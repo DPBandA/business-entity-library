@@ -5,220 +5,74 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
+import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import jm.com.dpba.business.entity.utils.BusinessEntityUtils;
+
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
 @Entity
 @Table(name = "business")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Business.findAll", query = "SELECT b FROM Business b"),
-    @NamedQuery(name = "Business.findById", query = "SELECT b FROM Business b WHERE b.id = :id"),
-    @NamedQuery(name = "Business.findByDatelastaccessed", query = "SELECT b FROM Business b WHERE b.datelastaccessed = :datelastaccessed"),
-    @NamedQuery(name = "Business.findByDatefirstreceived", query = "SELECT b FROM Business b WHERE b.datefirstreceived = :datefirstreceived"),
-    @NamedQuery(name = "Business.findByName", query = "SELECT b FROM Business b WHERE b.name = :name"),
-    @NamedQuery(name = "Business.findByTaxregistrationnumber", query = "SELECT b FROM Business b WHERE b.taxregistrationnumber = :taxregistrationnumber"),
-    @NamedQuery(name = "Business.findByNumber", query = "SELECT b FROM Business b WHERE b.number = :number"),
-    @NamedQuery(name = "Business.findByType", query = "SELECT b FROM Business b WHERE b.type = :type"),
-    @NamedQuery(name = "Business.findByNotes", query = "SELECT b FROM Business b WHERE b.notes = :notes")})
-public class Business implements Serializable {
+public class Business implements Customer, BusinessEntity, Comparable, Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
-    private Long id;
-    @Column(name = "DATELASTACCESSED")
-    @Temporal(TemporalType.DATE)
-    private Date datelastaccessed;
-    @Column(name = "DATEFIRSTRECEIVED")
-    @Temporal(TemporalType.DATE)
-    private Date datefirstreceived;
-    @Size(max = 255)
-    @Column(name = "NAME")
-    private String name;
-    @Size(max = 255)
-    @Column(name = "TAXREGISTRATIONNUMBER")
-    private String taxregistrationnumber;
-    @Size(max = 255)
-    @Column(name = "NUMBER")
-    private String number;
-    @Size(max = 255)
-    @Column(name = "TYPE")
-    private String type;
-    @Size(max = 255)
-    @Column(name = "NOTES")
-    private String notes;
-    @JoinTable(name = "business_address", joinColumns = {
-        @JoinColumn(name = "Business_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "addresses_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Address> addressList;
-    @JoinTable(name = "business_contact", joinColumns = {
-        @JoinColumn(name = "Business_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "contacts_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Contact> contactList;
-    @OneToMany(mappedBy = "businesssourceId")
-    private List<Marketproduct> marketproductList;
-    @OneToMany(mappedBy = "businessId")
-    private List<Employee> employeeList;
-    @OneToMany(mappedBy = "businesssourceId")
-    private List<Productinspection> productinspectionList;
-    @OneToMany(mappedBy = "grantedtoId")
-    private List<Certification> certificationList;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id = null;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Address> addresses;
+    private String name = "";
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Contact> contacts = null;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateLastAccessed = null;
+    private String number = "";
+    private String type = "";
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateFirstReceived = null;
+    private String notes = "";
+    private String taxRegistrationNumber = "";
 
     public Business() {
+        addresses = new ArrayList<Address>();
+        contacts = new ArrayList<Contact>();
     }
 
-    public Business(Long id) {
-        this.id = id;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    public Date getDatelastaccessed() {
-        return datelastaccessed;
+    @Override
+    public String getTaxRegistrationNumber() {
+        return taxRegistrationNumber;
     }
 
-    public void setDatelastaccessed(Date datelastaccessed) {
-        this.datelastaccessed = datelastaccessed;
-    }
-
-    public Date getDatefirstreceived() {
-        return datefirstreceived;
-    }
-
-    public void setDatefirstreceived(Date datefirstreceived) {
-        this.datefirstreceived = datefirstreceived;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTaxregistrationnumber() {
-        return taxregistrationnumber;
-    }
-
-    public void setTaxregistrationnumber(String taxregistrationnumber) {
-        this.taxregistrationnumber = taxregistrationnumber;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Address> getAddressList() {
-        return addressList;
-    }
-
-    public void setAddressList(List<Address> addressList) {
-        this.addressList = addressList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Contact> getContactList() {
-        return contactList;
-    }
-
-    public void setContactList(List<Contact> contactList) {
-        this.contactList = contactList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Marketproduct> getMarketproductList() {
-        return marketproductList;
-    }
-
-    public void setMarketproductList(List<Marketproduct> marketproductList) {
-        this.marketproductList = marketproductList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Employee> getEmployeeList() {
-        return employeeList;
-    }
-
-    public void setEmployeeList(List<Employee> employeeList) {
-        this.employeeList = employeeList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Productinspection> getProductinspectionList() {
-        return productinspectionList;
-    }
-
-    public void setProductinspectionList(List<Productinspection> productinspectionList) {
-        this.productinspectionList = productinspectionList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Certification> getCertificationList() {
-        return certificationList;
-    }
-
-    public void setCertificationList(List<Certification> certificationList) {
-        this.certificationList = certificationList;
+    @Override
+    public void setTaxRegistrationNumber(String taxRegistrationNumber) {
+        this.taxRegistrationNumber = taxRegistrationNumber;
     }
 
     @Override
@@ -243,7 +97,169 @@ public class Business implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Business[ id=" + id + " ]";
+        return "jm.org.bsj.entity.Business[id=" + id + "]";
+    }
+
+    @Override
+    public String getName() {
+        if (name == null) {
+            name = "";
+        }
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    @XmlTransient
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    @Override
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    @Override
+    @XmlTransient
+    public List<Contact> getContacts() {
+        return contacts;
+    }
+
+    @Override
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
+    @Override
+    public Address getBillingAddress() {
+        if (addresses != null) {
+            if (!addresses.isEmpty()) {
+                return addresses.get(0);
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void setBillingAddress(Address billingAddress) {
+        if (addresses != null) {
+            if (!addresses.isEmpty()) {
+                addresses.set(0, billingAddress);
+            }
+        }
+    }
+
+    @Override
+    public Date getDateLastAccessed() {
+        return dateLastAccessed;
+    }
+
+    @Override
+    public void setDateLastAccessed(Date dateLastAccessed) {
+        this.dateLastAccessed = dateLastAccessed;
+    }
+
+    @Override
+    public String getNumber() {
+        return number;
+    }
+
+    @Override
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Override
+    public Date getDateFirstReceived() {
+        return dateFirstReceived;
+    }
+
+    @Override
+    public void setDateFirstReceived(Date dateFirstReceived) {
+        this.dateFirstReceived = dateFirstReceived;
+    }
+
+    @Override
+    public String getNotes() {
+        return notes;
+    }
+
+    @Override
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.toString(), o.toString());
+    }
+
+    public static Business findBusinessById(EntityManager em, Long id) {
+
+        try {
+            Business business = em.find(Business.class, id);
+            return business;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
     
+    // Get the first business that matches the given name
+    public static Business findBusinessByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.trim().replaceAll("'", "''");
+
+            List<Business> businesses = em.createQuery("SELECT b FROM Business b "
+                    + "WHERE UPPER(b.name) "
+                    + "= '" + newName.toUpperCase() + "'", Business.class).getResultList();
+            if (businesses.size() > 0) {
+                return businesses.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static Business findDefaultBusiness(EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        Business business = Business.findBusinessByName(em, name);
+
+        if (business == null) {
+            business = new Business();
+            business.setName(name);
+
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, business);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, business);
+            }
+        }
+
+        return business;
+    }
 }

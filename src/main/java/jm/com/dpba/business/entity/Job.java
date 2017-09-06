@@ -5,249 +5,452 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+
 import java.util.List;
-import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import jm.com.dpba.business.entity.utils.BusinessEntityUtils;
+
 
 /**
  *
- * @author desbenn
+ * @author Desmond
  */
 @Entity
 @Table(name = "job")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Job.findAll", query = "SELECT j FROM Job j"),
-    @NamedQuery(name = "Job.findById", query = "SELECT j FROM Job j WHERE j.id = :id"),
-    @NamedQuery(name = "Job.findByYearreceived", query = "SELECT j FROM Job j WHERE j.yearreceived = :yearreceived"),
-    @NamedQuery(name = "Job.findByJobdescription", query = "SELECT j FROM Job j WHERE j.jobdescription = :jobdescription"),
-    @NamedQuery(name = "Job.findByEstimatedturnaroundtimeindays", query = "SELECT j FROM Job j WHERE j.estimatedturnaroundtimeindays = :estimatedturnaroundtimeindays"),
-    @NamedQuery(name = "Job.findByJobsequencenumber", query = "SELECT j FROM Job j WHERE j.jobsequencenumber = :jobsequencenumber"),
-    @NamedQuery(name = "Job.findByReportnumber", query = "SELECT j FROM Job j WHERE j.reportnumber = :reportnumber"),
-    @NamedQuery(name = "Job.findByNooftestsorcalibrations", query = "SELECT j FROM Job j WHERE j.nooftestsorcalibrations = :nooftestsorcalibrations"),
-    @NamedQuery(name = "Job.findByNumberofsamples", query = "SELECT j FROM Job j WHERE j.numberofsamples = :numberofsamples"),
-    @NamedQuery(name = "Job.findByIsearningjob", query = "SELECT j FROM Job j WHERE j.isearningjob = :isearningjob"),
-    @NamedQuery(name = "Job.findByAutogeneratejobnumber", query = "SELECT j FROM Job j WHERE j.autogeneratejobnumber = :autogeneratejobnumber"),
-    @NamedQuery(name = "Job.findByJobnumber", query = "SELECT j FROM Job j WHERE j.jobnumber = :jobnumber"),
-    @NamedQuery(name = "Job.findByNewclient", query = "SELECT j FROM Job j WHERE j.newclient = :newclient"),
-    @NamedQuery(name = "Job.findByLocked", query = "SELECT j FROM Job j WHERE j.locked = :locked"),
-    @NamedQuery(name = "Job.findByComment", query = "SELECT j FROM Job j WHERE j.comment = :comment"),
-    @NamedQuery(name = "Job.findByNooftests", query = "SELECT j FROM Job j WHERE j.nooftests = :nooftests"),
-    @NamedQuery(name = "Job.findByNoofcalibrations", query = "SELECT j FROM Job j WHERE j.noofcalibrations = :noofcalibrations"),
-    @NamedQuery(name = "Job.findByInstructions", query = "SELECT j FROM Job j WHERE j.instructions = :instructions"),
-    @NamedQuery(name = "Job.findByEstimatedturnaroundtimerequired", query = "SELECT j FROM Job j WHERE j.estimatedturnaroundtimerequired = :estimatedturnaroundtimerequired")})
-public class Job implements Serializable {
-    private static final long serialVersionUID = 1L;
+    @NamedQuery(name = "findAllJobs", query = "SELECT j FROM Job j ORDER BY j.jobNumber"),
+    @NamedQuery(name = "findByJobNumber", query = "SELECT j FROM Job j WHERE j.jobNumber = :jobNumber")
+})
+@XmlRootElement
+public class Job implements Serializable, BusinessEntity, ClientHandler {
+
+    private static final Long serialVersionUId = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(name = "YEARRECEIVED")
-    private Integer yearreceived;
-    @Size(max = 1024)
-    @Column(name = "JOBDESCRIPTION")
-    private String jobdescription;
-    @Column(name = "ESTIMATEDTURNAROUNDTIMEINDAYS")
-    private Integer estimatedturnaroundtimeindays;
-    @Column(name = "JOBSEQUENCENUMBER")
-    private BigInteger jobsequencenumber;
-    @Size(max = 255)
-    @Column(name = "REPORTNUMBER")
-    private String reportnumber;
-    @Column(name = "NOOFTESTSORCALIBRATIONS")
-    private Integer nooftestsorcalibrations;
-    @Column(name = "NUMBEROFSAMPLES")
-    private BigInteger numberofsamples;
-    @Column(name = "ISEARNINGJOB")
-    private Boolean isearningjob;
-    @Column(name = "AUTOGENERATEJOBNUMBER")
-    private Boolean autogeneratejobnumber;
-    @Size(max = 255)
-    @Column(name = "JOBNUMBER")
-    private String jobnumber;
-    @Column(name = "NEWCLIENT")
-    private Boolean newclient;
-    @Column(name = "LOCKED")
-    private Boolean locked;
-    @Size(max = 255)
-    @Column(name = "COMMENT")
+    private String jobNumber;
+    private Boolean autoGenerateJobNumber;
+    private Long jobSequenceNumber;
+    private String reportNumber;
+    @Column(length = 1024)
     private String comment;
-    @Column(name = "NOOFTESTS")
-    private Integer nooftests;
-    @Column(name = "NOOFCALIBRATIONS")
-    private Integer noofcalibrations;
-    @Size(max = 1024)
-    @Column(name = "INSTRUCTIONS")
+    private Long numberOfSamples;
+    private Integer estimatedTurnAroundTimeInDays;
+    private Boolean estimatedTurnAroundTimeRequired;
+    private Boolean locked;
+    private Boolean isEarningJob;
+    private Boolean newClient;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Classification classification;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Sector sector;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Department department;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Department subContractedDepartment;
+    private Integer yearReceived;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Client client;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private JobCategory jobCategory;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private JobSubCategory jobSubCategory;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<JobSample> jobSamples;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee assignedTo;
+    @OneToOne(cascade = CascadeType.ALL)
+    private JobCostingAndPayment jobCostingAndPayment;
+    @OneToOne(cascade = CascadeType.ALL)
+    private ServiceContract serviceContract;
+    @OneToOne(cascade = CascadeType.ALL)
+    private JobStatusAndTracking jobStatusAndTracking;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private BusinessOffice businessOffice;
+    @Column(length = 1024)
+    private String jobDescription;
+    @Column(length = 1024)
     private String instructions;
-    @Column(name = "ESTIMATEDTURNAROUNDTIMEREQUIRED")
-    private Boolean estimatedturnaroundtimerequired;
-    @ManyToMany(mappedBy = "jobList")
-    private List<Jobcostingbatch> jobcostingbatchList;
-    @JoinTable(name = "job_jobsample", joinColumns = {
-        @JoinColumn(name = "Job_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "jobSamples_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Jobsample> jobsampleList;
-    @OneToMany(mappedBy = "jobId")
-    private List<Registration> registrationList;
-    @JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Client clientId;
-    @JoinColumn(name = "ASSIGNEDTO_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Employee assignedtoId;
-    @JoinColumn(name = "BUSINESSOFFICE_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Businessoffice businessofficeId;
-    @JoinColumn(name = "SUBCONTRACTEDDEPARTMENT_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Department subcontracteddepartmentId;
-    @JoinColumn(name = "CLASSIFICATION_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Classification classificationId;
-    @JoinColumn(name = "DEPARTMENT_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Department departmentId;
-    @JoinColumn(name = "JOBCATEGORY_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Jobcategory jobcategoryId;
-    @JoinColumn(name = "JOBCOSTINGANDPAYMENT_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Jobcostingandpayment jobcostingandpaymentId;
-    @JoinColumn(name = "JOBSTATUSANDTRACKING_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Jobstatusandtracking jobstatusandtrackingId;
-    @JoinColumn(name = "JOBSUBCATEGORY_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Jobsubcategory jobsubcategoryId;
-    @JoinColumn(name = "SECTOR_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Sector sectorId;
-    @JoinColumn(name = "SERVICECONTRACT_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Servicecontract servicecontractId;
-    @OneToMany(mappedBy = "jobId")
-    private List<Petrolpumpnozzlecalibration> petrolpumpnozzlecalibrationList;
+    // Results summary
+    private Integer noOfTests;
+    private Integer noOfCalibrations;
+    private Integer noOfTestsOrCalibrations;
+    @Transient
+    private Boolean clientDirty;
 
     public Job() {
+        clientDirty = false;
+        jobSamples = new ArrayList<>();
     }
 
-    public Job(Long id) {
-        this.id = id;
+    public Job(String jobNumber) {
+        this.jobNumber = jobNumber;
+        jobSamples = new ArrayList<>();
     }
 
+    public Boolean getEstimatedTurnAroundTimeRequired() {
+        if (estimatedTurnAroundTimeRequired == null) {
+            estimatedTurnAroundTimeRequired = true;
+        }
+        return estimatedTurnAroundTimeRequired;
+    }
+
+    public void setEstimatedTurnAroundTimeRequired(Boolean estimatedTurnAroundTimeRequired) {
+        this.estimatedTurnAroundTimeRequired = estimatedTurnAroundTimeRequired;
+    }
+
+    public String getInstructions() {
+        if (instructions == null) {
+            instructions = "";
+        }
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+
+    public Boolean isSubContracted() {        
+//        if (getSubContractedDepartment().getSubGroupCode().equals("")
+//                || getSubContractedDepartment().getSubGroupCode().equals("--")) {
+//            return false;
+//        }
+         if (getSubContractedDepartment().getName().equals("")
+                || getSubContractedDepartment().getName().equals("--")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public Integer getNoOfTests() {
+        if (noOfTests == null) {
+            noOfTests = 0;
+        }
+        return noOfTests;
+    }
+
+    public void setNoOfTests(Integer noOfTests) {
+        this.noOfTests = noOfTests;
+    }
+
+    public Integer getNoOfCalibrations() {
+        if (noOfCalibrations == null) {
+            noOfCalibrations = 0;
+        }
+        return noOfCalibrations;
+    }
+
+    public void setNoOfCalibrations(Integer noOfCalibrations) {
+        this.noOfCalibrations = noOfCalibrations;
+    }
+
+    public Job(JobSubCategory jobSubCategory, Double finalCost) {
+        this.jobCostingAndPayment = new JobCostingAndPayment();
+        this.jobCostingAndPayment.setFinalCost(finalCost);
+        this.jobSubCategory = jobSubCategory;
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getYearreceived() {
-        return yearreceived;
+    public String getJobDescription() {
+        if (jobDescription == null) {
+            jobDescription = getDefaultJobDescription();
+        } else if (jobDescription.trim().equals("")) {
+            jobDescription = getDefaultJobDescription();
+        }
+
+        return jobDescription;
     }
 
-    public void setYearreceived(Integer yearreceived) {
-        this.yearreceived = yearreceived;
+    public void setJobDescription(String jobDescription) {
+        this.jobDescription = jobDescription;
     }
 
-    public String getJobdescription() {
-        return jobdescription;
+    public String getDefaultJobDescription() {
+        //if (getJobDescription().trim().equals("")) {
+        return this.instructions;
+        /* NB: Getting this form description can be made an option
+         for (JobSample jobSample : getJobSamples()) {
+         if (jobDescription.equals("")) {
+         jobDescription = jobSample.toString();
+         } else {
+         jobDescription = jobDescription + ", " + jobSample.toString();
+         }
+         }
+         */
+        //}
+
+        //return jobDescription;
     }
 
-    public void setJobdescription(String jobdescription) {
-        this.jobdescription = jobdescription;
+    public Boolean getNewClient() {
+        return newClient;
     }
 
-    public Integer getEstimatedturnaroundtimeindays() {
-        return estimatedturnaroundtimeindays;
+    public void setNewClient(Boolean newClient) {
+        this.newClient = newClient;
     }
 
-    public void setEstimatedturnaroundtimeindays(Integer estimatedturnaroundtimeindays) {
-        this.estimatedturnaroundtimeindays = estimatedturnaroundtimeindays;
+    public Classification getClassification() {
+        return classification;
     }
 
-    public BigInteger getJobsequencenumber() {
-        return jobsequencenumber;
+    public void setClassification(Classification classification) {
+        this.classification = classification;
     }
 
-    public void setJobsequencenumber(BigInteger jobsequencenumber) {
-        this.jobsequencenumber = jobsequencenumber;
+    public Sector getSector() {
+        return sector;
     }
 
-    public String getReportnumber() {
-        return reportnumber;
+    public void setSector(Sector sector) {
+        this.sector = sector;
     }
 
-    public void setReportnumber(String reportnumber) {
-        this.reportnumber = reportnumber;
+    public JobStatusAndTracking getJobStatusAndTracking() {
+        return jobStatusAndTracking;
     }
 
-    public Integer getNooftestsorcalibrations() {
-        return nooftestsorcalibrations;
+    public void setJobStatusAndTracking(JobStatusAndTracking jobStatusAndTracking) {
+        this.jobStatusAndTracking = jobStatusAndTracking;
     }
 
-    public void setNooftestsorcalibrations(Integer nooftestsorcalibrations) {
-        this.nooftestsorcalibrations = nooftestsorcalibrations;
+    public JobCostingAndPayment getJobCostingAndPayment() {
+        return jobCostingAndPayment;
     }
 
-    public BigInteger getNumberofsamples() {
-        return numberofsamples;
+    public void setJobCostingAndPayment(JobCostingAndPayment jobCostingAndPayment) {
+        this.jobCostingAndPayment = jobCostingAndPayment;
     }
 
-    public void setNumberofsamples(BigInteger numberofsamples) {
-        this.numberofsamples = numberofsamples;
+    public Integer getYearReceived() {
+        return yearReceived;
     }
 
-    public Boolean getIsearningjob() {
-        return isearningjob;
+    public void setYearReceived(Integer yearReceived) {
+        this.yearReceived = yearReceived;
     }
 
-    public void setIsearningjob(Boolean isearningjob) {
-        this.isearningjob = isearningjob;
+    public String getJobSampleDescriptions() {
+        String description = "";
+
+        if (getJobSamples().isEmpty() || hasOnlyDefaultJobSample()) {
+            return "None";
+        } else {
+            for (JobSample jobSample : getJobSamples()) {
+                if (description.equals("")) {
+                    description = jobSample.toString();
+                } else {
+                    description = description + ", " + jobSample.toString();
+                }
+            }
+        }
+
+        return description;
     }
 
-    public Boolean getAutogeneratejobnumber() {
-        return autogeneratejobnumber;
+    public Boolean hasOnlyDefaultJobSample() {
+        if ((getJobSamples().size() == 1) && (getJobSamples().get(0).getDescription().trim().equals("--"))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public void setAutogeneratejobnumber(Boolean autogeneratejobnumber) {
-        this.autogeneratejobnumber = autogeneratejobnumber;
+    /**
+     * Return empty list if the only job sample is the default sample
+     *
+     * @return
+     */
+    public List<JobSample> getFilteredJobSamples() {
+        if (hasOnlyDefaultJobSample()) {
+            return new ArrayList<>();
+        } else {
+            return getJobSamples();
+        }
     }
 
-    public String getJobnumber() {
-        return jobnumber;
+    public List<JobSample> getJobSamples() {
+        if (jobSamples != null) {
+            Collections.sort(jobSamples);
+        } else {
+            jobSamples = new ArrayList<>();
+        }
+
+        return jobSamples;
     }
 
-    public void setJobnumber(String jobnumber) {
-        this.jobnumber = jobnumber;
+    public BusinessOffice getBusinessOffice() {
+        return businessOffice;
     }
 
-    public Boolean getNewclient() {
-        return newclient;
+    public void setBusinessOffice(BusinessOffice businessOffice) {
+        this.businessOffice = businessOffice;
     }
 
-    public void setNewclient(Boolean newclient) {
-        this.newclient = newclient;
+    public ServiceContract getServiceContract() {
+        return serviceContract;
+    }
+
+    public void setServiceContract(ServiceContract serviceContract) {
+        this.serviceContract = serviceContract;
+    }
+
+    public Boolean getAutoGenerateJobNumber() {
+        if (autoGenerateJobNumber == null) {
+            autoGenerateJobNumber = true;
+        }
+        return autoGenerateJobNumber;
+    }
+
+    public void setAutoGenerateJobNumber(Boolean autoGenerateJobNumber) {
+        this.autoGenerateJobNumber = autoGenerateJobNumber;
+    }
+
+    @Override
+    public void setClientDirty(Boolean dirty) {
+        clientDirty = dirty;
+    }
+
+    @Override
+    public Boolean isClientDirty() {
+        return clientDirty;
+    }
+
+    @Override
+    public Client getClient() {
+        if (client == null) {
+            return new Client("");
+        }
+        return client;
+    }
+
+    @Override
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public Department getDepartment() {
+        if (department == null) {
+            return new Department("");
+        }
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public Department getDepartmentAssignedToJob() {
+
+        if (getSubContractedDepartment().getName().equals("--")) {
+            // This is not a subcontracted job see return to parent department            
+            return getDepartment();
+        } else {
+            return getSubContractedDepartment();
+        }
+    }
+
+    public Employee getAssignedTo() {
+        if (assignedTo == null) {
+            return new Employee();
+        }
+        return assignedTo;
+    }
+
+    public void setAssignedTo(Employee assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
+    public JobCategory getJobCategory() {
+        return jobCategory;
+    }
+
+    public void setJobCategory(JobCategory jobCategory) {
+        this.jobCategory = jobCategory;
+    }
+
+    public JobSubCategory getJobSubCategory() {
+        return jobSubCategory;
+    }
+
+    public void setJobSubCategory(JobSubCategory jobSubCategory) {
+        this.jobSubCategory = jobSubCategory;
+    }
+
+    public Department getSubContractedDepartment() {
+        if (subContractedDepartment == null) {
+            return new Department("");
+        }
+        return subContractedDepartment;
+    }
+
+    public void setSubContractedDepartment(Department subContractedDepartment) {
+        this.subContractedDepartment = subContractedDepartment;
+    }
+
+    public String getComment() {
+        if (comment == null) {
+            comment = "";
+        }
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Integer getEstimatedTurnAroundTimeInDays() {
+        if (estimatedTurnAroundTimeInDays == null) {
+            estimatedTurnAroundTimeInDays = 0;
+        }
+        return estimatedTurnAroundTimeInDays;
+    }
+
+    public void setEstimatedTurnAroundTimeInDays(Integer estimatedTurnAroundTimeInDays) {
+        this.estimatedTurnAroundTimeInDays = estimatedTurnAroundTimeInDays;
+    }
+
+    public Boolean getIsEarningJob() {
+        return isEarningJob;
+    }
+
+    public void setIsEarningJob(Boolean isEarningJob) {
+        this.isEarningJob = isEarningJob;
+    }
+
+    public Long getJobSequenceNumber() {
+        return jobSequenceNumber;
+    }
+
+    public void setJobSequenceNumber(Long jobSequenceNumber) {
+        this.jobSequenceNumber = jobSequenceNumber;
     }
 
     public Boolean getLocked() {
@@ -258,180 +461,55 @@ public class Job implements Serializable {
         this.locked = locked;
     }
 
-    public String getComment() {
-        return comment;
+    public Integer getNoOfTestsOrCalibrations() {
+        if (noOfTestsOrCalibrations == null) {
+            noOfTestsOrCalibrations = 0;
+        }
+        return noOfTestsOrCalibrations;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setNoOfTestsOrCalibrations(Integer noOfTestsOrCalibrations) {
+        this.noOfTestsOrCalibrations = noOfTestsOrCalibrations;
     }
 
-    public Integer getNooftests() {
-        return nooftests;
+    public Long getNumberOfSamples() {
+        if (numberOfSamples == null) {
+            numberOfSamples = 0L;
+        }
+        return numberOfSamples;
+    }
+    
+    public Long getNumberOfSampleProducts() {
+        Long total = 0L;
+        
+        for (JobSample jobSample : getJobSamples()) {
+            total = total + jobSample.getQuantity();
+        }
+        
+        return total;
     }
 
-    public void setNooftests(Integer nooftests) {
-        this.nooftests = nooftests;
+    public void setNumberOfSamples(Long numberOfSamples) {
+        this.numberOfSamples = numberOfSamples;
     }
 
-    public Integer getNoofcalibrations() {
-        return noofcalibrations;
+    public String getReportNumber() {
+        return reportNumber;
     }
 
-    public void setNoofcalibrations(Integer noofcalibrations) {
-        this.noofcalibrations = noofcalibrations;
+    public void setReportNumber(String reportNumber) {
+        this.reportNumber = reportNumber;
     }
 
-    public String getInstructions() {
-        return instructions;
+    public String getJobNumber() {
+        if (jobNumber == null) {
+            jobNumber = "";
+        }
+        return jobNumber;
     }
 
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
-    }
-
-    public Boolean getEstimatedturnaroundtimerequired() {
-        return estimatedturnaroundtimerequired;
-    }
-
-    public void setEstimatedturnaroundtimerequired(Boolean estimatedturnaroundtimerequired) {
-        this.estimatedturnaroundtimerequired = estimatedturnaroundtimerequired;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Jobcostingbatch> getJobcostingbatchList() {
-        return jobcostingbatchList;
-    }
-
-    public void setJobcostingbatchList(List<Jobcostingbatch> jobcostingbatchList) {
-        this.jobcostingbatchList = jobcostingbatchList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Jobsample> getJobsampleList() {
-        return jobsampleList;
-    }
-
-    public void setJobsampleList(List<Jobsample> jobsampleList) {
-        this.jobsampleList = jobsampleList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Registration> getRegistrationList() {
-        return registrationList;
-    }
-
-    public void setRegistrationList(List<Registration> registrationList) {
-        this.registrationList = registrationList;
-    }
-
-    public Client getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Client clientId) {
-        this.clientId = clientId;
-    }
-
-    public Employee getAssignedtoId() {
-        return assignedtoId;
-    }
-
-    public void setAssignedtoId(Employee assignedtoId) {
-        this.assignedtoId = assignedtoId;
-    }
-
-    public Businessoffice getBusinessofficeId() {
-        return businessofficeId;
-    }
-
-    public void setBusinessofficeId(Businessoffice businessofficeId) {
-        this.businessofficeId = businessofficeId;
-    }
-
-    public Department getSubcontracteddepartmentId() {
-        return subcontracteddepartmentId;
-    }
-
-    public void setSubcontracteddepartmentId(Department subcontracteddepartmentId) {
-        this.subcontracteddepartmentId = subcontracteddepartmentId;
-    }
-
-    public Classification getClassificationId() {
-        return classificationId;
-    }
-
-    public void setClassificationId(Classification classificationId) {
-        this.classificationId = classificationId;
-    }
-
-    public Department getDepartmentId() {
-        return departmentId;
-    }
-
-    public void setDepartmentId(Department departmentId) {
-        this.departmentId = departmentId;
-    }
-
-    public Jobcategory getJobcategoryId() {
-        return jobcategoryId;
-    }
-
-    public void setJobcategoryId(Jobcategory jobcategoryId) {
-        this.jobcategoryId = jobcategoryId;
-    }
-
-    public Jobcostingandpayment getJobcostingandpaymentId() {
-        return jobcostingandpaymentId;
-    }
-
-    public void setJobcostingandpaymentId(Jobcostingandpayment jobcostingandpaymentId) {
-        this.jobcostingandpaymentId = jobcostingandpaymentId;
-    }
-
-    public Jobstatusandtracking getJobstatusandtrackingId() {
-        return jobstatusandtrackingId;
-    }
-
-    public void setJobstatusandtrackingId(Jobstatusandtracking jobstatusandtrackingId) {
-        this.jobstatusandtrackingId = jobstatusandtrackingId;
-    }
-
-    public Jobsubcategory getJobsubcategoryId() {
-        return jobsubcategoryId;
-    }
-
-    public void setJobsubcategoryId(Jobsubcategory jobsubcategoryId) {
-        this.jobsubcategoryId = jobsubcategoryId;
-    }
-
-    public Sector getSectorId() {
-        return sectorId;
-    }
-
-    public void setSectorId(Sector sectorId) {
-        this.sectorId = sectorId;
-    }
-
-    public Servicecontract getServicecontractId() {
-        return servicecontractId;
-    }
-
-    public void setServicecontractId(Servicecontract servicecontractId) {
-        this.servicecontractId = servicecontractId;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Petrolpumpnozzlecalibration> getPetrolpumpnozzlecalibrationList() {
-        return petrolpumpnozzlecalibrationList;
-    }
-
-    public void setPetrolpumpnozzlecalibrationList(List<Petrolpumpnozzlecalibration> petrolpumpnozzlecalibrationList) {
-        this.petrolpumpnozzlecalibrationList = petrolpumpnozzlecalibrationList;
+    public void setJobNumber(String jobNumber) {
+        this.jobNumber = jobNumber;
     }
 
     @Override
@@ -455,8 +533,767 @@ public class Job implements Serializable {
     }
 
     @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Job[ id=" + id + " ]";
+        return getJobNumber();
+    }
+
+    @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
+    public void setName(String name) {
+    }
+
+    public static Job findLastClientJob(EntityManager em, Client client) {
+        Job lastJob = null;
+        String searchQuery;
+
+        // build query based on id or name
+        if (client.getId() != null) {
+            searchQuery =
+                    "SELECT job FROM Job job"
+                    + " JOIN job.client client"
+                    + " WHERE client.id = " + client.getId()
+                    + " ORDER BY client.name";
+        } else if (client.getName() != null) {
+            searchQuery =
+                    "SELECT job FROM Job job"
+                    + " JOIN job.client client"
+                    + " WHERE client.name = " + client.getName()
+                    + " ORDER BY client.name";
+        } else {
+            return lastJob;
+        }
+        // find last job if any
+        List<Job> jobs = em.createQuery(searchQuery, Job.class).getResultList();
+        if (jobs != null) {
+            if (jobs.size() > 0) {
+                lastJob = jobs.get(jobs.size() - 1);
+            }
+        }
+
+        return lastJob;
+    }
+
+    public static List<Job> findJobsByDateSearchField(
+            EntityManager em,
+            JobManagerUser user,
+            String dateSearchField,
+            String jobType,
+            String searchType,
+            String originalSearchText,
+            Date startDate,
+            Date endDate,
+            Boolean includeSampleSearch) {
+
+        List<Job> foundJobs;
+        String searchQuery = null;
+        String searchText;
+        String searchTextAndClause;
+        String sampleSearchWhereClause = "";
+        String sampleSearchJoinClause = "";
+
+        // get rid of any single quotes from text and ensure
+        // that it is not null
+        if (originalSearchText != null) {
+            searchText = originalSearchText.trim().replaceAll("'", "''");
+        } else {
+            searchText = "";
+        }
+
+        // include the search for samples?
+        if (includeSampleSearch) {
+            sampleSearchWhereClause =
+                    " OR UPPER(jobSamples.reference) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(jobSamples.description) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(jobSamples.productBrand) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(jobSamples.productModel) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(jobSamples.productSerialNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(jobSamples.productCode) LIKE '%" + searchText.toUpperCase() + "%'";
+
+            sampleSearchJoinClause = " JOIN job.jobSamples jobSamples";
+        }
+        switch (searchType) {
+            case "Parent jobs only":
+                searchTextAndClause =
+                        " AND subContractedDepartment.name = '--' AND ("
+                        + " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        //+ " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + sampleSearchWhereClause
+                        + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.comment) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobStatusAndTracking.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.instructions) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+                searchQuery =
+                        "SELECT job FROM Job job"
+                        + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
+                        + sampleSearchJoinClause
+                        + " JOIN job.businessOffice businessOffice"
+                        + " JOIN job.department department"
+                        + " JOIN job.subContractedDepartment subContractedDepartment"
+                        + " JOIN job.classification classification"
+                        + " JOIN job.sector sector"
+                        + " JOIN job.client client"
+                        + " JOIN job.jobCategory jobCategory"
+                        + " JOIN job.jobSubCategory jobSubCategory"
+                        + " JOIN job.assignedTo assignedTo"
+                        + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY job.id DESC";
+                break;
+            case "General":
+                searchTextAndClause =
+                        " AND ("
+                        + " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + sampleSearchWhereClause
+                        + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.comment) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobStatusAndTracking.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.instructions) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+                searchQuery =
+                        "SELECT job FROM Job job"
+                        + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
+                        + sampleSearchJoinClause
+                        + " JOIN job.businessOffice businessOffice"
+                        + " JOIN job.department department"
+                        + " JOIN job.subContractedDepartment subContractedDepartment"
+                        + " JOIN job.classification classification"
+                        + " JOIN job.sector sector"
+                        + " JOIN job.client client"
+                        + " JOIN job.jobCategory jobCategory"
+                        + " JOIN job.jobSubCategory jobSubCategory"
+                        + " JOIN job.assignedTo assignedTo"
+                        + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY job.id DESC";
+                break;
+            case "Jobs in period":
+                searchQuery =
+                        "SELECT job FROM Job job"
+                        + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
+                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " ORDER BY job.id DESC";
+                break;
+            case "Monthly report":
+                System.out.println("search text: " + searchText);
+                searchQuery =
+                        "SELECT job FROM Job job"
+                        + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
+                        + " JOIN job.department department"
+                        + " JOIN job.subContractedDepartment subContractedDepartment"
+                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " AND ( UPPER(department.name) = '" + searchText.toUpperCase() + "'"
+                        + " OR UPPER(subContractedDepartment.name) = '" + searchText.toUpperCase() + "'"
+                        + " )"
+                        + " ORDER BY job.id DESC";
+                break;
+            case "My department's jobs":
+                searchTextAndClause =
+                        " AND ("
+                        + " UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + sampleSearchWhereClause
+                        + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.comment) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobStatusAndTracking.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.instructions) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+                searchQuery =
+                        "SELECT job FROM Job job"
+                        + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
+                        + sampleSearchJoinClause
+                        + " JOIN job.department department"
+                        + " JOIN job.subContractedDepartment subContractedDepartment"
+                        + " JOIN job.classification classification"
+                        + " JOIN job.sector sector"
+                        + " JOIN job.client client"
+                        + " JOIN job.jobCategory jobCategory"
+                        + " JOIN job.jobSubCategory jobSubCategory"
+                        + " JOIN job.assignedTo assignedTo"
+                        + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " AND ( UPPER(department.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
+                        + " OR UPPER(subContractedDepartment.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
+                        + " )"
+                        + " ORDER BY job.id DESC";
+                break;
+            case "My jobs":
+                searchTextAndClause =
+                        " AND ("
+                        + " UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + sampleSearchWhereClause
+                        + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.comment) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobStatusAndTracking.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.instructions) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+                searchQuery =
+                        "SELECT job FROM Job job"
+                        + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
+                        + sampleSearchJoinClause
+                        + " JOIN job.department department"
+                        + " JOIN job.subContractedDepartment subContractedDepartment"
+                        + " JOIN job.classification classification"
+                        + " JOIN job.sector sector"
+                        + " JOIN job.client client"
+                        + " JOIN job.jobCategory jobCategory"
+                        + " JOIN job.jobSubCategory jobSubCategory"
+                        + " JOIN job.assignedTo assignedTo"
+                        + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " AND ( UPPER(assignedTo.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
+                        + " AND UPPER(assignedTo.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%'"
+                        + " )"
+                        + " ORDER BY job.id DESC";
+                break;
+            case "Jobs for my department":
+                searchText = user.getEmployee().getDepartment().getName().replaceAll("'", "''");
+                searchQuery =
+                        "SELECT job FROM Job job"
+                        + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
+                        + " JOIN job.department department"
+                        + " JOIN job.subContractedDepartment subContractedDepartment"
+                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " AND ( UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )"
+                        + " ORDER BY job.id DESC";
+                break;
+            default:
+                System.out.println("Default search to be implemented");
+
+                break;
+        }
+
+        try {
+            foundJobs = em.createQuery(searchQuery, Job.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
+        return foundJobs;
+    }
+
+    /**
+     * Gets all jobs that are considered to be new. Presently all jobs without
+     * an alert date set is considered new.
+     *
+     * @param em
+     * @return
+     */
+    public static List<Job> findAllNewJobs(EntityManager em, DatePeriod datePeriod) {
+        try {
+            List<Job> jobs = em.createQuery(
+                    "SELECT j FROM Job j"
+                    + " JOIN j.jobStatusAndTracking t"
+                    + " WHERE (t.dateSubmitted >= " + BusinessEntityUtils.getDateString(datePeriod.getStartDate(), "'", "YMD", "-")
+                    + " AND t.dateSubmitted <= " + BusinessEntityUtils.getDateString(datePeriod.getEndDate(), "'", "YMD", "-") + ")"
+                    + " AND t.alertDate IS NULL", Job.class).getResultList();
+
+            return jobs;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    /**
+     * Gets all jobs that have been updated. Presently all jobs without a job
+     * email date set is considered updated.
+     *
+     * @param em
+     * @return
+     */
+    public static List<Job> findAllUpdatedJobs(EntityManager em, DatePeriod datePeriod) {
+        try {
+            List<Job> jobs = em.createQuery(
+                    "SELECT j FROM Job j"
+                    + " JOIN j.jobStatusAndTracking t"
+                    + " WHERE (t.dateSubmitted >= " + BusinessEntityUtils.getDateString(datePeriod.getStartDate(), "'", "YMD", "-")
+                    + " AND t.dateSubmitted <= " + BusinessEntityUtils.getDateString(datePeriod.getEndDate(), "'", "YMD", "-") + ")"
+                    + " AND t.dateJobEmailWasSent IS NULL", Job.class).getResultList();
+
+            return jobs;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static List<Job> findAllJobs(EntityManager em) {
+
+        try {
+            List<Job> jobs = em.createNamedQuery("findAllJobs", Job.class).getResultList();
+
+            return jobs;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static List<Job> findJobsByBusinessOfficeId(EntityManager em, Long businessOfficeId) {
+
+        try {
+
+            List<Job> jobs = em.createQuery(
+                    "SELECT j FROM Job j"
+                    + " JOIN j.businessOffice businessOffice"
+                    + " WHERE businessOffice.id = " + businessOfficeId, Job.class).getResultList();
+
+            return jobs;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    /**
+     * Return the first job found with the matching job number.
+     *
+     * @param em
+     * @param jobNumber
+     * @return
+     */
+    public static Job findJobByJobNumber(EntityManager em, String jobNumber) {
+
+        try {
+            String newJobNumber = jobNumber.trim().replaceAll("'", "''");
+
+            List<Job> jobs = em.createQuery("SELECT j FROM Job j "
+                    + "WHERE UPPER(j.jobNumber) "
+                    + "= '" + newJobNumber.toUpperCase() + "'", Job.class).getResultList();
+
+            if (!jobs.isEmpty()) {
+                return jobs.get(0);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Job findParentJob(EntityManager em, Integer yearReceived, Long jobSequenceNumber) {
+        return null;
+    }
+
+    public static Job findJobByYearReceivedAndJobSequence(EntityManager em, Integer yearReceived, Long jobSequenceNumber) {
+
+        try {
+
+            List<Job> jobs = em.createQuery("SELECT j FROM Job j "
+                    + "WHERE j.yearReceived = "
+                    + yearReceived.toString() + " AND j.jobSequenceNumber = "
+                    + jobSequenceNumber.toString(), Job.class).getResultList();
+
+            if (!jobs.isEmpty()) {
+                return jobs.get(0);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Job findJobById(EntityManager em, Long id) {
+
+        try {
+            Job job = em.find(Job.class, id);
+
+            return job;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
     
+    public static List<Job> findIncompleteSubcontracts( EntityManager em, Job job) {
+        List<Job> foundJobs; 
+        ArrayList<Job> incompleteSubcontracts = new ArrayList<>();
+        
+        foundJobs = findJobsByYearReceivedAndJobSequenceNumber(em, job.yearReceived, job.jobSequenceNumber);
+        for (Job foundJob : foundJobs) {
+            if (foundJob.isSubContracted() && !foundJob.getJobStatusAndTracking().getCompleted()) {
+                incompleteSubcontracts.add(foundJob);
+            }
+        }
+        
+        return incompleteSubcontracts;
+    }
+
+    public static List<Job> findJobsByYearReceivedAndJobSequenceNumber(
+            EntityManager em, 
+            Integer yearReceived,
+            Long jobSequenceNumber) {
+        try {
+
+            List<Job> jobs = em.createQuery("SELECT j FROM Job j "
+                    + "WHERE j.yearReceived = "
+                    + yearReceived.toString() + " AND j.jobSequenceNumber = "
+                    + jobSequenceNumber.toString(), Job.class).getResultList();
+
+            if (!jobs.isEmpty()) {
+                return jobs;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static List<String> findJobNumbers(EntityManager em, String query) {
+
+        try {
+            String newName = query.replaceAll("'", "''");
+
+            List<String> numbers =
+                    em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) like '"
+                    + newName.toUpperCase().trim() + "%'"
+                    + " ORDER BY j.jobNumber", String.class).getResultList();
+            return numbers;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Job> findJobsWithJobCosting(
+            EntityManager em,
+            String originalDepartmentName,
+            String originalSearchText) {
+
+        List<Job> foundJobs;
+        String searchQuery;
+        String searchTextAndClause = "";
+        String joinClause;
+        String searchText;
+        String departmentName;
+
+        // NB: replace ' with '' to avoid SQL query error
+        if (originalSearchText != null) {
+            searchText = originalSearchText.replaceAll("'", "''");
+        } else {
+            searchText = "";
+        }
+
+        // NB: replace ' with '' to avoid SQL query error
+        if (originalDepartmentName != null) {
+            departmentName = originalDepartmentName.replaceAll("'", "''");
+        } else {
+            departmentName = "";
+        }
+
+        joinClause =
+                " JOIN job.department department"
+                + " JOIN job.subContractedDepartment subContractedDepartment"
+                + " JOIN job.jobCostingAndPayment jobCostingAndPayment";
+
+        if (!searchText.equals("") && !departmentName.equals("")) {
+            searchTextAndClause =
+                    " AND ("
+                    + " UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(job.jobDescription) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(department.name) LIKE '%" + departmentName.toUpperCase() + "%'"
+                    + " OR UPPER(subContractedDepartment.name) LIKE '%" + departmentName.toUpperCase() + "%'"
+                    + " )";
+        } else if (searchText.equals("") && !departmentName.equals("")) {
+            searchTextAndClause =
+                    " AND ("
+                    + " UPPER(department.name) LIKE '%" + departmentName.toUpperCase() + "%'"
+                    + " OR UPPER(subContractedDepartment.name) LIKE '%" + departmentName.toUpperCase() + "%'"
+                    + " )";
+        } else if (!searchText.equals("") && departmentName.equals("")) {
+            searchTextAndClause =
+                    " AND ("
+                    + " UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(job.jobDescription) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " )";
+        }
+
+        searchQuery =
+                "SELECT job FROM Job job"
+                + joinClause
+                + " WHERE (jobCostingAndPayment.costingCompleted = 1 OR jobCostingAndPayment.costingApproved = 1)" // used as place holder
+                + searchTextAndClause
+                + " ORDER BY job.id DESC";
+        try {
+            foundJobs = em.createQuery(searchQuery, Job.class).getResultList();
+            if (foundJobs == null) {
+                foundJobs = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+
+        return foundJobs;
+    }
+
+    public static List<Object[]> getJobReportRecords(
+            EntityManager em,
+            String startDate,
+            String endDate,
+            Long departmentId) {
+
+        String reportSQL = "SELECT"
+                + "     GROUP_CONCAT(jobsample.`DESCRIPTION` SEPARATOR ', ') AS samples," // 0
+                + "     GROUP_CONCAT(jobsample.`PRODUCTBRAND` SEPARATOR ', ') AS sampleBrands," // 1
+                + "     GROUP_CONCAT(jobsample.`PRODUCTMODEL` SEPARATOR ', ') AS sampleModels," // 2    
+                + "     job.`JOBDESCRIPTION` AS job_JOBDESCRIPTION," // 3   
+                + "     job.`NOOFTESTSORCALIBRATIONS` AS job_NOOFTESTSORCALIBRATIONS," // 4
+                + "     job.`NUMBEROFSAMPLES` AS job_NUMBEROFSAMPLES," // 5    
+                + "     job.`JOBNUMBER` AS job_JOBNUMBER," // 6             
+                + "     job.`COMMENT` AS job_COMMENT," // 7               
+                + "     client.`NAME` AS client_NAME," // 8                        
+                + "     department.`NAME` AS department_NAME," // 9              
+                + "     department_A.`NAME` AS department_A_NAME," // 10
+                + "     businessoffice.`NAME` AS businessoffice_NAME," // 11
+                + "     jobstatusandtracking.`WORKPROGRESS` AS jobstatusandtracking_WORKPROGRESS," // 12
+                + "     classification.`NAME` AS classification_NAME," // 13              
+                + "     jobcategory.`CATEGORY` AS jobcategory_CATEGORY," // 14
+                + "     jobsubcategory.`SubCategory` AS jobsubcategory_SubCategory," // 15             
+                + "     sector.`NAME` AS sector_NAME," // 16
+                + "     jobstatusandtracking.`EXPECTEDDATEOFCOMPLETION` AS jobstatusandtracking_EXPECTEDDATEOFCOMPLETION," // 17
+                + "     jobstatusandtracking.`ENTEREDBY_ID` AS jobstatusandtracking_ENTEREDBY_ID," // 18
+                + "     jobstatusandtracking.`DATEOFCOMPLETION` AS jobstatusandtracking_DATEOFCOMPLETION," // 19
+                + "     jobstatusandtracking.`DATEANDTIMEENTERED` AS jobstatusandtracking_DATEANDTIMEENTERED," // 20                
+                + "     employee.`FIRSTNAME` AS employee_FIRSTNAME," // 21
+                + "     employee.`LASTNAME` AS employee_LASTNAME," // 22               
+                + "     employee_A.`ID` AS employee_A_ID," // 23
+                + "     employee_A.`FIRSTNAME` AS employee_A_FIRSTNAME," // 24
+                + "     employee_A.`LASTNAME` AS employee_A_LASTNAME," // 25               
+                + "     jobcostingandpayment.`DEPOSIT` AS jobcostingandpayment_DEPOSIT," // 26
+                + "     jobcostingandpayment.`FINALCOST` AS jobcostingandpayment_FINALCOST," // 27
+                + "     jobcostingandpayment.`ESTIMATEDCOST` AS jobcostingandpayment_ESTIMATEDCOST," // 28
+                + "     jobstatusandtracking.`DATESUBMITTED` AS jobstatusandtracking_DATESUBMITTED," // 29
+                + "     job.`COMMENT` AS job_COMMENT" // 30
+                + " FROM"
+                + "     `jobstatusandtracking` jobstatusandtracking INNER JOIN `job` job ON jobstatusandtracking.`ID` = job.`JOBSTATUSANDTRACKING_ID`"
+                + "     INNER JOIN `client` client ON job.`CLIENT_ID` = client.`ID`"
+                + "     INNER JOIN `job_jobsample` job_jobsample ON job.`ID` = job_jobsample.`Job_ID`"
+                + "     INNER JOIN `department` department ON job.`DEPARTMENT_ID` = department.`ID`"
+                + "     INNER JOIN `department` department_A ON job.`SUBCONTRACTEDDEPARTMENT_ID` = department_A.`ID`"
+                + "     INNER JOIN `businessoffice` businessoffice ON job.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
+                + "     INNER JOIN `classification` classification ON job.`CLASSIFICATION_ID` = classification.`ID`"
+                + "     INNER JOIN `jobcategory` jobcategory ON job.`JOBCATEGORY_ID` = jobcategory.`ID`"
+                + "     INNER JOIN `jobsubcategory` jobsubcategory ON job.`JOBSUBCATEGORY_ID` = jobsubcategory.`ID`"
+                + "     INNER JOIN `sector` sector ON job.`SECTOR_ID` = sector.`ID`"
+                + "     INNER JOIN `employee` employee ON job.`ASSIGNEDTO_ID` = employee.`ID`"
+                + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON job.`JOBCOSTINGANDPAYMENT_ID` = jobcostingandpayment.`ID`"
+                + "     INNER JOIN `jobsample` jobsample ON job_jobsample.`jobSamples_ID` = jobsample.`ID`"
+                + "     INNER JOIN `employee` employee_A ON jobstatusandtracking.`ENTEREDBY_ID` = employee_A.`ID`"
+                + " WHERE"
+                + "     ((jobstatusandtracking.`DATESUBMITTED` >= " + startDate
+                + " AND jobstatusandtracking.`DATESUBMITTED` <= " + endDate + ")"
+                + "  OR (jobstatusandtracking.`DATEOFCOMPLETION` >= " + startDate
+                + " AND jobstatusandtracking.`DATEOFCOMPLETION` <= " + endDate + ")"
+                + "  OR (jobstatusandtracking.`EXPECTEDDATEOFCOMPLETION` >= " + startDate
+                + " AND jobstatusandtracking.`EXPECTEDDATEOFCOMPLETION` <= " + endDate + ")"
+                + "  OR (jobstatusandtracking.`DATEANDTIMEENTERED` >= " + startDate
+                + " AND jobstatusandtracking.`DATEANDTIMEENTERED` <= " + endDate + "))"
+                + " AND (department.`ID` = " + departmentId
+                + "  OR department_A.`ID` = " + departmentId + ")"
+                + " GROUP BY"
+                + "     job.`ID`"
+                + " ORDER BY"
+                + "     job.`ID` DESC,"
+                + "     employee.`LASTNAME` ASC";
+
+        try {
+            return em.createNativeQuery(reportSQL).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+
+    }
+
+    public static List<Object[]> getCompletedJobRecords(
+            EntityManager em,
+            String startDate,
+            String endDate,
+            Long departmentId) {
+
+        String reportSQL = "SELECT\n"
+                + "     GROUP_CONCAT(jobsample.`DESCRIPTION` SEPARATOR ', ') AS samples,\n" //0
+                + "     job.`ID` AS job_ID,\n" //1
+                + "     jobstatusandtracking.`ID` AS jobstatusandtracking_ID,\n" //2
+                + "     jobsample.`NAME` AS jobsample_NAME,\n" //3
+                + "     department.`NAME` AS department_NAME,\n" //4
+                + "     department_A.`NAME` AS department_A_NAME,\n" //5
+                + "     jobstatusandtracking.`DATEOFCOMPLETION` AS jobstatusandtracking_DATEOFCOMPLETION,\n" //6
+                + "     employee.`NAME` AS employee_NAME,\n" //7
+                + "     jobcostingandpayment.`FINALCOST` AS jobcostingandpayment_FINALCOST,\n" //8
+                + "     job.`NUMBEROFSAMPLES` AS job_NUMBEROFSAMPLES,\n" //9
+                + "     job.`NOOFTESTSORCALIBRATIONS` AS job_NOOFTESTSORCALIBRATIONS,\n" //10
+                + "     job.`NOOFTESTS` AS job_NOOFTESTS,\n" //11
+                + "     job.`NOOFCALIBRATIONS` AS job_NOOFCALIBRATIONS,\n" //12
+                + "     jobstatusandtracking.`EXPECTEDDATEOFCOMPLETION` AS jobstatusandtracking_EXPECTEDDATEOFCOMPLETION,\n" //13
+                + "     job.`JOBNUMBER` AS job_JOBNUMBER,\n" //14
+                + "     client.`NAME` AS client_NAME,\n" //15
+                + "     jobstatusandtracking.`DATESUBMITTED` AS jobstatusandtracking_DATESUBMITTED,\n" //16
+                + "     sector.`NAME` AS sector_NAME,\n" //17
+                + "     classification.`NAME` AS classification_NAME,\n" //18
+                + "     jobcategory.`CATEGORY` AS jobcategory_CATEGORY,\n" //19
+                + "     jobsubcategory.`SubCategory` AS jobsubcategory_SubCategory\n" // 20
+                + "FROM\n"
+                + "     `jobstatusandtracking` jobstatusandtracking INNER JOIN `job` job ON jobstatusandtracking.`ID` = job.`JOBSTATUSANDTRACKING_ID`\n"
+                + "     INNER JOIN `job_jobsample` job_jobsample ON job.`ID` = job_jobsample.`Job_ID`\n"
+                + "     INNER JOIN `department` department ON job.`DEPARTMENT_ID` = department.`ID`\n"
+                + "     INNER JOIN `department` department_A ON job.`SUBCONTRACTEDDEPARTMENT_ID` = department_A.`ID`\n"
+                + "     INNER JOIN `employee` employee ON job.`ASSIGNEDTO_ID` = employee.`ID`\n"
+                + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON job.`JOBCOSTINGANDPAYMENT_ID` = jobcostingandpayment.`ID`\n"
+                + "     INNER JOIN `client` client ON job.`CLIENT_ID` = client.`ID`\n"
+                + "     INNER JOIN `sector` sector ON job.`SECTOR_ID` = sector.`ID`\n"
+                + "     INNER JOIN `classification` classification ON job.`CLASSIFICATION_ID` = classification.`ID`\n"
+                + "     INNER JOIN `jobcategory` jobcategory ON job.`JOBCATEGORY_ID` = jobcategory.`ID`\n"
+                + "     INNER JOIN `jobsubcategory` jobsubcategory ON job.`JOBSUBCATEGORY_ID` = jobsubcategory.`ID`\n"
+                + "     RIGHT OUTER JOIN `jobsample` jobsample ON job_jobsample.`jobSamples_ID` = jobsample.`ID`\n"
+                + "WHERE\n"
+                + "     ((jobstatusandtracking.`DATEOFCOMPLETION` >= " + startDate
+                + " AND jobstatusandtracking.`DATEOFCOMPLETION` <= " + endDate + "))"
+                + " AND ((department.`ID` = " + departmentId
+                + " AND department_A.`NAME` = \"--\")"
+                + "  OR department_A.`ID` = " + departmentId + ")"
+                + " GROUP BY"
+                + "     job.`ID`"
+                + " ORDER BY"
+                + "     employee.`NAME` ASC";
+
+        try {
+            return em.createNativeQuery(reportSQL).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+
+    }
+
+    /*
+     public static List<Object[]> getAnalyticalServicesJobRecords(
+     EntityManager em,
+     String startDate,
+     String endDate,
+     Long departmentId) {
+
+     String reportSQL = "SELECT\n"
+     + "     GROUP_CONCAT(jobsample.`DESCRIPTION` SEPARATOR ', ') AS samples,\n" //0
+     + "     job.`ID` AS job_ID,\n" //1
+     + "     jobstatusandtracking.`ID` AS jobstatusandtracking_ID,\n" //2
+     + "     jobsample.`NAME` AS jobsample_NAME,\n" //3
+     + "     department.`NAME` AS department_NAME,\n" //4
+     + "     department_A.`NAME` AS department_A_NAME,\n" //5
+     + "     jobstatusandtracking.`DATEOFCOMPLETION` AS jobstatusandtracking_DATEOFCOMPLETION,\n" //6
+     + "     employee.`NAME` AS employee_NAME,\n" //7
+     + "     jobcostingandpayment.`FINALCOST` AS jobcostingandpayment_FINALCOST,\n" //8
+     + "     job.`NUMBEROFSAMPLES` AS job_NUMBEROFSAMPLES,\n" //9
+     + "     job.`NOOFTESTSORCALIBRATIONS` AS job_NOOFTESTSORCALIBRATIONS,\n" //10
+     + "     job.`NOOFTESTS` AS job_NOOFTESTS,\n" //11
+     + "     job.`NOOFCALIBRATIONS` AS job_NOOFCALIBRATIONS,\n" //12
+     + "     jobstatusandtracking.`EXPECTEDDATEOFCOMPLETION` AS jobstatusandtracking_EXPECTEDDATEOFCOMPLETION,\n" //13
+     + "     job.`JOBNUMBER` AS job_JOBNUMBER,\n" //14
+     + "     client.`NAME` AS client_NAME,\n" //15
+     + "     jobstatusandtracking.`DATESUBMITTED` AS jobstatusandtracking_DATESUBMITTED,\n" //16
+     + "     sector.`NAME` AS sector_NAME\n" //17
+     + "FROM\n"
+     + "     `jobstatusandtracking` jobstatusandtracking INNER JOIN `job` job ON jobstatusandtracking.`ID` = job.`JOBSTATUSANDTRACKING_ID`\n"
+     + "     INNER JOIN `job_jobsample` job_jobsample ON job.`ID` = job_jobsample.`Job_ID`\n"
+     + "     INNER JOIN `department` department ON job.`DEPARTMENT_ID` = department.`ID`\n"
+     + "     INNER JOIN `department` department_A ON job.`SUBCONTRACTEDDEPARTMENT_ID` = department_A.`ID`\n"
+     + "     INNER JOIN `employee` employee ON job.`ASSIGNEDTO_ID` = employee.`ID`\n"
+     + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON job.`JOBCOSTINGANDPAYMENT_ID` = jobcostingandpayment.`ID`\n"
+     + "     INNER JOIN `client` client ON job.`CLIENT_ID` = client.`ID`\n"
+     + "     INNER JOIN `sector` sector ON job.`SECTOR_ID` = sector.`ID`\n"
+     + "     RIGHT OUTER JOIN `jobsample` jobsample ON job_jobsample.`jobSamples_ID` = jobsample.`ID`\n"
+     + " WHERE"
+     + "     ((jobstatusandtracking.`DATEOFCOMPLETION` >= " + startDate
+     + " AND jobstatusandtracking.`DATEOFCOMPLETION` <= " + endDate + "))"
+     + " AND (department.`ID` = " + departmentId
+     + " OR department_A.`ID` = " + departmentId + ")"
+     + " GROUP BY"
+     + " job.`ID`"
+     + " ORDER BY"
+     + " employee.`NAME` ASC";
+        
+     try {
+     return em.createNativeQuery(reportSQL).getResultList();
+     } catch (Exception e) {
+     System.out.println(e);
+     return new ArrayList<>();
+     }
+
+     }
+    
+     */
 }

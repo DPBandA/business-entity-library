@@ -6,152 +6,128 @@ package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import jm.com.dpba.business.entity.utils.BusinessEntityUtils;
+
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
 @Entity
 @Table(name = "internet")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Internet.findAll", query = "SELECT i FROM Internet i"),
-    @NamedQuery(name = "Internet.findById", query = "SELECT i FROM Internet i WHERE i.id = :id"),
-    @NamedQuery(name = "Internet.findByInstantmessaging2", query = "SELECT i FROM Internet i WHERE i.instantmessaging2 = :instantmessaging2"),
-    @NamedQuery(name = "Internet.findByWebsite3", query = "SELECT i FROM Internet i WHERE i.website3 = :website3"),
-    @NamedQuery(name = "Internet.findByInstantmessaging1", query = "SELECT i FROM Internet i WHERE i.instantmessaging1 = :instantmessaging1"),
-    @NamedQuery(name = "Internet.findByWebsite2", query = "SELECT i FROM Internet i WHERE i.website2 = :website2"),
-    @NamedQuery(name = "Internet.findByInstantmessaging3", query = "SELECT i FROM Internet i WHERE i.instantmessaging3 = :instantmessaging3"),
-    @NamedQuery(name = "Internet.findByEmail1", query = "SELECT i FROM Internet i WHERE i.email1 = :email1"),
-    @NamedQuery(name = "Internet.findByWebsite1", query = "SELECT i FROM Internet i WHERE i.website1 = :website1"),
-    @NamedQuery(name = "Internet.findByEmail2", query = "SELECT i FROM Internet i WHERE i.email2 = :email2"),
-    @NamedQuery(name = "Internet.findByEmail3", query = "SELECT i FROM Internet i WHERE i.email3 = :email3")})
-public class Internet implements Serializable {
+public class Internet implements BusinessEntity, Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Size(max = 255)
-    @Column(name = "INSTANTMESSAGING2")
-    private String instantmessaging2;
-    @Size(max = 255)
-    @Column(name = "WEBSITE3")
-    private String website3;
-    @Size(max = 255)
-    @Column(name = "INSTANTMESSAGING1")
-    private String instantmessaging1;
-    @Size(max = 255)
-    @Column(name = "WEBSITE2")
-    private String website2;
-    @Size(max = 255)
-    @Column(name = "INSTANTMESSAGING3")
-    private String instantmessaging3;
-    @Size(max = 255)
-    @Column(name = "EMAIL1")
     private String email1;
-    @Size(max = 255)
-    @Column(name = "WEBSITE1")
-    private String website1;
-    @Size(max = 255)
-    @Column(name = "EMAIL2")
     private String email2;
-    @Size(max = 255)
-    @Column(name = "EMAIL3")
     private String email3;
-    @OneToMany(mappedBy = "internetId")
-    private List<Employee> employeeList;
-    @OneToMany(mappedBy = "internetId")
-    private List<Contact> contactList;
-    @OneToMany(mappedBy = "internetId")
-    private List<Scalecompany> scalecompanyList;
-    @OneToMany(mappedBy = "internetId")
-    private List<Petrolcompany> petrolcompanyList;
-    @OneToMany(mappedBy = "internetId")
-    private List<Businessoffice> businessofficeList;
-    @OneToMany(mappedBy = "internetId")
-    private List<Client> clientList;
-    @OneToMany(mappedBy = "internetId")
-    private List<Department> departmentList;
-    @OneToMany(mappedBy = "internetId")
-    private List<Foodfactory> foodfactoryList;
+    private String website1;
+    private String website2;
+    private String website3;
+    private String instantMessaging1;
+    private String instantMessaging2;
+    private String instantMessaging3;
 
     public Internet() {
+        email1 = "";
+        email2 = "";
+        email3 = "";
+        website1 = "";
+        website2 = "";
+        website3 = "";
+        instantMessaging1 = "";
+        instantMessaging2 = "";
+        instantMessaging3 = "";
     }
 
-    public Internet(Long id) {
-        this.id = id;
+    public Internet(Internet src) {
+        email1 = src.email1;
+        email2 = src.email2;
+        email3 = src.email3;
+        website1 = src.website1;
+        website2 = src.website2;
+        website3 = src.website3;
+        instantMessaging1 = src.instantMessaging1;
+        instantMessaging2 = src.instantMessaging2;
+        instantMessaging3 = src.instantMessaging3;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getInstantmessaging2() {
-        return instantmessaging2;
-    }
-
-    public void setInstantmessaging2(String instantmessaging2) {
-        this.instantmessaging2 = instantmessaging2;
-    }
-
-    public String getWebsite3() {
-        return website3;
-    }
-
-    public void setWebsite3(String website3) {
-        this.website3 = website3;
-    }
-
-    public String getInstantmessaging1() {
-        return instantmessaging1;
-    }
-
-    public void setInstantmessaging1(String instantmessaging1) {
-        this.instantmessaging1 = instantmessaging1;
-    }
-
-    public String getWebsite2() {
-        return website2;
-    }
-
-    public void setWebsite2(String website2) {
-        this.website2 = website2;
-    }
-
-    public String getInstantmessaging3() {
-        return instantmessaging3;
-    }
-
-    public void setInstantmessaging3(String instantmessaging3) {
-        this.instantmessaging3 = instantmessaging3;
-    }
-
     public String getEmail1() {
+        if (email1 == null) {
+            email1 = "";
+        }
         return email1;
     }
 
     public void setEmail1(String email1) {
         this.email1 = email1;
+    }
+
+    public String getEmail2() {
+        if (email2 == null) {
+            email2 = "";
+        }
+        return email2;
+    }
+
+    public void setEmail2(String email2) {
+        this.email2 = email2;
+    }
+
+    public String getEmail3() {
+        if (email3 == null) {
+            email3 = "";
+        }
+        return email3;
+    }
+
+    public void setEmail3(String email3) {
+        this.email3 = email3;
+    }
+
+    public String getInstantMessaging1() {
+        return instantMessaging1;
+    }
+
+    public void setInstantMessaging1(String instantMessaging1) {
+        this.instantMessaging1 = instantMessaging1;
+    }
+
+    public String getInstantMessaging2() {
+        return instantMessaging2;
+    }
+
+    public void setInstantMessaging2(String instantMessaging2) {
+        this.instantMessaging2 = instantMessaging2;
+    }
+
+    public String getInstantMessaging3() {
+        return instantMessaging3;
+    }
+
+    public void setInstantMessaging3(String instantMessaging3) {
+        this.instantMessaging3 = instantMessaging3;
     }
 
     public String getWebsite1() {
@@ -162,100 +138,20 @@ public class Internet implements Serializable {
         this.website1 = website1;
     }
 
-    public String getEmail2() {
-        return email2;
+    public String getWebsite2() {
+        return website2;
     }
 
-    public void setEmail2(String email2) {
-        this.email2 = email2;
+    public void setWebsite2(String website2) {
+        this.website2 = website2;
     }
 
-    public String getEmail3() {
-        return email3;
+    public String getWebsite3() {
+        return website3;
     }
 
-    public void setEmail3(String email3) {
-        this.email3 = email3;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Employee> getEmployeeList() {
-        return employeeList;
-    }
-
-    public void setEmployeeList(List<Employee> employeeList) {
-        this.employeeList = employeeList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Contact> getContactList() {
-        return contactList;
-    }
-
-    public void setContactList(List<Contact> contactList) {
-        this.contactList = contactList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Scalecompany> getScalecompanyList() {
-        return scalecompanyList;
-    }
-
-    public void setScalecompanyList(List<Scalecompany> scalecompanyList) {
-        this.scalecompanyList = scalecompanyList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Petrolcompany> getPetrolcompanyList() {
-        return petrolcompanyList;
-    }
-
-    public void setPetrolcompanyList(List<Petrolcompany> petrolcompanyList) {
-        this.petrolcompanyList = petrolcompanyList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Businessoffice> getBusinessofficeList() {
-        return businessofficeList;
-    }
-
-    public void setBusinessofficeList(List<Businessoffice> businessofficeList) {
-        this.businessofficeList = businessofficeList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Client> getClientList() {
-        return clientList;
-    }
-
-    public void setClientList(List<Client> clientList) {
-        this.clientList = clientList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Department> getDepartmentList() {
-        return departmentList;
-    }
-
-    public void setDepartmentList(List<Department> departmentList) {
-        this.departmentList = departmentList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Foodfactory> getFoodfactoryList() {
-        return foodfactoryList;
-    }
-
-    public void setFoodfactoryList(List<Foodfactory> foodfactoryList) {
-        this.foodfactoryList = foodfactoryList;
+    public void setWebsite3(String website3) {
+        this.website3 = website3;
     }
 
     @Override
@@ -280,7 +176,56 @@ public class Internet implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Internet[ id=" + id + " ]";
+        return "jm.org.bsj.entity.Internet[id=" + id + "]";
+    }
+
+    @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
+    public void setName(String name) {
     }
     
+     public static Internet findDefaultInternet(
+            EntityManager em,
+            String name,
+            Boolean useTransaction) {
+         
+        Internet internet = findInternetByName(em, name);
+
+        if (internet == null) {
+            internet = new Internet();
+            internet.setName(name);
+
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, internet);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, internet);
+            }
+        }
+
+        return internet;
+    }
+    
+    public static Internet findInternetByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.trim().replaceAll("'", "''");
+
+            List<Internet> internets = em.createQuery("SELECT i FROM Internet i "
+                    + "WHERE UPPER(i.name) "
+                    + "= '" + newName.toUpperCase() + "'", Internet.class).getResultList();
+            if (internets.size() > 0) {
+                return internets.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 }

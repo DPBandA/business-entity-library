@@ -5,145 +5,73 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
+import java.text.Collator;
 import java.util.Date;
-import java.util.List;
-import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
 @Entity
 @Table(name = "registration")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Registration.findAll", query = "SELECT r FROM Registration r"),
-    @NamedQuery(name = "Registration.findById", query = "SELECT r FROM Registration r WHERE r.id = :id"),
-    @NamedQuery(name = "Registration.findByDateregistered", query = "SELECT r FROM Registration r WHERE r.dateregistered = :dateregistered"),
-    @NamedQuery(name = "Registration.findByRegulatorydocuments", query = "SELECT r FROM Registration r WHERE r.regulatorydocuments = :regulatorydocuments"),
-    @NamedQuery(name = "Registration.findByStatus", query = "SELECT r FROM Registration r WHERE r.status = :status"),
-    @NamedQuery(name = "Registration.findByDateofapplication", query = "SELECT r FROM Registration r WHERE r.dateofapplication = :dateofapplication"),
-    @NamedQuery(name = "Registration.findByActive", query = "SELECT r FROM Registration r WHERE r.active = :active"),
-    @NamedQuery(name = "Registration.findByNumber", query = "SELECT r FROM Registration r WHERE r.number = :number"),
-    @NamedQuery(name = "Registration.findByType", query = "SELECT r FROM Registration r WHERE r.type = :type"),
-    @NamedQuery(name = "Registration.findByComment", query = "SELECT r FROM Registration r WHERE r.comment = :comment"),
-    @NamedQuery(name = "Registration.findByDateexpired", query = "SELECT r FROM Registration r WHERE r.dateexpired = :dateexpired")})
-public class Registration implements Serializable {
+public class Registration implements BusinessEntity, Serializable, Comparable {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(name = "DATEREGISTERED")
-    @Temporal(TemporalType.DATE)
-    private Date dateregistered;
-    @Size(max = 255)
-    @Column(name = "REGULATORYDOCUMENTS")
-    private String regulatorydocuments;
-    @Size(max = 255)
-    @Column(name = "STATUS")
-    private String status;
-    @Column(name = "DATEOFAPPLICATION")
-    @Temporal(TemporalType.DATE)
-    private Date dateofapplication;
-    @Column(name = "ACTIVE")
-    private Boolean active;
-    @Size(max = 255)
-    @Column(name = "NUMBER")
-    private String number;
-    @Size(max = 255)
-    @Column(name = "TYPE")
     private String type;
-    @Size(max = 255)
-    @Column(name = "COMMENT")
+    private String number;   
+    private String status;   
     private String comment;
-    @Column(name = "DATEEXPIRED")
-    @Temporal(TemporalType.DATE)
-    private Date dateexpired;
-    @ManyToMany(mappedBy = "registrationList")
-    private List<Foodfactory> foodfactoryList;
-    @JoinColumn(name = "JOB_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Job jobId;
+    private Boolean active;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateRegistered;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateExpired;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateOfApplication;
+    private String regulatoryDocuments;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Job job;
 
-    public Registration() {
-    }
-
-    public Registration(Long id) {
-        this.id = id;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    public Date getDateregistered() {
-        return dateregistered;
+    public Job getJob() {
+        if (job == null) {
+            job = new Job("");
+        }
+
+        return job;
     }
 
-    public void setDateregistered(Date dateregistered) {
-        this.dateregistered = dateregistered;
+    public void setJob(Job job) {
+        this.job = job;
     }
 
-    public String getRegulatorydocuments() {
-        return regulatorydocuments;
+    public Date getDateOfApplication() {
+        return dateOfApplication;
     }
 
-    public void setRegulatorydocuments(String regulatorydocuments) {
-        this.regulatorydocuments = regulatorydocuments;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Date getDateofapplication() {
-        return dateofapplication;
-    }
-
-    public void setDateofapplication(Date dateofapplication) {
-        this.dateofapplication = dateofapplication;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
+    public void setDateOfApplication(Date dateOfApplication) {
+        this.dateOfApplication = dateOfApplication;
     }
 
     public String getType() {
@@ -154,6 +82,14 @@ public class Registration implements Serializable {
         this.type = type;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     public String getComment() {
         return comment;
     }
@@ -162,30 +98,47 @@ public class Registration implements Serializable {
         this.comment = comment;
     }
 
-    public Date getDateexpired() {
-        return dateexpired;
+    public Date getDateExpired() {
+        return dateExpired;
     }
 
-    public void setDateexpired(Date dateexpired) {
-        this.dateexpired = dateexpired;
+    public void setDateExpired(Date dateExpired) {
+        this.dateExpired = dateExpired;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<Foodfactory> getFoodfactoryList() {
-        return foodfactoryList;
+    public Date getDateRegistered() {
+        return dateRegistered;
     }
 
-    public void setFoodfactoryList(List<Foodfactory> foodfactoryList) {
-        this.foodfactoryList = foodfactoryList;
+    public void setDateRegistered(Date dateRegistered) {
+        this.dateRegistered = dateRegistered;
     }
 
-    public Job getJobId() {
-        return jobId;
+    public String getNumber() {
+        return number;
     }
 
-    public void setJobId(Job jobId) {
-        this.jobId = jobId;
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getRegulatoryDocuments() {
+        if (regulatoryDocuments == null) {
+            regulatoryDocuments = "--";
+        }
+        return regulatoryDocuments;
+    }
+
+    public void setRegulatoryDocuments(String regulatoryDocuments) {
+        this.regulatoryDocuments = regulatoryDocuments;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
@@ -209,8 +162,29 @@ public class Registration implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return "jm.com.dpba.business.entity.utils.Registration[ id=" + id + " ]";
+    public int compareTo(Object o) {
+//         this sorts in descending based on registration date.
+        if ((((Registration) o).dateRegistered != null) && (this.dateRegistered != null)) {
+            return Collator.getInstance().compare(
+                    new Long(((Registration) o).dateRegistered.getTime()).toString(),
+                    new Long(this.dateRegistered.getTime()).toString());
+        } else {
+            return 0;
+        }
     }
-    
+
+    @Override
+    public String toString() {
+        return "jm.org.bsj.entity.Registration[id=" + id + "]";
+    }
+
+    @Override
+    public String getName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

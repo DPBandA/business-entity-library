@@ -5,160 +5,61 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
 @Entity
 @Table(name = "signature")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Signature.findAll", query = "SELECT s FROM Signature s"),
-    @NamedQuery(name = "Signature.findById", query = "SELECT s FROM Signature s WHERE s.id = :id"),
-    @NamedQuery(name = "Signature.findByName", query = "SELECT s FROM Signature s WHERE s.name = :name")})
-public class Signature implements Serializable {
+public class Signature implements Serializable, BusinessEntity {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Size(max = 255)
-    @Column(name = "NAME")
     private String name;
     @Lob
-    @Column(name = "SIGNATUREIMAGE")
-    private byte[] signatureimage;
-    @OneToMany(mappedBy = "signatureId")
-    private List<Employee> employeeList;
-    @OneToMany(mappedBy = "authsigfornoticeofdentiondmId")
-    private List<Compliancesurvey> compliancesurveyList;
-    @OneToMany(mappedBy = "authsigfordetentionrequestpoeId")
-    private List<Compliancesurvey> compliancesurveyList1;
-    @OneToMany(mappedBy = "inspectorsigforsamplerequestpoeId")
-    private List<Compliancesurvey> compliancesurveyList2;
-    @OneToMany(mappedBy = "authsigfornoticeofreleasefromdentiondmId")
-    private List<Compliancesurvey> compliancesurveyList3;
-    @OneToMany(mappedBy = "approvedbysigforreleaserequestpoeId")
-    private List<Compliancesurvey> compliancesurveyList4;
-    @OneToMany(mappedBy = "preparedbysigforreleaserequestpoeId")
-    private List<Compliancesurvey> compliancesurveyList5;
+    private byte[] signatureImage;
 
-    public Signature() {
-    }
-
-    public Signature(Long id) {
-        this.id = id;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Signature() {
+        this.name = "";
     }
 
-    public void setName(String name) {
+    public Signature(String name) {
         this.name = name;
     }
 
-    public byte[] getSignatureimage() {
-        return signatureimage;
+    public Signature(String name, byte[] signatureImage) {
+        this.name = name;
+        this.signatureImage = signatureImage;
     }
 
-    public void setSignatureimage(byte[] signatureimage) {
-        this.signatureimage = signatureimage;
+    public byte[] getSignatureImage() {
+        return signatureImage;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<Employee> getEmployeeList() {
-        return employeeList;
-    }
-
-    public void setEmployeeList(List<Employee> employeeList) {
-        this.employeeList = employeeList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList() {
-        return compliancesurveyList;
-    }
-
-    public void setCompliancesurveyList(List<Compliancesurvey> compliancesurveyList) {
-        this.compliancesurveyList = compliancesurveyList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList1() {
-        return compliancesurveyList1;
-    }
-
-    public void setCompliancesurveyList1(List<Compliancesurvey> compliancesurveyList1) {
-        this.compliancesurveyList1 = compliancesurveyList1;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList2() {
-        return compliancesurveyList2;
-    }
-
-    public void setCompliancesurveyList2(List<Compliancesurvey> compliancesurveyList2) {
-        this.compliancesurveyList2 = compliancesurveyList2;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList3() {
-        return compliancesurveyList3;
-    }
-
-    public void setCompliancesurveyList3(List<Compliancesurvey> compliancesurveyList3) {
-        this.compliancesurveyList3 = compliancesurveyList3;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList4() {
-        return compliancesurveyList4;
-    }
-
-    public void setCompliancesurveyList4(List<Compliancesurvey> compliancesurveyList4) {
-        this.compliancesurveyList4 = compliancesurveyList4;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList5() {
-        return compliancesurveyList5;
-    }
-
-    public void setCompliancesurveyList5(List<Compliancesurvey> compliancesurveyList5) {
-        this.compliancesurveyList5 = compliancesurveyList5;
+    public void setSignatureImage(byte[] signatureImage) {
+        this.signatureImage = signatureImage;
     }
 
     @Override
@@ -183,7 +84,20 @@ public class Signature implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Signature[ id=" + id + " ]";
+        return getName();
     }
-    
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public static Signature findSignatureById(EntityManager em, Long Id) {
+        return em.find(Signature.class, Id);
+    }
 }

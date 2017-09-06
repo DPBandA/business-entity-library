@@ -6,70 +6,54 @@ package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author desbenn
+ * @author Desmond
  */
 @Entity
 @Table(name = "division")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Division.findAll", query = "SELECT d FROM Division d"),
-    @NamedQuery(name = "Division.findById", query = "SELECT d FROM Division d WHERE d.id = :id"),
-    @NamedQuery(name = "Division.findByName", query = "SELECT d FROM Division d WHERE d.name = :name")})
-public class Division implements Serializable {
+    @NamedQuery(name = "findAllDivisions", query = "SELECT e FROM Division e ORDER BY e.name")
+})
+@XmlRootElement
+public class Division implements BusinessEntity, Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Size(max = 255)
-    @Column(name = "NAME")
     private String name;
-    @JoinTable(name = "standardsorganization_division", joinColumns = {
-        @JoinColumn(name = "divisions_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "StandardsOrganization_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Standardsorganization> standardsorganizationList;
-    @JoinTable(name = "division_department", joinColumns = {
-        @JoinColumn(name = "Division_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "departments_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Department> departmentList;
-    @OneToMany(mappedBy = "divisionId")
-    private List<Department> departmentList1;
+    @OneToMany
+    private List<Department> departments;
 
-    public Division() {
-    }
-
-    public Division(Long id) {
-        this.id = id;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Department> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(List<Department> departments) {
+        this.departments = departments;
     }
 
     public String getName() {
@@ -78,36 +62,6 @@ public class Division implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Standardsorganization> getStandardsorganizationList() {
-        return standardsorganizationList;
-    }
-
-    public void setStandardsorganizationList(List<Standardsorganization> standardsorganizationList) {
-        this.standardsorganizationList = standardsorganizationList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Department> getDepartmentList() {
-        return departmentList;
-    }
-
-    public void setDepartmentList(List<Department> departmentList) {
-        this.departmentList = departmentList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Department> getDepartmentList1() {
-        return departmentList1;
-    }
-
-    public void setDepartmentList1(List<Department> departmentList1) {
-        this.departmentList1 = departmentList1;
     }
 
     @Override
@@ -132,7 +86,41 @@ public class Division implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Division[ id=" + id + " ]";
+        return "jm.org.bsj.entity.Division[id=" + id + "]";
     }
-    
+
+    public static Division findDivisionById(EntityManager em, Long Id) {
+
+        try {
+            Division division = em.find(Division.class, Id);
+
+            return division;
+        } catch (Exception e) {
+
+            return null;
+        }
+    }
+
+    public static List<Division> findAllDivisions(EntityManager em) {
+
+        try {
+            return em.createNamedQuery("findAllDivisions", Division.class).getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static List<Distributor> findDistributorsBySearchPattern(EntityManager em, String searchPattern) {
+
+        try {
+            List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
+                    + "WHERE UPPER(d.name) "
+                    + "LIKE '" + searchPattern.toUpperCase() + "%' "
+                    + "ORDER BY d.name", Distributor.class).getResultList();
+            return distributors;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 }

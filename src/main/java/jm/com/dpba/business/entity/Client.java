@@ -5,213 +5,169 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import jm.com.dpba.business.entity.utils.BusinessEntityUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
- *
- * @author desbenn
+ * @author Desmond
  */
 @Entity
 @Table(name = "client")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Client.findAll", query = "SELECT c FROM Client c"),
-    @NamedQuery(name = "Client.findById", query = "SELECT c FROM Client c WHERE c.id = :id"),
-    @NamedQuery(name = "Client.findByTag", query = "SELECT c FROM Client c WHERE c.tag = :tag"),
-    @NamedQuery(name = "Client.findByTaxregistrationnumber", query = "SELECT c FROM Client c WHERE c.taxregistrationnumber = :taxregistrationnumber"),
-    @NamedQuery(name = "Client.findByNumber", query = "SELECT c FROM Client c WHERE c.number = :number"),
-    @NamedQuery(name = "Client.findByType", query = "SELECT c FROM Client c WHERE c.type = :type"),
-    @NamedQuery(name = "Client.findByDatelastaccessed", query = "SELECT c FROM Client c WHERE c.datelastaccessed = :datelastaccessed"),
-    @NamedQuery(name = "Client.findByDatefirstreceived", query = "SELECT c FROM Client c WHERE c.datefirstreceived = :datefirstreceived"),
-    @NamedQuery(name = "Client.findByName", query = "SELECT c FROM Client c WHERE c.name = :name"),
-    @NamedQuery(name = "Client.findByActive", query = "SELECT c FROM Client c WHERE c.active = :active"),
-    @NamedQuery(name = "Client.findByNotes", query = "SELECT c FROM Client c WHERE c.notes = :notes"),
-    @NamedQuery(name = "Client.findByInternal", query = "SELECT c FROM Client c WHERE c.internal = :internal"),
-    @NamedQuery(name = "Client.findByDateentered", query = "SELECT c FROM Client c WHERE c.dateentered = :dateentered"),
-    @NamedQuery(name = "Client.findByInternational", query = "SELECT c FROM Client c WHERE c.international = :international")})
-public class Client implements Serializable {
-    private static final long serialVersionUID = 1L;
+    @NamedQuery(name = "findAllClients", query = "SELECT c FROM Client c ORDER BY c.name")
+})
+@JsonIgnoreProperties(ignoreUnknown = true)
+@XmlRootElement
+public class Client implements Customer, Serializable, BusinessEntity, Converter {
+
+    private static final long serialVersionUId = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
-    private Long id;
-    @Column(name = "TAG")
-    private Boolean tag;
-    @Size(max = 255)
-    @Column(name = "TAXREGISTRATIONNUMBER")
-    private String taxregistrationnumber;
-    @Size(max = 255)
-    @Column(name = "NUMBER")
-    private String number;
-    @Size(max = 255)
-    @Column(name = "TYPE")
-    private String type;
-    @Column(name = "DATELASTACCESSED")
-    @Temporal(TemporalType.DATE)
-    private Date datelastaccessed;
-    @Column(name = "DATEFIRSTRECEIVED")
-    @Temporal(TemporalType.DATE)
-    private Date datefirstreceived;
-    @Size(max = 255)
-    @Column(name = "NAME")
-    private String name;
-    @Column(name = "ACTIVE")
-    private Boolean active;
-    @Size(max = 255)
-    @Column(name = "NOTES")
-    private String notes;
-    @Column(name = "INTERNAL")
-    private Boolean internal;
-    @Column(name = "DATEENTERED")
-    @Temporal(TemporalType.DATE)
-    private Date dateentered;
-    @Column(name = "INTERNATIONAL")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id = null;
+    private String name = "";
+    private String number = "";
+    private String type = "";
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Contact> contacts = null;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Address> addresses = null;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Internet internet = null;
+    private String notes = "";
+    private Boolean internal = false;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateFirstReceived = null;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateLastAccessed = null;
+    private Boolean tag = false;
+    private String taxRegistrationNumber = "";
+    private Boolean active = null;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateEntered = null;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee enteredBy = null;
     private Boolean international;
-    @JoinTable(name = "client_contact", joinColumns = {
-        @JoinColumn(name = "Client_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "contacts_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Contact> contactList;
-    @JoinTable(name = "client_address", joinColumns = {
-        @JoinColumn(name = "Client_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "addresses_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Address> addressList;
-    @OneToMany(mappedBy = "clientId")
-    private List<Jobcostingbatch> jobcostingbatchList;
-    @OneToMany(mappedBy = "clientId")
-    private List<Marketproduct> marketproductList;
-    @OneToMany(mappedBy = "clientId")
-    private List<Productinspection> productinspectionList;
-    @OneToMany(mappedBy = "receivedfromId")
-    private List<Samplerequest> samplerequestList;
-    @OneToMany(mappedBy = "retailoutletId")
-    private List<Marketproductsurvey> marketproductsurveyList;
-    @OneToMany(mappedBy = "consigneeId")
-    private List<Documentinspection> documentinspectionList;
-    @OneToMany(mappedBy = "consigneeId")
-    private List<Compliancesurvey> compliancesurveyList;
-    @OneToMany(mappedBy = "brokerId")
-    private List<Compliancesurvey> compliancesurveyList1;
-    @OneToMany(mappedBy = "retailoutletId")
-    private List<Compliancesurvey> compliancesurveyList2;
-    @OneToMany(mappedBy = "externalclientId")
-    private List<Legaldocument> legaldocumentList;
-    @OneToMany(mappedBy = "applicantId")
-    private List<Certification> certificationList;
-    @OneToMany(mappedBy = "clientId")
-    private List<Servicerequest> servicerequestList;
-    @OneToMany(mappedBy = "clientId")
-    private List<Petrolstation> petrolstationList;
-    @OneToMany(mappedBy = "clientId")
-    private List<Job> jobList;
-    @OneToMany(mappedBy = "externalclientId")
-    private List<Documenttracking> documenttrackingList;
-    @OneToMany(mappedBy = "clientId")
-    private List<Jobsample> jobsampleList;
-    @OneToMany(mappedBy = "clientId")
-    private List<Scale> scaleList;
-    @OneToMany(mappedBy = "brokerId")
-    private List<Portofentrydetention> portofentrydetentionList;
-    @OneToMany(mappedBy = "consigneeId")
-    private List<Portofentrydetention> portofentrydetentionList1;
-    @JoinColumn(name = "INTERNET_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Internet internetId;
-    @JoinColumn(name = "ENTEREDBY_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Employee enteredbyId;
 
     public Client() {
+        contacts = new ArrayList<>();
+        addresses = new ArrayList<>();
+        internet = new Internet();
+        active = true;
     }
 
-    public Client(Long id) {
-        this.id = id;
+    public Client(Client src, Boolean active) {
+        doCopy(src);
+        active = src.active;
     }
 
+    public Client(String name) {
+        this.name = name;
+        contacts = new ArrayList<>();
+        addresses = new ArrayList<>();
+        internet = new Internet();
+        active = true;
+    }
+
+    public Client(String name, Boolean active) {
+        this.name = name;
+        contacts = new ArrayList<>();
+        addresses = new ArrayList<>();
+        internet = new Internet();
+        this.active = active;
+    }
+
+    public Boolean getInternational() {
+        if (international == null) {
+            international = false;
+        }
+        return international;
+    }
+
+    public void setInternational(Boolean international) {
+        this.international = international;
+    }
+
+    public Date getDateEntered() {
+        return dateEntered;
+    }
+
+    public void setDateEntered(Date dateEntered) {
+        this.dateEntered = dateEntered;
+    }
+
+    public Employee getEnteredBy() {
+        if (enteredBy == null) {
+            return new Employee();
+        }
+        return enteredBy;
+    }
+
+    public void setEnteredBy(Employee enteredBy) {
+        this.enteredBy = enteredBy;
+    }
+
+    /**
+     * Copy the client without copying the id field
+     *
+     * @param src
+     */
+    public final void doCopy(Client src) {
+        contacts = new ArrayList<>();
+        addresses = new ArrayList<>();
+        name = src.name;
+        number = src.number;
+        type = src.type;
+        if (src.contacts != null) {
+            for (Contact contact : src.contacts) {
+                contacts.add(new Contact(contact));
+            }
+        }
+        if (src.addresses != null) {
+            for (Address address : src.addresses) {
+                addresses.add(new Address(address));
+            }
+        }
+        if (src.internet != null) {
+            internet = new Internet(src.internet);
+        }
+        notes = src.notes;
+        internal = src.internal;
+        dateFirstReceived = src.dateFirstReceived;
+        dateLastAccessed = src.dateLastAccessed;
+        tag = src.tag;
+        active = src.active;
+        taxRegistrationNumber = src.taxRegistrationNumber;
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Boolean getTag() {
-        return tag;
-    }
-
-    public void setTag(Boolean tag) {
-        this.tag = tag;
-    }
-
-    public String getTaxregistrationnumber() {
-        return taxregistrationnumber;
-    }
-
-    public void setTaxregistrationnumber(String taxregistrationnumber) {
-        this.taxregistrationnumber = taxregistrationnumber;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Date getDatelastaccessed() {
-        return datelastaccessed;
-    }
-
-    public void setDatelastaccessed(Date datelastaccessed) {
-        this.datelastaccessed = datelastaccessed;
-    }
-
-    public Date getDatefirstreceived() {
-        return datefirstreceived;
-    }
-
-    public void setDatefirstreceived(Date datefirstreceived) {
-        this.datefirstreceived = datefirstreceived;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Boolean getActive() {
@@ -222,12 +178,200 @@ public class Client implements Serializable {
         this.active = active;
     }
 
-    public String getNotes() {
-        return notes;
+    @Override
+    public String getTaxRegistrationNumber() {
+        return taxRegistrationNumber;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
+    @Override
+    public void setTaxRegistrationNumber(String taxRegistrationNumber) {
+        this.taxRegistrationNumber = taxRegistrationNumber;
+    }
+
+    public Internet getInternet() {
+        if (internet == null) {
+            internet = new Internet();
+        }
+        return internet;
+    }
+
+    public void setInternet(Internet internet) {
+        this.internet = internet;
+    }
+
+    @Override
+    public String getName() {
+        if (name == null) {
+            name = "";
+        }
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    @XmlTransient
+    public List<Address> getAddresses() {
+        if (addresses != null) {
+            Collections.sort(addresses);
+        } else {
+            addresses = new ArrayList<>();
+        }
+
+
+        return addresses;
+    }
+
+    @Override
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    @Override
+    @XmlTransient
+    public List<Contact> getContacts() {
+        if (contacts != null) {
+            Collections.sort(contacts);
+        } else {
+            contacts = new ArrayList<>();
+        }
+
+        return contacts;
+    }
+
+    @Override
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
+    public String getStringListOfContactPhoneNumbers() {
+        String list = "";
+
+        for (Contact contact : getContacts()) {
+            //for (PhoneNumber phoneNumber : contact.getPhoneNumbers()) {
+            if (list.equals("")) // first? 
+            {
+                list = contact.getMainPhoneNumber().getLocalNumber();
+            } else {
+                list = list + ", " + contact.getMainPhoneNumber().getLocalNumber();
+            }
+            //}
+        }
+
+        return list;
+    }
+
+    /**
+     * Get the main contact which is treated as the main contact in the list of
+     * contacts.
+     *
+     * @return
+     */
+    public Contact getMainContact() {
+        if (!getContacts().isEmpty()) {
+            //return getContacts().get(0);
+            for (Contact contact : getContacts()) {
+                if (contact.getType().equals("Main")) {
+                    return contact;
+                }
+            }
+            // use the first found address as the billing address
+            Contact contact = getContacts().get(0);
+            contact.setType("Main");
+            return contact;
+        } else {
+            Contact contact = new Contact();
+            contact.setType("Main");
+            getContacts().add(contact);
+            return getContacts().get(0);
+        }
+    }
+
+    public void setMainContact(Contact mainContact) {
+//        if (!getContacts().isEmpty()) {
+//            getContacts().set(0, contact);
+//        }
+        int index = 0;
+
+        if (!getContacts().isEmpty()) {
+            for (Contact contact : getContacts()) {
+                if (contact.getType().equals("Main")) {
+                    getContacts().set(index, mainContact);
+                    return;
+                }
+                ++index;
+            }
+            mainContact.setType("Main");
+            getContacts().set(0, mainContact);
+        }
+    }
+
+    @Override
+    public Address getBillingAddress() {
+        if (!getAddresses().isEmpty()) {
+            for (Address address : getAddresses()) {
+                if (address.getType().equals("Billing")) {
+                    return address;
+                }
+            }
+            // use the first found address as the billing address
+            Address address = getAddresses().get(0);
+            address.setType("Billing");
+            return address;
+
+        } else {
+            Address address = new Address();
+            address.setType("Billing");
+            getAddresses().add(address);
+            return getAddresses().get(0);
+        }
+    }
+
+    @Override
+    public void setBillingAddress(Address billingAddress) {
+        int index = 0;
+
+        if (!getAddresses().isEmpty()) {
+            for (Address address : getAddresses()) {
+                if (address.getType().equals("Billing")) {
+                    getAddresses().set(index, billingAddress);
+                    return;
+                }
+                ++index;
+            }
+            billingAddress.setType("Billing");
+            getAddresses().set(0, billingAddress);
+        }
+    }
+
+    @Override
+    public Date getDateLastAccessed() {
+        return dateLastAccessed;
+    }
+
+    @Override
+    public void setDateLastAccessed(Date dateLastAccessed) {
+        this.dateLastAccessed = dateLastAccessed;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public Date getDateFirstReceived() {
+        return dateFirstReceived;
+    }
+
+    @Override
+    public void setDateFirstReceived(Date dateFirstReceived) {
+        this.dateFirstReceived = dateFirstReceived;
     }
 
     public Boolean getInternal() {
@@ -238,253 +382,22 @@ public class Client implements Serializable {
         this.internal = internal;
     }
 
-    public Date getDateentered() {
-        return dateentered;
-    }
-
-    public void setDateentered(Date dateentered) {
-        this.dateentered = dateentered;
-    }
-
-    public Boolean getInternational() {
-        return international;
-    }
-
-    public void setInternational(Boolean international) {
-        this.international = international;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Contact> getContactList() {
-        return contactList;
-    }
-
-    public void setContactList(List<Contact> contactList) {
-        this.contactList = contactList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Address> getAddressList() {
-        return addressList;
-    }
-
-    public void setAddressList(List<Address> addressList) {
-        this.addressList = addressList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Jobcostingbatch> getJobcostingbatchList() {
-        return jobcostingbatchList;
-    }
-
-    public void setJobcostingbatchList(List<Jobcostingbatch> jobcostingbatchList) {
-        this.jobcostingbatchList = jobcostingbatchList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Marketproduct> getMarketproductList() {
-        return marketproductList;
-    }
-
-    public void setMarketproductList(List<Marketproduct> marketproductList) {
-        this.marketproductList = marketproductList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Productinspection> getProductinspectionList() {
-        return productinspectionList;
-    }
-
-    public void setProductinspectionList(List<Productinspection> productinspectionList) {
-        this.productinspectionList = productinspectionList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Samplerequest> getSamplerequestList() {
-        return samplerequestList;
-    }
-
-    public void setSamplerequestList(List<Samplerequest> samplerequestList) {
-        this.samplerequestList = samplerequestList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Marketproductsurvey> getMarketproductsurveyList() {
-        return marketproductsurveyList;
-    }
-
-    public void setMarketproductsurveyList(List<Marketproductsurvey> marketproductsurveyList) {
-        this.marketproductsurveyList = marketproductsurveyList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Documentinspection> getDocumentinspectionList() {
-        return documentinspectionList;
-    }
-
-    public void setDocumentinspectionList(List<Documentinspection> documentinspectionList) {
-        this.documentinspectionList = documentinspectionList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList() {
-        return compliancesurveyList;
-    }
-
-    public void setCompliancesurveyList(List<Compliancesurvey> compliancesurveyList) {
-        this.compliancesurveyList = compliancesurveyList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList1() {
-        return compliancesurveyList1;
-    }
-
-    public void setCompliancesurveyList1(List<Compliancesurvey> compliancesurveyList1) {
-        this.compliancesurveyList1 = compliancesurveyList1;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList2() {
-        return compliancesurveyList2;
-    }
-
-    public void setCompliancesurveyList2(List<Compliancesurvey> compliancesurveyList2) {
-        this.compliancesurveyList2 = compliancesurveyList2;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Legaldocument> getLegaldocumentList() {
-        return legaldocumentList;
-    }
-
-    public void setLegaldocumentList(List<Legaldocument> legaldocumentList) {
-        this.legaldocumentList = legaldocumentList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Certification> getCertificationList() {
-        return certificationList;
-    }
-
-    public void setCertificationList(List<Certification> certificationList) {
-        this.certificationList = certificationList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Servicerequest> getServicerequestList() {
-        return servicerequestList;
-    }
-
-    public void setServicerequestList(List<Servicerequest> servicerequestList) {
-        this.servicerequestList = servicerequestList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Petrolstation> getPetrolstationList() {
-        return petrolstationList;
-    }
-
-    public void setPetrolstationList(List<Petrolstation> petrolstationList) {
-        this.petrolstationList = petrolstationList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Job> getJobList() {
-        return jobList;
-    }
-
-    public void setJobList(List<Job> jobList) {
-        this.jobList = jobList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Documenttracking> getDocumenttrackingList() {
-        return documenttrackingList;
-    }
-
-    public void setDocumenttrackingList(List<Documenttracking> documenttrackingList) {
-        this.documenttrackingList = documenttrackingList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Jobsample> getJobsampleList() {
-        return jobsampleList;
-    }
-
-    public void setJobsampleList(List<Jobsample> jobsampleList) {
-        this.jobsampleList = jobsampleList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Scale> getScaleList() {
-        return scaleList;
-    }
-
-    public void setScaleList(List<Scale> scaleList) {
-        this.scaleList = scaleList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Portofentrydetention> getPortofentrydetentionList() {
-        return portofentrydetentionList;
-    }
-
-    public void setPortofentrydetentionList(List<Portofentrydetention> portofentrydetentionList) {
-        this.portofentrydetentionList = portofentrydetentionList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Portofentrydetention> getPortofentrydetentionList1() {
-        return portofentrydetentionList1;
-    }
-
-    public void setPortofentrydetentionList1(List<Portofentrydetention> portofentrydetentionList1) {
-        this.portofentrydetentionList1 = portofentrydetentionList1;
-    }
-
-    public Internet getInternetId() {
-        return internetId;
-    }
-
-    public void setInternetId(Internet internetId) {
-        this.internetId = internetId;
-    }
-
-    public Employee getEnteredbyId() {
-        return enteredbyId;
-    }
-
-    public void setEnteredbyId(Employee enteredbyId) {
-        this.enteredbyId = enteredbyId;
+    @Override
+    public String getNotes() {
+        return notes;
     }
 
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public Boolean getTag() {
+        return tag;
+    }
+
+    public void setTag(Boolean tag) {
+        this.tag = tag;
     }
 
     @Override
@@ -502,7 +415,289 @@ public class Client implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Client[ id=" + id + " ]";
+        if (name != null) {
+            return name.replaceAll("&#38;", "&");
+        } else {
+            return "";
+        }
     }
-    
+
+    @Override
+    public String getNumber() {
+        return number;
+    }
+
+    @Override
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public static List<Client> findClientsByTRN(EntityManager em, String trn) {
+
+        try {
+            String newTrn = trn.replaceAll("'", "''");
+
+            List<Client> clients =
+                    em.createQuery("SELECT c FROM Client c where UPPER(c.taxRegistrationNumber) like '"
+                    + newTrn.toUpperCase().trim() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<String> findActiveClientNames(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<String> names =
+                    em.createQuery("SELECT c FROM Client c WHERE UPPER(c.name) like '"
+                    + newName.toUpperCase().trim() + "%'"
+                    + " AND c.active = 1"
+                    + " ORDER BY c.name", String.class).getResultList();
+            return names;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Client> findActiveClientsByFirstPartOfName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Client> clients =
+                    em.createQuery("SELECT c FROM Client c WHERE UPPER(c.name) like '"
+                    + newName.toUpperCase().trim() + "%'"
+                    + " AND c.active = 1"
+                    + " ORDER BY c.name", Client.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Client> findActiveClientsByAnyPartOfName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Client> clients =
+                    em.createQuery("SELECT c FROM Client c WHERE UPPER(c.name) like '%"
+                    + newName.toUpperCase().trim() + "%'"
+                    + " AND c.active = 1"
+                    + " ORDER BY c.name", Client.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    // tk in client manager
+    public static List<String> findClientNames(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<String> names =
+                    em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
+                    + newName.toUpperCase().trim()
+                    + "%' ORDER BY c.name", String.class).getResultList();
+            return names;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Client> findClientsByFirstPartOfName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Client> clients =
+                    em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
+                    + newName.toUpperCase().trim()
+                    + "%' ORDER BY c.name", Client.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Client> findClientsByAnyPartOfName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Client> clients =
+                    em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '%"
+                    + newName.toUpperCase().trim()
+                    + "%'"
+                    + " ORDER BY c.name", Client.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    // is in client manager. remove later
+    public static List<Client> getAllClients(EntityManager em) {
+
+        try {
+            List<Client> clients = em.createNamedQuery("findAllClients", Client.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Client findClientByName(EntityManager em, String clientName, Boolean ignoreCase) {
+
+        List<Client> clients;
+
+        try {
+            String newClientName = clientName.trim().replaceAll("'", "''");
+
+            if (ignoreCase) {
+                clients = em.createQuery("SELECT c FROM Client c "
+                        + "WHERE UPPER(c.name) "
+                        + "= '" + newClientName.toUpperCase() + "'", Client.class).getResultList();
+            } else {
+                clients = em.createQuery("SELECT c FROM Client c "
+                        + "WHERE c.name "
+                        + "= '" + newClientName + "'", Client.class).getResultList();
+            }
+
+            if (!clients.isEmpty()) {
+                return clients.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println("Error getting client: possibly null name");
+            return null;
+        }
+    }
+
+    public static Client findActiveClientByName(EntityManager em, String clientName, Boolean ignoreCase) {
+
+        List<Client> clients;
+
+        try {
+            String newClientName = clientName.trim().replaceAll("'", "''");
+
+            if (ignoreCase) {
+                clients = em.createQuery("SELECT c FROM Client c "
+                        + "WHERE UPPER(c.name) "
+                        + "= '" + newClientName.toUpperCase() + "'"
+                        + " AND c.active = 1", Client.class).getResultList();
+            } else {
+                clients = em.createQuery("SELECT c FROM Client c "
+                        + "WHERE c.name "
+                        + "= '" + newClientName + "'"
+                        + " AND c.active = 1", Client.class).getResultList();
+            }
+
+            if (!clients.isEmpty()) {
+                return clients.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println("Error getting client: possibly null name");
+            return null;
+        }
+    }
+
+    // tk change name to findClientById
+    public static Client getClientById(EntityManager em, Long Id) {
+
+        try {
+            Client client = em.find(Client.class, Id);
+            return client;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Client findDefaultClient(
+            EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        Client client = findClientByName(em, name, true);
+
+        if (client == null) {
+            client = new Client(name);
+            client.setInternet(Internet.findDefaultInternet(em, "--", useTransaction));
+            client.setEnteredBy(Employee.findDefaultEmployee(em, "--", "--", useTransaction));
+
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, client);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, client);
+            }
+        }
+
+        return client;
+    }
+
+    public static List<Client> findClientsBySearchPattern(EntityManager em, String searchPattern) {
+
+        try {
+            List<Client> clients = em.createQuery("SELECT c FROM Client c "
+                    + "WHERE UPPER(c.name) "
+                    + "LIKE '" + searchPattern.toUpperCase() + "%' "
+                    + "ORDER BY c.name", Client.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
+
+        if (submittedValue.trim().equals("")) {
+            return null;
+        } else {
+            Client client = new Client();
+            client.setName(submittedValue.trim());
+
+            return client;
+        }
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+
+        if (value == null || value.equals("")) {
+            return "";
+        } else {
+            if (((Client) value).getName() != null) {
+                return ((Client) value).getName().replaceAll("&#38;", "&");
+            } else {
+                return "";
+            }
+        }
+    }
 }

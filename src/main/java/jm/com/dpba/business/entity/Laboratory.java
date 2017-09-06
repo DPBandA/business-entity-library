@@ -5,105 +5,59 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import jm.com.dpba.business.entity.utils.BusinessEntityUtils;
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
 @Entity
 @Table(name = "laboratory")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Laboratory.findAll", query = "SELECT l FROM Laboratory l"),
-    @NamedQuery(name = "Laboratory.findById", query = "SELECT l FROM Laboratory l WHERE l.id = :id"),
-    @NamedQuery(name = "Laboratory.findByName", query = "SELECT l FROM Laboratory l WHERE l.name = :name"),
-    @NamedQuery(name = "Laboratory.findByNumber", query = "SELECT l FROM Laboratory l WHERE l.number = :number"),
-    @NamedQuery(name = "Laboratory.findByType", query = "SELECT l FROM Laboratory l WHERE l.type = :type"),
-    @NamedQuery(name = "Laboratory.findByActive", query = "SELECT l FROM Laboratory l WHERE l.active = :active")})
-public class Laboratory implements Serializable {
+    @NamedQuery(name = "findAllLaboratories", query = "SELECT l FROM Laboratory l ORDER BY l.name")
+})
+@XmlRootElement
+public class Laboratory implements BusinessEntity, Company, Serializable, Converter {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Size(max = 255)
-    @Column(name = "NAME")
     private String name;
-    @Size(max = 255)
-    @Column(name = "NUMBER")
-    private String number;
-    @Size(max = 255)
-    @Column(name = "TYPE")
     private String type;
-    @Column(name = "ACTIVE")
+    private String number;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<BusinessOffice> businessOffices;
     private Boolean active;
-    @ManyToMany(mappedBy = "laboratoryList")
-    private List<Department> departmentList;
-    @JoinTable(name = "laboratory_businessoffice", joinColumns = {
-        @JoinColumn(name = "Laboratory_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "businessOffices_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Businessoffice> businessofficeList;
-    @OneToMany(mappedBy = "assignedlabId")
-    private List<Foodsample> foodsampleList;
-    @OneToMany(mappedBy = "laboratoryId")
-    private List<Unitcost> unitcostList;
 
     public Laboratory() {
+        businessOffices = new ArrayList<BusinessOffice>();
     }
 
-    public Laboratory(Long id) {
-        this.id = id;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public Boolean getActive() {
@@ -112,46 +66,6 @@ public class Laboratory implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Department> getDepartmentList() {
-        return departmentList;
-    }
-
-    public void setDepartmentList(List<Department> departmentList) {
-        this.departmentList = departmentList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Businessoffice> getBusinessofficeList() {
-        return businessofficeList;
-    }
-
-    public void setBusinessofficeList(List<Businessoffice> businessofficeList) {
-        this.businessofficeList = businessofficeList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Foodsample> getFoodsampleList() {
-        return foodsampleList;
-    }
-
-    public void setFoodsampleList(List<Foodsample> foodsampleList) {
-        this.foodsampleList = foodsampleList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Unitcost> getUnitcostList() {
-        return unitcostList;
-    }
-
-    public void setUnitcostList(List<Unitcost> unitcostList) {
-        this.unitcostList = unitcostList;
     }
 
     @Override
@@ -176,7 +90,144 @@ public class Laboratory implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Laboratory[ id=" + id + " ]";
+        return "jm.org.bsj.entity.Laboratory[id=" + id + "]";
     }
-    
+
+    @Override
+    public String getName() {
+        if (name == null) {
+            name = "";
+        }
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Override
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    @Override
+    public String getNumber() {
+        return number;
+    }
+
+    @Override
+    public List<BusinessOffice> getBusinessOffices() {
+        return businessOffices;
+    }
+
+    @Override
+    public void setBusinessOffices(List<BusinessOffice> businessOffices) {
+        this.businessOffices = businessOffices;
+    }
+
+    public static List<Laboratory> findLaboratoriesByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Laboratory> laboratories =
+                    em.createQuery("SELECT l FROM Laboratory l where UPPER(l.name) like '"
+                    + newName.toUpperCase().trim() + "%' ORDER BY l.name", Laboratory.class).getResultList();
+            return laboratories;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<Laboratory>();
+        }
+    }
+
+    public static List<Laboratory> findAllActiveLaboratories(EntityManager em) {
+
+        try {
+            return em.createQuery("SELECT l from Laboratory l where l.active = 1 order by l.name", Laboratory.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Laboratory findLaboratoryByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.trim().replaceAll("'", "''");
+
+            List<Laboratory> laboratories = em.createQuery("SELECT l FROM Laboratory l "
+                    + "WHERE UPPER(l.name) "
+                    + "= '" + newName.toUpperCase() + "'", Laboratory.class).getResultList();
+            if (laboratories.size() > 0) {
+                return laboratories.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Laboratory findLaboratoryById(EntityManager em, Long Id) {
+        return em.find(Laboratory.class, Id);
+    }
+
+    public static List<String> findAllLaboratoryNames(EntityManager em) {
+
+        ArrayList<String> names = new ArrayList<String>();
+
+        try { // tk try String.class instead of Laboratory.class for better performance
+            List<Laboratory> laboratories = em.createNamedQuery("findAllLaboratories", Laboratory.class).getResultList();
+            for (Laboratory laboratory : laboratories) {
+                names.add(laboratory.getName());
+            }
+            return names;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        Laboratory laboratory = new Laboratory();
+
+        if (value != null) {
+            laboratory.setName(value);
+        }
+
+        return laboratory;
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+        return ((Laboratory) value).getName();
+    }
+
+    public static Laboratory getDefaultLaboratory(EntityManager em,
+            String name) {
+        Laboratory laboratory = Laboratory.findLaboratoryByName(em, name);
+
+        if (laboratory == null) {
+            laboratory = new Laboratory();
+
+            em.getTransaction().begin();
+            laboratory.setName(name);
+            BusinessEntityUtils.saveBusinessEntity(em, laboratory);
+            em.getTransaction().commit();
+        }
+
+        return laboratory;
+    }
 }

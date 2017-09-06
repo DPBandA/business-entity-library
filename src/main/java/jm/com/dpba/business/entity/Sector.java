@@ -5,91 +5,57 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author desbenn
+ * @author Desmond
  */
 @Entity
 @Table(name = "sector")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Sector.findAll", query = "SELECT s FROM Sector s"),
-    @NamedQuery(name = "Sector.findById", query = "SELECT s FROM Sector s WHERE s.id = :id"),
-    @NamedQuery(name = "Sector.findByName", query = "SELECT s FROM Sector s WHERE s.name = :name"),
-    @NamedQuery(name = "Sector.findByActive", query = "SELECT s FROM Sector s WHERE s.active = :active"),
-    @NamedQuery(name = "Sector.findByDescription", query = "SELECT s FROM Sector s WHERE s.description = :description")})
-public class Sector implements Serializable {
+    @NamedQuery(name = "findAllSectors", query = "SELECT s FROM Sector s ORDER BY s.name"),
+    @NamedQuery(name = "findAllActiveSectors", query = "SELECT s FROM Sector s WHERE s.active = 1 ORDER BY s.name")
+})
+@XmlRootElement
+public class Sector implements BusinessEntity, Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Size(max = 255)
-    @Column(name = "NAME")
     private String name;
-    @Column(name = "ACTIVE")
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Department> departments;
     private Boolean active;
-    @Size(max = 1024)
-    @Column(name = "DESCRIPTION")
+    @Column(length = 1024)
     private String description;
-    @JoinTable(name = "sector_department", joinColumns = {
-        @JoinColumn(name = "Sector_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "departments_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Department> departmentList;
-    @OneToMany(mappedBy = "sectorId")
-    private List<Servicerequest> servicerequestList;
-    @OneToMany(mappedBy = "sectorId")
-    private List<Job> jobList;
 
     public Sector() {
+        departments = new ArrayList<>();
     }
 
-    public Sector(Long id) {
-        this.id = id;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     public String getDescription() {
@@ -100,34 +66,36 @@ public class Sector implements Serializable {
         this.description = description;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<Department> getDepartmentList() {
-        return departmentList;
+    public Boolean getActive() {
+        if (active == null) {
+            active = true;
+        }
+        return active;
     }
 
-    public void setDepartmentList(List<Department> departmentList) {
-        this.departmentList = departmentList;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<Servicerequest> getServicerequestList() {
-        return servicerequestList;
+    public List<Department> getDepartments() {
+        if (departments == null) {
+            departments = new ArrayList<>();
+        }
+        return departments;
     }
 
-    public void setServicerequestList(List<Servicerequest> servicerequestList) {
-        this.servicerequestList = servicerequestList;
+    public void setDepartments(List<Department> departments) {
+        this.departments = departments;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<Job> getJobList() {
-        return jobList;
+    @Override
+    public String getName() {
+        return name;
     }
 
-    public void setJobList(List<Job> jobList) {
-        this.jobList = jobList;
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -152,7 +120,91 @@ public class Sector implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Sector[ id=" + id + " ]";
+        return name;
     }
-    
+
+    public static List<Sector> findAllSectors(EntityManager em) {
+
+        try {
+            List<Sector> sectors = em.createNamedQuery("findAllSectors", Sector.class).getResultList();
+
+            return sectors;
+        } catch (Exception e) {
+
+            return null;
+        }
+    }
+
+    public static List<Sector> findAllActiveSectors(EntityManager em) {
+
+        try {
+            List<Sector> sectors = em.createNamedQuery("findAllActiveSectors", Sector.class).getResultList();
+
+            return sectors;
+        } catch (Exception e) {
+
+            return null;
+        }
+    }
+
+    public static Sector findSectorById(EntityManager em, Long id) {
+
+        try {
+            Sector sector = em.find(Sector.class, id);
+
+            return sector;
+        } catch (Exception e) {
+
+            return null;
+        }
+    }
+
+    public static List<Sector> findAllSectorsByDeparment(EntityManager em, Department department) {
+        try {
+            List<Sector> sectors =
+                    em.createQuery(
+                    "SELECT s FROM Sector s JOIN s.departments department"
+                    + " WHERE department.name = '" + department.getName().trim() + "'"
+                    + " ORDER BY s.name", Sector.class).getResultList();
+            return sectors;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Sector findSectorByName(EntityManager em, String sectorName) {
+
+        try {
+            String newSectorName = sectorName.trim().replaceAll("'", "''");
+
+            List<Sector> sectors = em.createQuery("SELECT s FROM Sector s "
+                    + "WHERE UPPER(s.name) "
+                    + "= '" + newSectorName.toUpperCase() + "'", Sector.class).getResultList();
+            if (sectors.size() > 0) {
+                return sectors.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
+    }
+
+    public String getUsable() {
+        if (getActive()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+
+    public void setUsable(String usable) {
+        if (usable.equals("Yes")) {
+            setActive(true);
+        } else {
+            setActive(false);
+        }
+    }
 }

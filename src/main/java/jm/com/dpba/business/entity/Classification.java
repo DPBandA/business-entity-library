@@ -5,95 +5,70 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Basic;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author desbenn
+ * @author Desmond
  */
 @Entity
 @Table(name = "classification")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Classification.findAll", query = "SELECT c FROM Classification c"),
-    @NamedQuery(name = "Classification.findById", query = "SELECT c FROM Classification c WHERE c.id = :id"),
-    @NamedQuery(name = "Classification.findByName", query = "SELECT c FROM Classification c WHERE c.name = :name"),
-    @NamedQuery(name = "Classification.findByActive", query = "SELECT c FROM Classification c WHERE c.active = :active"),
-    @NamedQuery(name = "Classification.findByDescription", query = "SELECT c FROM Classification c WHERE c.description = :description"),
-    @NamedQuery(name = "Classification.findByIsearning", query = "SELECT c FROM Classification c WHERE c.isearning = :isearning")})
-public class Classification implements Serializable {
+    @NamedQuery(name = "findAllClassifications", query = "SELECT c FROM Classification c ORDER BY c.name"),
+    @NamedQuery(name = "findAllActiveClassifications", query = "SELECT c FROM Classification c WHERE c.active = 1 ORDER BY c.name")
+})
+@XmlRootElement
+public class Classification implements BusinessEntity, Serializable, Converter {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
-    private Long id;
-    @Size(max = 255)
-    @Column(name = "NAME")
-    private String name;
-    @Column(name = "ACTIVE")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id = null;
+    private String name = "";
     private Boolean active;
-    @Size(max = 1024)
-    @Column(name = "DESCRIPTION")
+    @Column(length = 1024)
     private String description;
-    @Column(name = "ISEARNING")
-    private Boolean isearning;
-    @OneToMany(mappedBy = "classificationId")
-    private List<Legaldocument> legaldocumentList;
-    @OneToMany(mappedBy = "classificationId")
-    private List<Documentstandard> documentstandardList;
-    @OneToMany(mappedBy = "classificationId")
-    private List<Servicerequest> servicerequestList;
-    @OneToMany(mappedBy = "classificationId")
-    private List<Job> jobList;
-    @OneToMany(mappedBy = "classificationId")
-    private List<Documenttracking> documenttrackingList;
+    private Boolean isEarning;
 
-    public Classification() {
-    }
-
-    public Classification(Long id) {
-        this.id = id;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Boolean getIsEarning() {
+        if (isEarning == null) {
+            isEarning = true;
+        }
+        return isEarning;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setIsEarning(Boolean isEarning) {
+        this.isEarning = isEarning;
     }
 
     public String getDescription() {
+        if (description == null) {
+            description = "";
+        }
         return description;
     }
 
@@ -101,62 +76,60 @@ public class Classification implements Serializable {
         this.description = description;
     }
 
-    public Boolean getIsearning() {
-        return isearning;
+    public String getUsable() {
+        if (getActive()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
     }
 
-    public void setIsearning(Boolean isearning) {
-        this.isearning = isearning;
+    public void setUsable(String usable) {
+        if (usable.equals("Yes")) {
+            setActive(true);
+        } else {
+            setActive(false);
+        }
+    }
+    
+    public String getEarning() {
+        if (getIsEarning()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<Legaldocument> getLegaldocumentList() {
-        return legaldocumentList;
+    public void setEarning(String earning) {
+        if (earning.equals("Yes")) {
+            setIsEarning(true);
+        } else {
+            setIsEarning(false);
+        }
     }
 
-    public void setLegaldocumentList(List<Legaldocument> legaldocumentList) {
-        this.legaldocumentList = legaldocumentList;
+    public Boolean getActive() {
+        if (active == null) {
+            active = false;
+        }
+        return active;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<Documentstandard> getDocumentstandardList() {
-        return documentstandardList;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
-    public void setDocumentstandardList(List<Documentstandard> documentstandardList) {
-        this.documentstandardList = documentstandardList;
+    @Override
+    public String getName() {
+        if (name == null) {
+            name = "";
+        }
+        return name;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<Servicerequest> getServicerequestList() {
-        return servicerequestList;
-    }
-
-    public void setServicerequestList(List<Servicerequest> servicerequestList) {
-        this.servicerequestList = servicerequestList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Job> getJobList() {
-        return jobList;
-    }
-
-    public void setJobList(List<Job> jobList) {
-        this.jobList = jobList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Documenttracking> getDocumenttrackingList() {
-        return documenttrackingList;
-    }
-
-    public void setDocumenttrackingList(List<Documenttracking> documenttrackingList) {
-        this.documenttrackingList = documenttrackingList;
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -181,7 +154,119 @@ public class Classification implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Classification[ id=" + id + " ]";
+        return name;
     }
-    
+
+    public static List<Classification> findAllClassifications(EntityManager em) {
+
+        try {
+            List<Classification> classfications = em.createNamedQuery("findAllClassifications", Classification.class).getResultList();
+
+            return classfications;
+        } catch (Exception e) {
+
+            return null;
+        }
+
+    }
+
+    public static List<Classification> findAllActiveClassifications(EntityManager em) {
+
+        try {
+            List<Classification> classfications = em.createNamedQuery("findAllActiveClassifications", Classification.class).getResultList();
+
+            return classfications;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public static Classification findClassificationById(EntityManager em, Long id) {
+
+        try {
+            Classification classification = em.find(Classification.class, id);
+
+            return classification;
+        } catch (Exception e) {
+
+            return null;
+        }
+    }
+
+    public static Classification findClassificationByName(EntityManager em, String classificationName) {
+
+        try {
+            String newClassificationName = classificationName.trim().replaceAll("'", "''");
+
+            List<Classification> classifications = em.createQuery("SELECT c FROM Classification c "
+                    + "WHERE UPPER(c.name) "
+                    + "= '" + newClassificationName.toUpperCase() + "'", Classification.class).getResultList();
+            if (classifications.size() > 0) {
+                return classifications.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
+    }
+
+    public static List<Classification> findClassificationsByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Classification> classifications =
+                    em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
+                    + newName.toUpperCase().trim() + "%' ORDER BY c.name", Classification.class).getResultList();
+            return classifications;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Classification> findActiveClassificationsByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Classification> classifications =
+                    em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
+                    + newName.toUpperCase().trim() + "%' AND c.active = 1 ORDER BY c.name", Classification.class).getResultList();
+            return classifications;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
+
+        if (submittedValue.trim().equals("")) {
+            return null;
+        } else {
+            Classification classification = new Classification();
+            classification.setName(submittedValue.trim());
+
+            return classification;
+        }
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+
+        if (value == null || value.equals("")) {
+            return "";
+        } else {
+            if (((Classification) value).getName() != null) {
+                return ((Classification) value).getName().replaceAll("&#38;", "&");
+            } else {
+                return "";
+            }
+        }
+    }
 }

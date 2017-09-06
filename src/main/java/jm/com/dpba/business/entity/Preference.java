@@ -5,72 +5,71 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
+import java.util.ArrayList;
+import java.util.List;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Query;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
 @Entity
 @Table(name = "preference")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Preference.findAll", query = "SELECT p FROM Preference p"),
-    @NamedQuery(name = "Preference.findById", query = "SELECT p FROM Preference p WHERE p.id = :id"),
-    @NamedQuery(name = "Preference.findByCategory", query = "SELECT p FROM Preference p WHERE p.category = :category"),
-    @NamedQuery(name = "Preference.findByDescription", query = "SELECT p FROM Preference p WHERE p.description = :description"),
-    @NamedQuery(name = "Preference.findByName", query = "SELECT p FROM Preference p WHERE p.name = :name"),
-    @NamedQuery(name = "Preference.findByPreferencevalue", query = "SELECT p FROM Preference p WHERE p.preferencevalue = :preferencevalue"),
-    @NamedQuery(name = "Preference.findByRoles", query = "SELECT p FROM Preference p WHERE p.roles = :roles"),
-    @NamedQuery(name = "Preference.findByType", query = "SELECT p FROM Preference p WHERE p.type = :type")})
-public class Preference implements Serializable {
+    @NamedQuery(name = "findAllPreferencesByName", query = "SELECT p FROM Preference p WHERE p.name = :name ORDER BY p.name"),
+    @NamedQuery(name = "findAllPreferences", query = "SELECT p FROM Preference p ORDER BY p.name")
+})
+public class Preference implements Serializable, BusinessEntity, Converter {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Size(max = 255)
-    @Column(name = "CATEGORY")
-    private String category;
-    @Size(max = 255)
-    @Column(name = "DESCRIPTION")
-    private String description;
-    @Size(max = 255)
-    @Column(name = "NAME")
     private String name;
-    @Size(max = 255)
-    @Column(name = "PREFERENCEVALUE")
-    private String preferencevalue;
-    @Size(max = 255)
-    @Column(name = "ROLES")
-    private String roles;
-    @Size(max = 255)
-    @Column(name = "TYPE")
+    private String preferenceValue;
     private String type;
+    private String category;
+    private String roles;
+    private String description;
 
     public Preference() {
     }
 
-    public Preference(Long id) {
-        this.id = id;
+    public Preference(String name, String preferenceValue) {
+        this.name = name;
+        this.preferenceValue = preferenceValue;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getPreferenceValue() {
+        if (preferenceValue == null) {
+            preferenceValue = "";
+        }
+        return preferenceValue;
+    }
+
+    public void setPreferenceValue(String preferenceValue) {
+        this.preferenceValue = preferenceValue;
     }
 
     public String getCategory() {
@@ -87,22 +86,6 @@ public class Preference implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPreferencevalue() {
-        return preferencevalue;
-    }
-
-    public void setPreferencevalue(String preferencevalue) {
-        this.preferencevalue = preferencevalue;
     }
 
     public String getRoles() {
@@ -143,7 +126,122 @@ public class Preference implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Preference[ id=" + id + " ]";
+        return name + ": " + id;
     }
-    
+
+    @Override
+    public String getName() {
+        if (name == null) {
+            name = "";
+        }
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public static List<Preference> findAllPreferencesByValue(EntityManager em, String value) {
+//        try {
+//            Query query = em.createNamedQuery("findAllPreferencesByName");
+//            query.setParameter("name", name);
+//            return query.getResultList();
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            return null;
+//        }
+        try {
+            String newValue = value.replaceAll("'", "''");
+
+            List<Preference> preferences =
+                    em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '"
+                    + newValue.toUpperCase().trim() + "%' ORDER BY p.preferenceValue", Preference.class).getResultList();
+            return preferences;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<String> findAllPreferenceValues(EntityManager em, String value) {
+
+        List<String> values = new ArrayList<>();
+
+        try {
+            String newValue = value.replaceAll("'", "''");
+
+            List<Preference> preferences =
+                    em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '"
+                    + newValue.toUpperCase().trim() + "%' ORDER BY p.preferenceValue", Preference.class).getResultList();
+            
+            if (preferences != null) {
+                for (Preference preference : preferences) {
+                    values.add(preference.preferenceValue);
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return values;
+        }
+
+        return values;
+    }
+
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        Preference preference = new Preference();
+
+        if (value != null) {
+            preference.setPreferenceValue(value);
+        }
+
+        return preference;
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+        return ((Preference) value).getPreferenceValue();
+    }
+
+    public static List<Preference> findAllPreferencesByName(EntityManager em, String name) {
+
+        try {
+            Query query = em.createNamedQuery("findAllPreferencesByName");
+            query.setParameter("name", name);
+            return query.getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Preference findPreferenceByValue(EntityManager em, String value) {
+
+        try {
+            String newValue = value.trim().replaceAll("'", "''");
+
+            List<Preference> preferences = em.createQuery("SELECT p FROM Preference p "
+                    + "WHERE UPPER(p.preferenceValue) "
+                    + "= '" + newValue.toUpperCase() + "'", Preference.class).getResultList();
+            if (preferences.size() > 0) {
+                return preferences.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Preference findPreferenceById(EntityManager em, Long Id) {
+
+        try {
+            return em.find(Preference.class, Id);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 }

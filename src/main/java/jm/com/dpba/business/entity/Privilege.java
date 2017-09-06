@@ -6,147 +6,370 @@ package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
 @Entity
 @Table(name = "privilege")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Privilege.findAll", query = "SELECT p FROM Privilege p"),
-    @NamedQuery(name = "Privilege.findById", query = "SELECT p FROM Privilege p WHERE p.id = :id"),
-    @NamedQuery(name = "Privilege.findByCategory", query = "SELECT p FROM Privilege p WHERE p.category = :category"),
-    @NamedQuery(name = "Privilege.findByDescription", query = "SELECT p FROM Privilege p WHERE p.description = :description"),
-    @NamedQuery(name = "Privilege.findByName", query = "SELECT p FROM Privilege p WHERE p.name = :name"),
-    @NamedQuery(name = "Privilege.findByRoles", query = "SELECT p FROM Privilege p WHERE p.roles = :roles"),
-    @NamedQuery(name = "Privilege.findByType", query = "SELECT p FROM Privilege p WHERE p.type = :type"),
-    @NamedQuery(name = "Privilege.findByCanaddclient", query = "SELECT p FROM Privilege p WHERE p.canaddclient = :canaddclient"),
-    @NamedQuery(name = "Privilege.findByCanadddepartment", query = "SELECT p FROM Privilege p WHERE p.canadddepartment = :canadddepartment"),
-    @NamedQuery(name = "Privilege.findByCanaddemployee", query = "SELECT p FROM Privilege p WHERE p.canaddemployee = :canaddemployee"),
-    @NamedQuery(name = "Privilege.findByCanbejmtsadministrator", query = "SELECT p FROM Privilege p WHERE p.canbejmtsadministrator = :canbejmtsadministrator"),
-    @NamedQuery(name = "Privilege.findByCandeleteclient", query = "SELECT p FROM Privilege p WHERE p.candeleteclient = :candeleteclient"),
-    @NamedQuery(name = "Privilege.findByCandeletedepartment", query = "SELECT p FROM Privilege p WHERE p.candeletedepartment = :candeletedepartment"),
-    @NamedQuery(name = "Privilege.findByCandeleteemployee", query = "SELECT p FROM Privilege p WHERE p.candeleteemployee = :candeleteemployee"),
-    @NamedQuery(name = "Privilege.findByCandeletejob", query = "SELECT p FROM Privilege p WHERE p.candeletejob = :candeletejob"),
-    @NamedQuery(name = "Privilege.findByCaneditdepartmentjob", query = "SELECT p FROM Privilege p WHERE p.caneditdepartmentjob = :caneditdepartmentjob"),
-    @NamedQuery(name = "Privilege.findByCaneditownjob", query = "SELECT p FROM Privilege p WHERE p.caneditownjob = :caneditownjob"),
-    @NamedQuery(name = "Privilege.findByCanenterownjob", query = "SELECT p FROM Privilege p WHERE p.canenterownjob = :canenterownjob"),
-    @NamedQuery(name = "Privilege.findByCanenterdepartmentjob", query = "SELECT p FROM Privilege p WHERE p.canenterdepartmentjob = :canenterdepartmentjob"),
-    @NamedQuery(name = "Privilege.findByCaneditjob", query = "SELECT p FROM Privilege p WHERE p.caneditjob = :caneditjob"),
-    @NamedQuery(name = "Privilege.findByCanenterjob", query = "SELECT p FROM Privilege p WHERE p.canenterjob = :canenterjob"),
-    @NamedQuery(name = "Privilege.findByCanbesuperuser", query = "SELECT p FROM Privilege p WHERE p.canbesuperuser = :canbesuperuser"),
-    @NamedQuery(name = "Privilege.findByCanapprovejobcosting", query = "SELECT p FROM Privilege p WHERE p.canapprovejobcosting = :canapprovejobcosting"),
-    @NamedQuery(name = "Privilege.findByCanenterparentjob", query = "SELECT p FROM Privilege p WHERE p.canenterparentjob = :canenterparentjob"),
-    @NamedQuery(name = "Privilege.findByCaneditinvoicingandpayment", query = "SELECT p FROM Privilege p WHERE p.caneditinvoicingandpayment = :caneditinvoicingandpayment"),
-    @NamedQuery(name = "Privilege.findByCanauthdetentionrequest", query = "SELECT p FROM Privilege p WHERE p.canauthdetentionrequest = :canauthdetentionrequest"),
-    @NamedQuery(name = "Privilege.findByCanauthdetentionnotice", query = "SELECT p FROM Privilege p WHERE p.canauthdetentionnotice = :canauthdetentionnotice"),
-    @NamedQuery(name = "Privilege.findByCanapprvreleaserequest", query = "SELECT p FROM Privilege p WHERE p.canapprvreleaserequest = :canapprvreleaserequest"),
-    @NamedQuery(name = "Privilege.findByCanapplytaxestojobcosting", query = "SELECT p FROM Privilege p WHERE p.canapplytaxestojobcosting = :canapplytaxestojobcosting"),
-    @NamedQuery(name = "Privilege.findByCanbefinancialadministrator", query = "SELECT p FROM Privilege p WHERE p.canbefinancialadministrator = :canbefinancialadministrator")})
-public class Privilege implements Serializable {
+    @NamedQuery(name = "findAllPrivileges", query = "SELECT p FROM Privilege p ORDER BY p.name"),
+    @NamedQuery(name = "findByPrivilegesName", query = "SELECT p FROM Privilege p WHERE p.name = :name")
+})
+public class Privilege implements Serializable, BusinessEntity {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Size(max = 255)
-    @Column(name = "CATEGORY")
-    private String category;
-    @Size(max = 255)
-    @Column(name = "DESCRIPTION")
-    private String description;
-    @Size(max = 255)
-    @Column(name = "NAME")
     private String name;
-    @Size(max = 255)
-    @Column(name = "ROLES")
-    private String roles;
-    @Size(max = 255)
-    @Column(name = "TYPE")
     private String type;
-    @Column(name = "CANADDCLIENT")
-    private Boolean canaddclient;
-    @Column(name = "CANADDDEPARTMENT")
-    private Boolean canadddepartment;
-    @Column(name = "CANADDEMPLOYEE")
-    private Boolean canaddemployee;
-    @Column(name = "CANBEJMTSADMINISTRATOR")
-    private Boolean canbejmtsadministrator;
-    @Column(name = "CANDELETECLIENT")
-    private Boolean candeleteclient;
-    @Column(name = "CANDELETEDEPARTMENT")
-    private Boolean candeletedepartment;
-    @Column(name = "CANDELETEEMPLOYEE")
-    private Boolean candeleteemployee;
-    @Column(name = "CANDELETEJOB")
-    private Boolean candeletejob;
-    @Column(name = "CANEDITDEPARTMENTJOB")
-    private Boolean caneditdepartmentjob;
-    @Column(name = "CANEDITOWNJOB")
-    private Boolean caneditownjob;
-    @Column(name = "CANENTEROWNJOB")
-    private Boolean canenterownjob;
-    @Column(name = "CANENTERDEPARTMENTJOB")
-    private Boolean canenterdepartmentjob;
-    @Column(name = "CANEDITJOB")
-    private Boolean caneditjob;
-    @Column(name = "CANENTERJOB")
-    private Boolean canenterjob;
-    @Column(name = "CANBESUPERUSER")
-    private Boolean canbesuperuser;
-    @Column(name = "CANAPPROVEJOBCOSTING")
-    private Boolean canapprovejobcosting;
-    @Column(name = "CANENTERPARENTJOB")
-    private Boolean canenterparentjob;
-    @Column(name = "CANEDITINVOICINGANDPAYMENT")
-    private Boolean caneditinvoicingandpayment;
-    @Column(name = "CANAUTHDETENTIONREQUEST")
-    private Boolean canauthdetentionrequest;
-    @Column(name = "CANAUTHDETENTIONNOTICE")
-    private Boolean canauthdetentionnotice;
-    @Column(name = "CANAPPRVRELEASEREQUEST")
-    private Boolean canapprvreleaserequest;
-    @Column(name = "CANAPPLYTAXESTOJOBCOSTING")
-    private Boolean canapplytaxestojobcosting;
-    @Column(name = "CANBEFINANCIALADMINISTRATOR")
-    private Boolean canbefinancialadministrator;
-    @ManyToMany(mappedBy = "privilegeList")
-    private List<JobManagerUser> jobmanageruserList;
-    @OneToMany(mappedBy = "privilegeId")
-    private List<JobManagerUser> jobmanageruserList1;
-    @OneToMany(mappedBy = "privilegeId")
-    private List<Department> departmentList;
+    private String category;
+    private String roles;
+    private String description;
+    // Privileges
+    private Boolean canEnterJob;
+    private Boolean canEnterOwnJob;
+    private Boolean canEnterDepartmentJob;
+    private Boolean canDeleteJob;
+    private Boolean canEditJob;
+    private Boolean canEditOwnJob;
+    private Boolean canEditDepartmentJob;
+    private Boolean canAddClient;
+    private Boolean canDeleteClient;
+    private Boolean canAddEmployee;
+    private Boolean canDeleteEmployee;
+    private Boolean canAddDepartment;
+    private Boolean canDeleteDepartment;
+    private Boolean canBeJMTSAdministrator;
+    private Boolean canBeSuperUser;
+    private Boolean canApproveJobCosting;
+    private Boolean canEnterParentJob;
+    private Boolean canEditInvoicingAndPayment;
+    private Boolean canAuthDetentionRequest; //CANAUTHDETENTIONREQUEST, Authorize detention request
+    private Boolean canAuthDetentionNotice; //CANAUTHDETENTIONNOTICE, Authorize detention notice/release
+    private Boolean canApprvReleaseRequest; //CANAPPRVRELEASEREQUEST, Approve release request
+    private Boolean canApplyTaxesToJobCosting;
+    private Boolean canBeFinancialAdministrator;
+    // End privilges
 
     public Privilege() {
+        init("");
     }
 
-    public Privilege(Long id) {
-        this.id = id;
+    public Privilege(String name) {
+        init(name);
     }
 
+    /**
+     * NB: Temp code included to be removed in the future
+     */
+    private void init(String name) {
+        // default privileges
+        this.name = name;
+        canEnterJob = false;
+        canEnterOwnJob = true;
+        canEnterDepartmentJob = true;
+        canDeleteJob = false;
+        canEditJob = false;
+        canEditOwnJob = true;
+        canEditDepartmentJob = true;
+        if (name.equals("Customer Service") || name.equals("Finance & Accounting Services")) {
+            canAddClient = true;
+        } else {
+            canAddClient = false;
+        }
+        canDeleteClient = false;
+        canAddEmployee = false;
+        canDeleteEmployee = false;
+        canAddDepartment = false;
+        canDeleteDepartment = false;
+        // NB: This is to be removed
+        if (name.equals("dbennett")
+                || name.equals("gallen")
+                || name.equals("ggale")
+                || name.equals("rdixon")) {
+            canBeJMTSAdministrator = true;
+            canBeSuperUser = true;
+        } else {
+            canBeJMTSAdministrator = false;
+            canBeSuperUser = false;
+        }
+        canApproveJobCosting = false;
+        canEnterParentJob = true;
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getCanBeFinancialAdministrator() {
+        if (canBeFinancialAdministrator == null) {
+            canBeFinancialAdministrator = false;
+        }
+        return canBeFinancialAdministrator;
+    }
+
+    public void setCanBeFinancialAdministrator(Boolean canBeFinancialAdministrator) {
+        this.canBeFinancialAdministrator = canBeFinancialAdministrator;
+    }
+
+    public Boolean getCanApplyTaxesToJobCosting() {
+        if (canApplyTaxesToJobCosting == null) {
+            canApplyTaxesToJobCosting = true;
+        }
+        return canApplyTaxesToJobCosting;
+    }
+
+    public void setCanApplyTaxesToJobCosting(Boolean canApplyTaxesToJobCosting) {
+        this.canApplyTaxesToJobCosting = canApplyTaxesToJobCosting;
+    }
+
+    public Boolean getCanApprvReleaseRequest() {
+        if (canApprvReleaseRequest == null) {
+            canApprvReleaseRequest = false;
+        }
+        return canApprvReleaseRequest;
+    }
+
+    public void setCanApprvReleaseRequest(Boolean canApprvReleaseRequest) {
+        this.canApprvReleaseRequest = canApprvReleaseRequest;
+    }
+
+    public Boolean getCanAuthDetentionNotice() {
+        if (canAuthDetentionNotice == null) {
+            canAuthDetentionNotice = false;
+        }
+        return canAuthDetentionNotice;
+    }
+
+    public void setCanAuthDetentionNotice(Boolean canAuthDetentionNotice) {
+        this.canAuthDetentionNotice = canAuthDetentionNotice;
+    }
+
+    public Boolean getCanAuthDetentionRequest() {
+        if (canAuthDetentionRequest == null) {
+            canAuthDetentionRequest = false;
+        }
+        return canAuthDetentionRequest;
+    }
+
+    public void setCanAuthDetentionRequest(Boolean canAuthDetentionRequest) {
+        this.canAuthDetentionRequest = canAuthDetentionRequest;
+    }
+
+    public Boolean getCanEditInvoicingAndPayment() {
+        if (canEditInvoicingAndPayment == null) {
+            canEditInvoicingAndPayment = false;
+        }
+        return canEditInvoicingAndPayment;
+    }
+
+    public void setCanEditInvoicingAndPayment(Boolean canEditInvoicingAndPayment) {
+        this.canEditInvoicingAndPayment = canEditInvoicingAndPayment;
+    }
+
+    public Boolean getCanApproveJobCosting() {
+        if (canApproveJobCosting == null) {
+            canApproveJobCosting = false;
+        }
+        return canApproveJobCosting;
+    }
+
+    public void setCanApproveJobCosting(Boolean canApproveJobCosting) {
+        this.canApproveJobCosting = canApproveJobCosting;
+    }
+
+    public Boolean getCanEnterParentJob() {
+        if (canEnterParentJob == null) {
+            canEnterParentJob = false;
+        }
+        return canEnterParentJob;
+    }
+
+    public void setCanEnterParentJob(Boolean canEnterParentJob) {
+        this.canEnterParentJob = canEnterParentJob;
+    }
+
+    public Boolean getCanEnterOwnJob() {
+        if (canEnterOwnJob == null) {
+            canEnterOwnJob = false;
+        }
+        return canEnterOwnJob;
+    }
+
+    public void setCanEnterOwnJob(Boolean canEnterOwnJob) {
+        this.canEnterOwnJob = canEnterOwnJob;
+    }
+
+    public Boolean getCanEnterDepartmentJob() {
+        if (canEnterDepartmentJob == null) {
+            canEnterDepartmentJob = true;
+        }
+        return canEnterDepartmentJob;
+    }
+
+    public void setCanEnterDepartmentJob(Boolean canEnterDepartmentJob) {
+        this.canEnterDepartmentJob = canEnterDepartmentJob;
+    }
+
+    public Boolean getCanBeJMTSAdministrator() {
+        if (canBeJMTSAdministrator == null) {
+            canBeJMTSAdministrator = false;
+        }
+
+        return canBeJMTSAdministrator;
+    }
+
+    public void setCanBeJMTSAdministrator(Boolean canBeJMTSAdministrator) {
+        this.canBeJMTSAdministrator = canBeJMTSAdministrator;
+    }
+
+    public Boolean getCanBeSuperUser() {
+        if (canBeSuperUser == null) {
+            canBeSuperUser = false;
+        }
+        return canBeSuperUser;
+    }
+
+    public void setCanBeSuperUser(Boolean canBeSuperUser) {
+        this.canBeSuperUser = canBeSuperUser;
+    }
+
+    public Boolean getCanAddClient() {
+        if (canAddClient == null) {
+            canAddClient = false;
+        }
+        return canAddClient;
+    }
+
+    public void setCanAddClient(Boolean canAddClient) {
+        this.canAddClient = canAddClient;
+    }
+
+    public Boolean getCanAddDepartment() {
+        if (canAddDepartment == null) {
+            canAddDepartment = false;
+        }
+        return canAddDepartment;
+    }
+
+    public void setCanAddDepartment(Boolean canAddDepartment) {
+        this.canAddDepartment = canAddDepartment;
+    }
+
+    public Boolean getCanAddEmployee() {
+        if (canAddEmployee == null) {
+            canAddEmployee = false;
+        }
+        return canAddEmployee;
+    }
+
+    public void setCanAddEmployee(Boolean canAddEmployee) {
+        this.canAddEmployee = canAddEmployee;
+    }
+
+    public Boolean getCanDeleteClient() {
+        if (canDeleteClient == null) {
+            canDeleteClient = false;
+        }
+        return canDeleteClient;
+    }
+
+    public void setCanDeleteClient(Boolean canDeleteClient) {
+        this.canDeleteClient = canDeleteClient;
+    }
+
+    public Boolean getCanDeleteDepartment() {
+        if (canDeleteDepartment == null) {
+            canDeleteDepartment = false;
+        }
+        return canDeleteDepartment;
+    }
+
+    public void setCanDeleteDepartment(Boolean canDeleteDepartment) {
+        this.canDeleteDepartment = canDeleteDepartment;
+    }
+
+    public Boolean getCanDeleteEmployee() {
+        if (canDeleteEmployee == null) {
+            canDeleteEmployee = false;
+        }
+        return canDeleteEmployee;
+    }
+
+    public void setCanDeleteEmployee(Boolean canDeleteEmployee) {
+        this.canDeleteEmployee = canDeleteEmployee;
+    }
+
+    public Boolean getCanEditDepartmentJob() {
+        if (canEditDepartmentJob == null) {
+            canEditDepartmentJob = true;
+        }
+        return canEditDepartmentJob;
+    }
+
+    public void setCanEditDepartmentJob(Boolean canEditDepartmentJob) {
+        this.canEditDepartmentJob = canEditDepartmentJob;
+    }
+
+    public Boolean getCanDeleteJob() {
+        if (canDeleteJob == null) {
+            canDeleteJob = false;
+        }
+        return canDeleteJob;
+    }
+
+    public void setCanDeleteJob(Boolean canDeleteJob) {
+        this.canDeleteJob = canDeleteJob;
+    }
+
+    public Boolean getCanEditJob() {
+        if (canEditJob == null) {
+            canEditJob = false;
+        }
+        return canEditJob;
+    }
+
+    public void setCanEditJob(Boolean canEditJob) {
+        this.canEditJob = canEditJob;
+    }
+
+    public Boolean getCanEditOwnJob() {
+        if (canEditOwnJob == null) {
+            canEditOwnJob = false;
+        }
+        return canEditOwnJob;
+    }
+
+    public void setCanEditOwnJob(Boolean canEditOwnJob) {
+        this.canEditOwnJob = canEditOwnJob;
+    }
+
+    public Boolean getCanEnterJob() {
+        if (canEnterJob == null) {
+            canEnterJob = false;
+        }
+        return canEnterJob;
+    }
+
+    public void setCanEnterJob(Boolean canEnterJob) {
+        this.canEnterJob = canEnterJob;
     }
 
     public String getCategory() {
@@ -165,14 +388,6 @@ public class Privilege implements Serializable {
         this.description = description;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getRoles() {
         return roles;
     }
@@ -187,220 +402,6 @@ public class Privilege implements Serializable {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public Boolean getCanaddclient() {
-        return canaddclient;
-    }
-
-    public void setCanaddclient(Boolean canaddclient) {
-        this.canaddclient = canaddclient;
-    }
-
-    public Boolean getCanadddepartment() {
-        return canadddepartment;
-    }
-
-    public void setCanadddepartment(Boolean canadddepartment) {
-        this.canadddepartment = canadddepartment;
-    }
-
-    public Boolean getCanaddemployee() {
-        return canaddemployee;
-    }
-
-    public void setCanaddemployee(Boolean canaddemployee) {
-        this.canaddemployee = canaddemployee;
-    }
-
-    public Boolean getCanbejmtsadministrator() {
-        return canbejmtsadministrator;
-    }
-
-    public void setCanbejmtsadministrator(Boolean canbejmtsadministrator) {
-        this.canbejmtsadministrator = canbejmtsadministrator;
-    }
-
-    public Boolean getCandeleteclient() {
-        return candeleteclient;
-    }
-
-    public void setCandeleteclient(Boolean candeleteclient) {
-        this.candeleteclient = candeleteclient;
-    }
-
-    public Boolean getCandeletedepartment() {
-        return candeletedepartment;
-    }
-
-    public void setCandeletedepartment(Boolean candeletedepartment) {
-        this.candeletedepartment = candeletedepartment;
-    }
-
-    public Boolean getCandeleteemployee() {
-        return candeleteemployee;
-    }
-
-    public void setCandeleteemployee(Boolean candeleteemployee) {
-        this.candeleteemployee = candeleteemployee;
-    }
-
-    public Boolean getCandeletejob() {
-        return candeletejob;
-    }
-
-    public void setCandeletejob(Boolean candeletejob) {
-        this.candeletejob = candeletejob;
-    }
-
-    public Boolean getCaneditdepartmentjob() {
-        return caneditdepartmentjob;
-    }
-
-    public void setCaneditdepartmentjob(Boolean caneditdepartmentjob) {
-        this.caneditdepartmentjob = caneditdepartmentjob;
-    }
-
-    public Boolean getCaneditownjob() {
-        return caneditownjob;
-    }
-
-    public void setCaneditownjob(Boolean caneditownjob) {
-        this.caneditownjob = caneditownjob;
-    }
-
-    public Boolean getCanenterownjob() {
-        return canenterownjob;
-    }
-
-    public void setCanenterownjob(Boolean canenterownjob) {
-        this.canenterownjob = canenterownjob;
-    }
-
-    public Boolean getCanenterdepartmentjob() {
-        return canenterdepartmentjob;
-    }
-
-    public void setCanenterdepartmentjob(Boolean canenterdepartmentjob) {
-        this.canenterdepartmentjob = canenterdepartmentjob;
-    }
-
-    public Boolean getCaneditjob() {
-        return caneditjob;
-    }
-
-    public void setCaneditjob(Boolean caneditjob) {
-        this.caneditjob = caneditjob;
-    }
-
-    public Boolean getCanenterjob() {
-        return canenterjob;
-    }
-
-    public void setCanenterjob(Boolean canenterjob) {
-        this.canenterjob = canenterjob;
-    }
-
-    public Boolean getCanbesuperuser() {
-        return canbesuperuser;
-    }
-
-    public void setCanbesuperuser(Boolean canbesuperuser) {
-        this.canbesuperuser = canbesuperuser;
-    }
-
-    public Boolean getCanapprovejobcosting() {
-        return canapprovejobcosting;
-    }
-
-    public void setCanapprovejobcosting(Boolean canapprovejobcosting) {
-        this.canapprovejobcosting = canapprovejobcosting;
-    }
-
-    public Boolean getCanenterparentjob() {
-        return canenterparentjob;
-    }
-
-    public void setCanenterparentjob(Boolean canenterparentjob) {
-        this.canenterparentjob = canenterparentjob;
-    }
-
-    public Boolean getCaneditinvoicingandpayment() {
-        return caneditinvoicingandpayment;
-    }
-
-    public void setCaneditinvoicingandpayment(Boolean caneditinvoicingandpayment) {
-        this.caneditinvoicingandpayment = caneditinvoicingandpayment;
-    }
-
-    public Boolean getCanauthdetentionrequest() {
-        return canauthdetentionrequest;
-    }
-
-    public void setCanauthdetentionrequest(Boolean canauthdetentionrequest) {
-        this.canauthdetentionrequest = canauthdetentionrequest;
-    }
-
-    public Boolean getCanauthdetentionnotice() {
-        return canauthdetentionnotice;
-    }
-
-    public void setCanauthdetentionnotice(Boolean canauthdetentionnotice) {
-        this.canauthdetentionnotice = canauthdetentionnotice;
-    }
-
-    public Boolean getCanapprvreleaserequest() {
-        return canapprvreleaserequest;
-    }
-
-    public void setCanapprvreleaserequest(Boolean canapprvreleaserequest) {
-        this.canapprvreleaserequest = canapprvreleaserequest;
-    }
-
-    public Boolean getCanapplytaxestojobcosting() {
-        return canapplytaxestojobcosting;
-    }
-
-    public void setCanapplytaxestojobcosting(Boolean canapplytaxestojobcosting) {
-        this.canapplytaxestojobcosting = canapplytaxestojobcosting;
-    }
-
-    public Boolean getCanbefinancialadministrator() {
-        return canbefinancialadministrator;
-    }
-
-    public void setCanbefinancialadministrator(Boolean canbefinancialadministrator) {
-        this.canbefinancialadministrator = canbefinancialadministrator;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<JobManagerUser> getJobmanageruserList() {
-        return jobmanageruserList;
-    }
-
-    public void setJobmanageruserList(List<JobManagerUser> jobmanageruserList) {
-        this.jobmanageruserList = jobmanageruserList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<JobManagerUser> getJobmanageruserList1() {
-        return jobmanageruserList1;
-    }
-
-    public void setJobmanageruserList1(List<JobManagerUser> jobmanageruserList1) {
-        this.jobmanageruserList1 = jobmanageruserList1;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Department> getDepartmentList() {
-        return departmentList;
-    }
-
-    public void setDepartmentList(List<Department> departmentList) {
-        this.departmentList = departmentList;
     }
 
     @Override
@@ -425,7 +426,40 @@ public class Privilege implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Privilege[ id=" + id + " ]";
+        return name;
     }
-    
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public static Privilege findPrivilegeByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''").trim();
+
+            List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p "
+                    + "WHERE UPPER(p.name) "
+                    + "LIKE '" + newName.toUpperCase() + "%'", Privilege.class).getResultList();
+
+            if (privileges.size() > 0) {
+                // Make sure this is the current option stored in the database
+                Privilege privilege = privileges.get(0);
+                em.refresh(privilege);
+
+                return privilege;
+            }
+
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 }

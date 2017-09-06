@@ -5,93 +5,69 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
 @Entity
 @Table(name = "service")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Service.findAll", query = "SELECT s FROM Service s"),
-    @NamedQuery(name = "Service.findById", query = "SELECT s FROM Service s WHERE s.id = :id"),
-    @NamedQuery(name = "Service.findByName", query = "SELECT s FROM Service s WHERE s.name = :name")})
-public class Service implements Serializable {
+public class Service implements Serializable, BusinessEntity, Comparable, Converter {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Size(max = 255)
-    @Column(name = "NAME")
     private String name;
-    @ManyToMany(mappedBy = "serviceList")
-    private List<Servicerequest> servicerequestList;
-    @JoinTable(name = "service_department", joinColumns = {
-        @JoinColumn(name = "Service_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "departmentsOfferingService_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Department> departmentList;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Department> departmentsOfferingService;
 
     public Service() {
+        departmentsOfferingService = new ArrayList<Department>();
+    }
+    
+    public Service(String name) {
+        this.name = name;
+        departmentsOfferingService = new ArrayList<Department>();
     }
 
-    public Service(Long id) {
-        this.id = id;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public List<Department> getDepartmentsOfferingService() {
+        if (departmentsOfferingService != null) {
+            Collections.sort(departmentsOfferingService);
+        } else {
+            departmentsOfferingService = new ArrayList<Department>();
+        }
+        
+        return departmentsOfferingService;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Servicerequest> getServicerequestList() {
-        return servicerequestList;
-    }
-
-    public void setServicerequestList(List<Servicerequest> servicerequestList) {
-        this.servicerequestList = servicerequestList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Department> getDepartmentList() {
-        return departmentList;
-    }
-
-    public void setDepartmentList(List<Department> departmentList) {
-        this.departmentList = departmentList;
+    public void setDepartmentsOfferingService(List<Department> departmentsOfferingService) {
+        this.departmentsOfferingService = departmentsOfferingService;
     }
 
     @Override
@@ -116,7 +92,73 @@ public class Service implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Service[ id=" + id + " ]";
+        return name;
+    }
+
+    @Override
+    public String getName() {
+        if (name == null) {
+            name = "";
+        }
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.name, ((Service) o).name);
     }
     
+    public static Service findServiceByName(EntityManager em, String serviceName) {
+
+        try {
+            String newServiceName = serviceName.trim().replaceAll("'", "''");
+
+            List<Service> services = em.createQuery("SELECT s FROM Service s "
+                    + "WHERE UPPER(s.name) "
+                    + "= '" + newServiceName.toUpperCase() + "'", Service.class).getResultList();
+            if (services.size() > 0) {
+                return services.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+     public static List<Service> findServicesByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Service> services =
+                    em.createQuery("SELECT s FROM Service s where UPPER(s.name) like '"
+                    + newName.toUpperCase().trim() + "%' ORDER BY s.name", Service.class).getResultList();
+            return services;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<Service>();
+        }
+    }
+
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+         Service service = new Service();
+
+        if (value != null) {
+            service.setName(value);
+        }
+
+        return service;
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+        return ((Service)value).getName();
+    }
 }

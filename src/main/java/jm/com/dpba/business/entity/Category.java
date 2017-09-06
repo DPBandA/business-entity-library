@@ -6,99 +6,60 @@ package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
 @Entity
 @Table(name = "category")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c"),
-    @NamedQuery(name = "Category.findById", query = "SELECT c FROM Category c WHERE c.id = :id"),
-    @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :name"),
-    @NamedQuery(name = "Category.findByType", query = "SELECT c FROM Category c WHERE c.type = :type")})
-public class Category implements Serializable {
+public class Category implements BusinessEntity, Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
-    private Long id;
-    @Size(max = 255)
-    @Column(name = "NAME")
-    private String name;
-    @Size(max = 255)
-    @Column(name = "TYPE")
-    private String type;
-    @ManyToMany(mappedBy = "categoryList")
-    private List<Foodproduct> foodproductList;
-    @ManyToMany(mappedBy = "categoryList")
-    private List<Foodfactory> foodfactoryList;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id = null;
+    private String name = "";
+    private String type = "";
 
-    public Category() {
-    }
-
-    public Category(Long id) {
-        this.id = id;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getName() {
+        if (name == null) {
+            name = "";
+        }
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
     public String getType() {
+        if (type == null) {
+            type = "";
+        }
         return type;
     }
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Foodproduct> getFoodproductList() {
-        return foodproductList;
-    }
-
-    public void setFoodproductList(List<Foodproduct> foodproductList) {
-        this.foodproductList = foodproductList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Foodfactory> getFoodfactoryList() {
-        return foodfactoryList;
-    }
-
-    public void setFoodfactoryList(List<Foodfactory> foodfactoryList) {
-        this.foodfactoryList = foodfactoryList;
     }
 
     @Override
@@ -121,9 +82,24 @@ public class Category implements Serializable {
         return true;
     }
 
+    public static List<Category> findCategoriesByType(EntityManager em, String type) {
+
+        try {
+            String newType = type.trim().replaceAll("'", "''");
+
+            return em.createQuery("SELECT c FROM Category c "
+                    + "WHERE UPPER(c.type) "
+                    + "= '" + newType.toUpperCase() + "' ORDER BY c.name", Category.class).getResultList();
+
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Category[ id=" + id + " ]";
+        return "jm.org.bsj.entity.Category[id=" + id + "]";
     }
-    
 }

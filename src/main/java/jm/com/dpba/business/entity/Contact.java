@@ -5,143 +5,103 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
+import java.text.Collator;
+import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import jm.com.dpba.business.entity.utils.BusinessEntityUtils;
+
 
 /**
  *
- * @author desbenn
+ * @author DBennett
  */
 @Entity
 @Table(name = "contact")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Contact.findAll", query = "SELECT c FROM Contact c"),
-    @NamedQuery(name = "Contact.findById", query = "SELECT c FROM Contact c WHERE c.id = :id"),
-    @NamedQuery(name = "Contact.findByPosition", query = "SELECT c FROM Contact c WHERE c.position = :position"),
-    @NamedQuery(name = "Contact.findByMiddlename", query = "SELECT c FROM Contact c WHERE c.middlename = :middlename"),
-    @NamedQuery(name = "Contact.findByNamesuffix", query = "SELECT c FROM Contact c WHERE c.namesuffix = :namesuffix"),
-    @NamedQuery(name = "Contact.findByLastname", query = "SELECT c FROM Contact c WHERE c.lastname = :lastname"),
-    @NamedQuery(name = "Contact.findBySex", query = "SELECT c FROM Contact c WHERE c.sex = :sex"),
-    @NamedQuery(name = "Contact.findByType", query = "SELECT c FROM Contact c WHERE c.type = :type"),
-    @NamedQuery(name = "Contact.findByTitle", query = "SELECT c FROM Contact c WHERE c.title = :title"),
-    @NamedQuery(name = "Contact.findByName", query = "SELECT c FROM Contact c WHERE c.name = :name"),
-    @NamedQuery(name = "Contact.findByNotes", query = "SELECT c FROM Contact c WHERE c.notes = :notes"),
-    @NamedQuery(name = "Contact.findBySalutation", query = "SELECT c FROM Contact c WHERE c.salutation = :salutation"),
-    @NamedQuery(name = "Contact.findByFirstname", query = "SELECT c FROM Contact c WHERE c.firstname = :firstname")})
-public class Contact implements Serializable {
+public class Contact implements Person, BusinessEntity, Serializable, Comparable, Converter {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Size(max = 255)
-    @Column(name = "POSITION")
-    private String position;
-    @Size(max = 255)
-    @Column(name = "MIDDLENAME")
-    private String middlename;
-    @Size(max = 255)
-    @Column(name = "NAMESUFFIX")
-    private String namesuffix;
-    @Size(max = 255)
-    @Column(name = "LASTNAME")
-    private String lastname;
-    @Size(max = 255)
-    @Column(name = "SEX")
-    private String sex;
-    @Size(max = 255)
-    @Column(name = "TYPE")
-    private String type;
-    @Size(max = 255)
-    @Column(name = "TITLE")
-    private String title;
-    @Size(max = 255)
-    @Column(name = "NAME")
     private String name;
-    @Size(max = 255)
-    @Column(name = "NOTES")
-    private String notes;
-    @Size(max = 255)
-    @Column(name = "SALUTATION")
+    private String type;
+    private String sex;
     private String salutation;
-    @Size(max = 255)
-    @Column(name = "FIRSTNAME")
-    private String firstname;
-    @ManyToMany(mappedBy = "contactList")
-    private List<Foodfactory> foodfactoryList;
-    @ManyToMany(mappedBy = "contactList")
-    private List<Client> clientList;
-    @ManyToMany(mappedBy = "contactList")
-    private List<Petrolstation> petrolstationList;
-    @ManyToMany(mappedBy = "contactList")
-    private List<Petrolcompany> petrolcompanyList;
-    @JoinTable(name = "contact_phonenumber", joinColumns = {
-        @JoinColumn(name = "Contact_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "phoneNumbers_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Phonenumber> phonenumberList;
-    @ManyToMany(mappedBy = "contactList")
-    private List<Scalecompany> scalecompanyList;
-    @ManyToMany(mappedBy = "contactList")
-    private List<Business> businessList;
-    @JoinTable(name = "contact_address", joinColumns = {
-        @JoinColumn(name = "Contact_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "addresses_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Address> addressList;
-    @OneToMany(mappedBy = "representativeId")
-    private List<Samplerequest> samplerequestList;
-    @OneToMany(mappedBy = "retailrepresentativeId")
-    private List<Marketproductsurvey> marketproductsurveyList;
-    @JoinColumn(name = "INTERNET_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Internet internetId;
-    @OneToMany(mappedBy = "brokerrepresentativeId")
-    private List<Compliancesurvey> compliancesurveyList;
-    @OneToMany(mappedBy = "consigneerepresentativeId")
-    private List<Compliancesurvey> compliancesurveyList1;
-    @OneToMany(mappedBy = "retailrepresentativeId")
-    private List<Compliancesurvey> compliancesurveyList2;
-    @OneToMany(mappedBy = "contactId")
-    private List<Servicerequest> servicerequestList;
-    @OneToMany(mappedBy = "factoryrepresentativeId")
-    private List<Factoryinspection> factoryinspectionList;
-    @OneToMany(mappedBy = "authorizedbyId")
-    private List<Portofentrydetention> portofentrydetentionList;
-    @OneToMany(mappedBy = "brokerrepresentativeId")
-    private List<Portofentrydetention> portofentrydetentionList1;
-    @OneToMany(mappedBy = "consigneerepresentativeId")
-    private List<Portofentrydetention> portofentrydetentionList2;
+    private String position;
+    private String title;
+    private String nameSuffix;
+    private String firstName;
+    private String lastName;
+    private String middleName;
+    private String notes;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Internet internet;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<PhoneNumber> phoneNumbers;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Address> addresses;
 
     public Contact() {
+        phoneNumbers = new ArrayList<>();
+        addresses = new ArrayList<>();
     }
 
-    public Contact(Long id) {
-        this.id = id;
+    public Contact(String name) {
+        this.name = name;
+        phoneNumbers = new ArrayList<>();
+        addresses = new ArrayList<>();
     }
 
+    public Contact(Contact src) {
+        doCopy(src);
+    }
+
+    public final void doCopy(Contact src) {
+        phoneNumbers = new ArrayList<>();
+        addresses = new ArrayList<>();
+        this.name = src.name;
+        this.type = src.type;
+        this.sex = src.sex;
+        this.salutation = src.salutation;
+        this.position = src.position;
+        this.title = src.title;
+        this.nameSuffix = src.nameSuffix;
+        this.firstName = src.firstName;
+        this.lastName = src.lastName;
+        this.middleName = src.middleName;
+        this.notes = src.notes;
+        for (PhoneNumber phoneNumber : src.phoneNumbers) {
+            phoneNumbers.add(new PhoneNumber(phoneNumber));
+        }
+        for (Address address : src.addresses) {
+            addresses.add(new Address(address));
+        }
+        if (src.internet != null) {
+            internet = new Internet(src.internet);
+        }
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -154,70 +114,6 @@ public class Contact implements Serializable {
         this.position = position;
     }
 
-    public String getMiddlename() {
-        return middlename;
-    }
-
-    public void setMiddlename(String middlename) {
-        this.middlename = middlename;
-    }
-
-    public String getNamesuffix() {
-        return namesuffix;
-    }
-
-    public void setNamesuffix(String namesuffix) {
-        this.namesuffix = namesuffix;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
     public String getSalutation() {
         return salutation;
     }
@@ -226,200 +122,87 @@ public class Contact implements Serializable {
         this.salutation = salutation;
     }
 
-    public String getFirstname() {
-        return firstname;
+    @XmlTransient
+    public List<Address> getAddresses() {
+        return addresses;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    public Internet getInternet() {
+        if (internet == null) {
+            internet = new Internet();
+        }
+        return internet;
+    }
+
+    public void setInternet(Internet internet) {
+        this.internet = internet;
     }
 
     @XmlTransient
-    @JsonIgnore
-    public List<Foodfactory> getFoodfactoryList() {
-        return foodfactoryList;
+    public List<PhoneNumber> getPhoneNumbers() {
+        if (phoneNumbers == null) {
+            phoneNumbers = new ArrayList<>();
+        }
+
+        return phoneNumbers;
     }
 
-    public void setFoodfactoryList(List<Foodfactory> foodfactoryList) {
-        this.foodfactoryList = foodfactoryList;
+    public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<Client> getClientList() {
-        return clientList;
+    public PhoneNumber getMainPhoneNumber() {
+        if (!phoneNumbers.isEmpty()) {
+            return phoneNumbers.get(0);
+        } else {
+            phoneNumbers.add(new PhoneNumber());
+            return phoneNumbers.get(0);
+        }
     }
 
-    public void setClientList(List<Client> clientList) {
-        this.clientList = clientList;
+    public void setMainPhoneNumber(PhoneNumber phoneNumber) {
+//        if (!phoneNumbers.isEmpty()) {
+//            phoneNumbers.set(0, phoneNumber);
+//        }
+//        if (phoneNumber.getId() == null) {
+//            phoneNumbers.set(0, phoneNumber);
+//        }
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<Petrolstation> getPetrolstationList() {
-        return petrolstationList;
+    public PhoneNumber getMainFaxNumber() {
+        if (!phoneNumbers.isEmpty()) {
+            if (phoneNumbers.size() > 1) {
+                return phoneNumbers.get(1);
+            } else {
+                phoneNumbers.add(1, new PhoneNumber());
+                return phoneNumbers.get(1);
+            }
+        } else {
+            phoneNumbers.add(0, new PhoneNumber());
+            phoneNumbers.add(1, new PhoneNumber());
+            return phoneNumbers.get(1);
+        }
     }
 
-    public void setPetrolstationList(List<Petrolstation> petrolstationList) {
-        this.petrolstationList = petrolstationList;
+    public void setMainFaxNumber(PhoneNumber phoneNumber) {
+//        if (!phoneNumbers.isEmpty()) {
+//            phoneNumbers.set(1, phoneNumber);
+//        }
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<Petrolcompany> getPetrolcompanyList() {
-        return petrolcompanyList;
+    public String getType() {
+        if (type == null) {
+            type = "";
+        }
+        return type;
     }
 
-    public void setPetrolcompanyList(List<Petrolcompany> petrolcompanyList) {
-        this.petrolcompanyList = petrolcompanyList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Phonenumber> getPhonenumberList() {
-        return phonenumberList;
-    }
-
-    public void setPhonenumberList(List<Phonenumber> phonenumberList) {
-        this.phonenumberList = phonenumberList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Scalecompany> getScalecompanyList() {
-        return scalecompanyList;
-    }
-
-    public void setScalecompanyList(List<Scalecompany> scalecompanyList) {
-        this.scalecompanyList = scalecompanyList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Business> getBusinessList() {
-        return businessList;
-    }
-
-    public void setBusinessList(List<Business> businessList) {
-        this.businessList = businessList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Address> getAddressList() {
-        return addressList;
-    }
-
-    public void setAddressList(List<Address> addressList) {
-        this.addressList = addressList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Samplerequest> getSamplerequestList() {
-        return samplerequestList;
-    }
-
-    public void setSamplerequestList(List<Samplerequest> samplerequestList) {
-        this.samplerequestList = samplerequestList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Marketproductsurvey> getMarketproductsurveyList() {
-        return marketproductsurveyList;
-    }
-
-    public void setMarketproductsurveyList(List<Marketproductsurvey> marketproductsurveyList) {
-        this.marketproductsurveyList = marketproductsurveyList;
-    }
-
-    public Internet getInternetId() {
-        return internetId;
-    }
-
-    public void setInternetId(Internet internetId) {
-        this.internetId = internetId;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList() {
-        return compliancesurveyList;
-    }
-
-    public void setCompliancesurveyList(List<Compliancesurvey> compliancesurveyList) {
-        this.compliancesurveyList = compliancesurveyList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList1() {
-        return compliancesurveyList1;
-    }
-
-    public void setCompliancesurveyList1(List<Compliancesurvey> compliancesurveyList1) {
-        this.compliancesurveyList1 = compliancesurveyList1;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Compliancesurvey> getCompliancesurveyList2() {
-        return compliancesurveyList2;
-    }
-
-    public void setCompliancesurveyList2(List<Compliancesurvey> compliancesurveyList2) {
-        this.compliancesurveyList2 = compliancesurveyList2;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Servicerequest> getServicerequestList() {
-        return servicerequestList;
-    }
-
-    public void setServicerequestList(List<Servicerequest> servicerequestList) {
-        this.servicerequestList = servicerequestList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Factoryinspection> getFactoryinspectionList() {
-        return factoryinspectionList;
-    }
-
-    public void setFactoryinspectionList(List<Factoryinspection> factoryinspectionList) {
-        this.factoryinspectionList = factoryinspectionList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Portofentrydetention> getPortofentrydetentionList() {
-        return portofentrydetentionList;
-    }
-
-    public void setPortofentrydetentionList(List<Portofentrydetention> portofentrydetentionList) {
-        this.portofentrydetentionList = portofentrydetentionList;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Portofentrydetention> getPortofentrydetentionList1() {
-        return portofentrydetentionList1;
-    }
-
-    public void setPortofentrydetentionList1(List<Portofentrydetention> portofentrydetentionList1) {
-        this.portofentrydetentionList1 = portofentrydetentionList1;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Portofentrydetention> getPortofentrydetentionList2() {
-        return portofentrydetentionList2;
-    }
-
-    public void setPortofentrydetentionList2(List<Portofentrydetention> portofentrydetentionList2) {
-        this.portofentrydetentionList2 = portofentrydetentionList2;
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override
@@ -444,7 +227,177 @@ public class Contact implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Contact[ id=" + id + " ]";
+        return BusinessEntityUtils.getPersonFullName(this, Boolean.TRUE);
     }
-    
+
+    @Override
+    public String getSex() {
+        return sex;
+    }
+
+    @Override
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    @Override
+    public String getFirstName() {
+        if (firstName == null) {
+            firstName = "";
+        }
+        return firstName;
+    }
+
+    @Override
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    @Override
+    public String getLastName() {
+        if (lastName == null) {
+            lastName = "";
+        }
+        return lastName;
+    }
+
+    @Override
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    @Override
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    @Override
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    @Override
+    public String getNotes() {
+        return notes;
+    }
+
+    @Override
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Override
+    public String getNameSuffix() {
+        return nameSuffix;
+    }
+
+    @Override
+    public void setNameSuffix(String nameSuffix) {
+        this.nameSuffix = nameSuffix;
+    }
+
+    @Override
+    public String getName() {
+        if (name == null) {
+            name = toString();
+        }
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if ((((Contact) o).id != null) && (this.id != null)) {
+            return Collator.getInstance().compare(
+                    new Long(((Contact) o).id).toString(),
+                    new Long(this.id).toString());
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Gets first contact found with the given firstname and lastname
+     *
+     * @param em
+     * @param firstName
+     * @param lastName
+     * @return
+     */
+    public static Contact findContactByName(EntityManager em, String firstName, String lastName) {
+
+        if (firstName != null && lastName != null) {
+            String newFirstName = firstName.replaceAll("'", "''").trim().toUpperCase();
+            String newLastName = lastName.replaceAll("'", "''").trim().toUpperCase();
+            try {
+                List<Contact> contacts = em.createQuery("SELECT c FROM Contact c "
+                        + "WHERE UPPER(c.firstName) "
+                        + "= '" + newFirstName + "' AND UPPER(c.lastName) = '" + newLastName + "'",
+                        Contact.class).getResultList();
+                if (contacts.size() > 0) {
+                    return contacts.get(0);
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    public static Contact findDefaultContact(
+            EntityManager em,
+            String firstName,
+            String lastName,
+            Boolean useTransaction) {
+        Contact contact = Contact.findContactByName(em, firstName, lastName);
+
+        // create employee if it does not exist
+        if (contact == null) {
+            contact = new Contact();
+            contact.setFirstName(firstName);
+            contact.setLastName(lastName);
+            contact.setInternet(Internet.findDefaultInternet(em, "--", useTransaction));
+
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, contact);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, contact);
+            }
+        }
+
+        return contact;
+    }
+
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        Contact contact = new Contact();
+
+        if (value != null) {
+            contact.setName(value);
+        }
+
+        return contact;
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+        return ((Contact) value).getName();
+    }
 }

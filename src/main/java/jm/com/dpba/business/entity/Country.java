@@ -5,72 +5,52 @@
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
 @Entity
 @Table(name = "country")
+@NamedQueries({   
+    @NamedQuery(name = "findAllCountries", query = "SELECT c FROM Country c ORDER BY c.name")   
+})
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Country.findAll", query = "SELECT c FROM Country c"),
-    @NamedQuery(name = "Country.findById", query = "SELECT c FROM Country c WHERE c.id = :id"),
-    @NamedQuery(name = "Country.findByName", query = "SELECT c FROM Country c WHERE c.name = :name"),
-    @NamedQuery(name = "Country.findByTwodigitcode", query = "SELECT c FROM Country c WHERE c.twodigitcode = :twodigitcode")})
-public class Country implements Serializable {
+public class Country implements Serializable, BusinessEntity {
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Size(max = 255)
-    @Column(name = "NAME")
     private String name;
-    @Size(max = 255)
-    @Column(name = "TWODIGITCODE")
-    private String twodigitcode;
+    private String twoDigitCode;
 
-    public Country() {
-    }
-
-    public Country(Long id) {
-        this.id = id;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTwoDigitCode() {
+        return twoDigitCode;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTwodigitcode() {
-        return twodigitcode;
-    }
-
-    public void setTwodigitcode(String twodigitcode) {
-        this.twodigitcode = twodigitcode;
+    public void setTwoDigitCode(String twoDigitCode) {
+        this.twoDigitCode = twoDigitCode;
     }
 
     @Override
@@ -95,7 +75,44 @@ public class Country implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.utils.Country[ id=" + id + " ]";
+        return "jm.com.dpbennett.entity.Country[ id=" + id + " ]";
     }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public static List<Country> findAllCountries(EntityManager em) {
+
+        try {
+            List<Country> countries = em.createNamedQuery("findAllCountries", Country.class).getResultList();
+            return countries;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<Country> findCountriesByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Country> countries =
+                    em.createQuery("SELECT c FROM Country c where UPPER(c.name) like '%"
+                    + newName.toUpperCase().trim() + "%' ORDER BY c.name", Country.class).getResultList();
+            return countries;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     
 }
