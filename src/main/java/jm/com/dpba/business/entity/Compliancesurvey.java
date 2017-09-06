@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -13,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -20,8 +20,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -31,54 +34,54 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "compliancesurvey")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Compliancesurvey.findAll", query = "SELECT c FROM Compliancesurvey c")
-    , @NamedQuery(name = "Compliancesurvey.findById", query = "SELECT c FROM Compliancesurvey c WHERE c.id = :id")
-    , @NamedQuery(name = "Compliancesurvey.findByApprovedbysigdateforreleaserequestpoe", query = "SELECT c FROM Compliancesurvey c WHERE c.approvedbysigdateforreleaserequestpoe = :approvedbysigdateforreleaserequestpoe")
-    , @NamedQuery(name = "Compliancesurvey.findByAuthsigdatefordetentionrequestpoe", query = "SELECT c FROM Compliancesurvey c WHERE c.authsigdatefordetentionrequestpoe = :authsigdatefordetentionrequestpoe")
-    , @NamedQuery(name = "Compliancesurvey.findByAuthsigdatefornoticeofdentiondm", query = "SELECT c FROM Compliancesurvey c WHERE c.authsigdatefornoticeofdentiondm = :authsigdatefornoticeofdentiondm")
-    , @NamedQuery(name = "Compliancesurvey.findByAuthsigdatefornoticeofreleasefromdentiondm", query = "SELECT c FROM Compliancesurvey c WHERE c.authsigdatefornoticeofreleasefromdentiondm = :authsigdatefornoticeofreleasefromdentiondm")
-    , @NamedQuery(name = "Compliancesurvey.findByComments", query = "SELECT c FROM Compliancesurvey c WHERE c.comments = :comments")
-    , @NamedQuery(name = "Compliancesurvey.findByCompanytypes", query = "SELECT c FROM Compliancesurvey c WHERE c.companytypes = :companytypes")
-    , @NamedQuery(name = "Compliancesurvey.findByDateedited", query = "SELECT c FROM Compliancesurvey c WHERE c.dateedited = :dateedited")
-    , @NamedQuery(name = "Compliancesurvey.findByDateofdetention", query = "SELECT c FROM Compliancesurvey c WHERE c.dateofdetention = :dateofdetention")
-    , @NamedQuery(name = "Compliancesurvey.findByDateofsurvey", query = "SELECT c FROM Compliancesurvey c WHERE c.dateofsurvey = :dateofsurvey")
-    , @NamedQuery(name = "Compliancesurvey.findByDatesigned", query = "SELECT c FROM Compliancesurvey c WHERE c.datesigned = :datesigned")
-    , @NamedQuery(name = "Compliancesurvey.findByDistributor", query = "SELECT c FROM Compliancesurvey c WHERE c.distributor = :distributor")
-    , @NamedQuery(name = "Compliancesurvey.findByDomesticmarketdetentionnumber", query = "SELECT c FROM Compliancesurvey c WHERE c.domesticmarketdetentionnumber = :domesticmarketdetentionnumber")
-    , @NamedQuery(name = "Compliancesurvey.findByFullrelease", query = "SELECT c FROM Compliancesurvey c WHERE c.fullrelease = :fullrelease")
-    , @NamedQuery(name = "Compliancesurvey.findByInspectionpoint", query = "SELECT c FROM Compliancesurvey c WHERE c.inspectionpoint = :inspectionpoint")
-    , @NamedQuery(name = "Compliancesurvey.findByInspectorsigdateforsamplerequestpoe", query = "SELECT c FROM Compliancesurvey c WHERE c.inspectorsigdateforsamplerequestpoe = :inspectorsigdateforsamplerequestpoe")
-    , @NamedQuery(name = "Compliancesurvey.findByJobnumber", query = "SELECT c FROM Compliancesurvey c WHERE c.jobnumber = :jobnumber")
-    , @NamedQuery(name = "Compliancesurvey.findByName", query = "SELECT c FROM Compliancesurvey c WHERE c.name = :name")
-    , @NamedQuery(name = "Compliancesurvey.findByNoticeofdetentionissuedfordomesticmarket", query = "SELECT c FROM Compliancesurvey c WHERE c.noticeofdetentionissuedfordomesticmarket = :noticeofdetentionissuedfordomesticmarket")
-    , @NamedQuery(name = "Compliancesurvey.findByNoticeofreleasefromdetentionissuedfordomesticmarket", query = "SELECT c FROM Compliancesurvey c WHERE c.noticeofreleasefromdetentionissuedfordomesticmarket = :noticeofreleasefromdetentionissuedfordomesticmarket")
-    , @NamedQuery(name = "Compliancesurvey.findByOthercompanytypes", query = "SELECT c FROM Compliancesurvey c WHERE c.othercompanytypes = :othercompanytypes")
-    , @NamedQuery(name = "Compliancesurvey.findByPortofentry", query = "SELECT c FROM Compliancesurvey c WHERE c.portofentry = :portofentry")
-    , @NamedQuery(name = "Compliancesurvey.findByPortofentrydetentionnumber", query = "SELECT c FROM Compliancesurvey c WHERE c.portofentrydetentionnumber = :portofentrydetentionnumber")
-    , @NamedQuery(name = "Compliancesurvey.findByPreparedbysigdateforreleaserequestpoe", query = "SELECT c FROM Compliancesurvey c WHERE c.preparedbysigdateforreleaserequestpoe = :preparedbysigdateforreleaserequestpoe")
-    , @NamedQuery(name = "Compliancesurvey.findByReasonfordetention", query = "SELECT c FROM Compliancesurvey c WHERE c.reasonfordetention = :reasonfordetention")
-    , @NamedQuery(name = "Compliancesurvey.findByReferencenumber", query = "SELECT c FROM Compliancesurvey c WHERE c.referencenumber = :referencenumber")
-    , @NamedQuery(name = "Compliancesurvey.findByReleasedatedomesticmarket", query = "SELECT c FROM Compliancesurvey c WHERE c.releasedatedomesticmarket = :releasedatedomesticmarket")
-    , @NamedQuery(name = "Compliancesurvey.findByReleasefromdetentionreportdate", query = "SELECT c FROM Compliancesurvey c WHERE c.releasefromdetentionreportdate = :releasefromdetentionreportdate")
-    , @NamedQuery(name = "Compliancesurvey.findByReleaserequestreportdate", query = "SELECT c FROM Compliancesurvey c WHERE c.releaserequestreportdate = :releaserequestreportdate")
-    , @NamedQuery(name = "Compliancesurvey.findByRequestfordetentionissuedforportofentry", query = "SELECT c FROM Compliancesurvey c WHERE c.requestfordetentionissuedforportofentry = :requestfordetentionissuedforportofentry")
-    , @NamedQuery(name = "Compliancesurvey.findByRequestforreleaseissuedforportofentry", query = "SELECT c FROM Compliancesurvey c WHERE c.requestforreleaseissuedforportofentry = :requestforreleaseissuedforportofentry")
-    , @NamedQuery(name = "Compliancesurvey.findByRequestforsampleissuedforportofentry", query = "SELECT c FROM Compliancesurvey c WHERE c.requestforsampleissuedforportofentry = :requestforsampleissuedforportofentry")
-    , @NamedQuery(name = "Compliancesurvey.findByRetailer", query = "SELECT c FROM Compliancesurvey c WHERE c.retailer = :retailer")
-    , @NamedQuery(name = "Compliancesurvey.findBySamplestobecollected", query = "SELECT c FROM Compliancesurvey c WHERE c.samplestobecollected = :samplestobecollected")
-    , @NamedQuery(name = "Compliancesurvey.findBySamplestobedisposed", query = "SELECT c FROM Compliancesurvey c WHERE c.samplestobedisposed = :samplestobedisposed")
-    , @NamedQuery(name = "Compliancesurvey.findBySurveyendtime", query = "SELECT c FROM Compliancesurvey c WHERE c.surveyendtime = :surveyendtime")
-    , @NamedQuery(name = "Compliancesurvey.findBySurveylocationtype", query = "SELECT c FROM Compliancesurvey c WHERE c.surveylocationtype = :surveylocationtype")
-    , @NamedQuery(name = "Compliancesurvey.findBySurveystarttime", query = "SELECT c FROM Compliancesurvey c WHERE c.surveystarttime = :surveystarttime")
-    , @NamedQuery(name = "Compliancesurvey.findBySurveytype", query = "SELECT c FROM Compliancesurvey c WHERE c.surveytype = :surveytype")
-    , @NamedQuery(name = "Compliancesurvey.findByTypeofestablishment", query = "SELECT c FROM Compliancesurvey c WHERE c.typeofestablishment = :typeofestablishment")
-    , @NamedQuery(name = "Compliancesurvey.findByTypeofportofentry", query = "SELECT c FROM Compliancesurvey c WHERE c.typeofportofentry = :typeofportofentry")
-    , @NamedQuery(name = "Compliancesurvey.findByOtherinspectionlocation", query = "SELECT c FROM Compliancesurvey c WHERE c.otherinspectionlocation = :otherinspectionlocation")})
+    @NamedQuery(name = "Compliancesurvey.findAll", query = "SELECT c FROM Compliancesurvey c"),
+    @NamedQuery(name = "Compliancesurvey.findById", query = "SELECT c FROM Compliancesurvey c WHERE c.id = :id"),
+    @NamedQuery(name = "Compliancesurvey.findByApprovedbysigdateforreleaserequestpoe", query = "SELECT c FROM Compliancesurvey c WHERE c.approvedbysigdateforreleaserequestpoe = :approvedbysigdateforreleaserequestpoe"),
+    @NamedQuery(name = "Compliancesurvey.findByAuthsigdatefordetentionrequestpoe", query = "SELECT c FROM Compliancesurvey c WHERE c.authsigdatefordetentionrequestpoe = :authsigdatefordetentionrequestpoe"),
+    @NamedQuery(name = "Compliancesurvey.findByAuthsigdatefornoticeofdentiondm", query = "SELECT c FROM Compliancesurvey c WHERE c.authsigdatefornoticeofdentiondm = :authsigdatefornoticeofdentiondm"),
+    @NamedQuery(name = "Compliancesurvey.findByAuthsigdatefornoticeofreleasefromdentiondm", query = "SELECT c FROM Compliancesurvey c WHERE c.authsigdatefornoticeofreleasefromdentiondm = :authsigdatefornoticeofreleasefromdentiondm"),
+    @NamedQuery(name = "Compliancesurvey.findByComments", query = "SELECT c FROM Compliancesurvey c WHERE c.comments = :comments"),
+    @NamedQuery(name = "Compliancesurvey.findByCompanytypes", query = "SELECT c FROM Compliancesurvey c WHERE c.companytypes = :companytypes"),
+    @NamedQuery(name = "Compliancesurvey.findByDateedited", query = "SELECT c FROM Compliancesurvey c WHERE c.dateedited = :dateedited"),
+    @NamedQuery(name = "Compliancesurvey.findByDateofdetention", query = "SELECT c FROM Compliancesurvey c WHERE c.dateofdetention = :dateofdetention"),
+    @NamedQuery(name = "Compliancesurvey.findByDateofsurvey", query = "SELECT c FROM Compliancesurvey c WHERE c.dateofsurvey = :dateofsurvey"),
+    @NamedQuery(name = "Compliancesurvey.findByDatesigned", query = "SELECT c FROM Compliancesurvey c WHERE c.datesigned = :datesigned"),
+    @NamedQuery(name = "Compliancesurvey.findByDistributor", query = "SELECT c FROM Compliancesurvey c WHERE c.distributor = :distributor"),
+    @NamedQuery(name = "Compliancesurvey.findByDomesticmarketdetentionnumber", query = "SELECT c FROM Compliancesurvey c WHERE c.domesticmarketdetentionnumber = :domesticmarketdetentionnumber"),
+    @NamedQuery(name = "Compliancesurvey.findByFullrelease", query = "SELECT c FROM Compliancesurvey c WHERE c.fullrelease = :fullrelease"),
+    @NamedQuery(name = "Compliancesurvey.findByInspectionpoint", query = "SELECT c FROM Compliancesurvey c WHERE c.inspectionpoint = :inspectionpoint"),
+    @NamedQuery(name = "Compliancesurvey.findByInspectorsigdateforsamplerequestpoe", query = "SELECT c FROM Compliancesurvey c WHERE c.inspectorsigdateforsamplerequestpoe = :inspectorsigdateforsamplerequestpoe"),
+    @NamedQuery(name = "Compliancesurvey.findByJobnumber", query = "SELECT c FROM Compliancesurvey c WHERE c.jobnumber = :jobnumber"),
+    @NamedQuery(name = "Compliancesurvey.findByName", query = "SELECT c FROM Compliancesurvey c WHERE c.name = :name"),
+    @NamedQuery(name = "Compliancesurvey.findByNoticeofdetentionissuedfordomesticmarket", query = "SELECT c FROM Compliancesurvey c WHERE c.noticeofdetentionissuedfordomesticmarket = :noticeofdetentionissuedfordomesticmarket"),
+    @NamedQuery(name = "Compliancesurvey.findByNoticeofreleasefromdetentionissuedfordomesticmarket", query = "SELECT c FROM Compliancesurvey c WHERE c.noticeofreleasefromdetentionissuedfordomesticmarket = :noticeofreleasefromdetentionissuedfordomesticmarket"),
+    @NamedQuery(name = "Compliancesurvey.findByOthercompanytypes", query = "SELECT c FROM Compliancesurvey c WHERE c.othercompanytypes = :othercompanytypes"),
+    @NamedQuery(name = "Compliancesurvey.findByPortofentry", query = "SELECT c FROM Compliancesurvey c WHERE c.portofentry = :portofentry"),
+    @NamedQuery(name = "Compliancesurvey.findByPortofentrydetentionnumber", query = "SELECT c FROM Compliancesurvey c WHERE c.portofentrydetentionnumber = :portofentrydetentionnumber"),
+    @NamedQuery(name = "Compliancesurvey.findByPreparedbysigdateforreleaserequestpoe", query = "SELECT c FROM Compliancesurvey c WHERE c.preparedbysigdateforreleaserequestpoe = :preparedbysigdateforreleaserequestpoe"),
+    @NamedQuery(name = "Compliancesurvey.findByReasonfordetention", query = "SELECT c FROM Compliancesurvey c WHERE c.reasonfordetention = :reasonfordetention"),
+    @NamedQuery(name = "Compliancesurvey.findByReferencenumber", query = "SELECT c FROM Compliancesurvey c WHERE c.referencenumber = :referencenumber"),
+    @NamedQuery(name = "Compliancesurvey.findByReleasedatedomesticmarket", query = "SELECT c FROM Compliancesurvey c WHERE c.releasedatedomesticmarket = :releasedatedomesticmarket"),
+    @NamedQuery(name = "Compliancesurvey.findByReleasefromdetentionreportdate", query = "SELECT c FROM Compliancesurvey c WHERE c.releasefromdetentionreportdate = :releasefromdetentionreportdate"),
+    @NamedQuery(name = "Compliancesurvey.findByReleaserequestreportdate", query = "SELECT c FROM Compliancesurvey c WHERE c.releaserequestreportdate = :releaserequestreportdate"),
+    @NamedQuery(name = "Compliancesurvey.findByRequestfordetentionissuedforportofentry", query = "SELECT c FROM Compliancesurvey c WHERE c.requestfordetentionissuedforportofentry = :requestfordetentionissuedforportofentry"),
+    @NamedQuery(name = "Compliancesurvey.findByRequestforreleaseissuedforportofentry", query = "SELECT c FROM Compliancesurvey c WHERE c.requestforreleaseissuedforportofentry = :requestforreleaseissuedforportofentry"),
+    @NamedQuery(name = "Compliancesurvey.findByRequestforsampleissuedforportofentry", query = "SELECT c FROM Compliancesurvey c WHERE c.requestforsampleissuedforportofentry = :requestforsampleissuedforportofentry"),
+    @NamedQuery(name = "Compliancesurvey.findByRetailer", query = "SELECT c FROM Compliancesurvey c WHERE c.retailer = :retailer"),
+    @NamedQuery(name = "Compliancesurvey.findBySamplestobecollected", query = "SELECT c FROM Compliancesurvey c WHERE c.samplestobecollected = :samplestobecollected"),
+    @NamedQuery(name = "Compliancesurvey.findBySamplestobedisposed", query = "SELECT c FROM Compliancesurvey c WHERE c.samplestobedisposed = :samplestobedisposed"),
+    @NamedQuery(name = "Compliancesurvey.findBySurveyendtime", query = "SELECT c FROM Compliancesurvey c WHERE c.surveyendtime = :surveyendtime"),
+    @NamedQuery(name = "Compliancesurvey.findBySurveylocationtype", query = "SELECT c FROM Compliancesurvey c WHERE c.surveylocationtype = :surveylocationtype"),
+    @NamedQuery(name = "Compliancesurvey.findBySurveystarttime", query = "SELECT c FROM Compliancesurvey c WHERE c.surveystarttime = :surveystarttime"),
+    @NamedQuery(name = "Compliancesurvey.findBySurveytype", query = "SELECT c FROM Compliancesurvey c WHERE c.surveytype = :surveytype"),
+    @NamedQuery(name = "Compliancesurvey.findByTypeofestablishment", query = "SELECT c FROM Compliancesurvey c WHERE c.typeofestablishment = :typeofestablishment"),
+    @NamedQuery(name = "Compliancesurvey.findByTypeofportofentry", query = "SELECT c FROM Compliancesurvey c WHERE c.typeofportofentry = :typeofportofentry"),
+    @NamedQuery(name = "Compliancesurvey.findByOtherinspectionlocation", query = "SELECT c FROM Compliancesurvey c WHERE c.otherinspectionlocation = :otherinspectionlocation")})
 public class Compliancesurvey implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "APPROVEDBYSIGDATEFORRELEASEREQUESTPOE")
@@ -93,8 +96,10 @@ public class Compliancesurvey implements Serializable {
     @Column(name = "AUTHSIGDATEFORNOTICEOFRELEASEFROMDENTIONDM")
     @Temporal(TemporalType.DATE)
     private Date authsigdatefornoticeofreleasefromdentiondm;
+    @Size(max = 1024)
     @Column(name = "COMMENTS")
     private String comments;
+    @Size(max = 255)
     @Column(name = "COMPANYTYPES")
     private String companytypes;
     @Column(name = "DATEEDITED")
@@ -111,17 +116,21 @@ public class Compliancesurvey implements Serializable {
     private Date datesigned;
     @Column(name = "DISTRIBUTOR")
     private Boolean distributor;
+    @Size(max = 255)
     @Column(name = "DOMESTICMARKETDETENTIONNUMBER")
     private String domesticmarketdetentionnumber;
     @Column(name = "FULLRELEASE")
     private Boolean fullrelease;
+    @Size(max = 255)
     @Column(name = "INSPECTIONPOINT")
     private String inspectionpoint;
     @Column(name = "INSPECTORSIGDATEFORSAMPLEREQUESTPOE")
     @Temporal(TemporalType.DATE)
     private Date inspectorsigdateforsamplerequestpoe;
+    @Size(max = 255)
     @Column(name = "JOBNUMBER")
     private String jobnumber;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "NOTICEOFDETENTIONISSUEDFORDOMESTICMARKET")
@@ -130,15 +139,19 @@ public class Compliancesurvey implements Serializable {
     private Boolean noticeofreleasefromdetentionissuedfordomesticmarket;
     @Column(name = "OTHERCOMPANYTYPES")
     private Boolean othercompanytypes;
+    @Size(max = 255)
     @Column(name = "PORTOFENTRY")
     private String portofentry;
+    @Size(max = 255)
     @Column(name = "PORTOFENTRYDETENTIONNUMBER")
     private String portofentrydetentionnumber;
     @Column(name = "PREPAREDBYSIGDATEFORRELEASEREQUESTPOE")
     @Temporal(TemporalType.DATE)
     private Date preparedbysigdateforreleaserequestpoe;
+    @Size(max = 1024)
     @Column(name = "REASONFORDETENTION")
     private String reasonfordetention;
+    @Size(max = 255)
     @Column(name = "REFERENCENUMBER")
     private String referencenumber;
     @Column(name = "RELEASEDATEDOMESTICMARKET")
@@ -165,93 +178,103 @@ public class Compliancesurvey implements Serializable {
     @Column(name = "SURVEYENDTIME")
     @Temporal(TemporalType.TIME)
     private Date surveyendtime;
+    @Size(max = 255)
     @Column(name = "SURVEYLOCATIONTYPE")
     private String surveylocationtype;
     @Column(name = "SURVEYSTARTTIME")
     @Temporal(TemporalType.TIME)
     private Date surveystarttime;
+    @Size(max = 255)
     @Column(name = "SURVEYTYPE")
     private String surveytype;
+    @Size(max = 255)
     @Column(name = "TYPEOFESTABLISHMENT")
     private String typeofestablishment;
+    @Size(max = 255)
     @Column(name = "TYPEOFPORTOFENTRY")
     private String typeofportofentry;
+    @Size(max = 255)
     @Column(name = "OTHERINSPECTIONLOCATION")
     private String otherinspectionlocation;
     @ManyToMany(mappedBy = "compliancesurveyList")
     private List<Documentstandard> documentstandardList;
-    @JoinColumn(name = "BROKER_ID", referencedColumnName = "ID")
+    @JoinTable(name = "compliancesurvey_productinspection", joinColumns = {
+        @JoinColumn(name = "ComplianceSurvey_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
+        @JoinColumn(name = "productInspections_ID", referencedColumnName = "ID")})
+    @ManyToMany
+    private List<Productinspection> productinspectionList;
+    @JoinColumn(name = "CONSIGNEE_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Client brokerId;
+    private Client consigneeId;
     @JoinColumn(name = "AUTHSIGFORNOTICEOFDENTIONDM_ID", referencedColumnName = "ID")
     @ManyToOne
     private Signature authsigfornoticeofdentiondmId;
     @JoinColumn(name = "BROKERREPRESENTATIVE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Contact brokerrepresentativeId;
-    @JoinColumn(name = "AUTHSIGFORDETENTIONREQUESTPOE_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "BROKER_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Signature authsigfordetentionrequestpoeId;
+    private Client brokerId;
     @JoinColumn(name = "CONSIGNEEREPRESENTATIVE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Contact consigneerepresentativeId;
-    @JoinColumn(name = "INSPECTORSIGFORSAMPLEREQUESTPOE_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "SPECIFIEDRELEASELOCATION_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Signature inspectorsigforsamplerequestpoeId;
-    @JoinColumn(name = "CONSIGNEE_ID", referencedColumnName = "ID")
+    private Address specifiedreleaselocationId;
+    @JoinColumn(name = "AUTHSIGFORDETENTIONREQUESTPOE_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Client consigneeId;
+    private Signature authsigfordetentionrequestpoeId;
     @JoinColumn(name = "EDITEDBY_ID", referencedColumnName = "ID")
     @ManyToOne
     private Employee editedbyId;
     @JoinColumn(name = "ENTRYDOCUMENTINSPECTION_ID", referencedColumnName = "ID")
     @ManyToOne
     private Entrydocumentinspection entrydocumentinspectionId;
-    @JoinColumn(name = "AUTHEMPLOYEEFORDETENTIONREQUESTPOE_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "AUTHEMPFORNOTICEOFRELEASEFROMDENTIONDM_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Employee authemployeefordetentionrequestpoeId;
-    @JoinColumn(name = "PREPAREDBYEMPLOYEEFORRELEASEREQUESTPOE_ID", referencedColumnName = "ID")
+    private Employee authempfornoticeofreleasefromdentiondmId;
+    @JoinColumn(name = "LOCATIONOFDETAINEDPRODUCTDOMESTICMARKET_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Employee preparedbyemployeeforreleaserequestpoeId;
+    private Address locationofdetainedproductdomesticmarketId;
     @JoinColumn(name = "INSPECTIONADDRESS_ID", referencedColumnName = "ID")
     @ManyToOne
     private Address inspectionaddressId;
-    @JoinColumn(name = "SPECIFIEDRELEASELOCATION_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "INSPECTOR_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Address specifiedreleaselocationId;
+    private Employee inspectorId;
     @JoinColumn(name = "APPROVEDBYEMPLOYEEFORRELEASEREQUESTPOE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Employee approvedbyemployeeforreleaserequestpoeId;
     @JoinColumn(name = "SPECIFIEDRELEASELOCATIONDOMESTICMARKET_ID", referencedColumnName = "ID")
     @ManyToOne
     private Address specifiedreleaselocationdomesticmarketId;
-    @JoinColumn(name = "INSPECTOR_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "RETAILOUTLET_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Employee inspectorId;
-    @JoinColumn(name = "AUTHEMPFORNOTICEOFRELEASEFROMDENTIONDM_ID", referencedColumnName = "ID")
+    private Client retailoutletId;
+    @JoinColumn(name = "INSPECTORSIGFORSAMPLEREQUESTPOE_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Employee authempfornoticeofreleasefromdentiondmId;
+    private Signature inspectorsigforsamplerequestpoeId;
+    @JoinColumn(name = "AUTHSIGFORNOTICEOFRELEASEFROMDENTIONDM_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private Signature authsigfornoticeofreleasefromdentiondmId;
+    @JoinColumn(name = "APPROVEDBYSIGFORRELEASEREQUESTPOE_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private Signature approvedbysigforreleaserequestpoeId;
     @JoinColumn(name = "PREPAREDBYSIGFORRELEASEREQUESTPOE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Signature preparedbysigforreleaserequestpoeId;
     @JoinColumn(name = "AUTHEMPLOYEEFORNOTICEOFDENTIONDM_ID", referencedColumnName = "ID")
     @ManyToOne
     private Employee authemployeefornoticeofdentiondmId;
-    @JoinColumn(name = "RETAILOUTLET_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "PREPAREDBYEMPLOYEEFORRELEASEREQUESTPOE_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Client retailoutletId;
+    private Employee preparedbyemployeeforreleaserequestpoeId;
+    @JoinColumn(name = "AUTHEMPLOYEEFORDETENTIONREQUESTPOE_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private Employee authemployeefordetentionrequestpoeId;
     @JoinColumn(name = "RETAILREPRESENTATIVE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Contact retailrepresentativeId;
-    @JoinColumn(name = "LOCATIONOFDETAINEDPRODUCTDOMESTICMARKET_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Address locationofdetainedproductdomesticmarketId;
-    @JoinColumn(name = "APPROVEDBYSIGFORRELEASEREQUESTPOE_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Signature approvedbysigforreleaserequestpoeId;
-    @JoinColumn(name = "AUTHSIGFORNOTICEOFRELEASEFROMDENTIONDM_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Signature authsigfornoticeofreleasefromdentiondmId;
 
     public Compliancesurvey() {
     }
@@ -597,6 +620,7 @@ public class Compliancesurvey implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Documentstandard> getDocumentstandardList() {
         return documentstandardList;
     }
@@ -605,12 +629,22 @@ public class Compliancesurvey implements Serializable {
         this.documentstandardList = documentstandardList;
     }
 
-    public Client getBrokerId() {
-        return brokerId;
+    @XmlTransient
+    @JsonIgnore
+    public List<Productinspection> getProductinspectionList() {
+        return productinspectionList;
     }
 
-    public void setBrokerId(Client brokerId) {
-        this.brokerId = brokerId;
+    public void setProductinspectionList(List<Productinspection> productinspectionList) {
+        this.productinspectionList = productinspectionList;
+    }
+
+    public Client getConsigneeId() {
+        return consigneeId;
+    }
+
+    public void setConsigneeId(Client consigneeId) {
+        this.consigneeId = consigneeId;
     }
 
     public Signature getAuthsigfornoticeofdentiondmId() {
@@ -629,12 +663,12 @@ public class Compliancesurvey implements Serializable {
         this.brokerrepresentativeId = brokerrepresentativeId;
     }
 
-    public Signature getAuthsigfordetentionrequestpoeId() {
-        return authsigfordetentionrequestpoeId;
+    public Client getBrokerId() {
+        return brokerId;
     }
 
-    public void setAuthsigfordetentionrequestpoeId(Signature authsigfordetentionrequestpoeId) {
-        this.authsigfordetentionrequestpoeId = authsigfordetentionrequestpoeId;
+    public void setBrokerId(Client brokerId) {
+        this.brokerId = brokerId;
     }
 
     public Contact getConsigneerepresentativeId() {
@@ -645,20 +679,20 @@ public class Compliancesurvey implements Serializable {
         this.consigneerepresentativeId = consigneerepresentativeId;
     }
 
-    public Signature getInspectorsigforsamplerequestpoeId() {
-        return inspectorsigforsamplerequestpoeId;
+    public Address getSpecifiedreleaselocationId() {
+        return specifiedreleaselocationId;
     }
 
-    public void setInspectorsigforsamplerequestpoeId(Signature inspectorsigforsamplerequestpoeId) {
-        this.inspectorsigforsamplerequestpoeId = inspectorsigforsamplerequestpoeId;
+    public void setSpecifiedreleaselocationId(Address specifiedreleaselocationId) {
+        this.specifiedreleaselocationId = specifiedreleaselocationId;
     }
 
-    public Client getConsigneeId() {
-        return consigneeId;
+    public Signature getAuthsigfordetentionrequestpoeId() {
+        return authsigfordetentionrequestpoeId;
     }
 
-    public void setConsigneeId(Client consigneeId) {
-        this.consigneeId = consigneeId;
+    public void setAuthsigfordetentionrequestpoeId(Signature authsigfordetentionrequestpoeId) {
+        this.authsigfordetentionrequestpoeId = authsigfordetentionrequestpoeId;
     }
 
     public Employee getEditedbyId() {
@@ -677,20 +711,20 @@ public class Compliancesurvey implements Serializable {
         this.entrydocumentinspectionId = entrydocumentinspectionId;
     }
 
-    public Employee getAuthemployeefordetentionrequestpoeId() {
-        return authemployeefordetentionrequestpoeId;
+    public Employee getAuthempfornoticeofreleasefromdentiondmId() {
+        return authempfornoticeofreleasefromdentiondmId;
     }
 
-    public void setAuthemployeefordetentionrequestpoeId(Employee authemployeefordetentionrequestpoeId) {
-        this.authemployeefordetentionrequestpoeId = authemployeefordetentionrequestpoeId;
+    public void setAuthempfornoticeofreleasefromdentiondmId(Employee authempfornoticeofreleasefromdentiondmId) {
+        this.authempfornoticeofreleasefromdentiondmId = authempfornoticeofreleasefromdentiondmId;
     }
 
-    public Employee getPreparedbyemployeeforreleaserequestpoeId() {
-        return preparedbyemployeeforreleaserequestpoeId;
+    public Address getLocationofdetainedproductdomesticmarketId() {
+        return locationofdetainedproductdomesticmarketId;
     }
 
-    public void setPreparedbyemployeeforreleaserequestpoeId(Employee preparedbyemployeeforreleaserequestpoeId) {
-        this.preparedbyemployeeforreleaserequestpoeId = preparedbyemployeeforreleaserequestpoeId;
+    public void setLocationofdetainedproductdomesticmarketId(Address locationofdetainedproductdomesticmarketId) {
+        this.locationofdetainedproductdomesticmarketId = locationofdetainedproductdomesticmarketId;
     }
 
     public Address getInspectionaddressId() {
@@ -701,12 +735,12 @@ public class Compliancesurvey implements Serializable {
         this.inspectionaddressId = inspectionaddressId;
     }
 
-    public Address getSpecifiedreleaselocationId() {
-        return specifiedreleaselocationId;
+    public Employee getInspectorId() {
+        return inspectorId;
     }
 
-    public void setSpecifiedreleaselocationId(Address specifiedreleaselocationId) {
-        this.specifiedreleaselocationId = specifiedreleaselocationId;
+    public void setInspectorId(Employee inspectorId) {
+        this.inspectorId = inspectorId;
     }
 
     public Employee getApprovedbyemployeeforreleaserequestpoeId() {
@@ -725,20 +759,36 @@ public class Compliancesurvey implements Serializable {
         this.specifiedreleaselocationdomesticmarketId = specifiedreleaselocationdomesticmarketId;
     }
 
-    public Employee getInspectorId() {
-        return inspectorId;
+    public Client getRetailoutletId() {
+        return retailoutletId;
     }
 
-    public void setInspectorId(Employee inspectorId) {
-        this.inspectorId = inspectorId;
+    public void setRetailoutletId(Client retailoutletId) {
+        this.retailoutletId = retailoutletId;
     }
 
-    public Employee getAuthempfornoticeofreleasefromdentiondmId() {
-        return authempfornoticeofreleasefromdentiondmId;
+    public Signature getInspectorsigforsamplerequestpoeId() {
+        return inspectorsigforsamplerequestpoeId;
     }
 
-    public void setAuthempfornoticeofreleasefromdentiondmId(Employee authempfornoticeofreleasefromdentiondmId) {
-        this.authempfornoticeofreleasefromdentiondmId = authempfornoticeofreleasefromdentiondmId;
+    public void setInspectorsigforsamplerequestpoeId(Signature inspectorsigforsamplerequestpoeId) {
+        this.inspectorsigforsamplerequestpoeId = inspectorsigforsamplerequestpoeId;
+    }
+
+    public Signature getAuthsigfornoticeofreleasefromdentiondmId() {
+        return authsigfornoticeofreleasefromdentiondmId;
+    }
+
+    public void setAuthsigfornoticeofreleasefromdentiondmId(Signature authsigfornoticeofreleasefromdentiondmId) {
+        this.authsigfornoticeofreleasefromdentiondmId = authsigfornoticeofreleasefromdentiondmId;
+    }
+
+    public Signature getApprovedbysigforreleaserequestpoeId() {
+        return approvedbysigforreleaserequestpoeId;
+    }
+
+    public void setApprovedbysigforreleaserequestpoeId(Signature approvedbysigforreleaserequestpoeId) {
+        this.approvedbysigforreleaserequestpoeId = approvedbysigforreleaserequestpoeId;
     }
 
     public Signature getPreparedbysigforreleaserequestpoeId() {
@@ -757,12 +807,20 @@ public class Compliancesurvey implements Serializable {
         this.authemployeefornoticeofdentiondmId = authemployeefornoticeofdentiondmId;
     }
 
-    public Client getRetailoutletId() {
-        return retailoutletId;
+    public Employee getPreparedbyemployeeforreleaserequestpoeId() {
+        return preparedbyemployeeforreleaserequestpoeId;
     }
 
-    public void setRetailoutletId(Client retailoutletId) {
-        this.retailoutletId = retailoutletId;
+    public void setPreparedbyemployeeforreleaserequestpoeId(Employee preparedbyemployeeforreleaserequestpoeId) {
+        this.preparedbyemployeeforreleaserequestpoeId = preparedbyemployeeforreleaserequestpoeId;
+    }
+
+    public Employee getAuthemployeefordetentionrequestpoeId() {
+        return authemployeefordetentionrequestpoeId;
+    }
+
+    public void setAuthemployeefordetentionrequestpoeId(Employee authemployeefordetentionrequestpoeId) {
+        this.authemployeefordetentionrequestpoeId = authemployeefordetentionrequestpoeId;
     }
 
     public Contact getRetailrepresentativeId() {
@@ -771,30 +829,6 @@ public class Compliancesurvey implements Serializable {
 
     public void setRetailrepresentativeId(Contact retailrepresentativeId) {
         this.retailrepresentativeId = retailrepresentativeId;
-    }
-
-    public Address getLocationofdetainedproductdomesticmarketId() {
-        return locationofdetainedproductdomesticmarketId;
-    }
-
-    public void setLocationofdetainedproductdomesticmarketId(Address locationofdetainedproductdomesticmarketId) {
-        this.locationofdetainedproductdomesticmarketId = locationofdetainedproductdomesticmarketId;
-    }
-
-    public Signature getApprovedbysigforreleaserequestpoeId() {
-        return approvedbysigforreleaserequestpoeId;
-    }
-
-    public void setApprovedbysigforreleaserequestpoeId(Signature approvedbysigforreleaserequestpoeId) {
-        this.approvedbysigforreleaserequestpoeId = approvedbysigforreleaserequestpoeId;
-    }
-
-    public Signature getAuthsigfornoticeofreleasefromdentiondmId() {
-        return authsigfornoticeofreleasefromdentiondmId;
-    }
-
-    public void setAuthsigfornoticeofreleasefromdentiondmId(Signature authsigfornoticeofreleasefromdentiondmId) {
-        this.authsigfornoticeofreleasefromdentiondmId = authsigfornoticeofreleasefromdentiondmId;
     }
 
     @Override
@@ -819,7 +853,7 @@ public class Compliancesurvey implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Compliancesurvey[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Compliancesurvey[ id=" + id + " ]";
     }
     
 }

@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -18,8 +17,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -29,23 +31,26 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "laboratory")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Laboratory.findAll", query = "SELECT l FROM Laboratory l")
-    , @NamedQuery(name = "Laboratory.findById", query = "SELECT l FROM Laboratory l WHERE l.id = :id")
-    , @NamedQuery(name = "Laboratory.findByName", query = "SELECT l FROM Laboratory l WHERE l.name = :name")
-    , @NamedQuery(name = "Laboratory.findByNumber", query = "SELECT l FROM Laboratory l WHERE l.number = :number")
-    , @NamedQuery(name = "Laboratory.findByType", query = "SELECT l FROM Laboratory l WHERE l.type = :type")
-    , @NamedQuery(name = "Laboratory.findByActive", query = "SELECT l FROM Laboratory l WHERE l.active = :active")})
+    @NamedQuery(name = "Laboratory.findAll", query = "SELECT l FROM Laboratory l"),
+    @NamedQuery(name = "Laboratory.findById", query = "SELECT l FROM Laboratory l WHERE l.id = :id"),
+    @NamedQuery(name = "Laboratory.findByName", query = "SELECT l FROM Laboratory l WHERE l.name = :name"),
+    @NamedQuery(name = "Laboratory.findByNumber", query = "SELECT l FROM Laboratory l WHERE l.number = :number"),
+    @NamedQuery(name = "Laboratory.findByType", query = "SELECT l FROM Laboratory l WHERE l.type = :type"),
+    @NamedQuery(name = "Laboratory.findByActive", query = "SELECT l FROM Laboratory l WHERE l.active = :active")})
 public class Laboratory implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "NUMBER")
     private String number;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
     @Column(name = "ACTIVE")
@@ -110,6 +115,7 @@ public class Laboratory implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Department> getDepartmentList() {
         return departmentList;
     }
@@ -119,6 +125,7 @@ public class Laboratory implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Businessoffice> getBusinessofficeList() {
         return businessofficeList;
     }
@@ -128,6 +135,7 @@ public class Laboratory implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodsample> getFoodsampleList() {
         return foodsampleList;
     }
@@ -137,6 +145,7 @@ public class Laboratory implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Unitcost> getUnitcostList() {
         return unitcostList;
     }
@@ -167,7 +176,7 @@ public class Laboratory implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Laboratory[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Laboratory[ id=" + id + " ]";
     }
     
 }

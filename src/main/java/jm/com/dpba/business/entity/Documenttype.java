@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -15,8 +14,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -26,24 +28,29 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "documenttype")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Documenttype.findAll", query = "SELECT d FROM Documenttype d")
-    , @NamedQuery(name = "Documenttype.findById", query = "SELECT d FROM Documenttype d WHERE d.id = :id")
-    , @NamedQuery(name = "Documenttype.findByName", query = "SELECT d FROM Documenttype d WHERE d.name = :name")
-    , @NamedQuery(name = "Documenttype.findByCode", query = "SELECT d FROM Documenttype d WHERE d.code = :code")
-    , @NamedQuery(name = "Documenttype.findByType", query = "SELECT d FROM Documenttype d WHERE d.type = :type")})
+    @NamedQuery(name = "Documenttype.findAll", query = "SELECT d FROM Documenttype d"),
+    @NamedQuery(name = "Documenttype.findById", query = "SELECT d FROM Documenttype d WHERE d.id = :id"),
+    @NamedQuery(name = "Documenttype.findByName", query = "SELECT d FROM Documenttype d WHERE d.name = :name"),
+    @NamedQuery(name = "Documenttype.findByCode", query = "SELECT d FROM Documenttype d WHERE d.code = :code"),
+    @NamedQuery(name = "Documenttype.findByType", query = "SELECT d FROM Documenttype d WHERE d.type = :type")})
 public class Documenttype implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "CODE")
     private String code;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
+    @OneToMany(mappedBy = "typeId")
+    private List<Legaldocument> legaldocumentList;
     @OneToMany(mappedBy = "documenttypeId")
     private List<Documentstandard> documentstandardList;
     @OneToMany(mappedBy = "typeId")
@@ -89,6 +96,17 @@ public class Documenttype implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Legaldocument> getLegaldocumentList() {
+        return legaldocumentList;
+    }
+
+    public void setLegaldocumentList(List<Legaldocument> legaldocumentList) {
+        this.legaldocumentList = legaldocumentList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Documentstandard> getDocumentstandardList() {
         return documentstandardList;
     }
@@ -98,6 +116,7 @@ public class Documenttype implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Documenttracking> getDocumenttrackingList() {
         return documenttrackingList;
     }
@@ -128,7 +147,7 @@ public class Documenttype implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Documenttype[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Documenttype[ id=" + id + " ]";
     }
     
 }

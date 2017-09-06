@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -18,8 +17,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -29,28 +31,31 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "jobcategory")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Jobcategory.findAll", query = "SELECT j FROM Jobcategory j")
-    , @NamedQuery(name = "Jobcategory.findById", query = "SELECT j FROM Jobcategory j WHERE j.id = :id")
-    , @NamedQuery(name = "Jobcategory.findByCategory", query = "SELECT j FROM Jobcategory j WHERE j.category = :category")
-    , @NamedQuery(name = "Jobcategory.findByIsearning", query = "SELECT j FROM Jobcategory j WHERE j.isearning = :isearning")
-    , @NamedQuery(name = "Jobcategory.findByClassification", query = "SELECT j FROM Jobcategory j WHERE j.classification = :classification")
-    , @NamedQuery(name = "Jobcategory.findByActive", query = "SELECT j FROM Jobcategory j WHERE j.active = :active")
-    , @NamedQuery(name = "Jobcategory.findByDescription", query = "SELECT j FROM Jobcategory j WHERE j.description = :description")})
+    @NamedQuery(name = "Jobcategory.findAll", query = "SELECT j FROM Jobcategory j"),
+    @NamedQuery(name = "Jobcategory.findById", query = "SELECT j FROM Jobcategory j WHERE j.id = :id"),
+    @NamedQuery(name = "Jobcategory.findByCategory", query = "SELECT j FROM Jobcategory j WHERE j.category = :category"),
+    @NamedQuery(name = "Jobcategory.findByIsearning", query = "SELECT j FROM Jobcategory j WHERE j.isearning = :isearning"),
+    @NamedQuery(name = "Jobcategory.findByClassification", query = "SELECT j FROM Jobcategory j WHERE j.classification = :classification"),
+    @NamedQuery(name = "Jobcategory.findByActive", query = "SELECT j FROM Jobcategory j WHERE j.active = :active"),
+    @NamedQuery(name = "Jobcategory.findByDescription", query = "SELECT j FROM Jobcategory j WHERE j.description = :description")})
 public class Jobcategory implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "CATEGORY")
     private String category;
     @Column(name = "ISEARNING")
     private Boolean isearning;
+    @Size(max = 255)
     @Column(name = "CLASSIFICATION")
     private String classification;
     @Column(name = "ACTIVE")
     private Boolean active;
+    @Size(max = 1024)
     @Column(name = "DESCRIPTION")
     private String description;
     @ManyToMany(mappedBy = "jobcategoryList")
@@ -121,6 +126,7 @@ public class Jobcategory implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Department> getDepartmentList() {
         return departmentList;
     }
@@ -130,6 +136,7 @@ public class Jobcategory implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Department> getDepartmentList1() {
         return departmentList1;
     }
@@ -139,6 +146,7 @@ public class Jobcategory implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Servicerequest> getServicerequestList() {
         return servicerequestList;
     }
@@ -148,6 +156,7 @@ public class Jobcategory implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Job> getJobList() {
         return jobList;
     }
@@ -178,7 +187,7 @@ public class Jobcategory implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Jobcategory[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Jobcategory[ id=" + id + " ]";
     }
     
 }

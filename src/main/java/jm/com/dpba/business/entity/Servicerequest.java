@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -22,8 +21,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -33,31 +35,32 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "servicerequest")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Servicerequest.findAll", query = "SELECT s FROM Servicerequest s")
-    , @NamedQuery(name = "Servicerequest.findById", query = "SELECT s FROM Servicerequest s WHERE s.id = :id")
-    , @NamedQuery(name = "Servicerequest.findByAutogenerateservicerequestnumber", query = "SELECT s FROM Servicerequest s WHERE s.autogenerateservicerequestnumber = :autogenerateservicerequestnumber")
-    , @NamedQuery(name = "Servicerequest.findByComment", query = "SELECT s FROM Servicerequest s WHERE s.comment = :comment")
-    , @NamedQuery(name = "Servicerequest.findByDateandtimeentered", query = "SELECT s FROM Servicerequest s WHERE s.dateandtimeentered = :dateandtimeentered")
-    , @NamedQuery(name = "Servicerequest.findByDateofcompletion", query = "SELECT s FROM Servicerequest s WHERE s.dateofcompletion = :dateofcompletion")
-    , @NamedQuery(name = "Servicerequest.findByDatestatusedited", query = "SELECT s FROM Servicerequest s WHERE s.datestatusedited = :datestatusedited")
-    , @NamedQuery(name = "Servicerequest.findByDatesubmitted", query = "SELECT s FROM Servicerequest s WHERE s.datesubmitted = :datesubmitted")
-    , @NamedQuery(name = "Servicerequest.findByEstimatedturnaroundtimeindays", query = "SELECT s FROM Servicerequest s WHERE s.estimatedturnaroundtimeindays = :estimatedturnaroundtimeindays")
-    , @NamedQuery(name = "Servicerequest.findByExpecteddateofcompletion", query = "SELECT s FROM Servicerequest s WHERE s.expecteddateofcompletion = :expecteddateofcompletion")
-    , @NamedQuery(name = "Servicerequest.findByJobdescription", query = "SELECT s FROM Servicerequest s WHERE s.jobdescription = :jobdescription")
-    , @NamedQuery(name = "Servicerequest.findByName", query = "SELECT s FROM Servicerequest s WHERE s.name = :name")
-    , @NamedQuery(name = "Servicerequest.findByPurpose", query = "SELECT s FROM Servicerequest s WHERE s.purpose = :purpose")
-    , @NamedQuery(name = "Servicerequest.findByServicerequestnumber", query = "SELECT s FROM Servicerequest s WHERE s.servicerequestnumber = :servicerequestnumber")
-    , @NamedQuery(name = "Servicerequest.findByServicerequestsequencenumber", query = "SELECT s FROM Servicerequest s WHERE s.servicerequestsequencenumber = :servicerequestsequencenumber")
-    , @NamedQuery(name = "Servicerequest.findByStatusnote", query = "SELECT s FROM Servicerequest s WHERE s.statusnote = :statusnote")})
+    @NamedQuery(name = "Servicerequest.findAll", query = "SELECT s FROM Servicerequest s"),
+    @NamedQuery(name = "Servicerequest.findById", query = "SELECT s FROM Servicerequest s WHERE s.id = :id"),
+    @NamedQuery(name = "Servicerequest.findByAutogenerateservicerequestnumber", query = "SELECT s FROM Servicerequest s WHERE s.autogenerateservicerequestnumber = :autogenerateservicerequestnumber"),
+    @NamedQuery(name = "Servicerequest.findByComment", query = "SELECT s FROM Servicerequest s WHERE s.comment = :comment"),
+    @NamedQuery(name = "Servicerequest.findByDateandtimeentered", query = "SELECT s FROM Servicerequest s WHERE s.dateandtimeentered = :dateandtimeentered"),
+    @NamedQuery(name = "Servicerequest.findByDateofcompletion", query = "SELECT s FROM Servicerequest s WHERE s.dateofcompletion = :dateofcompletion"),
+    @NamedQuery(name = "Servicerequest.findByDatestatusedited", query = "SELECT s FROM Servicerequest s WHERE s.datestatusedited = :datestatusedited"),
+    @NamedQuery(name = "Servicerequest.findByDatesubmitted", query = "SELECT s FROM Servicerequest s WHERE s.datesubmitted = :datesubmitted"),
+    @NamedQuery(name = "Servicerequest.findByEstimatedturnaroundtimeindays", query = "SELECT s FROM Servicerequest s WHERE s.estimatedturnaroundtimeindays = :estimatedturnaroundtimeindays"),
+    @NamedQuery(name = "Servicerequest.findByExpecteddateofcompletion", query = "SELECT s FROM Servicerequest s WHERE s.expecteddateofcompletion = :expecteddateofcompletion"),
+    @NamedQuery(name = "Servicerequest.findByJobdescription", query = "SELECT s FROM Servicerequest s WHERE s.jobdescription = :jobdescription"),
+    @NamedQuery(name = "Servicerequest.findByName", query = "SELECT s FROM Servicerequest s WHERE s.name = :name"),
+    @NamedQuery(name = "Servicerequest.findByPurpose", query = "SELECT s FROM Servicerequest s WHERE s.purpose = :purpose"),
+    @NamedQuery(name = "Servicerequest.findByServicerequestnumber", query = "SELECT s FROM Servicerequest s WHERE s.servicerequestnumber = :servicerequestnumber"),
+    @NamedQuery(name = "Servicerequest.findByServicerequestsequencenumber", query = "SELECT s FROM Servicerequest s WHERE s.servicerequestsequencenumber = :servicerequestsequencenumber"),
+    @NamedQuery(name = "Servicerequest.findByStatusnote", query = "SELECT s FROM Servicerequest s WHERE s.statusnote = :statusnote")})
 public class Servicerequest implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "AUTOGENERATESERVICEREQUESTNUMBER")
     private Boolean autogenerateservicerequestnumber;
+    @Size(max = 1024)
     @Column(name = "COMMENT")
     private String comment;
     @Column(name = "DATEANDTIMEENTERED")
@@ -77,16 +80,21 @@ public class Servicerequest implements Serializable {
     @Column(name = "EXPECTEDDATEOFCOMPLETION")
     @Temporal(TemporalType.DATE)
     private Date expecteddateofcompletion;
+    @Size(max = 1024)
     @Column(name = "JOBDESCRIPTION")
     private String jobdescription;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 1024)
     @Column(name = "PURPOSE")
     private String purpose;
+    @Size(max = 255)
     @Column(name = "SERVICEREQUESTNUMBER")
     private String servicerequestnumber;
     @Column(name = "SERVICEREQUESTSEQUENCENUMBER")
     private BigInteger servicerequestsequencenumber;
+    @Size(max = 1024)
     @Column(name = "STATUSNOTE")
     private String statusnote;
     @JoinTable(name = "servicerequest_service", joinColumns = {
@@ -94,9 +102,9 @@ public class Servicerequest implements Serializable {
         @JoinColumn(name = "services_ID", referencedColumnName = "ID")})
     @ManyToMany
     private List<Service> serviceList;
-    @JoinColumn(name = "DEPARTMENT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "CONTACT_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Department departmentId;
+    private Contact contactId;
     @JoinColumn(name = "ASSIGNEDTO_ID", referencedColumnName = "ID")
     @ManyToOne
     private Employee assignedtoId;
@@ -109,15 +117,15 @@ public class Servicerequest implements Serializable {
     @JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID")
     @ManyToOne
     private Client clientId;
-    @JoinColumn(name = "SERVICECONTRACT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "DEPARTMENT_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Servicecontract servicecontractId;
-    @JoinColumn(name = "CONTACT_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Contact contactId;
+    private Department departmentId;
     @JoinColumn(name = "EDITEDBY_ID", referencedColumnName = "ID")
     @ManyToOne
     private Employee editedbyId;
+    @JoinColumn(name = "SERVICECONTRACT_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private Servicecontract servicecontractId;
     @JoinColumn(name = "ENTEREDBY_ID", referencedColumnName = "ID")
     @ManyToOne
     private Employee enteredbyId;
@@ -259,6 +267,7 @@ public class Servicerequest implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Service> getServiceList() {
         return serviceList;
     }
@@ -267,12 +276,12 @@ public class Servicerequest implements Serializable {
         this.serviceList = serviceList;
     }
 
-    public Department getDepartmentId() {
-        return departmentId;
+    public Contact getContactId() {
+        return contactId;
     }
 
-    public void setDepartmentId(Department departmentId) {
-        this.departmentId = departmentId;
+    public void setContactId(Contact contactId) {
+        this.contactId = contactId;
     }
 
     public Employee getAssignedtoId() {
@@ -307,20 +316,12 @@ public class Servicerequest implements Serializable {
         this.clientId = clientId;
     }
 
-    public Servicecontract getServicecontractId() {
-        return servicecontractId;
+    public Department getDepartmentId() {
+        return departmentId;
     }
 
-    public void setServicecontractId(Servicecontract servicecontractId) {
-        this.servicecontractId = servicecontractId;
-    }
-
-    public Contact getContactId() {
-        return contactId;
-    }
-
-    public void setContactId(Contact contactId) {
-        this.contactId = contactId;
+    public void setDepartmentId(Department departmentId) {
+        this.departmentId = departmentId;
     }
 
     public Employee getEditedbyId() {
@@ -329,6 +330,14 @@ public class Servicerequest implements Serializable {
 
     public void setEditedbyId(Employee editedbyId) {
         this.editedbyId = editedbyId;
+    }
+
+    public Servicecontract getServicecontractId() {
+        return servicecontractId;
+    }
+
+    public void setServicecontractId(Servicecontract servicecontractId) {
+        this.servicecontractId = servicecontractId;
     }
 
     public Employee getEnteredbyId() {
@@ -385,7 +394,7 @@ public class Servicerequest implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Servicerequest[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Servicerequest[ id=" + id + " ]";
     }
     
 }

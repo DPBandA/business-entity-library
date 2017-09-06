@@ -1,19 +1,24 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -23,39 +28,52 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "distributor")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Distributor.findAll", query = "SELECT d FROM Distributor d")
-    , @NamedQuery(name = "Distributor.findById", query = "SELECT d FROM Distributor d WHERE d.id = :id")
-    , @NamedQuery(name = "Distributor.findByPhone", query = "SELECT d FROM Distributor d WHERE d.phone = :phone")
-    , @NamedQuery(name = "Distributor.findByFax", query = "SELECT d FROM Distributor d WHERE d.fax = :fax")
-    , @NamedQuery(name = "Distributor.findByEmail", query = "SELECT d FROM Distributor d WHERE d.email = :email")
-    , @NamedQuery(name = "Distributor.findByName", query = "SELECT d FROM Distributor d WHERE d.name = :name")
-    , @NamedQuery(name = "Distributor.findByStreet", query = "SELECT d FROM Distributor d WHERE d.street = :street")
-    , @NamedQuery(name = "Distributor.findByPo", query = "SELECT d FROM Distributor d WHERE d.po = :po")
-    , @NamedQuery(name = "Distributor.findByCity", query = "SELECT d FROM Distributor d WHERE d.city = :city")
-    , @NamedQuery(name = "Distributor.findByCountry", query = "SELECT d FROM Distributor d WHERE d.country = :country")})
+    @NamedQuery(name = "Distributor.findAll", query = "SELECT d FROM Distributor d"),
+    @NamedQuery(name = "Distributor.findById", query = "SELECT d FROM Distributor d WHERE d.id = :id"),
+    @NamedQuery(name = "Distributor.findByPhone", query = "SELECT d FROM Distributor d WHERE d.phone = :phone"),
+    @NamedQuery(name = "Distributor.findByFax", query = "SELECT d FROM Distributor d WHERE d.fax = :fax"),
+    @NamedQuery(name = "Distributor.findByEmail", query = "SELECT d FROM Distributor d WHERE d.email = :email"),
+    @NamedQuery(name = "Distributor.findByName", query = "SELECT d FROM Distributor d WHERE d.name = :name"),
+    @NamedQuery(name = "Distributor.findByStreet", query = "SELECT d FROM Distributor d WHERE d.street = :street"),
+    @NamedQuery(name = "Distributor.findByPo", query = "SELECT d FROM Distributor d WHERE d.po = :po"),
+    @NamedQuery(name = "Distributor.findByCity", query = "SELECT d FROM Distributor d WHERE d.city = :city"),
+    @NamedQuery(name = "Distributor.findByCountry", query = "SELECT d FROM Distributor d WHERE d.country = :country")})
 public class Distributor implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
+    @Size(max = 255)
     @Column(name = "PHONE")
     private String phone;
+    // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
+    @Size(max = 255)
     @Column(name = "FAX")
     private String fax;
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    @Size(max = 255)
     @Column(name = "EMAIL")
     private String email;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "STREET")
     private String street;
+    @Size(max = 255)
     @Column(name = "PO")
     private String po;
+    @Size(max = 255)
     @Column(name = "CITY")
     private String city;
+    @Size(max = 255)
     @Column(name = "COUNTRY")
     private String country;
+    @OneToMany(mappedBy = "distributorId")
+    private List<Productinspection> productinspectionList;
 
     public Distributor() {
     }
@@ -136,6 +154,16 @@ public class Distributor implements Serializable {
         this.country = country;
     }
 
+    @XmlTransient
+    @JsonIgnore
+    public List<Productinspection> getProductinspectionList() {
+        return productinspectionList;
+    }
+
+    public void setProductinspectionList(List<Productinspection> productinspectionList) {
+        this.productinspectionList = productinspectionList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -158,7 +186,7 @@ public class Distributor implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Distributor[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Distributor[ id=" + id + " ]";
     }
     
 }

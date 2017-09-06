@@ -1,126 +1,111 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
+import java.text.Collator;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jm.com.dpba.business.entity.utils.BusinessEntityUtils;
 
 /**
  *
- * @author desbenn
+ * @author Desmond
  */
 @Entity
 @Table(name = "address")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Address.findAll", query = "SELECT a FROM Address a")
-    , @NamedQuery(name = "Address.findById", query = "SELECT a FROM Address a WHERE a.id = :id")
-    , @NamedQuery(name = "Address.findByPostalcode", query = "SELECT a FROM Address a WHERE a.postalcode = :postalcode")
-    , @NamedQuery(name = "Address.findByName", query = "SELECT a FROM Address a WHERE a.name = :name")
-    , @NamedQuery(name = "Address.findByStateorprovince", query = "SELECT a FROM Address a WHERE a.stateorprovince = :stateorprovince")
-    , @NamedQuery(name = "Address.findByType", query = "SELECT a FROM Address a WHERE a.type = :type")
-    , @NamedQuery(name = "Address.findByAddressline2", query = "SELECT a FROM Address a WHERE a.addressline2 = :addressline2")
-    , @NamedQuery(name = "Address.findByAddressline1", query = "SELECT a FROM Address a WHERE a.addressline1 = :addressline1")
-    , @NamedQuery(name = "Address.findByCity", query = "SELECT a FROM Address a WHERE a.city = :city")
-    , @NamedQuery(name = "Address.findByCountry", query = "SELECT a FROM Address a WHERE a.country = :country")})
-public class Address implements Serializable {
+    @NamedQuery(name = "findAllAddresses", query = "SELECT e FROM Address e ORDER BY e.type")
+})
+@XmlRootElement
+public class Address implements Serializable, BusinessEntity, Comparable, Converter {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUId = 1L;
     @Id
-    @Basic(optional = false)
-    @Column(name = "ID")
-    private Long id;
-    @Column(name = "POSTALCODE")
-    private String postalcode;
-    @Column(name = "NAME")
-    private String name;
-    @Column(name = "STATEORPROVINCE")
-    private String stateorprovince;
-    @Column(name = "TYPE")
-    private String type;
-    @Column(name = "ADDRESSLINE2")
-    private String addressline2;
-    @Column(name = "ADDRESSLINE1")
-    private String addressline1;
-    @Column(name = "CITY")
-    private String city;
-    @Column(name = "COUNTRY")
-    private String country;
-    @ManyToMany(mappedBy = "addressList")
-    private List<Business> businessList;
-    @ManyToMany(mappedBy = "addressList")
-    private List<Client> clientList;
-    @ManyToMany(mappedBy = "addressList")
-    private List<Contact> contactList;
-    @ManyToMany(mappedBy = "addressList")
-    private List<Foodfactory> foodfactoryList;
-    @ManyToMany(mappedBy = "addressList")
-    private List<Employee> employeeList;
-    @OneToMany(mappedBy = "inspectionaddressId")
-    private List<Compliancesurvey> compliancesurveyList;
-    @OneToMany(mappedBy = "specifiedreleaselocationId")
-    private List<Compliancesurvey> compliancesurveyList1;
-    @OneToMany(mappedBy = "specifiedreleaselocationdomesticmarketId")
-    private List<Compliancesurvey> compliancesurveyList2;
-    @OneToMany(mappedBy = "locationofdetainedproductdomesticmarketId")
-    private List<Compliancesurvey> compliancesurveyList3;
-    @OneToMany(mappedBy = "addressId")
-    private List<Businessoffice> businessofficeList;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long Id;
+    private String type = "";
+    private String addressLine1 = "";
+    private String addressLine2 = "";
+    private String city = "";
+    private String stateOrProvince = "";
+    private String postalCode = "";
+    private String country = "";
+    private String name = "";
 
     public Address() {
     }
 
-    public Address(Long id) {
-        this.id = id;
+    public Address(Address src) {
+        this.Id = null;
+        doCopy(src);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getPostalcode() {
-        return postalcode;
-    }
-
-    public void setPostalcode(String postalcode) {
-        this.postalcode = postalcode;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public Address(String name) {
+        this.Id = null;
         this.name = name;
     }
 
-    public String getStateorprovince() {
-        return stateorprovince;
+    public final void doCopy(Address src) {
+        type = src.type;
+        addressLine1 = src.addressLine1;
+        addressLine2 = src.addressLine2;
+        city = src.city;
+        stateOrProvince = src.stateOrProvince;
+        postalCode = src.postalCode;
+        country = src.country;
+        name = src.name;
     }
 
-    public void setStateorprovince(String stateorprovince) {
-        this.stateorprovince = stateorprovince;
+    @Override
+    public Long getId() {
+        return Id;
+    }
+
+    @Override
+    public void setId(Long Id) {
+        this.Id = Id;
+    }
+
+    public String getAddressLine1() {
+        if (addressLine1 == null) {
+            addressLine1 = "";
+        }
+        return addressLine1;
+    }
+
+    public void setAddressLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
+    }
+
+    public String getAddressLine2() {
+        if (addressLine2 == null) {
+            addressLine2 = "";
+        }
+        return addressLine2;
+    }
+
+    public void setAddressLine2(String addressLine2) {
+        this.addressLine2 = addressLine2;
     }
 
     public String getType() {
+        if (type == null) {
+            type = "";
+        }
         return type;
     }
 
@@ -128,23 +113,10 @@ public class Address implements Serializable {
         this.type = type;
     }
 
-    public String getAddressline2() {
-        return addressline2;
-    }
-
-    public void setAddressline2(String addressline2) {
-        this.addressline2 = addressline2;
-    }
-
-    public String getAddressline1() {
-        return addressline1;
-    }
-
-    public void setAddressline1(String addressline1) {
-        this.addressline1 = addressline1;
-    }
-
     public String getCity() {
+        if (city == null) {
+            city = "";
+        }
         return city;
     }
 
@@ -153,6 +125,9 @@ public class Address implements Serializable {
     }
 
     public String getCountry() {
+        if (country == null) {
+            country = "";
+        }
         return country;
     }
 
@@ -160,100 +135,32 @@ public class Address implements Serializable {
         this.country = country;
     }
 
-    @XmlTransient
-    public List<Business> getBusinessList() {
-        return businessList;
+    public String getPostalCode() {
+        if (postalCode == null) {
+            postalCode = "";
+        }
+        return postalCode;
     }
 
-    public void setBusinessList(List<Business> businessList) {
-        this.businessList = businessList;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
-    @XmlTransient
-    public List<Client> getClientList() {
-        return clientList;
+    public String getStateOrProvince() {
+        if (stateOrProvince == null) {
+            stateOrProvince = "";
+        }
+        return stateOrProvince;
     }
 
-    public void setClientList(List<Client> clientList) {
-        this.clientList = clientList;
-    }
-
-    @XmlTransient
-    public List<Contact> getContactList() {
-        return contactList;
-    }
-
-    public void setContactList(List<Contact> contactList) {
-        this.contactList = contactList;
-    }
-
-    @XmlTransient
-    public List<Foodfactory> getFoodfactoryList() {
-        return foodfactoryList;
-    }
-
-    public void setFoodfactoryList(List<Foodfactory> foodfactoryList) {
-        this.foodfactoryList = foodfactoryList;
-    }
-
-    @XmlTransient
-    public List<Employee> getEmployeeList() {
-        return employeeList;
-    }
-
-    public void setEmployeeList(List<Employee> employeeList) {
-        this.employeeList = employeeList;
-    }
-
-    @XmlTransient
-    public List<Compliancesurvey> getCompliancesurveyList() {
-        return compliancesurveyList;
-    }
-
-    public void setCompliancesurveyList(List<Compliancesurvey> compliancesurveyList) {
-        this.compliancesurveyList = compliancesurveyList;
-    }
-
-    @XmlTransient
-    public List<Compliancesurvey> getCompliancesurveyList1() {
-        return compliancesurveyList1;
-    }
-
-    public void setCompliancesurveyList1(List<Compliancesurvey> compliancesurveyList1) {
-        this.compliancesurveyList1 = compliancesurveyList1;
-    }
-
-    @XmlTransient
-    public List<Compliancesurvey> getCompliancesurveyList2() {
-        return compliancesurveyList2;
-    }
-
-    public void setCompliancesurveyList2(List<Compliancesurvey> compliancesurveyList2) {
-        this.compliancesurveyList2 = compliancesurveyList2;
-    }
-
-    @XmlTransient
-    public List<Compliancesurvey> getCompliancesurveyList3() {
-        return compliancesurveyList3;
-    }
-
-    public void setCompliancesurveyList3(List<Compliancesurvey> compliancesurveyList3) {
-        this.compliancesurveyList3 = compliancesurveyList3;
-    }
-
-    @XmlTransient
-    public List<Businessoffice> getBusinessofficeList() {
-        return businessofficeList;
-    }
-
-    public void setBusinessofficeList(List<Businessoffice> businessofficeList) {
-        this.businessofficeList = businessofficeList;
+    public void setStateOrProvince(String stateOrProvince) {
+        this.stateOrProvince = stateOrProvince;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (Id != null ? Id.hashCode() : 0);
         return hash;
     }
 
@@ -264,7 +171,7 @@ public class Address implements Serializable {
             return false;
         }
         Address other = (Address) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.Id == null && other.Id != null) || (this.Id != null && !this.Id.equals(other.Id))) {
             return false;
         }
         return true;
@@ -272,7 +179,90 @@ public class Address implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Address[ id=" + id + " ]";
+        return (getAddressLine1().trim().isEmpty() ? "" : getAddressLine1())
+                + (getAddressLine2().trim().isEmpty() ? "" : ", " + getAddressLine2())
+                + (getCity().trim().isEmpty() ? "" : ", " + getCity())
+                + (getStateOrProvince().trim().isEmpty() ? "" : ", " + getStateOrProvince())
+                + "\n";
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        if (name == null) {
+            name = "";
+        }
+        return name;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if ((((Address) o).Id != null) && (this.Id != null)) {
+            return Collator.getInstance().compare(
+                    new Long(((Address) o).Id).toString(),
+                    new Long(this.Id).toString());
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        Address address = new Address();
+
+        if (value != null) {
+            address.setName(value);
+        }
+
+        return address;
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+        return ((Address) value).getName();
     }
     
+    public static Address findDefaultAddress(
+            EntityManager em,
+            String name,
+            Boolean useTransaction) {
+         
+        Address address = findAddressByName(em, name);
+
+        if (address == null) {
+            address = new Address(name);
+            
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, address);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, address);
+            }
+        }
+
+        return address;
+    }
+
+    public static Address findAddressByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.trim().replaceAll("'", "''");
+
+            List<Address> addresses = em.createQuery("SELECT a FROM  Address a "
+                    + "WHERE UPPER(a.name) "
+                    + "= '" + newName.toUpperCase() + "'", Address.class).getResultList();
+            if (addresses.size() > 0) {
+                return addresses.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 }

@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -21,8 +20,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -32,22 +34,23 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "certification")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Certification.findAll", query = "SELECT c FROM Certification c")
-    , @NamedQuery(name = "Certification.findById", query = "SELECT c FROM Certification c WHERE c.id = :id")
-    , @NamedQuery(name = "Certification.findByCertificatenumber", query = "SELECT c FROM Certification c WHERE c.certificatenumber = :certificatenumber")
-    , @NamedQuery(name = "Certification.findByExpirydate", query = "SELECT c FROM Certification c WHERE c.expirydate = :expirydate")
-    , @NamedQuery(name = "Certification.findByActive", query = "SELECT c FROM Certification c WHERE c.active = :active")
-    , @NamedQuery(name = "Certification.findByDateissued", query = "SELECT c FROM Certification c WHERE c.dateissued = :dateissued")
-    , @NamedQuery(name = "Certification.findByNumber", query = "SELECT c FROM Certification c WHERE c.number = :number")
-    , @NamedQuery(name = "Certification.findByType", query = "SELECT c FROM Certification c WHERE c.type = :type")
-    , @NamedQuery(name = "Certification.findByNotes", query = "SELECT c FROM Certification c WHERE c.notes = :notes")})
+    @NamedQuery(name = "Certification.findAll", query = "SELECT c FROM Certification c"),
+    @NamedQuery(name = "Certification.findById", query = "SELECT c FROM Certification c WHERE c.id = :id"),
+    @NamedQuery(name = "Certification.findByCertificatenumber", query = "SELECT c FROM Certification c WHERE c.certificatenumber = :certificatenumber"),
+    @NamedQuery(name = "Certification.findByExpirydate", query = "SELECT c FROM Certification c WHERE c.expirydate = :expirydate"),
+    @NamedQuery(name = "Certification.findByActive", query = "SELECT c FROM Certification c WHERE c.active = :active"),
+    @NamedQuery(name = "Certification.findByDateissued", query = "SELECT c FROM Certification c WHERE c.dateissued = :dateissued"),
+    @NamedQuery(name = "Certification.findByNumber", query = "SELECT c FROM Certification c WHERE c.number = :number"),
+    @NamedQuery(name = "Certification.findByType", query = "SELECT c FROM Certification c WHERE c.type = :type"),
+    @NamedQuery(name = "Certification.findByNotes", query = "SELECT c FROM Certification c WHERE c.notes = :notes")})
 public class Certification implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "CERTIFICATENUMBER")
     private String certificatenumber;
     @Column(name = "EXPIRYDATE")
@@ -58,12 +61,17 @@ public class Certification implements Serializable {
     @Column(name = "DATEISSUED")
     @Temporal(TemporalType.DATE)
     private Date dateissued;
+    @Size(max = 255)
     @Column(name = "NUMBER")
     private String number;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
+    @Size(max = 255)
     @Column(name = "NOTES")
     private String notes;
+    @ManyToMany(mappedBy = "certificationList")
+    private List<Petrolpumpnozzle> petrolpumpnozzleList;
     @ManyToMany(mappedBy = "certificationList")
     private List<Foodfactory> foodfactoryList;
     @JoinColumn(name = "APPLICANT_ID", referencedColumnName = "ID")
@@ -76,7 +84,11 @@ public class Certification implements Serializable {
     @ManyToOne
     private Business grantedtoId;
     @OneToMany(mappedBy = "certificationId")
+    private List<Petrolstation> petrolstationList;
+    @OneToMany(mappedBy = "certificationId")
     private List<Scale> scaleList;
+    @OneToMany(mappedBy = "certificationId")
+    private List<Petrolpump> petrolpumpList;
 
     public Certification() {
     }
@@ -150,6 +162,17 @@ public class Certification implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Petrolpumpnozzle> getPetrolpumpnozzleList() {
+        return petrolpumpnozzleList;
+    }
+
+    public void setPetrolpumpnozzleList(List<Petrolpumpnozzle> petrolpumpnozzleList) {
+        this.petrolpumpnozzleList = petrolpumpnozzleList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Foodfactory> getFoodfactoryList() {
         return foodfactoryList;
     }
@@ -183,12 +206,33 @@ public class Certification implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Petrolstation> getPetrolstationList() {
+        return petrolstationList;
+    }
+
+    public void setPetrolstationList(List<Petrolstation> petrolstationList) {
+        this.petrolstationList = petrolstationList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Scale> getScaleList() {
         return scaleList;
     }
 
     public void setScaleList(List<Scale> scaleList) {
         this.scaleList = scaleList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Petrolpump> getPetrolpumpList() {
+        return petrolpumpList;
+    }
+
+    public void setPetrolpumpList(List<Petrolpump> petrolpumpList) {
+        this.petrolpumpList = petrolpumpList;
     }
 
     @Override
@@ -213,7 +257,7 @@ public class Certification implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Certification[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Certification[ id=" + id + " ]";
     }
     
 }

@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -16,8 +15,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -27,16 +29,17 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "signature")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Signature.findAll", query = "SELECT s FROM Signature s")
-    , @NamedQuery(name = "Signature.findById", query = "SELECT s FROM Signature s WHERE s.id = :id")
-    , @NamedQuery(name = "Signature.findByName", query = "SELECT s FROM Signature s WHERE s.name = :name")})
+    @NamedQuery(name = "Signature.findAll", query = "SELECT s FROM Signature s"),
+    @NamedQuery(name = "Signature.findById", query = "SELECT s FROM Signature s WHERE s.id = :id"),
+    @NamedQuery(name = "Signature.findByName", query = "SELECT s FROM Signature s WHERE s.name = :name")})
 public class Signature implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Lob
@@ -50,11 +53,11 @@ public class Signature implements Serializable {
     private List<Compliancesurvey> compliancesurveyList1;
     @OneToMany(mappedBy = "inspectorsigforsamplerequestpoeId")
     private List<Compliancesurvey> compliancesurveyList2;
-    @OneToMany(mappedBy = "preparedbysigforreleaserequestpoeId")
+    @OneToMany(mappedBy = "authsigfornoticeofreleasefromdentiondmId")
     private List<Compliancesurvey> compliancesurveyList3;
     @OneToMany(mappedBy = "approvedbysigforreleaserequestpoeId")
     private List<Compliancesurvey> compliancesurveyList4;
-    @OneToMany(mappedBy = "authsigfornoticeofreleasefromdentiondmId")
+    @OneToMany(mappedBy = "preparedbysigforreleaserequestpoeId")
     private List<Compliancesurvey> compliancesurveyList5;
 
     public Signature() {
@@ -89,6 +92,7 @@ public class Signature implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Employee> getEmployeeList() {
         return employeeList;
     }
@@ -98,6 +102,7 @@ public class Signature implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList() {
         return compliancesurveyList;
     }
@@ -107,6 +112,7 @@ public class Signature implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList1() {
         return compliancesurveyList1;
     }
@@ -116,6 +122,7 @@ public class Signature implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList2() {
         return compliancesurveyList2;
     }
@@ -125,6 +132,7 @@ public class Signature implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList3() {
         return compliancesurveyList3;
     }
@@ -134,6 +142,7 @@ public class Signature implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList4() {
         return compliancesurveyList4;
     }
@@ -143,6 +152,7 @@ public class Signature implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList5() {
         return compliancesurveyList5;
     }
@@ -173,7 +183,7 @@ public class Signature implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Signature[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Signature[ id=" + id + " ]";
     }
     
 }

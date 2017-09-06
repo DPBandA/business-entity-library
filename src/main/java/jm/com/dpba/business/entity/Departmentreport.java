@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -15,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -25,18 +26,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "departmentreport")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Departmentreport.findAll", query = "SELECT d FROM Departmentreport d")
-    , @NamedQuery(name = "Departmentreport.findById", query = "SELECT d FROM Departmentreport d WHERE d.id = :id")
-    , @NamedQuery(name = "Departmentreport.findByExecutivesummary", query = "SELECT d FROM Departmentreport d WHERE d.executivesummary = :executivesummary")
-    , @NamedQuery(name = "Departmentreport.findByReportyear", query = "SELECT d FROM Departmentreport d WHERE d.reportyear = :reportyear")
-    , @NamedQuery(name = "Departmentreport.findByReportperiod", query = "SELECT d FROM Departmentreport d WHERE d.reportperiod = :reportperiod")})
+    @NamedQuery(name = "Departmentreport.findAll", query = "SELECT d FROM Departmentreport d"),
+    @NamedQuery(name = "Departmentreport.findById", query = "SELECT d FROM Departmentreport d WHERE d.id = :id"),
+    @NamedQuery(name = "Departmentreport.findByExecutivesummary", query = "SELECT d FROM Departmentreport d WHERE d.executivesummary = :executivesummary"),
+    @NamedQuery(name = "Departmentreport.findByReportyear", query = "SELECT d FROM Departmentreport d WHERE d.reportyear = :reportyear"),
+    @NamedQuery(name = "Departmentreport.findByReportperiod", query = "SELECT d FROM Departmentreport d WHERE d.reportperiod = :reportperiod")})
 public class Departmentreport implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "EXECUTIVESUMMARY")
     private String executivesummary;
     @Column(name = "REPORTYEAR")
@@ -116,7 +118,7 @@ public class Departmentreport implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Departmentreport[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Departmentreport[ id=" + id + " ]";
     }
     
 }

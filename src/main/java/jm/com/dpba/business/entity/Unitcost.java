@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -18,6 +17,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -28,25 +29,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "unitcost")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Unitcost.findAll", query = "SELECT u FROM Unitcost u")
-    , @NamedQuery(name = "Unitcost.findById", query = "SELECT u FROM Unitcost u WHERE u.id = :id")
-    , @NamedQuery(name = "Unitcost.findByCost", query = "SELECT u FROM Unitcost u WHERE u.cost = :cost")
-    , @NamedQuery(name = "Unitcost.findByDescription", query = "SELECT u FROM Unitcost u WHERE u.description = :description")
-    , @NamedQuery(name = "Unitcost.findByEffective", query = "SELECT u FROM Unitcost u WHERE u.effective = :effective")
-    , @NamedQuery(name = "Unitcost.findByEffectivedate", query = "SELECT u FROM Unitcost u WHERE u.effectivedate = :effectivedate")
-    , @NamedQuery(name = "Unitcost.findByName", query = "SELECT u FROM Unitcost u WHERE u.name = :name")
-    , @NamedQuery(name = "Unitcost.findByService", query = "SELECT u FROM Unitcost u WHERE u.service = :service")
-    , @NamedQuery(name = "Unitcost.findByUnit", query = "SELECT u FROM Unitcost u WHERE u.unit = :unit")})
+    @NamedQuery(name = "Unitcost.findAll", query = "SELECT u FROM Unitcost u"),
+    @NamedQuery(name = "Unitcost.findById", query = "SELECT u FROM Unitcost u WHERE u.id = :id"),
+    @NamedQuery(name = "Unitcost.findByCost", query = "SELECT u FROM Unitcost u WHERE u.cost = :cost"),
+    @NamedQuery(name = "Unitcost.findByDescription", query = "SELECT u FROM Unitcost u WHERE u.description = :description"),
+    @NamedQuery(name = "Unitcost.findByEffective", query = "SELECT u FROM Unitcost u WHERE u.effective = :effective"),
+    @NamedQuery(name = "Unitcost.findByEffectivedate", query = "SELECT u FROM Unitcost u WHERE u.effectivedate = :effectivedate"),
+    @NamedQuery(name = "Unitcost.findByName", query = "SELECT u FROM Unitcost u WHERE u.name = :name"),
+    @NamedQuery(name = "Unitcost.findByService", query = "SELECT u FROM Unitcost u WHERE u.service = :service"),
+    @NamedQuery(name = "Unitcost.findByUnit", query = "SELECT u FROM Unitcost u WHERE u.unit = :unit")})
 public class Unitcost implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "COST")
     private Double cost;
+    @Size(max = 1024)
     @Column(name = "DESCRIPTION")
     private String description;
     @Column(name = "EFFECTIVE")
@@ -54,10 +56,13 @@ public class Unitcost implements Serializable {
     @Column(name = "EFFECTIVEDATE")
     @Temporal(TemporalType.DATE)
     private Date effectivedate;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "SERVICE")
     private String service;
+    @Size(max = 255)
     @Column(name = "UNIT")
     private String unit;
     @JoinColumn(name = "DEPARTMENTUNIT_ID", referencedColumnName = "ID")
@@ -187,7 +192,7 @@ public class Unitcost implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Unitcost[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Unitcost[ id=" + id + " ]";
     }
     
 }

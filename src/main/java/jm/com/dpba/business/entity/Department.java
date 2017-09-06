@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -19,8 +18,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -30,28 +32,31 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "department")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Department.findAll", query = "SELECT d FROM Department d")
-    , @NamedQuery(name = "Department.findById", query = "SELECT d FROM Department d WHERE d.id = :id")
-    , @NamedQuery(name = "Department.findByName", query = "SELECT d FROM Department d WHERE d.name = :name")
-    , @NamedQuery(name = "Department.findByActive", query = "SELECT d FROM Department d WHERE d.active = :active")
-    , @NamedQuery(name = "Department.findBySubgroupcode", query = "SELECT d FROM Department d WHERE d.subgroupcode = :subgroupcode")
-    , @NamedQuery(name = "Department.findByActingheadactive", query = "SELECT d FROM Department d WHERE d.actingheadactive = :actingheadactive")
-    , @NamedQuery(name = "Department.findByJobcostingtype", query = "SELECT d FROM Department d WHERE d.jobcostingtype = :jobcostingtype")})
+    @NamedQuery(name = "Department.findAll", query = "SELECT d FROM Department d"),
+    @NamedQuery(name = "Department.findById", query = "SELECT d FROM Department d WHERE d.id = :id"),
+    @NamedQuery(name = "Department.findByName", query = "SELECT d FROM Department d WHERE d.name = :name"),
+    @NamedQuery(name = "Department.findByActive", query = "SELECT d FROM Department d WHERE d.active = :active"),
+    @NamedQuery(name = "Department.findBySubgroupcode", query = "SELECT d FROM Department d WHERE d.subgroupcode = :subgroupcode"),
+    @NamedQuery(name = "Department.findByActingheadactive", query = "SELECT d FROM Department d WHERE d.actingheadactive = :actingheadactive"),
+    @NamedQuery(name = "Department.findByJobcostingtype", query = "SELECT d FROM Department d WHERE d.jobcostingtype = :jobcostingtype")})
 public class Department implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "ACTIVE")
     private Boolean active;
+    @Size(max = 255)
     @Column(name = "SUBGROUPCODE")
     private String subgroupcode;
     @Column(name = "ACTINGHEADACTIVE")
     private Boolean actingheadactive;
+    @Size(max = 255)
     @Column(name = "JOBCOSTINGTYPE")
     private String jobcostingtype;
     @JoinTable(name = "department_laboratory", joinColumns = {
@@ -59,20 +64,11 @@ public class Department implements Serializable {
         @JoinColumn(name = "laboratories_ID", referencedColumnName = "ID")})
     @ManyToMany
     private List<Laboratory> laboratoryList;
-    @ManyToMany(mappedBy = "departmentList")
-    private List<Jobsubcategory> jobsubcategoryList;
     @JoinTable(name = "department_employee", joinColumns = {
         @JoinColumn(name = "Department_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
         @JoinColumn(name = "staff_ID", referencedColumnName = "ID")})
     @ManyToMany
     private List<Employee> employeeList;
-    @JoinTable(name = "department_jobcategory", joinColumns = {
-        @JoinColumn(name = "Department_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "jobCategories_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    private List<Jobcategory> jobcategoryList;
-    @ManyToMany(mappedBy = "departmentList")
-    private List<Division> divisionList;
     @JoinTable(name = "department_departmentunit", joinColumns = {
         @JoinColumn(name = "Department_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
         @JoinColumn(name = "departmentUnits_ID", referencedColumnName = "ID")})
@@ -80,6 +76,17 @@ public class Department implements Serializable {
     private List<Departmentunit> departmentunitList;
     @ManyToMany(mappedBy = "departmentList")
     private List<Sector> sectorList;
+    @ManyToMany(mappedBy = "departmentList")
+    private List<Jobsubcategory> jobsubcategoryList;
+    @JoinTable(name = "department_jobcategory", joinColumns = {
+        @JoinColumn(name = "Department_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
+        @JoinColumn(name = "jobCategories_ID", referencedColumnName = "ID")})
+    @ManyToMany
+    private List<Jobcategory> jobcategoryList;
+    @ManyToMany(mappedBy = "departmentList")
+    private List<Division> divisionList;
+    @ManyToMany(mappedBy = "departmentList")
+    private List<Jobreportitem> jobreportitemList;
     @ManyToMany(mappedBy = "departmentList1")
     private List<Jobcategory> jobcategoryList1;
     @ManyToMany(mappedBy = "departmentList")
@@ -87,12 +94,20 @@ public class Department implements Serializable {
     @OneToMany(mappedBy = "departmentId")
     private List<Employee> employeeList1;
     @OneToMany(mappedBy = "departmentId")
+    private List<JobManagerUser> jobmanageruserList;
+    @OneToMany(mappedBy = "departmentresponsibleId")
+    private List<Jobtask> jobtaskList;
+    @OneToMany(mappedBy = "departmentId")
     private List<Departmentreport> departmentreportList;
+    @OneToMany(mappedBy = "requestingdepartmentId")
+    private List<Legaldocument> legaldocumentList;
+    @OneToMany(mappedBy = "responsibledepartmentId")
+    private List<Legaldocument> legaldocumentList1;
     @OneToMany(mappedBy = "departmentId")
     private List<Servicerequest> servicerequestList;
-    @OneToMany(mappedBy = "departmentId")
-    private List<Job> jobList;
     @OneToMany(mappedBy = "subcontracteddepartmentId")
+    private List<Job> jobList;
+    @OneToMany(mappedBy = "departmentId")
     private List<Job> jobList1;
     @OneToMany(mappedBy = "requestingdepartmentId")
     private List<Documenttracking> documenttrackingList;
@@ -178,6 +193,7 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Laboratory> getLaboratoryList() {
         return laboratoryList;
     }
@@ -187,15 +203,7 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
-    public List<Jobsubcategory> getJobsubcategoryList() {
-        return jobsubcategoryList;
-    }
-
-    public void setJobsubcategoryList(List<Jobsubcategory> jobsubcategoryList) {
-        this.jobsubcategoryList = jobsubcategoryList;
-    }
-
-    @XmlTransient
+    @JsonIgnore
     public List<Employee> getEmployeeList() {
         return employeeList;
     }
@@ -205,24 +213,7 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
-    public List<Jobcategory> getJobcategoryList() {
-        return jobcategoryList;
-    }
-
-    public void setJobcategoryList(List<Jobcategory> jobcategoryList) {
-        this.jobcategoryList = jobcategoryList;
-    }
-
-    @XmlTransient
-    public List<Division> getDivisionList() {
-        return divisionList;
-    }
-
-    public void setDivisionList(List<Division> divisionList) {
-        this.divisionList = divisionList;
-    }
-
-    @XmlTransient
+    @JsonIgnore
     public List<Departmentunit> getDepartmentunitList() {
         return departmentunitList;
     }
@@ -232,6 +223,7 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Sector> getSectorList() {
         return sectorList;
     }
@@ -241,6 +233,47 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Jobsubcategory> getJobsubcategoryList() {
+        return jobsubcategoryList;
+    }
+
+    public void setJobsubcategoryList(List<Jobsubcategory> jobsubcategoryList) {
+        this.jobsubcategoryList = jobsubcategoryList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Jobcategory> getJobcategoryList() {
+        return jobcategoryList;
+    }
+
+    public void setJobcategoryList(List<Jobcategory> jobcategoryList) {
+        this.jobcategoryList = jobcategoryList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Division> getDivisionList() {
+        return divisionList;
+    }
+
+    public void setDivisionList(List<Division> divisionList) {
+        this.divisionList = divisionList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Jobreportitem> getJobreportitemList() {
+        return jobreportitemList;
+    }
+
+    public void setJobreportitemList(List<Jobreportitem> jobreportitemList) {
+        this.jobreportitemList = jobreportitemList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Jobcategory> getJobcategoryList1() {
         return jobcategoryList1;
     }
@@ -250,6 +283,7 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Service> getServiceList() {
         return serviceList;
     }
@@ -259,6 +293,7 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Employee> getEmployeeList1() {
         return employeeList1;
     }
@@ -268,6 +303,27 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<JobManagerUser> getJobmanageruserList() {
+        return jobmanageruserList;
+    }
+
+    public void setJobmanageruserList(List<JobManagerUser> jobmanageruserList) {
+        this.jobmanageruserList = jobmanageruserList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Jobtask> getJobtaskList() {
+        return jobtaskList;
+    }
+
+    public void setJobtaskList(List<Jobtask> jobtaskList) {
+        this.jobtaskList = jobtaskList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Departmentreport> getDepartmentreportList() {
         return departmentreportList;
     }
@@ -277,6 +333,27 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Legaldocument> getLegaldocumentList() {
+        return legaldocumentList;
+    }
+
+    public void setLegaldocumentList(List<Legaldocument> legaldocumentList) {
+        this.legaldocumentList = legaldocumentList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Legaldocument> getLegaldocumentList1() {
+        return legaldocumentList1;
+    }
+
+    public void setLegaldocumentList1(List<Legaldocument> legaldocumentList1) {
+        this.legaldocumentList1 = legaldocumentList1;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Servicerequest> getServicerequestList() {
         return servicerequestList;
     }
@@ -286,6 +363,7 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Job> getJobList() {
         return jobList;
     }
@@ -295,6 +373,7 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Job> getJobList1() {
         return jobList1;
     }
@@ -304,6 +383,7 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Documenttracking> getDocumenttrackingList() {
         return documenttrackingList;
     }
@@ -313,6 +393,7 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Documenttracking> getDocumenttrackingList1() {
         return documenttrackingList1;
     }
@@ -322,6 +403,7 @@ public class Department implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Unitcost> getUnitcostList() {
         return unitcostList;
     }
@@ -408,7 +490,7 @@ public class Department implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Department[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Department[ id=" + id + " ]";
     }
     
 }

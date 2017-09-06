@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -16,6 +15,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -26,38 +27,38 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "documentreport")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Documentreport.findAll", query = "SELECT d FROM Documentreport d")
-    , @NamedQuery(name = "Documentreport.findById", query = "SELECT d FROM Documentreport d WHERE d.id = :id")
-    , @NamedQuery(name = "Documentreport.findByStartdate", query = "SELECT d FROM Documentreport d WHERE d.startdate = :startdate")
-    , @NamedQuery(name = "Documentreport.findByShowcomments", query = "SELECT d FROM Documentreport d WHERE d.showcomments = :showcomments")
-    , @NamedQuery(name = "Documentreport.findByShowresponsibleofficer", query = "SELECT d FROM Documentreport d WHERE d.showresponsibleofficer = :showresponsibleofficer")
-    , @NamedQuery(name = "Documentreport.findByShowmonthreceived", query = "SELECT d FROM Documentreport d WHERE d.showmonthreceived = :showmonthreceived")
-    , @NamedQuery(name = "Documentreport.findByEnddate", query = "SELECT d FROM Documentreport d WHERE d.enddate = :enddate")
-    , @NamedQuery(name = "Documentreport.findByShowdatereceived", query = "SELECT d FROM Documentreport d WHERE d.showdatereceived = :showdatereceived")
-    , @NamedQuery(name = "Documentreport.findByShowdocumentform", query = "SELECT d FROM Documentreport d WHERE d.showdocumentform = :showdocumentform")
-    , @NamedQuery(name = "Documentreport.findByShowurl", query = "SELECT d FROM Documentreport d WHERE d.showurl = :showurl")
-    , @NamedQuery(name = "Documentreport.findByColumnstoexclude", query = "SELECT d FROM Documentreport d WHERE d.columnstoexclude = :columnstoexclude")
-    , @NamedQuery(name = "Documentreport.findByShowworkperformedondocument", query = "SELECT d FROM Documentreport d WHERE d.showworkperformedondocument = :showworkperformedondocument")
-    , @NamedQuery(name = "Documentreport.findByName", query = "SELECT d FROM Documentreport d WHERE d.name = :name")
-    , @NamedQuery(name = "Documentreport.findByShowtype", query = "SELECT d FROM Documentreport d WHERE d.showtype = :showtype")
-    , @NamedQuery(name = "Documentreport.findByShowsequencenumber", query = "SELECT d FROM Documentreport d WHERE d.showsequencenumber = :showsequencenumber")
-    , @NamedQuery(name = "Documentreport.findByShownumberofdocuments", query = "SELECT d FROM Documentreport d WHERE d.shownumberofdocuments = :shownumberofdocuments")
-    , @NamedQuery(name = "Documentreport.findByShowdescription", query = "SELECT d FROM Documentreport d WHERE d.showdescription = :showdescription")
-    , @NamedQuery(name = "Documentreport.findBySqltext", query = "SELECT d FROM Documentreport d WHERE d.sqltext = :sqltext")
-    , @NamedQuery(name = "Documentreport.findByShowrequestingdepartment", query = "SELECT d FROM Documentreport d WHERE d.showrequestingdepartment = :showrequestingdepartment")
-    , @NamedQuery(name = "Documentreport.findByShowturnaroundtime", query = "SELECT d FROM Documentreport d WHERE d.showturnaroundtime = :showturnaroundtime")
-    , @NamedQuery(name = "Documentreport.findByShowsubmittedby", query = "SELECT d FROM Documentreport d WHERE d.showsubmittedby = :showsubmittedby")
-    , @NamedQuery(name = "Documentreport.findByShownumber", query = "SELECT d FROM Documentreport d WHERE d.shownumber = :shownumber")
-    , @NamedQuery(name = "Documentreport.findByShowdateofcompletion", query = "SELECT d FROM Documentreport d WHERE d.showdateofcompletion = :showdateofcompletion")
-    , @NamedQuery(name = "Documentreport.findByShowcurrentdocumentturnaroundtime", query = "SELECT d FROM Documentreport d WHERE d.showcurrentdocumentturnaroundtime = :showcurrentdocumentturnaroundtime")
-    , @NamedQuery(name = "Documentreport.findByShowclassification", query = "SELECT d FROM Documentreport d WHERE d.showclassification = :showclassification")
-    , @NamedQuery(name = "Documentreport.findByShownotes", query = "SELECT d FROM Documentreport d WHERE d.shownotes = :shownotes")
-    , @NamedQuery(name = "Documentreport.findByShowexpecteddateofcompletion", query = "SELECT d FROM Documentreport d WHERE d.showexpecteddateofcompletion = :showexpecteddateofcompletion")})
+    @NamedQuery(name = "Documentreport.findAll", query = "SELECT d FROM Documentreport d"),
+    @NamedQuery(name = "Documentreport.findById", query = "SELECT d FROM Documentreport d WHERE d.id = :id"),
+    @NamedQuery(name = "Documentreport.findByStartdate", query = "SELECT d FROM Documentreport d WHERE d.startdate = :startdate"),
+    @NamedQuery(name = "Documentreport.findByShowcomments", query = "SELECT d FROM Documentreport d WHERE d.showcomments = :showcomments"),
+    @NamedQuery(name = "Documentreport.findByShowresponsibleofficer", query = "SELECT d FROM Documentreport d WHERE d.showresponsibleofficer = :showresponsibleofficer"),
+    @NamedQuery(name = "Documentreport.findByShowmonthreceived", query = "SELECT d FROM Documentreport d WHERE d.showmonthreceived = :showmonthreceived"),
+    @NamedQuery(name = "Documentreport.findByEnddate", query = "SELECT d FROM Documentreport d WHERE d.enddate = :enddate"),
+    @NamedQuery(name = "Documentreport.findByShowdatereceived", query = "SELECT d FROM Documentreport d WHERE d.showdatereceived = :showdatereceived"),
+    @NamedQuery(name = "Documentreport.findByShowdocumentform", query = "SELECT d FROM Documentreport d WHERE d.showdocumentform = :showdocumentform"),
+    @NamedQuery(name = "Documentreport.findByShowurl", query = "SELECT d FROM Documentreport d WHERE d.showurl = :showurl"),
+    @NamedQuery(name = "Documentreport.findByColumnstoexclude", query = "SELECT d FROM Documentreport d WHERE d.columnstoexclude = :columnstoexclude"),
+    @NamedQuery(name = "Documentreport.findByShowworkperformedondocument", query = "SELECT d FROM Documentreport d WHERE d.showworkperformedondocument = :showworkperformedondocument"),
+    @NamedQuery(name = "Documentreport.findByName", query = "SELECT d FROM Documentreport d WHERE d.name = :name"),
+    @NamedQuery(name = "Documentreport.findByShowtype", query = "SELECT d FROM Documentreport d WHERE d.showtype = :showtype"),
+    @NamedQuery(name = "Documentreport.findByShowsequencenumber", query = "SELECT d FROM Documentreport d WHERE d.showsequencenumber = :showsequencenumber"),
+    @NamedQuery(name = "Documentreport.findByShownumberofdocuments", query = "SELECT d FROM Documentreport d WHERE d.shownumberofdocuments = :shownumberofdocuments"),
+    @NamedQuery(name = "Documentreport.findByShowdescription", query = "SELECT d FROM Documentreport d WHERE d.showdescription = :showdescription"),
+    @NamedQuery(name = "Documentreport.findBySqltext", query = "SELECT d FROM Documentreport d WHERE d.sqltext = :sqltext"),
+    @NamedQuery(name = "Documentreport.findByShowrequestingdepartment", query = "SELECT d FROM Documentreport d WHERE d.showrequestingdepartment = :showrequestingdepartment"),
+    @NamedQuery(name = "Documentreport.findByShowturnaroundtime", query = "SELECT d FROM Documentreport d WHERE d.showturnaroundtime = :showturnaroundtime"),
+    @NamedQuery(name = "Documentreport.findByShowsubmittedby", query = "SELECT d FROM Documentreport d WHERE d.showsubmittedby = :showsubmittedby"),
+    @NamedQuery(name = "Documentreport.findByShownumber", query = "SELECT d FROM Documentreport d WHERE d.shownumber = :shownumber"),
+    @NamedQuery(name = "Documentreport.findByShowdateofcompletion", query = "SELECT d FROM Documentreport d WHERE d.showdateofcompletion = :showdateofcompletion"),
+    @NamedQuery(name = "Documentreport.findByShowcurrentdocumentturnaroundtime", query = "SELECT d FROM Documentreport d WHERE d.showcurrentdocumentturnaroundtime = :showcurrentdocumentturnaroundtime"),
+    @NamedQuery(name = "Documentreport.findByShowclassification", query = "SELECT d FROM Documentreport d WHERE d.showclassification = :showclassification"),
+    @NamedQuery(name = "Documentreport.findByShownotes", query = "SELECT d FROM Documentreport d WHERE d.shownotes = :shownotes"),
+    @NamedQuery(name = "Documentreport.findByShowexpecteddateofcompletion", query = "SELECT d FROM Documentreport d WHERE d.showexpecteddateofcompletion = :showexpecteddateofcompletion")})
 public class Documentreport implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "STARTDATE")
@@ -78,10 +79,12 @@ public class Documentreport implements Serializable {
     private Boolean showdocumentform;
     @Column(name = "SHOWURL")
     private Boolean showurl;
+    @Size(max = 1024)
     @Column(name = "COLUMNSTOEXCLUDE")
     private String columnstoexclude;
     @Column(name = "SHOWWORKPERFORMEDONDOCUMENT")
     private Boolean showworkperformedondocument;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "SHOWTYPE")
@@ -92,6 +95,7 @@ public class Documentreport implements Serializable {
     private Boolean shownumberofdocuments;
     @Column(name = "SHOWDESCRIPTION")
     private Boolean showdescription;
+    @Size(max = 1024)
     @Column(name = "SQLTEXT")
     private String sqltext;
     @Column(name = "SHOWREQUESTINGDEPARTMENT")
@@ -350,7 +354,7 @@ public class Documentreport implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Documentreport[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Documentreport[ id=" + id + " ]";
     }
     
 }

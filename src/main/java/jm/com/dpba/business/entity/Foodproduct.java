@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -21,8 +20,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -32,31 +34,33 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "foodproduct")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Foodproduct.findAll", query = "SELECT f FROM Foodproduct f")
-    , @NamedQuery(name = "Foodproduct.findById", query = "SELECT f FROM Foodproduct f WHERE f.id = :id")
-    , @NamedQuery(name = "Foodproduct.findByDatelasttested", query = "SELECT f FROM Foodproduct f WHERE f.datelasttested = :datelasttested")
-    , @NamedQuery(name = "Foodproduct.findByName", query = "SELECT f FROM Foodproduct f WHERE f.name = :name")
-    , @NamedQuery(name = "Foodproduct.findByDatelastmanufactured", query = "SELECT f FROM Foodproduct f WHERE f.datelastmanufactured = :datelastmanufactured")
-    , @NamedQuery(name = "Foodproduct.findByBrand", query = "SELECT f FROM Foodproduct f WHERE f.brand = :brand")
-    , @NamedQuery(name = "Foodproduct.findByActive", query = "SELECT f FROM Foodproduct f WHERE f.active = :active")
-    , @NamedQuery(name = "Foodproduct.findByDatelastsampled", query = "SELECT f FROM Foodproduct f WHERE f.datelastsampled = :datelastsampled")
-    , @NamedQuery(name = "Foodproduct.findByCode", query = "SELECT f FROM Foodproduct f WHERE f.code = :code")
-    , @NamedQuery(name = "Foodproduct.findByType", query = "SELECT f FROM Foodproduct f WHERE f.type = :type")})
+    @NamedQuery(name = "Foodproduct.findAll", query = "SELECT f FROM Foodproduct f"),
+    @NamedQuery(name = "Foodproduct.findById", query = "SELECT f FROM Foodproduct f WHERE f.id = :id"),
+    @NamedQuery(name = "Foodproduct.findByDatelasttested", query = "SELECT f FROM Foodproduct f WHERE f.datelasttested = :datelasttested"),
+    @NamedQuery(name = "Foodproduct.findByName", query = "SELECT f FROM Foodproduct f WHERE f.name = :name"),
+    @NamedQuery(name = "Foodproduct.findByDatelastmanufactured", query = "SELECT f FROM Foodproduct f WHERE f.datelastmanufactured = :datelastmanufactured"),
+    @NamedQuery(name = "Foodproduct.findByBrand", query = "SELECT f FROM Foodproduct f WHERE f.brand = :brand"),
+    @NamedQuery(name = "Foodproduct.findByActive", query = "SELECT f FROM Foodproduct f WHERE f.active = :active"),
+    @NamedQuery(name = "Foodproduct.findByDatelastsampled", query = "SELECT f FROM Foodproduct f WHERE f.datelastsampled = :datelastsampled"),
+    @NamedQuery(name = "Foodproduct.findByCode", query = "SELECT f FROM Foodproduct f WHERE f.code = :code"),
+    @NamedQuery(name = "Foodproduct.findByType", query = "SELECT f FROM Foodproduct f WHERE f.type = :type")})
 public class Foodproduct implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "DATELASTTESTED")
     @Temporal(TemporalType.DATE)
     private Date datelasttested;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "DATELASTMANUFACTURED")
     @Temporal(TemporalType.DATE)
     private Date datelastmanufactured;
+    @Size(max = 255)
     @Column(name = "BRAND")
     private String brand;
     @Column(name = "ACTIVE")
@@ -64,8 +68,10 @@ public class Foodproduct implements Serializable {
     @Column(name = "DATELASTSAMPLED")
     @Temporal(TemporalType.DATE)
     private Date datelastsampled;
+    @Size(max = 255)
     @Column(name = "CODE")
     private String code;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
     @JoinTable(name = "foodproduct_category", joinColumns = {
@@ -159,6 +165,7 @@ public class Foodproduct implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Category> getCategoryList() {
         return categoryList;
     }
@@ -168,6 +175,7 @@ public class Foodproduct implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodfactory> getFoodfactoryList() {
         return foodfactoryList;
     }
@@ -206,7 +214,7 @@ public class Foodproduct implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Foodproduct[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Foodproduct[ id=" + id + " ]";
     }
     
 }

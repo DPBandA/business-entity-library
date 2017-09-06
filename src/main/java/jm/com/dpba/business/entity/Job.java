@@ -1,12 +1,12 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,11 +14,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -28,27 +34,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "job")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Job.findAll", query = "SELECT j FROM Job j")
-    , @NamedQuery(name = "Job.findById", query = "SELECT j FROM Job j WHERE j.id = :id")
-    , @NamedQuery(name = "Job.findByYearreceived", query = "SELECT j FROM Job j WHERE j.yearreceived = :yearreceived")
-    , @NamedQuery(name = "Job.findByJobdescription", query = "SELECT j FROM Job j WHERE j.jobdescription = :jobdescription")
-    , @NamedQuery(name = "Job.findByEstimatedturnaroundtimeindays", query = "SELECT j FROM Job j WHERE j.estimatedturnaroundtimeindays = :estimatedturnaroundtimeindays")
-    , @NamedQuery(name = "Job.findByJobsequencenumber", query = "SELECT j FROM Job j WHERE j.jobsequencenumber = :jobsequencenumber")
-    , @NamedQuery(name = "Job.findByReportnumber", query = "SELECT j FROM Job j WHERE j.reportnumber = :reportnumber")
-    , @NamedQuery(name = "Job.findByNooftestsorcalibrations", query = "SELECT j FROM Job j WHERE j.nooftestsorcalibrations = :nooftestsorcalibrations")
-    , @NamedQuery(name = "Job.findByNumberofsamples", query = "SELECT j FROM Job j WHERE j.numberofsamples = :numberofsamples")
-    , @NamedQuery(name = "Job.findByIsearningjob", query = "SELECT j FROM Job j WHERE j.isearningjob = :isearningjob")
-    , @NamedQuery(name = "Job.findByAutogeneratejobnumber", query = "SELECT j FROM Job j WHERE j.autogeneratejobnumber = :autogeneratejobnumber")
-    , @NamedQuery(name = "Job.findByJobnumber", query = "SELECT j FROM Job j WHERE j.jobnumber = :jobnumber")
-    , @NamedQuery(name = "Job.findByNewclient", query = "SELECT j FROM Job j WHERE j.newclient = :newclient")
-    , @NamedQuery(name = "Job.findByLocked", query = "SELECT j FROM Job j WHERE j.locked = :locked")
-    , @NamedQuery(name = "Job.findByComment", query = "SELECT j FROM Job j WHERE j.comment = :comment")
-    , @NamedQuery(name = "Job.findByNooftests", query = "SELECT j FROM Job j WHERE j.nooftests = :nooftests")
-    , @NamedQuery(name = "Job.findByNoofcalibrations", query = "SELECT j FROM Job j WHERE j.noofcalibrations = :noofcalibrations")
-    , @NamedQuery(name = "Job.findByInstructions", query = "SELECT j FROM Job j WHERE j.instructions = :instructions")
-    , @NamedQuery(name = "Job.findByEstimatedturnaroundtimerequired", query = "SELECT j FROM Job j WHERE j.estimatedturnaroundtimerequired = :estimatedturnaroundtimerequired")})
+    @NamedQuery(name = "Job.findAll", query = "SELECT j FROM Job j"),
+    @NamedQuery(name = "Job.findById", query = "SELECT j FROM Job j WHERE j.id = :id"),
+    @NamedQuery(name = "Job.findByYearreceived", query = "SELECT j FROM Job j WHERE j.yearreceived = :yearreceived"),
+    @NamedQuery(name = "Job.findByJobdescription", query = "SELECT j FROM Job j WHERE j.jobdescription = :jobdescription"),
+    @NamedQuery(name = "Job.findByEstimatedturnaroundtimeindays", query = "SELECT j FROM Job j WHERE j.estimatedturnaroundtimeindays = :estimatedturnaroundtimeindays"),
+    @NamedQuery(name = "Job.findByJobsequencenumber", query = "SELECT j FROM Job j WHERE j.jobsequencenumber = :jobsequencenumber"),
+    @NamedQuery(name = "Job.findByReportnumber", query = "SELECT j FROM Job j WHERE j.reportnumber = :reportnumber"),
+    @NamedQuery(name = "Job.findByNooftestsorcalibrations", query = "SELECT j FROM Job j WHERE j.nooftestsorcalibrations = :nooftestsorcalibrations"),
+    @NamedQuery(name = "Job.findByNumberofsamples", query = "SELECT j FROM Job j WHERE j.numberofsamples = :numberofsamples"),
+    @NamedQuery(name = "Job.findByIsearningjob", query = "SELECT j FROM Job j WHERE j.isearningjob = :isearningjob"),
+    @NamedQuery(name = "Job.findByAutogeneratejobnumber", query = "SELECT j FROM Job j WHERE j.autogeneratejobnumber = :autogeneratejobnumber"),
+    @NamedQuery(name = "Job.findByJobnumber", query = "SELECT j FROM Job j WHERE j.jobnumber = :jobnumber"),
+    @NamedQuery(name = "Job.findByNewclient", query = "SELECT j FROM Job j WHERE j.newclient = :newclient"),
+    @NamedQuery(name = "Job.findByLocked", query = "SELECT j FROM Job j WHERE j.locked = :locked"),
+    @NamedQuery(name = "Job.findByComment", query = "SELECT j FROM Job j WHERE j.comment = :comment"),
+    @NamedQuery(name = "Job.findByNooftests", query = "SELECT j FROM Job j WHERE j.nooftests = :nooftests"),
+    @NamedQuery(name = "Job.findByNoofcalibrations", query = "SELECT j FROM Job j WHERE j.noofcalibrations = :noofcalibrations"),
+    @NamedQuery(name = "Job.findByInstructions", query = "SELECT j FROM Job j WHERE j.instructions = :instructions"),
+    @NamedQuery(name = "Job.findByEstimatedturnaroundtimerequired", query = "SELECT j FROM Job j WHERE j.estimatedturnaroundtimerequired = :estimatedturnaroundtimerequired")})
 public class Job implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,12 +62,14 @@ public class Job implements Serializable {
     private Long id;
     @Column(name = "YEARRECEIVED")
     private Integer yearreceived;
+    @Size(max = 1024)
     @Column(name = "JOBDESCRIPTION")
     private String jobdescription;
     @Column(name = "ESTIMATEDTURNAROUNDTIMEINDAYS")
     private Integer estimatedturnaroundtimeindays;
     @Column(name = "JOBSEQUENCENUMBER")
     private BigInteger jobsequencenumber;
+    @Size(max = 255)
     @Column(name = "REPORTNUMBER")
     private String reportnumber;
     @Column(name = "NOOFTESTSORCALIBRATIONS")
@@ -73,40 +80,52 @@ public class Job implements Serializable {
     private Boolean isearningjob;
     @Column(name = "AUTOGENERATEJOBNUMBER")
     private Boolean autogeneratejobnumber;
+    @Size(max = 255)
     @Column(name = "JOBNUMBER")
     private String jobnumber;
     @Column(name = "NEWCLIENT")
     private Boolean newclient;
     @Column(name = "LOCKED")
     private Boolean locked;
+    @Size(max = 255)
     @Column(name = "COMMENT")
     private String comment;
     @Column(name = "NOOFTESTS")
     private Integer nooftests;
     @Column(name = "NOOFCALIBRATIONS")
     private Integer noofcalibrations;
+    @Size(max = 1024)
     @Column(name = "INSTRUCTIONS")
     private String instructions;
     @Column(name = "ESTIMATEDTURNAROUNDTIMEREQUIRED")
     private Boolean estimatedturnaroundtimerequired;
-    @JoinColumn(name = "BUSINESSOFFICE_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Businessoffice businessofficeId;
-    @JoinColumn(name = "ASSIGNEDTO_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Employee assignedtoId;
-    @JoinColumn(name = "CLASSIFICATION_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Classification classificationId;
+    @ManyToMany(mappedBy = "jobList")
+    private List<Jobcostingbatch> jobcostingbatchList;
+    @JoinTable(name = "job_jobsample", joinColumns = {
+        @JoinColumn(name = "Job_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
+        @JoinColumn(name = "jobSamples_ID", referencedColumnName = "ID")})
+    @ManyToMany
+    private List<Jobsample> jobsampleList;
+    @OneToMany(mappedBy = "jobId")
+    private List<Registration> registrationList;
     @JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID")
     @ManyToOne
     private Client clientId;
-    @JoinColumn(name = "DEPARTMENT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "ASSIGNEDTO_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Department departmentId;
+    private Employee assignedtoId;
+    @JoinColumn(name = "BUSINESSOFFICE_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private Businessoffice businessofficeId;
     @JoinColumn(name = "SUBCONTRACTEDDEPARTMENT_ID", referencedColumnName = "ID")
     @ManyToOne
     private Department subcontracteddepartmentId;
+    @JoinColumn(name = "CLASSIFICATION_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private Classification classificationId;
+    @JoinColumn(name = "DEPARTMENT_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private Department departmentId;
     @JoinColumn(name = "JOBCATEGORY_ID", referencedColumnName = "ID")
     @ManyToOne
     private Jobcategory jobcategoryId;
@@ -125,6 +144,8 @@ public class Job implements Serializable {
     @JoinColumn(name = "SERVICECONTRACT_ID", referencedColumnName = "ID")
     @ManyToOne
     private Servicecontract servicecontractId;
+    @OneToMany(mappedBy = "jobId")
+    private List<Petrolpumpnozzlecalibration> petrolpumpnozzlecalibrationList;
 
     public Job() {
     }
@@ -277,28 +298,34 @@ public class Job implements Serializable {
         this.estimatedturnaroundtimerequired = estimatedturnaroundtimerequired;
     }
 
-    public Businessoffice getBusinessofficeId() {
-        return businessofficeId;
+    @XmlTransient
+    @JsonIgnore
+    public List<Jobcostingbatch> getJobcostingbatchList() {
+        return jobcostingbatchList;
     }
 
-    public void setBusinessofficeId(Businessoffice businessofficeId) {
-        this.businessofficeId = businessofficeId;
+    public void setJobcostingbatchList(List<Jobcostingbatch> jobcostingbatchList) {
+        this.jobcostingbatchList = jobcostingbatchList;
     }
 
-    public Employee getAssignedtoId() {
-        return assignedtoId;
+    @XmlTransient
+    @JsonIgnore
+    public List<Jobsample> getJobsampleList() {
+        return jobsampleList;
     }
 
-    public void setAssignedtoId(Employee assignedtoId) {
-        this.assignedtoId = assignedtoId;
+    public void setJobsampleList(List<Jobsample> jobsampleList) {
+        this.jobsampleList = jobsampleList;
     }
 
-    public Classification getClassificationId() {
-        return classificationId;
+    @XmlTransient
+    @JsonIgnore
+    public List<Registration> getRegistrationList() {
+        return registrationList;
     }
 
-    public void setClassificationId(Classification classificationId) {
-        this.classificationId = classificationId;
+    public void setRegistrationList(List<Registration> registrationList) {
+        this.registrationList = registrationList;
     }
 
     public Client getClientId() {
@@ -309,12 +336,20 @@ public class Job implements Serializable {
         this.clientId = clientId;
     }
 
-    public Department getDepartmentId() {
-        return departmentId;
+    public Employee getAssignedtoId() {
+        return assignedtoId;
     }
 
-    public void setDepartmentId(Department departmentId) {
-        this.departmentId = departmentId;
+    public void setAssignedtoId(Employee assignedtoId) {
+        this.assignedtoId = assignedtoId;
+    }
+
+    public Businessoffice getBusinessofficeId() {
+        return businessofficeId;
+    }
+
+    public void setBusinessofficeId(Businessoffice businessofficeId) {
+        this.businessofficeId = businessofficeId;
     }
 
     public Department getSubcontracteddepartmentId() {
@@ -323,6 +358,22 @@ public class Job implements Serializable {
 
     public void setSubcontracteddepartmentId(Department subcontracteddepartmentId) {
         this.subcontracteddepartmentId = subcontracteddepartmentId;
+    }
+
+    public Classification getClassificationId() {
+        return classificationId;
+    }
+
+    public void setClassificationId(Classification classificationId) {
+        this.classificationId = classificationId;
+    }
+
+    public Department getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Department departmentId) {
+        this.departmentId = departmentId;
     }
 
     public Jobcategory getJobcategoryId() {
@@ -373,6 +424,16 @@ public class Job implements Serializable {
         this.servicecontractId = servicecontractId;
     }
 
+    @XmlTransient
+    @JsonIgnore
+    public List<Petrolpumpnozzlecalibration> getPetrolpumpnozzlecalibrationList() {
+        return petrolpumpnozzlecalibrationList;
+    }
+
+    public void setPetrolpumpnozzlecalibrationList(List<Petrolpumpnozzlecalibration> petrolpumpnozzlecalibrationList) {
+        this.petrolpumpnozzlecalibrationList = petrolpumpnozzlecalibrationList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -395,7 +456,7 @@ public class Job implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Job[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Job[ id=" + id + " ]";
     }
     
 }

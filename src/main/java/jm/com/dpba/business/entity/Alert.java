@@ -1,213 +1,117 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
 
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import javax.persistence.Basic;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
 @Entity
-@Table(name = "alert")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Alert.findAll", query = "SELECT a FROM Alert a")
-    , @NamedQuery(name = "Alert.findById", query = "SELECT a FROM Alert a WHERE a.id = :id")
-    , @NamedQuery(name = "Alert.findByComment", query = "SELECT a FROM Alert a WHERE a.comment = :comment")
-    , @NamedQuery(name = "Alert.findByDuetime", query = "SELECT a FROM Alert a WHERE a.duetime = :duetime")
-    , @NamedQuery(name = "Alert.findByName", query = "SELECT a FROM Alert a WHERE a.name = :name")
-    , @NamedQuery(name = "Alert.findByPeriodtype", query = "SELECT a FROM Alert a WHERE a.periodtype = :periodtype")
-    , @NamedQuery(name = "Alert.findByRecurrenceperiod", query = "SELECT a FROM Alert a WHERE a.recurrenceperiod = :recurrenceperiod")
-    , @NamedQuery(name = "Alert.findByReference", query = "SELECT a FROM Alert a WHERE a.reference = :reference")
-    , @NamedQuery(name = "Alert.findByStatus", query = "SELECT a FROM Alert a WHERE a.status = :status")
-    , @NamedQuery(name = "Alert.findByType", query = "SELECT a FROM Alert a WHERE a.type = :type")
-    , @NamedQuery(name = "Alert.findByActiontotake", query = "SELECT a FROM Alert a WHERE a.actiontotake = :actiontotake")
-    , @NamedQuery(name = "Alert.findByActiontaken", query = "SELECT a FROM Alert a WHERE a.actiontaken = :actiontaken")
-    , @NamedQuery(name = "Alert.findByActive", query = "SELECT a FROM Alert a WHERE a.active = :active")
-    , @NamedQuery(name = "Alert.findByMessage", query = "SELECT a FROM Alert a WHERE a.message = :message")
-    , @NamedQuery(name = "Alert.findByOwnerid", query = "SELECT a FROM Alert a WHERE a.ownerid = :ownerid")
-    , @NamedQuery(name = "Alert.findBySubject", query = "SELECT a FROM Alert a WHERE a.subject = :subject")})
-public class Alert implements Serializable {
+public class Alert implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(name = "COMMENT")
-    private String comment;
-    @Basic(optional = false)
-    @Column(name = "DUETIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date duetime;
-    @Column(name = "NAME")
-    private String name;
-    @Column(name = "PERIODTYPE")
-    private String periodtype;
-    @Column(name = "RECURRENCEPERIOD")
-    private BigInteger recurrenceperiod;
-    @Column(name = "REFERENCE")
-    private String reference;
-    @Column(name = "STATUS")
-    private String status;
-    @Column(name = "TYPE")
-    private String type;
-    @Column(name = "ACTIONTOTAKE")
-    private String actiontotake;
-    @Column(name = "ACTIONTAKEN")
-    private String actiontaken;
-    @Column(name = "ACTIVE")
-    private Boolean active;
-    @Column(name = "MESSAGE")
-    private String message;
-    @Column(name = "OWNERID")
-    private BigInteger ownerid;
-    @Column(name = "SUBJECT")
-    private String subject;
-    @JoinColumn(name = "RECIPIENT_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Employee recipientId;
+    private Long ownerId = 0L;
+    private String name = "";
+    private String type = "";
+    private String reference = "";
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date dueTime = null;
+    private String periodType = "";
+    private Long recurrencePeriod = null;
+    @Column(length = 1024)
+    private String comment = "";
+    @Column(length = 1024)
+    private String status = "";
+    @Column(length = 1024)
+    private String actionToTake = "";
+    @Column(length = 1024)
+    private String actionTaken = "";
+    private Boolean active = false;
+    private String subject = "";
+    @Column(length = 1024)
+    private String message = "";
+    private static ArrayList<String> statuses = null;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee recipient = null;
 
     public Alert() {
+        active = true;
+        statuses = new ArrayList<String>();
     }
 
-    public Alert(Long id) {
-        this.id = id;
+    public Alert(Long ownerId,
+            Date dueTime,
+            String status) {
+
+        active = true;
+        statuses = new ArrayList<String>();
+        this.ownerId = ownerId;
+        this.dueTime = dueTime;
+        this.status = status;
     }
 
-    public Alert(Long id, Date duetime) {
-        this.id = id;
-        this.duetime = duetime;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getComment() {
-        return comment;
+    public Employee getRecipient() {
+        return recipient;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setRecipient(Employee recipient) {
+        this.recipient = recipient;
     }
 
-    public Date getDuetime() {
-        return duetime;
+    public static ArrayList<String> getStatuses() {
+        if (statuses.isEmpty()) {
+            statuses.add("Job saved");
+            statuses.add("Job entered");
+            statuses.add("Job to be completed");
+            statuses.add("Job costing due");
+            statuses.add("New job email sent");
+            statuses.add("Job update email sent");
+            statuses.add("Job is being tracked");
+        }
+
+        Collections.sort(statuses);
+
+        return statuses;
     }
 
-    public void setDuetime(Date duetime) {
-        this.duetime = duetime;
+    public Long getOwnerId() {
+        return ownerId;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPeriodtype() {
-        return periodtype;
-    }
-
-    public void setPeriodtype(String periodtype) {
-        this.periodtype = periodtype;
-    }
-
-    public BigInteger getRecurrenceperiod() {
-        return recurrenceperiod;
-    }
-
-    public void setRecurrenceperiod(BigInteger recurrenceperiod) {
-        this.recurrenceperiod = recurrenceperiod;
-    }
-
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getActiontotake() {
-        return actiontotake;
-    }
-
-    public void setActiontotake(String actiontotake) {
-        this.actiontotake = actiontotake;
-    }
-
-    public String getActiontaken() {
-        return actiontaken;
-    }
-
-    public void setActiontaken(String actiontaken) {
-        this.actiontaken = actiontaken;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public BigInteger getOwnerid() {
-        return ownerid;
-    }
-
-    public void setOwnerid(BigInteger ownerid) {
-        this.ownerid = ownerid;
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getSubject() {
@@ -218,12 +122,36 @@ public class Alert implements Serializable {
         this.subject = subject;
     }
 
-    public Employee getRecipientId() {
-        return recipientId;
+    public String getMessage() {
+        return message;
     }
 
-    public void setRecipientId(Employee recipientId) {
-        this.recipientId = recipientId;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getActionToTake() {
+        return actionToTake;
+    }
+
+    public void setActionToTake(String actionToTake) {
+        this.actionToTake = actionToTake;
+    }
+
+    public String getActionTaken() {
+        return actionTaken;
+    }
+
+    public void setActionTaken(String actionTaken) {
+        this.actionTaken = actionTaken;
     }
 
     @Override
@@ -248,7 +176,112 @@ public class Alert implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Alert[ id=" + id + " ]";
+        return name;
     }
-    
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public Date getDueTime() {
+        return dueTime;
+    }
+
+    public void setDueTime(Date dueTime) {
+        this.dueTime = dueTime;
+    }
+
+    public String getPeriodType() {
+        return periodType;
+    }
+
+    public void setPeriodType(String periodType) {
+        this.periodType = periodType;
+    }
+
+    public Long getRecurrencePeriod() {
+        return recurrencePeriod;
+    }
+
+    public void setRecurrencePeriod(Long recurrencePeriod) {
+        this.recurrencePeriod = recurrencePeriod;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public static Alert findAlertById(EntityManager em, Long Id) {
+
+        try {
+            return em.find(Alert.class, Id);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Alert findFirstAlertByOwnerId(EntityManager em, Long ownerId) {
+
+        try {
+            List<Alert> alerts = em.createQuery("SELECT a FROM Alert a "
+                    + "WHERE a.ownerId"
+                    + "= " + ownerId + " ORDER BY a.id", Alert.class).getResultList();
+
+            if (!alerts.isEmpty()) {
+                return alerts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static List<Alert> findAllActiveAlerts(EntityManager em) {
+
+        try {
+            List<Alert> alerts = em.createQuery("SELECT a FROM Alert a "
+                    + "WHERE a.active = 1 ORDER BY a.id", Alert.class).getResultList();
+
+            return alerts;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<Alert>();
+        }
+    }
 }

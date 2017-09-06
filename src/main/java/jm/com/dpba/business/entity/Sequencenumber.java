@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -14,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -24,18 +25,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "sequencenumber")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Sequencenumber.findAll", query = "SELECT s FROM Sequencenumber s")
-    , @NamedQuery(name = "Sequencenumber.findById", query = "SELECT s FROM Sequencenumber s WHERE s.id = :id")
-    , @NamedQuery(name = "Sequencenumber.findByName", query = "SELECT s FROM Sequencenumber s WHERE s.name = :name")
-    , @NamedQuery(name = "Sequencenumber.findBySequentialnumber", query = "SELECT s FROM Sequencenumber s WHERE s.sequentialnumber = :sequentialnumber")
-    , @NamedQuery(name = "Sequencenumber.findByYearreceived", query = "SELECT s FROM Sequencenumber s WHERE s.yearreceived = :yearreceived")})
+    @NamedQuery(name = "Sequencenumber.findAll", query = "SELECT s FROM Sequencenumber s"),
+    @NamedQuery(name = "Sequencenumber.findById", query = "SELECT s FROM Sequencenumber s WHERE s.id = :id"),
+    @NamedQuery(name = "Sequencenumber.findByName", query = "SELECT s FROM Sequencenumber s WHERE s.name = :name"),
+    @NamedQuery(name = "Sequencenumber.findBySequentialnumber", query = "SELECT s FROM Sequencenumber s WHERE s.sequentialnumber = :sequentialnumber"),
+    @NamedQuery(name = "Sequencenumber.findByYearreceived", query = "SELECT s FROM Sequencenumber s WHERE s.yearreceived = :yearreceived")})
 public class Sequencenumber implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "SEQUENTIALNUMBER")
@@ -104,7 +106,7 @@ public class Sequencenumber implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Sequencenumber[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Sequencenumber[ id=" + id + " ]";
     }
     
 }

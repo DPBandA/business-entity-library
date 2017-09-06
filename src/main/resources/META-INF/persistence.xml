@@ -6,7 +6,6 @@
     <class>jm.com.dpba.business.entity.Unitcost</class>
     <class>jm.com.dpba.business.entity.Laboratory</class>
     <class>jm.com.dpba.business.entity.Job</class>
-    <class>jm.com.dpba.business.entity.Dateperiod</class>
     <class>jm.com.dpba.business.entity.Jobstatusandtracking</class>
     <class>jm.com.dpba.business.entity.Departmentunit</class>
     <class>jm.com.dpba.business.entity.Departmentreport</class>
@@ -63,6 +62,37 @@
     <class>jm.com.dpba.business.entity.Testmeasure</class>
     <class>jm.com.dpba.business.entity.Manufacturer</class>
     <class>jm.com.dpba.business.entity.Asset</class>
+    <class>jm.com.dpba.business.entity.DatePeriod</class>
+    <class>jm.com.dpba.business.entity.Petrolstation</class>
+    <class>jm.com.dpba.business.entity.Scalecompany</class>
+    <class>jm.com.dpba.business.entity.Reporttablecolumn</class>
+    <class>jm.com.dpba.business.entity.Jobsample</class>
+    <class>jm.com.dpba.business.entity.Registration</class>
+    <class>jm.com.dpba.business.entity.Portofentrydetention</class>
+    <class>jm.com.dpba.business.entity.Jobreportitem</class>
+    <class>jm.com.dpba.business.entity.Preference</class>
+    <class>jm.com.dpba.business.entity.Petrolpumpnozzle</class>
+    <class>jm.com.dpba.business.entity.Petrolpumpcalibration</class>
+    <class>jm.com.dpba.business.entity.Petrolpumpnozzlecalibration</class>
+    <class>jm.com.dpba.business.entity.Report</class>
+    <class>jm.com.dpba.business.entity.Phonenumber</class>
+    <class>jm.com.dpba.business.entity.Jobcostingbatch</class>
+    <class>jm.com.dpba.business.entity.Petrolpumpnozzlecalibrationpoint</class>
+    <class>jm.com.dpba.business.entity.Marketproduct</class>
+    <class>jm.com.dpba.business.entity.Jobsequencenumber</class>
+    <class>jm.com.dpba.business.entity.Legaldocument</class>
+    <class>jm.com.dpba.business.entity.Petrolcompany</class>
+    <class>jm.com.dpba.business.entity.Marketproductsurvey</class>
+    <class>jm.com.dpba.business.entity.Ldapcontext</class>
+    <class>jm.com.dpba.business.entity.Producttest</class>
+    <class>jm.com.dpba.business.entity.Petrolpump</class>
+    <class>jm.com.dpba.business.entity.Shippingcontainer</class>
+    <class>jm.com.dpba.business.entity.Productinspection</class>
+    <class>jm.com.dpba.business.entity.Samplerequest</class>
+    <class>jm.com.dpba.business.entity.Jobtask</class>
+    <class>jm.com.dpba.business.entity.Petrolpumpcalibrationvalue</class>
+    <class>jm.com.dpba.business.entity.Standardsorganization</class>
+    <class>jm.com.dpba.business.entity.JobManagerUser</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jmts?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

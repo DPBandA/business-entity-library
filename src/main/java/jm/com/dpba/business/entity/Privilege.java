@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -11,12 +10,16 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -26,51 +29,56 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "privilege")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Privilege.findAll", query = "SELECT p FROM Privilege p")
-    , @NamedQuery(name = "Privilege.findById", query = "SELECT p FROM Privilege p WHERE p.id = :id")
-    , @NamedQuery(name = "Privilege.findByCategory", query = "SELECT p FROM Privilege p WHERE p.category = :category")
-    , @NamedQuery(name = "Privilege.findByDescription", query = "SELECT p FROM Privilege p WHERE p.description = :description")
-    , @NamedQuery(name = "Privilege.findByName", query = "SELECT p FROM Privilege p WHERE p.name = :name")
-    , @NamedQuery(name = "Privilege.findByRoles", query = "SELECT p FROM Privilege p WHERE p.roles = :roles")
-    , @NamedQuery(name = "Privilege.findByType", query = "SELECT p FROM Privilege p WHERE p.type = :type")
-    , @NamedQuery(name = "Privilege.findByCanaddclient", query = "SELECT p FROM Privilege p WHERE p.canaddclient = :canaddclient")
-    , @NamedQuery(name = "Privilege.findByCanadddepartment", query = "SELECT p FROM Privilege p WHERE p.canadddepartment = :canadddepartment")
-    , @NamedQuery(name = "Privilege.findByCanaddemployee", query = "SELECT p FROM Privilege p WHERE p.canaddemployee = :canaddemployee")
-    , @NamedQuery(name = "Privilege.findByCanbejmtsadministrator", query = "SELECT p FROM Privilege p WHERE p.canbejmtsadministrator = :canbejmtsadministrator")
-    , @NamedQuery(name = "Privilege.findByCandeleteclient", query = "SELECT p FROM Privilege p WHERE p.candeleteclient = :candeleteclient")
-    , @NamedQuery(name = "Privilege.findByCandeletedepartment", query = "SELECT p FROM Privilege p WHERE p.candeletedepartment = :candeletedepartment")
-    , @NamedQuery(name = "Privilege.findByCandeleteemployee", query = "SELECT p FROM Privilege p WHERE p.candeleteemployee = :candeleteemployee")
-    , @NamedQuery(name = "Privilege.findByCandeletejob", query = "SELECT p FROM Privilege p WHERE p.candeletejob = :candeletejob")
-    , @NamedQuery(name = "Privilege.findByCaneditdepartmentjob", query = "SELECT p FROM Privilege p WHERE p.caneditdepartmentjob = :caneditdepartmentjob")
-    , @NamedQuery(name = "Privilege.findByCaneditownjob", query = "SELECT p FROM Privilege p WHERE p.caneditownjob = :caneditownjob")
-    , @NamedQuery(name = "Privilege.findByCanenterownjob", query = "SELECT p FROM Privilege p WHERE p.canenterownjob = :canenterownjob")
-    , @NamedQuery(name = "Privilege.findByCanenterdepartmentjob", query = "SELECT p FROM Privilege p WHERE p.canenterdepartmentjob = :canenterdepartmentjob")
-    , @NamedQuery(name = "Privilege.findByCaneditjob", query = "SELECT p FROM Privilege p WHERE p.caneditjob = :caneditjob")
-    , @NamedQuery(name = "Privilege.findByCanenterjob", query = "SELECT p FROM Privilege p WHERE p.canenterjob = :canenterjob")
-    , @NamedQuery(name = "Privilege.findByCanbesuperuser", query = "SELECT p FROM Privilege p WHERE p.canbesuperuser = :canbesuperuser")
-    , @NamedQuery(name = "Privilege.findByCanapprovejobcosting", query = "SELECT p FROM Privilege p WHERE p.canapprovejobcosting = :canapprovejobcosting")
-    , @NamedQuery(name = "Privilege.findByCanenterparentjob", query = "SELECT p FROM Privilege p WHERE p.canenterparentjob = :canenterparentjob")
-    , @NamedQuery(name = "Privilege.findByCaneditinvoicingandpayment", query = "SELECT p FROM Privilege p WHERE p.caneditinvoicingandpayment = :caneditinvoicingandpayment")
-    , @NamedQuery(name = "Privilege.findByCanauthdetentionrequest", query = "SELECT p FROM Privilege p WHERE p.canauthdetentionrequest = :canauthdetentionrequest")
-    , @NamedQuery(name = "Privilege.findByCanauthdetentionnotice", query = "SELECT p FROM Privilege p WHERE p.canauthdetentionnotice = :canauthdetentionnotice")
-    , @NamedQuery(name = "Privilege.findByCanapprvreleaserequest", query = "SELECT p FROM Privilege p WHERE p.canapprvreleaserequest = :canapprvreleaserequest")
-    , @NamedQuery(name = "Privilege.findByCanapplytaxestojobcosting", query = "SELECT p FROM Privilege p WHERE p.canapplytaxestojobcosting = :canapplytaxestojobcosting")
-    , @NamedQuery(name = "Privilege.findByCanbefinancialadministrator", query = "SELECT p FROM Privilege p WHERE p.canbefinancialadministrator = :canbefinancialadministrator")})
+    @NamedQuery(name = "Privilege.findAll", query = "SELECT p FROM Privilege p"),
+    @NamedQuery(name = "Privilege.findById", query = "SELECT p FROM Privilege p WHERE p.id = :id"),
+    @NamedQuery(name = "Privilege.findByCategory", query = "SELECT p FROM Privilege p WHERE p.category = :category"),
+    @NamedQuery(name = "Privilege.findByDescription", query = "SELECT p FROM Privilege p WHERE p.description = :description"),
+    @NamedQuery(name = "Privilege.findByName", query = "SELECT p FROM Privilege p WHERE p.name = :name"),
+    @NamedQuery(name = "Privilege.findByRoles", query = "SELECT p FROM Privilege p WHERE p.roles = :roles"),
+    @NamedQuery(name = "Privilege.findByType", query = "SELECT p FROM Privilege p WHERE p.type = :type"),
+    @NamedQuery(name = "Privilege.findByCanaddclient", query = "SELECT p FROM Privilege p WHERE p.canaddclient = :canaddclient"),
+    @NamedQuery(name = "Privilege.findByCanadddepartment", query = "SELECT p FROM Privilege p WHERE p.canadddepartment = :canadddepartment"),
+    @NamedQuery(name = "Privilege.findByCanaddemployee", query = "SELECT p FROM Privilege p WHERE p.canaddemployee = :canaddemployee"),
+    @NamedQuery(name = "Privilege.findByCanbejmtsadministrator", query = "SELECT p FROM Privilege p WHERE p.canbejmtsadministrator = :canbejmtsadministrator"),
+    @NamedQuery(name = "Privilege.findByCandeleteclient", query = "SELECT p FROM Privilege p WHERE p.candeleteclient = :candeleteclient"),
+    @NamedQuery(name = "Privilege.findByCandeletedepartment", query = "SELECT p FROM Privilege p WHERE p.candeletedepartment = :candeletedepartment"),
+    @NamedQuery(name = "Privilege.findByCandeleteemployee", query = "SELECT p FROM Privilege p WHERE p.candeleteemployee = :candeleteemployee"),
+    @NamedQuery(name = "Privilege.findByCandeletejob", query = "SELECT p FROM Privilege p WHERE p.candeletejob = :candeletejob"),
+    @NamedQuery(name = "Privilege.findByCaneditdepartmentjob", query = "SELECT p FROM Privilege p WHERE p.caneditdepartmentjob = :caneditdepartmentjob"),
+    @NamedQuery(name = "Privilege.findByCaneditownjob", query = "SELECT p FROM Privilege p WHERE p.caneditownjob = :caneditownjob"),
+    @NamedQuery(name = "Privilege.findByCanenterownjob", query = "SELECT p FROM Privilege p WHERE p.canenterownjob = :canenterownjob"),
+    @NamedQuery(name = "Privilege.findByCanenterdepartmentjob", query = "SELECT p FROM Privilege p WHERE p.canenterdepartmentjob = :canenterdepartmentjob"),
+    @NamedQuery(name = "Privilege.findByCaneditjob", query = "SELECT p FROM Privilege p WHERE p.caneditjob = :caneditjob"),
+    @NamedQuery(name = "Privilege.findByCanenterjob", query = "SELECT p FROM Privilege p WHERE p.canenterjob = :canenterjob"),
+    @NamedQuery(name = "Privilege.findByCanbesuperuser", query = "SELECT p FROM Privilege p WHERE p.canbesuperuser = :canbesuperuser"),
+    @NamedQuery(name = "Privilege.findByCanapprovejobcosting", query = "SELECT p FROM Privilege p WHERE p.canapprovejobcosting = :canapprovejobcosting"),
+    @NamedQuery(name = "Privilege.findByCanenterparentjob", query = "SELECT p FROM Privilege p WHERE p.canenterparentjob = :canenterparentjob"),
+    @NamedQuery(name = "Privilege.findByCaneditinvoicingandpayment", query = "SELECT p FROM Privilege p WHERE p.caneditinvoicingandpayment = :caneditinvoicingandpayment"),
+    @NamedQuery(name = "Privilege.findByCanauthdetentionrequest", query = "SELECT p FROM Privilege p WHERE p.canauthdetentionrequest = :canauthdetentionrequest"),
+    @NamedQuery(name = "Privilege.findByCanauthdetentionnotice", query = "SELECT p FROM Privilege p WHERE p.canauthdetentionnotice = :canauthdetentionnotice"),
+    @NamedQuery(name = "Privilege.findByCanapprvreleaserequest", query = "SELECT p FROM Privilege p WHERE p.canapprvreleaserequest = :canapprvreleaserequest"),
+    @NamedQuery(name = "Privilege.findByCanapplytaxestojobcosting", query = "SELECT p FROM Privilege p WHERE p.canapplytaxestojobcosting = :canapplytaxestojobcosting"),
+    @NamedQuery(name = "Privilege.findByCanbefinancialadministrator", query = "SELECT p FROM Privilege p WHERE p.canbefinancialadministrator = :canbefinancialadministrator")})
 public class Privilege implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "CATEGORY")
     private String category;
+    @Size(max = 255)
     @Column(name = "DESCRIPTION")
     private String description;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "ROLES")
     private String roles;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
     @Column(name = "CANADDCLIENT")
@@ -119,6 +127,10 @@ public class Privilege implements Serializable {
     private Boolean canapplytaxestojobcosting;
     @Column(name = "CANBEFINANCIALADMINISTRATOR")
     private Boolean canbefinancialadministrator;
+    @ManyToMany(mappedBy = "privilegeList")
+    private List<JobManagerUser> jobmanageruserList;
+    @OneToMany(mappedBy = "privilegeId")
+    private List<JobManagerUser> jobmanageruserList1;
     @OneToMany(mappedBy = "privilegeId")
     private List<Department> departmentList;
 
@@ -362,6 +374,27 @@ public class Privilege implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<JobManagerUser> getJobmanageruserList() {
+        return jobmanageruserList;
+    }
+
+    public void setJobmanageruserList(List<JobManagerUser> jobmanageruserList) {
+        this.jobmanageruserList = jobmanageruserList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<JobManagerUser> getJobmanageruserList1() {
+        return jobmanageruserList1;
+    }
+
+    public void setJobmanageruserList1(List<JobManagerUser> jobmanageruserList1) {
+        this.jobmanageruserList1 = jobmanageruserList1;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Department> getDepartmentList() {
         return departmentList;
     }
@@ -392,7 +425,7 @@ public class Privilege implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Privilege[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Privilege[ id=" + id + " ]";
     }
     
 }

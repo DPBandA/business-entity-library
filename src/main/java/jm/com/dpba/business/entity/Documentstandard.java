@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -22,8 +21,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -33,37 +35,38 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "documentstandard")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Documentstandard.findAll", query = "SELECT d FROM Documentstandard d")
-    , @NamedQuery(name = "Documentstandard.findById", query = "SELECT d FROM Documentstandard d WHERE d.id = :id")
-    , @NamedQuery(name = "Documentstandard.findByAutogeneratenumber", query = "SELECT d FROM Documentstandard d WHERE d.autogeneratenumber = :autogeneratenumber")
-    , @NamedQuery(name = "Documentstandard.findByComments", query = "SELECT d FROM Documentstandard d WHERE d.comments = :comments")
-    , @NamedQuery(name = "Documentstandard.findByDateconfirmed", query = "SELECT d FROM Documentstandard d WHERE d.dateconfirmed = :dateconfirmed")
-    , @NamedQuery(name = "Documentstandard.findByDateedited", query = "SELECT d FROM Documentstandard d WHERE d.dateedited = :dateedited")
-    , @NamedQuery(name = "Documentstandard.findByDateentered", query = "SELECT d FROM Documentstandard d WHERE d.dateentered = :dateentered")
-    , @NamedQuery(name = "Documentstandard.findByDatepublished", query = "SELECT d FROM Documentstandard d WHERE d.datepublished = :datepublished")
-    , @NamedQuery(name = "Documentstandard.findByDaterevised", query = "SELECT d FROM Documentstandard d WHERE d.daterevised = :daterevised")
-    , @NamedQuery(name = "Documentstandard.findByDaterevisiondue", query = "SELECT d FROM Documentstandard d WHERE d.daterevisiondue = :daterevisiondue")
-    , @NamedQuery(name = "Documentstandard.findByDocumentform", query = "SELECT d FROM Documentstandard d WHERE d.documentform = :documentform")
-    , @NamedQuery(name = "Documentstandard.findByEnforcement", query = "SELECT d FROM Documentstandard d WHERE d.enforcement = :enforcement")
-    , @NamedQuery(name = "Documentstandard.findByNotes", query = "SELECT d FROM Documentstandard d WHERE d.notes = :notes")
-    , @NamedQuery(name = "Documentstandard.findByNumber", query = "SELECT d FROM Documentstandard d WHERE d.number = :number")
-    , @NamedQuery(name = "Documentstandard.findBySequencenumber", query = "SELECT d FROM Documentstandard d WHERE d.sequencenumber = :sequencenumber")
-    , @NamedQuery(name = "Documentstandard.findByStatus", query = "SELECT d FROM Documentstandard d WHERE d.status = :status")
-    , @NamedQuery(name = "Documentstandard.findBySynopsis", query = "SELECT d FROM Documentstandard d WHERE d.synopsis = :synopsis")
-    , @NamedQuery(name = "Documentstandard.findByTitle", query = "SELECT d FROM Documentstandard d WHERE d.title = :title")
-    , @NamedQuery(name = "Documentstandard.findByUrl", query = "SELECT d FROM Documentstandard d WHERE d.url = :url")
-    , @NamedQuery(name = "Documentstandard.findByWorkperformedondocument", query = "SELECT d FROM Documentstandard d WHERE d.workperformedondocument = :workperformedondocument")
-    , @NamedQuery(name = "Documentstandard.findByName", query = "SELECT d FROM Documentstandard d WHERE d.name = :name")
-    , @NamedQuery(name = "Documentstandard.findByActive", query = "SELECT d FROM Documentstandard d WHERE d.active = :active")})
+    @NamedQuery(name = "Documentstandard.findAll", query = "SELECT d FROM Documentstandard d"),
+    @NamedQuery(name = "Documentstandard.findById", query = "SELECT d FROM Documentstandard d WHERE d.id = :id"),
+    @NamedQuery(name = "Documentstandard.findByAutogeneratenumber", query = "SELECT d FROM Documentstandard d WHERE d.autogeneratenumber = :autogeneratenumber"),
+    @NamedQuery(name = "Documentstandard.findByComments", query = "SELECT d FROM Documentstandard d WHERE d.comments = :comments"),
+    @NamedQuery(name = "Documentstandard.findByDateconfirmed", query = "SELECT d FROM Documentstandard d WHERE d.dateconfirmed = :dateconfirmed"),
+    @NamedQuery(name = "Documentstandard.findByDateedited", query = "SELECT d FROM Documentstandard d WHERE d.dateedited = :dateedited"),
+    @NamedQuery(name = "Documentstandard.findByDateentered", query = "SELECT d FROM Documentstandard d WHERE d.dateentered = :dateentered"),
+    @NamedQuery(name = "Documentstandard.findByDatepublished", query = "SELECT d FROM Documentstandard d WHERE d.datepublished = :datepublished"),
+    @NamedQuery(name = "Documentstandard.findByDaterevised", query = "SELECT d FROM Documentstandard d WHERE d.daterevised = :daterevised"),
+    @NamedQuery(name = "Documentstandard.findByDaterevisiondue", query = "SELECT d FROM Documentstandard d WHERE d.daterevisiondue = :daterevisiondue"),
+    @NamedQuery(name = "Documentstandard.findByDocumentform", query = "SELECT d FROM Documentstandard d WHERE d.documentform = :documentform"),
+    @NamedQuery(name = "Documentstandard.findByEnforcement", query = "SELECT d FROM Documentstandard d WHERE d.enforcement = :enforcement"),
+    @NamedQuery(name = "Documentstandard.findByNotes", query = "SELECT d FROM Documentstandard d WHERE d.notes = :notes"),
+    @NamedQuery(name = "Documentstandard.findByNumber", query = "SELECT d FROM Documentstandard d WHERE d.number = :number"),
+    @NamedQuery(name = "Documentstandard.findBySequencenumber", query = "SELECT d FROM Documentstandard d WHERE d.sequencenumber = :sequencenumber"),
+    @NamedQuery(name = "Documentstandard.findByStatus", query = "SELECT d FROM Documentstandard d WHERE d.status = :status"),
+    @NamedQuery(name = "Documentstandard.findBySynopsis", query = "SELECT d FROM Documentstandard d WHERE d.synopsis = :synopsis"),
+    @NamedQuery(name = "Documentstandard.findByTitle", query = "SELECT d FROM Documentstandard d WHERE d.title = :title"),
+    @NamedQuery(name = "Documentstandard.findByUrl", query = "SELECT d FROM Documentstandard d WHERE d.url = :url"),
+    @NamedQuery(name = "Documentstandard.findByWorkperformedondocument", query = "SELECT d FROM Documentstandard d WHERE d.workperformedondocument = :workperformedondocument"),
+    @NamedQuery(name = "Documentstandard.findByName", query = "SELECT d FROM Documentstandard d WHERE d.name = :name"),
+    @NamedQuery(name = "Documentstandard.findByActive", query = "SELECT d FROM Documentstandard d WHERE d.active = :active")})
 public class Documentstandard implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "AUTOGENERATENUMBER")
     private Boolean autogeneratenumber;
+    @Size(max = 1024)
     @Column(name = "COMMENTS")
     private String comments;
     @Column(name = "DATECONFIRMED")
@@ -84,26 +87,36 @@ public class Documentstandard implements Serializable {
     @Column(name = "DATEREVISIONDUE")
     @Temporal(TemporalType.DATE)
     private Date daterevisiondue;
+    @Size(max = 255)
     @Column(name = "DOCUMENTFORM")
     private String documentform;
+    @Size(max = 255)
     @Column(name = "ENFORCEMENT")
     private String enforcement;
+    @Size(max = 1024)
     @Column(name = "NOTES")
     private String notes;
+    @Size(max = 255)
     @Column(name = "NUMBER")
     private String number;
     @Column(name = "SEQUENCENUMBER")
     private BigInteger sequencenumber;
+    @Size(max = 1024)
     @Column(name = "STATUS")
     private String status;
+    @Size(max = 1024)
     @Column(name = "SYNOPSIS")
     private String synopsis;
+    @Size(max = 255)
     @Column(name = "TITLE")
     private String title;
+    @Size(max = 255)
     @Column(name = "URL")
     private String url;
+    @Size(max = 255)
     @Column(name = "WORKPERFORMEDONDOCUMENT")
     private String workperformedondocument;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "ACTIVE")
@@ -299,6 +312,7 @@ public class Documentstandard implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList() {
         return compliancesurveyList;
     }
@@ -353,7 +367,7 @@ public class Documentstandard implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Documentstandard[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Documentstandard[ id=" + id + " ]";
     }
     
 }

@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -21,8 +20,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -32,24 +34,25 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "factoryinspection")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Factoryinspection.findAll", query = "SELECT f FROM Factoryinspection f")
-    , @NamedQuery(name = "Factoryinspection.findById", query = "SELECT f FROM Factoryinspection f WHERE f.id = :id")
-    , @NamedQuery(name = "Factoryinspection.findByInspectiontype", query = "SELECT f FROM Factoryinspection f WHERE f.inspectiontype = :inspectiontype")
-    , @NamedQuery(name = "Factoryinspection.findByInspectiondate", query = "SELECT f FROM Factoryinspection f WHERE f.inspectiondate = :inspectiondate")
-    , @NamedQuery(name = "Factoryinspection.findByInspectionstarttime", query = "SELECT f FROM Factoryinspection f WHERE f.inspectionstarttime = :inspectionstarttime")
-    , @NamedQuery(name = "Factoryinspection.findByWorkinprogress", query = "SELECT f FROM Factoryinspection f WHERE f.workinprogress = :workinprogress")
-    , @NamedQuery(name = "Factoryinspection.findByActionstaken", query = "SELECT f FROM Factoryinspection f WHERE f.actionstaken = :actionstaken")
-    , @NamedQuery(name = "Factoryinspection.findByGeneralcomments", query = "SELECT f FROM Factoryinspection f WHERE f.generalcomments = :generalcomments")
-    , @NamedQuery(name = "Factoryinspection.findByName", query = "SELECT f FROM Factoryinspection f WHERE f.name = :name")
-    , @NamedQuery(name = "Factoryinspection.findByInspectionendtime", query = "SELECT f FROM Factoryinspection f WHERE f.inspectionendtime = :inspectionendtime")
-    , @NamedQuery(name = "Factoryinspection.findByMaxdaysforcompliance", query = "SELECT f FROM Factoryinspection f WHERE f.maxdaysforcompliance = :maxdaysforcompliance")})
+    @NamedQuery(name = "Factoryinspection.findAll", query = "SELECT f FROM Factoryinspection f"),
+    @NamedQuery(name = "Factoryinspection.findById", query = "SELECT f FROM Factoryinspection f WHERE f.id = :id"),
+    @NamedQuery(name = "Factoryinspection.findByInspectiontype", query = "SELECT f FROM Factoryinspection f WHERE f.inspectiontype = :inspectiontype"),
+    @NamedQuery(name = "Factoryinspection.findByInspectiondate", query = "SELECT f FROM Factoryinspection f WHERE f.inspectiondate = :inspectiondate"),
+    @NamedQuery(name = "Factoryinspection.findByInspectionstarttime", query = "SELECT f FROM Factoryinspection f WHERE f.inspectionstarttime = :inspectionstarttime"),
+    @NamedQuery(name = "Factoryinspection.findByWorkinprogress", query = "SELECT f FROM Factoryinspection f WHERE f.workinprogress = :workinprogress"),
+    @NamedQuery(name = "Factoryinspection.findByActionstaken", query = "SELECT f FROM Factoryinspection f WHERE f.actionstaken = :actionstaken"),
+    @NamedQuery(name = "Factoryinspection.findByGeneralcomments", query = "SELECT f FROM Factoryinspection f WHERE f.generalcomments = :generalcomments"),
+    @NamedQuery(name = "Factoryinspection.findByName", query = "SELECT f FROM Factoryinspection f WHERE f.name = :name"),
+    @NamedQuery(name = "Factoryinspection.findByInspectionendtime", query = "SELECT f FROM Factoryinspection f WHERE f.inspectionendtime = :inspectionendtime"),
+    @NamedQuery(name = "Factoryinspection.findByMaxdaysforcompliance", query = "SELECT f FROM Factoryinspection f WHERE f.maxdaysforcompliance = :maxdaysforcompliance")})
 public class Factoryinspection implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "INSPECTIONTYPE")
     private String inspectiontype;
     @Column(name = "INSPECTIONDATE")
@@ -58,12 +61,16 @@ public class Factoryinspection implements Serializable {
     @Column(name = "INSPECTIONSTARTTIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date inspectionstarttime;
+    @Size(max = 1024)
     @Column(name = "WORKINPROGRESS")
     private String workinprogress;
+    @Size(max = 255)
     @Column(name = "ACTIONSTAKEN")
     private String actionstaken;
+    @Size(max = 1024)
     @Column(name = "GENERALCOMMENTS")
     private String generalcomments;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "INSPECTIONENDTIME")
@@ -176,6 +183,7 @@ public class Factoryinspection implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodfactory> getFoodfactoryList() {
         return foodfactoryList;
     }
@@ -185,6 +193,7 @@ public class Factoryinspection implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Factoryinspectioncomponent> getFactoryinspectioncomponentList() {
         return factoryinspectioncomponentList;
     }
@@ -239,7 +248,7 @@ public class Factoryinspection implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Factoryinspection[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Factoryinspection[ id=" + id + " ]";
     }
     
 }

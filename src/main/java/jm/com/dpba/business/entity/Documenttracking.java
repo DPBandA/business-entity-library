@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -19,6 +18,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -29,36 +30,37 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "documenttracking")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Documenttracking.findAll", query = "SELECT d FROM Documenttracking d")
-    , @NamedQuery(name = "Documenttracking.findById", query = "SELECT d FROM Documenttracking d WHERE d.id = :id")
-    , @NamedQuery(name = "Documenttracking.findByAutogeneratenumber", query = "SELECT d FROM Documenttracking d WHERE d.autogeneratenumber = :autogeneratenumber")
-    , @NamedQuery(name = "Documenttracking.findByComments", query = "SELECT d FROM Documenttracking d WHERE d.comments = :comments")
-    , @NamedQuery(name = "Documenttracking.findByDateofcompletion", query = "SELECT d FROM Documenttracking d WHERE d.dateofcompletion = :dateofcompletion")
-    , @NamedQuery(name = "Documenttracking.findByDatereceived", query = "SELECT d FROM Documenttracking d WHERE d.datereceived = :datereceived")
-    , @NamedQuery(name = "Documenttracking.findByDescription", query = "SELECT d FROM Documenttracking d WHERE d.description = :description")
-    , @NamedQuery(name = "Documenttracking.findByDocumentform", query = "SELECT d FROM Documenttracking d WHERE d.documentform = :documentform")
-    , @NamedQuery(name = "Documenttracking.findByExpecteddateofcompletion", query = "SELECT d FROM Documenttracking d WHERE d.expecteddateofcompletion = :expecteddateofcompletion")
-    , @NamedQuery(name = "Documenttracking.findByGoal", query = "SELECT d FROM Documenttracking d WHERE d.goal = :goal")
-    , @NamedQuery(name = "Documenttracking.findByMonthreceived", query = "SELECT d FROM Documenttracking d WHERE d.monthreceived = :monthreceived")
-    , @NamedQuery(name = "Documenttracking.findByNotes", query = "SELECT d FROM Documenttracking d WHERE d.notes = :notes")
-    , @NamedQuery(name = "Documenttracking.findByNumber", query = "SELECT d FROM Documenttracking d WHERE d.number = :number")
-    , @NamedQuery(name = "Documenttracking.findByNumberofdocuments", query = "SELECT d FROM Documenttracking d WHERE d.numberofdocuments = :numberofdocuments")
-    , @NamedQuery(name = "Documenttracking.findByPrioritylevel", query = "SELECT d FROM Documenttracking d WHERE d.prioritylevel = :prioritylevel")
-    , @NamedQuery(name = "Documenttracking.findBySequencenumber", query = "SELECT d FROM Documenttracking d WHERE d.sequencenumber = :sequencenumber")
-    , @NamedQuery(name = "Documenttracking.findByStatus", query = "SELECT d FROM Documenttracking d WHERE d.status = :status")
-    , @NamedQuery(name = "Documenttracking.findByTurnaroundtime", query = "SELECT d FROM Documenttracking d WHERE d.turnaroundtime = :turnaroundtime")
-    , @NamedQuery(name = "Documenttracking.findByUrl", query = "SELECT d FROM Documenttracking d WHERE d.url = :url")
-    , @NamedQuery(name = "Documenttracking.findByWorkperformedondocument", query = "SELECT d FROM Documenttracking d WHERE d.workperformedondocument = :workperformedondocument")
-    , @NamedQuery(name = "Documenttracking.findByYearreceived", query = "SELECT d FROM Documenttracking d WHERE d.yearreceived = :yearreceived")})
+    @NamedQuery(name = "Documenttracking.findAll", query = "SELECT d FROM Documenttracking d"),
+    @NamedQuery(name = "Documenttracking.findById", query = "SELECT d FROM Documenttracking d WHERE d.id = :id"),
+    @NamedQuery(name = "Documenttracking.findByAutogeneratenumber", query = "SELECT d FROM Documenttracking d WHERE d.autogeneratenumber = :autogeneratenumber"),
+    @NamedQuery(name = "Documenttracking.findByComments", query = "SELECT d FROM Documenttracking d WHERE d.comments = :comments"),
+    @NamedQuery(name = "Documenttracking.findByDateofcompletion", query = "SELECT d FROM Documenttracking d WHERE d.dateofcompletion = :dateofcompletion"),
+    @NamedQuery(name = "Documenttracking.findByDatereceived", query = "SELECT d FROM Documenttracking d WHERE d.datereceived = :datereceived"),
+    @NamedQuery(name = "Documenttracking.findByDescription", query = "SELECT d FROM Documenttracking d WHERE d.description = :description"),
+    @NamedQuery(name = "Documenttracking.findByDocumentform", query = "SELECT d FROM Documenttracking d WHERE d.documentform = :documentform"),
+    @NamedQuery(name = "Documenttracking.findByExpecteddateofcompletion", query = "SELECT d FROM Documenttracking d WHERE d.expecteddateofcompletion = :expecteddateofcompletion"),
+    @NamedQuery(name = "Documenttracking.findByGoal", query = "SELECT d FROM Documenttracking d WHERE d.goal = :goal"),
+    @NamedQuery(name = "Documenttracking.findByMonthreceived", query = "SELECT d FROM Documenttracking d WHERE d.monthreceived = :monthreceived"),
+    @NamedQuery(name = "Documenttracking.findByNotes", query = "SELECT d FROM Documenttracking d WHERE d.notes = :notes"),
+    @NamedQuery(name = "Documenttracking.findByNumber", query = "SELECT d FROM Documenttracking d WHERE d.number = :number"),
+    @NamedQuery(name = "Documenttracking.findByNumberofdocuments", query = "SELECT d FROM Documenttracking d WHERE d.numberofdocuments = :numberofdocuments"),
+    @NamedQuery(name = "Documenttracking.findByPrioritylevel", query = "SELECT d FROM Documenttracking d WHERE d.prioritylevel = :prioritylevel"),
+    @NamedQuery(name = "Documenttracking.findBySequencenumber", query = "SELECT d FROM Documenttracking d WHERE d.sequencenumber = :sequencenumber"),
+    @NamedQuery(name = "Documenttracking.findByStatus", query = "SELECT d FROM Documenttracking d WHERE d.status = :status"),
+    @NamedQuery(name = "Documenttracking.findByTurnaroundtime", query = "SELECT d FROM Documenttracking d WHERE d.turnaroundtime = :turnaroundtime"),
+    @NamedQuery(name = "Documenttracking.findByUrl", query = "SELECT d FROM Documenttracking d WHERE d.url = :url"),
+    @NamedQuery(name = "Documenttracking.findByWorkperformedondocument", query = "SELECT d FROM Documenttracking d WHERE d.workperformedondocument = :workperformedondocument"),
+    @NamedQuery(name = "Documenttracking.findByYearreceived", query = "SELECT d FROM Documenttracking d WHERE d.yearreceived = :yearreceived")})
 public class Documenttracking implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "AUTOGENERATENUMBER")
     private Boolean autogeneratenumber;
+    @Size(max = 1024)
     @Column(name = "COMMENTS")
     private String comments;
     @Column(name = "DATEOFCOMPLETION")
@@ -67,33 +69,42 @@ public class Documenttracking implements Serializable {
     @Column(name = "DATERECEIVED")
     @Temporal(TemporalType.DATE)
     private Date datereceived;
+    @Size(max = 1024)
     @Column(name = "DESCRIPTION")
     private String description;
+    @Size(max = 255)
     @Column(name = "DOCUMENTFORM")
     private String documentform;
     @Column(name = "EXPECTEDDATEOFCOMPLETION")
     @Temporal(TemporalType.DATE)
     private Date expecteddateofcompletion;
+    @Size(max = 1024)
     @Column(name = "GOAL")
     private String goal;
     @Column(name = "MONTHRECEIVED")
     private Integer monthreceived;
+    @Size(max = 1024)
     @Column(name = "NOTES")
     private String notes;
+    @Size(max = 255)
     @Column(name = "NUMBER")
     private String number;
     @Column(name = "NUMBEROFDOCUMENTS")
     private BigInteger numberofdocuments;
+    @Size(max = 255)
     @Column(name = "PRIORITYLEVEL")
     private String prioritylevel;
     @Column(name = "SEQUENCENUMBER")
     private BigInteger sequencenumber;
+    @Size(max = 1024)
     @Column(name = "STATUS")
     private String status;
     @Column(name = "TURNAROUNDTIME")
     private Integer turnaroundtime;
+    @Size(max = 255)
     @Column(name = "URL")
     private String url;
+    @Size(max = 255)
     @Column(name = "WORKPERFORMEDONDOCUMENT")
     private String workperformedondocument;
     @Column(name = "YEARRECEIVED")
@@ -376,7 +387,7 @@ public class Documenttracking implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Documenttracking[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Documenttracking[ id=" + id + " ]";
     }
     
 }

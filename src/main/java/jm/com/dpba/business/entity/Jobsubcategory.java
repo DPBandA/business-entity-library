@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -19,8 +18,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -30,28 +32,30 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "jobsubcategory")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Jobsubcategory.findAll", query = "SELECT j FROM Jobsubcategory j")
-    , @NamedQuery(name = "Jobsubcategory.findById", query = "SELECT j FROM Jobsubcategory j WHERE j.id = :id")
-    , @NamedQuery(name = "Jobsubcategory.findByIsEarning", query = "SELECT j FROM Jobsubcategory j WHERE j.isEarning = :isEarning")
-    , @NamedQuery(name = "Jobsubcategory.findBySubCategory", query = "SELECT j FROM Jobsubcategory j WHERE j.subCategory = :subCategory")
-    , @NamedQuery(name = "Jobsubcategory.findByCategoryId", query = "SELECT j FROM Jobsubcategory j WHERE j.categoryId = :categoryId")
-    , @NamedQuery(name = "Jobsubcategory.findByActive", query = "SELECT j FROM Jobsubcategory j WHERE j.active = :active")
-    , @NamedQuery(name = "Jobsubcategory.findByDescription", query = "SELECT j FROM Jobsubcategory j WHERE j.description = :description")})
+    @NamedQuery(name = "Jobsubcategory.findAll", query = "SELECT j FROM Jobsubcategory j"),
+    @NamedQuery(name = "Jobsubcategory.findById", query = "SELECT j FROM Jobsubcategory j WHERE j.id = :id"),
+    @NamedQuery(name = "Jobsubcategory.findByIsEarning", query = "SELECT j FROM Jobsubcategory j WHERE j.isEarning = :isEarning"),
+    @NamedQuery(name = "Jobsubcategory.findBySubCategory", query = "SELECT j FROM Jobsubcategory j WHERE j.subCategory = :subCategory"),
+    @NamedQuery(name = "Jobsubcategory.findByCategoryId", query = "SELECT j FROM Jobsubcategory j WHERE j.categoryId = :categoryId"),
+    @NamedQuery(name = "Jobsubcategory.findByActive", query = "SELECT j FROM Jobsubcategory j WHERE j.active = :active"),
+    @NamedQuery(name = "Jobsubcategory.findByDescription", query = "SELECT j FROM Jobsubcategory j WHERE j.description = :description")})
 public class Jobsubcategory implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "IsEarning")
     private Boolean isEarning;
+    @Size(max = 255)
     @Column(name = "SubCategory")
     private String subCategory;
     @Column(name = "CategoryId")
     private BigInteger categoryId;
     @Column(name = "ACTIVE")
     private Boolean active;
+    @Size(max = 1024)
     @Column(name = "DESCRIPTION")
     private String description;
     @JoinTable(name = "jobsubcategory_department", joinColumns = {
@@ -120,6 +124,7 @@ public class Jobsubcategory implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Department> getDepartmentList() {
         return departmentList;
     }
@@ -129,6 +134,7 @@ public class Jobsubcategory implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Servicerequest> getServicerequestList() {
         return servicerequestList;
     }
@@ -138,6 +144,7 @@ public class Jobsubcategory implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Job> getJobList() {
         return jobList;
     }
@@ -168,7 +175,7 @@ public class Jobsubcategory implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Jobsubcategory[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Jobsubcategory[ id=" + id + " ]";
     }
     
 }

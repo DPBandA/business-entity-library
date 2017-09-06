@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -15,8 +14,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -26,26 +28,27 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "costcomponent")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Costcomponent.findAll", query = "SELECT c FROM Costcomponent c")
-    , @NamedQuery(name = "Costcomponent.findById", query = "SELECT c FROM Costcomponent c WHERE c.id = :id")
-    , @NamedQuery(name = "Costcomponent.findByCategory", query = "SELECT c FROM Costcomponent c WHERE c.category = :category")
-    , @NamedQuery(name = "Costcomponent.findByRate", query = "SELECT c FROM Costcomponent c WHERE c.rate = :rate")
-    , @NamedQuery(name = "Costcomponent.findByHours", query = "SELECT c FROM Costcomponent c WHERE c.hours = :hours")
-    , @NamedQuery(name = "Costcomponent.findByName", query = "SELECT c FROM Costcomponent c WHERE c.name = :name")
-    , @NamedQuery(name = "Costcomponent.findByIsheading", query = "SELECT c FROM Costcomponent c WHERE c.isheading = :isheading")
-    , @NamedQuery(name = "Costcomponent.findByCode", query = "SELECT c FROM Costcomponent c WHERE c.code = :code")
-    , @NamedQuery(name = "Costcomponent.findByHoursorquantity", query = "SELECT c FROM Costcomponent c WHERE c.hoursorquantity = :hoursorquantity")
-    , @NamedQuery(name = "Costcomponent.findByCost", query = "SELECT c FROM Costcomponent c WHERE c.cost = :cost")
-    , @NamedQuery(name = "Costcomponent.findByComments", query = "SELECT c FROM Costcomponent c WHERE c.comments = :comments")
-    , @NamedQuery(name = "Costcomponent.findByIsfixedcost", query = "SELECT c FROM Costcomponent c WHERE c.isfixedcost = :isfixedcost")
-    , @NamedQuery(name = "Costcomponent.findByIseditable", query = "SELECT c FROM Costcomponent c WHERE c.iseditable = :iseditable")})
+    @NamedQuery(name = "Costcomponent.findAll", query = "SELECT c FROM Costcomponent c"),
+    @NamedQuery(name = "Costcomponent.findById", query = "SELECT c FROM Costcomponent c WHERE c.id = :id"),
+    @NamedQuery(name = "Costcomponent.findByCategory", query = "SELECT c FROM Costcomponent c WHERE c.category = :category"),
+    @NamedQuery(name = "Costcomponent.findByRate", query = "SELECT c FROM Costcomponent c WHERE c.rate = :rate"),
+    @NamedQuery(name = "Costcomponent.findByHours", query = "SELECT c FROM Costcomponent c WHERE c.hours = :hours"),
+    @NamedQuery(name = "Costcomponent.findByName", query = "SELECT c FROM Costcomponent c WHERE c.name = :name"),
+    @NamedQuery(name = "Costcomponent.findByIsheading", query = "SELECT c FROM Costcomponent c WHERE c.isheading = :isheading"),
+    @NamedQuery(name = "Costcomponent.findByCode", query = "SELECT c FROM Costcomponent c WHERE c.code = :code"),
+    @NamedQuery(name = "Costcomponent.findByHoursorquantity", query = "SELECT c FROM Costcomponent c WHERE c.hoursorquantity = :hoursorquantity"),
+    @NamedQuery(name = "Costcomponent.findByCost", query = "SELECT c FROM Costcomponent c WHERE c.cost = :cost"),
+    @NamedQuery(name = "Costcomponent.findByComments", query = "SELECT c FROM Costcomponent c WHERE c.comments = :comments"),
+    @NamedQuery(name = "Costcomponent.findByIsfixedcost", query = "SELECT c FROM Costcomponent c WHERE c.isfixedcost = :isfixedcost"),
+    @NamedQuery(name = "Costcomponent.findByIseditable", query = "SELECT c FROM Costcomponent c WHERE c.iseditable = :iseditable")})
 public class Costcomponent implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "CATEGORY")
     private String category;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -53,16 +56,19 @@ public class Costcomponent implements Serializable {
     private Double rate;
     @Column(name = "HOURS")
     private Double hours;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "ISHEADING")
     private Boolean isheading;
+    @Size(max = 255)
     @Column(name = "CODE")
     private String code;
     @Column(name = "HOURSORQUANTITY")
     private Double hoursorquantity;
     @Column(name = "COST")
     private Double cost;
+    @Size(max = 255)
     @Column(name = "COMMENTS")
     private String comments;
     @Column(name = "ISFIXEDCOST")
@@ -178,6 +184,7 @@ public class Costcomponent implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Jobcostingandpayment> getJobcostingandpaymentList() {
         return jobcostingandpaymentList;
     }
@@ -187,6 +194,7 @@ public class Costcomponent implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Jobcosting> getJobcostingList() {
         return jobcostingList;
     }
@@ -217,7 +225,7 @@ public class Costcomponent implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Costcomponent[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Costcomponent[ id=" + id + " ]";
     }
     
 }

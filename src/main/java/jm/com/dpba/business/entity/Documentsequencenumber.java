@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -14,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -24,17 +24,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "documentsequencenumber")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Documentsequencenumber.findAll", query = "SELECT d FROM Documentsequencenumber d")
-    , @NamedQuery(name = "Documentsequencenumber.findById", query = "SELECT d FROM Documentsequencenumber d WHERE d.id = :id")
-    , @NamedQuery(name = "Documentsequencenumber.findByMonthreceived", query = "SELECT d FROM Documentsequencenumber d WHERE d.monthreceived = :monthreceived")
-    , @NamedQuery(name = "Documentsequencenumber.findByDocumenttypeid", query = "SELECT d FROM Documentsequencenumber d WHERE d.documenttypeid = :documenttypeid")
-    , @NamedQuery(name = "Documentsequencenumber.findByYearreceived", query = "SELECT d FROM Documentsequencenumber d WHERE d.yearreceived = :yearreceived")
-    , @NamedQuery(name = "Documentsequencenumber.findBySequentialnumber", query = "SELECT d FROM Documentsequencenumber d WHERE d.sequentialnumber = :sequentialnumber")})
+    @NamedQuery(name = "Documentsequencenumber.findAll", query = "SELECT d FROM Documentsequencenumber d"),
+    @NamedQuery(name = "Documentsequencenumber.findById", query = "SELECT d FROM Documentsequencenumber d WHERE d.id = :id"),
+    @NamedQuery(name = "Documentsequencenumber.findByMonthreceived", query = "SELECT d FROM Documentsequencenumber d WHERE d.monthreceived = :monthreceived"),
+    @NamedQuery(name = "Documentsequencenumber.findByDocumenttypeid", query = "SELECT d FROM Documentsequencenumber d WHERE d.documenttypeid = :documenttypeid"),
+    @NamedQuery(name = "Documentsequencenumber.findByYearreceived", query = "SELECT d FROM Documentsequencenumber d WHERE d.yearreceived = :yearreceived"),
+    @NamedQuery(name = "Documentsequencenumber.findBySequentialnumber", query = "SELECT d FROM Documentsequencenumber d WHERE d.sequentialnumber = :sequentialnumber")})
 public class Documentsequencenumber implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "MONTHRECEIVED")
@@ -115,7 +115,7 @@ public class Documentsequencenumber implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Documentsequencenumber[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Documentsequencenumber[ id=" + id + " ]";
     }
     
 }

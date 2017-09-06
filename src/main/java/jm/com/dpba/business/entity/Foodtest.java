@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -20,8 +19,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -31,19 +33,19 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "foodtest")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Foodtest.findAll", query = "SELECT f FROM Foodtest f")
-    , @NamedQuery(name = "Foodtest.findById", query = "SELECT f FROM Foodtest f WHERE f.id = :id")
-    , @NamedQuery(name = "Foodtest.findByTestdate", query = "SELECT f FROM Foodtest f WHERE f.testdate = :testdate")
-    , @NamedQuery(name = "Foodtest.findByRetestdate", query = "SELECT f FROM Foodtest f WHERE f.retestdate = :retestdate")
-    , @NamedQuery(name = "Foodtest.findByHourlyrate", query = "SELECT f FROM Foodtest f WHERE f.hourlyrate = :hourlyrate")
-    , @NamedQuery(name = "Foodtest.findByCategory", query = "SELECT f FROM Foodtest f WHERE f.category = :category")
-    , @NamedQuery(name = "Foodtest.findByName", query = "SELECT f FROM Foodtest f WHERE f.name = :name")
-    , @NamedQuery(name = "Foodtest.findByType", query = "SELECT f FROM Foodtest f WHERE f.type = :type")})
+    @NamedQuery(name = "Foodtest.findAll", query = "SELECT f FROM Foodtest f"),
+    @NamedQuery(name = "Foodtest.findById", query = "SELECT f FROM Foodtest f WHERE f.id = :id"),
+    @NamedQuery(name = "Foodtest.findByTestdate", query = "SELECT f FROM Foodtest f WHERE f.testdate = :testdate"),
+    @NamedQuery(name = "Foodtest.findByRetestdate", query = "SELECT f FROM Foodtest f WHERE f.retestdate = :retestdate"),
+    @NamedQuery(name = "Foodtest.findByHourlyrate", query = "SELECT f FROM Foodtest f WHERE f.hourlyrate = :hourlyrate"),
+    @NamedQuery(name = "Foodtest.findByCategory", query = "SELECT f FROM Foodtest f WHERE f.category = :category"),
+    @NamedQuery(name = "Foodtest.findByName", query = "SELECT f FROM Foodtest f WHERE f.name = :name"),
+    @NamedQuery(name = "Foodtest.findByType", query = "SELECT f FROM Foodtest f WHERE f.type = :type")})
 public class Foodtest implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "TESTDATE")
@@ -55,10 +57,13 @@ public class Foodtest implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "HOURLYRATE")
     private Double hourlyrate;
+    @Size(max = 255)
     @Column(name = "CATEGORY")
     private String category;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
     @ManyToMany(mappedBy = "foodtestList")
@@ -131,6 +136,7 @@ public class Foodtest implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodsample> getFoodsampleList() {
         return foodsampleList;
     }
@@ -169,7 +175,7 @@ public class Foodtest implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Foodtest[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Foodtest[ id=" + id + " ]";
     }
     
 }

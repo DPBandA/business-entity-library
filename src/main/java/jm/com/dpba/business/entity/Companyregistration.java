@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -13,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -23,16 +24,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "companyregistration")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Companyregistration.findAll", query = "SELECT c FROM Companyregistration c")
-    , @NamedQuery(name = "Companyregistration.findById", query = "SELECT c FROM Companyregistration c WHERE c.id = :id")
-    , @NamedQuery(name = "Companyregistration.findByName", query = "SELECT c FROM Companyregistration c WHERE c.name = :name")})
+    @NamedQuery(name = "Companyregistration.findAll", query = "SELECT c FROM Companyregistration c"),
+    @NamedQuery(name = "Companyregistration.findById", query = "SELECT c FROM Companyregistration c WHERE c.id = :id"),
+    @NamedQuery(name = "Companyregistration.findByName", query = "SELECT c FROM Companyregistration c WHERE c.name = :name")})
 public class Companyregistration implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
 
@@ -81,7 +83,7 @@ public class Companyregistration implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Companyregistration[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Companyregistration[ id=" + id + " ]";
     }
     
 }

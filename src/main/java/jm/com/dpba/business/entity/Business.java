@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -21,8 +20,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -32,20 +34,20 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "business")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Business.findAll", query = "SELECT b FROM Business b")
-    , @NamedQuery(name = "Business.findById", query = "SELECT b FROM Business b WHERE b.id = :id")
-    , @NamedQuery(name = "Business.findByDatelastaccessed", query = "SELECT b FROM Business b WHERE b.datelastaccessed = :datelastaccessed")
-    , @NamedQuery(name = "Business.findByDatefirstreceived", query = "SELECT b FROM Business b WHERE b.datefirstreceived = :datefirstreceived")
-    , @NamedQuery(name = "Business.findByName", query = "SELECT b FROM Business b WHERE b.name = :name")
-    , @NamedQuery(name = "Business.findByTaxregistrationnumber", query = "SELECT b FROM Business b WHERE b.taxregistrationnumber = :taxregistrationnumber")
-    , @NamedQuery(name = "Business.findByNumber", query = "SELECT b FROM Business b WHERE b.number = :number")
-    , @NamedQuery(name = "Business.findByType", query = "SELECT b FROM Business b WHERE b.type = :type")
-    , @NamedQuery(name = "Business.findByNotes", query = "SELECT b FROM Business b WHERE b.notes = :notes")})
+    @NamedQuery(name = "Business.findAll", query = "SELECT b FROM Business b"),
+    @NamedQuery(name = "Business.findById", query = "SELECT b FROM Business b WHERE b.id = :id"),
+    @NamedQuery(name = "Business.findByDatelastaccessed", query = "SELECT b FROM Business b WHERE b.datelastaccessed = :datelastaccessed"),
+    @NamedQuery(name = "Business.findByDatefirstreceived", query = "SELECT b FROM Business b WHERE b.datefirstreceived = :datefirstreceived"),
+    @NamedQuery(name = "Business.findByName", query = "SELECT b FROM Business b WHERE b.name = :name"),
+    @NamedQuery(name = "Business.findByTaxregistrationnumber", query = "SELECT b FROM Business b WHERE b.taxregistrationnumber = :taxregistrationnumber"),
+    @NamedQuery(name = "Business.findByNumber", query = "SELECT b FROM Business b WHERE b.number = :number"),
+    @NamedQuery(name = "Business.findByType", query = "SELECT b FROM Business b WHERE b.type = :type"),
+    @NamedQuery(name = "Business.findByNotes", query = "SELECT b FROM Business b WHERE b.notes = :notes")})
 public class Business implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "DATELASTACCESSED")
@@ -54,14 +56,19 @@ public class Business implements Serializable {
     @Column(name = "DATEFIRSTRECEIVED")
     @Temporal(TemporalType.DATE)
     private Date datefirstreceived;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "TAXREGISTRATIONNUMBER")
     private String taxregistrationnumber;
+    @Size(max = 255)
     @Column(name = "NUMBER")
     private String number;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
+    @Size(max = 255)
     @Column(name = "NOTES")
     private String notes;
     @JoinTable(name = "business_address", joinColumns = {
@@ -74,8 +81,12 @@ public class Business implements Serializable {
         @JoinColumn(name = "contacts_ID", referencedColumnName = "ID")})
     @ManyToMany
     private List<Contact> contactList;
+    @OneToMany(mappedBy = "businesssourceId")
+    private List<Marketproduct> marketproductList;
     @OneToMany(mappedBy = "businessId")
     private List<Employee> employeeList;
+    @OneToMany(mappedBy = "businesssourceId")
+    private List<Productinspection> productinspectionList;
     @OneToMany(mappedBy = "grantedtoId")
     private List<Certification> certificationList;
 
@@ -151,6 +162,7 @@ public class Business implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Address> getAddressList() {
         return addressList;
     }
@@ -160,6 +172,7 @@ public class Business implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Contact> getContactList() {
         return contactList;
     }
@@ -169,6 +182,17 @@ public class Business implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Marketproduct> getMarketproductList() {
+        return marketproductList;
+    }
+
+    public void setMarketproductList(List<Marketproduct> marketproductList) {
+        this.marketproductList = marketproductList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Employee> getEmployeeList() {
         return employeeList;
     }
@@ -178,6 +202,17 @@ public class Business implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Productinspection> getProductinspectionList() {
+        return productinspectionList;
+    }
+
+    public void setProductinspectionList(List<Productinspection> productinspectionList) {
+        this.productinspectionList = productinspectionList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Certification> getCertificationList() {
         return certificationList;
     }
@@ -208,7 +243,7 @@ public class Business implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Business[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Business[ id=" + id + " ]";
     }
     
 }

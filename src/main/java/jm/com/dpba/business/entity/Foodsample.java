@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -22,8 +21,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -33,27 +35,27 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "foodsample")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Foodsample.findAll", query = "SELECT f FROM Foodsample f")
-    , @NamedQuery(name = "Foodsample.findById", query = "SELECT f FROM Foodsample f WHERE f.id = :id")
-    , @NamedQuery(name = "Foodsample.findByDatereturned", query = "SELECT f FROM Foodsample f WHERE f.datereturned = :datereturned")
-    , @NamedQuery(name = "Foodsample.findByJobid", query = "SELECT f FROM Foodsample f WHERE f.jobid = :jobid")
-    , @NamedQuery(name = "Foodsample.findByCode", query = "SELECT f FROM Foodsample f WHERE f.code = :code")
-    , @NamedQuery(name = "Foodsample.findByDatereceived", query = "SELECT f FROM Foodsample f WHERE f.datereceived = :datereceived")
-    , @NamedQuery(name = "Foodsample.findByType", query = "SELECT f FROM Foodsample f WHERE f.type = :type")
-    , @NamedQuery(name = "Foodsample.findByReferenceindex", query = "SELECT f FROM Foodsample f WHERE f.referenceindex = :referenceindex")
-    , @NamedQuery(name = "Foodsample.findByReference", query = "SELECT f FROM Foodsample f WHERE f.reference = :reference")
-    , @NamedQuery(name = "Foodsample.findByMethodofdisposal", query = "SELECT f FROM Foodsample f WHERE f.methodofdisposal = :methodofdisposal")
-    , @NamedQuery(name = "Foodsample.findBySamplequantity", query = "SELECT f FROM Foodsample f WHERE f.samplequantity = :samplequantity")
-    , @NamedQuery(name = "Foodsample.findByDescription", query = "SELECT f FROM Foodsample f WHERE f.description = :description")
-    , @NamedQuery(name = "Foodsample.findByName", query = "SELECT f FROM Foodsample f WHERE f.name = :name")
-    , @NamedQuery(name = "Foodsample.findByQuantity", query = "SELECT f FROM Foodsample f WHERE f.quantity = :quantity")
-    , @NamedQuery(name = "Foodsample.findByDatesampled", query = "SELECT f FROM Foodsample f WHERE f.datesampled = :datesampled")
-    , @NamedQuery(name = "Foodsample.findByUnitofmeasure", query = "SELECT f FROM Foodsample f WHERE f.unitofmeasure = :unitofmeasure")})
+    @NamedQuery(name = "Foodsample.findAll", query = "SELECT f FROM Foodsample f"),
+    @NamedQuery(name = "Foodsample.findById", query = "SELECT f FROM Foodsample f WHERE f.id = :id"),
+    @NamedQuery(name = "Foodsample.findByDatereturned", query = "SELECT f FROM Foodsample f WHERE f.datereturned = :datereturned"),
+    @NamedQuery(name = "Foodsample.findByJobid", query = "SELECT f FROM Foodsample f WHERE f.jobid = :jobid"),
+    @NamedQuery(name = "Foodsample.findByCode", query = "SELECT f FROM Foodsample f WHERE f.code = :code"),
+    @NamedQuery(name = "Foodsample.findByDatereceived", query = "SELECT f FROM Foodsample f WHERE f.datereceived = :datereceived"),
+    @NamedQuery(name = "Foodsample.findByType", query = "SELECT f FROM Foodsample f WHERE f.type = :type"),
+    @NamedQuery(name = "Foodsample.findByReferenceindex", query = "SELECT f FROM Foodsample f WHERE f.referenceindex = :referenceindex"),
+    @NamedQuery(name = "Foodsample.findByReference", query = "SELECT f FROM Foodsample f WHERE f.reference = :reference"),
+    @NamedQuery(name = "Foodsample.findByMethodofdisposal", query = "SELECT f FROM Foodsample f WHERE f.methodofdisposal = :methodofdisposal"),
+    @NamedQuery(name = "Foodsample.findBySamplequantity", query = "SELECT f FROM Foodsample f WHERE f.samplequantity = :samplequantity"),
+    @NamedQuery(name = "Foodsample.findByDescription", query = "SELECT f FROM Foodsample f WHERE f.description = :description"),
+    @NamedQuery(name = "Foodsample.findByName", query = "SELECT f FROM Foodsample f WHERE f.name = :name"),
+    @NamedQuery(name = "Foodsample.findByQuantity", query = "SELECT f FROM Foodsample f WHERE f.quantity = :quantity"),
+    @NamedQuery(name = "Foodsample.findByDatesampled", query = "SELECT f FROM Foodsample f WHERE f.datesampled = :datesampled"),
+    @NamedQuery(name = "Foodsample.findByUnitofmeasure", query = "SELECT f FROM Foodsample f WHERE f.unitofmeasure = :unitofmeasure")})
 public class Foodsample implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "DATERETURNED")
@@ -61,23 +63,28 @@ public class Foodsample implements Serializable {
     private Date datereturned;
     @Column(name = "JOBID")
     private BigInteger jobid;
+    @Size(max = 255)
     @Column(name = "CODE")
     private String code;
     @Column(name = "DATERECEIVED")
     @Temporal(TemporalType.DATE)
     private Date datereceived;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
     @Column(name = "REFERENCEINDEX")
     private BigInteger referenceindex;
+    @Size(max = 255)
     @Column(name = "REFERENCE")
     private String reference;
     @Column(name = "METHODOFDISPOSAL")
     private Integer methodofdisposal;
     @Column(name = "SAMPLEQUANTITY")
     private BigInteger samplequantity;
+    @Size(max = 255)
     @Column(name = "DESCRIPTION")
     private String description;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "QUANTITY")
@@ -85,6 +92,7 @@ public class Foodsample implements Serializable {
     @Column(name = "DATESAMPLED")
     @Temporal(TemporalType.DATE)
     private Date datesampled;
+    @Size(max = 255)
     @Column(name = "UNITOFMEASURE")
     private String unitofmeasure;
     @JoinTable(name = "foodsample_foodtest", joinColumns = {
@@ -236,6 +244,7 @@ public class Foodsample implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodtest> getFoodtestList() {
         return foodtestList;
     }
@@ -306,7 +315,7 @@ public class Foodsample implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Foodsample[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Foodsample[ id=" + id + " ]";
     }
     
 }

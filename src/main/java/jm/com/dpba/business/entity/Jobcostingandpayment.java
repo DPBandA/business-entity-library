@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -23,8 +22,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -34,40 +36,40 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "jobcostingandpayment")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Jobcostingandpayment.findAll", query = "SELECT j FROM Jobcostingandpayment j")
-    , @NamedQuery(name = "Jobcostingandpayment.findById", query = "SELECT j FROM Jobcostingandpayment j WHERE j.id = :id")
-    , @NamedQuery(name = "Jobcostingandpayment.findByCostingdate", query = "SELECT j FROM Jobcostingandpayment j WHERE j.costingdate = :costingdate")
-    , @NamedQuery(name = "Jobcostingandpayment.findByPaymentreceivedtodate", query = "SELECT j FROM Jobcostingandpayment j WHERE j.paymentreceivedtodate = :paymentreceivedtodate")
-    , @NamedQuery(name = "Jobcostingandpayment.findByMindeposit", query = "SELECT j FROM Jobcostingandpayment j WHERE j.mindeposit = :mindeposit")
-    , @NamedQuery(name = "Jobcostingandpayment.findByCostingapproved", query = "SELECT j FROM Jobcostingandpayment j WHERE j.costingapproved = :costingapproved")
-    , @NamedQuery(name = "Jobcostingandpayment.findByJobid", query = "SELECT j FROM Jobcostingandpayment j WHERE j.jobid = :jobid")
-    , @NamedQuery(name = "Jobcostingandpayment.findByEstimatedcostdoneby", query = "SELECT j FROM Jobcostingandpayment j WHERE j.estimatedcostdoneby = :estimatedcostdoneby")
-    , @NamedQuery(name = "Jobcostingandpayment.findByDeposit", query = "SELECT j FROM Jobcostingandpayment j WHERE j.deposit = :deposit")
-    , @NamedQuery(name = "Jobcostingandpayment.findByFinalcost", query = "SELECT j FROM Jobcostingandpayment j WHERE j.finalcost = :finalcost")
-    , @NamedQuery(name = "Jobcostingandpayment.findByFinalcostdoneby", query = "SELECT j FROM Jobcostingandpayment j WHERE j.finalcostdoneby = :finalcostdoneby")
-    , @NamedQuery(name = "Jobcostingandpayment.findByInvoicenumber", query = "SELECT j FROM Jobcostingandpayment j WHERE j.invoicenumber = :invoicenumber")
-    , @NamedQuery(name = "Jobcostingandpayment.findByDateoflastpayment", query = "SELECT j FROM Jobcostingandpayment j WHERE j.dateoflastpayment = :dateoflastpayment")
-    , @NamedQuery(name = "Jobcostingandpayment.findByEstimatedcost", query = "SELECT j FROM Jobcostingandpayment j WHERE j.estimatedcost = :estimatedcost")
-    , @NamedQuery(name = "Jobcostingandpayment.findByDiscount", query = "SELECT j FROM Jobcostingandpayment j WHERE j.discount = :discount")
-    , @NamedQuery(name = "Jobcostingandpayment.findByPurchaseordernumber", query = "SELECT j FROM Jobcostingandpayment j WHERE j.purchaseordernumber = :purchaseordernumber")
-    , @NamedQuery(name = "Jobcostingandpayment.findByName", query = "SELECT j FROM Jobcostingandpayment j WHERE j.name = :name")
-    , @NamedQuery(name = "Jobcostingandpayment.findByPaymentterms", query = "SELECT j FROM Jobcostingandpayment j WHERE j.paymentterms = :paymentterms")
-    , @NamedQuery(name = "Jobcostingandpayment.findByReceiptnumber", query = "SELECT j FROM Jobcostingandpayment j WHERE j.receiptnumber = :receiptnumber")
-    , @NamedQuery(name = "Jobcostingandpayment.findByCostingcompleted", query = "SELECT j FROM Jobcostingandpayment j WHERE j.costingcompleted = :costingcompleted")
-    , @NamedQuery(name = "Jobcostingandpayment.findByDepositdate", query = "SELECT j FROM Jobcostingandpayment j WHERE j.depositdate = :depositdate")
-    , @NamedQuery(name = "Jobcostingandpayment.findByCompleted", query = "SELECT j FROM Jobcostingandpayment j WHERE j.completed = :completed")
-    , @NamedQuery(name = "Jobcostingandpayment.findByInvoiced", query = "SELECT j FROM Jobcostingandpayment j WHERE j.invoiced = :invoiced")
-    , @NamedQuery(name = "Jobcostingandpayment.findByAmountdue", query = "SELECT j FROM Jobcostingandpayment j WHERE j.amountdue = :amountdue")
-    , @NamedQuery(name = "Jobcostingandpayment.findByTotaltax", query = "SELECT j FROM Jobcostingandpayment j WHERE j.totaltax = :totaltax")
-    , @NamedQuery(name = "Jobcostingandpayment.findByTotalcost", query = "SELECT j FROM Jobcostingandpayment j WHERE j.totalcost = :totalcost")
-    , @NamedQuery(name = "Jobcostingandpayment.findByLastpaymententeredbyId", query = "SELECT j FROM Jobcostingandpayment j WHERE j.lastpaymententeredbyId = :lastpaymententeredbyId")
-    , @NamedQuery(name = "Jobcostingandpayment.findByPercentagegct", query = "SELECT j FROM Jobcostingandpayment j WHERE j.percentagegct = :percentagegct")
-    , @NamedQuery(name = "Jobcostingandpayment.findByDiscounttype", query = "SELECT j FROM Jobcostingandpayment j WHERE j.discounttype = :discounttype")})
+    @NamedQuery(name = "Jobcostingandpayment.findAll", query = "SELECT j FROM Jobcostingandpayment j"),
+    @NamedQuery(name = "Jobcostingandpayment.findById", query = "SELECT j FROM Jobcostingandpayment j WHERE j.id = :id"),
+    @NamedQuery(name = "Jobcostingandpayment.findByCostingdate", query = "SELECT j FROM Jobcostingandpayment j WHERE j.costingdate = :costingdate"),
+    @NamedQuery(name = "Jobcostingandpayment.findByPaymentreceivedtodate", query = "SELECT j FROM Jobcostingandpayment j WHERE j.paymentreceivedtodate = :paymentreceivedtodate"),
+    @NamedQuery(name = "Jobcostingandpayment.findByMindeposit", query = "SELECT j FROM Jobcostingandpayment j WHERE j.mindeposit = :mindeposit"),
+    @NamedQuery(name = "Jobcostingandpayment.findByCostingapproved", query = "SELECT j FROM Jobcostingandpayment j WHERE j.costingapproved = :costingapproved"),
+    @NamedQuery(name = "Jobcostingandpayment.findByJobid", query = "SELECT j FROM Jobcostingandpayment j WHERE j.jobid = :jobid"),
+    @NamedQuery(name = "Jobcostingandpayment.findByEstimatedcostdoneby", query = "SELECT j FROM Jobcostingandpayment j WHERE j.estimatedcostdoneby = :estimatedcostdoneby"),
+    @NamedQuery(name = "Jobcostingandpayment.findByDeposit", query = "SELECT j FROM Jobcostingandpayment j WHERE j.deposit = :deposit"),
+    @NamedQuery(name = "Jobcostingandpayment.findByFinalcost", query = "SELECT j FROM Jobcostingandpayment j WHERE j.finalcost = :finalcost"),
+    @NamedQuery(name = "Jobcostingandpayment.findByFinalcostdoneby", query = "SELECT j FROM Jobcostingandpayment j WHERE j.finalcostdoneby = :finalcostdoneby"),
+    @NamedQuery(name = "Jobcostingandpayment.findByInvoicenumber", query = "SELECT j FROM Jobcostingandpayment j WHERE j.invoicenumber = :invoicenumber"),
+    @NamedQuery(name = "Jobcostingandpayment.findByDateoflastpayment", query = "SELECT j FROM Jobcostingandpayment j WHERE j.dateoflastpayment = :dateoflastpayment"),
+    @NamedQuery(name = "Jobcostingandpayment.findByEstimatedcost", query = "SELECT j FROM Jobcostingandpayment j WHERE j.estimatedcost = :estimatedcost"),
+    @NamedQuery(name = "Jobcostingandpayment.findByDiscount", query = "SELECT j FROM Jobcostingandpayment j WHERE j.discount = :discount"),
+    @NamedQuery(name = "Jobcostingandpayment.findByPurchaseordernumber", query = "SELECT j FROM Jobcostingandpayment j WHERE j.purchaseordernumber = :purchaseordernumber"),
+    @NamedQuery(name = "Jobcostingandpayment.findByName", query = "SELECT j FROM Jobcostingandpayment j WHERE j.name = :name"),
+    @NamedQuery(name = "Jobcostingandpayment.findByPaymentterms", query = "SELECT j FROM Jobcostingandpayment j WHERE j.paymentterms = :paymentterms"),
+    @NamedQuery(name = "Jobcostingandpayment.findByReceiptnumber", query = "SELECT j FROM Jobcostingandpayment j WHERE j.receiptnumber = :receiptnumber"),
+    @NamedQuery(name = "Jobcostingandpayment.findByCostingcompleted", query = "SELECT j FROM Jobcostingandpayment j WHERE j.costingcompleted = :costingcompleted"),
+    @NamedQuery(name = "Jobcostingandpayment.findByDepositdate", query = "SELECT j FROM Jobcostingandpayment j WHERE j.depositdate = :depositdate"),
+    @NamedQuery(name = "Jobcostingandpayment.findByCompleted", query = "SELECT j FROM Jobcostingandpayment j WHERE j.completed = :completed"),
+    @NamedQuery(name = "Jobcostingandpayment.findByInvoiced", query = "SELECT j FROM Jobcostingandpayment j WHERE j.invoiced = :invoiced"),
+    @NamedQuery(name = "Jobcostingandpayment.findByAmountdue", query = "SELECT j FROM Jobcostingandpayment j WHERE j.amountdue = :amountdue"),
+    @NamedQuery(name = "Jobcostingandpayment.findByTotaltax", query = "SELECT j FROM Jobcostingandpayment j WHERE j.totaltax = :totaltax"),
+    @NamedQuery(name = "Jobcostingandpayment.findByTotalcost", query = "SELECT j FROM Jobcostingandpayment j WHERE j.totalcost = :totalcost"),
+    @NamedQuery(name = "Jobcostingandpayment.findByLastpaymententeredbyId", query = "SELECT j FROM Jobcostingandpayment j WHERE j.lastpaymententeredbyId = :lastpaymententeredbyId"),
+    @NamedQuery(name = "Jobcostingandpayment.findByPercentagegct", query = "SELECT j FROM Jobcostingandpayment j WHERE j.percentagegct = :percentagegct"),
+    @NamedQuery(name = "Jobcostingandpayment.findByDiscounttype", query = "SELECT j FROM Jobcostingandpayment j WHERE j.discounttype = :discounttype")})
 public class Jobcostingandpayment implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "COSTINGDATE")
@@ -82,14 +84,17 @@ public class Jobcostingandpayment implements Serializable {
     private Boolean costingapproved;
     @Column(name = "JOBID")
     private BigInteger jobid;
+    @Size(max = 255)
     @Column(name = "ESTIMATEDCOSTDONEBY")
     private String estimatedcostdoneby;
     @Column(name = "DEPOSIT")
     private Double deposit;
     @Column(name = "FINALCOST")
     private Double finalcost;
+    @Size(max = 255)
     @Column(name = "FINALCOSTDONEBY")
     private String finalcostdoneby;
+    @Size(max = 255)
     @Column(name = "INVOICENUMBER")
     private String invoicenumber;
     @Column(name = "DATEOFLASTPAYMENT")
@@ -99,12 +104,16 @@ public class Jobcostingandpayment implements Serializable {
     private Double estimatedcost;
     @Column(name = "DISCOUNT")
     private Double discount;
+    @Size(max = 255)
     @Column(name = "PURCHASEORDERNUMBER")
     private String purchaseordernumber;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "PAYMENTTERMS")
     private String paymentterms;
+    @Size(max = 255)
     @Column(name = "RECEIPTNUMBER")
     private String receiptnumber;
     @Column(name = "COSTINGCOMPLETED")
@@ -126,6 +135,7 @@ public class Jobcostingandpayment implements Serializable {
     private BigInteger lastpaymententeredbyId;
     @Column(name = "PERCENTAGEGCT")
     private Double percentagegct;
+    @Size(max = 255)
     @Column(name = "DISCOUNTTYPE")
     private String discounttype;
     @JoinTable(name = "jobcostingandpayment_costcomponent", joinColumns = {
@@ -133,13 +143,13 @@ public class Jobcostingandpayment implements Serializable {
         @JoinColumn(name = "costComponents_ID", referencedColumnName = "ID")})
     @ManyToMany
     private List<Costcomponent> costcomponentList;
-    @ManyToMany(mappedBy = "jobcostingandpaymentList")
-    private List<Jobcosting> jobcostingList;
     @JoinTable(name = "jobcostingandpayment_cashpayment", joinColumns = {
         @JoinColumn(name = "JobCostingAndPayment_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
         @JoinColumn(name = "cashPayments_ID", referencedColumnName = "ID")})
     @ManyToMany
     private List<Cashpayment> cashpaymentList;
+    @ManyToMany(mappedBy = "jobcostingandpaymentList")
+    private List<Jobcosting> jobcostingList;
     @OneToMany(mappedBy = "jobcostingandpaymentId")
     private List<Job> jobList;
     @JoinColumn(name = "COSTINGAPPROVEDBY_ID", referencedColumnName = "ID")
@@ -378,6 +388,7 @@ public class Jobcostingandpayment implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Costcomponent> getCostcomponentList() {
         return costcomponentList;
     }
@@ -387,15 +398,7 @@ public class Jobcostingandpayment implements Serializable {
     }
 
     @XmlTransient
-    public List<Jobcosting> getJobcostingList() {
-        return jobcostingList;
-    }
-
-    public void setJobcostingList(List<Jobcosting> jobcostingList) {
-        this.jobcostingList = jobcostingList;
-    }
-
-    @XmlTransient
+    @JsonIgnore
     public List<Cashpayment> getCashpaymentList() {
         return cashpaymentList;
     }
@@ -405,6 +408,17 @@ public class Jobcostingandpayment implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Jobcosting> getJobcostingList() {
+        return jobcostingList;
+    }
+
+    public void setJobcostingList(List<Jobcosting> jobcostingList) {
+        this.jobcostingList = jobcostingList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Job> getJobList() {
         return jobList;
     }
@@ -443,7 +457,7 @@ public class Jobcostingandpayment implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Jobcostingandpayment[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Jobcostingandpayment[ id=" + id + " ]";
     }
     
 }

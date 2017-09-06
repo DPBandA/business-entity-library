@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -13,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -23,19 +24,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "asset")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Asset.findAll", query = "SELECT a FROM Asset a")
-    , @NamedQuery(name = "Asset.findById", query = "SELECT a FROM Asset a WHERE a.id = :id")
-    , @NamedQuery(name = "Asset.findByName", query = "SELECT a FROM Asset a WHERE a.name = :name")
-    , @NamedQuery(name = "Asset.findByType", query = "SELECT a FROM Asset a WHERE a.type = :type")})
+    @NamedQuery(name = "Asset.findAll", query = "SELECT a FROM Asset a"),
+    @NamedQuery(name = "Asset.findById", query = "SELECT a FROM Asset a WHERE a.id = :id"),
+    @NamedQuery(name = "Asset.findByName", query = "SELECT a FROM Asset a WHERE a.name = :name"),
+    @NamedQuery(name = "Asset.findByType", query = "SELECT a FROM Asset a WHERE a.type = :type")})
 public class Asset implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
 
@@ -92,7 +95,7 @@ public class Asset implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Asset[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Asset[ id=" + id + " ]";
     }
     
 }

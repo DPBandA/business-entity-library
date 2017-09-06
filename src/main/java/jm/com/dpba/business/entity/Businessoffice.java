@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -12,14 +11,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -29,26 +32,37 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "businessoffice")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Businessoffice.findAll", query = "SELECT b FROM Businessoffice b")
-    , @NamedQuery(name = "Businessoffice.findById", query = "SELECT b FROM Businessoffice b WHERE b.id = :id")
-    , @NamedQuery(name = "Businessoffice.findByName", query = "SELECT b FROM Businessoffice b WHERE b.name = :name")
-    , @NamedQuery(name = "Businessoffice.findByCode", query = "SELECT b FROM Businessoffice b WHERE b.code = :code")
-    , @NamedQuery(name = "Businessoffice.findByActive", query = "SELECT b FROM Businessoffice b WHERE b.active = :active")})
+    @NamedQuery(name = "Businessoffice.findAll", query = "SELECT b FROM Businessoffice b"),
+    @NamedQuery(name = "Businessoffice.findById", query = "SELECT b FROM Businessoffice b WHERE b.id = :id"),
+    @NamedQuery(name = "Businessoffice.findByName", query = "SELECT b FROM Businessoffice b WHERE b.name = :name"),
+    @NamedQuery(name = "Businessoffice.findByCode", query = "SELECT b FROM Businessoffice b WHERE b.code = :code"),
+    @NamedQuery(name = "Businessoffice.findByActive", query = "SELECT b FROM Businessoffice b WHERE b.active = :active")})
 public class Businessoffice implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "CODE")
     private String code;
     @Column(name = "ACTIVE")
     private Boolean active;
     @ManyToMany(mappedBy = "businessofficeList")
     private List<Laboratory> laboratoryList;
+    @ManyToMany(mappedBy = "businessofficeList")
+    private List<Petrolcompany> petrolcompanyList;
+    @ManyToMany(mappedBy = "businessofficeList")
+    private List<Scalecompany> scalecompanyList;
+    @JoinTable(name = "standardsorganization_businessoffice", joinColumns = {
+        @JoinColumn(name = "businessOffices_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
+        @JoinColumn(name = "StandardsOrganization_ID", referencedColumnName = "ID")})
+    @ManyToMany
+    private List<Standardsorganization> standardsorganizationList;
     @OneToMany(mappedBy = "businessofficeId")
     private List<Employee> employeeList;
     @OneToMany(mappedBy = "businessofficeId")
@@ -65,6 +79,8 @@ public class Businessoffice implements Serializable {
     private Internet internetId;
     @OneToMany(mappedBy = "businessofficeId")
     private List<Factoryinspection> factoryinspectionList;
+    @OneToMany(mappedBy = "regulatoryofficeId")
+    private List<Jobsample> jobsampleList;
     @OneToMany(mappedBy = "assignedbusinessofficeId")
     private List<Foodfactory> foodfactoryList;
 
@@ -108,6 +124,7 @@ public class Businessoffice implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Laboratory> getLaboratoryList() {
         return laboratoryList;
     }
@@ -117,6 +134,37 @@ public class Businessoffice implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Petrolcompany> getPetrolcompanyList() {
+        return petrolcompanyList;
+    }
+
+    public void setPetrolcompanyList(List<Petrolcompany> petrolcompanyList) {
+        this.petrolcompanyList = petrolcompanyList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Scalecompany> getScalecompanyList() {
+        return scalecompanyList;
+    }
+
+    public void setScalecompanyList(List<Scalecompany> scalecompanyList) {
+        this.scalecompanyList = scalecompanyList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Standardsorganization> getStandardsorganizationList() {
+        return standardsorganizationList;
+    }
+
+    public void setStandardsorganizationList(List<Standardsorganization> standardsorganizationList) {
+        this.standardsorganizationList = standardsorganizationList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Employee> getEmployeeList() {
         return employeeList;
     }
@@ -126,6 +174,7 @@ public class Businessoffice implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Servicerequest> getServicerequestList() {
         return servicerequestList;
     }
@@ -135,6 +184,7 @@ public class Businessoffice implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Job> getJobList() {
         return jobList;
     }
@@ -144,6 +194,7 @@ public class Businessoffice implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodsample> getFoodsampleList() {
         return foodsampleList;
     }
@@ -169,6 +220,7 @@ public class Businessoffice implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Factoryinspection> getFactoryinspectionList() {
         return factoryinspectionList;
     }
@@ -178,6 +230,17 @@ public class Businessoffice implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Jobsample> getJobsampleList() {
+        return jobsampleList;
+    }
+
+    public void setJobsampleList(List<Jobsample> jobsampleList) {
+        this.jobsampleList = jobsampleList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Foodfactory> getFoodfactoryList() {
         return foodfactoryList;
     }
@@ -208,7 +271,7 @@ public class Businessoffice implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Businessoffice[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Businessoffice[ id=" + id + " ]";
     }
     
 }

@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -22,8 +21,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -33,48 +35,56 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "employee")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e")
-    , @NamedQuery(name = "Employee.findById", query = "SELECT e FROM Employee e WHERE e.id = :id")
-    , @NamedQuery(name = "Employee.findByMiddlename", query = "SELECT e FROM Employee e WHERE e.middlename = :middlename")
-    , @NamedQuery(name = "Employee.findByNamesuffix", query = "SELECT e FROM Employee e WHERE e.namesuffix = :namesuffix")
-    , @NamedQuery(name = "Employee.findByLastname", query = "SELECT e FROM Employee e WHERE e.lastname = :lastname")
-    , @NamedQuery(name = "Employee.findBySex", query = "SELECT e FROM Employee e WHERE e.sex = :sex")
-    , @NamedQuery(name = "Employee.findByNumber", query = "SELECT e FROM Employee e WHERE e.number = :number")
-    , @NamedQuery(name = "Employee.findByBillingrate", query = "SELECT e FROM Employee e WHERE e.billingrate = :billingrate")
-    , @NamedQuery(name = "Employee.findByUsername", query = "SELECT e FROM Employee e WHERE e.username = :username")
-    , @NamedQuery(name = "Employee.findByTitle", query = "SELECT e FROM Employee e WHERE e.title = :title")
-    , @NamedQuery(name = "Employee.findByName", query = "SELECT e FROM Employee e WHERE e.name = :name")
-    , @NamedQuery(name = "Employee.findByActive", query = "SELECT e FROM Employee e WHERE e.active = :active")
-    , @NamedQuery(name = "Employee.findByBirthdate", query = "SELECT e FROM Employee e WHERE e.birthdate = :birthdate")
-    , @NamedQuery(name = "Employee.findByFirstname", query = "SELECT e FROM Employee e WHERE e.firstname = :firstname")
-    , @NamedQuery(name = "Employee.findByNotes", query = "SELECT e FROM Employee e WHERE e.notes = :notes")
-    , @NamedQuery(name = "Employee.findByDatehired", query = "SELECT e FROM Employee e WHERE e.datehired = :datehired")
-    , @NamedQuery(name = "Employee.findByEmploymenttype", query = "SELECT e FROM Employee e WHERE e.employmenttype = :employmenttype")
-    , @NamedQuery(name = "Employee.findByPost", query = "SELECT e FROM Employee e WHERE e.post = :post")})
+    @NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e"),
+    @NamedQuery(name = "Employee.findById", query = "SELECT e FROM Employee e WHERE e.id = :id"),
+    @NamedQuery(name = "Employee.findByMiddlename", query = "SELECT e FROM Employee e WHERE e.middlename = :middlename"),
+    @NamedQuery(name = "Employee.findByNamesuffix", query = "SELECT e FROM Employee e WHERE e.namesuffix = :namesuffix"),
+    @NamedQuery(name = "Employee.findByLastname", query = "SELECT e FROM Employee e WHERE e.lastname = :lastname"),
+    @NamedQuery(name = "Employee.findBySex", query = "SELECT e FROM Employee e WHERE e.sex = :sex"),
+    @NamedQuery(name = "Employee.findByNumber", query = "SELECT e FROM Employee e WHERE e.number = :number"),
+    @NamedQuery(name = "Employee.findByBillingrate", query = "SELECT e FROM Employee e WHERE e.billingrate = :billingrate"),
+    @NamedQuery(name = "Employee.findByUsername", query = "SELECT e FROM Employee e WHERE e.username = :username"),
+    @NamedQuery(name = "Employee.findByTitle", query = "SELECT e FROM Employee e WHERE e.title = :title"),
+    @NamedQuery(name = "Employee.findByName", query = "SELECT e FROM Employee e WHERE e.name = :name"),
+    @NamedQuery(name = "Employee.findByActive", query = "SELECT e FROM Employee e WHERE e.active = :active"),
+    @NamedQuery(name = "Employee.findByBirthdate", query = "SELECT e FROM Employee e WHERE e.birthdate = :birthdate"),
+    @NamedQuery(name = "Employee.findByFirstname", query = "SELECT e FROM Employee e WHERE e.firstname = :firstname"),
+    @NamedQuery(name = "Employee.findByNotes", query = "SELECT e FROM Employee e WHERE e.notes = :notes"),
+    @NamedQuery(name = "Employee.findByDatehired", query = "SELECT e FROM Employee e WHERE e.datehired = :datehired"),
+    @NamedQuery(name = "Employee.findByEmploymenttype", query = "SELECT e FROM Employee e WHERE e.employmenttype = :employmenttype"),
+    @NamedQuery(name = "Employee.findByPost", query = "SELECT e FROM Employee e WHERE e.post = :post")})
 public class Employee implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "MIDDLENAME")
     private String middlename;
+    @Size(max = 255)
     @Column(name = "NAMESUFFIX")
     private String namesuffix;
+    @Size(max = 255)
     @Column(name = "LASTNAME")
     private String lastname;
+    @Size(max = 255)
     @Column(name = "SEX")
     private String sex;
+    @Size(max = 255)
     @Column(name = "NUMBER")
     private String number;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "BILLINGRATE")
     private Double billingrate;
+    @Size(max = 255)
     @Column(name = "USERNAME")
     private String username;
+    @Size(max = 255)
     @Column(name = "TITLE")
     private String title;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "ACTIVE")
@@ -82,24 +92,35 @@ public class Employee implements Serializable {
     @Column(name = "BIRTHDATE")
     @Temporal(TemporalType.DATE)
     private Date birthdate;
+    @Size(max = 255)
     @Column(name = "FIRSTNAME")
     private String firstname;
+    @Size(max = 255)
     @Column(name = "NOTES")
     private String notes;
     @Column(name = "DATEHIRED")
     @Temporal(TemporalType.DATE)
     private Date datehired;
+    @Size(max = 255)
     @Column(name = "EMPLOYMENTTYPE")
     private String employmenttype;
+    @Size(max = 255)
     @Column(name = "POST")
     private String post;
     @ManyToMany(mappedBy = "employeeList")
     private List<Department> departmentList;
+    @JoinTable(name = "employee_phonenumber", joinColumns = {
+        @JoinColumn(name = "Employee_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
+        @JoinColumn(name = "phoneNumbers_ID", referencedColumnName = "ID")})
+    @ManyToMany
+    private List<Phonenumber> phonenumberList;
     @JoinTable(name = "employee_address", joinColumns = {
         @JoinColumn(name = "Employee_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
         @JoinColumn(name = "addresses_ID", referencedColumnName = "ID")})
     @ManyToMany
     private List<Address> addressList;
+    @OneToMany(mappedBy = "calibrationdonebyId")
+    private List<Petrolpumpcalibration> petrolpumpcalibrationList;
     @JoinColumn(name = "BUSINESSOFFICE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Businessoffice businessofficeId;
@@ -116,7 +137,17 @@ public class Employee implements Serializable {
     @ManyToOne
     private Signature signatureId;
     @OneToMany(mappedBy = "inspectorId")
+    private List<Productinspection> productinspectionList;
+    @OneToMany(mappedBy = "inspectorId")
+    private List<Samplerequest> samplerequestList;
+    @OneToMany(mappedBy = "inspectorId")
+    private List<Marketproductsurvey> marketproductsurveyList;
+    @OneToMany(mappedBy = "employeeId")
+    private List<JobManagerUser> jobmanageruserList;
+    @OneToMany(mappedBy = "inspectorId")
     private List<Documentinspection> documentinspectionList;
+    @OneToMany(mappedBy = "employeeresponsibleId")
+    private List<Jobtask> jobtaskList;
     @OneToMany(mappedBy = "editedbyId")
     private List<Jobstatusandtracking> jobstatusandtrackingList;
     @OneToMany(mappedBy = "enteredbyId")
@@ -125,18 +156,26 @@ public class Employee implements Serializable {
     private List<Jobstatusandtracking> jobstatusandtrackingList2;
     @OneToMany(mappedBy = "editedbyId")
     private List<Compliancesurvey> compliancesurveyList;
-    @OneToMany(mappedBy = "authemployeefordetentionrequestpoeId")
+    @OneToMany(mappedBy = "authempfornoticeofreleasefromdentiondmId")
     private List<Compliancesurvey> compliancesurveyList1;
-    @OneToMany(mappedBy = "preparedbyemployeeforreleaserequestpoeId")
+    @OneToMany(mappedBy = "inspectorId")
     private List<Compliancesurvey> compliancesurveyList2;
     @OneToMany(mappedBy = "approvedbyemployeeforreleaserequestpoeId")
     private List<Compliancesurvey> compliancesurveyList3;
-    @OneToMany(mappedBy = "inspectorId")
-    private List<Compliancesurvey> compliancesurveyList4;
-    @OneToMany(mappedBy = "authempfornoticeofreleasefromdentiondmId")
-    private List<Compliancesurvey> compliancesurveyList5;
     @OneToMany(mappedBy = "authemployeefornoticeofdentiondmId")
+    private List<Compliancesurvey> compliancesurveyList4;
+    @OneToMany(mappedBy = "preparedbyemployeeforreleaserequestpoeId")
+    private List<Compliancesurvey> compliancesurveyList5;
+    @OneToMany(mappedBy = "authemployeefordetentionrequestpoeId")
     private List<Compliancesurvey> compliancesurveyList6;
+    @OneToMany(mappedBy = "responsibleofficerId")
+    private List<Legaldocument> legaldocumentList;
+    @OneToMany(mappedBy = "submittedbyId")
+    private List<Legaldocument> legaldocumentList1;
+    @OneToMany(mappedBy = "editedbyId")
+    private List<Legaldocument> legaldocumentList2;
+    @OneToMany(mappedBy = "testdonebyId")
+    private List<Producttest> producttestList;
     @OneToMany(mappedBy = "editedbyId")
     private List<Documentstandard> documentstandardList;
     @OneToMany(mappedBy = "certificatesignedbyId")
@@ -147,6 +186,8 @@ public class Employee implements Serializable {
     private List<Servicerequest> servicerequestList1;
     @OneToMany(mappedBy = "enteredbyId")
     private List<Servicerequest> servicerequestList2;
+    @OneToMany(mappedBy = "lastassigneeId")
+    private List<Petrolstation> petrolstationList;
     @OneToMany(mappedBy = "assignedtoId")
     private List<Job> jobList;
     @OneToMany(mappedBy = "editedbyId")
@@ -161,12 +202,22 @@ public class Employee implements Serializable {
     private List<Foodsample> foodsampleList1;
     @OneToMany(mappedBy = "assignedinspectorId")
     private List<Factoryinspection> factoryinspectionList;
+    @OneToMany(mappedBy = "receivedbyId")
+    private List<Jobsample> jobsampleList;
+    @OneToMany(mappedBy = "sampledbyId")
+    private List<Jobsample> jobsampleList1;
     @OneToMany(mappedBy = "assigneeId")
     private List<Seal> sealList;
+    @OneToMany(mappedBy = "inspectorId")
+    private List<Portofentrydetention> portofentrydetentionList;
     @OneToMany(mappedBy = "recipientId")
     private List<Alert> alertList;
     @OneToMany(mappedBy = "enteredbyId")
     private List<Client> clientList;
+    @OneToMany(mappedBy = "recordedbyId")
+    private List<Petrolpumpcalibrationvalue> petrolpumpcalibrationvalueList;
+    @OneToMany(mappedBy = "testdonebyId")
+    private List<Foodtest> foodtestList;
     @OneToMany(mappedBy = "managerId")
     private List<Department> departmentList1;
     @OneToMany(mappedBy = "teamleaderId")
@@ -175,14 +226,14 @@ public class Employee implements Serializable {
     private List<Department> departmentList3;
     @OneToMany(mappedBy = "headId")
     private List<Department> departmentList4;
-    @OneToMany(mappedBy = "testdonebyId")
-    private List<Foodtest> foodtestList;
     @OneToMany(mappedBy = "assignedinspectorId")
     private List<Foodfactory> foodfactoryList;
     @OneToMany(mappedBy = "editedbyId")
     private List<Foodfactory> foodfactoryList1;
     @OneToMany(mappedBy = "assigneeId")
     private List<Sticker> stickerList;
+    @OneToMany(mappedBy = "calibrationdonebyId")
+    private List<Petrolpumpnozzlecalibration> petrolpumpnozzlecalibrationList;
     @OneToMany(mappedBy = "costingapprovedbyId")
     private List<Jobcostingandpayment> jobcostingandpaymentList;
 
@@ -330,6 +381,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Department> getDepartmentList() {
         return departmentList;
     }
@@ -339,12 +391,33 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Phonenumber> getPhonenumberList() {
+        return phonenumberList;
+    }
+
+    public void setPhonenumberList(List<Phonenumber> phonenumberList) {
+        this.phonenumberList = phonenumberList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Address> getAddressList() {
         return addressList;
     }
 
     public void setAddressList(List<Address> addressList) {
         this.addressList = addressList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Petrolpumpcalibration> getPetrolpumpcalibrationList() {
+        return petrolpumpcalibrationList;
+    }
+
+    public void setPetrolpumpcalibrationList(List<Petrolpumpcalibration> petrolpumpcalibrationList) {
+        this.petrolpumpcalibrationList = petrolpumpcalibrationList;
     }
 
     public Businessoffice getBusinessofficeId() {
@@ -388,6 +461,47 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Productinspection> getProductinspectionList() {
+        return productinspectionList;
+    }
+
+    public void setProductinspectionList(List<Productinspection> productinspectionList) {
+        this.productinspectionList = productinspectionList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Samplerequest> getSamplerequestList() {
+        return samplerequestList;
+    }
+
+    public void setSamplerequestList(List<Samplerequest> samplerequestList) {
+        this.samplerequestList = samplerequestList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Marketproductsurvey> getMarketproductsurveyList() {
+        return marketproductsurveyList;
+    }
+
+    public void setMarketproductsurveyList(List<Marketproductsurvey> marketproductsurveyList) {
+        this.marketproductsurveyList = marketproductsurveyList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<JobManagerUser> getJobmanageruserList() {
+        return jobmanageruserList;
+    }
+
+    public void setJobmanageruserList(List<JobManagerUser> jobmanageruserList) {
+        this.jobmanageruserList = jobmanageruserList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Documentinspection> getDocumentinspectionList() {
         return documentinspectionList;
     }
@@ -397,6 +511,17 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Jobtask> getJobtaskList() {
+        return jobtaskList;
+    }
+
+    public void setJobtaskList(List<Jobtask> jobtaskList) {
+        this.jobtaskList = jobtaskList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Jobstatusandtracking> getJobstatusandtrackingList() {
         return jobstatusandtrackingList;
     }
@@ -406,6 +531,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Jobstatusandtracking> getJobstatusandtrackingList1() {
         return jobstatusandtrackingList1;
     }
@@ -415,6 +541,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Jobstatusandtracking> getJobstatusandtrackingList2() {
         return jobstatusandtrackingList2;
     }
@@ -424,6 +551,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList() {
         return compliancesurveyList;
     }
@@ -433,6 +561,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList1() {
         return compliancesurveyList1;
     }
@@ -442,6 +571,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList2() {
         return compliancesurveyList2;
     }
@@ -451,6 +581,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList3() {
         return compliancesurveyList3;
     }
@@ -460,6 +591,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList4() {
         return compliancesurveyList4;
     }
@@ -469,6 +601,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList5() {
         return compliancesurveyList5;
     }
@@ -478,6 +611,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList6() {
         return compliancesurveyList6;
     }
@@ -487,6 +621,47 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Legaldocument> getLegaldocumentList() {
+        return legaldocumentList;
+    }
+
+    public void setLegaldocumentList(List<Legaldocument> legaldocumentList) {
+        this.legaldocumentList = legaldocumentList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Legaldocument> getLegaldocumentList1() {
+        return legaldocumentList1;
+    }
+
+    public void setLegaldocumentList1(List<Legaldocument> legaldocumentList1) {
+        this.legaldocumentList1 = legaldocumentList1;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Legaldocument> getLegaldocumentList2() {
+        return legaldocumentList2;
+    }
+
+    public void setLegaldocumentList2(List<Legaldocument> legaldocumentList2) {
+        this.legaldocumentList2 = legaldocumentList2;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Producttest> getProducttestList() {
+        return producttestList;
+    }
+
+    public void setProducttestList(List<Producttest> producttestList) {
+        this.producttestList = producttestList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Documentstandard> getDocumentstandardList() {
         return documentstandardList;
     }
@@ -496,6 +671,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Certification> getCertificationList() {
         return certificationList;
     }
@@ -505,6 +681,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Servicerequest> getServicerequestList() {
         return servicerequestList;
     }
@@ -514,6 +691,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Servicerequest> getServicerequestList1() {
         return servicerequestList1;
     }
@@ -523,6 +701,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Servicerequest> getServicerequestList2() {
         return servicerequestList2;
     }
@@ -532,6 +711,17 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Petrolstation> getPetrolstationList() {
+        return petrolstationList;
+    }
+
+    public void setPetrolstationList(List<Petrolstation> petrolstationList) {
+        this.petrolstationList = petrolstationList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Job> getJobList() {
         return jobList;
     }
@@ -541,6 +731,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Documenttracking> getDocumenttrackingList() {
         return documenttrackingList;
     }
@@ -550,6 +741,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Documenttracking> getDocumenttrackingList1() {
         return documenttrackingList1;
     }
@@ -559,6 +751,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Documenttracking> getDocumenttrackingList2() {
         return documenttrackingList2;
     }
@@ -568,6 +761,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodsample> getFoodsampleList() {
         return foodsampleList;
     }
@@ -577,6 +771,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodsample> getFoodsampleList1() {
         return foodsampleList1;
     }
@@ -586,6 +781,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Factoryinspection> getFactoryinspectionList() {
         return factoryinspectionList;
     }
@@ -595,6 +791,27 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Jobsample> getJobsampleList() {
+        return jobsampleList;
+    }
+
+    public void setJobsampleList(List<Jobsample> jobsampleList) {
+        this.jobsampleList = jobsampleList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Jobsample> getJobsampleList1() {
+        return jobsampleList1;
+    }
+
+    public void setJobsampleList1(List<Jobsample> jobsampleList1) {
+        this.jobsampleList1 = jobsampleList1;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Seal> getSealList() {
         return sealList;
     }
@@ -604,6 +821,17 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Portofentrydetention> getPortofentrydetentionList() {
+        return portofentrydetentionList;
+    }
+
+    public void setPortofentrydetentionList(List<Portofentrydetention> portofentrydetentionList) {
+        this.portofentrydetentionList = portofentrydetentionList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Alert> getAlertList() {
         return alertList;
     }
@@ -613,6 +841,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Client> getClientList() {
         return clientList;
     }
@@ -622,42 +851,17 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
-    public List<Department> getDepartmentList1() {
-        return departmentList1;
+    @JsonIgnore
+    public List<Petrolpumpcalibrationvalue> getPetrolpumpcalibrationvalueList() {
+        return petrolpumpcalibrationvalueList;
     }
 
-    public void setDepartmentList1(List<Department> departmentList1) {
-        this.departmentList1 = departmentList1;
-    }
-
-    @XmlTransient
-    public List<Department> getDepartmentList2() {
-        return departmentList2;
-    }
-
-    public void setDepartmentList2(List<Department> departmentList2) {
-        this.departmentList2 = departmentList2;
+    public void setPetrolpumpcalibrationvalueList(List<Petrolpumpcalibrationvalue> petrolpumpcalibrationvalueList) {
+        this.petrolpumpcalibrationvalueList = petrolpumpcalibrationvalueList;
     }
 
     @XmlTransient
-    public List<Department> getDepartmentList3() {
-        return departmentList3;
-    }
-
-    public void setDepartmentList3(List<Department> departmentList3) {
-        this.departmentList3 = departmentList3;
-    }
-
-    @XmlTransient
-    public List<Department> getDepartmentList4() {
-        return departmentList4;
-    }
-
-    public void setDepartmentList4(List<Department> departmentList4) {
-        this.departmentList4 = departmentList4;
-    }
-
-    @XmlTransient
+    @JsonIgnore
     public List<Foodtest> getFoodtestList() {
         return foodtestList;
     }
@@ -667,6 +871,47 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Department> getDepartmentList1() {
+        return departmentList1;
+    }
+
+    public void setDepartmentList1(List<Department> departmentList1) {
+        this.departmentList1 = departmentList1;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Department> getDepartmentList2() {
+        return departmentList2;
+    }
+
+    public void setDepartmentList2(List<Department> departmentList2) {
+        this.departmentList2 = departmentList2;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Department> getDepartmentList3() {
+        return departmentList3;
+    }
+
+    public void setDepartmentList3(List<Department> departmentList3) {
+        this.departmentList3 = departmentList3;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Department> getDepartmentList4() {
+        return departmentList4;
+    }
+
+    public void setDepartmentList4(List<Department> departmentList4) {
+        this.departmentList4 = departmentList4;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Foodfactory> getFoodfactoryList() {
         return foodfactoryList;
     }
@@ -676,6 +921,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodfactory> getFoodfactoryList1() {
         return foodfactoryList1;
     }
@@ -685,6 +931,7 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Sticker> getStickerList() {
         return stickerList;
     }
@@ -694,6 +941,17 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Petrolpumpnozzlecalibration> getPetrolpumpnozzlecalibrationList() {
+        return petrolpumpnozzlecalibrationList;
+    }
+
+    public void setPetrolpumpnozzlecalibrationList(List<Petrolpumpnozzlecalibration> petrolpumpnozzlecalibrationList) {
+        this.petrolpumpnozzlecalibrationList = petrolpumpnozzlecalibrationList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Jobcostingandpayment> getJobcostingandpaymentList() {
         return jobcostingandpaymentList;
     }
@@ -724,7 +982,7 @@ public class Employee implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Employee[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Employee[ id=" + id + " ]";
     }
     
 }

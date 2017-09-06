@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -19,8 +18,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -30,25 +32,26 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "cashpayment")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Cashpayment.findAll", query = "SELECT c FROM Cashpayment c")
-    , @NamedQuery(name = "Cashpayment.findById", query = "SELECT c FROM Cashpayment c WHERE c.id = :id")
-    , @NamedQuery(name = "Cashpayment.findByPayeetitle", query = "SELECT c FROM Cashpayment c WHERE c.payeetitle = :payeetitle")
-    , @NamedQuery(name = "Cashpayment.findByJobid", query = "SELECT c FROM Cashpayment c WHERE c.jobid = :jobid")
-    , @NamedQuery(name = "Cashpayment.findByPayment", query = "SELECT c FROM Cashpayment c WHERE c.payment = :payment")
-    , @NamedQuery(name = "Cashpayment.findByPayeefirstname", query = "SELECT c FROM Cashpayment c WHERE c.payeefirstname = :payeefirstname")
-    , @NamedQuery(name = "Cashpayment.findByPayeelastname", query = "SELECT c FROM Cashpayment c WHERE c.payeelastname = :payeelastname")
-    , @NamedQuery(name = "Cashpayment.findByJmtsuserid", query = "SELECT c FROM Cashpayment c WHERE c.jmtsuserid = :jmtsuserid")
-    , @NamedQuery(name = "Cashpayment.findByType", query = "SELECT c FROM Cashpayment c WHERE c.type = :type")
-    , @NamedQuery(name = "Cashpayment.findByComment", query = "SELECT c FROM Cashpayment c WHERE c.comment = :comment")
-    , @NamedQuery(name = "Cashpayment.findByReceiptnumber", query = "SELECT c FROM Cashpayment c WHERE c.receiptnumber = :receiptnumber")
-    , @NamedQuery(name = "Cashpayment.findByDateofpayment", query = "SELECT c FROM Cashpayment c WHERE c.dateofpayment = :dateofpayment")})
+    @NamedQuery(name = "Cashpayment.findAll", query = "SELECT c FROM Cashpayment c"),
+    @NamedQuery(name = "Cashpayment.findById", query = "SELECT c FROM Cashpayment c WHERE c.id = :id"),
+    @NamedQuery(name = "Cashpayment.findByPayeetitle", query = "SELECT c FROM Cashpayment c WHERE c.payeetitle = :payeetitle"),
+    @NamedQuery(name = "Cashpayment.findByJobid", query = "SELECT c FROM Cashpayment c WHERE c.jobid = :jobid"),
+    @NamedQuery(name = "Cashpayment.findByPayment", query = "SELECT c FROM Cashpayment c WHERE c.payment = :payment"),
+    @NamedQuery(name = "Cashpayment.findByPayeefirstname", query = "SELECT c FROM Cashpayment c WHERE c.payeefirstname = :payeefirstname"),
+    @NamedQuery(name = "Cashpayment.findByPayeelastname", query = "SELECT c FROM Cashpayment c WHERE c.payeelastname = :payeelastname"),
+    @NamedQuery(name = "Cashpayment.findByJmtsuserid", query = "SELECT c FROM Cashpayment c WHERE c.jmtsuserid = :jmtsuserid"),
+    @NamedQuery(name = "Cashpayment.findByType", query = "SELECT c FROM Cashpayment c WHERE c.type = :type"),
+    @NamedQuery(name = "Cashpayment.findByComment", query = "SELECT c FROM Cashpayment c WHERE c.comment = :comment"),
+    @NamedQuery(name = "Cashpayment.findByReceiptnumber", query = "SELECT c FROM Cashpayment c WHERE c.receiptnumber = :receiptnumber"),
+    @NamedQuery(name = "Cashpayment.findByDateofpayment", query = "SELECT c FROM Cashpayment c WHERE c.dateofpayment = :dateofpayment")})
 public class Cashpayment implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "PAYEETITLE")
     private String payeetitle;
     @Column(name = "JOBID")
@@ -56,16 +59,21 @@ public class Cashpayment implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "PAYMENT")
     private Double payment;
+    @Size(max = 255)
     @Column(name = "PAYEEFIRSTNAME")
     private String payeefirstname;
+    @Size(max = 255)
     @Column(name = "PAYEELASTNAME")
     private String payeelastname;
     @Column(name = "JMTSUSERID")
     private BigInteger jmtsuserid;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
+    @Size(max = 255)
     @Column(name = "COMMENT")
     private String comment;
+    @Size(max = 255)
     @Column(name = "RECEIPTNUMBER")
     private String receiptnumber;
     @Column(name = "DATEOFPAYMENT")
@@ -170,6 +178,7 @@ public class Cashpayment implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Jobcostingandpayment> getJobcostingandpaymentList() {
         return jobcostingandpaymentList;
     }
@@ -200,7 +209,7 @@ public class Cashpayment implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Cashpayment[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Cashpayment[ id=" + id + " ]";
     }
     
 }

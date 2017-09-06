@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -17,11 +16,15 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -31,21 +34,21 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "sticker")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Sticker.findAll", query = "SELECT s FROM Sticker s")
-    , @NamedQuery(name = "Sticker.findById", query = "SELECT s FROM Sticker s WHERE s.id = :id")
-    , @NamedQuery(name = "Sticker.findByValid", query = "SELECT s FROM Sticker s WHERE s.valid = :valid")
-    , @NamedQuery(name = "Sticker.findByDateassigned", query = "SELECT s FROM Sticker s WHERE s.dateassigned = :dateassigned")
-    , @NamedQuery(name = "Sticker.findByName", query = "SELECT s FROM Sticker s WHERE s.name = :name")
-    , @NamedQuery(name = "Sticker.findByDateissued", query = "SELECT s FROM Sticker s WHERE s.dateissued = :dateissued")
-    , @NamedQuery(name = "Sticker.findByNumber", query = "SELECT s FROM Sticker s WHERE s.number = :number")
-    , @NamedQuery(name = "Sticker.findByUsed", query = "SELECT s FROM Sticker s WHERE s.used = :used")
-    , @NamedQuery(name = "Sticker.findByType", query = "SELECT s FROM Sticker s WHERE s.type = :type")
-    , @NamedQuery(name = "Sticker.findByDateexpired", query = "SELECT s FROM Sticker s WHERE s.dateexpired = :dateexpired")})
+    @NamedQuery(name = "Sticker.findAll", query = "SELECT s FROM Sticker s"),
+    @NamedQuery(name = "Sticker.findById", query = "SELECT s FROM Sticker s WHERE s.id = :id"),
+    @NamedQuery(name = "Sticker.findByValid", query = "SELECT s FROM Sticker s WHERE s.valid = :valid"),
+    @NamedQuery(name = "Sticker.findByDateassigned", query = "SELECT s FROM Sticker s WHERE s.dateassigned = :dateassigned"),
+    @NamedQuery(name = "Sticker.findByName", query = "SELECT s FROM Sticker s WHERE s.name = :name"),
+    @NamedQuery(name = "Sticker.findByDateissued", query = "SELECT s FROM Sticker s WHERE s.dateissued = :dateissued"),
+    @NamedQuery(name = "Sticker.findByNumber", query = "SELECT s FROM Sticker s WHERE s.number = :number"),
+    @NamedQuery(name = "Sticker.findByUsed", query = "SELECT s FROM Sticker s WHERE s.used = :used"),
+    @NamedQuery(name = "Sticker.findByType", query = "SELECT s FROM Sticker s WHERE s.type = :type"),
+    @NamedQuery(name = "Sticker.findByDateexpired", query = "SELECT s FROM Sticker s WHERE s.dateexpired = :dateexpired")})
 public class Sticker implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Column(name = "VALID")
@@ -53,15 +56,18 @@ public class Sticker implements Serializable {
     @Column(name = "DATEASSIGNED")
     @Temporal(TemporalType.DATE)
     private Date dateassigned;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "DATEISSUED")
     @Temporal(TemporalType.DATE)
     private Date dateissued;
+    @Size(max = 255)
     @Column(name = "NUMBER")
     private String number;
     @Column(name = "USED")
     private Boolean used;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
     @Column(name = "DATEEXPIRED")
@@ -69,12 +75,18 @@ public class Sticker implements Serializable {
     private Date dateexpired;
     @ManyToMany(mappedBy = "stickerList")
     private List<Scale> scaleList;
+    @ManyToMany(mappedBy = "stickerList")
+    private List<Petrolpumpnozzle> petrolpumpnozzleList;
+    @ManyToMany(mappedBy = "stickerList")
+    private List<Petrolpump> petrolpumpList;
     @JoinColumn(name = "ASSIGNEE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Employee assigneeId;
     @JoinColumn(name = "MANUFACTURER_ID", referencedColumnName = "ID")
     @ManyToOne
     private Manufacturer manufacturerId;
+    @OneToMany(mappedBy = "laststickerissuedId")
+    private List<Petrolpumpnozzle> petrolpumpnozzleList1;
 
     public Sticker() {
     }
@@ -156,12 +168,33 @@ public class Sticker implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Scale> getScaleList() {
         return scaleList;
     }
 
     public void setScaleList(List<Scale> scaleList) {
         this.scaleList = scaleList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Petrolpumpnozzle> getPetrolpumpnozzleList() {
+        return petrolpumpnozzleList;
+    }
+
+    public void setPetrolpumpnozzleList(List<Petrolpumpnozzle> petrolpumpnozzleList) {
+        this.petrolpumpnozzleList = petrolpumpnozzleList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Petrolpump> getPetrolpumpList() {
+        return petrolpumpList;
+    }
+
+    public void setPetrolpumpList(List<Petrolpump> petrolpumpList) {
+        this.petrolpumpList = petrolpumpList;
     }
 
     public Employee getAssigneeId() {
@@ -178,6 +211,16 @@ public class Sticker implements Serializable {
 
     public void setManufacturerId(Manufacturer manufacturerId) {
         this.manufacturerId = manufacturerId;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Petrolpumpnozzle> getPetrolpumpnozzleList1() {
+        return petrolpumpnozzleList1;
+    }
+
+    public void setPetrolpumpnozzleList1(List<Petrolpumpnozzle> petrolpumpnozzleList1) {
+        this.petrolpumpnozzleList1 = petrolpumpnozzleList1;
     }
 
     @Override
@@ -202,7 +245,7 @@ public class Sticker implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Sticker[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Sticker[ id=" + id + " ]";
     }
     
 }

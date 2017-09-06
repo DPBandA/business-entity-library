@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -15,8 +14,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -26,28 +28,32 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "factoryinspectioncomponent")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Factoryinspectioncomponent.findAll", query = "SELECT f FROM Factoryinspectioncomponent f")
-    , @NamedQuery(name = "Factoryinspectioncomponent.findById", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.id = :id")
-    , @NamedQuery(name = "Factoryinspectioncomponent.findByCategory", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.category = :category")
-    , @NamedQuery(name = "Factoryinspectioncomponent.findByResults", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.results = :results")
-    , @NamedQuery(name = "Factoryinspectioncomponent.findByName", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.name = :name")
-    , @NamedQuery(name = "Factoryinspectioncomponent.findByIsheading", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.isheading = :isheading")
-    , @NamedQuery(name = "Factoryinspectioncomponent.findByComments", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.comments = :comments")})
+    @NamedQuery(name = "Factoryinspectioncomponent.findAll", query = "SELECT f FROM Factoryinspectioncomponent f"),
+    @NamedQuery(name = "Factoryinspectioncomponent.findById", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.id = :id"),
+    @NamedQuery(name = "Factoryinspectioncomponent.findByCategory", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.category = :category"),
+    @NamedQuery(name = "Factoryinspectioncomponent.findByResults", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.results = :results"),
+    @NamedQuery(name = "Factoryinspectioncomponent.findByName", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.name = :name"),
+    @NamedQuery(name = "Factoryinspectioncomponent.findByIsheading", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.isheading = :isheading"),
+    @NamedQuery(name = "Factoryinspectioncomponent.findByComments", query = "SELECT f FROM Factoryinspectioncomponent f WHERE f.comments = :comments")})
 public class Factoryinspectioncomponent implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "CATEGORY")
     private String category;
+    @Size(max = 255)
     @Column(name = "RESULTS")
     private String results;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @Column(name = "ISHEADING")
     private Boolean isheading;
+    @Size(max = 1024)
     @Column(name = "COMMENTS")
     private String comments;
     @ManyToMany(mappedBy = "factoryinspectioncomponentList")
@@ -109,6 +115,7 @@ public class Factoryinspectioncomponent implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Factoryinspection> getFactoryinspectionList() {
         return factoryinspectionList;
     }
@@ -139,7 +146,7 @@ public class Factoryinspectioncomponent implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Factoryinspectioncomponent[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Factoryinspectioncomponent[ id=" + id + " ]";
     }
     
 }

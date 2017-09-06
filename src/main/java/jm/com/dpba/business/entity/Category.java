@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -15,8 +14,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -26,19 +28,21 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "category")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c")
-    , @NamedQuery(name = "Category.findById", query = "SELECT c FROM Category c WHERE c.id = :id")
-    , @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :name")
-    , @NamedQuery(name = "Category.findByType", query = "SELECT c FROM Category c WHERE c.type = :type")})
+    @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c"),
+    @NamedQuery(name = "Category.findById", query = "SELECT c FROM Category c WHERE c.id = :id"),
+    @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :name"),
+    @NamedQuery(name = "Category.findByType", query = "SELECT c FROM Category c WHERE c.type = :type")})
 public class Category implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
     @ManyToMany(mappedBy = "categoryList")
@@ -78,6 +82,7 @@ public class Category implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodproduct> getFoodproductList() {
         return foodproductList;
     }
@@ -87,6 +92,7 @@ public class Category implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodfactory> getFoodfactoryList() {
         return foodfactoryList;
     }
@@ -117,7 +123,7 @@ public class Category implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Category[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Category[ id=" + id + " ]";
     }
     
 }

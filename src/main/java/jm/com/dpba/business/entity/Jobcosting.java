@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -17,8 +16,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -28,16 +30,17 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "jobcosting")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Jobcosting.findAll", query = "SELECT j FROM Jobcosting j")
-    , @NamedQuery(name = "Jobcosting.findById", query = "SELECT j FROM Jobcosting j WHERE j.id = :id")
-    , @NamedQuery(name = "Jobcosting.findByName", query = "SELECT j FROM Jobcosting j WHERE j.name = :name")})
+    @NamedQuery(name = "Jobcosting.findAll", query = "SELECT j FROM Jobcosting j"),
+    @NamedQuery(name = "Jobcosting.findById", query = "SELECT j FROM Jobcosting j WHERE j.id = :id"),
+    @NamedQuery(name = "Jobcosting.findByName", query = "SELECT j FROM Jobcosting j WHERE j.name = :name")})
 public class Jobcosting implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     @JoinTable(name = "jobcostingandpayment_jobcosting", joinColumns = {
@@ -75,6 +78,7 @@ public class Jobcosting implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Jobcostingandpayment> getJobcostingandpaymentList() {
         return jobcostingandpaymentList;
     }
@@ -84,6 +88,7 @@ public class Jobcosting implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Costcomponent> getCostcomponentList() {
         return costcomponentList;
     }
@@ -114,7 +119,7 @@ public class Jobcosting implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Jobcosting[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Jobcosting[ id=" + id + " ]";
     }
     
 }

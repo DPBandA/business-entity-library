@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -17,8 +16,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -28,47 +29,59 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "internet")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Internet.findAll", query = "SELECT i FROM Internet i")
-    , @NamedQuery(name = "Internet.findById", query = "SELECT i FROM Internet i WHERE i.id = :id")
-    , @NamedQuery(name = "Internet.findByInstantmessaging2", query = "SELECT i FROM Internet i WHERE i.instantmessaging2 = :instantmessaging2")
-    , @NamedQuery(name = "Internet.findByWebsite3", query = "SELECT i FROM Internet i WHERE i.website3 = :website3")
-    , @NamedQuery(name = "Internet.findByInstantmessaging1", query = "SELECT i FROM Internet i WHERE i.instantmessaging1 = :instantmessaging1")
-    , @NamedQuery(name = "Internet.findByWebsite2", query = "SELECT i FROM Internet i WHERE i.website2 = :website2")
-    , @NamedQuery(name = "Internet.findByInstantmessaging3", query = "SELECT i FROM Internet i WHERE i.instantmessaging3 = :instantmessaging3")
-    , @NamedQuery(name = "Internet.findByEmail1", query = "SELECT i FROM Internet i WHERE i.email1 = :email1")
-    , @NamedQuery(name = "Internet.findByWebsite1", query = "SELECT i FROM Internet i WHERE i.website1 = :website1")
-    , @NamedQuery(name = "Internet.findByEmail2", query = "SELECT i FROM Internet i WHERE i.email2 = :email2")
-    , @NamedQuery(name = "Internet.findByEmail3", query = "SELECT i FROM Internet i WHERE i.email3 = :email3")})
+    @NamedQuery(name = "Internet.findAll", query = "SELECT i FROM Internet i"),
+    @NamedQuery(name = "Internet.findById", query = "SELECT i FROM Internet i WHERE i.id = :id"),
+    @NamedQuery(name = "Internet.findByInstantmessaging2", query = "SELECT i FROM Internet i WHERE i.instantmessaging2 = :instantmessaging2"),
+    @NamedQuery(name = "Internet.findByWebsite3", query = "SELECT i FROM Internet i WHERE i.website3 = :website3"),
+    @NamedQuery(name = "Internet.findByInstantmessaging1", query = "SELECT i FROM Internet i WHERE i.instantmessaging1 = :instantmessaging1"),
+    @NamedQuery(name = "Internet.findByWebsite2", query = "SELECT i FROM Internet i WHERE i.website2 = :website2"),
+    @NamedQuery(name = "Internet.findByInstantmessaging3", query = "SELECT i FROM Internet i WHERE i.instantmessaging3 = :instantmessaging3"),
+    @NamedQuery(name = "Internet.findByEmail1", query = "SELECT i FROM Internet i WHERE i.email1 = :email1"),
+    @NamedQuery(name = "Internet.findByWebsite1", query = "SELECT i FROM Internet i WHERE i.website1 = :website1"),
+    @NamedQuery(name = "Internet.findByEmail2", query = "SELECT i FROM Internet i WHERE i.email2 = :email2"),
+    @NamedQuery(name = "Internet.findByEmail3", query = "SELECT i FROM Internet i WHERE i.email3 = :email3")})
 public class Internet implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "INSTANTMESSAGING2")
     private String instantmessaging2;
+    @Size(max = 255)
     @Column(name = "WEBSITE3")
     private String website3;
+    @Size(max = 255)
     @Column(name = "INSTANTMESSAGING1")
     private String instantmessaging1;
+    @Size(max = 255)
     @Column(name = "WEBSITE2")
     private String website2;
+    @Size(max = 255)
     @Column(name = "INSTANTMESSAGING3")
     private String instantmessaging3;
+    @Size(max = 255)
     @Column(name = "EMAIL1")
     private String email1;
+    @Size(max = 255)
     @Column(name = "WEBSITE1")
     private String website1;
+    @Size(max = 255)
     @Column(name = "EMAIL2")
     private String email2;
+    @Size(max = 255)
     @Column(name = "EMAIL3")
     private String email3;
     @OneToMany(mappedBy = "internetId")
     private List<Employee> employeeList;
     @OneToMany(mappedBy = "internetId")
     private List<Contact> contactList;
+    @OneToMany(mappedBy = "internetId")
+    private List<Scalecompany> scalecompanyList;
+    @OneToMany(mappedBy = "internetId")
+    private List<Petrolcompany> petrolcompanyList;
     @OneToMany(mappedBy = "internetId")
     private List<Businessoffice> businessofficeList;
     @OneToMany(mappedBy = "internetId")
@@ -166,6 +179,7 @@ public class Internet implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Employee> getEmployeeList() {
         return employeeList;
     }
@@ -175,6 +189,7 @@ public class Internet implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Contact> getContactList() {
         return contactList;
     }
@@ -184,6 +199,27 @@ public class Internet implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Scalecompany> getScalecompanyList() {
+        return scalecompanyList;
+    }
+
+    public void setScalecompanyList(List<Scalecompany> scalecompanyList) {
+        this.scalecompanyList = scalecompanyList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Petrolcompany> getPetrolcompanyList() {
+        return petrolcompanyList;
+    }
+
+    public void setPetrolcompanyList(List<Petrolcompany> petrolcompanyList) {
+        this.petrolcompanyList = petrolcompanyList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Businessoffice> getBusinessofficeList() {
         return businessofficeList;
     }
@@ -193,6 +229,7 @@ public class Internet implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Client> getClientList() {
         return clientList;
     }
@@ -202,6 +239,7 @@ public class Internet implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Department> getDepartmentList() {
         return departmentList;
     }
@@ -211,6 +249,7 @@ public class Internet implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Foodfactory> getFoodfactoryList() {
         return foodfactoryList;
     }
@@ -241,7 +280,7 @@ public class Internet implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Internet[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Internet[ id=" + id + " ]";
     }
     
 }

@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -16,6 +15,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -26,41 +27,47 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "compliancedailyreport")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Compliancedailyreport.findAll", query = "SELECT c FROM Compliancedailyreport c")
-    , @NamedQuery(name = "Compliancedailyreport.findById", query = "SELECT c FROM Compliancedailyreport c WHERE c.id = :id")
-    , @NamedQuery(name = "Compliancedailyreport.findByDriver", query = "SELECT c FROM Compliancedailyreport c WHERE c.driver = :driver")
-    , @NamedQuery(name = "Compliancedailyreport.findByEndofperiod", query = "SELECT c FROM Compliancedailyreport c WHERE c.endofperiod = :endofperiod")
-    , @NamedQuery(name = "Compliancedailyreport.findByLocation", query = "SELECT c FROM Compliancedailyreport c WHERE c.location = :location")
-    , @NamedQuery(name = "Compliancedailyreport.findByName", query = "SELECT c FROM Compliancedailyreport c WHERE c.name = :name")
-    , @NamedQuery(name = "Compliancedailyreport.findByReportname", query = "SELECT c FROM Compliancedailyreport c WHERE c.reportname = :reportname")
-    , @NamedQuery(name = "Compliancedailyreport.findByStartofperiod", query = "SELECT c FROM Compliancedailyreport c WHERE c.startofperiod = :startofperiod")
-    , @NamedQuery(name = "Compliancedailyreport.findByTeam", query = "SELECT c FROM Compliancedailyreport c WHERE c.team = :team")
-    , @NamedQuery(name = "Compliancedailyreport.findByTeammembers", query = "SELECT c FROM Compliancedailyreport c WHERE c.teammembers = :teammembers")
-    , @NamedQuery(name = "Compliancedailyreport.findByTimeofarrival", query = "SELECT c FROM Compliancedailyreport c WHERE c.timeofarrival = :timeofarrival")
-    , @NamedQuery(name = "Compliancedailyreport.findByTimeofdeparture", query = "SELECT c FROM Compliancedailyreport c WHERE c.timeofdeparture = :timeofdeparture")})
+    @NamedQuery(name = "Compliancedailyreport.findAll", query = "SELECT c FROM Compliancedailyreport c"),
+    @NamedQuery(name = "Compliancedailyreport.findById", query = "SELECT c FROM Compliancedailyreport c WHERE c.id = :id"),
+    @NamedQuery(name = "Compliancedailyreport.findByDriver", query = "SELECT c FROM Compliancedailyreport c WHERE c.driver = :driver"),
+    @NamedQuery(name = "Compliancedailyreport.findByEndofperiod", query = "SELECT c FROM Compliancedailyreport c WHERE c.endofperiod = :endofperiod"),
+    @NamedQuery(name = "Compliancedailyreport.findByLocation", query = "SELECT c FROM Compliancedailyreport c WHERE c.location = :location"),
+    @NamedQuery(name = "Compliancedailyreport.findByName", query = "SELECT c FROM Compliancedailyreport c WHERE c.name = :name"),
+    @NamedQuery(name = "Compliancedailyreport.findByReportname", query = "SELECT c FROM Compliancedailyreport c WHERE c.reportname = :reportname"),
+    @NamedQuery(name = "Compliancedailyreport.findByStartofperiod", query = "SELECT c FROM Compliancedailyreport c WHERE c.startofperiod = :startofperiod"),
+    @NamedQuery(name = "Compliancedailyreport.findByTeam", query = "SELECT c FROM Compliancedailyreport c WHERE c.team = :team"),
+    @NamedQuery(name = "Compliancedailyreport.findByTeammembers", query = "SELECT c FROM Compliancedailyreport c WHERE c.teammembers = :teammembers"),
+    @NamedQuery(name = "Compliancedailyreport.findByTimeofarrival", query = "SELECT c FROM Compliancedailyreport c WHERE c.timeofarrival = :timeofarrival"),
+    @NamedQuery(name = "Compliancedailyreport.findByTimeofdeparture", query = "SELECT c FROM Compliancedailyreport c WHERE c.timeofdeparture = :timeofdeparture")})
 public class Compliancedailyreport implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "DRIVER")
     private String driver;
     @Column(name = "ENDOFPERIOD")
     @Temporal(TemporalType.TIME)
     private Date endofperiod;
+    @Size(max = 255)
     @Column(name = "LOCATION")
     private String location;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "REPORTNAME")
     private String reportname;
     @Column(name = "STARTOFPERIOD")
     @Temporal(TemporalType.TIME)
     private Date startofperiod;
+    @Size(max = 255)
     @Column(name = "TEAM")
     private String team;
+    @Size(max = 255)
     @Column(name = "TEAMMEMBERS")
     private String teammembers;
     @Column(name = "TIMEOFARRIVAL")
@@ -187,7 +194,7 @@ public class Compliancedailyreport implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Compliancedailyreport[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Compliancedailyreport[ id=" + id + " ]";
     }
     
 }

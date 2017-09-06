@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -19,8 +18,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -30,59 +32,85 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "contact")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Contact.findAll", query = "SELECT c FROM Contact c")
-    , @NamedQuery(name = "Contact.findById", query = "SELECT c FROM Contact c WHERE c.id = :id")
-    , @NamedQuery(name = "Contact.findByPosition", query = "SELECT c FROM Contact c WHERE c.position = :position")
-    , @NamedQuery(name = "Contact.findByMiddlename", query = "SELECT c FROM Contact c WHERE c.middlename = :middlename")
-    , @NamedQuery(name = "Contact.findByNamesuffix", query = "SELECT c FROM Contact c WHERE c.namesuffix = :namesuffix")
-    , @NamedQuery(name = "Contact.findByLastname", query = "SELECT c FROM Contact c WHERE c.lastname = :lastname")
-    , @NamedQuery(name = "Contact.findBySex", query = "SELECT c FROM Contact c WHERE c.sex = :sex")
-    , @NamedQuery(name = "Contact.findByType", query = "SELECT c FROM Contact c WHERE c.type = :type")
-    , @NamedQuery(name = "Contact.findByTitle", query = "SELECT c FROM Contact c WHERE c.title = :title")
-    , @NamedQuery(name = "Contact.findByName", query = "SELECT c FROM Contact c WHERE c.name = :name")
-    , @NamedQuery(name = "Contact.findByNotes", query = "SELECT c FROM Contact c WHERE c.notes = :notes")
-    , @NamedQuery(name = "Contact.findBySalutation", query = "SELECT c FROM Contact c WHERE c.salutation = :salutation")
-    , @NamedQuery(name = "Contact.findByFirstname", query = "SELECT c FROM Contact c WHERE c.firstname = :firstname")})
+    @NamedQuery(name = "Contact.findAll", query = "SELECT c FROM Contact c"),
+    @NamedQuery(name = "Contact.findById", query = "SELECT c FROM Contact c WHERE c.id = :id"),
+    @NamedQuery(name = "Contact.findByPosition", query = "SELECT c FROM Contact c WHERE c.position = :position"),
+    @NamedQuery(name = "Contact.findByMiddlename", query = "SELECT c FROM Contact c WHERE c.middlename = :middlename"),
+    @NamedQuery(name = "Contact.findByNamesuffix", query = "SELECT c FROM Contact c WHERE c.namesuffix = :namesuffix"),
+    @NamedQuery(name = "Contact.findByLastname", query = "SELECT c FROM Contact c WHERE c.lastname = :lastname"),
+    @NamedQuery(name = "Contact.findBySex", query = "SELECT c FROM Contact c WHERE c.sex = :sex"),
+    @NamedQuery(name = "Contact.findByType", query = "SELECT c FROM Contact c WHERE c.type = :type"),
+    @NamedQuery(name = "Contact.findByTitle", query = "SELECT c FROM Contact c WHERE c.title = :title"),
+    @NamedQuery(name = "Contact.findByName", query = "SELECT c FROM Contact c WHERE c.name = :name"),
+    @NamedQuery(name = "Contact.findByNotes", query = "SELECT c FROM Contact c WHERE c.notes = :notes"),
+    @NamedQuery(name = "Contact.findBySalutation", query = "SELECT c FROM Contact c WHERE c.salutation = :salutation"),
+    @NamedQuery(name = "Contact.findByFirstname", query = "SELECT c FROM Contact c WHERE c.firstname = :firstname")})
 public class Contact implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "POSITION")
     private String position;
+    @Size(max = 255)
     @Column(name = "MIDDLENAME")
     private String middlename;
+    @Size(max = 255)
     @Column(name = "NAMESUFFIX")
     private String namesuffix;
+    @Size(max = 255)
     @Column(name = "LASTNAME")
     private String lastname;
+    @Size(max = 255)
     @Column(name = "SEX")
     private String sex;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
+    @Size(max = 255)
     @Column(name = "TITLE")
     private String title;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
+    @Size(max = 255)
     @Column(name = "NOTES")
     private String notes;
+    @Size(max = 255)
     @Column(name = "SALUTATION")
     private String salutation;
+    @Size(max = 255)
     @Column(name = "FIRSTNAME")
     private String firstname;
-    @ManyToMany(mappedBy = "contactList")
-    private List<Business> businessList;
     @ManyToMany(mappedBy = "contactList")
     private List<Foodfactory> foodfactoryList;
     @ManyToMany(mappedBy = "contactList")
     private List<Client> clientList;
+    @ManyToMany(mappedBy = "contactList")
+    private List<Petrolstation> petrolstationList;
+    @ManyToMany(mappedBy = "contactList")
+    private List<Petrolcompany> petrolcompanyList;
+    @JoinTable(name = "contact_phonenumber", joinColumns = {
+        @JoinColumn(name = "Contact_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
+        @JoinColumn(name = "phoneNumbers_ID", referencedColumnName = "ID")})
+    @ManyToMany
+    private List<Phonenumber> phonenumberList;
+    @ManyToMany(mappedBy = "contactList")
+    private List<Scalecompany> scalecompanyList;
+    @ManyToMany(mappedBy = "contactList")
+    private List<Business> businessList;
     @JoinTable(name = "contact_address", joinColumns = {
         @JoinColumn(name = "Contact_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
         @JoinColumn(name = "addresses_ID", referencedColumnName = "ID")})
     @ManyToMany
     private List<Address> addressList;
+    @OneToMany(mappedBy = "representativeId")
+    private List<Samplerequest> samplerequestList;
+    @OneToMany(mappedBy = "retailrepresentativeId")
+    private List<Marketproductsurvey> marketproductsurveyList;
     @JoinColumn(name = "INTERNET_ID", referencedColumnName = "ID")
     @ManyToOne
     private Internet internetId;
@@ -96,6 +124,12 @@ public class Contact implements Serializable {
     private List<Servicerequest> servicerequestList;
     @OneToMany(mappedBy = "factoryrepresentativeId")
     private List<Factoryinspection> factoryinspectionList;
+    @OneToMany(mappedBy = "authorizedbyId")
+    private List<Portofentrydetention> portofentrydetentionList;
+    @OneToMany(mappedBy = "brokerrepresentativeId")
+    private List<Portofentrydetention> portofentrydetentionList1;
+    @OneToMany(mappedBy = "consigneerepresentativeId")
+    private List<Portofentrydetention> portofentrydetentionList2;
 
     public Contact() {
     }
@@ -201,15 +235,7 @@ public class Contact implements Serializable {
     }
 
     @XmlTransient
-    public List<Business> getBusinessList() {
-        return businessList;
-    }
-
-    public void setBusinessList(List<Business> businessList) {
-        this.businessList = businessList;
-    }
-
-    @XmlTransient
+    @JsonIgnore
     public List<Foodfactory> getFoodfactoryList() {
         return foodfactoryList;
     }
@@ -219,6 +245,7 @@ public class Contact implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Client> getClientList() {
         return clientList;
     }
@@ -228,12 +255,83 @@ public class Contact implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Petrolstation> getPetrolstationList() {
+        return petrolstationList;
+    }
+
+    public void setPetrolstationList(List<Petrolstation> petrolstationList) {
+        this.petrolstationList = petrolstationList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Petrolcompany> getPetrolcompanyList() {
+        return petrolcompanyList;
+    }
+
+    public void setPetrolcompanyList(List<Petrolcompany> petrolcompanyList) {
+        this.petrolcompanyList = petrolcompanyList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Phonenumber> getPhonenumberList() {
+        return phonenumberList;
+    }
+
+    public void setPhonenumberList(List<Phonenumber> phonenumberList) {
+        this.phonenumberList = phonenumberList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Scalecompany> getScalecompanyList() {
+        return scalecompanyList;
+    }
+
+    public void setScalecompanyList(List<Scalecompany> scalecompanyList) {
+        this.scalecompanyList = scalecompanyList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Business> getBusinessList() {
+        return businessList;
+    }
+
+    public void setBusinessList(List<Business> businessList) {
+        this.businessList = businessList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Address> getAddressList() {
         return addressList;
     }
 
     public void setAddressList(List<Address> addressList) {
         this.addressList = addressList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Samplerequest> getSamplerequestList() {
+        return samplerequestList;
+    }
+
+    public void setSamplerequestList(List<Samplerequest> samplerequestList) {
+        this.samplerequestList = samplerequestList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Marketproductsurvey> getMarketproductsurveyList() {
+        return marketproductsurveyList;
+    }
+
+    public void setMarketproductsurveyList(List<Marketproductsurvey> marketproductsurveyList) {
+        this.marketproductsurveyList = marketproductsurveyList;
     }
 
     public Internet getInternetId() {
@@ -245,6 +343,7 @@ public class Contact implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList() {
         return compliancesurveyList;
     }
@@ -254,6 +353,7 @@ public class Contact implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList1() {
         return compliancesurveyList1;
     }
@@ -263,6 +363,7 @@ public class Contact implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Compliancesurvey> getCompliancesurveyList2() {
         return compliancesurveyList2;
     }
@@ -272,6 +373,7 @@ public class Contact implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Servicerequest> getServicerequestList() {
         return servicerequestList;
     }
@@ -281,12 +383,43 @@ public class Contact implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Factoryinspection> getFactoryinspectionList() {
         return factoryinspectionList;
     }
 
     public void setFactoryinspectionList(List<Factoryinspection> factoryinspectionList) {
         this.factoryinspectionList = factoryinspectionList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Portofentrydetention> getPortofentrydetentionList() {
+        return portofentrydetentionList;
+    }
+
+    public void setPortofentrydetentionList(List<Portofentrydetention> portofentrydetentionList) {
+        this.portofentrydetentionList = portofentrydetentionList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Portofentrydetention> getPortofentrydetentionList1() {
+        return portofentrydetentionList1;
+    }
+
+    public void setPortofentrydetentionList1(List<Portofentrydetention> portofentrydetentionList1) {
+        this.portofentrydetentionList1 = portofentrydetentionList1;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Portofentrydetention> getPortofentrydetentionList2() {
+        return portofentrydetentionList2;
+    }
+
+    public void setPortofentrydetentionList2(List<Portofentrydetention> portofentrydetentionList2) {
+        this.portofentrydetentionList2 = portofentrydetentionList2;
     }
 
     @Override
@@ -311,7 +444,7 @@ public class Contact implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Contact[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Contact[ id=" + id + " ]";
     }
     
 }

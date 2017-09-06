@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -21,8 +20,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -32,44 +34,53 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "scale")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Scale.findAll", query = "SELECT s FROM Scale s")
-    , @NamedQuery(name = "Scale.findById", query = "SELECT s FROM Scale s WHERE s.id = :id")
-    , @NamedQuery(name = "Scale.findByModel", query = "SELECT s FROM Scale s WHERE s.model = :model")
-    , @NamedQuery(name = "Scale.findByStatus", query = "SELECT s FROM Scale s WHERE s.status = :status")
-    , @NamedQuery(name = "Scale.findByCapacityunit", query = "SELECT s FROM Scale s WHERE s.capacityunit = :capacityunit")
-    , @NamedQuery(name = "Scale.findBySerialnumber", query = "SELECT s FROM Scale s WHERE s.serialnumber = :serialnumber")
-    , @NamedQuery(name = "Scale.findByNumber", query = "SELECT s FROM Scale s WHERE s.number = :number")
-    , @NamedQuery(name = "Scale.findByType", query = "SELECT s FROM Scale s WHERE s.type = :type")
-    , @NamedQuery(name = "Scale.findByDatescheduledfortest", query = "SELECT s FROM Scale s WHERE s.datescheduledfortest = :datescheduledfortest")
-    , @NamedQuery(name = "Scale.findByName", query = "SELECT s FROM Scale s WHERE s.name = :name")
-    , @NamedQuery(name = "Scale.findByCapacity", query = "SELECT s FROM Scale s WHERE s.capacity = :capacity")})
+    @NamedQuery(name = "Scale.findAll", query = "SELECT s FROM Scale s"),
+    @NamedQuery(name = "Scale.findById", query = "SELECT s FROM Scale s WHERE s.id = :id"),
+    @NamedQuery(name = "Scale.findByModel", query = "SELECT s FROM Scale s WHERE s.model = :model"),
+    @NamedQuery(name = "Scale.findByStatus", query = "SELECT s FROM Scale s WHERE s.status = :status"),
+    @NamedQuery(name = "Scale.findByCapacityunit", query = "SELECT s FROM Scale s WHERE s.capacityunit = :capacityunit"),
+    @NamedQuery(name = "Scale.findBySerialnumber", query = "SELECT s FROM Scale s WHERE s.serialnumber = :serialnumber"),
+    @NamedQuery(name = "Scale.findByNumber", query = "SELECT s FROM Scale s WHERE s.number = :number"),
+    @NamedQuery(name = "Scale.findByType", query = "SELECT s FROM Scale s WHERE s.type = :type"),
+    @NamedQuery(name = "Scale.findByDatescheduledfortest", query = "SELECT s FROM Scale s WHERE s.datescheduledfortest = :datescheduledfortest"),
+    @NamedQuery(name = "Scale.findByName", query = "SELECT s FROM Scale s WHERE s.name = :name"),
+    @NamedQuery(name = "Scale.findByCapacity", query = "SELECT s FROM Scale s WHERE s.capacity = :capacity")})
 public class Scale implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "MODEL")
     private String model;
+    @Size(max = 255)
     @Column(name = "STATUS")
     private String status;
+    @Size(max = 255)
     @Column(name = "CAPACITYUNIT")
     private String capacityunit;
+    @Size(max = 255)
     @Column(name = "SERIALNUMBER")
     private String serialnumber;
+    @Size(max = 255)
     @Column(name = "NUMBER")
     private String number;
+    @Size(max = 255)
     @Column(name = "TYPE")
     private String type;
     @Column(name = "DATESCHEDULEDFORTEST")
     @Temporal(TemporalType.DATE)
     private Date datescheduledfortest;
+    @Size(max = 255)
     @Column(name = "NAME")
     private String name;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "CAPACITY")
     private Double capacity;
+    @ManyToMany(mappedBy = "scaleList")
+    private List<Scalecompany> scalecompanyList;
     @JoinTable(name = "scale_sticker", joinColumns = {
         @JoinColumn(name = "Scale_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
         @JoinColumn(name = "stickers_ID", referencedColumnName = "ID")})
@@ -173,6 +184,17 @@ public class Scale implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Scalecompany> getScalecompanyList() {
+        return scalecompanyList;
+    }
+
+    public void setScalecompanyList(List<Scalecompany> scalecompanyList) {
+        this.scalecompanyList = scalecompanyList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Sticker> getStickerList() {
         return stickerList;
     }
@@ -227,7 +249,7 @@ public class Scale implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Scale[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Scale[ id=" + id + " ]";
     }
     
 }

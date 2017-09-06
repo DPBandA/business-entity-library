@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package jm.com.dpba.business.entity;
@@ -16,8 +15,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -27,46 +29,48 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "servicecontract")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Servicecontract.findAll", query = "SELECT s FROM Servicecontract s")
-    , @NamedQuery(name = "Servicecontract.findById", query = "SELECT s FROM Servicecontract s WHERE s.id = :id")
-    , @NamedQuery(name = "Servicecontract.findBySpecialinstructions", query = "SELECT s FROM Servicecontract s WHERE s.specialinstructions = :specialinstructions")
-    , @NamedQuery(name = "Servicecontract.findByIntendedmarketothertext", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketothertext = :intendedmarketothertext")
-    , @NamedQuery(name = "Servicecontract.findByJobid", query = "SELECT s FROM Servicecontract s WHERE s.jobid = :jobid")
-    , @NamedQuery(name = "Servicecontract.findByServicerequestedcalibration", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedcalibration = :servicerequestedcalibration")
-    , @NamedQuery(name = "Servicecontract.findByEstimatedturnaroundtime", query = "SELECT s FROM Servicecontract s WHERE s.estimatedturnaroundtime = :estimatedturnaroundtime")
-    , @NamedQuery(name = "Servicecontract.findByAdditionalservicefaxresults", query = "SELECT s FROM Servicecontract s WHERE s.additionalservicefaxresults = :additionalservicefaxresults")
-    , @NamedQuery(name = "Servicecontract.findByAdditionalservicetelephonepresumptiveresults", query = "SELECT s FROM Servicecontract s WHERE s.additionalservicetelephonepresumptiveresults = :additionalservicetelephonepresumptiveresults")
-    , @NamedQuery(name = "Servicecontract.findByServicerequestedlabelevaluation", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedlabelevaluation = :servicerequestedlabelevaluation")
-    , @NamedQuery(name = "Servicecontract.findByIntendedmarketlocal", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketlocal = :intendedmarketlocal")
-    , @NamedQuery(name = "Servicecontract.findByAdditionalserviceother", query = "SELECT s FROM Servicecontract s WHERE s.additionalserviceother = :additionalserviceother")
-    , @NamedQuery(name = "Servicecontract.findByIntendedmarketusa", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketusa = :intendedmarketusa")
-    , @NamedQuery(name = "Servicecontract.findByAdditionalservicesendmorecontractforms", query = "SELECT s FROM Servicecontract s WHERE s.additionalservicesendmorecontractforms = :additionalservicesendmorecontractforms")
-    , @NamedQuery(name = "Servicecontract.findByIntendedmarketcaricom", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketcaricom = :intendedmarketcaricom")
-    , @NamedQuery(name = "Servicecontract.findByServicerequesteddetails", query = "SELECT s FROM Servicecontract s WHERE s.servicerequesteddetails = :servicerequesteddetails")
-    , @NamedQuery(name = "Servicecontract.findByServicerequestedtesting", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedtesting = :servicerequestedtesting")
-    , @NamedQuery(name = "Servicecontract.findByAutoaddsampleinformation", query = "SELECT s FROM Servicecontract s WHERE s.autoaddsampleinformation = :autoaddsampleinformation")
-    , @NamedQuery(name = "Servicecontract.findByServicerequestedinspection", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedinspection = :servicerequestedinspection")
-    , @NamedQuery(name = "Servicecontract.findByAdditionalserviceurgent", query = "SELECT s FROM Servicecontract s WHERE s.additionalserviceurgent = :additionalserviceurgent")
-    , @NamedQuery(name = "Servicecontract.findByServicerequestedconsultancy", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedconsultancy = :servicerequestedconsultancy")
-    , @NamedQuery(name = "Servicecontract.findBySubmittedby", query = "SELECT s FROM Servicecontract s WHERE s.submittedby = :submittedby")
-    , @NamedQuery(name = "Servicecontract.findByServicerequestedothertext", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedothertext = :servicerequestedothertext")
-    , @NamedQuery(name = "Servicecontract.findByIntendedmarketuk", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketuk = :intendedmarketuk")
-    , @NamedQuery(name = "Servicecontract.findByIntendedmarketother", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketother = :intendedmarketother")
-    , @NamedQuery(name = "Servicecontract.findByReceivedby", query = "SELECT s FROM Servicecontract s WHERE s.receivedby = :receivedby")
-    , @NamedQuery(name = "Servicecontract.findByAdditionalserviceothertext", query = "SELECT s FROM Servicecontract s WHERE s.additionalserviceothertext = :additionalserviceothertext")
-    , @NamedQuery(name = "Servicecontract.findByServicerequestedtraining", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedtraining = :servicerequestedtraining")
-    , @NamedQuery(name = "Servicecontract.findByBillingaddressid", query = "SELECT s FROM Servicecontract s WHERE s.billingaddressid = :billingaddressid")
-    , @NamedQuery(name = "Servicecontract.findByServicerequestedother", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedother = :servicerequestedother")
-    , @NamedQuery(name = "Servicecontract.findByIntendedmarketcanada", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketcanada = :intendedmarketcanada")})
+    @NamedQuery(name = "Servicecontract.findAll", query = "SELECT s FROM Servicecontract s"),
+    @NamedQuery(name = "Servicecontract.findById", query = "SELECT s FROM Servicecontract s WHERE s.id = :id"),
+    @NamedQuery(name = "Servicecontract.findBySpecialinstructions", query = "SELECT s FROM Servicecontract s WHERE s.specialinstructions = :specialinstructions"),
+    @NamedQuery(name = "Servicecontract.findByIntendedmarketothertext", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketothertext = :intendedmarketothertext"),
+    @NamedQuery(name = "Servicecontract.findByJobid", query = "SELECT s FROM Servicecontract s WHERE s.jobid = :jobid"),
+    @NamedQuery(name = "Servicecontract.findByServicerequestedcalibration", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedcalibration = :servicerequestedcalibration"),
+    @NamedQuery(name = "Servicecontract.findByEstimatedturnaroundtime", query = "SELECT s FROM Servicecontract s WHERE s.estimatedturnaroundtime = :estimatedturnaroundtime"),
+    @NamedQuery(name = "Servicecontract.findByAdditionalservicefaxresults", query = "SELECT s FROM Servicecontract s WHERE s.additionalservicefaxresults = :additionalservicefaxresults"),
+    @NamedQuery(name = "Servicecontract.findByAdditionalservicetelephonepresumptiveresults", query = "SELECT s FROM Servicecontract s WHERE s.additionalservicetelephonepresumptiveresults = :additionalservicetelephonepresumptiveresults"),
+    @NamedQuery(name = "Servicecontract.findByServicerequestedlabelevaluation", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedlabelevaluation = :servicerequestedlabelevaluation"),
+    @NamedQuery(name = "Servicecontract.findByIntendedmarketlocal", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketlocal = :intendedmarketlocal"),
+    @NamedQuery(name = "Servicecontract.findByAdditionalserviceother", query = "SELECT s FROM Servicecontract s WHERE s.additionalserviceother = :additionalserviceother"),
+    @NamedQuery(name = "Servicecontract.findByIntendedmarketusa", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketusa = :intendedmarketusa"),
+    @NamedQuery(name = "Servicecontract.findByAdditionalservicesendmorecontractforms", query = "SELECT s FROM Servicecontract s WHERE s.additionalservicesendmorecontractforms = :additionalservicesendmorecontractforms"),
+    @NamedQuery(name = "Servicecontract.findByIntendedmarketcaricom", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketcaricom = :intendedmarketcaricom"),
+    @NamedQuery(name = "Servicecontract.findByServicerequesteddetails", query = "SELECT s FROM Servicecontract s WHERE s.servicerequesteddetails = :servicerequesteddetails"),
+    @NamedQuery(name = "Servicecontract.findByServicerequestedtesting", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedtesting = :servicerequestedtesting"),
+    @NamedQuery(name = "Servicecontract.findByAutoaddsampleinformation", query = "SELECT s FROM Servicecontract s WHERE s.autoaddsampleinformation = :autoaddsampleinformation"),
+    @NamedQuery(name = "Servicecontract.findByServicerequestedinspection", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedinspection = :servicerequestedinspection"),
+    @NamedQuery(name = "Servicecontract.findByAdditionalserviceurgent", query = "SELECT s FROM Servicecontract s WHERE s.additionalserviceurgent = :additionalserviceurgent"),
+    @NamedQuery(name = "Servicecontract.findByServicerequestedconsultancy", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedconsultancy = :servicerequestedconsultancy"),
+    @NamedQuery(name = "Servicecontract.findBySubmittedby", query = "SELECT s FROM Servicecontract s WHERE s.submittedby = :submittedby"),
+    @NamedQuery(name = "Servicecontract.findByServicerequestedothertext", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedothertext = :servicerequestedothertext"),
+    @NamedQuery(name = "Servicecontract.findByIntendedmarketuk", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketuk = :intendedmarketuk"),
+    @NamedQuery(name = "Servicecontract.findByIntendedmarketother", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketother = :intendedmarketother"),
+    @NamedQuery(name = "Servicecontract.findByReceivedby", query = "SELECT s FROM Servicecontract s WHERE s.receivedby = :receivedby"),
+    @NamedQuery(name = "Servicecontract.findByAdditionalserviceothertext", query = "SELECT s FROM Servicecontract s WHERE s.additionalserviceothertext = :additionalserviceothertext"),
+    @NamedQuery(name = "Servicecontract.findByServicerequestedtraining", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedtraining = :servicerequestedtraining"),
+    @NamedQuery(name = "Servicecontract.findByBillingaddressid", query = "SELECT s FROM Servicecontract s WHERE s.billingaddressid = :billingaddressid"),
+    @NamedQuery(name = "Servicecontract.findByServicerequestedother", query = "SELECT s FROM Servicecontract s WHERE s.servicerequestedother = :servicerequestedother"),
+    @NamedQuery(name = "Servicecontract.findByIntendedmarketcanada", query = "SELECT s FROM Servicecontract s WHERE s.intendedmarketcanada = :intendedmarketcanada")})
 public class Servicecontract implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
+    @Size(max = 255)
     @Column(name = "SPECIALINSTRUCTIONS")
     private String specialinstructions;
+    @Size(max = 255)
     @Column(name = "INTENDEDMARKETOTHERTEXT")
     private String intendedmarketothertext;
     @Column(name = "JOBID")
@@ -91,6 +95,7 @@ public class Servicecontract implements Serializable {
     private Boolean additionalservicesendmorecontractforms;
     @Column(name = "INTENDEDMARKETCARICOM")
     private Boolean intendedmarketcaricom;
+    @Size(max = 255)
     @Column(name = "SERVICEREQUESTEDDETAILS")
     private String servicerequesteddetails;
     @Column(name = "SERVICEREQUESTEDTESTING")
@@ -103,16 +108,20 @@ public class Servicecontract implements Serializable {
     private Boolean additionalserviceurgent;
     @Column(name = "SERVICEREQUESTEDCONSULTANCY")
     private Boolean servicerequestedconsultancy;
+    @Size(max = 255)
     @Column(name = "SUBMITTEDBY")
     private String submittedby;
+    @Size(max = 255)
     @Column(name = "SERVICEREQUESTEDOTHERTEXT")
     private String servicerequestedothertext;
     @Column(name = "INTENDEDMARKETUK")
     private Boolean intendedmarketuk;
     @Column(name = "INTENDEDMARKETOTHER")
     private Boolean intendedmarketother;
+    @Size(max = 255)
     @Column(name = "RECEIVEDBY")
     private String receivedby;
+    @Size(max = 255)
     @Column(name = "ADDITIONALSERVICEOTHERTEXT")
     private String additionalserviceothertext;
     @Column(name = "SERVICEREQUESTEDTRAINING")
@@ -376,6 +385,7 @@ public class Servicecontract implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Servicerequest> getServicerequestList() {
         return servicerequestList;
     }
@@ -385,6 +395,7 @@ public class Servicecontract implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Job> getJobList() {
         return jobList;
     }
@@ -415,7 +426,7 @@ public class Servicecontract implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.com.dpba.business.entity.Servicecontract[ id=" + id + " ]";
+        return "jm.com.dpba.business.entity.utils.Servicecontract[ id=" + id + " ]";
     }
     
 }
