@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="jm.com.dpba_business-entity_jar_1.0-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>jm.com.dpba.business.entity.Classification</class>
+    <class>jm.com.dpba.business.entity.Unitcost</class>
+    <class>jm.com.dpba.business.entity.Laboratory</class>
+    <class>jm.com.dpba.business.entity.Job</class>
+    <class>jm.com.dpba.business.entity.Dateperiod</class>
+    <class>jm.com.dpba.business.entity.Jobstatusandtracking</class>
+    <class>jm.com.dpba.business.entity.Departmentunit</class>
+    <class>jm.com.dpba.business.entity.Departmentreport</class>
+    <class>jm.com.dpba.business.entity.Foodtest</class>
+    <class>jm.com.dpba.business.entity.Employee</class>
+    <class>jm.com.dpba.business.entity.Documentreport</class>
+    <class>jm.com.dpba.business.entity.Distributor</class>
+    <class>jm.com.dpba.business.entity.Foodproduct</class>
+    <class>jm.com.dpba.business.entity.Seal</class>
+    <class>jm.com.dpba.business.entity.Certification</class>
+    <class>jm.com.dpba.business.entity.Documentinspection</class>
+    <class>jm.com.dpba.business.entity.Business</class>
+    <class>jm.com.dpba.business.entity.Documentsequencenumber</class>
+    <class>jm.com.dpba.business.entity.Jobsubcategory</class>
+    <class>jm.com.dpba.business.entity.Costcode</class>
+    <class>jm.com.dpba.business.entity.Systemoptions</class>
+    <class>jm.com.dpba.business.entity.Internet</class>
+    <class>jm.com.dpba.business.entity.Privilege</class>
+    <class>jm.com.dpba.business.entity.Contact</class>
+    <class>jm.com.dpba.business.entity.Foodsample</class>
+    <class>jm.com.dpba.business.entity.Generatedform</class>
+    <class>jm.com.dpba.business.entity.Complianceproductsurvey</class>
+    <class>jm.com.dpba.business.entity.Scale</class>
+    <class>jm.com.dpba.business.entity.Servicecontract</class>
+    <class>jm.com.dpba.business.entity.Division</class>
+    <class>jm.com.dpba.business.entity.Jobcosting</class>
+    <class>jm.com.dpba.business.entity.Servicerequest</class>
+    <class>jm.com.dpba.business.entity.Country</class>
+    <class>jm.com.dpba.business.entity.Entrydocumentinspection</class>
+    <class>jm.com.dpba.business.entity.Sequencenumber</class>
+    <class>jm.com.dpba.business.entity.Address</class>
+    <class>jm.com.dpba.business.entity.Factoryinspectioncomponent</class>
+    <class>jm.com.dpba.business.entity.Service</class>
+    <class>jm.com.dpba.business.entity.Documenttype</class>
+    <class>jm.com.dpba.business.entity.Alert</class>
+    <class>jm.com.dpba.business.entity.Category</class>
+    <class>jm.com.dpba.business.entity.Jobcategory</class>
+    <class>jm.com.dpba.business.entity.Signature</class>
+    <class>jm.com.dpba.business.entity.Sector</class>
+    <class>jm.com.dpba.business.entity.Factoryinspection</class>
+    <class>jm.com.dpba.business.entity.Businessoffice</class>
+    <class>jm.com.dpba.business.entity.Jobcostingandpayment</class>
+    <class>jm.com.dpba.business.entity.Costcomponent</class>
+    <class>jm.com.dpba.business.entity.Documentstandard</class>
+    <class>jm.com.dpba.business.entity.Compliancedailyreport</class>
+    <class>jm.com.dpba.business.entity.Department</class>
+    <class>jm.com.dpba.business.entity.Compliancesurvey</class>
+    <class>jm.com.dpba.business.entity.Foodfactory</class>
+    <class>jm.com.dpba.business.entity.Sticker</class>
+    <class>jm.com.dpba.business.entity.Client</class>
+    <class>jm.com.dpba.business.entity.Cashpayment</class>
+    <class>jm.com.dpba.business.entity.Companyregistration</class>
+    <class>jm.com.dpba.business.entity.Documenttracking</class>
+    <class>jm.com.dpba.business.entity.Testmeasure</class>
+    <class>jm.com.dpba.business.entity.Manufacturer</class>
+    <class>jm.com.dpba.business.entity.Asset</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jmts?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.user" value="root"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="?Des12300!"/>
+    </properties>
+  </persistence-unit>
+</persistence>
