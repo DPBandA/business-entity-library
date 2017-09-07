@@ -1,0 +1,95 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package jm.com.dpbennett.business.accpac;
+
+import java.io.Serializable;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+/**
+ *
+ * @author DBennett
+ */
+@Embeddable
+public class AribsPK implements Serializable {
+    @Basic(optional = false)
+    @Column(name = "CNTBTCH")
+    private int cntbtch;
+    @Basic(optional = false)
+    @Column(name = "CNTITEM")
+    private int cntitem;
+    @Basic(optional = false)
+    @Column(name = "CNTPAYM")
+    private int cntpaym;
+
+    public AribsPK() {
+    }
+
+    public AribsPK(int cntbtch, int cntitem, int cntpaym) {
+        this.cntbtch = cntbtch;
+        this.cntitem = cntitem;
+        this.cntpaym = cntpaym;
+    }
+
+    public int getCntbtch() {
+        return cntbtch;
+    }
+
+    public void setCntbtch(int cntbtch) {
+        this.cntbtch = cntbtch;
+    }
+
+    public int getCntitem() {
+        return cntitem;
+    }
+
+    public void setCntitem(int cntitem) {
+        this.cntitem = cntitem;
+    }
+
+    public int getCntpaym() {
+        return cntpaym;
+    }
+
+    public void setCntpaym(int cntpaym) {
+        this.cntpaym = cntpaym;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (int) cntbtch;
+        hash += (int) cntitem;
+        hash += (int) cntpaym;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof AribsPK)) {
+            return false;
+        }
+        AribsPK other = (AribsPK) object;
+        if (this.cntbtch != other.cntbtch) {
+            return false;
+        }
+        if (this.cntitem != other.cntitem) {
+            return false;
+        }
+        if (this.cntpaym != other.cntpaym) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "jm.org.bsj.entity.accpac.AribsPK[cntbtch=" + cntbtch + ", cntitem=" + cntitem + ", cntpaym=" + cntpaym + "]";
+    }
+
+}
