@@ -1,0 +1,253 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package jm.com.dpbennett.business.entity;
+
+import java.io.Serializable;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+
+/**
+ *
+ * @author DBennett
+ */
+@Entity
+@Table(name = "petrolpump")
+public class PetrolPump implements Product, BusinessEntity, Comparable, Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String number;
+    private String type;
+    private String serialNumber;
+    private String model;
+    private String status;
+    private Double rate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateScheduledForTest;
+    private String name;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Manufacturer manufacturer;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Certification certification;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<PetrolPumpNozzle> nozzles;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Sticker> stickers;
+
+    public PetrolPump(PetrolPump src, Long id) {
+        this.id = id;
+        this.number = src.number;
+        this.type = src.type;
+        this.serialNumber = src.serialNumber;
+        this.model = src.model;
+        this.status = src.status;
+        this.rate = src.rate;
+        this.dateScheduledForTest = src.dateScheduledForTest;
+        this.name = src.name;
+
+        this.nozzles = new ArrayList<>();
+        this.stickers = new ArrayList<>();
+    }
+
+    public PetrolPump() {
+        nozzles = new ArrayList<>();
+        stickers = new ArrayList<>();
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public Manufacturer getManufacturer() {
+        if (manufacturer == null) {
+            return new Manufacturer();
+        }
+        return manufacturer;
+    }
+
+    @Override
+    public void setManufacturer(Manufacturer manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public Date getDateScheduledForTest() {
+        return dateScheduledForTest;
+    }
+
+    public void setDateScheduledForTest(Date dateScheduledForTest) {
+        this.dateScheduledForTest = dateScheduledForTest;
+    }
+
+    public Double getRate() {
+        return rate;
+    }
+
+    public void setRate(Double rate) {
+        this.rate = rate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Certification getCertification() {
+        if (certification == null) {
+            certification = new Certification();
+        }
+        return certification;
+    }
+
+    public void setCertification(Certification certification) {
+        this.certification = certification;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public List<PetrolPumpNozzle> getNozzles() {
+        Collections.sort(nozzles);
+        return nozzles;
+    }
+
+    public Integer getNumberOfNozzles() {
+        return getNozzles().size();
+    }
+
+    public void setNozzles(List<PetrolPumpNozzle> nozzles) {
+        this.nozzles = nozzles;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    public List<Sticker> getStickers() {
+        return stickers;
+    }
+
+    public void setStickers(List<Sticker> stickers) {
+        this.stickers = stickers;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof PetrolPump)) {
+            return false;
+        }
+        PetrolPump other = (PetrolPump) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        String identification = "";
+
+        if (serialNumber != null) {
+            identification = serialNumber;
+        } else if (model != null) {
+            identification = model;
+        } else {
+            identification = "";
+        }
+
+        if (id != null) {
+            return "(" + id + ") " + identification;
+        } else {
+            return identification;
+        }
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.toString(), o.toString());
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    
+    public static PetrolPump findPetrolPumpById(EntityManager em, Long id) {
+
+        try {
+            PetrolPump pump = em.find(PetrolPump.class, id);
+
+            return pump;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+}
