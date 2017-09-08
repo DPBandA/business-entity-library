@@ -1970,49 +1970,49 @@ public class BusinessEntityUtils {
 
     }
 
-//    public static void setExcelCellValue(HSSFWorkbook wb, HSSFSheet sheet, String cellReference,
-//            Object value, String dataType, HSSFCellStyle style) {
-//
-//        int rowIndex = Integer.parseInt(getRowPartOfCellReference(cellReference)) - 1;
-//        int colIndex = convertAlphabetToNumber(
-//                getColumnPartOfCellReference(cellReference),
-//                getColumnPartOfCellReference(cellReference).length(),
-//                0);
-//
-//        HSSFRow row = sheet.getRow(rowIndex);
-//        if (row == null) {
-//            row = sheet.createRow(rowIndex);
-//        }
-//        HSSFCell cell = row.getCell(colIndex);
-//        if (cell == null) {
-//            cell = row.createCell(colIndex);
-//        }
-//        HSSFCellStyle newStyle = setExcelCellDataFormat(wb, dataType, style);
-//
-//        try {
-//            if (value != null) {
-//                if (dataType.equals("java.lang.Long")) {
-//                    cell.setCellValue((Long) value);
-//                } else if (dataType.equals("java.lang.Integer")) {
-//                    cell.setCellValue((Integer) value);
-//                } else if (dataType.equals("java.lang.Double")) {
-//                    cell.setCellValue((Double) value);
-//                } else if (dataType.equals("Currency")) {
-//                    cell.setCellValue((Double) value);
-//                } else if (dataType.equals("java.lang.Boolean")) {
-//                    cell.setCellValue((Boolean) value);
-//                } else if (dataType.equals("java.lang.String")) {
-//                    cell.setCellValue(new HSSFRichTextString(value.toString()));
-//                } else if (dataType.equals("java.util.Date")) {
-//                    cell.setCellValue((Date) value);
-//                }
-//
-//                cell.setCellStyle(newStyle);
-//            }
-//        } catch (Exception e) {
-//            System.out.println(e);
-//        }
-//    }
+    public static void setExcelCellValue(HSSFWorkbook wb, HSSFSheet sheet, String cellReference,
+            Object value, String dataType, HSSFCellStyle style) {
+
+        int rowIndex = Integer.parseInt(getRowPartOfCellReference(cellReference)) - 1;
+        int colIndex = convertAlphabetToNumber(
+                getColumnPartOfCellReference(cellReference),
+                getColumnPartOfCellReference(cellReference).length(),
+                0);
+
+        HSSFRow row = sheet.getRow(rowIndex);
+        if (row == null) {
+            row = sheet.createRow(rowIndex);
+        }
+        HSSFCell cell = row.getCell(colIndex);
+        if (cell == null) {
+            cell = row.createCell(colIndex);
+        }
+        HSSFCellStyle newStyle = setExcelCellDataFormat(wb, dataType, style);
+
+        try {
+            if (value != null) {
+                if (dataType.equals("java.lang.Long")) {
+                    cell.setCellValue((Long) value);
+                } else if (dataType.equals("java.lang.Integer")) {
+                    cell.setCellValue((Integer) value);
+                } else if (dataType.equals("java.lang.Double")) {
+                    cell.setCellValue((Double) value);
+                } else if (dataType.equals("Currency")) {
+                    cell.setCellValue((Double) value);
+                } else if (dataType.equals("java.lang.Boolean")) {
+                    cell.setCellValue((Boolean) value);
+                } else if (dataType.equals("java.lang.String")) {
+                    cell.setCellValue(new HSSFRichTextString(value.toString()));
+                } else if (dataType.equals("java.util.Date")) {
+                    cell.setCellValue((Date) value);
+                }
+
+                cell.setCellStyle(newStyle);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
     public static Double roundTo2DecimalPlaces(Double value) {
 
