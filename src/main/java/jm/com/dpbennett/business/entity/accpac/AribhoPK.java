@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package jm.com.dpbennett.business.accpac;
+package jm.com.dpbennett.business.entity.accpac;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
@@ -15,20 +15,24 @@ import javax.persistence.Embeddable;
  * @author DBennett
  */
 @Embeddable
-public class AribhPK implements Serializable {
+public class AribhoPK implements Serializable {
     @Basic(optional = false)
     @Column(name = "CNTBTCH")
     private int cntbtch;
     @Basic(optional = false)
     @Column(name = "CNTITEM")
     private int cntitem;
+    @Basic(optional = false)
+    @Column(name = "OPTFIELD")
+    private String optfield;
 
-    public AribhPK() {
+    public AribhoPK() {
     }
 
-    public AribhPK(int cntbtch, int cntitem) {
+    public AribhoPK(int cntbtch, int cntitem, String optfield) {
         this.cntbtch = cntbtch;
         this.cntitem = cntitem;
+        this.optfield = optfield;
     }
 
     public int getCntbtch() {
@@ -47,25 +51,37 @@ public class AribhPK implements Serializable {
         this.cntitem = cntitem;
     }
 
+    public String getOptfield() {
+        return optfield;
+    }
+
+    public void setOptfield(String optfield) {
+        this.optfield = optfield;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (int) cntbtch;
         hash += (int) cntitem;
+        hash += (optfield != null ? optfield.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof AribhPK)) {
+        if (!(object instanceof AribhoPK)) {
             return false;
         }
-        AribhPK other = (AribhPK) object;
+        AribhoPK other = (AribhoPK) object;
         if (this.cntbtch != other.cntbtch) {
             return false;
         }
         if (this.cntitem != other.cntitem) {
+            return false;
+        }
+        if ((this.optfield == null && other.optfield != null) || (this.optfield != null && !this.optfield.equals(other.optfield))) {
             return false;
         }
         return true;
@@ -73,7 +89,7 @@ public class AribhPK implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.accpac.AribhPK[cntbtch=" + cntbtch + ", cntitem=" + cntitem + "]";
+        return "jm.org.bsj.entity.accpac.AribhoPK[cntbtch=" + cntbtch + ", cntitem=" + cntitem + ", optfield=" + optfield + "]";
     }
 
 }

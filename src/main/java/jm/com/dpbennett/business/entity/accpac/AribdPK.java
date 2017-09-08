@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package jm.com.dpbennett.business.accpac;
+package jm.com.dpbennett.business.entity.accpac;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
@@ -15,7 +15,7 @@ import javax.persistence.Embeddable;
  * @author DBennett
  */
 @Embeddable
-public class AribdoPK implements Serializable {
+public class AribdPK implements Serializable {
     @Basic(optional = false)
     @Column(name = "CNTBTCH")
     private int cntbtch;
@@ -25,18 +25,14 @@ public class AribdoPK implements Serializable {
     @Basic(optional = false)
     @Column(name = "CNTLINE")
     private int cntline;
-    @Basic(optional = false)
-    @Column(name = "OPTFIELD")
-    private String optfield;
 
-    public AribdoPK() {
+    public AribdPK() {
     }
 
-    public AribdoPK(int cntbtch, int cntitem, int cntline, String optfield) {
+    public AribdPK(int cntbtch, int cntitem, int cntline) {
         this.cntbtch = cntbtch;
         this.cntitem = cntitem;
         this.cntline = cntline;
-        this.optfield = optfield;
     }
 
     public int getCntbtch() {
@@ -63,31 +59,22 @@ public class AribdoPK implements Serializable {
         this.cntline = cntline;
     }
 
-    public String getOptfield() {
-        return optfield;
-    }
-
-    public void setOptfield(String optfield) {
-        this.optfield = optfield;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (int) cntbtch;
         hash += (int) cntitem;
         hash += (int) cntline;
-        hash += (optfield != null ? optfield.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof AribdoPK)) {
+        if (!(object instanceof AribdPK)) {
             return false;
         }
-        AribdoPK other = (AribdoPK) object;
+        AribdPK other = (AribdPK) object;
         if (this.cntbtch != other.cntbtch) {
             return false;
         }
@@ -97,15 +84,12 @@ public class AribdoPK implements Serializable {
         if (this.cntline != other.cntline) {
             return false;
         }
-        if ((this.optfield == null && other.optfield != null) || (this.optfield != null && !this.optfield.equals(other.optfield))) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.accpac.AribdoPK[cntbtch=" + cntbtch + ", cntitem=" + cntitem + ", cntline=" + cntline + ", optfield=" + optfield + "]";
+        return "jm.org.bsj.entity.accpac.AribdPK[cntbtch=" + cntbtch + ", cntitem=" + cntitem + ", cntline=" + cntline + "]";
     }
 
 }

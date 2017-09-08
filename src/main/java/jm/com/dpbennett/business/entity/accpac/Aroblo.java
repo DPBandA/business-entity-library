@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package jm.com.dpbennett.business.accpac;
+package jm.com.dpbennett.business.entity.accpac;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
@@ -19,27 +19,26 @@ import javax.persistence.Table;
  * @author DBennett
  */
 @Entity
-@Table(name = "AROBLJO")
+@Table(name = "AROBLO")
 @NamedQueries({
-    @NamedQuery(name = "Arobljo.findAll", query = "SELECT a FROM Arobljo a"),
-    @NamedQuery(name = "Arobljo.findByIdcust", query = "SELECT a FROM Arobljo a WHERE a.arobljoPK.idcust = :idcust"),
-    @NamedQuery(name = "Arobljo.findByIdinvc", query = "SELECT a FROM Arobljo a WHERE a.arobljoPK.idinvc = :idinvc"),
-    @NamedQuery(name = "Arobljo.findByCntline", query = "SELECT a FROM Arobljo a WHERE a.arobljoPK.cntline = :cntline"),
-    @NamedQuery(name = "Arobljo.findByOptfield", query = "SELECT a FROM Arobljo a WHERE a.arobljoPK.optfield = :optfield"),
-    @NamedQuery(name = "Arobljo.findByAudtdate", query = "SELECT a FROM Arobljo a WHERE a.audtdate = :audtdate"),
-    @NamedQuery(name = "Arobljo.findByAudttime", query = "SELECT a FROM Arobljo a WHERE a.audttime = :audttime"),
-    @NamedQuery(name = "Arobljo.findByAudtuser", query = "SELECT a FROM Arobljo a WHERE a.audtuser = :audtuser"),
-    @NamedQuery(name = "Arobljo.findByAudtorg", query = "SELECT a FROM Arobljo a WHERE a.audtorg = :audtorg"),
-    @NamedQuery(name = "Arobljo.findByValue", query = "SELECT a FROM Arobljo a WHERE a.value = :value"),
-    @NamedQuery(name = "Arobljo.findByType", query = "SELECT a FROM Arobljo a WHERE a.type = :type"),
-    @NamedQuery(name = "Arobljo.findByLength", query = "SELECT a FROM Arobljo a WHERE a.length = :length"),
-    @NamedQuery(name = "Arobljo.findByDecimals", query = "SELECT a FROM Arobljo a WHERE a.decimals = :decimals"),
-    @NamedQuery(name = "Arobljo.findByAllownull", query = "SELECT a FROM Arobljo a WHERE a.allownull = :allownull"),
-    @NamedQuery(name = "Arobljo.findByValidate", query = "SELECT a FROM Arobljo a WHERE a.validate = :validate")})
-public class Arobljo implements Serializable {
+    @NamedQuery(name = "Aroblo.findAll", query = "SELECT a FROM Aroblo a"),
+    @NamedQuery(name = "Aroblo.findByIdcust", query = "SELECT a FROM Aroblo a WHERE a.arobloPK.idcust = :idcust"),
+    @NamedQuery(name = "Aroblo.findByIdinvc", query = "SELECT a FROM Aroblo a WHERE a.arobloPK.idinvc = :idinvc"),
+    @NamedQuery(name = "Aroblo.findByOptfield", query = "SELECT a FROM Aroblo a WHERE a.arobloPK.optfield = :optfield"),
+    @NamedQuery(name = "Aroblo.findByAudtdate", query = "SELECT a FROM Aroblo a WHERE a.audtdate = :audtdate"),
+    @NamedQuery(name = "Aroblo.findByAudttime", query = "SELECT a FROM Aroblo a WHERE a.audttime = :audttime"),
+    @NamedQuery(name = "Aroblo.findByAudtuser", query = "SELECT a FROM Aroblo a WHERE a.audtuser = :audtuser"),
+    @NamedQuery(name = "Aroblo.findByAudtorg", query = "SELECT a FROM Aroblo a WHERE a.audtorg = :audtorg"),
+    @NamedQuery(name = "Aroblo.findByValue", query = "SELECT a FROM Aroblo a WHERE a.value = :value"),
+    @NamedQuery(name = "Aroblo.findByType", query = "SELECT a FROM Aroblo a WHERE a.type = :type"),
+    @NamedQuery(name = "Aroblo.findByLength", query = "SELECT a FROM Aroblo a WHERE a.length = :length"),
+    @NamedQuery(name = "Aroblo.findByDecimals", query = "SELECT a FROM Aroblo a WHERE a.decimals = :decimals"),
+    @NamedQuery(name = "Aroblo.findByAllownull", query = "SELECT a FROM Aroblo a WHERE a.allownull = :allownull"),
+    @NamedQuery(name = "Aroblo.findByValidate", query = "SELECT a FROM Aroblo a WHERE a.validate = :validate")})
+public class Aroblo implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
-    protected ArobljoPK arobljoPK;
+    protected ArobloPK arobloPK;
     @Basic(optional = false)
     @Column(name = "AUDTDATE")
     private int audtdate;
@@ -71,15 +70,15 @@ public class Arobljo implements Serializable {
     @Column(name = "VALIDATE")
     private short validate;
 
-    public Arobljo() {
+    public Aroblo() {
     }
 
-    public Arobljo(ArobljoPK arobljoPK) {
-        this.arobljoPK = arobljoPK;
+    public Aroblo(ArobloPK arobloPK) {
+        this.arobloPK = arobloPK;
     }
 
-    public Arobljo(ArobljoPK arobljoPK, int audtdate, int audttime, String audtuser, String audtorg, String value, short type, short length, short decimals, short allownull, short validate) {
-        this.arobljoPK = arobljoPK;
+    public Aroblo(ArobloPK arobloPK, int audtdate, int audttime, String audtuser, String audtorg, String value, short type, short length, short decimals, short allownull, short validate) {
+        this.arobloPK = arobloPK;
         this.audtdate = audtdate;
         this.audttime = audttime;
         this.audtuser = audtuser;
@@ -92,16 +91,16 @@ public class Arobljo implements Serializable {
         this.validate = validate;
     }
 
-    public Arobljo(String idcust, String idinvc, int cntline, String optfield) {
-        this.arobljoPK = new ArobljoPK(idcust, idinvc, cntline, optfield);
+    public Aroblo(String idcust, String idinvc, String optfield) {
+        this.arobloPK = new ArobloPK(idcust, idinvc, optfield);
     }
 
-    public ArobljoPK getArobljoPK() {
-        return arobljoPK;
+    public ArobloPK getArobloPK() {
+        return arobloPK;
     }
 
-    public void setArobljoPK(ArobljoPK arobljoPK) {
-        this.arobljoPK = arobljoPK;
+    public void setArobloPK(ArobloPK arobloPK) {
+        this.arobloPK = arobloPK;
     }
 
     public int getAudtdate() {
@@ -187,18 +186,18 @@ public class Arobljo implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (arobljoPK != null ? arobljoPK.hashCode() : 0);
+        hash += (arobloPK != null ? arobloPK.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Arobljo)) {
+        if (!(object instanceof Aroblo)) {
             return false;
         }
-        Arobljo other = (Arobljo) object;
-        if ((this.arobljoPK == null && other.arobljoPK != null) || (this.arobljoPK != null && !this.arobljoPK.equals(other.arobljoPK))) {
+        Aroblo other = (Aroblo) object;
+        if ((this.arobloPK == null && other.arobloPK != null) || (this.arobloPK != null && !this.arobloPK.equals(other.arobloPK))) {
             return false;
         }
         return true;
@@ -206,7 +205,7 @@ public class Arobljo implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.accpac.Arobljo[arobljoPK=" + arobljoPK + "]";
+        return "jm.org.bsj.entity.accpac.Aroblo[arobloPK=" + arobloPK + "]";
     }
 
 }

@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package jm.com.dpbennett.business.accpac;
+package jm.com.dpbennett.business.entity.accpac;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
@@ -19,27 +19,27 @@ import javax.persistence.Table;
  * @author DBennett
  */
 @Entity
-@Table(name = "ARIBHO")
+@Table(name = "AROBLJO")
 @NamedQueries({
-    @NamedQuery(name = "Aribho.findAll", query = "SELECT a FROM Aribho a"),
-    @NamedQuery(name = "Aribho.findByCntbtch", query = "SELECT a FROM Aribho a WHERE a.aribhoPK.cntbtch = :cntbtch"),
-    @NamedQuery(name = "Aribho.findByCntitem", query = "SELECT a FROM Aribho a WHERE a.aribhoPK.cntitem = :cntitem"),
-    @NamedQuery(name = "Aribho.findByOptfield", query = "SELECT a FROM Aribho a WHERE a.aribhoPK.optfield = :optfield"),
-    @NamedQuery(name = "Aribho.findByAudtdate", query = "SELECT a FROM Aribho a WHERE a.audtdate = :audtdate"),
-    @NamedQuery(name = "Aribho.findByAudttime", query = "SELECT a FROM Aribho a WHERE a.audttime = :audttime"),
-    @NamedQuery(name = "Aribho.findByAudtuser", query = "SELECT a FROM Aribho a WHERE a.audtuser = :audtuser"),
-    @NamedQuery(name = "Aribho.findByAudtorg", query = "SELECT a FROM Aribho a WHERE a.audtorg = :audtorg"),
-    @NamedQuery(name = "Aribho.findByValue", query = "SELECT a FROM Aribho a WHERE a.value = :value"),
-    @NamedQuery(name = "Aribho.findByType", query = "SELECT a FROM Aribho a WHERE a.type = :type"),
-    @NamedQuery(name = "Aribho.findByLength", query = "SELECT a FROM Aribho a WHERE a.length = :length"),
-    @NamedQuery(name = "Aribho.findByDecimals", query = "SELECT a FROM Aribho a WHERE a.decimals = :decimals"),
-    @NamedQuery(name = "Aribho.findByAllownull", query = "SELECT a FROM Aribho a WHERE a.allownull = :allownull"),
-    @NamedQuery(name = "Aribho.findByValidate", query = "SELECT a FROM Aribho a WHERE a.validate = :validate"),
-    @NamedQuery(name = "Aribho.findBySwset", query = "SELECT a FROM Aribho a WHERE a.swset = :swset")})
-public class Aribho implements Serializable {
+    @NamedQuery(name = "Arobljo.findAll", query = "SELECT a FROM Arobljo a"),
+    @NamedQuery(name = "Arobljo.findByIdcust", query = "SELECT a FROM Arobljo a WHERE a.arobljoPK.idcust = :idcust"),
+    @NamedQuery(name = "Arobljo.findByIdinvc", query = "SELECT a FROM Arobljo a WHERE a.arobljoPK.idinvc = :idinvc"),
+    @NamedQuery(name = "Arobljo.findByCntline", query = "SELECT a FROM Arobljo a WHERE a.arobljoPK.cntline = :cntline"),
+    @NamedQuery(name = "Arobljo.findByOptfield", query = "SELECT a FROM Arobljo a WHERE a.arobljoPK.optfield = :optfield"),
+    @NamedQuery(name = "Arobljo.findByAudtdate", query = "SELECT a FROM Arobljo a WHERE a.audtdate = :audtdate"),
+    @NamedQuery(name = "Arobljo.findByAudttime", query = "SELECT a FROM Arobljo a WHERE a.audttime = :audttime"),
+    @NamedQuery(name = "Arobljo.findByAudtuser", query = "SELECT a FROM Arobljo a WHERE a.audtuser = :audtuser"),
+    @NamedQuery(name = "Arobljo.findByAudtorg", query = "SELECT a FROM Arobljo a WHERE a.audtorg = :audtorg"),
+    @NamedQuery(name = "Arobljo.findByValue", query = "SELECT a FROM Arobljo a WHERE a.value = :value"),
+    @NamedQuery(name = "Arobljo.findByType", query = "SELECT a FROM Arobljo a WHERE a.type = :type"),
+    @NamedQuery(name = "Arobljo.findByLength", query = "SELECT a FROM Arobljo a WHERE a.length = :length"),
+    @NamedQuery(name = "Arobljo.findByDecimals", query = "SELECT a FROM Arobljo a WHERE a.decimals = :decimals"),
+    @NamedQuery(name = "Arobljo.findByAllownull", query = "SELECT a FROM Arobljo a WHERE a.allownull = :allownull"),
+    @NamedQuery(name = "Arobljo.findByValidate", query = "SELECT a FROM Arobljo a WHERE a.validate = :validate")})
+public class Arobljo implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
-    protected AribhoPK aribhoPK;
+    protected ArobljoPK arobljoPK;
     @Basic(optional = false)
     @Column(name = "AUDTDATE")
     private int audtdate;
@@ -70,19 +70,16 @@ public class Aribho implements Serializable {
     @Basic(optional = false)
     @Column(name = "VALIDATE")
     private short validate;
-    @Basic(optional = false)
-    @Column(name = "SWSET")
-    private short swset;
 
-    public Aribho() {
+    public Arobljo() {
     }
 
-    public Aribho(AribhoPK aribhoPK) {
-        this.aribhoPK = aribhoPK;
+    public Arobljo(ArobljoPK arobljoPK) {
+        this.arobljoPK = arobljoPK;
     }
 
-    public Aribho(AribhoPK aribhoPK, int audtdate, int audttime, String audtuser, String audtorg, String value, short type, short length, short decimals, short allownull, short validate, short swset) {
-        this.aribhoPK = aribhoPK;
+    public Arobljo(ArobljoPK arobljoPK, int audtdate, int audttime, String audtuser, String audtorg, String value, short type, short length, short decimals, short allownull, short validate) {
+        this.arobljoPK = arobljoPK;
         this.audtdate = audtdate;
         this.audttime = audttime;
         this.audtuser = audtuser;
@@ -93,19 +90,18 @@ public class Aribho implements Serializable {
         this.decimals = decimals;
         this.allownull = allownull;
         this.validate = validate;
-        this.swset = swset;
     }
 
-    public Aribho(int cntbtch, int cntitem, String optfield) {
-        this.aribhoPK = new AribhoPK(cntbtch, cntitem, optfield);
+    public Arobljo(String idcust, String idinvc, int cntline, String optfield) {
+        this.arobljoPK = new ArobljoPK(idcust, idinvc, cntline, optfield);
     }
 
-    public AribhoPK getAribhoPK() {
-        return aribhoPK;
+    public ArobljoPK getArobljoPK() {
+        return arobljoPK;
     }
 
-    public void setAribhoPK(AribhoPK aribhoPK) {
-        this.aribhoPK = aribhoPK;
+    public void setArobljoPK(ArobljoPK arobljoPK) {
+        this.arobljoPK = arobljoPK;
     }
 
     public int getAudtdate() {
@@ -188,29 +184,21 @@ public class Aribho implements Serializable {
         this.validate = validate;
     }
 
-    public short getSwset() {
-        return swset;
-    }
-
-    public void setSwset(short swset) {
-        this.swset = swset;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (aribhoPK != null ? aribhoPK.hashCode() : 0);
+        hash += (arobljoPK != null ? arobljoPK.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Aribho)) {
+        if (!(object instanceof Arobljo)) {
             return false;
         }
-        Aribho other = (Aribho) object;
-        if ((this.aribhoPK == null && other.aribhoPK != null) || (this.aribhoPK != null && !this.aribhoPK.equals(other.aribhoPK))) {
+        Arobljo other = (Arobljo) object;
+        if ((this.arobljoPK == null && other.arobljoPK != null) || (this.arobljoPK != null && !this.arobljoPK.equals(other.arobljoPK))) {
             return false;
         }
         return true;
@@ -218,7 +206,7 @@ public class Aribho implements Serializable {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.accpac.Aribho[aribhoPK=" + aribhoPK + "]";
+        return "jm.org.bsj.entity.accpac.Arobljo[arobljoPK=" + arobljoPK + "]";
     }
 
 }

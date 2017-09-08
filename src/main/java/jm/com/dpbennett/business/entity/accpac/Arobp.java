@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package jm.com.dpbennett.business.accpac;
+package jm.com.dpbennett.business.entity.accpac;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
