@@ -27,7 +27,6 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.utils.BusinessEntityUtils;
 
-
 /**
  *
  * @author Desmond
@@ -35,7 +34,8 @@ import jm.com.dpbennett.business.utils.BusinessEntityUtils;
 @Entity
 @Table(name = "job")
 @NamedQueries({
-    @NamedQuery(name = "findAllJobs", query = "SELECT j FROM Job j ORDER BY j.jobNumber"),
+    @NamedQuery(name = "findAllJobs", query = "SELECT j FROM Job j ORDER BY j.jobNumber")
+    ,
     @NamedQuery(name = "findByJobNumber", query = "SELECT j FROM Job j WHERE j.jobNumber = :jobNumber")
 })
 @XmlRootElement
@@ -127,12 +127,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
         this.instructions = instructions;
     }
 
-    public Boolean isSubContracted() {        
-//        if (getSubContractedDepartment().getSubGroupCode().equals("")
-//                || getSubContractedDepartment().getSubGroupCode().equals("--")) {
-//            return false;
-//        }
-         if (getSubContractedDepartment().getName().equals("")
+    public Boolean isSubContracted() {
+        if (getSubContractedDepartment().getName().equals("")
                 || getSubContractedDepartment().getName().equals("--")) {
             return false;
         }
@@ -478,14 +474,14 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
         }
         return numberOfSamples;
     }
-    
+
     public Long getNumberOfSampleProducts() {
         Long total = 0L;
-        
+
         for (JobSample jobSample : getJobSamples()) {
             total = total + jobSample.getQuantity();
         }
-        
+
         return total;
     }
 
@@ -557,14 +553,14 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
 
         // build query based on id or name
         if (client.getId() != null) {
-            searchQuery =
-                    "SELECT job FROM Job job"
+            searchQuery
+                    = "SELECT job FROM Job job"
                     + " JOIN job.client client"
                     + " WHERE client.id = " + client.getId()
                     + " ORDER BY client.name";
         } else if (client.getName() != null) {
-            searchQuery =
-                    "SELECT job FROM Job job"
+            searchQuery
+                    = "SELECT job FROM Job job"
                     + " JOIN job.client client"
                     + " WHERE client.name = " + client.getName()
                     + " ORDER BY client.name";
@@ -610,8 +606,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
 
         // include the search for samples?
         if (includeSampleSearch) {
-            sampleSearchWhereClause =
-                    " OR UPPER(jobSamples.reference) LIKE '%" + searchText.toUpperCase() + "%'"
+            sampleSearchWhereClause
+                    = " OR UPPER(jobSamples.reference) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.description) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.productBrand) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.productModel) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -622,8 +618,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
         }
         switch (searchType) {
             case "Parent jobs only":
-                searchTextAndClause =
-                        " AND subContractedDepartment.name = '--' AND ("
+                searchTextAndClause
+                        = " AND subContractedDepartment.name = '--' AND ("
                         + " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         //+ " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -644,8 +640,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
                         + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
-                searchQuery =
-                        "SELECT job FROM Job job"
+                searchQuery
+                        = "SELECT job FROM Job job"
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + sampleSearchJoinClause
                         + " JOIN job.businessOffice businessOffice"
@@ -664,8 +660,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
                         + " ORDER BY job.id DESC";
                 break;
             case "General":
-                searchTextAndClause =
-                        " AND ("
+                searchTextAndClause
+                        = " AND ("
                         + " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -686,8 +682,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
                         + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
-                searchQuery =
-                        "SELECT job FROM Job job"
+                searchQuery
+                        = "SELECT job FROM Job job"
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + sampleSearchJoinClause
                         + " JOIN job.businessOffice businessOffice"
@@ -706,8 +702,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
                         + " ORDER BY job.id DESC";
                 break;
             case "Jobs in period":
-                searchQuery =
-                        "SELECT job FROM Job job"
+                searchQuery
+                        = "SELECT job FROM Job job"
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                         + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
@@ -715,8 +711,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
                 break;
             case "Monthly report":
                 System.out.println("search text: " + searchText);
-                searchQuery =
-                        "SELECT job FROM Job job"
+                searchQuery
+                        = "SELECT job FROM Job job"
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + " JOIN job.department department"
                         + " JOIN job.subContractedDepartment subContractedDepartment"
@@ -728,8 +724,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
                         + " ORDER BY job.id DESC";
                 break;
             case "My department's jobs":
-                searchTextAndClause =
-                        " AND ("
+                searchTextAndClause
+                        = " AND ("
                         + " UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + sampleSearchWhereClause
                         + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -746,8 +742,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
                         + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
-                searchQuery =
-                        "SELECT job FROM Job job"
+                searchQuery
+                        = "SELECT job FROM Job job"
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + sampleSearchJoinClause
                         + " JOIN job.department department"
@@ -768,8 +764,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
                         + " ORDER BY job.id DESC";
                 break;
             case "My jobs":
-                searchTextAndClause =
-                        " AND ("
+                searchTextAndClause
+                        = " AND ("
                         + " UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + sampleSearchWhereClause
                         + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -786,8 +782,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
                         + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
-                searchQuery =
-                        "SELECT job FROM Job job"
+                searchQuery
+                        = "SELECT job FROM Job job"
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + sampleSearchJoinClause
                         + " JOIN job.department department"
@@ -809,8 +805,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
                 break;
             case "Jobs for my department":
                 searchText = user.getEmployee().getDepartment().getName().replaceAll("'", "''");
-                searchQuery =
-                        "SELECT job FROM Job job"
+                searchQuery
+                        = "SELECT job FROM Job job"
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + " JOIN job.department department"
                         + " JOIN job.subContractedDepartment subContractedDepartment"
@@ -973,23 +969,23 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
             return null;
         }
     }
-    
-    public static List<Job> findIncompleteSubcontracts( EntityManager em, Job job) {
-        List<Job> foundJobs; 
+
+    public static List<Job> findIncompleteSubcontracts(EntityManager em, Job job) {
+        List<Job> foundJobs;
         ArrayList<Job> incompleteSubcontracts = new ArrayList<>();
-        
+
         foundJobs = findJobsByYearReceivedAndJobSequenceNumber(em, job.yearReceived, job.jobSequenceNumber);
         for (Job foundJob : foundJobs) {
             if (foundJob.isSubContracted() && !foundJob.getJobStatusAndTracking().getCompleted()) {
                 incompleteSubcontracts.add(foundJob);
             }
         }
-        
+
         return incompleteSubcontracts;
     }
 
     public static List<Job> findJobsByYearReceivedAndJobSequenceNumber(
-            EntityManager em, 
+            EntityManager em,
             Integer yearReceived,
             Long jobSequenceNumber) {
         try {
@@ -1015,10 +1011,10 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
         try {
             String newName = query.replaceAll("'", "''");
 
-            List<String> numbers =
-                    em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) like '"
-                    + newName.toUpperCase().trim() + "%'"
-                    + " ORDER BY j.jobNumber", String.class).getResultList();
+            List<String> numbers
+                    = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) like '"
+                            + newName.toUpperCase().trim() + "%'"
+                            + " ORDER BY j.jobNumber", String.class).getResultList();
             return numbers;
         } catch (Exception e) {
             System.out.println(e);
@@ -1052,28 +1048,28 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
             departmentName = "";
         }
 
-        joinClause =
-                " JOIN job.department department"
+        joinClause
+                = " JOIN job.department department"
                 + " JOIN job.subContractedDepartment subContractedDepartment"
                 + " JOIN job.jobCostingAndPayment jobCostingAndPayment";
 
         if (!searchText.equals("") && !departmentName.equals("")) {
-            searchTextAndClause =
-                    " AND ("
+            searchTextAndClause
+                    = " AND ("
                     + " UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(job.jobDescription) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(department.name) LIKE '%" + departmentName.toUpperCase() + "%'"
                     + " OR UPPER(subContractedDepartment.name) LIKE '%" + departmentName.toUpperCase() + "%'"
                     + " )";
         } else if (searchText.equals("") && !departmentName.equals("")) {
-            searchTextAndClause =
-                    " AND ("
+            searchTextAndClause
+                    = " AND ("
                     + " UPPER(department.name) LIKE '%" + departmentName.toUpperCase() + "%'"
                     + " OR UPPER(subContractedDepartment.name) LIKE '%" + departmentName.toUpperCase() + "%'"
                     + " )";
         } else if (!searchText.equals("") && departmentName.equals("")) {
-            searchTextAndClause =
-                    " AND ("
+            searchTextAndClause
+                    = " AND ("
                     + " UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(job.jobDescription) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -1081,8 +1077,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
                     + " )";
         }
 
-        searchQuery =
-                "SELECT job FROM Job job"
+        searchQuery
+                = "SELECT job FROM Job job"
                 + joinClause
                 + " WHERE (jobCostingAndPayment.costingCompleted = 1 OR jobCostingAndPayment.costingApproved = 1)" // used as place holder
                 + searchTextAndClause
@@ -1296,4 +1292,9 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
      }
     
      */
+
+    @Override
+    public boolean save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
