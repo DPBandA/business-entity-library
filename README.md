@@ -5,4 +5,4 @@ utilities that are used in a typical business.  It also facilitates consistent
 and safe access to data stores such as files and relational databases.
 
 # Things to do
-- Implement save() in the Business entity interface
+- Implement save() and validate() in the Business entity interface

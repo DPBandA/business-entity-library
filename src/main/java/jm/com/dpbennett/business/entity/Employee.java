@@ -30,6 +30,7 @@ import javax.persistence.Temporal;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.utils.MethodResult;
 import org.codehaus.jackson.annotate.JsonBackReference;
 
 /**
@@ -583,4 +584,14 @@ public class Employee implements Person, Serializable, BusinessEntity, Converter
 //            return new ArrayList<>();
 //        }
 //    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

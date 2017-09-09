@@ -10,12 +10,14 @@ import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 /**
  *
@@ -216,5 +218,15 @@ public class Certification implements BusinessEntity, Serializable, Comparable {
     @Override
     public void setName(String name) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

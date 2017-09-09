@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 /**
  *
@@ -235,5 +236,15 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
                 return "";
             }
         }
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

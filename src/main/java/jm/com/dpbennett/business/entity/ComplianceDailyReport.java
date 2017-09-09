@@ -7,11 +7,13 @@ package jm.com.dpbennett.business.entity;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 /**
  *
@@ -180,5 +182,15 @@ public class ComplianceDailyReport implements Serializable, BusinessEntity {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

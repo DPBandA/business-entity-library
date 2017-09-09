@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 /**
  *
@@ -120,5 +122,15 @@ public class StandardsOrganization implements BusinessEntity, Company, Serializa
     @Override
     public void setBusinessOffices(List<BusinessOffice> businessOffices) {
         this.businessOffices = businessOffices;
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

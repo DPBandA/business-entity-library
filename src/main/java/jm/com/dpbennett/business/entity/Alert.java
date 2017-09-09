@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.xml.bind.annotation.XmlRootElement;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 /**
  *
@@ -283,5 +284,15 @@ public class Alert implements Serializable, BusinessEntity {
             System.out.println(e);
             return new ArrayList<Alert>();
         }
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -5,6 +5,7 @@
 package jm.com.dpbennett.business.entity;
 
 import javax.persistence.EntityManager;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 /**
  *
@@ -15,5 +16,6 @@ public interface BusinessEntity {
     public void setId(Long id);
     public String getName();
     public void setName(String name);
-    public boolean save(EntityManager em);
+    public MethodResult save(EntityManager em);
+    public MethodResult validate(EntityManager em);
 }

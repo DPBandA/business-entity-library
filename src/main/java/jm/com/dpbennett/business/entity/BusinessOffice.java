@@ -22,6 +22,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 
 /**
@@ -300,5 +301,15 @@ public class BusinessOffice implements Serializable, BusinessEntity, Converter {
         }
 
         return office;
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

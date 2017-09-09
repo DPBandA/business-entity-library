@@ -15,6 +15,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,6 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 
 /**
@@ -363,5 +365,15 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter {
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         return ((DatePeriod) value).getName();
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

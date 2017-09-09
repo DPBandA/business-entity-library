@@ -20,6 +20,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 /**
  *
@@ -252,5 +253,15 @@ public class Manufacturer implements Serializable, BusinessEntity, Converter {
         }
 
         return manufacturer;
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -23,6 +23,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 
 /**
@@ -399,5 +400,15 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         return ((Contact) value).getName();
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

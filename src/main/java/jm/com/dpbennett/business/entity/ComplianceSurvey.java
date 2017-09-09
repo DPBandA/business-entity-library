@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.utils.ComplianceSurveySearchResult;
+import jm.com.dpbennett.business.utils.MethodResult;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
@@ -1251,5 +1252,15 @@ public class ComplianceSurvey
 
     public static void main(String[] args) {
         ComplianceSurvey c = new ComplianceSurvey();
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

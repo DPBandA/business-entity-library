@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 /**
  *
@@ -99,5 +100,15 @@ public class Signature implements Serializable, BusinessEntity {
 
     public static Signature findSignatureById(EntityManager em, Long Id) {
         return em.find(Signature.class, Id);
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

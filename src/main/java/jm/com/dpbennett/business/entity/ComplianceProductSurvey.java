@@ -7,10 +7,12 @@ package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import jm.com.dpbennett.business.utils.MethodResult;
 
 /**
  *
@@ -68,6 +70,16 @@ public class ComplianceProductSurvey implements Serializable, BusinessEntity, Fo
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public MethodResult save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MethodResult validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
