@@ -23,7 +23,7 @@ import jm.com.dpbennett.business.utils.MethodResult;
  */
 @Entity
 @Table(name = "cashpayment")
-@NamedQueries({    
+@NamedQueries({
     @NamedQuery(name = "findAllCashPayments", query = "SELECT e FROM CashPayment e ORDER BY e.type")
 })
 public class CashPayment implements Serializable, BusinessEntity {
@@ -31,19 +31,33 @@ public class CashPayment implements Serializable, BusinessEntity {
     private static final long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id = null;
-    private String type = "";    
-    private Long jobId = null;
-    private Double payment = null;    
-    private String receiptNumber = "";    
+    private Long id;
+    private String type;
+    private Long jobId;
+    private Double payment;
+    private String receiptNumber;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfPayment = null;    
-    private String payeeTitle = "";   
-    private String payeeFirstname = "";    
-    private String payeeLastname = "";    
-    private String comment = "";    
-    private Long JMTSUserId = null;
+    private Date dateOfPayment;
+    private String payeeTitle;
+    private String payeeFirstname;
+    private String payeeLastname;
+    private String comment;
+    private Long userId;
+    private Double discount;
+    private String discountType;
+    private String paymentTerms;
 
+    public CashPayment() {
+        this.discount = 0.0;
+        this.comment = "";
+        this.payeeLastname = "";
+        this.payeeFirstname = "";
+        this.payeeTitle = "";
+        this.receiptNumber = "";
+        this.payment = 0.0;
+        this.type = "Cash";        
+    }
+    
     @Override
     public Long getId() {
         return id;
@@ -54,14 +68,43 @@ public class CashPayment implements Serializable, BusinessEntity {
         this.id = id;
     }
 
-    public Long getJMTSUserId() {
-        return JMTSUserId;
+    public String getPaymentTerms() {
+        return paymentTerms;
     }
 
-    public void setJMTSUserId(Long JMTSUserId) {
-        this.JMTSUserId = JMTSUserId;
+    public void setPaymentTerms(String paymentTerms) {
+        this.paymentTerms = paymentTerms;
     }
 
+    public String getDiscountType() {
+        if (discountType == null) {
+            discountType = "Fixed Cost";
+        }
+        return discountType;
+    }
+
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
+    }
+
+    public Double getDiscount() {
+        if (discount == null) {
+            discount = 0.0;
+        }
+        return discount;
+    }
+
+    public void setDiscount(Double discount) {
+        this.discount = discount;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public String getComment() {
         return comment;
@@ -70,7 +113,7 @@ public class CashPayment implements Serializable, BusinessEntity {
     public void setComment(String comment) {
         this.comment = comment;
     }
-    
+
     public String getType() {
         return type;
     }

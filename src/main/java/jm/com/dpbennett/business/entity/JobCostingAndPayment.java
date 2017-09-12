@@ -50,23 +50,23 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     private List<CashPayment> cashPayments;
     @OneToMany(cascade = CascadeType.ALL)
     private List<CostComponent> costComponents;
-    private Double estimatedCost = 0.0;
+    private Double estimatedCost;
     private String estimatedCostDoneBy;
-    private Double finalCost = 0.0;
+    private Double finalCost;
     private String finalCostDoneBy;
-    private Double paymentReceivedToDate = 0.0;
-    private Double deposit = 0.0;
-    private Double amountDue = 0.0;
+    private Double paymentReceivedToDate;
+    private Double deposit;
+    private Double amountDue;
     private Boolean costingCompleted;
     private Boolean costingApproved;
     private Boolean invoiced;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee costingApprovedBy;
-    private Double discount = 0.0;
-    private Double minDeposit = 0.0;
-    private Double totalTax = 0.0;
-    private Double totalCost = 0.0;
-    private Double percentageGCT = 0.0;
+    private Double discount;
+    private Double minDeposit;
+    private Double totalTax;
+    private Double totalCost;
+    private Double percentageGCT;
     @Transient
     private Double estimatedCostIncludingTaxes;
     @Transient
@@ -76,6 +76,16 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     private String discountType;
 
     public JobCostingAndPayment() {
+        this.percentageGCT = 0.0;
+        this.totalCost = 0.0;
+        this.totalTax = 0.0;
+        this.minDeposit = 0.0;
+        this.discount = 0.0;
+        this.amountDue = 0.0;
+        this.deposit = 0.0;
+        this.paymentReceivedToDate = 0.0;
+        this.finalCost = 0.0;
+        this.estimatedCost = 0.0;
         cashPayments = new ArrayList<>();
         costComponents = new ArrayList<>();
     }
@@ -435,10 +445,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             return false;
         }
         JobCostingAndPayment other = (JobCostingAndPayment) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -574,17 +581,12 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public static Boolean getCanApplyGCT(Job job) {
-        if (!job.isSubContracted()
+        return !job.isSubContracted()
                 && job.getClassification().getIsEarning()
                 && job.getDepartment().getPrivilege().getCanApplyTaxesToJobCosting()
                 && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option
                 <= BusinessEntityUtils.getMediumDateStringAsLong(
-                BusinessEntityUtils.getDateInMediumDateFormat(job.getJobStatusAndTracking().getDateSubmitted())))) {
-
-            return true;
-        }
-
-        return false;
+                        BusinessEntityUtils.getDateInMediumDateFormat(job.getJobStatusAndTracking().getDateSubmitted())));
     }
 
     public static void setJobCostingTaxes(EntityManager em, Job job) {

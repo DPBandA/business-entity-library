@@ -8,3 +8,5 @@ and safe access to data stores such as files and relational databases.
 - Implement save() and validate() in the Business entity interface.
 - Change "BSJ/Accpac" PU to Entity_PU and Accpac_Entity_PU.
 - Setup site using the GSWM sample project.
+- Create default constructors and do all member variables initializations there.
+- Rename JobManagerUser to User.
