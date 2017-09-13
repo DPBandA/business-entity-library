@@ -6,7 +6,6 @@ package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -18,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.utils.MethodResult;
 
@@ -33,38 +33,70 @@ public class Alert implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long ownerId = 0L;
-    private String name = "";
-    private String type = "";
-    private String reference = "";
+    private Long ownerId;
+    private String name;
+    private String type;
+    private String reference;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date dueTime = null;
-    private String periodType = "";
-    private Long recurrencePeriod = null;
+    private Date dueTime;
+    private String periodType;
+    private Long recurrencePeriod;
     @Column(length = 1024)
-    private String comment = "";
+    private String comment;
     @Column(length = 1024)
-    private String status = "";
+    private String status;
     @Column(length = 1024)
-    private String actionToTake = "";
+    private String actionToTake;
     @Column(length = 1024)
-    private String actionTaken = "";
-    private Boolean active = false;
-    private String subject = "";
+    private String actionTaken;
+    private Boolean active;
+    private String subject;
     @Column(length = 1024)
-    private String message = "";
-    private static ArrayList<String> statuses = null;
+    private String message;
+    @Transient
+    private ArrayList<String> statuses;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee recipient = null;
+    private Employee recipient;
 
     public Alert() {
-        active = true;
-        statuses = new ArrayList<String>();
+        this.statuses = new ArrayList<>();
+        this.recipient = null;
+        this.message = "";
+        this.subject = "";
+        this.active = false;
+        this.actionTaken = "";
+        this.actionToTake = "";
+        this.status = "";
+        this.comment = "";
+        this.recurrencePeriod = null;
+        this.periodType = "";
+        this.dueTime = null;
+        this.reference = "";
+        this.type = "";
+        this.name = "";
+        this.ownerId = 0L;
+        active = true;        
     }
 
     public Alert(Long ownerId,
             Date dueTime,
             String status) {
+        this.statuses = new ArrayList<>();
+        this.recipient = null;
+        this.message = "";
+        this.subject = "";
+        this.active = false;
+        this.actionTaken = "";
+        this.actionToTake = "";
+        this.status = "";
+        this.comment = "";
+        this.recurrencePeriod = null;
+        this.periodType = "";
+        this.dueTime = null;
+        this.reference = "";
+        this.type = "";
+        this.name = "";
+        this.ownerId = 0L;
 
         active = true;
         statuses = new ArrayList<String>();
@@ -91,21 +123,21 @@ public class Alert implements Serializable, BusinessEntity {
         this.recipient = recipient;
     }
 
-    public static ArrayList<String> getStatuses() {
-        if (statuses.isEmpty()) {
-            statuses.add("Job saved");
-            statuses.add("Job entered");
-            statuses.add("Job to be completed");
-            statuses.add("Job costing due");
-            statuses.add("New job email sent");
-            statuses.add("Job update email sent");
-            statuses.add("Job is being tracked");
-        }
-
-        Collections.sort(statuses);
-
-        return statuses;
-    }
+//    public static ArrayList<String> getStatuses() {
+//        if (statuses.isEmpty()) {
+//            statuses.add("Job saved");
+//            statuses.add("Job entered");
+//            statuses.add("Job to be completed");
+//            statuses.add("Job costing due");
+//            statuses.add("New job email sent");
+//            statuses.add("Job update email sent");
+//            statuses.add("Job is being tracked");
+//        }
+//
+//        Collections.sort(statuses);
+//
+//        return statuses;
+//    }
 
     public Long getOwnerId() {
         return ownerId;

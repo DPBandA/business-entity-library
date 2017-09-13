@@ -227,4 +227,5 @@ public class CashPayment implements Serializable, BusinessEntity {
     public MethodResult validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }

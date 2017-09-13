@@ -10,6 +10,5 @@ package jm.com.dpbennett.business.entity;
  */
 public interface BusinessEntityManager {
      public void setDirty(Boolean dirty);
-     public Boolean isDirty();
-     
+     public Boolean isDirty();     
 }

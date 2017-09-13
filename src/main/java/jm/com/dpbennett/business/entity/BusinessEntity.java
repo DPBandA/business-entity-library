@@ -12,10 +12,16 @@ import jm.com.dpbennett.business.utils.MethodResult;
  * @author Desmond
  */
 public interface BusinessEntity {
+   
     public Long getId();
+
     public void setId(Long id);
+
     public String getName();
+
     public void setName(String name);
+
     public MethodResult save(EntityManager em);
-    public MethodResult validate(EntityManager em);
+
+    public MethodResult validate(EntityManager em);      
 }
