@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.utils.MethodResult;
 import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -178,6 +179,8 @@ public class Employee implements Person, Serializable, BusinessEntity, Converter
     }
 
     //@XmlTransient
+    @XmlTransient
+    @JsonIgnore
     public List<Address> getAddresses() {
         return addresses;
     }
@@ -187,6 +190,8 @@ public class Employee implements Person, Serializable, BusinessEntity, Converter
     }
 
     //@XmlTransient
+    @XmlTransient
+    @JsonIgnore
     public List<PhoneNumber> getPhoneNumbers() {
         return phoneNumbers;
     }

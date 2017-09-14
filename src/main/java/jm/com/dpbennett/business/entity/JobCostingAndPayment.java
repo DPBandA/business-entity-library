@@ -22,8 +22,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.utils.MethodResult;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 
 /**
@@ -319,6 +321,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         this.completed = completed;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public List<CashPayment> getCashPayments() {
         return cashPayments;
     }
@@ -463,6 +467,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         this.name = name;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public List<CostComponent> getCostComponents() {
         if (costComponents == null) {
             costComponents = new ArrayList<>();
