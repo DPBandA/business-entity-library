@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.utils.MethodResult;
 
 /**
@@ -25,6 +26,7 @@ import jm.com.dpbennett.business.utils.MethodResult;
  */
 @Entity
 @Table(name = "documenttype")
+@XmlRootElement
 public class DocumentType implements Comparable, BusinessEntity, Serializable, Converter {
 
     private static final long serialVersionUID = 1L;

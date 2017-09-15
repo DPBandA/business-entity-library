@@ -23,6 +23,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.utils.MethodResult;
 
@@ -35,6 +36,7 @@ import jm.com.dpbennett.business.utils.MethodResult;
 @NamedQueries({
     @NamedQuery(name = "findAllLegalDocuments", query = "SELECT l FROM LegalDocument l ORDER BY l.number")
 })
+@XmlRootElement
 public class LegalDocument implements Document, Serializable, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;

@@ -922,11 +922,11 @@ public class BusinessEntityUtils {
     public static Long saveBusinessEntity(EntityManager em, BusinessEntity businessEntity) {
 
         if (businessEntity.getId() != null) {
-            em.merge(businessEntity);
+            em.merge(businessEntity);            
         } else {
             em.persist(businessEntity);
         }
-
+        
         return businessEntity.getId();
     }
 

@@ -97,6 +97,8 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
     private Integer noOfTestsOrCalibrations;
     @Transient
     private Boolean clientDirty;
+    @Transient
+    private Boolean isJobToBeSubcontracted = false;
 
     public Job() {
         clientDirty = false;
@@ -106,6 +108,14 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
     public Job(String jobNumber) {
         this.jobNumber = jobNumber;
         jobSamples = new ArrayList<>();
+    }
+
+    public Boolean getIsJobToBeSubcontracted() {
+        return isJobToBeSubcontracted;
+    }
+
+    public void setIsJobToBeSubcontracted(Boolean isJobToBeSubcontracted) {
+        this.isJobToBeSubcontracted = isJobToBeSubcontracted;
     }
 
     public Boolean getEstimatedTurnAroundTimeRequired() {
@@ -1297,7 +1307,6 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
      }
     
      */
-
     @Override
     public MethodResult save(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -1305,8 +1314,237 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
 
     @Override
     public MethodResult validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Job currentlySavedJob = null;
+        Job currentJob = this;
+
+        // Get currently saved job for later use in validation
+        if (currentJob.getId() != null) {
+            currentlySavedJob = Job.findJobById(em, currentJob.getId());
+        }
+
+        if (!BusinessEntityUtils.validateName(currentJob.getBusinessOffice().getName())) {
+
+            return new MethodResult(false, "This job cannot be saved because a valid business office was not entered.");
+        }
+
+        BusinessOffice Office = BusinessOffice.findBusinessOfficeByName(em, currentJob.getBusinessOffice().getName());
+        if (Office != null) {
+            em.refresh(Office);
+            currentJob.setBusinessOffice(Office);
+        } else {
+            return new MethodResult(false, "This job cannot be saved because a valid business office was not entered.");
+        }
+
+        // Check if job nunmber is already associated with a job        
+        Job existingJob = Job.findJobByJobNumber(em, currentJob.getJobNumber());
+        if (existingJob != null) {
+            //System.out.println("exist id: " + existingJob.getId());
+            long current_jobid = currentJob.getId() != null ? currentJob.getId() : -1L;
+            if (existingJob.getId() != current_jobid) {
+                return new MethodResult(false, "This job cannot be saved because the job number is not unique.");
+            }
+        }
+
+        // get  job number if auto is on
+        if (currentJob.getAutoGenerateJobNumber()) {
+            if (!validateJobNumber(currentJob.getJobNumber(), currentJob.getAutoGenerateJobNumber())) {
+                return new MethodResult(false, "This job cannot be saved because a valid job number was not entered.");
+            }
+        }
+
+        // Validate client
+        if (!BusinessEntityUtils.validateName(currentJob.getClient().getName())) {  
+            return new MethodResult(false,
+                    "This job cannot be saved. Please select a valid client from the list."
+                    + "You may create a new client if you have the privilege and the client's name does not appear in the list.");
+
+        } else if (currentJob.getClient().getId() != null) {
+            currentJob.setClient(Client.getClientById(em, currentJob.getClient().getId()));
+        }
+
+        // Department
+        Department dept = Department.findDepartmentByName(em, currentJob.getDepartment().getName());
+        if (dept == null) {
+            return new MethodResult(false, "This job cannot be saved because a valid department was not entered.");
+        } else {
+            em.refresh(dept);
+            currentJob.setDepartment(dept);
+        }
+        // Subcontracted department   
+        Department subContractedDept = Department.findDepartmentByName(em, currentJob.getSubContractedDepartment().getName());
+        if (subContractedDept == null) {
+            currentJob.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
+        }
+
+        // Check for valid subcontracted department
+        // tk impl isJobToBeSubcontracted in Job use it as it is used in JobManager
+        if (!currentJob.isSubContracted() && getIsJobToBeSubcontracted()) {           
+            return new MethodResult(false, "Please enter a valid subcontracted department.");
+        } else if ((currentlySavedJob != null)
+                && !currentJob.isSubContracted()
+                && currentlySavedJob.isSubContracted()) {
+           
+            // Reset current subcontracted department
+            currentJob.setSubContractedDepartment(currentlySavedJob.getSubContractedDepartment());
+
+            return new MethodResult(false, "Please enter a valid subcontracted department.");
+        }
+
+        // Check for self contracts        
+        if (currentJob.getDepartment().getName().equals(currentJob.getSubContractedDepartment().getName())) {
+            return new MethodResult(false, "The main and subcontracted departments cannot be the same.");
+        }
+
+        // TAT
+        if ((currentJob.getEstimatedTurnAroundTimeInDays() == 0) && currentJob.getEstimatedTurnAroundTimeRequired()) {
+            return new MethodResult(false, "A valid estimated turnaround time (TAT) is required and must be provided.");
+        }
+
+        // assignee
+        Employee assignee = Employee.findEmployeeByName(em, currentJob.getAssignedTo().getName());
+        if (assignee != null) {
+            if (assignee.getName().equals("--, --")
+                    || assignee.getFirstName().trim().equals("")
+                    || assignee.getLastName().trim().equals("")) {
+                return new MethodResult(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
+            }
+            em.refresh(assignee);
+            currentJob.setAssignedTo(assignee);
+        } else {
+            currentJob.setAssignedTo(Employee.findDefaultEmployee(em, "--", "--", true));
+            
+            return new MethodResult(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
+        }
+
+        // Validate Instructions
+        if (currentJob.getInstructions().trim().equals("")) {
+            return new MethodResult(false, "Please enter instructions for this job.");
+        }
+
+        // Classification objects
+        Classification classn = Classification.findClassificationByName(em, currentJob.getClassification().getName());
+        if (classn == null) {
+           return new MethodResult(false, "Please select/enter a job classification.");
+        } else if (classn.getName().equals("--") || classn.getName().trim().equals("")) {
+            return new MethodResult(false, "Please select/enter a job classification.");
+        } else {
+            currentJob.setClassification(classn);
+        }
+
+        Sector sect = Sector.findSectorById(em, currentJob.getSector().getId());
+        if (sect == null) {
+            return new MethodResult(false, "Please select/enter a sector.\"");
+        } else {
+            currentJob.setSector(sect);
+        }
+
+        JobCategory category = JobCategory.findJobCategoryById(em, currentJob.getJobCategory().getId());
+        if (category == null) {
+            return new MethodResult(false, "Please select/enter a job category.");
+        } else {
+            currentJob.setJobCategory(category);
+        }
+
+        JobSubCategory subCategory = JobSubCategory.findJobSubCategoryById(em, currentJob.getJobSubCategory().getId());
+        if (subCategory == null) {
+            return new MethodResult(false, "Please select/enter a job subcategory.");
+        } else {
+            currentJob.setJobSubCategory(subCategory);
+        }
+
+        // Check for valid creation of sub contracts
+        if (currentJob.isSubContracted() && currentJob.getJobSequenceNumber() == null) {
+            return new MethodResult(false, "A main/parent job must be created before creating a subcontracted job.");
+        }
+
+        // Check if job as previously saved as parent job and prevent saving 
+        // suubconttacted job if so
+        if (currentJob.getId() != null) {
+            Job jobFound = Job.findJobById(em, currentJob.getId());
+            if (jobFound != null) {
+                if (!jobFound.isSubContracted() && currentJob.isSubContracted()) {
+                    return new MethodResult(false, "A main/parent job cannot be converted to a subcontracted job.\n"
+                                + "Create a copy of this job instead then convert the copied job to a subcontract.");
+                }
+            }
+        }
+
+        if (currentJob.getJobStatusAndTracking().getCompleted()
+                && currentJob.getJobCostingAndPayment().getFinalCost() == 0.0) {         
+
+            return new MethodResult(false, "A job cannot have a completed 'Work progress' without a final cost.");
+        }
+
+        return new MethodResult();
     }
 
-   
+    public Boolean validateJobNumber(String jobNumber, Boolean auto) {
+        Integer departmentCode = 0;
+        Integer year = 0;
+        Long sequenceNumber = 0L;
+
+        String parts[] = jobNumber.split("/");
+        if (parts != null) {
+            // check for correct number of parts
+            if ((parts.length >= 3)
+                    && (parts.length <= 5)) {
+                // are subgroup code, year and sequence number valid integers/long?
+                try {
+                    if (auto && parts[0].equals("?")) {
+                        // This means the complete job number has not yet
+                        // been generate. Ignore for now.
+                    } else {
+                        departmentCode = Integer.parseInt(parts[0]);
+                    }
+                    year = Integer.parseInt(parts[1]);
+                    if (auto && parts[2].equals("?")) {
+                        // This means the complete job number has not yet
+                        // been generate. Ignore for now.
+                    } else {
+                        sequenceNumber = Long.parseLong(parts[2]);
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println(e);
+                    return false;
+                }
+                // subgroup code, year and deparment code have valid ranges?
+                if (auto && parts[0].equals("?")) {
+                    // This means the complete job number has not yet
+                    // been generate. Ignore for now.
+                } else if (departmentCode < 0) {
+                    return false;
+                }
+                if (year < 1970) {
+                    return false;
+                }
+                if (auto && parts[2].equals("?")) {
+                    // This means the complete job number has not yet
+                    // been generate. Ignore for now.
+                } else if (sequenceNumber < 1L) {
+                    return false;
+                }
+                // validate 4th part that can be an integer for a department
+                // code or a sample reference(s)
+                if (parts.length > 3) {
+                    try {
+                        departmentCode = Integer.parseInt(parts[3]);
+                        if (departmentCode < 0) {
+                            return false;
+                        }
+                    } catch (NumberFormatException e) {
+                        // this means 4th part is not a department code
+                        // and that's ok for now.
+                        System.out.println("Job number validation error: This means 4th part is not a department code.: " + e);
+                    }
+                }
+                // all is well here
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
 }
