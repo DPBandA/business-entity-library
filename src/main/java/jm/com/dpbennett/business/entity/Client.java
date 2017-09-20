@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -40,49 +37,63 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlRootElement
-public class Client implements Customer, Serializable, BusinessEntity, Converter {
+public class Client implements Customer, Serializable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id = null;
-    private String name = "";
-    private String number = "";
-    private String type = "";
+    private Long id;
+    private String name;
+    private String number;
+    private String type;
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Contact> contacts = null;
+    private List<Contact> contacts;
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Address> addresses = null;
+    private List<Address> addresses;
     @OneToOne(cascade = CascadeType.ALL)
-    private Internet internet = null;
-    private String notes = "";
-    private Boolean internal = false;
+    private Internet internet;
+    private String notes;
+    private Boolean internal;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateFirstReceived = null;
+    private Date dateFirstReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastAccessed = null;
-    private Boolean tag = false;
-    private String taxRegistrationNumber = "";
-    private Boolean active = null;
+    private Date dateLastAccessed;
+    private Boolean tag;
+    private String taxRegistrationNumber;
+    private Boolean active;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEntered = null;
+    private Date dateEntered;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee enteredBy = null;
+    private Employee enteredBy;
     private Boolean international;
 
     public Client() {
+        this.taxRegistrationNumber = "";
+        this.tag = false;
+        this.internal = false;
+        this.notes = "";
+        this.type = "";
+        this.number = "";
+        this.name = "";
         contacts = new ArrayList<>();
         addresses = new ArrayList<>();
         internet = new Internet();
         active = true;
+        international = false;
     }
 
     public Client(Client src, Boolean active) {
         doCopy(src);
-        active = src.active;
+        this.active = active;
     }
 
     public Client(String name) {
+        this.taxRegistrationNumber = "";
+        this.tag = false;
+        this.internal = false;
+        this.notes = "";
+        this.type = "";
+        this.number = "";
         this.name = name;
         contacts = new ArrayList<>();
         addresses = new ArrayList<>();
@@ -91,6 +102,12 @@ public class Client implements Customer, Serializable, BusinessEntity, Converter
     }
 
     public Client(String name, Boolean active) {
+        this.taxRegistrationNumber = "";
+        this.tag = false;
+        this.internal = false;
+        this.notes = "";
+        this.type = "";
+        this.number = "";
         this.name = name;
         contacts = new ArrayList<>();
         addresses = new ArrayList<>();
@@ -672,33 +689,6 @@ public class Client implements Customer, Serializable, BusinessEntity, Converter
             return clients;
         } catch (Exception e) {
             return null;
-        }
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
-
-        if (submittedValue.trim().equals("")) {
-            return null;
-        } else {
-            Client client = new Client();
-            client.setName(submittedValue.trim());
-
-            return client;
-        }
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-
-        if (value == null || value.equals("")) {
-            return "";
-        } else {
-            if (((Client) value).getName() != null) {
-                return ((Client) value).getName().replaceAll("&#38;", "&");
-            } else {
-                return "";
-            }
         }
     }
 
