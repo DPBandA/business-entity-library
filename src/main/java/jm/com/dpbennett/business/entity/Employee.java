@@ -44,7 +44,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "findAllEmployees", query = "SELECT e FROM Employee e ORDER BY e.lastName")
 })
 @XmlRootElement
-public class Employee implements Person, Serializable, BusinessEntity, Converter {
+public class Employee implements Person, Serializable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;
     @Id
@@ -501,23 +501,7 @@ public class Employee implements Person, Serializable, BusinessEntity, Converter
 
     public static Employee findEmployeeById(EntityManager em, Long Id) {
         return em.find(Employee.class, Id);
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        Employee employee = new Employee();
-
-        if (value != null) {
-            employee.setName(value);
-        }
-
-        return employee;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((Employee) value).getName();
-    }
+    }    
 
     public static Employee findDefaultEmployee(
             EntityManager em,

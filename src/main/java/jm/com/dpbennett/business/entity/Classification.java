@@ -13,11 +13,13 @@ import javax.faces.convert.Converter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.utils.MethodResult;
@@ -33,18 +35,22 @@ import jm.com.dpbennett.business.utils.MethodResult;
     @NamedQuery(name = "findAllActiveClassifications", query = "SELECT c FROM Classification c WHERE c.active = 1 ORDER BY c.name")
 })
 @XmlRootElement
-public class Classification implements BusinessEntity, Serializable, Converter {
+public class Classification implements BusinessEntity, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id = null;
-    private String name = "";
+    private Long id;
+    private String name;
     private Boolean active;
     @Column(length = 1024)
     private String description;
     private Boolean isEarning;
 
+    public Classification() {
+        this.name = "";
+    }
+    
     @Override
     public Long getId() {
         return id;
@@ -241,33 +247,6 @@ public class Classification implements BusinessEntity, Serializable, Converter {
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
-        }
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
-
-        if (submittedValue.trim().equals("")) {
-            return null;
-        } else {
-            Classification classification = new Classification();
-            classification.setName(submittedValue.trim());
-
-            return classification;
-        }
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-
-        if (value == null || value.equals("")) {
-            return "";
-        } else {
-            if (((Classification) value).getName() != null) {
-                return ((Classification) value).getName().replaceAll("&#38;", "&");
-            } else {
-                return "";
-            }
         }
     }
 

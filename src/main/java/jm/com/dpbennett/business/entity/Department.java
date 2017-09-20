@@ -42,7 +42,7 @@ import jm.com.dpbennett.business.utils.MethodResult;
     @NamedQuery(name = "findBySubGroupCode", query = "SELECT e FROM Department e WHERE e.subGroupCode = :subGroupCode")
 })
 @XmlRootElement
-public class Department implements Serializable, BusinessEntity, Converter, Comparable {
+public class Department implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;
     @Id
@@ -385,23 +385,7 @@ public class Department implements Serializable, BusinessEntity, Converter, Comp
         } catch (Exception e) {
             return null;
         }
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        Department department = new Department();
-
-        if (value != null) {
-            department.setName(value);
-        }
-
-        return department;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((Department) value).getName();
-    }
+    }    
 
     @Override
     public int compareTo(Object o) {

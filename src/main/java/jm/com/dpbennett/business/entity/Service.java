@@ -9,9 +9,6 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -28,7 +25,7 @@ import jm.com.dpbennett.business.utils.MethodResult;
  */
 @Entity
 @Table(name = "service")
-public class Service implements Serializable, BusinessEntity, Comparable, Converter {
+public class Service implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -39,12 +36,12 @@ public class Service implements Serializable, BusinessEntity, Comparable, Conver
     private List<Department> departmentsOfferingService;
 
     public Service() {
-        departmentsOfferingService = new ArrayList<Department>();
+        departmentsOfferingService = new ArrayList<>();
     }
     
     public Service(String name) {
         this.name = name;
-        departmentsOfferingService = new ArrayList<Department>();
+        departmentsOfferingService = new ArrayList<>();
     }
 
     @Override
@@ -145,22 +142,6 @@ public class Service implements Serializable, BusinessEntity, Comparable, Conver
             System.out.println(e);
             return new ArrayList<Service>();
         }
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-         Service service = new Service();
-
-        if (value != null) {
-            service.setName(value);
-        }
-
-        return service;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((Service)value).getName();
     }
 
     @Override

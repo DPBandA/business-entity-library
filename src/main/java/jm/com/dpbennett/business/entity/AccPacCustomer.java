@@ -23,7 +23,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "ARCUS")
-public class AccPacCustomer implements Serializable, Converter {
+public class AccPacCustomer implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -250,28 +250,28 @@ public class AccPacCustomer implements Serializable, Converter {
         }
     }
 
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
-        if (submittedValue.trim().equals("")) {
-            return null;
-        } else {
-            AccPacCustomer customer = new AccPacCustomer();
-            customer.setCustomerName(submittedValue.trim());
-
-            return customer;
-        }
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        if (value == null || value.equals("")) {
-            return "";
-        } else {
-            if (((AccPacCustomer) value).getCustomerName() != null) {
-                return ((AccPacCustomer) value).getCustomerName().replaceAll("&amp;", "&&"); // org &#38;
-            } else {
-                return "";
-            }
-        }
-    }
+//    @Override
+//    public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
+//        if (submittedValue.trim().equals("")) {
+//            return null;
+//        } else {
+//            AccPacCustomer customer = new AccPacCustomer();
+//            customer.setCustomerName(submittedValue.trim());
+//
+//            return customer;
+//        }
+//    }
+//
+//    @Override
+//    public String getAsString(FacesContext context, UIComponent component, Object value) {
+//        if (value == null || value.equals("")) {
+//            return "";
+//        } else {
+//            if (((AccPacCustomer) value).getCustomerName() != null) {
+//                return ((AccPacCustomer) value).getCustomerName().replaceAll("&amp;", "&&"); // org &#38;
+//            } else {
+//                return "";
+//            }
+//        }
+//    }
 }

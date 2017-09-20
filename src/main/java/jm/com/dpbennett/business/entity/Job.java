@@ -1401,6 +1401,7 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
         }
 
         // assignee
+        System.out.println("assign to: " + currentJob.getAssignedTo().getId());
         Employee assignee = Employee.findEmployeeByName(em, currentJob.getAssignedTo().getName());
         if (assignee != null) {
             if (assignee.getName().equals("--, --")

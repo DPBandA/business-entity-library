@@ -4,6 +4,7 @@
  */
 package jm.com.dpbennett.business.utils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import jm.com.dpbennett.business.entity.DatePeriod;
 
@@ -11,7 +12,7 @@ import jm.com.dpbennett.business.entity.DatePeriod;
  *
  * @author dbennett
  */
-public class SearchParameters {
+public class SearchParameters implements Serializable {
 
     private String name;
      private String jobType;
@@ -26,7 +27,7 @@ public class SearchParameters {
     private DatePeriod datePeriod;
     private String searchText;
 
-    public SearchParameters(
+    public SearchParameters (
             String name,
             ArrayList jobTypes,
             Boolean showJobTypes,

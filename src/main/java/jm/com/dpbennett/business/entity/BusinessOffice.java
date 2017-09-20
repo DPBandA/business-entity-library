@@ -35,32 +35,48 @@ import jm.com.dpbennett.business.utils.MethodResult;
     @NamedQuery(name = "findAllBusinessOffices", query = "SELECT e FROM BusinessOffice e ORDER BY e.name")
 })
 @XmlRootElement
-public class BusinessOffice implements Serializable, BusinessEntity, Converter {
+public class BusinessOffice implements Serializable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id = null;
-    private String name = "";
+    private Long id;
+    private String name;
     @OneToOne(cascade = CascadeType.ALL)
-    private Internet internet = null;
+    private Internet internet;
     @OneToOne(cascade = CascadeType.ALL)
     private Address address;
-    private String code = "";
-    private Boolean active = false;
+    private String code;
+    private Boolean active;
 
     public BusinessOffice() {
+        this.active = false;
+        this.code = "";
+        this.internet = null;
+        this.name = "";
     }
 
     public BusinessOffice(String name) {
+        this.active = false;
+        this.code = "";
+        this.internet = null;
+        this.name = "";
         this.name = name;
     }
 
     public BusinessOffice(BusinessOffice src, Long id) {
+        this.active = false;
+        this.code = "";
+        this.internet = null;
+        this.name = "";
         doCopy(src, id);
     }
 
     public BusinessOffice(BusinessOffice src) {
+        this.active = false;
+        this.code = "";
+        this.internet = null;
+        this.name = "";
         doCopy(src);
     }
 
@@ -271,23 +287,7 @@ public class BusinessOffice implements Serializable, BusinessEntity, Converter {
             return null;
         }
     }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-
-        BusinessOffice office = new BusinessOffice();
-
-        if (value != null) {
-            office.setName(value);
-        }
-
-        return office;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((BusinessOffice) value).getName();
-    }
+  
 
     public static BusinessOffice getDefaultBusinessOffice(EntityManager em, String name) {
         BusinessOffice office = BusinessOffice.findBusinessOfficeByName(em, name);
