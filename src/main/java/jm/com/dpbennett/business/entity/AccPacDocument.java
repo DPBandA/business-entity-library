@@ -18,6 +18,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  *
@@ -54,26 +55,11 @@ public class AccPacDocument implements Serializable {
     @Column(name = "TRXTYPETXT", columnDefinition = "SMALLINT(5,0)")
     private Integer documentType;
     @Column(name = "SWPAID", columnDefinition = "SMALLINT(5,0)")
-    private Integer fullyPaid;
-    // other
-//    @Column(name = "AUDTDATE", columnDefinition = "DECIMAL(9,0)")
-//    private BigDecimal audtDate;
-//    @Column(name = "AUDTTIME", columnDefinition = "DECIMAL(9,0)")
-//    private BigDecimal audtTime;
-//    @Column(name = "AUDTUSER", length = 8)
-//    private String audtUser;
-//    @Column(name = "AUDTORG", length = 6)
-//    private String audtOrg;
-//    @Column(name = "IDRMIT", length = 24)
-//    private String IDRMIT;
-//    @Column(name = "IDORDERNBR", length = 22)
-//    private String IDORDERNBR;
-//    @Column(name = "IDCUSTPO", length = 22)
-//    private String IDCUSTPO;
-//    @Column(name = "IDNATACCT", length = 12)
-//    private String IDNATACCT;
-//    @Column(name = "IDCUSTSHPT", length = 6)
-//    private String IDCUSTSHPT;
+    private Integer fullyPaid; 
+    
+    public AccPacDocument() {
+        
+    }
 
     public String getId() {
         return id;
