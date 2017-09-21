@@ -1362,7 +1362,7 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
             currentJob.setClient(Client.getClientById(em, currentJob.getClient().getId()));
         }
 
-        // Department
+        // Department        
         Department dept = Department.findDepartmentByName(em, currentJob.getDepartment().getName());
         if (dept == null) {
             return new MethodResult(false, "This job cannot be saved because a valid department was not entered.");
@@ -1400,8 +1400,7 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
             return new MethodResult(false, "A valid estimated turnaround time (TAT) is required and must be provided.");
         }
 
-        // assignee
-        System.out.println("assign to: " + currentJob.getAssignedTo().getId());
+        // Assignee       
         Employee assignee = Employee.findEmployeeByName(em, currentJob.getAssignedTo().getName());
         if (assignee != null) {
             if (assignee.getName().equals("--, --")
