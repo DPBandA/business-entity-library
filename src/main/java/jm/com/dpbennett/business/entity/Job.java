@@ -98,16 +98,27 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
     @Transient
     private Boolean clientDirty;
     @Transient
-    private Boolean isJobToBeSubcontracted = false;
+    private Boolean isJobToBeSubcontracted;
+    private Long billingAddressId;
 
     public Job() {
+        this.isJobToBeSubcontracted = false;
         clientDirty = false;
-        jobSamples = new ArrayList<>();
+        jobSamples = new ArrayList<>();        
     }
 
     public Job(String jobNumber) {
+        this.isJobToBeSubcontracted = false;
         this.jobNumber = jobNumber;
         jobSamples = new ArrayList<>();
+    }
+
+    public Long getBillingAddressId() {
+        return billingAddressId;
+    }
+
+    public void setBillingAddressId(Long billingAddressId) {
+        this.billingAddressId = billingAddressId;
     }
 
     public Boolean getIsJobToBeSubcontracted() {
@@ -172,6 +183,7 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
     }
 
     public Job(JobSubCategory jobSubCategory, Double finalCost) {
+        this.isJobToBeSubcontracted = false;
         this.jobCostingAndPayment = new JobCostingAndPayment();
         this.jobCostingAndPayment.setFinalCost(finalCost);
         this.jobSubCategory = jobSubCategory;

@@ -52,6 +52,11 @@ public class JobCategory implements Serializable, BusinessEntity {
         departments = new ArrayList<>();
     }
 
+    public JobCategory(String category) {
+        this.category = category;
+        departments = new ArrayList<>();
+    }
+    
     @Override
     public Long getId() {
         return id;

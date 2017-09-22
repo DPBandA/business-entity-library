@@ -50,6 +50,11 @@ public class Sector implements BusinessEntity, Serializable {
     public Sector() {
         departments = new ArrayList<>();
     }
+    
+    public Sector(String name) {
+        this.name = name;
+        departments = new ArrayList<>();
+    }
 
     @Override
     public Long getId() {

@@ -38,26 +38,49 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long Id;
-    private String type = "";
-    private String addressLine1 = "";
-    private String addressLine2 = "";
-    private String city = "";
-    private String stateOrProvince = "";
-    private String postalCode = "";
-    private String country = "";
-    private String name = "";
+    private String type;
+    private String addressLine1;
+    private String addressLine2;
+    private String city;
+    private String stateOrProvince;
+    private String postalCode;
+    private String country;
+    private String name;
 
-    public Address() {
+    public Address() {     
+        this.name = "";
+        this.country = "";
+        this.postalCode = "";
+        this.stateOrProvince = "";
+        this.city = "";
+        this.addressLine2 = "";
+        this.addressLine1 = "";
+        this.type = "";
     }
 
-    public Address(Address src) {
+    public Address(Address src) {        
+        this.name = "";
+        this.country = "";
+        this.postalCode = "";
+        this.stateOrProvince = "";
+        this.city = "";
+        this.addressLine2 = "";
+        this.addressLine1 = "";
+        this.type = "";
         this.Id = null;
         doCopy(src);
     }
 
-    public Address(String name) {
-        this.Id = null;
+    public Address(String name) {    
         this.name = name;
+        this.country = "";
+        this.postalCode = "";
+        this.stateOrProvince = "";
+        this.city = "";
+        this.addressLine2 = "";
+        this.addressLine1 = "";
+        this.type = "";
+        this.Id = null;        
     }
 
     public final void doCopy(Address src) {
@@ -166,16 +189,13 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+    public boolean equals(Object object) {        
         if (!(object instanceof Address)) {
             return false;
         }
         Address other = (Address) object;
-        if ((this.Id == null && other.Id != null) || (this.Id != null && !this.Id.equals(other.Id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.Id == null && other.Id != null) || (this.Id != null && !this.Id.equals(other.Id)));
     }
 
     @Override
@@ -197,6 +217,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         if (name == null) {
             name = "";
         }
+        
         return name;
     }
 
@@ -204,8 +225,8 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     public int compareTo(Object o) {
         if ((((Address) o).Id != null) && (this.Id != null)) {
             return Collator.getInstance().compare(
-                    new Long(((Address) o).Id).toString(),
-                    new Long(this.Id).toString());
+                    ((Address) o).Id.toString(),
+                    this.Id.toString());
         } else {
             return 0;
         }
@@ -263,6 +284,28 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
             return null;
         } catch (Exception e) {
             System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static Address findClientAddress(Client client, String query) {
+        for (Address address : client.getAddresses()) {
+            if (address.toString().equals(query)) {
+                return address;
+            }
+        }
+        
+        return null;
+    }
+    
+    public static Address findAddressById(EntityManager em, Long id) {
+
+        try {
+            Address address = em.find(Address.class, id);
+
+            return address;
+        } catch (Exception e) {
+
             return null;
         }
     }

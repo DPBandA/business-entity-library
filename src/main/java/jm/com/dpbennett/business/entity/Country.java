@@ -36,6 +36,14 @@ public class Country implements Serializable, BusinessEntity {
     private String name;
     private String twoDigitCode;
 
+    public Country() {
+        name = "";
+    }
+
+    public Country(String name) {
+        this.name = name;
+    }
+    
     @Override
     public Long getId() {
         return id;
@@ -76,7 +84,7 @@ public class Country implements Serializable, BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.com.dpbennett.entity.Country[ id=" + id + " ]";
+        return name;
     }
 
     @Override
@@ -113,6 +121,25 @@ public class Country implements Serializable, BusinessEntity {
             System.out.println(e);
             return new ArrayList<>();
         }
+    }
+    
+    public static Country findCountryByName(EntityManager em, String countryName) {
+
+        try {
+            String newCountryName = countryName.trim().replaceAll("'", "''");
+
+            List<Country> countries = em.createQuery("SELECT c FROM Sector c "
+                    + "WHERE UPPER(c.name) "
+                    + "= '" + newCountryName.toUpperCase() + "'", Country.class).getResultList();
+            if (countries.size() > 0) {
+                return countries.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
     }
 
     @Override

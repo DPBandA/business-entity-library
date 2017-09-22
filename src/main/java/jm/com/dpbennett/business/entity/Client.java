@@ -491,7 +491,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-
+    
     public static List<Client> findActiveClientsByFirstPartOfName(EntityManager em, String name) {
 
         try {

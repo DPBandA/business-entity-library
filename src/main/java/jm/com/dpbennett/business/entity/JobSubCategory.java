@@ -59,6 +59,11 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
         departments = new ArrayList<>();
     }
 
+    public JobSubCategory(String subCategory) {
+        this.subCategory = subCategory;
+        departments = new ArrayList<>();
+    }
+
     @Override
     public Long getId() {
         return id;
