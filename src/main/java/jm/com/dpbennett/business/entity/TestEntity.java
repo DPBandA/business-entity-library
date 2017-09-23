@@ -2159,10 +2159,9 @@ public class TestEntity {
 
     // TK: End BusinessEntityUtils code used for testing
     public static void main(String[] args) {      
-        int number = 411;
-        String alphabet = convertNumberToAlphabet(number);
-
-        System.out.println(number + " is " + convertNumberToAlphabet(number));
-        System.out.println(alphabet + " is " + convertAlphabetToNumber(alphabet, alphabet.length(), 0));
+        if (setupDatabaseConnection("PU")) {
+            EntityManager em = EMF.createEntityManager();
+            System.out.println("Address: " + Address.findClientAddress(em, "85 Young Street"));
+        }
     }
 }

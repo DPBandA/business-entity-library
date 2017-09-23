@@ -200,10 +200,10 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     @Override
     public String toString() {
-        return (getAddressLine1().trim().isEmpty() ? "" : getAddressLine1())
-                + (getAddressLine2().trim().isEmpty() ? "" : ", " + getAddressLine2())
-                + (getCity().trim().isEmpty() ? "" : ", " + getCity())
-                + (getStateOrProvince().trim().isEmpty() ? "" : ", " + getStateOrProvince())
+        return (getAddressLine1().isEmpty() ? "" : getAddressLine1())
+                + (getAddressLine2().isEmpty() ? "" : ", " + getAddressLine2())
+                + (getCity().isEmpty() ? "" : ", " + getCity())
+                + (getStateOrProvince().isEmpty() ? "" : ", " + getStateOrProvince())
                 + "\n";
     }
 
@@ -215,9 +215,9 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     @Override
     public String getName() {
         if (name == null) {
-            name = "";
+            name = toString();
         }
-        
+       
         return name;
     }
 
@@ -288,16 +288,34 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         }
     }
     
-    public static Address findClientAddress(Client client, String query) {
-        for (Address address : client.getAddresses()) {
-            if (address.toString().equals(query)) {
-                return address;
+    /**
+     * Find an associated with a client.
+     * @param em
+     * @param query
+     * @return 
+     */
+    public static Address findClientAddress(EntityManager em, String query) {
+
+        try {
+            String newQuery= query.trim().replaceAll("'", "''");
+            newQuery = newQuery.split(",")[0]; // addressLine1
+            
+            System.out.println("addr query: " +newQuery );
+
+            List<Address> addresses = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
+                    + " WHERE a.addressLine1 = '" + newQuery + "'"
+                    + "", 
+                    Address.class).getResultList();
+            if (addresses.size() > 0) {
+                return addresses.get(0);
             }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
         }
-        
-        return null;
     }
-    
+       
     public static Address findAddressById(EntityManager em, Long id) {
 
         try {
@@ -312,11 +330,11 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     @Override
     public MethodResult save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     @Override
     public MethodResult validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 }

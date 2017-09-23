@@ -99,12 +99,13 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
     private Boolean clientDirty;
     @Transient
     private Boolean isJobToBeSubcontracted;
-    private Long billingAddressId;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Address billingAddress;
 
     public Job() {
         this.isJobToBeSubcontracted = false;
         clientDirty = false;
-        jobSamples = new ArrayList<>();        
+        jobSamples = new ArrayList<>();
     }
 
     public Job(String jobNumber) {
@@ -113,12 +114,15 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
         jobSamples = new ArrayList<>();
     }
 
-    public Long getBillingAddressId() {
-        return billingAddressId;
+    public Address getBillingAddress() {
+        if (billingAddress == null) {
+            billingAddress = getClient().getBillingAddress();
+        }
+        return billingAddress;
     }
 
-    public void setBillingAddressId(Long billingAddressId) {
-        this.billingAddressId = billingAddressId;
+    public void setBillingAddress(Address billingAddress) {
+        this.billingAddress = billingAddress;
     }
 
     public Boolean getIsJobToBeSubcontracted() {
@@ -1365,7 +1369,7 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
         }
 
         // Validate client
-        if (!BusinessEntityUtils.validateName(currentJob.getClient().getName())) {  
+        if (!BusinessEntityUtils.validateName(currentJob.getClient().getName())) {
             return new MethodResult(false,
                     "This job cannot be saved. Please select a valid client from the list."
                     + "You may create a new client if you have the privilege and the client's name does not appear in the list.");
@@ -1390,12 +1394,12 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
 
         // Check for valid subcontracted department
         // tk impl isJobToBeSubcontracted in Job use it as it is used in JobManager
-        if (!currentJob.isSubContracted() && getIsJobToBeSubcontracted()) {           
+        if (!currentJob.isSubContracted() && getIsJobToBeSubcontracted()) {
             return new MethodResult(false, "Please enter a valid subcontracted department.");
         } else if ((currentlySavedJob != null)
                 && !currentJob.isSubContracted()
                 && currentlySavedJob.isSubContracted()) {
-           
+
             // Reset current subcontracted department
             currentJob.setSubContractedDepartment(currentlySavedJob.getSubContractedDepartment());
 
@@ -1424,7 +1428,7 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
             currentJob.setAssignedTo(assignee);
         } else {
             currentJob.setAssignedTo(Employee.findDefaultEmployee(em, "--", "--", true));
-            
+
             return new MethodResult(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
         }
 
@@ -1436,7 +1440,7 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
         // Classification objects
         Classification classn = Classification.findClassificationByName(em, currentJob.getClassification().getName());
         if (classn == null) {
-           return new MethodResult(false, "Please select/enter a job classification.");
+            return new MethodResult(false, "Please select/enter a job classification.");
         } else if (classn.getName().equals("--") || classn.getName().trim().equals("")) {
             return new MethodResult(false, "Please select/enter a job classification.");
         } else {
@@ -1476,13 +1480,13 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
             if (jobFound != null) {
                 if (!jobFound.isSubContracted() && currentJob.isSubContracted()) {
                     return new MethodResult(false, "A main/parent job cannot be converted to a subcontracted job.\n"
-                                + "Create a copy of this job instead then convert the copied job to a subcontract.");
+                            + "Create a copy of this job instead then convert the copied job to a subcontract.");
                 }
             }
         }
 
         if (currentJob.getJobStatusAndTracking().getCompleted()
-                && currentJob.getJobCostingAndPayment().getFinalCost() == 0.0) {         
+                && currentJob.getJobCostingAndPayment().getFinalCost() == 0.0) {
 
             return new MethodResult(false, "A job cannot have a completed 'Work progress' without a final cost.");
         }
