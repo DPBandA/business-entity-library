@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jm.com.dpbennett.business.management;
+package jm.com.dpbennett.business.entity.management;
 
-import jm.com.dpbennett.business.utils.SearchParameters;
+import jm.com.dpbennett.business.entity.utils.SearchParameters;
 
 
 /**

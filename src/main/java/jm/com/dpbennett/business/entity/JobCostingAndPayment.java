@@ -23,8 +23,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import jm.com.dpbennett.business.utils.BusinessEntityUtils;
-import jm.com.dpbennett.business.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.MethodResult;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 

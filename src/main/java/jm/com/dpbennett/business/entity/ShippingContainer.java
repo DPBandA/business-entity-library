@@ -13,7 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
-import jm.com.dpbennett.business.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.MethodResult;
 
 /**
  *

@@ -17,7 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import jm.com.dpbennett.business.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.MethodResult;
 
 /**
  *

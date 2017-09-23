@@ -18,7 +18,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import jm.com.dpbennett.business.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.MethodResult;
 
 /**
  *

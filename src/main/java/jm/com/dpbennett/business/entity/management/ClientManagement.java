@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jm.com.dpbennett.business.management;
+package jm.com.dpbennett.business.entity.management;
 
 import javax.persistence.EntityManagerFactory;
 import jm.com.dpbennett.business.entity.BusinessEntityManager;

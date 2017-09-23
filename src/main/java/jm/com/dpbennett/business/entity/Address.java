@@ -17,10 +17,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import jm.com.dpbennett.business.utils.BusinessEntityUtils;
-import jm.com.dpbennett.business.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.MethodResult;
 
 /**
  *
@@ -47,7 +48,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     private String country;
     private String name;
 
-    public Address() {     
+    public Address() {
         this.name = "";
         this.country = "";
         this.postalCode = "";
@@ -58,7 +59,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         this.type = "";
     }
 
-    public Address(Address src) {        
+    public Address(Address src) {
         this.name = "";
         this.country = "";
         this.postalCode = "";
@@ -71,7 +72,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         doCopy(src);
     }
 
-    public Address(String name) {    
+    public Address(String name) {
         this.name = name;
         this.country = "";
         this.postalCode = "";
@@ -80,7 +81,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         this.addressLine2 = "";
         this.addressLine1 = "";
         this.type = "";
-        this.Id = null;        
+        this.Id = null;
     }
 
     public final void doCopy(Address src) {
@@ -189,22 +190,25 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     @Override
-    public boolean equals(Object object) {        
+    public boolean equals(Object object) {
         if (!(object instanceof Address)) {
             return false;
         }
         Address other = (Address) object;
-        
+
         return !((this.Id == null && other.Id != null) || (this.Id != null && !this.Id.equals(other.Id)));
     }
 
     @Override
     public String toString() {
-        return (getAddressLine1().isEmpty() ? "" : getAddressLine1())
-                + (getAddressLine2().isEmpty() ? "" : ", " + getAddressLine2())
-                + (getCity().isEmpty() ? "" : ", " + getCity())
-                + (getStateOrProvince().isEmpty() ? "" : ", " + getStateOrProvince())
-                + "\n";
+//        return (getAddressLine1().isEmpty() ? "" : getAddressLine1())
+//                + (getAddressLine2().isEmpty() ? "" : ", " + getAddressLine2())
+//                + (getCity().isEmpty() ? "" : ", " + getCity())
+//                + (getStateOrProvince().isEmpty() ? "" : ", " + getStateOrProvince());
+        return getAddressLine1()
+                + ", " + getAddressLine2()
+                + ", " + getCity()
+                + ", " + getStateOrProvince();
     }
 
     @Override
@@ -217,7 +221,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         if (name == null) {
             name = toString();
         }
-       
+
         return name;
     }
 
@@ -247,17 +251,17 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         return ((Address) value).getName();
     }
-    
+
     public static Address findDefaultAddress(
             EntityManager em,
             String name,
             Boolean useTransaction) {
-         
+
         Address address = findAddressByName(em, name);
 
         if (address == null) {
             address = new Address(name);
-            
+
             if (useTransaction) {
                 em.getTransaction().begin();
                 BusinessEntityUtils.saveBusinessEntity(em, address);
@@ -287,25 +291,33 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
             return null;
         }
     }
-    
+
     /**
      * Find an associated with a client.
+     *
      * @param em
      * @param query
-     * @return 
+     * @return
      */
     public static Address findClientAddress(EntityManager em, String query) {
 
         try {
-            String newQuery= query.trim().replaceAll("'", "''");
-            newQuery = newQuery.split(",")[0]; // addressLine1
-            
-            System.out.println("addr query: " +newQuery );
+            String newQuery = query.trim().replaceAll("'", "''");
+            String address[] = newQuery.split(", ");
+            String addressLine1 = address[0];
+            String addressLine2 = address[1];
+            String city = address[2];
+            String stateOrProvince = address[3];
 
-            List<Address> addresses = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
-                    + " WHERE a.addressLine1 = '" + newQuery + "'"
-                    + "", 
-                    Address.class).getResultList();
+            List<Address> addresses;
+            Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
+                    + " WHERE a.addressLine1 = '" + addressLine1 + "'"
+                    + " AND (a.addressLine2 = '" + addressLine2 + "' OR a.addressLine2 IS NULL)"
+                    + " AND (a.city = '" + city + "' OR a.city IS NULL)"
+                    + " AND (a.stateOrProvince = '" + stateOrProvince + "' OR a.stateOrProvince IS NULL)",
+                    Address.class);
+            addresses = SQLQuery.getResultList();
+
             if (addresses.size() > 0) {
                 return addresses.get(0);
             }
@@ -315,7 +327,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
             return null;
         }
     }
-       
+
     public static Address findAddressById(EntityManager em, Long id) {
 
         try {
@@ -330,11 +342,11 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     @Override
     public MethodResult save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public MethodResult validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

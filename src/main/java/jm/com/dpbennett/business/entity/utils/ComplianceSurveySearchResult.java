@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jm.com.dpbennett.business.utils;
+package jm.com.dpbennett.business.entity.utils;
 
 import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;

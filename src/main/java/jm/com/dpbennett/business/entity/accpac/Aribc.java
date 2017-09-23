@@ -14,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import jm.com.dpbennett.business.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 
 /**
  * AccPac Invoice Batches table

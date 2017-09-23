@@ -22,7 +22,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import jm.com.dpbennett.business.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.MethodResult;
 
 /**
  *

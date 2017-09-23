@@ -1,5 +1,5 @@
 
-package jm.com.dpbennett.business.utils;
+package jm.com.dpbennett.business.entity.utils;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;

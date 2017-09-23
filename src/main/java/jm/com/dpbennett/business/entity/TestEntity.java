@@ -23,7 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-import jm.com.dpbennett.business.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -2161,7 +2161,7 @@ public class TestEntity {
     public static void main(String[] args) {      
         if (setupDatabaseConnection("PU")) {
             EntityManager em = EMF.createEntityManager();
-            System.out.println("Address: " + Address.findClientAddress(em, "85 Young Street"));
+            System.out.println("Address: " + Address.findClientAddress(em, "85 Young Street, Spanish Town, , Trelawny"));
         }
     }
 }
