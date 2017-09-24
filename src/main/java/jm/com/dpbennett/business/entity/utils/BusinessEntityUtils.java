@@ -1,4 +1,3 @@
-
 package jm.com.dpbennett.business.entity.utils;
 
 import java.lang.reflect.Method;
@@ -47,7 +46,6 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 
 /**
  *
@@ -158,7 +156,7 @@ public class BusinessEntityUtils {
                 rowIndex, //last row
                 0, //first column
                 widthInColumns - 1 //last column
-                ));
+        ));
         // Set header title
         headerRow.getCell(0).setCellValue(new HSSFRichTextString(header));
     }
@@ -502,6 +500,8 @@ public class BusinessEntityUtils {
         } else if (containsChar(name, '"')) {
             return false;
         } else if (name.contains("''")) {
+            return false;
+        } else if (name.contains(";")) {
             return false;
         }
 
@@ -922,11 +922,11 @@ public class BusinessEntityUtils {
     public static Long saveBusinessEntity(EntityManager em, BusinessEntity businessEntity) {
 
         if (businessEntity.getId() != null) {
-            em.merge(businessEntity);            
+            em.merge(businessEntity);
         } else {
             em.persist(businessEntity);
         }
-        
+
         return businessEntity.getId();
     }
 
@@ -1430,11 +1430,11 @@ public class BusinessEntityUtils {
     public static DatePeriod[] getMonthlyReportDatePeriods(DatePeriod reportingPeriod) {
 
         // previous reporting period
-        DatePeriod previousReportingPeriod =
-                new DatePeriod("Previous reporting period", "month",
-                BusinessEntityUtils.adjustDate(reportingPeriod.getStartDate(), Calendar.MONTH, -1),
-                BusinessEntityUtils.adjustDate(reportingPeriod.getEndDate(), Calendar.MONTH, -1),
-                false, false, true);
+        DatePeriod previousReportingPeriod
+                = new DatePeriod("Previous reporting period", "month",
+                        BusinessEntityUtils.adjustDate(reportingPeriod.getStartDate(), Calendar.MONTH, -1),
+                        BusinessEntityUtils.adjustDate(reportingPeriod.getEndDate(), Calendar.MONTH, -1),
+                        false, false, true);
 
         // reporting period year to date
         Calendar now = Calendar.getInstance();
@@ -1464,7 +1464,6 @@ public class BusinessEntityUtils {
                 BusinessEntityUtils.createDate(year - 1, monthIndex, day),
                 false, false, true);
         lastFinancialYTD.setName("Last financial year to date");
-
 
         DatePeriod datePeriods[] = {
             reportingPeriod,

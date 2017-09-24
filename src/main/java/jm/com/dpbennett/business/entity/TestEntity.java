@@ -2159,7 +2159,7 @@ public class TestEntity {
         if (setupDatabaseConnection("PU")) {
             EntityManager em = EMF.createEntityManager();
             //System.out.println("Address: " + Address.findClientAddress(em, "85 Young Street; Spanish Town; ; Trelawny"));
-            System.out.println("Address: " + Address.findClientAddress(em, "2 East Trade Way, Naggo Head; St. Catherine; ;  "));
+            System.out.println("Address: " + Address.findClientAddress(em, "; 2 East Trade Way, Naggo Head; ;  "));
         }
     }
 }

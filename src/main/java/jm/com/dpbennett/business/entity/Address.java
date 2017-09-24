@@ -74,7 +74,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public Address(String name) {
-        this.name = name;       
+        this.name = name;
         this.country = " ";
         this.postalCode = " ";
         this.stateOrProvince = " ";
@@ -118,7 +118,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getAddressLine2() {
-        if (addressLine2 == null) {
+        if ("".equals(addressLine2) || addressLine2 == null) {
             addressLine2 = " ";
         }
         return addressLine2;
@@ -129,7 +129,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getType() {
-        if (type == null) {
+        if ("".equals(type) || type == null) {
             type = " ";
         }
         return type;
@@ -140,7 +140,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getCity() {
-        if (city == null) {
+        if ("".equals(city) || city == null) {
             city = " ";
         }
         return city;
@@ -151,7 +151,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getCountry() {
-        if (country == null) {
+        if ("".equals(country) || country == null) {
             country = " ";
         }
         return country;
@@ -162,7 +162,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getPostalCode() {
-        if (postalCode == null) {
+        if ("".equals(postalCode) || postalCode == null) {
             postalCode = " ";
         }
         return postalCode;
@@ -173,7 +173,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getStateOrProvince() {
-        if (stateOrProvince == null) {
+        if ("".equals(stateOrProvince) || stateOrProvince == null) {
             stateOrProvince = " ";
         }
         return stateOrProvince;
@@ -202,14 +202,17 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     @Override
     public String toString() {
-//        return (getAddressLine1().isEmpty() ? "" : getAddressLine1())
-//                + (getAddressLine2().isEmpty() ? "" : ", " + getAddressLine2())
-//                + (getCity().isEmpty() ? "" : ", " + getCity())
-//                + (getStateOrProvince().isEmpty() ? "" : ", " + getStateOrProvince());
-        return getAddressLine1()
-                + "; " + getAddressLine2()
-                + "; " + getCity()
-                + "; " + getStateOrProvince();
+        if (getAddressLine1().trim().isEmpty()
+                && getAddressLine2().trim().isEmpty()
+                && getCity().trim().isEmpty()
+                && getStateOrProvince().trim().isEmpty()) {
+            return "";
+        } else {
+            return (getAddressLine1().isEmpty() ? "" : getAddressLine1())
+                    + (getAddressLine2().isEmpty() ? "" : ", " + getAddressLine2())
+                    + (getCity().isEmpty() ? "" : ", " + getCity())
+                    + (getStateOrProvince().isEmpty() ? "" : ", " + getStateOrProvince());
+        }
     }
 
     @Override
@@ -219,11 +222,18 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     @Override
     public String getName() {
-//        if (name == null || name == "") {
-//            name = toString();
-//        }
 
-        return toString(); //name;
+        if (getAddressLine1().trim().isEmpty()
+                && getAddressLine2().trim().isEmpty()
+                && getCity().trim().isEmpty()
+                && getStateOrProvince().trim().isEmpty()) {
+            return "";
+        } else {
+            return getAddressLine1()
+                    + "; " + getAddressLine2()
+                    + "; " + getCity()
+                    + "; " + getStateOrProvince();
+        }
     }
 
     @Override
@@ -302,8 +312,6 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
      */
     public static Address findClientAddress(EntityManager em, String query) {
 
-        System.out.println("address string to query: " + query);
-
         try {
             String newQuery = query.replaceAll("'", "''");
             String address[] = newQuery.split("; ");
@@ -311,7 +319,6 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
             String addressLine2 = address[1];
             String city = address[2];
             String stateOrProvince = address[3];
-            
 
             List<Address> addresses;
             Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
@@ -327,7 +334,6 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
             }
             return null;
         } catch (Exception e) {
-            //System.out.println("findClientAddress exception: May be array out of bound which occurs when closing Job dialog. Not sure why this happens.");
             System.out.println(e);
             return null;
         }

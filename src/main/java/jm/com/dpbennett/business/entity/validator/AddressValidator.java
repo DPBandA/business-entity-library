@@ -23,26 +23,26 @@ public class AddressValidator implements Validator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
-        Address address = (Address)value;
-       
-        if (!BusinessEntityUtils.validateName(address.getAddressLine1().trim())) {
-            throw new ValidatorException(getMessage(component.getId()));
+        Address address = (Address) value;
+        if (address != null) {
+            if (!BusinessEntityUtils.validateName(address.getAddressLine1())) {
+                throw new ValidatorException(getMessage(component.getId()));
+            } 
+//            else if (!BusinessEntityUtils.validateName(address.getAddressLine2().trim())) {
+//                throw new ValidatorException(getMessage(component.getId()));
+//            } else if (!BusinessEntityUtils.validateName(address.getCity().trim())) {
+//                throw new ValidatorException(getMessage(component.getId()));
+//            } else if (!BusinessEntityUtils.validateName(address.getStateOrProvince().trim())) {
+//                throw new ValidatorException(getMessage(component.getId()));
+//            }
         }
-        else  if (!BusinessEntityUtils.validateName(address.getAddressLine2().trim())) {
-            throw new ValidatorException(getMessage(component.getId()));
-        }
-        else  if (!BusinessEntityUtils.validateName(address.getCity().trim())) {
-            throw new ValidatorException(getMessage(component.getId()));
-        }
-        else  if (!BusinessEntityUtils.validateName(address.getStateOrProvince().trim())) {
-            throw new ValidatorException(getMessage(component.getId()));            
-        }
+
     }
-    
+
     private FacesMessage getMessage(String componentId) {
-        switch(componentId) {
+        switch (componentId) {
             case "billingAddress":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please ensure that all billing address fields are entered.", null);           
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please ensure that all billing address fields are entered and contain valid characters.", null);
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter all required (*) fields.", null);
         }

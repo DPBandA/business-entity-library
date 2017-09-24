@@ -99,7 +99,7 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
     private Boolean clientDirty;
     @Transient
     private Boolean isJobToBeSubcontracted;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Address billingAddress;
 
     public Job() {
@@ -115,9 +115,9 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
     }
 
     public Address getBillingAddress() {
-        if (billingAddress == null) {
-            billingAddress = getClient().getBillingAddress();
-        }
+        //if (billingAddress == null) {
+        //    billingAddress = getClient().getBillingAddress();
+        //}
         return billingAddress;
     }
 
