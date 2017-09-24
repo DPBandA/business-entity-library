@@ -28,10 +28,4 @@ public class AddressConverter extends ConverterAdapter {
        
         return address;
     }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((Address) value).toString();
-    }
-
 }

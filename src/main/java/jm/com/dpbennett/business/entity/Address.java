@@ -6,6 +6,7 @@ package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.List;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -50,37 +51,37 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     public Address() {
         this.name = "";
-        this.country = "";
-        this.postalCode = "";
-        this.stateOrProvince = "";
-        this.city = "";
-        this.addressLine2 = "";
+        this.country = " ";
+        this.postalCode = " ";
+        this.stateOrProvince = " ";
+        this.city = " ";
+        this.addressLine2 = " ";
         this.addressLine1 = "";
-        this.type = "";
+        this.type = " ";
     }
 
     public Address(Address src) {
         this.name = "";
-        this.country = "";
-        this.postalCode = "";
-        this.stateOrProvince = "";
-        this.city = "";
-        this.addressLine2 = "";
+        this.country = " ";
+        this.postalCode = " ";
+        this.stateOrProvince = " ";
+        this.city = " ";
+        this.addressLine2 = " ";
         this.addressLine1 = "";
-        this.type = "";
+        this.type = " ";
         this.Id = null;
         doCopy(src);
     }
 
     public Address(String name) {
-        this.name = name;
-        this.country = "";
-        this.postalCode = "";
-        this.stateOrProvince = "";
-        this.city = "";
-        this.addressLine2 = "";
+        this.name = name;       
+        this.country = " ";
+        this.postalCode = " ";
+        this.stateOrProvince = " ";
+        this.city = " ";
+        this.addressLine2 = " ";
         this.addressLine1 = "";
-        this.type = "";
+        this.type = " ";
         this.Id = null;
     }
 
@@ -118,7 +119,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     public String getAddressLine2() {
         if (addressLine2 == null) {
-            addressLine2 = "";
+            addressLine2 = " ";
         }
         return addressLine2;
     }
@@ -129,7 +130,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     public String getType() {
         if (type == null) {
-            type = "";
+            type = " ";
         }
         return type;
     }
@@ -140,7 +141,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     public String getCity() {
         if (city == null) {
-            city = "";
+            city = " ";
         }
         return city;
     }
@@ -151,7 +152,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     public String getCountry() {
         if (country == null) {
-            country = "";
+            country = " ";
         }
         return country;
     }
@@ -162,7 +163,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     public String getPostalCode() {
         if (postalCode == null) {
-            postalCode = "";
+            postalCode = " ";
         }
         return postalCode;
     }
@@ -173,7 +174,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     public String getStateOrProvince() {
         if (stateOrProvince == null) {
-            stateOrProvince = "";
+            stateOrProvince = " ";
         }
         return stateOrProvince;
     }
@@ -206,9 +207,9 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 //                + (getCity().isEmpty() ? "" : ", " + getCity())
 //                + (getStateOrProvince().isEmpty() ? "" : ", " + getStateOrProvince());
         return getAddressLine1()
-                + ", " + getAddressLine2()
-                + ", " + getCity()
-                + ", " + getStateOrProvince();
+                + "; " + getAddressLine2()
+                + "; " + getCity()
+                + "; " + getStateOrProvince();
     }
 
     @Override
@@ -218,11 +219,11 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     @Override
     public String getName() {
-        if (name == null) {
-            name = toString();
-        }
+//        if (name == null || name == "") {
+//            name = toString();
+//        }
 
-        return name;
+        return toString(); //name;
     }
 
     @Override
@@ -301,13 +302,16 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
      */
     public static Address findClientAddress(EntityManager em, String query) {
 
+        System.out.println("address string to query: " + query);
+
         try {
-            String newQuery = query.trim().replaceAll("'", "''");
-            String address[] = newQuery.split(", ");
+            String newQuery = query.replaceAll("'", "''");
+            String address[] = newQuery.split("; ");
             String addressLine1 = address[0];
             String addressLine2 = address[1];
             String city = address[2];
             String stateOrProvince = address[3];
+            
 
             List<Address> addresses;
             Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
@@ -323,8 +327,31 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
             }
             return null;
         } catch (Exception e) {
+            //System.out.println("findClientAddress exception: May be array out of bound which occurs when closing Job dialog. Not sure why this happens.");
             System.out.println(e);
             return null;
+        }
+    }
+
+    public static List<Address> findClientAddresses(EntityManager em, String query) {
+
+        try {
+            String newQuery = query.trim().replaceAll("'", "''");
+
+            List<Address> addresses;
+            Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
+                    + " WHERE a.addressLine1 LIKE '%" + newQuery + "%'"
+                    + " OR a.addressLine2 LIKE '%" + newQuery + "%'"
+                    + " OR a.city LIKE '%" + newQuery + "%'"
+                    + " OR a.stateOrProvince LIKE '%" + newQuery + "%'",
+                    Address.class);
+            addresses = SQLQuery.getResultList();
+
+            return addresses;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
         }
     }
 

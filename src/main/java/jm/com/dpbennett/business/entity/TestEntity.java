@@ -158,7 +158,6 @@ public class TestEntity {
         job.setJobStatusAndTracking(new JobStatusAndTracking());
         job.getJobStatusAndTracking().setDateSubmitted(new Date());
 
-
         job.setJobNumber("?"); //(getJobNumber(job));
 
         job.setNumberOfSamples(0L);
@@ -480,8 +479,8 @@ public class TestEntity {
         EntityManager em = EMF.createEntityManager();
         List<Job> foundJobs;
 
-        String searchQuery =
-                "SELECT job FROM Job job"
+        String searchQuery
+                = "SELECT job FROM Job job"
                 + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                 + " JOIN job.department department"
                 + " JOIN job.subContractedDepartment subContractedDepartment"
@@ -1050,10 +1049,10 @@ public class TestEntity {
         String newSubCategory = name.replaceAll("'", "''");
 
         try {
-            List<JobSubCategory> jobSubCategories =
-                    em.createQuery("SELECT c FROM JobSubCategory c "
-                    + "WHERE c.subCategory "
-                    + "= '" + newSubCategory + "'", JobSubCategory.class).getResultList();
+            List<JobSubCategory> jobSubCategories
+                    = em.createQuery("SELECT c FROM JobSubCategory c "
+                            + "WHERE c.subCategory "
+                            + "= '" + newSubCategory + "'", JobSubCategory.class).getResultList();
             if (jobSubCategories.size() > 0) {
                 return jobSubCategories.get(0);
             } else {
@@ -1139,7 +1138,6 @@ public class TestEntity {
 //            "Service",
 //            "Work",
 //            "--"};
-
         String classifications[] = {
             "Lease",
             "Contract",
@@ -1283,10 +1281,10 @@ public class TestEntity {
 
         String newUsername = username.replaceAll("'", "''");
         try {
-            List<JobManagerUser> users =
-                    em.createNamedQuery("findByJobManagerUsername",
-                    JobManagerUser.class).
-                    setParameter("username", newUsername).getResultList();
+            List<JobManagerUser> users
+                    = em.createNamedQuery("findByJobManagerUsername",
+                            JobManagerUser.class).
+                            setParameter("username", newUsername).getResultList();
             //System.out.println("users: " + users.size());
             if (users.size() > 0) {
                 return users.get(0);
@@ -1298,6 +1296,7 @@ public class TestEntity {
         }
 
     }
+
     /*
      public static void buildFoodFactoryDatabase(EntityManager em, String sheetName) {
      // cell indices
@@ -1686,8 +1685,6 @@ public class TestEntity {
 
         int rowCount = 0, numDocs = 0;
         int cellCount = 0;
-
-
 
         try {
             POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
@@ -2127,14 +2124,15 @@ public class TestEntity {
      * Determines the corresponding index for a maximum sequence of characters.
      * The sequence of characters are those that are obtained from a spreadsheet
      * column heading (eg AR).
+     *
      * @param alphabet
      * @param len
      * @param num
-     * @return 
+     * @return
      */
     public static long convertAlphabetToNumber(String alphabet, int len, long num) {
         int letterIndex, previousLetterIndex;
-       
+
         char chars[] = alphabet.toCharArray();
         letterIndex = getLetterIndex("" + chars[len - 1]);
         if ((len - 1) > 0) {
@@ -2146,22 +2144,22 @@ public class TestEntity {
         if (previousLetterIndex != -1) {
             num = num + (previousLetterIndex + len - 1) * 26;
         }
-        
-         if ((len - 2) > 0) {
-             String newAlphabet = alphabet.substring(0, len - 1);
-             //System.out.println("str len: " + newAlphabet.length());
-             return convertAlphabetToNumber(newAlphabet, newAlphabet.length(), num);
-         }
-         else {
-             return num;
-         }
+
+        if ((len - 2) > 0) {
+            String newAlphabet = alphabet.substring(0, len - 1);
+            //System.out.println("str len: " + newAlphabet.length());
+            return convertAlphabetToNumber(newAlphabet, newAlphabet.length(), num);
+        } else {
+            return num;
+        }
     }
 
     // TK: End BusinessEntityUtils code used for testing
-    public static void main(String[] args) {      
+    public static void main(String[] args) {
         if (setupDatabaseConnection("PU")) {
             EntityManager em = EMF.createEntityManager();
-            System.out.println("Address: " + Address.findClientAddress(em, "85 Young Street, Spanish Town, , Trelawny"));
+            //System.out.println("Address: " + Address.findClientAddress(em, "85 Young Street; Spanish Town; ; Trelawny"));
+            System.out.println("Address: " + Address.findClientAddress(em, "2 East Trade Way, Naggo Head; St. Catherine; ;  "));
         }
     }
 }

@@ -206,7 +206,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
             return businessOffices;
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<BusinessOffice>();
+            return new ArrayList<>();
         }
     }
     
@@ -221,7 +221,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
             return businessOffices;
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<BusinessOffice>();
+            return new ArrayList<>();
         }
     }
 
