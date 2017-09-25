@@ -21,5 +21,9 @@ public interface ClientHandler {
     public void setBillingAddress(Address billingAddress);
     
     public Address getBillingAddress();
+    
+    public Boolean getDirty();
+
+    public void setDirty(Boolean dirty);
 
 }

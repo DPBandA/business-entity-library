@@ -101,11 +101,28 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
     private Boolean isJobToBeSubcontracted;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Address billingAddress;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Contact contact;
+    @Transient
+    private Boolean dirty;
 
     public Job() {
         this.isJobToBeSubcontracted = false;
         clientDirty = false;
         jobSamples = new ArrayList<>();
+    }
+
+    @Override
+    public Boolean getDirty() {
+        if (dirty == null) {
+            dirty = false;
+        }
+        return dirty;
+    }
+
+    @Override
+    public void setDirty(Boolean dirty) {
+        this.dirty = dirty;
     }
 
     public Job(String jobNumber) {
@@ -114,8 +131,16 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
         jobSamples = new ArrayList<>();
     }
 
+    public Contact getContact() {
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+
     @Override
-    public Address getBillingAddress() {     
+    public Address getBillingAddress() {
         return billingAddress;
     }
 

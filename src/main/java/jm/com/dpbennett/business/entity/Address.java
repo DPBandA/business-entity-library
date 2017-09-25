@@ -208,10 +208,10 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
                 && getStateOrProvince().trim().isEmpty()) {
             return "";
         } else {
-            return (getAddressLine1().isEmpty() ? "" : getAddressLine1())
-                    + (getAddressLine2().isEmpty() ? "" : ", " + getAddressLine2())
-                    + (getCity().isEmpty() ? "" : ", " + getCity())
-                    + (getStateOrProvince().isEmpty() ? "" : ", " + getStateOrProvince());
+            return (getAddressLine1().trim().isEmpty() ? "" : getAddressLine1())
+                    + (getAddressLine2().trim().isEmpty() ? "" : ", " + getAddressLine2())
+                    + (getCity().trim().isEmpty() ? "" : ", " + getCity())
+                    + (getStateOrProvince().trim().isEmpty() ? "" : ", " + getStateOrProvince());
         }
     }
 
