@@ -114,13 +114,12 @@ public class Job implements Serializable, BusinessEntity, ClientHandler {
         jobSamples = new ArrayList<>();
     }
 
-    public Address getBillingAddress() {
-        //if (billingAddress == null) {
-        //    billingAddress = getClient().getBillingAddress();
-        //}
+    @Override
+    public Address getBillingAddress() {     
         return billingAddress;
     }
 
+    @Override
     public void setBillingAddress(Address billingAddress) {
         this.billingAddress = billingAddress;
     }
