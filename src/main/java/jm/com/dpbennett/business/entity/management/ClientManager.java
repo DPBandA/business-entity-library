@@ -23,6 +23,7 @@ import jm.com.dpbennett.business.entity.Internet;
 import jm.com.dpbennett.business.entity.JobManagerUser;
 import jm.com.dpbennett.business.entity.PhoneNumber;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import org.primefaces.context.RequestContext;
 //import org.primefaces.context.RequestContext;
 
 /**
@@ -435,55 +436,24 @@ public class ClientManager implements Serializable, ClientManagement {
     }
 
     public void cancelClientEdit(ActionEvent actionEvent) {
-        // This is the default component to update which is the 
-        // Client Database table
-        setComponentsToUpdate("@form");
-
-        setClientNameAndIdEditable(true);
+             
 
         if (clientBackup != null) {
             getClient().doCopy(clientBackup);
         }
+        
         setDirty(false);
         isNewClient = false;
 
         if (businessEntityManager != null) {
             businessEntityManager.setDirty(false);
         }
+        
+        RequestContext.getCurrentInstance().closeDialog(null);
     }
 
-//    public Boolean validateClient(Boolean displayAlert) {
-//        if ((getClient().getName() == null) || (getClient().getName().trim().equals(""))) {
-//            // display message
-//            if (displayAlert) {
-//                displayMessageDialog("Please enter a name for the client", "No Client Name", "info");
-//            }
-//            return false;
-//        }
-//        if (!BusinessEntityUtils.validateName(getClient().getName())) {
-//            // display message
-//            if (displayAlert) {
-//                displayMessageDialog("Please enter a valid client name", "Invalid Client Name", "info");
-//            }
-//            return false;
-//        }
-//
-//        // Validate TRN if required
-//        if (getTaxRegistrationNumberRequired()) {
-//            if ((getClient().getTaxRegistrationNumber() == null) || (getClient().getTaxRegistrationNumber().trim().equals(""))) {
-//                if (displayAlert) {
-//                    displayMessageDialog("Please enter a valid TRN for the client", "No Tax Registration Number (TRN)", "info");
-//                }
-//                return false;
-//            }
-//        }
-//
-//        return true;
-//    }
-
     public void createNewClient() {
-        createNewClient(null, new Client("", true));
-        setSave(true);
+        createNewClient(null, new Client("", true));        
     }
 
     public EntityManager getEntityManager() {
@@ -498,50 +468,15 @@ public class ClientManager implements Serializable, ClientManagement {
 
         EntityManager em;
 
-        //RequestContext context = RequestContext.getCurrentInstance();
-
         try {
 
             em = getEntityManager();
 
-//            if (!validateClient(true)) {
-//                return;
-//            }
-
-            // If we have reached this far we can hide the client dialog...for now
-            //context.execute("clientFormDialog.hide();");
-
-            // This is the default component to update which is the 
-            // Client Database table
-            setComponentsToUpdate("@form");
-
-            setClientNameAndIdEditable(true);
-
-            // replace double quotes with two single quotes to avoid query issues
-            getClient().setName(getClient().getName().replaceAll("\"", "''"));
-            // replace & with &#38; query issues
-            // save client and check for save error
-            // indicate if this is a new client being created
-            // this prevents creating two clients with the same name
-            if (isNewClient) {
-                // Check if the client already exist
-//                String clientName = getClient().getName();
-//                Client currentClient = getActiveClientByName(em, clientName);
-//                if (currentClient != null) {
-//                    context.addCallbackParam("clientExists", true);
-//                    displayMessageDialog("This client already exists", "Client Exists", "info");
-//                    return;
-//                }
+            if (isNewClient) {               
                 getClient().setDateFirstReceived(new Date());
             }
             isNewClient = false;
-
-            // Get entered by 
-            if (getClient().getEnteredBy().getId() != null) {
-                Employee e = Employee.findEmployeeById(em, getClient().getEnteredBy().getId());
-                getClient().setEnteredBy(e);
-            }
-
+            
             if (save) {
                 saveClient(em, true);
                 em.close();
@@ -551,6 +486,8 @@ public class ClientManager implements Serializable, ClientManagement {
             if (clientHandler != null) {
                 clientHandler.setClient(getClient());
             }
+            
+            RequestContext.getCurrentInstance().closeDialog(null);
 
         } catch (Exception e) {
             isNewClient = false;
