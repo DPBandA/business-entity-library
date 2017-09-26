@@ -22,11 +22,7 @@ import jm.com.dpbennett.business.entity.Employee;
 import jm.com.dpbennett.business.entity.Internet;
 import jm.com.dpbennett.business.entity.JobManagerUser;
 import jm.com.dpbennett.business.entity.PhoneNumber;
-//import jm.com.dpbennett.business.entity.management.ClientManagement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
-//import jm.com.dpbennett.jmts.AddressDataModel;
-//import jm.com.dpbennett.jmts.Application;
-//import jm.com.dpbennett.jmts.ContactDataModel;
 //import org.primefaces.context.RequestContext;
 
 /**
@@ -69,6 +65,7 @@ public class ClientManager implements Serializable, ClientManagement {
     public ClientManager() {        
         isNewContact = false;
         isNewAddress = false;
+        isNewClient = false;
         taxRegistrationNumberRequired = false;
         save = true;
         clientNameAndIdEditable = false;
@@ -77,6 +74,14 @@ public class ClientManager implements Serializable, ClientManagement {
         billingAddress = new Address();
     }
 
+    public Boolean getIsNewClient() {
+        return isNewClient;
+    }
+
+    public void setIsNewClient(Boolean isNewClient) {
+        this.isNewClient = isNewClient;
+    }
+    
     public Address getBillingAddress() {
         return billingAddress;
     }
@@ -181,10 +186,7 @@ public class ClientManager implements Serializable, ClientManagement {
 
     // Edit the client via the ClientManager
     public void editClient() {
-
         setSave(true);    
-        setComponentsToUpdate(":clientsTableForm:clientsTable");
-
     }
 
     public List<Client> getFoundClients() {
@@ -198,10 +200,7 @@ public class ClientManager implements Serializable, ClientManagement {
     public void doClientSearch() {
         if (clientSearchText.trim().length() > 0) {
             foundClients = Client.findActiveClientsByAnyPartOfName(getLocalEntityManager(), clientSearchText);
-        } else {
-            foundClients = new ArrayList<>();
-            //getMain().displayCommonMessageDialog(null, "Please provide at least 1 character for the search text.", "Insufficient Characters", "alert");
-        }
+        }         
     }
 
     public String getClientSearchText() {
@@ -238,9 +237,9 @@ public class ClientManager implements Serializable, ClientManagement {
         this.save = save;
     }
 
-    public void displayMessageDialog(String dialogMessage,
-            String dialogMessageHeader,
-            String dialoMessageSeverity) {
+//    public void displayMessageDialog(String dialogMessage,
+//            String dialogMessageHeader,
+//            String dialoMessageSeverity) {
 //        RequestContext context = RequestContext.getCurrentInstance();
 //
 //        setDialogMessage(dialogMessage);
@@ -248,8 +247,8 @@ public class ClientManager implements Serializable, ClientManagement {
 //        setDialogMessageSeverity(dialoMessageSeverity);
 //        context.update("clientManagerMessageDialogForm");
 //        context.execute("clientManagerMessageDialog.show();");
-        throw new UnsupportedOperationException("displayMessageDialog() in Client Manager not supported yet.");
-    }
+//        throw new UnsupportedOperationException("displayMessageDialog() in Client Manager not supported yet.");
+//    }
 
     public String getDialogMessage() {
         return dialogMessage;
@@ -453,34 +452,34 @@ public class ClientManager implements Serializable, ClientManagement {
         }
     }
 
-    public Boolean validateClient(Boolean displayAlert) {
-        if ((getClient().getName() == null) || (getClient().getName().trim().equals(""))) {
-            // display message
-            if (displayAlert) {
-                displayMessageDialog("Please enter a name for the client", "No Client Name", "info");
-            }
-            return false;
-        }
-        if (!BusinessEntityUtils.validateName(getClient().getName())) {
-            // display message
-            if (displayAlert) {
-                displayMessageDialog("Please enter a valid client name", "Invalid Client Name", "info");
-            }
-            return false;
-        }
-
-        // Validate TRN if required
-        if (getTaxRegistrationNumberRequired()) {
-            if ((getClient().getTaxRegistrationNumber() == null) || (getClient().getTaxRegistrationNumber().trim().equals(""))) {
-                if (displayAlert) {
-                    displayMessageDialog("Please enter a valid TRN for the client", "No Tax Registration Number (TRN)", "info");
-                }
-                return false;
-            }
-        }
-
-        return true;
-    }
+//    public Boolean validateClient(Boolean displayAlert) {
+//        if ((getClient().getName() == null) || (getClient().getName().trim().equals(""))) {
+//            // display message
+//            if (displayAlert) {
+//                displayMessageDialog("Please enter a name for the client", "No Client Name", "info");
+//            }
+//            return false;
+//        }
+//        if (!BusinessEntityUtils.validateName(getClient().getName())) {
+//            // display message
+//            if (displayAlert) {
+//                displayMessageDialog("Please enter a valid client name", "Invalid Client Name", "info");
+//            }
+//            return false;
+//        }
+//
+//        // Validate TRN if required
+//        if (getTaxRegistrationNumberRequired()) {
+//            if ((getClient().getTaxRegistrationNumber() == null) || (getClient().getTaxRegistrationNumber().trim().equals(""))) {
+//                if (displayAlert) {
+//                    displayMessageDialog("Please enter a valid TRN for the client", "No Tax Registration Number (TRN)", "info");
+//                }
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//    }
 
     public void createNewClient() {
         createNewClient(null, new Client("", true));
@@ -505,9 +504,9 @@ public class ClientManager implements Serializable, ClientManagement {
 
             em = getEntityManager();
 
-            if (!validateClient(true)) {
-                return;
-            }
+//            if (!validateClient(true)) {
+//                return;
+//            }
 
             // If we have reached this far we can hide the client dialog...for now
             //context.execute("clientFormDialog.hide();");
@@ -525,14 +524,14 @@ public class ClientManager implements Serializable, ClientManagement {
             // indicate if this is a new client being created
             // this prevents creating two clients with the same name
             if (isNewClient) {
-                // check if the client already exist
-                String clientName = getClient().getName();
-                Client currentClient = getActiveClientByName(em, clientName);
-                if (currentClient != null) {
-                    //context.addCallbackParam("clientExists", true);
-                    displayMessageDialog("This client already exists", "Client Exists", "info");
-                    return;
-                }
+                // Check if the client already exist
+//                String clientName = getClient().getName();
+//                Client currentClient = getActiveClientByName(em, clientName);
+//                if (currentClient != null) {
+//                    context.addCallbackParam("clientExists", true);
+//                    displayMessageDialog("This client already exists", "Client Exists", "info");
+//                    return;
+//                }
                 getClient().setDateFirstReceived(new Date());
             }
             isNewClient = false;
