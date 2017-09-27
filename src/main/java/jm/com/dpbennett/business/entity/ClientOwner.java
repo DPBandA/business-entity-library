@@ -8,7 +8,7 @@ package jm.com.dpbennett.business.entity;
  *
  * @author desbenn
  */
-public interface ClientHandler {
+public interface ClientOwner {
 
     public Client getClient();
 

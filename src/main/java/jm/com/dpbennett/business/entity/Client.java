@@ -309,9 +309,6 @@ public class Client implements Customer, Serializable, BusinessEntity {
     }
 
     public void setMainContact(Contact mainContact) {
-//        if (!getContacts().isEmpty()) {
-//            getContacts().set(0, contact);
-//        }
         int index = 0;
 
         if (!getContacts().isEmpty()) {
@@ -344,8 +341,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
             Address address = new Address();
             address.setType("Billing");
             getAddresses().add(address);
-            return getAddresses().get(0);
-            //return null;
+            return getAddresses().get(0);        
         }
     }
 

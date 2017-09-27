@@ -42,7 +42,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "findByJobNumber", query = "SELECT j FROM Job j WHERE j.jobNumber = :jobNumber")
 })
 @XmlRootElement
-public class Job implements Serializable, BusinessEntity, ClientHandler {
+public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     private static final Long serialVersionUId = 1L;
     @Id
