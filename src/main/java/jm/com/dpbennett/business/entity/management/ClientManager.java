@@ -8,8 +8,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -23,12 +25,12 @@ import jm.com.dpbennett.business.entity.PhoneNumber;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import org.primefaces.context.RequestContext;
 import jm.com.dpbennett.business.entity.ClientOwner;
-//import org.primefaces.context.RequestContext;
-
 /**
  *
  * @author dbennett
  */
+@Named
+@SessionScoped
 public class ClientManager implements Serializable, ClientManagement {
 
     @PersistenceUnit(unitName = "JMTSPU") // tk to be put in resource bundle
@@ -36,8 +38,7 @@ public class ClientManager implements Serializable, ClientManagement {
     // This factory is used by external clients. May be removed in the future
     private EntityManagerFactory externalEntityManagerFactory;
     private Client client;
-    private Boolean dirty;
-    private String componentsToUpdate;
+    private Boolean dirty;    
     private Boolean isNewContact;
     private Boolean isNewAddress;
     private Contact currentContact;
@@ -53,7 +54,6 @@ public class ClientManager implements Serializable, ClientManagement {
     private Boolean isNewClient;
     private String clientSearchText;
     private List<Client> foundClients;
-    //private Main main;
     private ClientOwner clientOwner;
     private String clientBillingAddressString;
     private Address billingAddress;
@@ -346,17 +346,7 @@ public class ClientManager implements Serializable, ClientManagement {
         }
         isNewClient = true;
     }
-
-    @Override
-    public String getComponentsToUpdate() {
-        return componentsToUpdate;
-    }
-
-    @Override
-    public void setComponentsToUpdate(String componentsToUpdate) {
-        this.componentsToUpdate = componentsToUpdate;
-    }
-
+    
     public Boolean getDirty() {
         return dirty;
     }

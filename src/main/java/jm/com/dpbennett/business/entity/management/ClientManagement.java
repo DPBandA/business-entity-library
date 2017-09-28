@@ -20,10 +20,6 @@ public interface ClientManagement {
 
     public void createNewClient(Client existingClient, Client newClient);
 
-    public String getComponentsToUpdate();
-
-    public void setComponentsToUpdate(String componentsToUpdate);
-
     public void setExternalEntityManagerFactory(EntityManagerFactory externalEntityManagerFactory);
 
     public void setSave(Boolean save);

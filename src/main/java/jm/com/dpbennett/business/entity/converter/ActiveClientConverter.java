@@ -19,10 +19,10 @@ public class ActiveClientConverter extends ConverterAdapter {
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
       
-        Client client = Client.findActiveClientByName(getEntityManager(), submittedValue, Boolean.TRUE);
+       Client client = Client.findActiveClientByName(getEntityManager(), submittedValue, Boolean.TRUE);
 
         if (client == null) {
-            client = new Client();
+            client = new Client(submittedValue);
             client.setName(submittedValue);
         } 
         
