@@ -653,14 +653,15 @@ public class Client implements Customer, Serializable, BusinessEntity {
         }
     }
 
-    public static Client findDefaultClient(
+    public static Client findActiveDefaultClient(
             EntityManager em,
             String name,
             Boolean useTransaction) {
-        Client client = findClientByName(em, name, true);
+        Client client = findActiveClientByName(em, name, false);
 
         if (client == null) {
             client = new Client(name);
+            client.setActive(true);
             client.setInternet(Internet.findDefaultInternet(em, "--", useTransaction));
             client.setEnteredBy(Employee.findDefaultEmployee(em, "--", "--", useTransaction));
 
