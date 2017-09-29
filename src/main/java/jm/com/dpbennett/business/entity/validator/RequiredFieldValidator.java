@@ -21,7 +21,7 @@ public class RequiredFieldValidator implements Validator {
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-
+    
         // Check for valid names
         if (!BusinessEntityUtils.validateName(value.toString().trim())) {
             throw new ValidatorException(getMessage(component.getId()));
@@ -30,13 +30,11 @@ public class RequiredFieldValidator implements Validator {
     }
 
     private FacesMessage getMessage(String componentId) {
-        //switch (componentId) {
-        //    case "clientName":
-        //        return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid name.", null);
-        //    case "trn":
-        //        return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Taxpayer Registration Number or N/A.", null);            
-        //    default:
+        switch (componentId) {            
+            case "trn":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Taxpayer Registration Number or N/A.", null);            
+            default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter all required (*) fields.", null);
-        //}
+        }
     }
 }
