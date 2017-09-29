@@ -220,9 +220,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
     public String getCostEstimateWithTaxLabel() {
         if (getPercentageGCT() != 0.0) {
-            return "Cost estimate (incl. GCT)($): ";
+            return "Calculated cost estimate (incl. GCT)($): ";
         } else {
-            return "Cost estimate ($): ";
+            return "Calculated cost estimate ($): ";
         }
     }
 
