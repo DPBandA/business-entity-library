@@ -69,7 +69,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department subContractedDepartment;
     private Integer yearReceived;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     private Client client;
     @OneToOne(cascade = CascadeType.REFRESH)
     private JobCategory jobCategory;
