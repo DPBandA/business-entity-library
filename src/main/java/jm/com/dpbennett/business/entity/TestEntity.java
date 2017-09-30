@@ -2158,8 +2158,13 @@ public class TestEntity {
     public static void main(String[] args) {
         if (setupDatabaseConnection("PU")) {
             EntityManager em = EMF.createEntityManager();
+            Address address = new Address("A great address!");
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, address);
+            em.getTransaction().commit();
+            System.out.println("Address Id: " + address.getId());
             //System.out.println("Address: " + Address.findClientAddress(em, "85 Young Street; Spanish Town; ; Trelawny"));
-            System.out.println("Address: " + Address.findClientAddress(em, "; 2 East Trade Way, Naggo Head; ;  "));
+            //System.out.println("Address: " + Address.findClientAddress(em, "; 2 East Trade Way, Naggo Head; ;  "));
         }
     }
 }
