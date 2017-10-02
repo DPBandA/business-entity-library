@@ -669,7 +669,15 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     @Override
     public MethodResult save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (!BusinessEntityUtils.validateName(this.getUsername())) {
+            return new MethodResult(false, "Username is not valid");
+        }
+
+        em.getTransaction().begin();
+        BusinessEntityUtils.saveBusinessEntity(em, this);
+        em.getTransaction().commit();
+
+        return new MethodResult();
     }
 
     @Override
