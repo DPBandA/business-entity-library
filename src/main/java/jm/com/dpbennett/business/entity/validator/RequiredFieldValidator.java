@@ -21,18 +21,25 @@ public class RequiredFieldValidator implements Validator {
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-    
+
         // Check for valid names
-        if (!BusinessEntityUtils.validateName(value.toString().trim())) {
-            throw new ValidatorException(getMessage(component.getId()));
+        if (value != null) {
+            if (!BusinessEntityUtils.validateName(value.toString().trim())) {
+                throw new ValidatorException(getMessage(component.getId()));
+            }
+        }
+        else {
+             throw new ValidatorException(getMessage(component.getId()));
         }
 
     }
 
     private FacesMessage getMessage(String componentId) {
-        switch (componentId) {            
+        switch (componentId) {
+            case "businessOffice":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Business Office.", null);
             case "trn":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Taxpayer Registration Number or N/A.", null);            
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Taxpayer Registration Number or N/A.", null);
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter all required (*) fields.", null);
         }

@@ -30,7 +30,7 @@ public class BusinessEntityValidator implements Validator {
             } 
         }
         else {
-            throw new ValidatorException(getMessage(""));
+            throw new ValidatorException(getMessage(component.getId()));
         }
 
     }
@@ -39,12 +39,16 @@ public class BusinessEntityValidator implements Validator {
         switch (componentId) { 
             case "businessOffice": 
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Business Office.", null);
-            case "billingAddress": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Billing Address.", null);
             case "jobClassification": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Job Classification", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Job Classification.", null);    
             case "client": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid client", null);    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Client.", null);    
+            case "billingAddress": 
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Billing Address.", null);           
+            case "clientContact": 
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Contact.", null);               
+            case "department": 
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Department.", null);               
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter all required (*) fields.", null);
         }
