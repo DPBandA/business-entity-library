@@ -37,8 +37,10 @@ public class BusinessEntityValidator implements Validator {
 
     private FacesMessage getMessage(String componentId) {
         switch (componentId) { 
+            case "businessOffice": 
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Business Office.", null);
             case "billingAddress": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please ensure that all billing address fields are entered and contain valid characters.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Billing Address.", null);
             case "jobClassification": 
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Job Classification", null);
             case "client": 
