@@ -48,7 +48,9 @@ public class BusinessEntityValidator implements Validator {
             case "clientContact": 
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Contact.", null);               
             case "department": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Department.", null);               
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Department.", null);    
+            case "subContractedDepartment": 
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Subcontracted Department.", null);      
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter all required (*) fields.", null);
         }

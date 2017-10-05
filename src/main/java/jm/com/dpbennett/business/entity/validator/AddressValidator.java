@@ -28,13 +28,6 @@ public class AddressValidator implements Validator {
             if (!BusinessEntityUtils.validateName(address.getAddressLine1())) {
                 throw new ValidatorException(getMessage(component.getId()));
             } 
-//            else if (!BusinessEntityUtils.validateName(address.getAddressLine2().trim())) {
-//                throw new ValidatorException(getMessage(component.getId()));
-//            } else if (!BusinessEntityUtils.validateName(address.getCity().trim())) {
-//                throw new ValidatorException(getMessage(component.getId()));
-//            } else if (!BusinessEntityUtils.validateName(address.getStateOrProvince().trim())) {
-//                throw new ValidatorException(getMessage(component.getId()));
-//            }
         }
 
     }

@@ -10,6 +10,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.ValidatorException;
 import jm.com.dpbennett.business.entity.Department;
+import jm.com.dpbennett.business.entity.Job;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.MethodResult;
 
 /**
  *
@@ -20,14 +23,35 @@ public class SubcontractedDepartmentValidator extends ValidatorAdapter {
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-      
-        if ( value != null) {
-            Department subContractedDepartment = Department.findDepartmentByName(getEntityManager(), ((Department) value).getName());
-            if (subContractedDepartment == null) {
-                throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department not valid!", null));
-            } 
-        } else {
-            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department not valid!", null));
+
+        Department subContractedDepartment = (Department) value;
+        if (!BusinessEntityUtils.validateName(subContractedDepartment.getName())) {
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Subcontracted Department.", null));
+        }
+
+
+        Long currentJobId = (Long) component.getAttributes().get("currentJobId");
+        Boolean isSubContracted = (Boolean) component.getAttributes().get("isSubContracted");
+        Boolean isToBeSubcontracted = (Boolean) component.getAttributes().get("isToBeSubcontracted");
+        String departmentName = (String) component.getAttributes().get("departmentName");
+
+        if (currentJobId != null) {
+            Job currentlySavedJob = Job.findJobById(getEntityManager(), currentJobId);
+            if (currentlySavedJob != null) {
+                if (isSubContracted && isToBeSubcontracted) {
+                    throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Subcontracted Department.", null));
+                }
+                if (!isSubContracted && currentlySavedJob.isSubContracted()) {
+                    throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Subcontracted Department.", null));
+                }
+            }
+        }
+
+        // Check for self contracts    
+        if (subContractedDepartment != null) {
+            if (subContractedDepartment.getName().equals(departmentName)) {
+                throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "The main and subcontracted departments cannot be the same.", null));
+            }
         }
     }
 }

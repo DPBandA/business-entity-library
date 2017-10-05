@@ -149,7 +149,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.billingAddress = billingAddress;
     }
 
-    public Boolean getIsJobToBeSubcontracted() {
+    public Boolean isToBeSubcontracted() {
         return isJobToBeSubcontracted;
     }
 
@@ -1417,8 +1417,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
 
         // Check for valid subcontracted department
-        // tk impl isJobToBeSubcontracted in Job use it as it is used in JobManager
-        if (!currentJob.isSubContracted() && getIsJobToBeSubcontracted()) {
+        // tk impl isToBeSubcontracted in Job use it as it is used in JobManager
+        if (!currentJob.isSubContracted() && isToBeSubcontracted()) {
             return new MethodResult(false, "Please enter a valid subcontracted department.");
         } else if ((currentlySavedJob != null)
                 && !currentJob.isSubContracted()
