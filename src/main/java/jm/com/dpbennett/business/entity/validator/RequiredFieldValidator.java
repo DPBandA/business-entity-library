@@ -37,11 +37,11 @@ public class RequiredFieldValidator implements Validator {
     private FacesMessage getMessage(String componentId) {
         switch (componentId) {
             case "businessOffice":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Business Office.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Business Office", "Please enter a valid Business Office.");
             case "trn":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Taxpayer Registration Number or N/A.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Taxpayer Registration Number", "Please enter a valid Taxpayer Registration Number or N/A.");
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter all required (*) fields.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Required", "Please enter all required (*) fields.");
         }
     }
 }

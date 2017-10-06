@@ -149,7 +149,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.billingAddress = billingAddress;
     }
 
-    public Boolean isToBeSubcontracted() {
+    public Boolean getIsToBeSubcontracted() {
         return isJobToBeSubcontracted;
     }
 
@@ -179,7 +179,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.instructions = instructions;
     }
 
-    public Boolean isSubContracted() {
+    public Boolean getIsSubContracted() {
         if (getSubContractedDepartment().getName().equals("")
                 || getSubContractedDepartment().getName().equals("--")) {
             return false;
@@ -1031,7 +1031,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
         foundJobs = findJobsByYearReceivedAndJobSequenceNumber(em, job.yearReceived, job.jobSequenceNumber);
         for (Job foundJob : foundJobs) {
-            if (foundJob.isSubContracted() && !foundJob.getJobStatusAndTracking().getCompleted()) {
+            if (foundJob.getIsSubContracted() && !foundJob.getJobStatusAndTracking().getCompleted()) {
                 incompleteSubcontracts.add(foundJob);
             }
         }
@@ -1418,11 +1418,11 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
         // Check for valid subcontracted department
         // tk impl isToBeSubcontracted in Job use it as it is used in JobManager
-        if (!currentJob.isSubContracted() && isToBeSubcontracted()) {
+        if (!currentJob.getIsSubContracted() && getIsToBeSubcontracted()) {
             return new MethodResult(false, "Please enter a valid subcontracted department.");
         } else if ((currentlySavedJob != null)
-                && !currentJob.isSubContracted()
-                && currentlySavedJob.isSubContracted()) {
+                && !currentJob.getIsSubContracted()
+                && currentlySavedJob.getIsSubContracted()) {
 
             // Reset current subcontracted department
             currentJob.setSubContractedDepartment(currentlySavedJob.getSubContractedDepartment());
@@ -1493,7 +1493,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
 
         // Check for valid creation of sub contracts
-        if (currentJob.isSubContracted() && currentJob.getJobSequenceNumber() == null) {
+        if (currentJob.getIsSubContracted() && currentJob.getJobSequenceNumber() == null) {
             return new MethodResult(false, "A main/parent job must be created before creating a subcontracted job.");
         }
 
@@ -1502,7 +1502,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         if (currentJob.getId() != null) {
             Job jobFound = Job.findJobById(em, currentJob.getId());
             if (jobFound != null) {
-                if (!jobFound.isSubContracted() && currentJob.isSubContracted()) {
+                if (!jobFound.getIsSubContracted() && currentJob.getIsSubContracted()) {
                     return new MethodResult(false, "A main/parent job cannot be converted to a subcontracted job.\n"
                             + "Create a copy of this job instead then convert the copied job to a subcontract.");
                 }

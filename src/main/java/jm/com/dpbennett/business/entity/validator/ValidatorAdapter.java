@@ -32,7 +32,7 @@ public class ValidatorAdapter implements Validator {
     
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        
+        System.out.println("ValidatorAdapter validate method to be implemented");
     }
     
 }

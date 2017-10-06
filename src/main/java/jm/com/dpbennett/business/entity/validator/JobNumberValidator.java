@@ -22,14 +22,23 @@ public class JobNumberValidator extends ValidatorAdapter {
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-
-        String currentJobNumber = (String) component.getAttributes().get("currentJobNumber");
+              
+        String currentJobNumber = (String) value;
         Long currentJobId = (Long) component.getAttributes().get("currentJobId");
         Boolean autoGenerateJobNumber = (Boolean) component.getAttributes().get("autoGenerateJobNumber");
 
-        // Check for valid names
-        if (!BusinessEntityUtils.validateName(value.toString().trim())) {
+        // Check for valid job number
+        if (!BusinessEntityUtils.validateName(currentJobNumber.trim())) {
             throw new ValidatorException(getMessage(component.getId()));
+        }
+
+        // Check if job number is unique
+        Job existingJob = Job.findJobByJobNumber(getEntityManager(), currentJobNumber);
+        if (existingJob != null) {            
+            long current_jobid = currentJobId != null ? currentJobId : -1L;
+            if (existingJob.getId() != current_jobid) {
+                throw new ValidatorException(getMessage("exist"));
+            }
         }
 
         // Validate job number text 
@@ -39,27 +48,18 @@ public class JobNumberValidator extends ValidatorAdapter {
             }
         }
 
-        // Check if job number is unique
-        Job existingJob = Job.findJobByJobNumber(getEntityManager(), currentJobNumber);
-        if (existingJob != null) {
-            long current_jobid = currentJobId != null ? currentJobId : -1L;
-            if (existingJob.getId() != current_jobid) {
-                throw new ValidatorException(getMessage("exist"));
-            }
-        }
-
     }
 
     private FacesMessage getMessage(String componentId) {
         switch (componentId) {
             case "jobNumber":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Job Number.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Job Number", "Please enter a valid Job Number.");
             case "invalid":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "This job cannot be saved because a valid job number was not entered.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Job Number", "This job cannot be saved because a valid job number was not entered.");
             case "exist":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "This job cannot be saved because the job number is not unique.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Number Not Unique", "This job cannot be saved because the job number is not unique.");
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter all required (*) fields.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Required", "Please enter all required (*) fields.");
         }
     }
 

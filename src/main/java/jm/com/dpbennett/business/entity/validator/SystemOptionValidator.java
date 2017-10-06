@@ -30,17 +30,17 @@ public class SystemOptionValidator implements Validator {
     private FacesMessage getMessage(String componentId) {
         switch(componentId) {
             case "systemOptionName":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter an option name.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Name Required", "Please enter an option name.");
             case "systemOptionValue":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter an option value.", null);    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Value Required", "Please enter an option value.");    
             case "systemOptionValueType":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter an option value type.", null);   
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Type Required", "Please enter an option value type.");   
             case "systemOptionCategory":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter an option category.", null);  
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Category Required", "Please enter an option category.");  
             case "systemOptionComment":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter an option comment.", null);      
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Comment Required", "Please enter an option comment.");      
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter all required (*) fields.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Required", "Please enter all required (*) fields.");
         }
     }
 }

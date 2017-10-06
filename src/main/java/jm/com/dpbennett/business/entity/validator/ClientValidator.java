@@ -35,11 +35,11 @@ public class ClientValidator implements Validator {
     private FacesMessage getMessage(String componentId) {
         switch (componentId) {
             case "clientName":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid name.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Name", "Please enter a valid name.");
             case "trn":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Taxpayer Registration Number or N/A.", null);            
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Taxpayer Registration Number", "Please enter a valid Taxpayer Registration Number or N/A.");            
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter all required (*) fields.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Required", "Please enter all required (*) fields.");
         }
     }
 }

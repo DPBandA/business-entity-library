@@ -587,7 +587,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public static Boolean getCanApplyGCT(Job job) {
-        return !job.isSubContracted()
+        return !job.getIsSubContracted()
                 && job.getClassification().getIsEarning()
                 && job.getDepartment().getPrivilege().getCanApplyTaxesToJobCosting()
                 && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option

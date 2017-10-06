@@ -38,21 +38,23 @@ public class BusinessEntityValidator implements Validator {
     private FacesMessage getMessage(String componentId) {
         switch (componentId) { 
             case "businessOffice": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Business Office.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Business Office", "Please enter a valid Business Office.");
             case "jobClassification": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Job Classification.", null);    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Classification", "Please enter a valid Classification.");    
             case "client": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Client.", null);    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Client", "Please enter a valid Client.");    
             case "billingAddress": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Billing Address.", null);           
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Billing Address", "Please enter a valid Billing Address.");           
             case "clientContact": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Contact.", null);               
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Contact", "Please enter a valid Contact.");               
             case "department": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Department.", null);    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Department", "Please enter a valid Department.");    
             case "subContractedDepartment": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter a valid Subcontracted Department.", null);      
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Subcontracted Department", "Please enter a valid Subcontracted Department.");      
+            case "assignee": 
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Assignee/Department Representative", "This job cannot be saved because a valid assignee/department representative was not entered.");      
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter all required (*) fields.", null);
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Required", "Please enter all required (*) fields.");
         }
     }
 }
