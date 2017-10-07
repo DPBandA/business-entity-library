@@ -9,23 +9,24 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.FacesConverter;
 import jm.com.dpbennett.business.entity.Address;
+import jm.com.dpbennett.business.entity.Contact;
 
 /**
  *
  * @author desbenn
  */
-@FacesConverter("addressConverter")
-public class AddressConverter extends ConverterAdapter {
+@FacesConverter("clientContactConverter")
+public class ClientContactConverter extends ConverterAdapter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         
-        Address address = Address.findClientAddress(getEntityManager(), value);
+        Contact contact = null;//Contact.findContactByName(getEntityManager(), value);
         
-        if (address == null) {
-           address = new Address(value);
+        if (contact == null) {
+           contact = new Contact(value);
         }
        
-        return address;
+        return contact;
     }
 }

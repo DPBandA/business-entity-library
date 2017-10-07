@@ -96,37 +96,48 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private Integer noOfCalibrations;
     private Integer noOfTestsOrCalibrations;
     @Transient
-    private Boolean clientDirty;
+    private Boolean isClientDirty;
     @Transient
-    private Boolean isJobToBeSubcontracted;
+    private Boolean isToBeSubcontracted;
+    @Transient
+    private Boolean isToBeCopied;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Address billingAddress;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact contact;
     @Transient
-    private Boolean dirty;
+    private Boolean isDirty;
 
     public Job() {
-        this.isJobToBeSubcontracted = false;
-        clientDirty = false;
+        this.isToBeSubcontracted = false;
+        this.isToBeCopied = false;
+        isClientDirty = false;
         jobSamples = new ArrayList<>();
     }
 
-    @Override
-    public Boolean getDirty() {
-        if (dirty == null) {
-            dirty = false;
-        }
-        return dirty;
+    public Boolean getIsToBeCopied() {
+        return isToBeCopied;
+    }
+
+    public void setIsToBeCopied(Boolean isToBeCopied) {
+        this.isToBeCopied = isToBeCopied;
     }
 
     @Override
-    public void setDirty(Boolean dirty) {
-        this.dirty = dirty;
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Job(String jobNumber) {
-        this.isJobToBeSubcontracted = false;
+        this.isToBeSubcontracted = false;
         this.jobNumber = jobNumber;
         jobSamples = new ArrayList<>();
     }
@@ -150,11 +161,11 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     }
 
     public Boolean getIsToBeSubcontracted() {
-        return isJobToBeSubcontracted;
+        return isToBeSubcontracted;
     }
 
-    public void setIsJobToBeSubcontracted(Boolean isJobToBeSubcontracted) {
-        this.isJobToBeSubcontracted = isJobToBeSubcontracted;
+    public void setIsToBeSubcontracted(Boolean isToBeSubcontracted) {
+        this.isToBeSubcontracted = isToBeSubcontracted;
     }
 
     public Boolean getEstimatedTurnAroundTimeRequired() {
@@ -211,7 +222,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     }
 
     public Job(JobSubCategory jobSubCategory, Double finalCost) {
-        this.isJobToBeSubcontracted = false;
+        this.isToBeSubcontracted = false;
         this.jobCostingAndPayment = new JobCostingAndPayment();
         this.jobCostingAndPayment.setFinalCost(finalCost);
         this.jobSubCategory = jobSubCategory;
@@ -385,13 +396,13 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     }
 
     @Override
-    public void setClientDirty(Boolean dirty) {
-        clientDirty = dirty;
+    public void setIsClientDirty(Boolean dirty) {
+        isClientDirty = dirty;
     }
 
     @Override
-    public Boolean isClientDirty() {
-        return clientDirty;
+    public Boolean getIsClientDirty() {
+        return isClientDirty;
     }
 
     @Override

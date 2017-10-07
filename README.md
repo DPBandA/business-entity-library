@@ -4,7 +4,7 @@ This is a data access library that has a considerable number data classes and
 utilities that are used in a typical business.  It also facilitates consistent 
 and safe access to data stores such as files and relational databases.
 
-## Remove PWD
+## REMOVE PWD
 
 ## Things to do
 - Verify if after creating and saving an entity the id field is automatically set

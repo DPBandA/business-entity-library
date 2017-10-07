@@ -19,6 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -309,10 +310,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
     @Override
     public String getName() {
-        if (name == null) {
-            name = toString();
-        }
-        return name;
+        return this.getLastName() + ", " + this.getFirstName();
     }
 
     @Override
@@ -358,6 +356,40 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         }
 
         return null;
+    }
+    
+    /**
+     * Find a contact associated with a client.
+     *
+     * @param em
+     * @param query
+     * @return
+     */
+    public static Contact findClientContact(EntityManager em, String query) {
+
+        try {
+            String newQuery = query.replaceAll("'", "''");
+            String contact[] = newQuery.split(", ");
+            String lastname = contact[0];
+            String firstname = contact[1];
+            
+            List<Contact> contacts = null;
+//            Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
+//                    + " WHERE a.addressLine1 = '" + addressLine1 + "'"
+//                    + " AND (a.addressLine2 = '" + addressLine2 + "' OR a.addressLine2 IS NULL)"
+//                    + " AND (a.city = '" + city + "' OR a.city IS NULL)"
+//                    + " AND (a.stateOrProvince = '" + stateOrProvince + "' OR a.stateOrProvince IS NULL)",
+//                    Address.class);
+//            contacts = SQLQuery.getResultList();
+
+            if (contacts.size() > 0) {
+                return contacts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
 
     public static Contact findDefaultContact(

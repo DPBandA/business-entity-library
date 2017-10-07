@@ -22,7 +22,7 @@ public class SystemOptionValidator implements Validator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
-        if (!BusinessEntityUtils.validateName(value.toString().trim())) {
+        if (!BusinessEntityUtils.validateText(value.toString().trim())) {
             throw new ValidatorException(getMessage(component.getId()));
         }
     }

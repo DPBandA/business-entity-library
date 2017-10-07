@@ -304,7 +304,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     /**
-     * Find an associated with a client.
+     * Find an address associated with a client.
      *
      * @param em
      * @param query

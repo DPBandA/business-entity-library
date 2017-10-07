@@ -14,16 +14,16 @@ public interface ClientOwner {
 
     public void setClient(Client client);
 
-    public void setClientDirty(Boolean dirty);
+    public void setIsClientDirty(Boolean dirty);
 
-    public Boolean isClientDirty();
+    public Boolean getIsClientDirty();
     
     public void setBillingAddress(Address billingAddress);
     
     public Address getBillingAddress();
     
-    public Boolean getDirty();
+    public Boolean getIsDirty();
 
-    public void setDirty(Boolean dirty);
+    public void setIsDirty(Boolean dirty);
 
 }

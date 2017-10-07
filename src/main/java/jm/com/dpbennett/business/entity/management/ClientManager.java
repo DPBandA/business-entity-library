@@ -317,7 +317,7 @@ public class ClientManager implements Serializable, ClientManagement {
 
     public void updateBillingAddress() {
         getClientHandler().setBillingAddress(billingAddress);
-        getClientHandler().setDirty(true);
+        getClientHandler().setIsDirty(true);
     }
 
     public void updateClient() {

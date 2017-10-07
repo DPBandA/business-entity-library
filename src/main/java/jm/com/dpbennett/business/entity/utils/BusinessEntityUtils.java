@@ -507,6 +507,21 @@ public class BusinessEntityUtils {
 
         return true;
     }
+    
+    public static boolean validateText(String name) {
+
+        if (name == null) {
+            return false;
+        } else if (name.equals("")) {
+            return false;
+        } else if (containsChar(name, '"')) {
+            return false;
+        } else if (name.contains("''")) {
+            return false;
+        } 
+
+        return true;
+    }
 
     public static boolean validateNameOfBusinessEntity(BusinessEntity entity) {
 
