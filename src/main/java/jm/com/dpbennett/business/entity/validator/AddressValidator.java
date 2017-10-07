@@ -29,6 +29,9 @@ public class AddressValidator implements Validator {
                 throw new ValidatorException(getMessage(component.getId()));
             } 
         }
+        else {
+            throw new ValidatorException(getMessage("invalidBillingAddress"));
+        }
 
     }
 
@@ -36,8 +39,10 @@ public class AddressValidator implements Validator {
         switch (componentId) {
             case "billingAddress":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Billing Address", "Please ensure that all billing address fields are entered and contain valid characters.");
+            case "invalidBillingAddress":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Billing Address", "Please enter a valid Billing Address.");    
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Required", "Please enter all required (*) fields.");
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
         }
     }
 }

@@ -40,8 +40,10 @@ public class RequiredFieldValidator implements Validator {
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Business Office", "Please enter a valid Business Office.");
             case "trn":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Taxpayer Registration Number", "Please enter a valid Taxpayer Registration Number or N/A.");
+            case "instructions":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Instuctions Required", "Please enter instructions for this job.");    
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Required", "Please enter all required (*) fields.");
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
         }
     }
 }
