@@ -7,6 +7,7 @@ and safe access to data stores such as files and relational databases.
 ## REMOVE PWD
 
 ## Things to do
+- Implement findClientAddressById()
 - Verify if after creating and saving an entity the id field is automatically set
   using the business entity util save.
 - Implement use of resource bundle to store and retrieve persistent unit names etc.

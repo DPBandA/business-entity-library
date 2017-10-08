@@ -158,7 +158,7 @@ public class TestEntity {
         job.setJobStatusAndTracking(new JobStatusAndTracking());
         job.getJobStatusAndTracking().setDateSubmitted(new Date());
 
-        job.setJobNumber("?"); //(getJobNumber(job));
+        job.setJobNumber("?");
 
         job.setNumberOfSamples(0L);
 
@@ -2158,13 +2158,9 @@ public class TestEntity {
     public static void main(String[] args) {
         if (setupDatabaseConnection("PU")) {
             EntityManager em = EMF.createEntityManager();
-            Address address = new Address("A great address!");
-            em.getTransaction().begin();
-            BusinessEntityUtils.saveBusinessEntity(em, address);
-            em.getTransaction().commit();
-            System.out.println("Address Id: " + address.getId());
-            //System.out.println("Address: " + Address.findClientAddress(em, "85 Young Street; Spanish Town; ; Trelawny"));
-            //System.out.println("Address: " + Address.findClientAddress(em, "; 2 East Trade Way, Naggo Head; ;  "));
+            
+            Client client = Client.findClientById(em, 1088587L);
+            System.out.println("Client name: " + client.getName());
         }
     }
 }

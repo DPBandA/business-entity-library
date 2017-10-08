@@ -360,12 +360,14 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     
     /**
      * Find a contact associated with a client.
+     * This method uses a crude method by finding the client first then looping over the
+     * contacts to find the required contact. I full SQL solution is to be developed.
      *
      * @param em
      * @param query
      * @return
      */
-    public static Contact findClientContact(EntityManager em, String query) {
+    public static Contact findClientContactById(EntityManager em, String query, Long clientId) {
 
         try {
             String newQuery = query.replaceAll("'", "''");

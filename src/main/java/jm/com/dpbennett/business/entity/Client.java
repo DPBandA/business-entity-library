@@ -611,6 +611,19 @@ public class Client implements Customer, Serializable, BusinessEntity {
             return null;
         }
     }
+    
+    public static Client findClientById(EntityManager em, Long id) {
+
+        try {
+            Client client = em.find(Client.class, id);
+
+            return client;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     public static Client findActiveClientByName(EntityManager em, String clientName, Boolean ignoreCase) {
 

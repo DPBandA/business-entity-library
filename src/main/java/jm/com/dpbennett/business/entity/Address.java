@@ -339,6 +339,41 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         }
     }
 
+    /**
+     * Find an address associated with a client given the client's id. This
+     * method uses a cude method by finding the client first then looping over the
+     * addresses to find the required address. I full SQL solution is to be
+     * developed.
+     *
+     * @param em
+     * @param query
+     * @param clientId
+     * @return
+     */
+    public static Address findClientAddressById(EntityManager em, String query, Long clientId) {
+
+        try {
+            String newQuery = query.replaceAll("'", "''");
+            String address[] = newQuery.split("; ");
+            String addressLine1 = address[0];
+            String addressLine2 = address[1];
+            String city = address[2];
+            String stateOrProvince = address[3];
+            
+            Client client  = Client.findClientById(em, clientId);
+
+            for (Address addr : client.getAddresses()) {
+                if (addr.getAddressLine1().trim().equals(addressLine1.trim())) {
+                    
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     public static List<Address> findClientAddresses(EntityManager em, String query) {
 
         try {
