@@ -19,13 +19,26 @@ public class ClientAddressConverter extends ConverterAdapter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        
-        Address address = Address.findClientAddress(getEntityManager(), value);
-        
-        if (address == null) {
-           address = new Address(value);
+        Address address = null;
+
+        try {
+                            
+            Long currentJobClientId = (Long) component.getAttributes().get("currentJobClientId");
+           
+            if (currentJobClientId != null) {
+                
+                address = Address.findClientAddressById(getEntityManager(), value, currentJobClientId);
+            }
+
+            if (address == null) {
+                address = new Address(value);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+            address = new Address(value);
         }
-       
+
         return address;
     }
+
 }

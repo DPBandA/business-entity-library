@@ -24,6 +24,7 @@ public class AddressValidator implements Validator {
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
         Address address = (Address) value;
+      
         if (address != null) {
             if (!BusinessEntityUtils.validateName(address.getAddressLine1())) {
                 throw new ValidatorException(getMessage(component.getId()));

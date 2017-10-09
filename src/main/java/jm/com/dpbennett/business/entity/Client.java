@@ -230,6 +230,26 @@ public class Client implements Customer, Serializable, BusinessEntity {
         this.name = name;
     }
 
+    /**
+     * This method guards against returning very long names. 
+     * This is used in an autocomplete JSF component for instance
+     * to prevent the list of clients from extending beyond the screen.
+     * In the future, the maximum length of say 50 will be a value stored in the 
+     * resource bundle of the BEL.
+     * @return 
+     */
+    public String getTruncatedName() {
+        if (getName().length() >= 50) {
+            return getName().substring(0, 50);
+        } else {
+            return getName();
+        }
+    }
+
+    public void setTruncatedName(String name) {
+        setName(name);
+    }
+
     @Override
     @XmlTransient
     public List<Address> getAddresses() {
@@ -238,7 +258,6 @@ public class Client implements Customer, Serializable, BusinessEntity {
         } else {
             addresses = new ArrayList<>();
         }
-
 
         return addresses;
     }
@@ -341,7 +360,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
             Address address = new Address();
             address.setType("Billing");
             getAddresses().add(address);
-            return getAddresses().get(0);        
+            return getAddresses().get(0);
         }
     }
 
@@ -462,9 +481,9 @@ public class Client implements Customer, Serializable, BusinessEntity {
         try {
             String newTrn = trn.replaceAll("'", "''");
 
-            List<Client> clients =
-                    em.createQuery("SELECT c FROM Client c where UPPER(c.taxRegistrationNumber) like '"
-                    + newTrn.toUpperCase() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
+            List<Client> clients
+                    = em.createQuery("SELECT c FROM Client c where UPPER(c.taxRegistrationNumber) like '"
+                            + newTrn.toUpperCase() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -477,28 +496,28 @@ public class Client implements Customer, Serializable, BusinessEntity {
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<String> names =
-                    em.createQuery("SELECT c FROM Client c WHERE UPPER(c.name) like '"
-                    + newName.toUpperCase() + "%'"
-                    + " AND c.active = 1"
-                    + " ORDER BY c.name", String.class).getResultList();
+            List<String> names
+                    = em.createQuery("SELECT c FROM Client c WHERE UPPER(c.name) like '"
+                            + newName.toUpperCase() + "%'"
+                            + " AND c.active = 1"
+                            + " ORDER BY c.name", String.class).getResultList();
             return names;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Client> findActiveClientsByFirstPartOfName(EntityManager em, String name) {
 
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<Client> clients =
-                    em.createQuery("SELECT c FROM Client c WHERE c.name like '"
-                    + newName + "%'"
-                    + " AND c.active = 1"
-                    + " ORDER BY c.name", Client.class).getResultList();
+            List<Client> clients
+                    = em.createQuery("SELECT c FROM Client c WHERE c.name like '"
+                            + newName + "%'"
+                            + " AND c.active = 1"
+                            + " ORDER BY c.name", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -511,11 +530,11 @@ public class Client implements Customer, Serializable, BusinessEntity {
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<Client> clients =
-                    em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
-                    + newName + "%'"
-                    + " AND c.active = 1"
-                    + " ORDER BY c.name", Client.class).getResultList();
+            List<Client> clients
+                    = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
+                            + newName + "%'"
+                            + " AND c.active = 1"
+                            + " ORDER BY c.name", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -529,10 +548,10 @@ public class Client implements Customer, Serializable, BusinessEntity {
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<String> names =
-                    em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
-                    + newName.toUpperCase()
-                    + "%' ORDER BY c.name", String.class).getResultList();
+            List<String> names
+                    = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
+                            + newName.toUpperCase()
+                            + "%' ORDER BY c.name", String.class).getResultList();
             return names;
         } catch (Exception e) {
             System.out.println(e);
@@ -545,10 +564,10 @@ public class Client implements Customer, Serializable, BusinessEntity {
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<Client> clients =
-                    em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
-                    + newName.toUpperCase()
-                    + "%' ORDER BY c.name", Client.class).getResultList();
+            List<Client> clients
+                    = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
+                            + newName.toUpperCase()
+                            + "%' ORDER BY c.name", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -561,11 +580,11 @@ public class Client implements Customer, Serializable, BusinessEntity {
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<Client> clients =
-                    em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '%"
-                    + newName.toUpperCase()
-                    + "%'"
-                    + " ORDER BY c.name", Client.class).getResultList();
+            List<Client> clients
+                    = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '%"
+                            + newName.toUpperCase()
+                            + "%'"
+                            + " ORDER BY c.name", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -611,14 +630,14 @@ public class Client implements Customer, Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static Client findClientById(EntityManager em, Long id) {
 
         try {
             Client client = em.find(Client.class, id);
 
             return client;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;

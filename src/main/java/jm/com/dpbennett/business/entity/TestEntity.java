@@ -2154,13 +2154,20 @@ public class TestEntity {
         }
     }
 
-    // TK: End BusinessEntityUtils code used for testing
     public static void main(String[] args) {
         if (setupDatabaseConnection("PU")) {
             EntityManager em = EMF.createEntityManager();
             
             Client client = Client.findClientById(em, 1088587L);
             System.out.println("Client name: " + client.getName());
+            System.out.println("Addresses: " + client.getAddresses().size());
+            
+            System.out.println("Client address found: " + 
+                    Address.findClientAddressById(em, 
+                            "Another address for testing;  line 2;  city; Saint Elizabeth", 
+                            client.getId()));
+            
+            // Another address for testing;  line 2;  city; Saint Elizabeth
         }
     }
 }
