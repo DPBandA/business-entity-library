@@ -49,14 +49,13 @@ public class ClientManager implements Serializable, ClientManagement {
     private String dialogMessageSeverity;
     private Boolean save;
     private Boolean clientNameAndIdEditable;
-    private BusinessEntityManager businessEntityManager;
+    //private BusinessEntityManager businessEntityManager;
     private Client clientBackup;
     private Boolean isNewClient;
     private String clientSearchText;
     private List<Client> foundClients;
     private ClientOwner clientOwner;
-    private String clientBillingAddressString;
-    //private Address billingAddress;
+    private String clientBillingAddressString;  
     private JobManagerUser user;
 
     /**
@@ -71,7 +70,6 @@ public class ClientManager implements Serializable, ClientManagement {
         clientNameAndIdEditable = false;
         clientSearchText = "";
         foundClients = new ArrayList<>();
-        //billingAddress = new Address();
     }
 
     public Boolean getIsNewClient() {
@@ -81,17 +79,6 @@ public class ClientManager implements Serializable, ClientManagement {
     public void setIsNewClient(Boolean isNewClient) {
         this.isNewClient = isNewClient;
     }
-
-//    public Address getBillingAddress() {
-//        if (billingAddress == null) {
-//            billingAddress = new Address();
-//        }
-//        return billingAddress;
-//    }
-//
-//    public void setBillingAddress(Address billingAddress) {
-//        this.billingAddress = billingAddress;
-//    }
 
     public void changeContactType(String contactString) {
         // Reset address types 
@@ -150,9 +137,7 @@ public class ClientManager implements Serializable, ClientManagement {
     public List<SelectItem> getClientAddresses() {
         ArrayList<SelectItem> addresses = new ArrayList<>();
 
-        //int count = 0;
         for (Address address : getClient().getAddresses()) {
-            //addresses.add(new SelectItem(address.toString(), BusinessEntityUtils.getShortenedString(address.toString(), 30) + "..."));
             addresses.add(new SelectItem(address.toString(), address.toString()));
         }
 
@@ -163,7 +148,7 @@ public class ClientManager implements Serializable, ClientManagement {
         this.clientOwner = clientHandler;
     }
 
-    public ClientOwner getClientHandler() {
+    public ClientOwner getClientOwner() {
         return clientOwner;
     }
 
@@ -233,14 +218,14 @@ public class ClientManager implements Serializable, ClientManagement {
         this.clientBackup = clientBackup;
     }
 
-    public BusinessEntityManager getBusinessEntityManager() {
-        return businessEntityManager;
-    }
-
-    @Override
-    public void setBusinessEntityManager(BusinessEntityManager businessEntityManager) {
-        this.businessEntityManager = businessEntityManager;
-    }
+//    public BusinessEntityManager getBusinessEntityManager() {
+//        return businessEntityManager;
+//    }
+//
+//    @Override
+//    public void setBusinessEntityManager(BusinessEntityManager businessEntityManager) {
+//        this.businessEntityManager = businessEntityManager;
+//    }
 
     public Boolean getSave() {
         return save;
@@ -320,12 +305,12 @@ public class ClientManager implements Serializable, ClientManagement {
     }
 
     public void updateCurrentContact() {
-        //getCurrentContact().setName(getCurrentContact().toString());
+        getClientOwner().setContact(currentContact);
         setDirty(true);
     }
 
     public void updateCurrentAddress() {
-        //getCurrentAddress().setName(getCurrentAddress().toString());
+        getClientOwner().setBillingAddress(currentAddress);
         setDirty(true);
     }
 
@@ -348,9 +333,9 @@ public class ClientManager implements Serializable, ClientManagement {
 
     public void setDirty(Boolean dirty) {
         this.dirty = dirty;
-        if (businessEntityManager != null) {
-            businessEntityManager.setDirty(dirty);
-        }
+//        if (businessEntityManager != null) {
+//            businessEntityManager.setDirty(dirty);
+//        }
     }
 
     @Override
@@ -389,9 +374,9 @@ public class ClientManager implements Serializable, ClientManagement {
         setDirty(false);
         isNewClient = false;
 
-        if (businessEntityManager != null) {
-            businessEntityManager.setDirty(false);
-        }
+//        if (businessEntityManager != null) {
+//            businessEntityManager.setDirty(false);
+//        }
 
         RequestContext.getCurrentInstance().closeDialog(null);
     }
@@ -475,13 +460,13 @@ public class ClientManager implements Serializable, ClientManagement {
 
             // reload from database to ensure that all entities recently saved
             // do not have null ids.
-            setClient(em.find(Client.class, getClient().getId()));
+            //setClient(em.find(Client.class, getClient().getId()));
 
             setDirty(false);
 
-            if (businessEntityManager != null) {
-                businessEntityManager.setDirty(false);
-            }
+//            if (businessEntityManager != null) {
+//                businessEntityManager.setDirty(false);
+//            }
 
         } catch (Exception e) {
             System.out.println(e);

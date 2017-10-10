@@ -141,10 +141,12 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         jobSamples = new ArrayList<>();
     }
 
+    @Override
     public Contact getContact() {
         return contact;
     }
 
+    @Override
     public void setContact(Contact contact) {
         this.contact = contact;
     }

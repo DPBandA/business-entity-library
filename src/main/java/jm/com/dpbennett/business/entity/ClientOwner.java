@@ -22,6 +22,10 @@ public interface ClientOwner {
     
     public Address getBillingAddress();
     
+    public void setContact(Contact contact);
+    
+    public Contact getContact();
+    
     public Boolean getIsDirty();
 
     public void setIsDirty(Boolean dirty);

@@ -24,5 +24,5 @@ public interface ClientManagement {
 
     public void setSave(Boolean save);
 
-    public void setBusinessEntityManager(BusinessEntityManager businessEntityManager);
+    //public void setBusinessEntityManager(BusinessEntityManager businessEntityManager);
 }
