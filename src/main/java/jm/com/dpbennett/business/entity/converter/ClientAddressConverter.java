@@ -33,7 +33,8 @@ public class ClientAddressConverter extends ConverterAdapter {
             if (address == null) {
                 address = new Address(value);
             }
-        } catch (NumberFormatException e) {
+            
+        } catch (Exception e) {
             System.out.println(e);
             address = new Address(value);
         }

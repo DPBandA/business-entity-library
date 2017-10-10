@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.MethodResult;
 
-
 /**
  *
  * @author DBennett
@@ -357,11 +356,11 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
         return null;
     }
-    
+
     /**
-     * Find a contact associated with a client.
-     * This method uses a crude method by finding the client first then looping over the
-     * contacts to find the required contact. I full SQL solution is to be developed.
+     * Find a contact associated with a client. This method uses a crude method
+     * by finding the client first then looping over the contacts to find the
+     * required contact. I full SQL solution is to be developed.
      *
      * @param em
      * @param query
@@ -374,19 +373,18 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
             String contact[] = newQuery.split(", ");
             String lastname = contact[0];
             String firstname = contact[1];
-            
-            List<Contact> contacts = null;
-//            Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
-//                    + " WHERE a.addressLine1 = '" + addressLine1 + "'"
-//                    + " AND (a.addressLine2 = '" + addressLine2 + "' OR a.addressLine2 IS NULL)"
-//                    + " AND (a.city = '" + city + "' OR a.city IS NULL)"
-//                    + " AND (a.stateOrProvince = '" + stateOrProvince + "' OR a.stateOrProvince IS NULL)",
-//                    Address.class);
-//            contacts = SQLQuery.getResultList();
 
-            if (contacts.size() > 0) {
-                return contacts.get(0);
+            Client client = Client.findClientById(em, clientId);
+
+            if (client != null) {
+                for (Contact cont : client.getContacts()) {
+                    if (cont.getFirstName().equals(firstname)
+                            && cont.getLastName().equals(lastname)) {
+                        return cont;
+                    }
+                }
             }
+
             return null;
         } catch (Exception e) {
             System.out.println(e);

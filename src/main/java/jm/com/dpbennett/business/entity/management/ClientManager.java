@@ -56,7 +56,7 @@ public class ClientManager implements Serializable, ClientManagement {
     private List<Client> foundClients;
     private ClientOwner clientOwner;
     private String clientBillingAddressString;
-    private Address billingAddress;
+    //private Address billingAddress;
     private JobManagerUser user;
 
     /**
@@ -71,7 +71,7 @@ public class ClientManager implements Serializable, ClientManagement {
         clientNameAndIdEditable = false;
         clientSearchText = "";
         foundClients = new ArrayList<>();
-        billingAddress = new Address();
+        //billingAddress = new Address();
     }
 
     public Boolean getIsNewClient() {
@@ -82,16 +82,16 @@ public class ClientManager implements Serializable, ClientManagement {
         this.isNewClient = isNewClient;
     }
 
-    public Address getBillingAddress() {
-        if (billingAddress == null) {
-            billingAddress = new Address();
-        }
-        return billingAddress;
-    }
-
-    public void setBillingAddress(Address billingAddress) {
-        this.billingAddress = billingAddress;
-    }
+//    public Address getBillingAddress() {
+//        if (billingAddress == null) {
+//            billingAddress = new Address();
+//        }
+//        return billingAddress;
+//    }
+//
+//    public void setBillingAddress(Address billingAddress) {
+//        this.billingAddress = billingAddress;
+//    }
 
     public void changeContactType(String contactString) {
         // Reset address types 
@@ -315,22 +315,17 @@ public class ClientManager implements Serializable, ClientManagement {
         }
     }
 
-    public void updateBillingAddress() {
-        getClientHandler().setBillingAddress(billingAddress);
-        getClientHandler().setIsDirty(true);
-    }
-
     public void updateClient() {
         setDirty(true);
     }
 
     public void updateCurrentContact() {
-        getCurrentContact().setName(getCurrentContact().toString());
+        //getCurrentContact().setName(getCurrentContact().toString());
         setDirty(true);
     }
 
     public void updateCurrentAddress() {
-        getCurrentAddress().setName(getCurrentAddress().toString());
+        //getCurrentAddress().setName(getCurrentAddress().toString());
         setDirty(true);
     }
 
@@ -384,46 +379,6 @@ public class ClientManager implements Serializable, ClientManagement {
             return null;
         }
     }
-
-    //   + " AND c.active = 1"
-//    public Client getActiveClientByName(EntityManager em, String clientName) {
-//
-//        try {
-//            String newClientName = clientName.trim().replaceAll("'", "''");
-//
-//            List<Client> clients = em.createQuery("SELECT c FROM Client c "
-//                    + "WHERE UPPER(c.name) "
-//                    + "= '" + newClientName.toUpperCase() + "'" + " AND c.active = 1",
-//                    Client.class).getResultList();
-//
-//            if (!clients.isEmpty()) {
-//                return clients.get(0);
-//            }
-//            return null;
-//        } catch (Exception e) {
-//            System.out.println("Error getting client: possibly null name");
-//            return null;
-//        }
-//    }
-
-//    public Client getClientByName(EntityManager em, String clientName) {
-//
-//        try {
-//            String newClientName = clientName.trim().replaceAll("'", "''");
-//
-//            List<Client> clients = em.createQuery("SELECT c FROM Client c "
-//                    + "WHERE UPPER(c.name) "
-//                    + "= '" + newClientName.toUpperCase() + "'", Client.class).getResultList();
-//
-//            if (!clients.isEmpty()) {
-//                return clients.get(0);
-//            }
-//            return null;
-//        } catch (Exception e) {
-//            System.out.println("Error getting client: possibly null name");
-//            return null;
-//        }
-//    }
 
     public void cancelClientEdit(ActionEvent actionEvent) {
 
@@ -613,109 +568,6 @@ public class ClientManager implements Serializable, ClientManagement {
             closeEntityManager(em);
         }
     }
-
-//    public List<Client> findActiveClientsByName(EntityManager em, String name) {
-//
-//        try {
-//            String newName = name.replaceAll("'", "''");
-//
-//            List<Client> clients
-//                    = em.createQuery("SELECT c FROM Client c WHERE UPPER(c.name) like '"
-//                            + newName.toUpperCase().trim() + "%'"
-//                            + " AND c.active = 1"
-//                            + " ORDER BY c.name", Client.class).getResultList();
-//            return clients;
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return new ArrayList<>();
-//        }
-//    }
-
-//    public List<String> completeClientName(String query) {
-//        try {
-//            return findActiveClientNames(getEntityManager(), query);
-//
-//        } catch (Exception e) {
-//            System.out.println(e);
-//
-//            return new ArrayList<>();
-//        }
-//    }
-
-//    public List<String> findActiveClientNames(EntityManager em, String name) {
-//
-//        try {
-//            String newName = name.replaceAll("'", "''");
-//
-//            List<String> names
-//                    = em.createQuery("SELECT c FROM Client c WHERE UPPER(c.name) like '"
-//                            + newName.toUpperCase().trim() + "%'"
-//                            + " AND c.active = 1"
-//                            + " ORDER BY c.name", String.class).getResultList();
-//            return names;
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return new ArrayList<>();
-//        }
-//    }
-
-//    public List<Client> findClientsByTRN(EntityManager em, String trn) {
-//
-//        try {
-//            String newTrn = trn.replaceAll("'", "''");
-//
-//            List<Client> clients
-//                    = em.createQuery("SELECT c FROM Client c where UPPER(c.taxRegistrationNumber) like '"
-//                            + newTrn.toUpperCase().trim() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
-//            return clients;
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return new ArrayList<Client>();
-//        }
-//    }
-
-//    public List<Client> getAllClients(EntityManager em) {
-//
-//        try {
-//            List<Client> clients = em.createNamedQuery("findAllClients", Client.class).getResultList();
-//            return clients;
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return null;
-//        }
-//    }
-
-//    public List<Client> findClientsByName(EntityManager em, String name) {
-//
-//        try {
-//            String newName = name.replaceAll("'", "''");
-//
-//            List<Client> clients
-//                    = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
-//                            + newName.toUpperCase().trim()
-//                            + "%' ORDER BY c.name", Client.class).getResultList();
-//            return clients;
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return new ArrayList<>();
-//        }
-//    }
-
-//    public List<String> findClientNames(EntityManager em, String name) {
-//
-//        try {
-//            String newName = name.replaceAll("'", "''");
-//
-//            List<String> names
-//                    = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
-//                            + newName.toUpperCase().trim()
-//                            + "%' ORDER BY c.name", String.class).getResultList();
-//            return names;
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return new ArrayList<>();
-//        }
-//    }
 
     public void closeEntityManager(EntityManager em) {
         if (em != null) {

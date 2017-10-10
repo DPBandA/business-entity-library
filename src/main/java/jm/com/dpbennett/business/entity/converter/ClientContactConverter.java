@@ -8,7 +8,6 @@ package jm.com.dpbennett.business.entity.converter;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.FacesConverter;
-import jm.com.dpbennett.business.entity.Address;
 import jm.com.dpbennett.business.entity.Contact;
 
 /**
@@ -20,13 +19,24 @@ public class ClientContactConverter extends ConverterAdapter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        
-        Contact contact = null;//Contact.findContactByName(getEntityManager(), value);
-        
-        if (contact == null) {
-           contact = new Contact(value);
+        Contact contact = null;
+
+        try {
+            Long currentJobClientId = (Long) component.getAttributes().get("currentJobClientId");
+            
+            if (currentJobClientId != null) {                
+                contact = Contact.findClientContactById(getEntityManager(), value, currentJobClientId);
+            }
+           
+            if (contact == null) {
+                contact = new Contact(value);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+            contact = new Contact(value);
         }
-       
+
         return contact;
     }
 }
