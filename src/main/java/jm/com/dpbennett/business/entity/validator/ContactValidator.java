@@ -10,38 +10,37 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
-import jm.com.dpbennett.business.entity.Address;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 
 /**
  *
  * @author desbenn
  */
-@FacesValidator("addressValidator")
-public class AddressValidator implements Validator {
+@FacesValidator("contactValidator")
+public class ContactValidator implements Validator {
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
-        Address address = (Address) value;
-      
-        if (address != null) {
-            if (!BusinessEntityUtils.validateName(address.getAddressLine1())) {
+        if (value != null) {
+            if (!BusinessEntityUtils.validateText(value.toString().trim())) {
                 throw new ValidatorException(getMessage(component.getId()));
-            } 
+            }
         }
         else {
-            throw new ValidatorException(getMessage("invalidBillingAddress"));
+             throw new ValidatorException(getMessage(component.getId()));
         }
 
     }
 
     private FacesMessage getMessage(String componentId) {
-        switch (componentId) {            
-            case "billingAddress":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Billing Address", "Please ensure that all billing address fields are entered and contain valid characters. The characters \" ' and ; are NOT allowed.");
-            case "invalidBillingAddress":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Billing Address", "Please enter a valid Billing Address.");    
+        switch (componentId) {
+            case "contactType":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contact Type Required", "Please enter a valid type. The characters \" ' and ; are NOT allowed.");
+            case "contactFirstname":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Firstname Required", "Please enter a valid firstname. The characters \" ' and ; are NOT allowed.");
+            case "contactLastname":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Lastname Required", "Please enter a valid lastname. The characters \" ' and ; are NOT allowed.");
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
         }

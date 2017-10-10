@@ -28,7 +28,7 @@ public class JobNumberValidator extends ValidatorAdapter {
         Boolean autoGenerateJobNumber = (Boolean) component.getAttributes().get("autoGenerateJobNumber");
 
         // Check for valid job number
-        if (!BusinessEntityUtils.validateName(currentJobNumber.trim())) {
+        if (!BusinessEntityUtils.validateText(currentJobNumber.trim())) {
             throw new ValidatorException(getMessage(component.getId()));
         }
 

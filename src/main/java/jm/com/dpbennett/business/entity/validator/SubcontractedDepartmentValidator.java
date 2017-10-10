@@ -26,7 +26,7 @@ public class SubcontractedDepartmentValidator extends ValidatorAdapter {
 
         Department subContractedDepartment = (Department) value;
         if (subContractedDepartment != null) {
-            if (!BusinessEntityUtils.validateName(subContractedDepartment.getName())) {
+            if (!BusinessEntityUtils.validateText(subContractedDepartment.getName())) {
                 throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Subcontracted Department", "Please enter a valid Subcontracted Department."));
             }
         }

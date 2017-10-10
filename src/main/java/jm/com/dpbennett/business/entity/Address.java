@@ -51,38 +51,49 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     public Address() {
         this.name = "";
-        this.country = " ";
-        this.postalCode = " ";
-        this.stateOrProvince = " ";
-        this.city = " ";
-        this.addressLine2 = " ";
+        this.country = "";
+        this.postalCode = "";
+        this.stateOrProvince = "";
+        this.city = "";
+        this.addressLine2 = "";
         this.addressLine1 = "";
-        this.type = " ";
+        this.type = "";
     }
 
     public Address(Address src) {
         this.name = "";
-        this.country = " ";
-        this.postalCode = " ";
-        this.stateOrProvince = " ";
-        this.city = " ";
-        this.addressLine2 = " ";
+        this.country = "";
+        this.postalCode = "";
+        this.stateOrProvince = "";
+        this.city = "";
+        this.addressLine2 = "";
         this.addressLine1 = "";
-        this.type = " ";
+        this.type = "";
         this.Id = null;
         doCopy(src);
     }
 
     public Address(String name) {
         this.name = name;
-        this.country = " ";
-        this.postalCode = " ";
-        this.stateOrProvince = " ";
-        this.city = " ";
-        this.addressLine2 = " ";
+        this.country = "";
+        this.postalCode = "";
+        this.stateOrProvince = "";
+        this.city = "";
+        this.addressLine2 = "";
         this.addressLine1 = "";
         this.type = " ";
         this.Id = null;
+    }
+
+    public Address prepare() {
+        
+        addressLine1 = getAddressLine1().trim();
+        addressLine2 = getAddressLine2().trim();
+        city = getCity().trim();
+        stateOrProvince = getStateOrProvince().trim();
+        country = getCountry().trim();
+
+        return this;
     }
 
     public final void doCopy(Address src) {
@@ -107,8 +118,8 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getAddressLine1() {
-        if (addressLine1 == null) {
-            addressLine1 = "";
+        if (addressLine1 == null || addressLine1.isEmpty()) {
+            addressLine1 = " ";
         }
         return addressLine1;
     }
@@ -118,7 +129,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getAddressLine2() {
-        if ("".equals(addressLine2) || addressLine2 == null) {
+        if (addressLine2 == null || addressLine2.isEmpty()) {
             addressLine2 = " ";
         }
         return addressLine2;
@@ -129,7 +140,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getType() {
-        if ("".equals(type) || type == null) {
+        if (type == null || type.isEmpty()) {
             type = " ";
         }
         return type;
@@ -140,7 +151,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getCity() {
-        if ("".equals(city) || city == null) {
+        if (city == null || city.isEmpty() ) {
             city = " ";
         }
         return city;
@@ -151,7 +162,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getCountry() {
-        if ("".equals(country) || country == null) {
+        if (country == null || country.isEmpty()) {
             country = " ";
         }
         return country;
@@ -162,7 +173,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getPostalCode() {
-        if ("".equals(postalCode) || postalCode == null) {
+        if (postalCode == null || postalCode.isEmpty()) {
             postalCode = " ";
         }
         return postalCode;
@@ -173,7 +184,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getStateOrProvince() {
-        if ("".equals(stateOrProvince) || stateOrProvince == null) {
+        if (stateOrProvince == null || stateOrProvince.isEmpty()) {
             stateOrProvince = " ";
         }
         return stateOrProvince;
@@ -229,6 +240,8 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
                 && getStateOrProvince().trim().isEmpty()) {
             return "";
         } else {
+
+//            Address.prepare(this);
             return getAddressLine1()
                     + "; " + getAddressLine2()
                     + "; " + getCity()
@@ -362,7 +375,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
             Client client = Client.findClientById(em, clientId);
 
-            if (client != null) {                
+            if (client != null) {
                 for (Address addr : client.getAddresses()) {
                     if (addr.getAddressLine1().equals(addressLine1)
                             && addr.getAddressLine2().equals(addressLine2)
@@ -372,7 +385,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
                     }
                 }
             }
-                        
+
             return null;
         } catch (Exception e) {
             System.out.println(e);

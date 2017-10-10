@@ -25,7 +25,7 @@ public class BusinessEntityValidator implements Validator {
 
         BusinessEntity entity = (BusinessEntity) value;
         if (entity != null) {
-            if (!BusinessEntityUtils.validateName(entity.getName())) {
+            if (!BusinessEntityUtils.validateText(entity.getName())) {
                 throw new ValidatorException(getMessage(component.getId()));
             } 
         }

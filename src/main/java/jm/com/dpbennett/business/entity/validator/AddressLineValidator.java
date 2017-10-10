@@ -16,15 +16,14 @@ import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
  *
  * @author desbenn
  */
-@FacesValidator("requiredFieldValidator")
-public class RequiredFieldValidator implements Validator {
+@FacesValidator("addressLineValidator")
+public class AddressLineValidator implements Validator {
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
-        // Check for valid names
         if (value != null) {
-            if (!BusinessEntityUtils.validateText(value.toString().trim())) {
+            if (!BusinessEntityUtils.validateAddressLine(value.toString().trim())) {
                 throw new ValidatorException(getMessage(component.getId()));
             }
         }
@@ -36,12 +35,14 @@ public class RequiredFieldValidator implements Validator {
 
     private FacesMessage getMessage(String componentId) {
         switch (componentId) {
-            case "businessOffice":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Business Office", "Please enter a valid Business Office.");
-            case "trn":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Taxpayer Registration Number", "Please enter a valid Taxpayer Registration Number or N/A.");
-            case "instructions":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Instuctions Required", "Please enter instructions for this job.");    
+            case "addressType":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Address Type Required", "Please enter a valid type. The characters \" ' and ; are NOT allowed.");
+            case "addressLine1":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Address Line 1 Required", "Please enter a valid address line. The characters \" ' and ; are NOT allowed.");
+            case "addressCity":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "City/Town Required", "Please enter a valid city. The characters \" ' and ; are NOT allowed.");
+            case "parishStateProvince":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Parish/State/Province Required", "Please enter a valid parish/state/province. The characters \" ' and ; are NOT allowed.");    
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
         }

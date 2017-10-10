@@ -72,6 +72,14 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         doCopy(src);
     }
 
+    public Contact prepare() {
+        
+        firstName = getFirstName().trim();
+        lastName = getLastName().trim();
+        
+        return this;
+    }
+
     public final void doCopy(Contact src) {
         phoneNumbers = new ArrayList<>();
         addresses = new ArrayList<>();
@@ -243,7 +251,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
     @Override
     public String getFirstName() {
-        if (firstName == null) {
+        if (firstName == null || firstName.isEmpty()) {
             firstName = "";
         }
         return firstName;
@@ -256,7 +264,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
     @Override
     public String getLastName() {
-        if (lastName == null) {
+        if (lastName == null || lastName.isEmpty()) {
             lastName = "";
         }
         return lastName;
@@ -269,6 +277,9 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
     @Override
     public String getMiddleName() {
+        if (middleName == null || middleName.isEmpty()) {
+            middleName = "";
+        }
         return middleName;
     }
 
@@ -309,7 +320,13 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
     @Override
     public String getName() {
-        return this.getLastName() + ", " + this.getFirstName();
+        if (getFirstName().trim().isEmpty()
+                && getLastName().trim().isEmpty()) {
+            return "";
+        } else {
+//            Contact.prepare(this);
+            return getLastName() + ", " + getFirstName();
+        }
     }
 
     @Override

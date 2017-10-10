@@ -26,7 +26,7 @@ public class ClientValidator implements Validator {
         Boolean isNewClient = (Boolean) component.getAttributes().get("isNewClient");
         
         // Check for valid names
-        if (!BusinessEntityUtils.validateName(value.toString().trim())) {
+        if (!BusinessEntityUtils.validateText(value.toString().trim())) {
             throw new ValidatorException(getMessage(component.getId()));
         }
 
