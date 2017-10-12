@@ -231,12 +231,12 @@ public class Client implements Customer, Serializable, BusinessEntity {
     }
 
     /**
-     * This method guards against returning very long names. 
-     * This is used in an autocomplete JSF component for instance
-     * to prevent the list of clients from extending beyond the screen.
-     * In the future, the maximum length of say 50 will be a value stored in the 
-     * resource bundle of the BEL.
-     * @return 
+     * This method guards against returning very long names. This is used in an
+     * autocomplete JSF component for instance to prevent the list of clients
+     * from extending beyond the screen. In the future, the maximum length of
+     * say 50 will be a value stored in the resource bundle of the BEL.
+     *
+     * @return
      */
     public String getTruncatedName() {
         if (getName().length() >= 50) {
@@ -724,9 +724,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
 
     @Override
     public MethodResult save(EntityManager em) {
-         try {
-            em.getTransaction().begin();
-            
+        try {
             // Save contacts and addresses
             for (Contact contact : getContacts()) {
                 if (contact.getId() == null) {
@@ -739,6 +737,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
                 }
             }
 
+            em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
