@@ -153,6 +153,9 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     @Override
     public Address getBillingAddress() {
+        if (billingAddress == null) {
+            return new Address();
+        }
         return billingAddress;
     }
 
