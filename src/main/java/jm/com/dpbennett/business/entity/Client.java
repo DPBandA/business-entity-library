@@ -724,7 +724,30 @@ public class Client implements Customer, Serializable, BusinessEntity {
 
     @Override
     public MethodResult save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         try {
+            em.getTransaction().begin();
+            
+            // Save contacts and addresses
+            for (Contact contact : getContacts()) {
+                if (contact.getId() == null) {
+                    contact.save(em);
+                }
+            }
+            for (Address address : getAddresses()) {
+                if (address.getId() == null) {
+                    address.save(em);
+                }
+            }
+
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new MethodResult();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new MethodResult(false, "Client not saved");
     }
 
     @Override

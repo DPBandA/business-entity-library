@@ -19,7 +19,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -71,12 +70,17 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public Contact(Contact src) {
         doCopy(src);
     }
+    
+     public List getContactTypes() { 
+        throw new UnsupportedOperationException("Not supported yet: getContactTypes() to be put in Contact class");
+        //return Application.getStringListAsSortableSelectItems(getEntityManager(), "personalContactTypes");
+    }
 
     public Contact prepare() {
-        
+
         firstName = getFirstName().trim();
         lastName = getLastName().trim();
-        
+
         return this;
     }
 
@@ -173,15 +177,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         }
     }
 
-    public void setMainPhoneNumber(PhoneNumber phoneNumber) {
-//        if (!phoneNumbers.isEmpty()) {
-//            phoneNumbers.set(0, phoneNumber);
-//        }
-//        if (phoneNumber.getId() == null) {
-//            phoneNumbers.set(0, phoneNumber);
-//        }
-    }
-
     public PhoneNumber getMainFaxNumber() {
         if (!phoneNumbers.isEmpty()) {
             if (phoneNumbers.size() > 1) {
@@ -195,12 +190,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
             phoneNumbers.add(1, new PhoneNumber());
             return phoneNumbers.get(1);
         }
-    }
-
-    public void setMainFaxNumber(PhoneNumber phoneNumber) {
-//        if (!phoneNumbers.isEmpty()) {
-//            phoneNumbers.set(1, phoneNumber);
-//        }
     }
 
     public String getType() {
@@ -324,7 +313,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
                 && getLastName().trim().isEmpty()) {
             return "";
         } else {
-//            Contact.prepare(this);
             return getLastName() + ", " + getFirstName();
         }
     }
@@ -453,7 +441,30 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
     @Override
     public MethodResult save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            
+            // Save phone numbers and addresses
+            for (PhoneNumber phoneNumber : getPhoneNumbers()) {
+                if (phoneNumber.getId() == null) {
+                    BusinessEntityUtils.saveBusinessEntity(em, phoneNumber);
+                }
+            }
+            for (Address address : getAddresses()) {
+                if (address.getId() == null) {
+                    BusinessEntityUtils.saveBusinessEntity(em, address);
+                }
+            }
+
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new MethodResult();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new MethodResult(false, "Contact not saved");
     }
 
     @Override

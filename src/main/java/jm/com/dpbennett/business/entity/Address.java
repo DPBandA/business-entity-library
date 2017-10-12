@@ -86,7 +86,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public Address prepare() {
-        
+
         addressLine1 = getAddressLine1().trim();
         addressLine2 = getAddressLine2().trim();
         city = getCity().trim();
@@ -151,7 +151,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public String getCity() {
-        if (city == null || city.isEmpty() ) {
+        if (city == null || city.isEmpty()) {
             city = " ";
         }
         return city;
@@ -246,6 +246,21 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
                     + "; " + getAddressLine2()
                     + "; " + getCity()
                     + "; " + getStateOrProvince();
+        }
+    }
+    
+     public String getDisplay() {
+
+        if (getAddressLine1().trim().isEmpty()
+                && getAddressLine2().trim().isEmpty()
+                && getCity().trim().isEmpty()
+                && getStateOrProvince().trim().isEmpty()) {
+            return "";
+        } else {
+            return (getAddressLine1().trim().isEmpty() ? "" : getAddressLine1())
+                    + (getAddressLine2().trim().isEmpty() ? "" : ",\n" + getAddressLine2())
+                    + (getCity().trim().isEmpty() ? "" : ",\n" + getCity())
+                    + (getStateOrProvince().trim().isEmpty() ? "" : ",\n" + getStateOrProvince());
         }
     }
 
@@ -429,7 +444,17 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     @Override
     public MethodResult save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new MethodResult();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new MethodResult(false, "Address not saved");
     }
 
     @Override
