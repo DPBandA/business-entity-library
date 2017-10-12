@@ -4,8 +4,6 @@
  */
 package jm.com.dpbennett.business.entity.management;
 
-import javax.persistence.EntityManagerFactory;
-import jm.com.dpbennett.business.entity.BusinessEntityManager;
 import jm.com.dpbennett.business.entity.Client;
 
 /**
@@ -14,15 +12,12 @@ import jm.com.dpbennett.business.entity.Client;
  */
 public interface ClientManagement {
 
-    public Client getClient();
+    public Client getCurrentClient();
 
-    public void setClient(Client client);
+    public void setCurrentClient(Client client);
 
-    public void createNewClient(Client existingClient, Client newClient);
+    public void createNewClient(Boolean active);
 
-    public void setExternalEntityManagerFactory(EntityManagerFactory externalEntityManagerFactory);
+    public void setIsToBeSaved(Boolean save);
 
-    public void setSave(Boolean save);
-
-    //public void setBusinessEntityManager(BusinessEntityManager businessEntityManager);
 }

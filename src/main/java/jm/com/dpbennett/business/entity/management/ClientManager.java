@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -33,25 +32,16 @@ import jm.com.dpbennett.business.entity.ClientOwner;
 public class ClientManager implements Serializable, ClientManagement {
 
     @PersistenceUnit(unitName = "JMTSPU") // tk to be put in resource bundle
-    private EntityManagerFactory localEntityManagerFactory;
-    // This factory is used by external clients. May be removed in the future
-    private EntityManagerFactory externalEntityManagerFactory;
-    private Client client;
-    private Boolean dirty;
+    private EntityManagerFactory entityManagerFactory;
+    private Boolean isDirty;
+    private Boolean isNewClient;
     private Boolean isNewContact;
     private Boolean isNewAddress;
+    private Boolean isToBeSaved;
+    private Boolean isClientNameAndIdEditable;
+    private Client currentClient;
     private Contact currentContact;
     private Address currentAddress;
-    private Boolean taxRegistrationNumberRequired;
-    private String dialogMessage;
-    private String dialogMessageHeader;
-    private String dialogMessageSeverity;
-    private Boolean save;
-    private Boolean clientNameAndIdEditable;
-    private Client clientBackup;
-    private Boolean isNewClient;
-    private String clientSearchText;
-    private List<Client> foundClients;
     private ClientOwner clientOwner;
     private JobManagerUser user;
 
@@ -62,11 +52,8 @@ public class ClientManager implements Serializable, ClientManagement {
         isNewContact = false;
         isNewAddress = false;
         isNewClient = false;
-        taxRegistrationNumberRequired = false;
-        save = true;
-        clientNameAndIdEditable = false;
-        clientSearchText = "";
-        foundClients = new ArrayList<>();
+        isToBeSaved = true;
+        isClientNameAndIdEditable = false;
     }
 
     public Boolean getIsNewClient() {
@@ -77,31 +64,12 @@ public class ClientManager implements Serializable, ClientManagement {
         this.isNewClient = isNewClient;
     }
 
-    public void changeContactType(String contactString) {
-        // Reset address types 
-        for (Contact contact : getClient().getContacts()) {
-            if (contact.getType().equals("Main")) {
-                contact.setType("General");
-            }
-        }
-        // Set new main type
-        for (Contact contact : getClient().getContacts()) {
-            if (contact.toString().trim().equals(contactString.trim())) {
-                contact.setType("Main");
-            }
-        }
-    }
-
-    public void addressSelected() {
-        changeBillingAddress(getCurrentAddress().toString());
-    }
-
     public List<Address> completeClientAddress(String query) {
         List<Address> addresses = new ArrayList<>();
 
         try {
 
-            for (Address address : getClient().getAddresses()) {
+            for (Address address : getCurrentClient().getAddresses()) {
                 if (address.toString().toUpperCase().contains(query.toUpperCase())) {
                     addresses.add(address);
                 }
@@ -120,7 +88,7 @@ public class ClientManager implements Serializable, ClientManagement {
 
         try {
 
-            for (Contact contact : getClient().getContacts()) {
+            for (Contact contact : getCurrentClient().getContacts()) {
                 if (contact.toString().toUpperCase().contains(query.toUpperCase())) {
                     contacts.add(contact);
                 }
@@ -135,21 +103,11 @@ public class ClientManager implements Serializable, ClientManagement {
     }
 
     public List<Address> getAddressesModel() {
-        return getClient().getAddresses();
+        return getCurrentClient().getAddresses();
     }
 
     public List<Contact> getContactsModel() {
-        return getClient().getContacts();
-    }
-
-    public List<SelectItem> getClientAddresses() {
-        ArrayList<SelectItem> addresses = new ArrayList<>();
-
-        for (Address address : getClient().getAddresses()) {
-            addresses.add(new SelectItem(address.toString(), address.toString()));
-        }
-
-        return addresses;
+        return getCurrentClient().getContacts();
     }
 
     public void setClientOwner(ClientOwner clientHandler) {
@@ -171,16 +129,12 @@ public class ClientManager implements Serializable, ClientManagement {
         this.currentAddress = currentAddress;
     }
 
-    public Boolean getClientNameAndIdEditable() {
-        return clientNameAndIdEditable;
+    public Boolean getIsClientNameAndIdEditable() {
+        return isClientNameAndIdEditable;
     }
 
-    public void setClientNameAndIdEditable(Boolean clientNameAndIdEditable) {
-        this.clientNameAndIdEditable = clientNameAndIdEditable;
-    }
-
-    public EntityManager getLocalEntityManager() {
-        return localEntityManagerFactory.createEntityManager();
+    public void setIsClientNameAndIdEditable(Boolean isClientNameAndIdEditable) {
+        this.isClientNameAndIdEditable = isClientNameAndIdEditable;
     }
 
     public JobManagerUser getUser() {
@@ -192,109 +146,20 @@ public class ClientManager implements Serializable, ClientManagement {
     }
 
     public void editClient() {
-        setSave(true);
+        setIsToBeSaved(true);
     }
 
-    public List<Client> getFoundClients() {
-        return foundClients;
-    }
-
-    public void setFoundClients(List<Client> foundClients) {
-        this.foundClients = foundClients;
-    }
-
-    public void doClientSearch() {
-        if (clientSearchText.trim().length() > 0) {
-            foundClients = Client.findActiveClientsByAnyPartOfName(getLocalEntityManager(), clientSearchText);
-        }
-    }
-
-    public String getClientSearchText() {
-        return clientSearchText;
-    }
-
-    public void setClientSearchText(String clientSearchText) {
-        this.clientSearchText = clientSearchText;
-    }
-
-    public Client getClientBackup() {
-        return clientBackup;
-    }
-
-    public void setClientBackup(Client clientBackup) {
-        this.clientBackup = clientBackup;
-    }
-
-    public Boolean getSave() {
-        return save;
+    public Boolean getIsToBeSaved() {
+        return isToBeSaved;
     }
 
     @Override
-    public void setSave(Boolean save) {
-        this.save = save;
-    }
-
-    public String getDialogMessage() {
-        return dialogMessage;
-    }
-
-    public void setDialogMessage(String dialogMessage) {
-        this.dialogMessage = dialogMessage;
-    }
-
-    public String getDialogMessageHeader() {
-        return dialogMessageHeader;
-    }
-
-    public void setDialogMessageHeader(String dialogMessageHeader) {
-        this.dialogMessageHeader = dialogMessageHeader;
-    }
-
-    public String getDialogMessageSeverity() {
-        return dialogMessageSeverity;
-    }
-
-    public void setDialogMessageSeverity(String dialogMessageSeverity) {
-        this.dialogMessageSeverity = dialogMessageSeverity;
-    }
-
-    public Boolean getTaxRegistrationNumberRequired() {
-        if (taxRegistrationNumberRequired == null) {
-            taxRegistrationNumberRequired = false;
-        }
-        return taxRegistrationNumberRequired;
-    }
-
-    public void setTaxRegistrationNumberRequired(Boolean taxRegistrationNumberRequired) {
-        this.taxRegistrationNumberRequired = taxRegistrationNumberRequired;
-    }
-
-    @Override
-    public void setExternalEntityManagerFactory(EntityManagerFactory externalEntityManagerFactory) {
-        this.externalEntityManagerFactory = externalEntityManagerFactory;
-    }
-
-    public EntityManager getExternalEntityManager() {
-        return externalEntityManagerFactory.createEntityManager();
-    }
-
-    public void changeBillingAddress(String addressString) {
-        // Reset address types 
-        for (Address address : getClient().getAddresses()) {
-            if (address.getType().equals("Billing")) {
-                address.setType("General");
-            }
-        }
-        // Set new billing type
-        for (Address address : getClient().getAddresses()) {
-            if (address.toString().trim().equals(addressString.trim())) {
-                address.setType("Billing");
-            }
-        }
+    public void setIsToBeSaved(Boolean isToBeSaved) {
+        this.isToBeSaved = isToBeSaved;
     }
 
     public void updateClient() {
-        setDirty(true);
+        setIsDirty(true);
     }
 
     public void updateClientOwner(Boolean isDirty) {
@@ -304,47 +169,44 @@ public class ClientManager implements Serializable, ClientManagement {
     }
 
     public void updateCurrentContact() {
-        setDirty(true);
+        setIsDirty(true);
     }
 
     public void updateCurrentAddress() {
-        setDirty(true);
+        setIsDirty(true);
     }
 
     @Override
-    public void createNewClient(Client existingClient, Client newClient) {
-        if (existingClient != null) {
-            clientBackup = existingClient;
-        }
-        client = newClient;
-        getClient().setDateEntered(new Date());
+    public void createNewClient(Boolean active) {
+        currentClient = new Client("", active);
+
+        currentClient.setDateEntered(new Date());
         if (getUser() != null) {
-            getClient().setEnteredBy(getUser().getEmployee());
+            currentClient.setEnteredBy(getUser().getEmployee());
         }
         isNewClient = true;
     }
 
-    public Boolean getDirty() {
-        return dirty;
+    public Boolean getIsDirty() {
+        return isDirty;
     }
 
-    public void setDirty(Boolean dirty) {
-        this.dirty = dirty;
-        updateClientOwner(dirty);
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+        updateClientOwner(isDirty);
     }
 
     @Override
-    public Client getClient() {
-        if (client == null) {
+    public Client getCurrentClient() {
+        if (currentClient == null) {
             return new Client("");
         }
-        return client;
+        return currentClient;
     }
 
     @Override
-    public void setClient(Client client) {
-        this.client = client;
-        setClientBackup(new Client(getClient(), getClient().getActive()));               
+    public void setCurrentClient(Client currentClient) {
+        this.currentClient = currentClient;
         isNewClient = false;
     }
 
@@ -360,26 +222,16 @@ public class ClientManager implements Serializable, ClientManagement {
 
     public void cancelClientEdit(ActionEvent actionEvent) {
 
-        if (clientBackup != null) {
-            getClient().doCopy(clientBackup);
-        }
-
-        setDirty(false);
+        setIsDirty(false);
         isNewClient = false;
 
         RequestContext.getCurrentInstance().closeDialog(null);
     }
 
-    public void createNewClient() {
-        createNewClient(null, new Client("", true));
-    }
-
     public EntityManager getEntityManager() {
-        if (externalEntityManagerFactory != null) {
-            return getExternalEntityManager();
-        } else {
-            return getLocalEntityManager();
-        }
+
+        return entityManagerFactory.createEntityManager();
+
     }
 
     public void okClient() {
@@ -387,17 +239,17 @@ public class ClientManager implements Serializable, ClientManagement {
         try {
 
             if (isNewClient) {
-                getClient().setDateFirstReceived(new Date());
+                getCurrentClient().setDateFirstReceived(new Date());
             }
 
-            if (save) {
-                client.save(getEntityManager());
-                dirty = false;
+            if (isToBeSaved) {
+                currentClient.save(getEntityManager());
+                isDirty = false;
             }
 
-            // Pass edited object to the client owner
+            // Pass edited object to the currentClient owner
             if (clientOwner != null) {
-                clientOwner.setClient(getClient());
+                clientOwner.setClient(getCurrentClient());
                 clientOwner.setBillingAddress(currentAddress);
                 clientOwner.setContact(currentContact);
             }
@@ -413,39 +265,18 @@ public class ClientManager implements Serializable, ClientManagement {
     }
 
     public Boolean getIsClientValid() {
-        return BusinessEntityUtils.validateText(getClient().getName());
-    }
-
-    public void saveClient(EntityManager em, Boolean useTransaction) {
-
-        try {
-            if (useTransaction) {
-                em.getTransaction().begin();
-            }
-
-            BusinessEntityUtils.saveBusinessEntity(em, getClient());
-
-            if (useTransaction) {
-                em.getTransaction().commit();
-            }
-
-            dirty = false;
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
+        return BusinessEntityUtils.validateText(getCurrentClient().getName());
     }
 
     public void removeContact() {
-        getClient().getContacts().remove(currentContact);
-        setDirty(true);
+        getCurrentClient().getContacts().remove(currentContact);
+        setIsDirty(true);
         currentContact = null;
     }
 
     public void removeAddress() {
-        getClient().getAddresses().remove(currentAddress);
-        setDirty(true);
+        getCurrentClient().getAddresses().remove(currentAddress);
+        setIsDirty(true);
         currentAddress = null;
     }
 
@@ -466,7 +297,7 @@ public class ClientManager implements Serializable, ClientManagement {
 
         if (isNewContact) {
             EntityManager em = getEntityManager();
-            getClient().getContacts().add(currentContact);
+            getCurrentClient().getContacts().add(currentContact);
             isNewContact = false;
         }
 
@@ -480,7 +311,7 @@ public class ClientManager implements Serializable, ClientManagement {
 
         if (isNewAddress) {
             EntityManager em = getEntityManager();
-            getClient().getAddresses().add(currentAddress);
+            getCurrentClient().getAddresses().add(currentAddress);
             isNewAddress = false;
         }
 
@@ -493,16 +324,15 @@ public class ClientManager implements Serializable, ClientManagement {
         currentContact = new Contact();
         currentContact.setType("Main");
         currentContact.setInternet(new Internet());
-        setDirty(false);
+        setIsDirty(false);
     }
 
     public void createNewAddress() {
         isNewAddress = true;
         currentAddress = new Address();
         currentAddress.setType("Billing");
-        setDirty(false);
+        setIsDirty(false);
     }
- 
 
     public List<Client> completeClient(String query) {
         EntityManager em = getEntityManager();
