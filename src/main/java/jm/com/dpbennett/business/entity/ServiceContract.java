@@ -69,6 +69,37 @@ public class ServiceContract implements Serializable, BusinessEntity {
 
     public ServiceContract() {
     }
+    
+     public static ServiceContract create() {
+        ServiceContract serviceContract = new ServiceContract();
+        // init service contract
+        serviceContract.setIntendedMarketLocal(true);
+        serviceContract.setAutoAddSampleInformation(true);
+        serviceContract.setAdditionalServiceUrgent(false);
+        serviceContract.setAdditionalServiceFaxResults(false);
+        serviceContract.setAdditionalServiceTelephonePresumptiveResults(false);
+        serviceContract.setAdditionalServiceSendMoreContractForms(false);
+        serviceContract.setAdditionalServiceOther(false);
+        serviceContract.setAdditionalServiceOtherText("");
+        serviceContract.setIntendedMarketLocal(false);
+        serviceContract.setIntendedMarketCaricom(false);
+        serviceContract.setIntendedMarketUK(false);
+        serviceContract.setIntendedMarketUSA(false);
+        serviceContract.setIntendedMarketCanada(false);
+        serviceContract.setIntendedMarketOther(false);
+        serviceContract.setIntendedMarketOtherText("");
+        serviceContract.setServiceRequestedTesting(false);
+        serviceContract.setServiceRequestedCalibration(false);
+        serviceContract.setServiceRequestedLabelEvaluation(false);
+        serviceContract.setServiceRequestedInspection(false);
+        serviceContract.setServiceRequestedConsultancy(false);
+        serviceContract.setServiceRequestedTraining(false);
+        serviceContract.setServiceRequestedOther(false);
+        serviceContract.setServiceRequestedOtherText("");
+        serviceContract.setSpecialInstructions("");
+
+        return serviceContract;
+    }
 
     public String getServicesRequested() {
         String services = "";

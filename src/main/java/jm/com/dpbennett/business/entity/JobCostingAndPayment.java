@@ -101,6 +101,15 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     public void setId(Long id) {
         this.id = id;
     }
+    
+     public static JobCostingAndPayment create() {
+        JobCostingAndPayment jobCostingAndPayment = new JobCostingAndPayment();
+
+        jobCostingAndPayment.setPurchaseOrderNumber("");
+        jobCostingAndPayment.setReceiptNumber("");
+
+        return jobCostingAndPayment;
+    }
 
     public String getDiscountType() {
         if (discountType == null) {

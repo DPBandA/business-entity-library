@@ -6,8 +6,10 @@ package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -112,6 +114,156 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.isToBeCopied = false;
         isClientDirty = false;
         jobSamples = new ArrayList<>();
+    }
+
+    public void clean() {
+        this.setIsToBeCopied(false);
+        this.setIsToBeSubcontracted(false);
+        this.setIsDirty(false);
+    }
+
+    public static Job copy(EntityManager em,
+            Job currentJob,
+            JobManagerUser user,
+            Boolean autoGenerateJobNumber,
+            Boolean copySamples) {
+        Job job = new Job();
+
+        job.setClient(new Client("", false));
+        job.setIsToBeCopied(true);
+
+        job.setReportNumber("");
+        job.setJobDescription("");
+
+        job.setBusinessOffice(currentJob.getBusinessOffice());
+        job.setDepartment(currentJob.getDepartment());
+        job.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
+        job.setClassification(Classification.findClassificationByName(em, "--"));
+        job.setSector(Sector.findSectorByName(em, "--"));
+        job.setJobCategory(JobCategory.findJobCategoryByName(em, "--"));
+        job.setJobSubCategory(JobSubCategory.findJobSubCategoryByName(em, "--"));
+        // service contract
+        job.setServiceContract(ServiceContract.create());
+        // set default values
+        job.setAutoGenerateJobNumber(autoGenerateJobNumber);
+        job.setIsEarningJob(Boolean.TRUE);
+        job.setYearReceived(Calendar.getInstance().get(Calendar.YEAR));
+        // job status and tracking
+        job.setJobStatusAndTracking(new JobStatusAndTracking());
+        job.getJobStatusAndTracking().setDateAndTimeEntered(new Date());
+        job.getJobStatusAndTracking().setDateSubmitted(new Date());
+        job.getJobStatusAndTracking().setAlertDate(null);
+        job.getJobStatusAndTracking().setDateJobEmailWasSent(null);
+        // job costing and payment 
+        job.setJobCostingAndPayment(JobCostingAndPayment.create());
+        // this is done here because job number is dependent on business office, department/subcontracted department
+
+        // copy samples
+        if (copySamples) {
+            List<JobSample> samples = currentJob.getJobSamples();
+            job.setNumberOfSamples(currentJob.getNumberOfSamples());
+            for (Iterator<JobSample> it = samples.iterator(); it.hasNext();) {
+                JobSample jobSample = it.next();
+                job.getJobSamples().add(new JobSample(jobSample));
+            }
+        }
+
+        // Set sequence number
+        job.setJobSequenceNumber(currentJob.getJobSequenceNumber());
+
+        // Set job number
+        if (job.getAutoGenerateJobNumber()) {
+            job.setJobNumber(Job.getJobNumber(job, em));
+        }
+
+        return job;
+    }
+
+    public static Job create(EntityManager em,
+            JobManagerUser user,
+            Boolean autoGenerateJobNumber) {
+
+        Job job = new Job();
+        job.setClient(new Client("", false));
+        job.setReportNumber("");
+        job.setJobDescription("");
+        job.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
+        job.setBusinessOffice(BusinessOffice.findDefaultBusinessOffice(em, "Head Office"));
+        job.setClassification(new Classification());
+        job.setSector(Sector.findSectorByName(em, "--"));
+        job.setJobCategory(JobCategory.findJobCategoryByName(em, "--"));
+        job.setJobSubCategory(JobSubCategory.findJobSubCategoryByName(em, "--"));
+        // service contract
+        job.setServiceContract(ServiceContract.create());
+        // set default values
+        job.setAutoGenerateJobNumber(autoGenerateJobNumber);
+        job.setIsEarningJob(Boolean.TRUE);
+        job.setYearReceived(Calendar.getInstance().get(Calendar.YEAR));
+        // job status and tracking
+        job.setJobStatusAndTracking(new JobStatusAndTracking());
+        job.getJobStatusAndTracking().setDateAndTimeEntered(new Date());
+        job.getJobStatusAndTracking().setDateSubmitted(new Date());
+        job.getJobStatusAndTracking().setWorkProgress("Not started");
+        // job costing and payment
+        job.setJobCostingAndPayment(JobCostingAndPayment.create());
+        // this is done here because job number is dependent on business office, department/subcontracted department
+        job.setNumberOfSamples(0L);
+        if (job.getAutoGenerateJobNumber()) {
+            job.setJobNumber(Job.getJobNumber(job, em));
+        }
+
+        return job;
+    }
+
+    public static String getJobNumber(Job job, EntityManager em) {
+        Calendar c = Calendar.getInstance();
+        String departmentOrCompanyCode;
+        String year = "?";
+        String sequenceNumber;
+        String subContractedDepartmenyOrCompanyCode;
+
+        departmentOrCompanyCode = job.getDepartment().getSubGroupCode().equals("") ? "?" : job.getDepartment().getSubGroupCode();
+        subContractedDepartmenyOrCompanyCode = job.getSubContractedDepartment().getSubGroupCode().equals("") ? "?" : job.getSubContractedDepartment().getSubGroupCode();
+
+        // Use the date entered to get the year if it is valid
+        // and only if this is not a subcontracted job
+        if ((job.getJobStatusAndTracking().getDateAndTimeEntered() != null)
+                && (subContractedDepartmenyOrCompanyCode.equals("?"))) {
+            c.setTime(job.getJobStatusAndTracking().getDateAndTimeEntered());
+            year = "" + c.get(Calendar.YEAR);
+        } else if (job.getYearReceived() != null) {
+            year = job.getYearReceived().toString();
+        }
+        // include the sequence number if it is valid
+        if (job.getJobSequenceNumber() != null) {
+            sequenceNumber = BusinessEntityUtils.getFourDigitString(job.getJobSequenceNumber());
+        } else {
+            sequenceNumber = "?";
+        }
+        // set base job number
+        job.setJobNumber(departmentOrCompanyCode + "/" + year + "/" + sequenceNumber);
+        // append subcontracted code if valid
+        if (!subContractedDepartmenyOrCompanyCode.equals("?")) {
+            job.setJobNumber(job.getJobNumber() + "/" + subContractedDepartmenyOrCompanyCode);
+        }
+
+        SystemOption sysOption = SystemOption.findSystemOptionByName(em,
+                "includeSampleReference");
+
+        Boolean includeRef = true;
+        if (sysOption != null) {
+            includeRef = Boolean.parseBoolean(sysOption.getOptionValue());
+        }
+        // Append sample codes if any
+        if (includeRef) {
+            if ((job.getNumberOfSamples() != null) && (job.getNumberOfSamples() > 1)) {
+                job.setJobNumber(job.getJobNumber() + "/"
+                        + BusinessEntityUtils.getAlphaCode(0) + "-"
+                        + BusinessEntityUtils.getAlphaCode(job.getNumberOfSamples() - 1));
+            }
+        }
+
+        return job.getJobNumber();
     }
 
     public Boolean getIsToBeCopied() {

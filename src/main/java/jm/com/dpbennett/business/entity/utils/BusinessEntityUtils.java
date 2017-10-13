@@ -507,7 +507,7 @@ public class BusinessEntityUtils {
 
         return true;
     }
-    
+
     public static boolean validateText(String name) {
 
         if (name == null) {
@@ -518,11 +518,11 @@ public class BusinessEntityUtils {
             return false;
         } else if (name.contains("''")) {
             return false;
-        } 
+        }
 
         return true;
     }
-    
+
     public static boolean validateAddressLine(String name) {
 
         if (name == null) {
@@ -1157,6 +1157,13 @@ public class BusinessEntityUtils {
         }
     }
 
+    /**
+     * getFourDigitNumberString Pad number with leading zeros if the number is
+     * less than four digits
+     *
+     * @param number
+     * @return
+     */
     public static String getFourDigitString(long number) {
         String fourDigitString = "";
 
@@ -2067,4 +2074,27 @@ public class BusinessEntityUtils {
         }
 
     }
+
+    /**
+     * Delete a generic entity
+     *
+     * @param entity
+     * @return
+     */
+    public static Boolean deleteEntity(EntityManager em, Object entity) {
+
+        try {
+            if (entity != null) {
+                em.remove(entity);
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+
+        return true;
+    }
+
 }

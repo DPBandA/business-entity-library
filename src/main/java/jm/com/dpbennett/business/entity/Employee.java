@@ -515,7 +515,7 @@ public class Employee implements Person, Serializable, BusinessEntity {
             employee = new Employee();
             employee.setFirstName(firstName);
             employee.setLastName(lastName);
-            employee.setBusinessOffice(BusinessOffice.getDefaultBusinessOffice(em, "--"));
+            employee.setBusinessOffice(BusinessOffice.findDefaultBusinessOffice(em, "--"));
 
             employee.setDepartment(Department.findDefaultDepartment(em, "--"));
             // save

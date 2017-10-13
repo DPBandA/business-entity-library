@@ -231,7 +231,7 @@ public class AccPacCustomer implements Serializable {
         }
     }
 
-    public static AccPacCustomer findAccPacCustomerByName(EntityManager em, String customerName) {
+    public static AccPacCustomer findByName(EntityManager em, String customerName) {
 
         try {
             String newCustomerName = customerName.trim().replaceAll("'", "''");

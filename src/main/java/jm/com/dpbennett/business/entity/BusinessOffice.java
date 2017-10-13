@@ -289,7 +289,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     }
   
 
-    public static BusinessOffice getDefaultBusinessOffice(EntityManager em, String name) {
+    public static BusinessOffice findDefaultBusinessOffice(EntityManager em, String name) {
         BusinessOffice office = BusinessOffice.findBusinessOfficeByName(em, name);
 
         if (office == null) {
