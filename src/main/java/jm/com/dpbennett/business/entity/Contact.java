@@ -61,6 +61,13 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         addresses = new ArrayList<>();
     }
 
+    public Contact(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        phoneNumbers = new ArrayList<>();
+        addresses = new ArrayList<>();
+    }
+
     public Contact(String name) {
         this.name = name;
         phoneNumbers = new ArrayList<>();
@@ -70,8 +77,8 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public Contact(Contact src) {
         doCopy(src);
     }
-    
-     public List getContactTypes() { 
+
+    public List getContactTypes() {
         throw new UnsupportedOperationException("Not supported yet: getContactTypes() to be put in Contact class");
         //return Application.getStringListAsSortableSelectItems(getEntityManager(), "personalContactTypes");
     }
@@ -397,6 +404,29 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         }
     }
 
+    public static Contact findClientContactByEmployee(EntityManager em,
+            Employee employee, Long clientId) {
+
+        try {
+
+            Client client = Client.findClientById(em, clientId);
+
+            if (client != null) {
+                for (Contact contact : client.getContacts()) {
+                    if (contact.getFirstName().equals(employee.getFirstName())
+                            && contact.getLastName().equals(employee.getLastName())) {
+                        return contact;
+                    }
+                }
+            }
+
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     public static Contact findDefaultContact(
             EntityManager em,
             String firstName,
@@ -443,7 +473,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public MethodResult save(EntityManager em) {
         try {
             em.getTransaction().begin();
-            
+
             // Save phone numbers and addresses
             for (PhoneNumber phoneNumber : getPhoneNumbers()) {
                 if (phoneNumber.getId() == null) {

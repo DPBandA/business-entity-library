@@ -366,16 +366,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-//    public static Department findDepartmentBySubGroupCode(EntityManager em, Integer subGroupCode) {
-//
-//        try {
-//            Query query = em.createNamedQuery("findBySubGroupCode");
-//            query.setParameter("subGroupCode", subGroupCode);
-//            return (Department) query.getSingleResult();
-//        } catch (Exception e) {
-//            return null;
-//        }
-//    }
     public static Department findDepartmentBySubGroupCode(EntityManager em, String subGroupCode) {
 
         try {
@@ -447,4 +437,25 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public MethodResult validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    /**
+     * This method guards against returning very long names. This is used in an
+     * autocomplete JSF component for instance to prevent the list of entity names
+     * from extending beyond the screen. In the future, the maximum length of
+     * say 50 will be a value stored in the resource bundle of the BEL.
+     *
+     * @return
+     */
+    public String getTruncatedName() {
+        if (getName().length() >= 50) {
+            return getName().substring(0, 50);
+        } else {
+            return getName();
+        }
+    }
+
+    public void setTruncatedName(String name) {
+        setName(name);
+    }
+    
 }
