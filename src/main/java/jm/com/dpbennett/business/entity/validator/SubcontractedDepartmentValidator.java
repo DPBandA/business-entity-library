@@ -30,6 +30,9 @@ public class SubcontractedDepartmentValidator extends ValidatorAdapter {
                 throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Subcontracted Department", "Please enter a valid Subcontracted Department."));
             }
         }
+        else {
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Subcontracted Department", "Please enter a valid Subcontracted Department."));
+        }
 
         Long currentJobId = (Long) component.getAttributes().get("currentJobId");
         Boolean isSubContracted = (Boolean) component.getAttributes().get("isSubContracted");

@@ -41,7 +41,7 @@ public class RequiredFieldValidator implements Validator {
             case "trn":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Taxpayer Registration Number", "Please enter a valid Taxpayer Registration Number or N/A.");
             case "instructions":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Instuctions Required", "Please enter instructions for this job.");    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Instructions Required", "Please enter instructions for this job.");    
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
         }
