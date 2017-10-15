@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.MethodResult;
 
-
 /**
  *
  * @author Desmond
@@ -36,7 +35,8 @@ import jm.com.dpbennett.business.entity.utils.MethodResult;
 @Entity
 @Table(name = "jobmanageruser")
 @NamedQueries({
-    @NamedQuery(name = "findAllJobManagerUsers", query = "SELECT e FROM JobManagerUser e ORDER BY e.username"),
+    @NamedQuery(name = "findAllJobManagerUsers", query = "SELECT e FROM JobManagerUser e ORDER BY e.username")
+    ,
     @NamedQuery(name = "findByJobManagerUsername", query = "SELECT e FROM JobManagerUser e WHERE UPPER(e.username) = :username")
 })
 @XmlRootElement
@@ -165,7 +165,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     public String getUserInterfaceThemeName() {
         if (userInterfaceThemeName == null) {
-            userInterfaceThemeName = "black-tie";
+            userInterfaceThemeName = "redmond";
         }
 
         return userInterfaceThemeName;
@@ -287,7 +287,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     }
 
     public Date getPollTime() {
-        if (pollTime == null) {  
+        if (pollTime == null) {
             pollTime = new Date();
         }
         return pollTime;
@@ -402,9 +402,9 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         String newUsername = username.replaceAll("'", "''");
 
         try {
-            List<JobManagerUser> users =
-                    em.createQuery("SELECT j FROM JobManagerUser j where UPPER(j.username) like '%"
-                    + newUsername.toUpperCase().trim() + "%' ORDER BY j.username", JobManagerUser.class).getResultList();
+            List<JobManagerUser> users
+                    = em.createQuery("SELECT j FROM JobManagerUser j where UPPER(j.username) like '%"
+                            + newUsername.toUpperCase().trim() + "%' ORDER BY j.username", JobManagerUser.class).getResultList();
             return users;
         } catch (Exception e) {
             System.out.println(e);
@@ -420,10 +420,10 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
         String newUsername = username.replaceAll("'", "''");
         try {
-            List<JobManagerUser> users =
-                    em.createNamedQuery("findByJobManagerUsername",
-                    JobManagerUser.class).
-                    setParameter("username", newUsername.toUpperCase()).getResultList();
+            List<JobManagerUser> users
+                    = em.createNamedQuery("findByJobManagerUsername",
+                            JobManagerUser.class).
+                            setParameter("username", newUsername.toUpperCase()).getResultList();
 
             if (users.size() > 0) {
                 return users.get(0);
@@ -465,7 +465,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
                     + newName + "%'" + " OR UPPER(e.lastName) like '%"
                     + newName + "%'" + " OR UPPER(j.username) like '%"
                     + newName + "%'", JobManagerUser.class).getResultList();
-
 
             return users;
 
@@ -526,15 +525,19 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     @Override
     public MethodResult save(EntityManager em) {
-        if (!BusinessEntityUtils.validateName(this.getUsername())) {
-            return new MethodResult(false, "Username is not valid");
+
+        try {
+            
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new MethodResult();
+        } catch (Exception e) {
+            System.out.println(e);
         }
 
-        em.getTransaction().begin();
-        BusinessEntityUtils.saveBusinessEntity(em, this);
-        em.getTransaction().commit();
-
-        return new MethodResult();
+        return new MethodResult(false, "User not saved");
     }
 
     @Override
