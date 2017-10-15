@@ -251,9 +251,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         Long currentTime = new Date().getTime();
 
         if (pollTime != null) {
-//             System.out.println("poll time: " + pollTime); // tk
             Long diff = currentTime - pollTime.getTime();
-//             System.out.println("Time diff: " + diff);
             if (diff <= 241000) {// tk get from system option org <=
                 TimeZone z = TimeZone.getTimeZone("America/Jamaica"); // tk get from system option
                 Calendar c = Calendar.getInstance();
@@ -289,8 +287,8 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     }
 
     public Date getPollTime() {
-        if (pollTime == null) {  // tk
-            pollTime = new Date(); // tk
+        if (pollTime == null) {  
+            pollTime = new Date();
         }
         return pollTime;
     }
@@ -337,147 +335,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         this.department = department;
     }
 
-//    public Boolean getCanBeJMTSAdministrator() {
-//        if (canBeJMTSAdministrator == null) {
-//            canBeJMTSAdministrator = false;
-//        }
-//
-//        return canBeJMTSAdministrator;
-//    }
-//
-//    public void setCanBeJMTSAdministrator(Boolean canBeJMTSAdministrator) {
-//        this.canBeJMTSAdministrator = canBeJMTSAdministrator;
-//    }
-//
-//    public Boolean getCanBeSuperUser() {
-//        if (canBeSuperUser == null) {
-//            canBeSuperUser = false;
-//        }
-//        return canBeSuperUser;
-//    }
-//    public void setCanBeSuperUser(Boolean canBeSuperUser) {
-//        this.canBeSuperUser = canBeSuperUser;
-//    }
-//
-//    public Boolean getCanAddClient() {
-//        if (canAddClient == null) {
-//            canAddClient = false;
-//        }
-//        return canAddClient;
-//    }
-//
-//    public void setCanAddClient(Boolean canAddClient) {
-//        this.canAddClient = canAddClient;
-//    }
-//
-//    public Boolean getCanAddDepartment() {
-//        if (canAddDepartment == null) {
-//            canAddDepartment = false;
-//        }
-//        return canAddDepartment;
-//    }
-//
-//    public void setCanAddDepartment(Boolean canAddDepartment) {
-//        this.canAddDepartment = canAddDepartment;
-//    }
-//
-//    public Boolean getCanAddEmployee() {
-//        if (canAddEmployee == null) {
-//            canAddEmployee = false;
-//        }
-//        return canAddEmployee;
-//    }
-//
-//    public void setCanAddEmployee(Boolean canAddEmployee) {
-//        this.canAddEmployee = canAddEmployee;
-//    }
-//
-//    public Boolean getCanDeleteClient() {
-//        if (canDeleteClient == null) {
-//            canDeleteClient = false;
-//        }
-//        return canDeleteClient;
-//    }
-//
-//    public void setCanDeleteClient(Boolean canDeleteClient) {
-//        this.canDeleteClient = canDeleteClient;
-//    }
-//
-//    public Boolean getCanDeleteDepartment() {
-//        if (canDeleteDepartment == null) {
-//            canDeleteDepartment = false;
-//        }
-//        return canDeleteDepartment;
-//    }
-//
-//    public void setCanDeleteDepartment(Boolean canDeleteDepartment) {
-//        this.canDeleteDepartment = canDeleteDepartment;
-//    }
-//
-//    public Boolean getCanDeleteEmployee() {
-//        if (canDeleteEmployee == null) {
-//            canDeleteEmployee = false;
-//        }
-//        return canDeleteEmployee;
-//    }
-//
-//    public void setCanDeleteEmployee(Boolean canDeleteEmployee) {
-//        this.canDeleteEmployee = canDeleteEmployee;
-//    }
-//
-//    public Boolean getCanEditDepartmentalJob() {
-//        if (canEditDepartmentalJob == null) {
-//            canEditDepartmentalJob = true;
-//        }
-//        return canEditDepartmentalJob;
-//    }
-//
-//    public void setCanEditDepartmentalJob(Boolean canEditDepartmentalJob) {
-//        this.canEditDepartmentalJob = canEditDepartmentalJob;
-//    }
-//
-//    public Boolean getCanDeleteJob() {
-//        if (canDeleteJob == null) {
-//            canDeleteJob = false;
-//        }
-//        return canDeleteJob;
-//    }
-//
-//    public void setCanDeleteJob(Boolean canDeleteJob) {
-//        this.canDeleteJob = canDeleteJob;
-//    }
-//
-//    public Boolean getCanEditJob() {
-//        if (canEditJob == null) {
-//            canEditJob = false;
-//        }
-//        return canEditJob;
-//    }
-//
-//    public void setCanEditJob(Boolean canEditJob) {
-//        this.canEditJob = canEditJob;
-//    }
-//
-//    public Boolean getCanEditOwnJob() {
-//        if (canEditOwnJob == null) {
-//            canEditOwnJob = false;
-//        }
-//        return canEditOwnJob;
-//    }
-//    public void setCanEditOwnJob(Boolean canEditOwnJob) {
-//        this.canEditOwnJob = canEditOwnJob;
-//    }
-//
-//    public Boolean getCanEnterJob() {
-//        if (canEnterJob == null) {
-//            canEnterJob = false;
-//        }
-//        return canEnterJob;
-//    }
-//
-//    public void setCanEnterJob(Boolean canEnterJob) {
-//        this.canEnterJob = canEnterJob;
-//    }
     public String getUserFirstname() {
         return userFirstname;
     }
