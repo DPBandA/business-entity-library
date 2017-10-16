@@ -295,6 +295,9 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     @Override
     public Contact getContact() {
+        if (contact == null) {
+            return new Contact();
+        }
         return contact;
     }
 
