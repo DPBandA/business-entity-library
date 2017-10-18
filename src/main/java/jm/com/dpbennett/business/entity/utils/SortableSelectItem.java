@@ -17,23 +17,26 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+package jm.com.dpbennett.business.entity.utils;
 
-package jm.com.dpbennett.business.entity.management;
-
-import jm.com.dpbennett.business.entity.Client;
+import java.text.Collator;
+import javax.faces.model.SelectItem;
 
 /**
  *
  * @author dbennett
  */
-public interface ClientManagement {
+public class SortableSelectItem extends SelectItem implements Comparable {
 
-    public Client getCurrentClient();
+    public SortableSelectItem() {
+    }
 
-    public void setCurrentClient(Client client);
+    public SortableSelectItem(Object value, String label) {
+        super(value, label);
+    }
 
-    public void createNewClient(Boolean active);
-
-    public void setIsToBeSaved(Boolean save);
-
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.getLabel(), ((SortableSelectItem) o).getLabel());
+    }
 }

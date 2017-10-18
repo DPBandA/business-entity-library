@@ -17,23 +17,43 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+package jm.com.dpbennett.business.entity.utils;
 
-package jm.com.dpbennett.business.entity.management;
-
-import jm.com.dpbennett.business.entity.Client;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author dbennett
  */
-public interface ClientManagement {
+@XmlRootElement
+public class DataItem extends SortableSelectItem {
 
-    public Client getCurrentClient();
+    public DataItem() {
+        super("", "");
+    }
 
-    public void setCurrentClient(Client client);
+    public DataItem(Object value, String label) {
+        super(value, label);
+    }
 
-    public void createNewClient(Boolean active);
+    @Override
+    public String getLabel() {
+        return super.getLabel(); 
+    }
 
-    public void setIsToBeSaved(Boolean save);
+    @Override
+    public void setLabel(String label) {
+        super.setLabel(label);
+    }
+
+    @Override
+    public Object getValue() {
+        return super.getValue(); 
+    }
+
+    @Override
+    public void setValue(Object value) {
+        super.setValue(value); 
+    }
 
 }

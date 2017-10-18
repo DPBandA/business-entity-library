@@ -17,23 +17,42 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+package jm.com.dpbennett.business.entity.utils;
 
-package jm.com.dpbennett.business.entity.management;
-
-import jm.com.dpbennett.business.entity.Client;
+import java.util.List;
+import javax.faces.model.ListDataModel;
+import jm.com.dpbennett.business.entity.Job;
+import org.primefaces.model.SelectableDataModel;
 
 /**
  *
  * @author dbennett
  */
-public interface ClientManagement {
+public class JobDataModel extends ListDataModel<Job> implements SelectableDataModel<Job> {
+    
+    private List<Job> list;
 
-    public Client getCurrentClient();
+    public JobDataModel() {
+    }
 
-    public void setCurrentClient(Client client);
+    public JobDataModel(List<Job> list) {
+        super(list);
+        this. list = list;
+    }
 
-    public void createNewClient(Boolean active);
+    @Override
+    public Object getRowKey(Job job) {
+        return job.getId();
+    }
 
-    public void setIsToBeSaved(Boolean save);
+    @Override
+    public Job getRowData(String rowKey) {
+        for (Job job : list) {
+            if (job.getId().toString().equals(rowKey)) {
+                return job;
+            }
+        }
 
+        return null;
+    }
 }

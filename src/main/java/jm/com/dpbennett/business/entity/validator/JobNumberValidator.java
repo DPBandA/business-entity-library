@@ -1,6 +1,21 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+Business Entity Library (BEL) - A foundational library for JSF web applications 
+Copyright (C) 2017  D P Bennett & Associates Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.validator;
 
@@ -11,7 +26,6 @@ import javax.faces.validator.FacesValidator;
 import javax.faces.validator.ValidatorException;
 import jm.com.dpbennett.business.entity.Job;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
-import jm.com.dpbennett.business.entity.utils.MethodResult;
 
 /**
  *
@@ -22,7 +36,7 @@ public class JobNumberValidator extends ValidatorAdapter {
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-              
+
         String currentJobNumber = (String) value;
         Long currentJobId = (Long) component.getAttributes().get("currentJobId");
         Boolean autoGenerateJobNumber = (Boolean) component.getAttributes().get("autoGenerateJobNumber");
@@ -34,7 +48,7 @@ public class JobNumberValidator extends ValidatorAdapter {
 
         // Check if job number is unique
         Job existingJob = Job.findJobByJobNumber(getEntityManager(), currentJobNumber);
-        if (existingJob != null) {            
+        if (existingJob != null) {
             long current_jobid = currentJobId != null ? currentJobId : -1L;
             if (existingJob.getId() != current_jobid) {
                 throw new ValidatorException(getMessage("exist"));

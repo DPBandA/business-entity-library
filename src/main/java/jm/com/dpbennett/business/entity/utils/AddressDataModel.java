@@ -17,31 +17,42 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+package jm.com.dpbennett.business.entity.utils;
 
-package jm.com.dpbennett.business.entity.converter;
-
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.FacesConverter;
-import jm.com.dpbennett.business.entity.BusinessOffice;
+import java.util.List;
+import javax.faces.model.ListDataModel;
+import jm.com.dpbennett.business.entity.Address;
+import org.primefaces.model.SelectableDataModel;
 
 /**
  *
- * @author desbenn
+ * @author D P Bennett &amp; Associates
  */
-@FacesConverter("businessOfficeConverter")
-public class BusinessOfficeConverter extends ConverterAdapter {
+public class AddressDataModel extends ListDataModel<Address> implements SelectableDataModel<Address> {
+    
+    private List<Address> list;
 
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-       
-        BusinessOffice office = BusinessOffice.findBusinessOfficeByName(getEntityManager(), value);
-
-        if (office == null) {
-            office = new BusinessOffice(value);
-        }
-
-        return office;
+    public AddressDataModel() {
     }
 
+    public AddressDataModel(List<Address> list) {
+        super(list);
+        this. list = list;
+    }
+
+    @Override
+    public Object getRowKey(Address address) {
+        return address.getId();
+    }
+
+    @Override
+    public Address getRowData(String rowKey) {
+        for (Address address : list) {
+            if (address.getId().toString().equals(rowKey)) {
+                return address;
+            }
+        }
+
+        return null;
+    }
 }

@@ -17,31 +17,42 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+package jm.com.dpbennett.business.entity.utils;
 
-package jm.com.dpbennett.business.entity.converter;
-
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.FacesConverter;
-import jm.com.dpbennett.business.entity.BusinessOffice;
+import java.util.List;
+import javax.faces.model.ListDataModel;
+import jm.com.dpbennett.business.entity.Contact;
+import org.primefaces.model.SelectableDataModel;
 
 /**
  *
- * @author desbenn
+ * @author dbennett
  */
-@FacesConverter("businessOfficeConverter")
-public class BusinessOfficeConverter extends ConverterAdapter {
+public class ContactDataModel extends ListDataModel<Contact> implements SelectableDataModel<Contact> {
+    
+    private List<Contact> list;
 
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-       
-        BusinessOffice office = BusinessOffice.findBusinessOfficeByName(getEntityManager(), value);
-
-        if (office == null) {
-            office = new BusinessOffice(value);
-        }
-
-        return office;
+    public ContactDataModel() {
     }
 
+    public ContactDataModel(List<Contact> list) {
+        super(list);
+        this. list = list;
+    }
+
+    @Override
+    public Object getRowKey(Contact contact) {
+        return contact.getId();
+    }
+
+    @Override
+    public Contact getRowData(String rowKey) {
+        for (Contact contact : list) {
+            if (contact.getId().toString().equals(rowKey)) {
+                return contact;
+            }
+        }
+
+        return null;
+    }
 }
