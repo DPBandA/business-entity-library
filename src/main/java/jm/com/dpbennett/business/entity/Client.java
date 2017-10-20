@@ -533,7 +533,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '"
                             + newName + "%'"
                             + " AND c.active = 1"
-                            + " ORDER BY c.name", Client.class).getResultList();
+                            + " ORDER BY c.id", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -550,7 +550,23 @@ public class Client implements Customer, Serializable, BusinessEntity {
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
                             + newName + "%'"
                             + " AND c.active = 1"
-                            + " ORDER BY c.name", Client.class).getResultList();
+                            + " ORDER BY c.id", Client.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<Client> findClientsByAnyPartOfName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Client> clients
+                    = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
+                            + newName + "%'"
+                            + " ORDER BY c.id", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -584,23 +600,6 @@ public class Client implements Customer, Serializable, BusinessEntity {
                     = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
                             + newName.toUpperCase()
                             + "%' ORDER BY c.name", Client.class).getResultList();
-            return clients;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Client> findClientsByAnyPartOfName(EntityManager em, String name) {
-
-        try {
-            String newName = name.replaceAll("'", "''");
-
-            List<Client> clients
-                    = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '%"
-                            + newName.toUpperCase()
-                            + "%'"
-                            + " ORDER BY c.name", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
