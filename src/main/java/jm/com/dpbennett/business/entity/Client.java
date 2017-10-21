@@ -573,7 +573,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-
+ 
     // tk in client manager
     public static List<String> findClientNames(EntityManager em, String name) {
 
