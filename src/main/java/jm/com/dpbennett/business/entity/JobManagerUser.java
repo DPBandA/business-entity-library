@@ -20,7 +20,6 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,7 +36,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -262,31 +260,33 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         this.legalMetrologyUnit = legalMetrologyUnit;
     }
 
-    public String getStatus() {
+    public Boolean isLoggedIn() {
+        if (getPollTime() != null) {
+            Long currentTime = new Date().getTime();            
+            Long diff = currentTime - getPollTime().getTime();
 
-        //if (pollTime != null) {
-//            TimeZone z = TimeZone.getTimeZone("America/Jamaica"); // tk get from system option
-//            Calendar c = Calendar.getInstance();
-//            c.setTime(pollTime);
-//            c.setTimeZone(z);
-        Long currentTime = new Date().getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd, hh:mm:ss");
-        Long diff = (currentTime - getPollTime().getTime()) / 1000;
-        
-//        Timestamp ts = new Timestamp(getPollTime().getTime());
-//        
-//        System.out.println("Poll time: " + getPollTime());
-        
-        if (diff <= 241000) {// tk get from system option
+            if (diff <= 240000) { // tk get from system option
+                return true;
+            } else {
 
-            return "Checked in (" + formatter.format(getPollTime()) + ")";
+                return false;
+            }
         } else {
+            return false;
+        }
+       
+    }
 
+    public String getStatus() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd, hh:mm:ss");
+        
+        if (isLoggedIn()) {
+            return "Checked in (" + formatter.format(getPollTime()) + ")";
+        }
+        else {
             return "Checked out (" + formatter.format(getPollTime()) + ")";
         }
-        //} else {          
-        //    return "--";
-        //}
+
     }
 
     public String getEmployeeFirstname() {
@@ -308,9 +308,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     }
 
     public Date getPollTime() {
-        if (pollTime == null) {
-            pollTime = new Date();
-        }
         return pollTime;
     }
 
@@ -504,22 +501,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         }
     }
 
-    // tk be made efficient by find all users with the given status
-//    public static List<JobManagerUser> findLoggedInJobManagerUsers(EntityManager em) {
-//        List<JobManagerUser> users = findAllJobManagerUsers(em);
-//        List<JobManagerUser> loggedInusers = new ArrayList<JobManagerUser>();
-//
-//        if (users != null) {
-//            for (JobManagerUser jobManagerUser : users) {
-//                em.refresh(jobManagerUser);
-//                if (!jobManagerUser.getStatus().equals("--")) {
-//                    loggedInusers.add(jobManagerUser);
-//                }
-//            }
-//        }
-//
-//        return loggedInusers;
-//    }
     public static boolean save(EntityManager em, JobManagerUser user) {
         // validate fields
         // username
