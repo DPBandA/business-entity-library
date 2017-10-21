@@ -17,15 +17,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -75,7 +74,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Privilege privilege;
-    @Temporal(TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date pollTime;
     private Long lastDatabaseModuleId;
     // Units
@@ -264,24 +263,30 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     }
 
     public String getStatus() {
+
+        //if (pollTime != null) {
+//            TimeZone z = TimeZone.getTimeZone("America/Jamaica"); // tk get from system option
+//            Calendar c = Calendar.getInstance();
+//            c.setTime(pollTime);
+//            c.setTimeZone(z);
         Long currentTime = new Date().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd, hh:mm:ss");
+        Long diff = (currentTime - getPollTime().getTime()) / 1000;
+        
+//        Timestamp ts = new Timestamp(getPollTime().getTime());
+//        
+//        System.out.println("Poll time: " + getPollTime());
+        
+        if (diff <= 241000) {// tk get from system option
 
-        if (pollTime != null) {
-            Long diff = currentTime - pollTime.getTime();
-            if (diff <= 241000) {// tk get from system option org <=
-                TimeZone z = TimeZone.getTimeZone("America/Jamaica"); // tk get from system option
-                Calendar c = Calendar.getInstance();
-                c.setTime(pollTime);
-                c.setTimeZone(z);
-
-                return "Checked in (" + c.getTime() + ")";
-            } else {
-                return "--";
-            }
+            return "Checked in (" + formatter.format(getPollTime()) + ")";
         } else {
-            System.out.println("poll time: " + pollTime); //tk
-            return "--";
+
+            return "Checked out (" + formatter.format(getPollTime()) + ")";
         }
+        //} else {          
+        //    return "--";
+        //}
     }
 
     public String getEmployeeFirstname() {
@@ -500,22 +505,21 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     }
 
     // tk be made efficient by find all users with the given status
-    public static List<JobManagerUser> findLoggedInJobManagerUsers(EntityManager em) {
-        List<JobManagerUser> users = findAllJobManagerUsers(em);
-        List<JobManagerUser> loggedInusers = new ArrayList<JobManagerUser>();
-
-        if (users != null) {
-            for (JobManagerUser jobManagerUser : users) {
-                em.refresh(jobManagerUser);
-                if (!jobManagerUser.getStatus().equals("--")) {
-                    loggedInusers.add(jobManagerUser);
-                }
-            }
-        }
-
-        return loggedInusers;
-    }
-
+//    public static List<JobManagerUser> findLoggedInJobManagerUsers(EntityManager em) {
+//        List<JobManagerUser> users = findAllJobManagerUsers(em);
+//        List<JobManagerUser> loggedInusers = new ArrayList<JobManagerUser>();
+//
+//        if (users != null) {
+//            for (JobManagerUser jobManagerUser : users) {
+//                em.refresh(jobManagerUser);
+//                if (!jobManagerUser.getStatus().equals("--")) {
+//                    loggedInusers.add(jobManagerUser);
+//                }
+//            }
+//        }
+//
+//        return loggedInusers;
+//    }
     public static boolean save(EntityManager em, JobManagerUser user) {
         // validate fields
         // username
@@ -543,7 +547,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     public MethodResult save(EntityManager em) {
 
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
