@@ -376,6 +376,23 @@ public class Employee implements Person, Serializable, BusinessEntity {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public static List<Employee> findEmployeesByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.toUpperCase().trim().replaceAll("'", "''");
+
+            List<Employee> employees =
+                    em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
+                    + newName + "%'" + " OR UPPER(e.lastName) like '%"
+                    + newName + "%'"
+                    + " ORDER BY e.lastName", Employee.class).getResultList();
+            return employees;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     public static List<Employee> findActiveEmployeesByName(EntityManager em, String name) {
 
@@ -387,23 +404,6 @@ public class Employee implements Person, Serializable, BusinessEntity {
                     + newName + "%'" + " OR UPPER(e.lastName) like '"
                     + newName + "%'"
                     + ") AND e.active = 1"
-                    + " ORDER BY e.lastName", Employee.class).getResultList();
-            return employees;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Employee> findEmployeesByName(EntityManager em, String name) {
-
-        try {
-            String newName = name.toUpperCase().trim().replaceAll("'", "''");
-
-            List<Employee> employees =
-                    em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
-                    + newName + "%'" + " OR UPPER(e.lastName) like '%"
-                    + newName + "%'"
                     + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
         } catch (Exception e) {

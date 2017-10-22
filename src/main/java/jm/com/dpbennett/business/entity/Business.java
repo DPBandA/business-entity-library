@@ -68,8 +68,8 @@ public class Business implements Customer, BusinessEntity, Comparable, Serializa
     private String taxRegistrationNumber = "";
 
     public Business() {
-        addresses = new ArrayList<Address>();
-        contacts = new ArrayList<Contact>();
+        addresses = new ArrayList<>();
+        contacts = new ArrayList<>();
     }
 
     @Override
