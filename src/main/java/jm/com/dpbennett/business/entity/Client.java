@@ -211,6 +211,22 @@ public class Client implements Customer, Serializable, BusinessEntity {
     public void setActive(Boolean active) {
         this.active = active;
     }
+    
+    public String getIsActive() {
+        if (getActive()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+
+    public void setIsActive(String active) {
+        if (active.equals("Yes")) {
+            setActive(true);
+        } else {
+            setActive(false);
+        }
+    }
 
     @Override
     public String getTaxRegistrationNumber() {
