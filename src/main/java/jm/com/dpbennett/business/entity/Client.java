@@ -74,13 +74,17 @@ public class Client implements Customer, Serializable, BusinessEntity {
     private Date dateFirstReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastAccessed;
-    private Boolean tag;
-    private String taxRegistrationNumber;
-    private Boolean active;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEntered;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateEdited;
+    private Boolean tag;
+    private String taxRegistrationNumber;
+    private Boolean active;    
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee editedBy;
     private Boolean international;
 
     public Client() {
@@ -97,6 +101,24 @@ public class Client implements Customer, Serializable, BusinessEntity {
         active = true;
         international = false;
     }
+
+    public Date getDateEdited() {
+        return dateEdited;
+    }
+
+    public void setDateEdited(Date dateEdited) {
+        this.dateEdited = dateEdited;
+    }
+
+    public Employee getEditedBy() {
+        return editedBy;
+    }
+
+    public void setEditedBy(Employee editedBy) {
+        this.editedBy = editedBy;
+    }
+    
+    
 
     public Client(Client src, Boolean active) {
         doCopy(src);
