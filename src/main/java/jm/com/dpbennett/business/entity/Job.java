@@ -201,8 +201,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
         Job job = new Job();
         job.setClient(new Client("", false));
-        job.setBillingAddress(new Address());
-        job.setContact(new Contact());
+        job.setBillingAddress(job.getClient().getBillingAddress());
+        job.setContact(job.getClient().getMainContact());
         job.setReportNumber("");
         job.setJobDescription("");
         job.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
