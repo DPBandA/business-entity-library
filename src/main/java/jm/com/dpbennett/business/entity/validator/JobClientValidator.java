@@ -26,6 +26,7 @@ import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Client;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 
 /**
@@ -38,18 +39,18 @@ public class JobClientValidator implements Validator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
-        // Check that name does not already exist if this is a new client
-        Long clientBillingAddressId = (Long) component.getAttributes().get("clientBillingAddressId");
-        Long clientContactId = (Long) component.getAttributes().get("clientContactId");
-
         BusinessEntity entity = (BusinessEntity) value;
         if (entity != null) {
+           
             if (!BusinessEntityUtils.validateText(entity.getName())) {
                 throw new ValidatorException(getMessage(component.getId()));
             }
+            
         } else {
             throw new ValidatorException(getMessage(component.getId()));
         }
+        
+        // NB: Validation of billing address and contact may be implemented here
 
     }
 
@@ -57,6 +58,10 @@ public class JobClientValidator implements Validator {
         switch (componentId) {
             case "client":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Client", "Please enter a valid Client.");
+            case "invalidBillingAddress":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Billing Address", "Please enter a valid Billing Address.");        
+            case "contact": 
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Contact", "Please enter a valid Contact.");                   
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
         }
