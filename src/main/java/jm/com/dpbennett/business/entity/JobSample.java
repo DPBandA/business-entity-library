@@ -38,6 +38,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.MethodResult;
 
@@ -98,7 +99,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee receivedBy;
     private String countryOfOrigin;
-
+   
     public JobSample() {
         tests = new ArrayList<>();
     }
