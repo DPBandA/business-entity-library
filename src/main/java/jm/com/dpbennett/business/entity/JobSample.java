@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -99,12 +98,52 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee receivedBy;
     private String countryOfOrigin;
-   
+    @Transient
+    private Boolean isToBeAdded;
+    @Transient
+    private Boolean isToBeSaved;
+
     public JobSample() {
         tests = new ArrayList<>();
     }
 
     public JobSample(JobSample src) {
+        copy(src);
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Boolean getIsToBeSaved() {
+        if (isToBeSaved == null) {
+            isToBeSaved = false;
+        }
+        return isToBeSaved;
+    }
+
+    public void setIsToBeSaved(Boolean isToBeSaved) {
+        this.isToBeSaved = isToBeSaved;
+    }
+
+    public Boolean getIsToBeAdded() {
+        if (isToBeAdded == null) {
+            isToBeAdded = false;
+        }
+        return isToBeAdded;
+    }
+
+    public void setIsToBeAdded(Boolean isToBeAdded) {
+        this.isToBeAdded = isToBeAdded;
+    }
+
+    public final void copy(JobSample src) {
         this.jobId = src.jobId;
         this.name = src.name;
         this.code = src.code;
@@ -133,16 +172,6 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
         this.sampledBy = src.sampledBy;
         this.receivedBy = src.receivedBy;
         this.countryOfOrigin = src.countryOfOrigin;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCountryOfOrigin() {
@@ -490,11 +519,11 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     public static List<JobSample> findJobSamplesByJobId(EntityManager em, Long jobId) {
 
         try {
-            List<JobSample> jobSamples =
-                    em.createQuery("SELECT s FROM JobSample s "
-                    + "WHERE s.jobId "
-                    + "= '" + jobId + "'"
-                    + " ORDER BY s.reference", JobSample.class).getResultList();
+            List<JobSample> jobSamples
+                    = em.createQuery("SELECT s FROM JobSample s "
+                            + "WHERE s.jobId "
+                            + "= '" + jobId + "'"
+                            + " ORDER BY s.reference", JobSample.class).getResultList();
             return jobSamples;
         } catch (Exception e) {
             System.out.println(e);
@@ -544,7 +573,6 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
 
     public String getSampleBasicDetail() {
         String detail = "";
-
 
         if (productBrand != null && !productBrand.equals("")) {
             detail = detail + "Brand: " + productBrand;

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -42,7 +41,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.MethodResult;
 import org.codehaus.jackson.annotate.JsonIgnore;
-
 
 /**
  *
@@ -92,6 +90,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee lastPaymentEnteredBy;
     private String discountType;
+    @Transient
+    private Boolean isDirty;
 
     public JobCostingAndPayment() {
         this.percentageGCT = 0.0;
@@ -104,8 +104,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         this.paymentReceivedToDate = 0.0;
         this.finalCost = 0.0;
         this.estimatedCost = 0.0;
-        cashPayments = new ArrayList<>();
-        costComponents = new ArrayList<>();
+        this.cashPayments = new ArrayList<>();
+        this.costComponents = new ArrayList<>();
+        this.isDirty = false;
     }
 
     @Override
@@ -117,8 +118,19 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     public void setId(Long id) {
         this.id = id;
     }
-    
-     public static JobCostingAndPayment create() {
+
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+
+    public static JobCostingAndPayment create() {
         JobCostingAndPayment jobCostingAndPayment = new JobCostingAndPayment();
 
         jobCostingAndPayment.setPurchaseOrderNumber("");
@@ -139,8 +151,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public Double getMinDepositIncludingTaxes() {
-        minDepositIncludingTaxes =
-                BusinessEntityUtils.roundTo2DecimalPlaces(getMinDeposit() + getMinDeposit() * getPercentageGCT() / 100.0);
+        minDepositIncludingTaxes
+                = BusinessEntityUtils.roundTo2DecimalPlaces(getMinDeposit() + getMinDeposit() * getPercentageGCT() / 100.0);
 
         return minDepositIncludingTaxes;
     }
@@ -222,9 +234,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             return getFinalCost() * getDiscount() / 100.0;
         }
     }
-    
+
     public String getTotalTaxLabel() {
-       return "Tax (GCT: " + getPercentageGCT() + "%)($):"; 
+        return "Tax (GCT: " + getPercentageGCT() + "%)($):";
     }
 
     public String getTotalCostWithTaxLabel() {
@@ -376,8 +388,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public Double getEstimatedCostIncludingTaxes() {
-        estimatedCostIncludingTaxes =
-                BusinessEntityUtils.roundTo2DecimalPlaces(getEstimatedCost() + getEstimatedCost() * getPercentageGCT() / 100.0);
+        estimatedCostIncludingTaxes
+                = BusinessEntityUtils.roundTo2DecimalPlaces(getEstimatedCost() + getEstimatedCost() * getPercentageGCT() / 100.0);
 
         return estimatedCostIncludingTaxes;
     }
@@ -516,17 +528,17 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
             String newDepartmentName = departmentName.replaceAll("'", "''");
 
-            List<Job> jobs =
-                    em.createQuery("SELECT job FROM Job job"
-                    + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                    + " JOIN job.department department"
-                    + " JOIN job.subContractedDepartment subContractedDepartment"
-                    + " WHERE UPPER(jobCostingAndPayment.name) LIKE '"
-                    + newJobCostingAndPaymentName.toUpperCase().trim() + "%'"
-                    + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
-                    + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
-                    + " )"
-                    + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
+            List<Job> jobs
+                    = em.createQuery("SELECT job FROM Job job"
+                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                            + " JOIN job.department department"
+                            + " JOIN job.subContractedDepartment subContractedDepartment"
+                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '"
+                            + newJobCostingAndPaymentName.toUpperCase().trim() + "%'"
+                            + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
+                            + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
+                            + " )"
+                            + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
             if (!jobs.isEmpty()) {
                 for (int i = 0; i < jobs.size(); i++) {
                     if (!jobs.get(i).getJobCostingAndPayment().getName().trim().equals("")) {
@@ -551,17 +563,17 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
             String newDepartmentName = departmentName.replaceAll("'", "''");
 
-            List<Job> jobs =
-                    em.createQuery("SELECT job FROM Job job"
-                    + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                    + " JOIN job.department department"
-                    + " JOIN job.subContractedDepartment subContractedDepartment"
-                    + " WHERE UPPER(jobCostingAndPayment.name) = '"
-                    + newJobCostingAndPaymentName.toUpperCase().trim() + "'"
-                    + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
-                    + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
-                    + " )"
-                    + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
+            List<Job> jobs
+                    = em.createQuery("SELECT job FROM Job job"
+                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                            + " JOIN job.department department"
+                            + " JOIN job.subContractedDepartment subContractedDepartment"
+                            + " WHERE UPPER(jobCostingAndPayment.name) = '"
+                            + newJobCostingAndPaymentName.toUpperCase().trim() + "'"
+                            + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
+                            + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
+                            + " )"
+                            + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
             if (!jobs.isEmpty()) {
                 return jobs.get(0).getJobCostingAndPayment();
             }

@@ -38,13 +38,14 @@ public class TurnaroundTimeValidator extends ValidatorAdapter {
         Number tat = (Number) value;
         Boolean tatRequired = (Boolean) component.getAttributes().get("tatRequired");
 
-        if ((tat.intValue() <= 0) && tatRequired) {
+        if (tat != null) {
+            if ((tat.intValue() <= 0) && tatRequired) {
+                throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Estimated Turnaround Time", "A valid estimated turnaround time (TAT) is required and must be provided."));
+            } else if (tat.intValue() < 0) {
+                throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Estimated Turnaround Time", "A valid estimated turnaround time (TAT) is required and must be provided."));
+            }
+        } else {
             throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Estimated Turnaround Time", "A valid estimated turnaround time (TAT) is required and must be provided."));
         }
-        else if (tat.intValue() < 0) {
-            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Estimated Turnaround Time", "A valid estimated turnaround time (TAT) is required and must be provided."));
-        }
-
-    }  
-
+    }
 }
