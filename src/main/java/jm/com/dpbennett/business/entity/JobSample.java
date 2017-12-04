@@ -101,8 +101,8 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     @Transient
     private Boolean isToBeAdded;
     @Transient
-    private Boolean isToBeSaved;
-
+    private Boolean isDirty;
+   
     public JobSample() {
         tests = new ArrayList<>();
     }
@@ -121,15 +121,15 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
         this.id = id;
     }
 
-    public Boolean getIsToBeSaved() {
-        if (isToBeSaved == null) {
-            isToBeSaved = false;
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
         }
-        return isToBeSaved;
+        return isDirty;
     }
 
-    public void setIsToBeSaved(Boolean isToBeSaved) {
-        this.isToBeSaved = isToBeSaved;
+    public void setIsDirty(Boolean isDirty) {       
+        this.isDirty = isDirty;
     }
 
     public Boolean getIsToBeAdded() {
@@ -172,6 +172,8 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
         this.sampledBy = src.sampledBy;
         this.receivedBy = src.receivedBy;
         this.countryOfOrigin = src.countryOfOrigin;
+        this.isToBeAdded = src.isToBeAdded;
+        this.isDirty = src.isDirty;
     }
 
     public String getCountryOfOrigin() {
