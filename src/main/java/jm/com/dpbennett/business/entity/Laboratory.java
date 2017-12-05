@@ -38,7 +38,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
-import jm.com.dpbennett.business.entity.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
@@ -249,12 +249,12 @@ public class Laboratory implements BusinessEntity, Company, Serializable, Conver
     }
 
     @Override
-    public MethodResult save(EntityManager em) {
+    public ReturnMessage save(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public MethodResult validate(EntityManager em) {
+    public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

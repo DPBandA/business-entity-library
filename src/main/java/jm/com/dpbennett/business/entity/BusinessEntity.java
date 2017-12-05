@@ -21,7 +21,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import javax.persistence.EntityManager;
-import jm.com.dpbennett.business.entity.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
@@ -37,7 +37,7 @@ public interface BusinessEntity {
 
     public void setName(String name);
 
-    public MethodResult save(EntityManager em);
+    public ReturnMessage save(EntityManager em);
 
-    public MethodResult validate(EntityManager em);      
+    public ReturnMessage validate(EntityManager em);      
 }

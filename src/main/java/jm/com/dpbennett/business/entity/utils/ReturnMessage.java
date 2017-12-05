@@ -19,22 +19,47 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.utils;
 
+import javax.faces.application.FacesMessage;
+
 /**
  *
  * @author desbenn
  */
-public class MethodResult {
-    private final boolean success;
-    private final String message;
+public class ReturnMessage {
 
-    public MethodResult(boolean success, String message) {
+    private boolean success;
+    private String header;
+    private String message;
+    private FacesMessage.Severity severity;
+
+    public ReturnMessage(boolean success, String header,
+            String message, FacesMessage.Severity severity) {
         this.success = success;
         this.message = message;
+        this.header = header;
+        this.severity = severity;
     }
 
-    public MethodResult() {
+    public ReturnMessage(boolean success, String message) {
+        this.success = success;
+        this.message = message;
+        this.header = "";
+        this.severity = FacesMessage.SEVERITY_INFO;
+    }
+
+    public ReturnMessage() {
         this.success = true;
         this.message = "";
+        this.header = "";
+        this.severity = FacesMessage.SEVERITY_INFO;
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public void setHeader(String header) {
+        this.header = header;
     }
 
     public String getMessage() {
@@ -43,6 +68,14 @@ public class MethodResult {
 
     public boolean isSuccess() {
         return success;
-    }    
-    
-  }
+    }
+
+    public FacesMessage.Severity getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(FacesMessage.Severity severity) {
+        this.severity = severity;
+    }
+
+}

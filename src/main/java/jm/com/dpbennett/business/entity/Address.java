@@ -38,7 +38,7 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
-import jm.com.dpbennett.business.entity.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
@@ -459,22 +459,22 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     @Override
-    public MethodResult save(EntityManager em) {
+    public ReturnMessage save(EntityManager em) {
         try {
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
-            return new MethodResult();
+            return new ReturnMessage();
         } catch (Exception e) {
             System.out.println(e);
         }
 
-        return new MethodResult(false, "Address not saved");
+        return new ReturnMessage(false, "Address not saved");
     }
 
     @Override
-    public MethodResult validate(EntityManager em) {
+    public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

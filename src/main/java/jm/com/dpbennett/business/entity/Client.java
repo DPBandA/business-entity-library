@@ -40,7 +40,7 @@ import javax.persistence.Temporal;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
-import jm.com.dpbennett.business.entity.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
@@ -776,7 +776,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
     }
 
     @Override
-    public MethodResult save(EntityManager em) {
+    public ReturnMessage save(EntityManager em) {
         try {
             // Save contacts and addresses
             for (Contact contact : getContacts()) {
@@ -794,16 +794,16 @@ public class Client implements Customer, Serializable, BusinessEntity {
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
-            return new MethodResult();
+            return new ReturnMessage();
         } catch (Exception e) {
             System.out.println(e);
         }
 
-        return new MethodResult(false, "Client not saved");
+        return new ReturnMessage(false, "Client not saved");
     }
 
     @Override
-    public MethodResult validate(EntityManager em) {
+    public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

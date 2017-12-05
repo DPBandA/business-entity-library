@@ -39,7 +39,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
-import jm.com.dpbennett.business.entity.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
@@ -596,12 +596,12 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     }
 
     @Override
-    public MethodResult save(EntityManager em) {
+    public ReturnMessage save(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public MethodResult validate(EntityManager em) {
+    public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

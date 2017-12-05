@@ -44,7 +44,7 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
-import jm.com.dpbennett.business.entity.utils.MethodResult;
+import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
@@ -60,7 +60,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 })
 @XmlRootElement
 public class Job implements Serializable, BusinessEntity, ClientOwner {
-    
+
     private static final Long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -124,26 +124,23 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private Contact contact;
     @Transient
     private Boolean isDirty;
-    
+
     public Job() {
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
         isClientDirty = false;
         jobSamples = new ArrayList<>();
     }
-    
+
     // tk find a better name for this method
-    public MethodResult prepareAndSave(EntityManager em, JobManagerUser user) {
+    public ReturnMessage prepareAndSave(EntityManager em, JobManagerUser user) {
 
         Date now = new Date();
         JobSequenceNumber nextJobSequenceNumber = null;
-        boolean jobEmailAlertsActivated = Boolean.parseBoolean(SystemOption.
-                findSystemOptionByName(em,
-                        "jobEmailAlertsActivated").getOptionValue());
 
         try {
             // Get employee for later use
-            Employee employee = user.getEmployee(); 
+            Employee employee = user.getEmployee();
 
             // Use the client's default billing address and main contact if the
             // Job's billing address and contact are not valid.
@@ -170,52 +167,51 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         && !user.getEmployee().isMemberOf(Department.findDepartmentBySystemOptionDeptId("invoicingDepartmentId", em))
                         && !user.getPrivilege().getCanBeJMTSAdministrator()
                         && !JobManagerUser.isUserDepartmentSupervisor(this, user, em)) {
-                    //setDirty(false);
-                    this.setIsDirty(false);
-                    
-                    addMessage("Job Cannot Be Saved",
-                            "This job is marked as completed so changes cannot be saved. You may contact your department's supervisor or a system administrator.",
-                            FacesMessage.SEVERITY_ERROR);
 
-                    return false;
+                    this.setIsDirty(false);
+
+                    return new ReturnMessage(false,
+                            "Job Cannot Be Saved",
+                            "This job is marked as completed so changes cannot be saved. You may contact your department's supervisor or a system administrator",
+                            FacesMessage.SEVERITY_ERROR);
                 }
             }
 
             em.getTransaction().begin();
 
             // Set date entered
-            if (currentJob.getJobStatusAndTracking().getDateAndTimeEntered() == null) {
-                currentJob.getJobStatusAndTracking().setDateAndTimeEntered(now);
+            if (this.getJobStatusAndTracking().getDateAndTimeEntered() == null) {
+                this.getJobStatusAndTracking().setDateAndTimeEntered(now);
             }
 
             if (employee != null) {
-                if (currentJob.getJobStatusAndTracking().getEnteredBy().getId() == null) {
+                if (this.getJobStatusAndTracking().getEnteredBy().getId() == null) {
                     // This means this this is a new job so set user and person who entered the job
-                    currentJob.getJobStatusAndTracking().setEnteredBy(employee);
-                    currentJob.getJobStatusAndTracking().setEditedBy(employee);
+                    this.getJobStatusAndTracking().setEnteredBy(employee);
+                    this.getJobStatusAndTracking().setEditedBy(employee);
                 }
             }
 
             // Update re the person who last edited/entered the job etc.
-            if (isDirty()) {
-                currentJob.getJobStatusAndTracking().setDateStatusEdited(now);
-                currentJob.getJobStatusAndTracking().setEditedBy(employee);
+            if (this.getIsDirty()) {
+                this.getJobStatusAndTracking().setDateStatusEdited(now);
+                this.getJobStatusAndTracking().setEditedBy(employee);
             }
 
             // Modify job number with sequence number if required
-            if (currentJob.getAutoGenerateJobNumber()) {
-                if ((currentJob.getId() == null) && (currentJob.getJobSequenceNumber() == null)) {
-                    nextJobSequenceNumber = JobSequenceNumber.findNextJobSequenceNumber(em, currentJob.getYearReceived());
-                    currentJob.setJobSequenceNumber(nextJobSequenceNumber.getSequentialNumber());
-                    currentJob.setJobNumber(Job.getJobNumber(currentJob, em));
+            if (this.getAutoGenerateJobNumber()) {
+                if ((this.getId() == null) && (this.getJobSequenceNumber() == null)) {
+                    nextJobSequenceNumber = JobSequenceNumber.findNextJobSequenceNumber(em, this.getYearReceived());
+                    this.setJobSequenceNumber(nextJobSequenceNumber.getSequentialNumber());
+                    this.setJobNumber(Job.getJobNumber(this, em));
                 } else {
-                    currentJob.setJobNumber(Job.getJobNumber(currentJob, em));
+                    this.setJobNumber(Job.getJobNumber(this, em));
                 }
             }
 
             // Save job samples
-            if (currentJob.getJobSamples().size() > 0) {
-                for (JobSample jobSample : currentJob.getJobSamples()) {
+            if (this.getJobSamples().size() > 0) {
+                for (JobSample jobSample : this.getJobSamples()) {
                     /// Save newly entered samples 
                     if (jobSample.getId() == null) {
                         BusinessEntityUtils.saveBusinessEntity(em, jobSample);
@@ -223,126 +219,77 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                     // "Clean" sample
                     jobSample.setIsDirty(false);
                 }
-            } 
-           
+            }
+
             // Do actual save here and check for errors
-            Long id = BusinessEntityUtils.saveBusinessEntity(em, currentJob);
+            Long id = BusinessEntityUtils.saveBusinessEntity(em, this);
 
             if (id == null) {
-                if (currentJob.getAutoGenerateJobNumber()) {
-                    currentJob.setJobNumber(Job.getJobNumber(currentJob, em));
+                if (this.getAutoGenerateJobNumber()) {
+                    this.setJobNumber(Job.getJobNumber(this, em));
                 }
 
-                addMessage("Job save error occured",
-                        "An error occured while saving job (Null ID)" + currentJob.getJobNumber(),
+                return new ReturnMessage(false,
+                        "Job save error occurred",
+                        "An error occurred while saving job (Null ID)" + this.getJobNumber(),
                         FacesMessage.SEVERITY_ERROR);
-
-                if (jobEmailAlertsActivated) {
-                    sendErrorEmail("An error occured while saving job (Null ID)" + currentJob.getJobNumber(),
-                            "Job save error occured");
-                }
-
-                return false;
 
             } else if (id == 0L) {
-                if (currentJob.getAutoGenerateJobNumber()) {
-                    currentJob.setJobNumber(Job.getJobNumber(currentJob, em));
+                if (this.getAutoGenerateJobNumber()) {
+                    this.setJobNumber(Job.getJobNumber(this, em));
                 }
-                addMessage("Job save error occured",
-                        "An error occured while saving job (0L ID)" + currentJob.getJobNumber(),
+
+                return new ReturnMessage(false,
+                        "Job save error occurred",
+                        "An error occurred while saving job (0L ID)" + this.getJobNumber(),
                         FacesMessage.SEVERITY_ERROR);
-                if (jobEmailAlertsActivated) {
-                    sendErrorEmail("An error occured while saving job (0L ID)" + currentJob.getJobNumber(),
-                            "Job save error occured");
-                }
 
-                return false;
-            } else {
-                // Job was saved so save id for furture use
-                //currentJobId = id;
-
+            } else {               
                 // Save job sequence number
                 if (nextJobSequenceNumber != null) {
                     BusinessEntityUtils.saveBusinessEntity(em, nextJobSequenceNumber);
                 }
-
-                // Send job email alerts if the option is activated
-                try {
-                    // Send email alerts if any was flagged to be sent    
-                    // tk del this and other email alert code and find some other way to do this.
-                    if (jobEmailAlertsActivated) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                System.out.println("Generating and sending emails...");
-                                generateEmailAlerts();
-                            }
-                        }).start();
-
-                    } else {
-                        System.out.println("Email alerts will not be generated!");
-                    }
-                } catch (Exception e) {
-                    System.out.println(e);
-                    addMessage("Email Error!", "An error occurred while attempting to send an alert email.", FacesMessage.SEVERITY_ERROR);
-                }
-
-//                addMessage("Success!", "This job was saved.", FacesMessage.SEVERITY_INFO); // tk del
             }
 
             em.getTransaction().commit();
 
-            currentJob.clean();
+            this.clean();
 
         } catch (Exception e) {
-            if (currentJob.getAutoGenerateJobNumber()) {
-                currentJob.setJobNumber(Job.getJobNumber(currentJob, em));
-            }
-            addMessage("Undefined Error!", "An undefined error occurred while saving this job. "
-                    + "Please contact the System Administrator", FacesMessage.SEVERITY_ERROR);
-
-            if (jobEmailAlertsActivated) {
-                try {
-                    sendErrorEmail("An exception occurred while saving a job!",
-                            "Job number: " + currentJob.getJobNumber()
-                            + "\nJMTS User: " + getUser().getUsername()
-                            + "\nDate/time: " + new Date()
-                            + "\nException detail: " + e);
-                } catch (Exception e2) {
-                    addMessage("Email Error!", "An error occurred while attempting to send an alert email.", FacesMessage.SEVERITY_ERROR);
-                    System.out.println(e2);
-                }
-
+            if (this.getAutoGenerateJobNumber()) {
+                this.setJobNumber(Job.getJobNumber(this, em));
             }
 
-            System.out.println(e);
-
-            return false;
+            return new ReturnMessage(false,
+                    "Undefined Error!",
+                    "An undefined error occurred while saving this job. "
+                    + "Please contact the System Administrator",
+                    FacesMessage.SEVERITY_ERROR);
         }
 
-        return true;
+        return new ReturnMessage();
 
     }
-    
+
     public void clean() {
         this.setIsToBeCopied(false);
         this.setIsToBeSubcontracted(false);
         this.setIsDirty(false);
     }
-    
+
     public static Job copy(EntityManager em,
             Job currentJob,
             JobManagerUser user,
             Boolean autoGenerateJobNumber,
             Boolean copySamples) {
         Job job = new Job();
-        
+
         job.setClient(new Client("", false));
         job.setIsToBeCopied(true);
-        
+
         job.setReportNumber("");
         job.setJobDescription("");
-        
+
         job.setBusinessOffice(currentJob.getBusinessOffice());
         job.setDepartment(currentJob.getDepartment());
         job.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
@@ -383,14 +330,14 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         if (job.getAutoGenerateJobNumber()) {
             job.setJobNumber(Job.getJobNumber(job, em));
         }
-        
+
         return job;
     }
-    
+
     public static Job create(EntityManager em,
             JobManagerUser user,
             Boolean autoGenerateJobNumber) {
-        
+
         Job job = new Job();
         job.setClient(new Client("", false));
         job.setBillingAddress(job.getClient().getBillingAddress());
@@ -421,17 +368,17 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         if (job.getAutoGenerateJobNumber()) {
             job.setJobNumber(Job.getJobNumber(job, em));
         }
-        
+
         return job;
     }
-    
+
     public static String getJobNumber(Job job, EntityManager em) {
         Calendar c = Calendar.getInstance();
         String departmentOrCompanyCode;
         String year = "?";
         String sequenceNumber;
         String subContractedDepartmenyOrCompanyCode;
-        
+
         departmentOrCompanyCode = job.getDepartment().getSubGroupCode().equals("") ? "?" : job.getDepartment().getSubGroupCode();
         subContractedDepartmenyOrCompanyCode = job.getSubContractedDepartment().getSubGroupCode().equals("") ? "?" : job.getSubContractedDepartment().getSubGroupCode();
 
@@ -456,10 +403,10 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         if (!subContractedDepartmenyOrCompanyCode.equals("?")) {
             job.setJobNumber(job.getJobNumber() + "/" + subContractedDepartmenyOrCompanyCode);
         }
-        
+
         SystemOption sysOption = SystemOption.findSystemOptionByName(em,
                 "includeSampleReference");
-        
+
         Boolean includeRef = true;
         if (sysOption != null) {
             includeRef = Boolean.parseBoolean(sysOption.getOptionValue());
@@ -472,18 +419,18 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + BusinessEntityUtils.getAlphaCode(job.getNumberOfSamples() - 1));
             }
         }
-        
+
         return job.getJobNumber();
     }
-    
+
     public Boolean getIsToBeCopied() {
         return isToBeCopied;
     }
-    
+
     public void setIsToBeCopied(Boolean isToBeCopied) {
         this.isToBeCopied = isToBeCopied;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -491,18 +438,18 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
         return isDirty;
     }
-    
+
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
-    
+
     public Job(String jobNumber) {
         this.isToBeSubcontracted = false;
         this.jobNumber = jobNumber;
         jobSamples = new ArrayList<>();
     }
-    
+
     @Override
     public Contact getContact() {
         if (contact == null) {
@@ -514,12 +461,12 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
         return contact;
     }
-    
+
     @Override
     public void setContact(Contact contact) {
         this.contact = contact;
     }
-    
+
     @Override
     public Address getBillingAddress() {
         if (billingAddress == null) {
@@ -531,104 +478,104 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
         return billingAddress;
     }
-    
+
     @Override
     public void setBillingAddress(Address billingAddress) {
         this.billingAddress = billingAddress;
     }
-    
+
     public Boolean getIsToBeSubcontracted() {
         return isToBeSubcontracted;
     }
-    
+
     public void setIsToBeSubcontracted(Boolean isToBeSubcontracted) {
         this.isToBeSubcontracted = isToBeSubcontracted;
     }
-    
+
     public Boolean getEstimatedTurnAroundTimeRequired() {
         if (estimatedTurnAroundTimeRequired == null) {
             estimatedTurnAroundTimeRequired = true;
         }
         return estimatedTurnAroundTimeRequired;
     }
-    
+
     public void setEstimatedTurnAroundTimeRequired(Boolean estimatedTurnAroundTimeRequired) {
         this.estimatedTurnAroundTimeRequired = estimatedTurnAroundTimeRequired;
     }
-    
+
     public String getInstructions() {
         if (instructions == null) {
             instructions = "";
         }
         return instructions;
     }
-    
+
     public void setInstructions(String instructions) {
         this.instructions = instructions;
     }
-    
+
     public Boolean getIsSubContracted() {
         if (getSubContractedDepartment().getName().equals("")
                 || getSubContractedDepartment().getName().equals("--")) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     public Integer getNoOfTests() {
         if (noOfTests == null) {
             noOfTests = 0;
         }
         return noOfTests;
     }
-    
+
     public void setNoOfTests(Integer noOfTests) {
         this.noOfTests = noOfTests;
     }
-    
+
     public Integer getNoOfCalibrations() {
         if (noOfCalibrations == null) {
             noOfCalibrations = 0;
         }
         return noOfCalibrations;
     }
-    
+
     public void setNoOfCalibrations(Integer noOfCalibrations) {
         this.noOfCalibrations = noOfCalibrations;
     }
-    
+
     public Job(JobSubCategory jobSubCategory, Double finalCost) {
         this.isToBeSubcontracted = false;
         this.jobCostingAndPayment = new JobCostingAndPayment();
         this.jobCostingAndPayment.setFinalCost(finalCost);
         this.jobSubCategory = jobSubCategory;
     }
-    
+
     @Override
     public Long getId() {
         return id;
     }
-    
+
     @Override
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public String getJobDescription() {
         if (jobDescription == null) {
             jobDescription = getDefaultJobDescription();
         } else if (jobDescription.trim().equals("")) {
             jobDescription = getDefaultJobDescription();
         }
-        
+
         return jobDescription;
     }
-    
+
     public void setJobDescription(String jobDescription) {
         this.jobDescription = jobDescription;
     }
-    
+
     public String getDefaultJobDescription() {
         //if (getJobDescription().trim().equals("")) {
         return this.instructions;
@@ -645,58 +592,58 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
         //return jobDescription;
     }
-    
+
     public Boolean getNewClient() {
         return newClient;
     }
-    
+
     public void setNewClient(Boolean newClient) {
         this.newClient = newClient;
     }
-    
+
     public Classification getClassification() {
         return classification;
     }
-    
+
     public void setClassification(Classification classification) {
         this.classification = classification;
     }
-    
+
     public Sector getSector() {
         return sector;
     }
-    
+
     public void setSector(Sector sector) {
         this.sector = sector;
     }
-    
+
     public JobStatusAndTracking getJobStatusAndTracking() {
         return jobStatusAndTracking;
     }
-    
+
     public void setJobStatusAndTracking(JobStatusAndTracking jobStatusAndTracking) {
         this.jobStatusAndTracking = jobStatusAndTracking;
     }
-    
+
     public JobCostingAndPayment getJobCostingAndPayment() {
         return jobCostingAndPayment;
     }
-    
+
     public void setJobCostingAndPayment(JobCostingAndPayment jobCostingAndPayment) {
         this.jobCostingAndPayment = jobCostingAndPayment;
     }
-    
+
     public Integer getYearReceived() {
         return yearReceived;
     }
-    
+
     public void setYearReceived(Integer yearReceived) {
         this.yearReceived = yearReceived;
     }
-    
+
     public String getJobSampleDescriptions() {
         String description = "";
-        
+
         if (getJobSamples().isEmpty() || hasOnlyDefaultJobSample()) {
             return "None";
         } else {
@@ -708,10 +655,10 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 }
             }
         }
-        
+
         return description;
     }
-    
+
     public Boolean hasOnlyDefaultJobSample() {
         if ((getJobSamples().size() == 1) && (getJobSamples().get(0).getDescription().trim().equals("--"))) {
             return true;
@@ -732,7 +679,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             return getJobSamples();
         }
     }
-    
+
     @XmlTransient
     @JsonIgnore
     public List<JobSample> getJobSamples() {
@@ -741,47 +688,47 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         } else {
             jobSamples = new ArrayList<>();
         }
-        
+
         return jobSamples;
     }
-    
+
     public BusinessOffice getBusinessOffice() {
         return businessOffice;
     }
-    
+
     public void setBusinessOffice(BusinessOffice businessOffice) {
         this.businessOffice = businessOffice;
     }
-    
+
     public ServiceContract getServiceContract() {
         return serviceContract;
     }
-    
+
     public void setServiceContract(ServiceContract serviceContract) {
         this.serviceContract = serviceContract;
     }
-    
+
     public Boolean getAutoGenerateJobNumber() {
         if (autoGenerateJobNumber == null) {
             autoGenerateJobNumber = true;
         }
         return autoGenerateJobNumber;
     }
-    
+
     public void setAutoGenerateJobNumber(Boolean autoGenerateJobNumber) {
         this.autoGenerateJobNumber = autoGenerateJobNumber;
     }
-    
+
     @Override
     public void setIsClientDirty(Boolean dirty) {
         isClientDirty = dirty;
     }
-    
+
     @Override
     public Boolean getIsClientDirty() {
         return isClientDirty;
     }
-    
+
     @Override
     public Client getClient() {
         if (client == null) {
@@ -789,25 +736,25 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
         return client;
     }
-    
+
     @Override
     public void setClient(Client client) {
         this.client = client;
     }
-    
+
     public Department getDepartment() {
         if (department == null) {
             return new Department("");
         }
         return department;
     }
-    
+
     public void setDepartment(Department department) {
         this.department = department;
     }
-    
+
     public Department getDepartmentAssignedToJob() {
-        
+
         if (getSubContractedDepartment().getName().equals("--")) {
             // This is not a subcontracted job see return to parent department            
             return getDepartment();
@@ -815,149 +762,149 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             return getSubContractedDepartment();
         }
     }
-    
+
     public Employee getAssignedTo() {
         if (assignedTo == null) {
             return new Employee();
         }
         return assignedTo;
     }
-    
+
     public void setAssignedTo(Employee assignedTo) {
         this.assignedTo = assignedTo;
     }
-    
+
     public JobCategory getJobCategory() {
         return jobCategory;
     }
-    
+
     public void setJobCategory(JobCategory jobCategory) {
         this.jobCategory = jobCategory;
     }
-    
+
     public JobSubCategory getJobSubCategory() {
         return jobSubCategory;
     }
-    
+
     public void setJobSubCategory(JobSubCategory jobSubCategory) {
         this.jobSubCategory = jobSubCategory;
     }
-    
+
     public Department getSubContractedDepartment() {
         if (subContractedDepartment == null) {
             return new Department("");
         }
         return subContractedDepartment;
     }
-    
+
     public void setSubContractedDepartment(Department subContractedDepartment) {
         this.subContractedDepartment = subContractedDepartment;
     }
-    
+
     public String getComment() {
         if (comment == null) {
             comment = "";
         }
         return comment;
     }
-    
+
     public void setComment(String comment) {
         this.comment = comment;
     }
-    
+
     public Integer getEstimatedTurnAroundTimeInDays() {
         if (estimatedTurnAroundTimeInDays == null) {
             estimatedTurnAroundTimeInDays = 0;
         }
         return estimatedTurnAroundTimeInDays;
     }
-    
+
     public void setEstimatedTurnAroundTimeInDays(Integer estimatedTurnAroundTimeInDays) {
         this.estimatedTurnAroundTimeInDays = estimatedTurnAroundTimeInDays;
     }
-    
+
     public Boolean getIsEarningJob() {
         return isEarningJob;
     }
-    
+
     public void setIsEarningJob(Boolean isEarningJob) {
         this.isEarningJob = isEarningJob;
     }
-    
+
     public Long getJobSequenceNumber() {
         return jobSequenceNumber;
     }
-    
+
     public void setJobSequenceNumber(Long jobSequenceNumber) {
         this.jobSequenceNumber = jobSequenceNumber;
     }
-    
+
     public Boolean getLocked() {
         return locked;
     }
-    
+
     public void setLocked(Boolean locked) {
         this.locked = locked;
     }
-    
+
     public Integer getNoOfTestsOrCalibrations() {
         if (noOfTestsOrCalibrations == null) {
             noOfTestsOrCalibrations = 0;
         }
         return noOfTestsOrCalibrations;
     }
-    
+
     public void setNoOfTestsOrCalibrations(Integer noOfTestsOrCalibrations) {
         this.noOfTestsOrCalibrations = noOfTestsOrCalibrations;
     }
-    
+
     public Long getNumberOfSamples() {
         if (numberOfSamples == null) {
             numberOfSamples = 0L;
         }
         return numberOfSamples;
     }
-    
+
     public Long getNumberOfSampleProducts() {
         Long total = 0L;
-        
+
         for (JobSample jobSample : getJobSamples()) {
             total = total + jobSample.getQuantity();
         }
-        
+
         return total;
     }
-    
+
     public void setNumberOfSamples(Long numberOfSamples) {
         this.numberOfSamples = numberOfSamples;
     }
-    
+
     public String getReportNumber() {
         return reportNumber;
     }
-    
+
     public void setReportNumber(String reportNumber) {
         this.reportNumber = reportNumber;
     }
-    
+
     public String getJobNumber() {
         if (jobNumber == null) {
             jobNumber = "";
         }
         return jobNumber;
     }
-    
+
     public void setJobNumber(String jobNumber) {
         this.jobNumber = jobNumber;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -970,26 +917,26 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
         return true;
     }
-    
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
-    
+
     @Override
     public String toString() {
         return getJobNumber();
     }
-    
+
     @Override
     public String getName() {
         return "";
     }
-    
+
     @Override
     public void setName(String name) {
     }
-    
+
     public static Job findLastClientJob(EntityManager em, Client client) {
         Job lastJob = null;
         String searchQuery;
@@ -1017,10 +964,10 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 lastJob = jobs.get(jobs.size() - 1);
             }
         }
-        
+
         return lastJob;
     }
-    
+
     public static List<Job> findJobsByDateSearchField(
             EntityManager em,
             JobManagerUser user,
@@ -1031,7 +978,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             Date startDate,
             Date endDate,
             Boolean includeSampleSearch) {
-        
+
         List<Job> foundJobs;
         String searchQuery = null;
         String searchText;
@@ -1056,7 +1003,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                     + " OR UPPER(jobSamples.productModel) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.productSerialNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.productCode) LIKE '%" + searchText.toUpperCase() + "%'";
-            
+
             sampleSearchJoinClause = " JOIN job.jobSamples jobSamples";
         }
         switch (searchType) {
@@ -1262,17 +1209,17 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 break;
             default:
                 System.out.println("Default search to be implemented");
-                
+
                 break;
         }
-        
+
         try {
             foundJobs = em.createQuery(searchQuery, Job.class).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
-        
+
         return foundJobs;
     }
 
@@ -1291,7 +1238,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                     + " WHERE (t.dateSubmitted >= " + BusinessEntityUtils.getDateString(datePeriod.getStartDate(), "'", "YMD", "-")
                     + " AND t.dateSubmitted <= " + BusinessEntityUtils.getDateString(datePeriod.getEndDate(), "'", "YMD", "-") + ")"
                     + " AND t.alertDate IS NULL", Job.class).getResultList();
-            
+
             return jobs;
         } catch (Exception e) {
             System.out.println(e);
@@ -1314,35 +1261,35 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                     + " WHERE (t.dateSubmitted >= " + BusinessEntityUtils.getDateString(datePeriod.getStartDate(), "'", "YMD", "-")
                     + " AND t.dateSubmitted <= " + BusinessEntityUtils.getDateString(datePeriod.getEndDate(), "'", "YMD", "-") + ")"
                     + " AND t.dateJobEmailWasSent IS NULL", Job.class).getResultList();
-            
+
             return jobs;
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
-    
+
     public static List<Job> findAllJobs(EntityManager em) {
-        
+
         try {
             List<Job> jobs = em.createNamedQuery("findAllJobs", Job.class).getResultList();
-            
+
             return jobs;
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
-    
+
     public static List<Job> findJobsByBusinessOfficeId(EntityManager em, Long businessOfficeId) {
-        
+
         try {
-            
+
             List<Job> jobs = em.createQuery(
                     "SELECT j FROM Job j"
                     + " JOIN j.businessOffice businessOffice"
                     + " WHERE businessOffice.id = " + businessOfficeId, Job.class).getResultList();
-            
+
             return jobs;
         } catch (Exception e) {
             System.out.println(e);
@@ -1358,14 +1305,14 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
      * @return
      */
     public static Job findJobByJobNumber(EntityManager em, String jobNumber) {
-        
+
         try {
             String newJobNumber = jobNumber.trim().replaceAll("'", "''");
-            
+
             List<Job> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE UPPER(j.jobNumber) "
                     + "= '" + newJobNumber.toUpperCase() + "'", Job.class).getResultList();
-            
+
             if (!jobs.isEmpty()) {
                 return jobs.get(0);
             } else {
@@ -1376,20 +1323,20 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             return null;
         }
     }
-    
+
     public static Job findParentJob(EntityManager em, Integer yearReceived, Long jobSequenceNumber) {
         return null;
     }
-    
+
     public static Job findJobByYearReceivedAndJobSequence(EntityManager em, Integer yearReceived, Long jobSequenceNumber) {
-        
+
         try {
-            
+
             List<Job> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE j.yearReceived = "
                     + yearReceived.toString() + " AND j.jobSequenceNumber = "
                     + jobSequenceNumber.toString(), Job.class).getResultList();
-            
+
             if (!jobs.isEmpty()) {
                 return jobs.get(0);
             } else {
@@ -1400,44 +1347,44 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             return null;
         }
     }
-    
+
     public static Job findJobById(EntityManager em, Long id) {
-        
+
         try {
             Job job = em.find(Job.class, id);
-            
+
             return job;
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
-    
+
     public static List<Job> findIncompleteSubcontracts(EntityManager em, Job job) {
         List<Job> foundJobs;
         ArrayList<Job> incompleteSubcontracts = new ArrayList<>();
-        
+
         foundJobs = findJobsByYearReceivedAndJobSequenceNumber(em, job.yearReceived, job.jobSequenceNumber);
         for (Job foundJob : foundJobs) {
             if (foundJob.getIsSubContracted() && !foundJob.getJobStatusAndTracking().getCompleted()) {
                 incompleteSubcontracts.add(foundJob);
             }
         }
-        
+
         return incompleteSubcontracts;
     }
-    
+
     public static List<Job> findJobsByYearReceivedAndJobSequenceNumber(
             EntityManager em,
             Integer yearReceived,
             Long jobSequenceNumber) {
         try {
-            
+
             List<Job> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE j.yearReceived = "
                     + yearReceived.toString() + " AND j.jobSequenceNumber = "
                     + jobSequenceNumber.toString(), Job.class).getResultList();
-            
+
             if (!jobs.isEmpty()) {
                 return jobs;
             } else {
@@ -1448,12 +1395,12 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             return null;
         }
     }
-    
+
     public static List<String> findJobNumbers(EntityManager em, String query) {
-        
+
         try {
             String newName = query.replaceAll("'", "''");
-            
+
             List<String> numbers
                     = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) like '"
                             + newName.toUpperCase().trim() + "%'"
@@ -1464,12 +1411,12 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Job> findJobsWithJobCosting(
             EntityManager em,
             String originalDepartmentName,
             String originalSearchText) {
-        
+
         List<Job> foundJobs;
         String searchQuery;
         String searchTextAndClause = "";
@@ -1490,12 +1437,12 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         } else {
             departmentName = "";
         }
-        
+
         joinClause
                 = " JOIN job.department department"
                 + " JOIN job.subContractedDepartment subContractedDepartment"
                 + " JOIN job.jobCostingAndPayment jobCostingAndPayment";
-        
+
         if (!searchText.equals("") && !departmentName.equals("")) {
             searchTextAndClause
                     = " AND ("
@@ -1519,7 +1466,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                     + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " )";
         }
-        
+
         searchQuery
                 = "SELECT job FROM Job job"
                 + joinClause
@@ -1535,16 +1482,16 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             System.out.println(e);
             return new ArrayList<>();
         }
-        
+
         return foundJobs;
     }
-    
+
     public static List<Object[]> getJobReportRecords(
             EntityManager em,
             String startDate,
             String endDate,
             Long departmentId) {
-        
+
         String reportSQL = "SELECT"
                 + "     GROUP_CONCAT(jobsample.`DESCRIPTION` SEPARATOR ', ') AS samples," // 0
                 + "     GROUP_CONCAT(jobsample.`PRODUCTBRAND` SEPARATOR ', ') AS sampleBrands," // 1
@@ -1608,22 +1555,22 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 + " ORDER BY"
                 + "     job.`ID` DESC,"
                 + "     employee.`LASTNAME` ASC";
-        
+
         try {
             return em.createNativeQuery(reportSQL).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
-        
+
     }
-    
+
     public static List<Object[]> getCompletedJobRecords(
             EntityManager em,
             String startDate,
             String endDate,
             Long departmentId) {
-        
+
         String reportSQL = "SELECT\n"
                 + "     GROUP_CONCAT(jobsample.`DESCRIPTION` SEPARATOR ', ') AS samples,\n" //0
                 + "     job.`ID` AS job_ID,\n" //1
@@ -1669,14 +1616,14 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 + "     job.`ID`"
                 + " ORDER BY"
                 + "     employee.`NAME` ASC";
-        
+
         try {
             return em.createNativeQuery(reportSQL).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
-        
+
     }
 
     /*
@@ -1736,12 +1683,12 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     
      */
     @Override
-    public MethodResult save(EntityManager em) {
+    public ReturnMessage save(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
-    public MethodResult validate(EntityManager em) {
+    public ReturnMessage validate(EntityManager em) {
         Job currentlySavedJob = null;
         Job currentJob = this;
 
@@ -1749,18 +1696,18 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         if (currentJob.getId() != null) {
             currentlySavedJob = Job.findJobById(em, currentJob.getId());
         }
-        
+
         if (!BusinessEntityUtils.validateName(currentJob.getBusinessOffice().getName())) {
-            
-            return new MethodResult(false, "This job cannot be saved because a valid business office was not entered.");
+
+            return new ReturnMessage(false, "This job cannot be saved because a valid business office was not entered.");
         }
-        
+
         BusinessOffice Office = BusinessOffice.findBusinessOfficeByName(em, currentJob.getBusinessOffice().getName());
         if (Office != null) {
             em.refresh(Office);
             currentJob.setBusinessOffice(Office);
         } else {
-            return new MethodResult(false, "This job cannot be saved because a valid business office was not entered.");
+            return new ReturnMessage(false, "This job cannot be saved because a valid business office was not entered.");
         }
 
         // Check if job nunmber is already associated with a job        
@@ -1769,23 +1716,23 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             //System.out.println("exist id: " + existingJob.getId());
             long current_jobid = currentJob.getId() != null ? currentJob.getId() : -1L;
             if (existingJob.getId() != current_jobid) {
-                return new MethodResult(false, "This job cannot be saved because the job number is not unique.");
+                return new ReturnMessage(false, "This job cannot be saved because the job number is not unique.");
             }
         }
 
         // get  job number if auto is on
         if (currentJob.getAutoGenerateJobNumber()) {
             if (!validateJobNumber(currentJob.getJobNumber(), currentJob.getAutoGenerateJobNumber())) {
-                return new MethodResult(false, "This job cannot be saved because a valid job number was not entered.");
+                return new ReturnMessage(false, "This job cannot be saved because a valid job number was not entered.");
             }
         }
 
         // Validate client
         if (!BusinessEntityUtils.validateName(currentJob.getClient().getName())) {
-            return new MethodResult(false,
+            return new ReturnMessage(false,
                     "This job cannot be saved. Please select a valid client from the list."
                     + "You may create a new client if you have the privilege and the client's name does not appear in the list.");
-            
+
         } else if (currentJob.getClient().getId() != null) {
             currentJob.setClient(Client.getClientById(em, currentJob.getClient().getId()));
         }
@@ -1793,7 +1740,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         // Department        
         Department dept = Department.findDepartmentByName(em, currentJob.getDepartment().getName());
         if (dept == null) {
-            return new MethodResult(false, "This job cannot be saved because a valid department was not entered.");
+            return new ReturnMessage(false, "This job cannot be saved because a valid department was not entered.");
         } else {
             em.refresh(dept);
             currentJob.setDepartment(dept);
@@ -1807,25 +1754,25 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         // Check for valid subcontracted department
         // tk impl isToBeSubcontracted in Job use it as it is used in JobManager
         if (!currentJob.getIsSubContracted() && getIsToBeSubcontracted()) {
-            return new MethodResult(false, "Please enter a valid subcontracted department.");
+            return new ReturnMessage(false, "Please enter a valid subcontracted department.");
         } else if ((currentlySavedJob != null)
                 && !currentJob.getIsSubContracted()
                 && currentlySavedJob.getIsSubContracted()) {
 
             // Reset current subcontracted department
             currentJob.setSubContractedDepartment(currentlySavedJob.getSubContractedDepartment());
-            
-            return new MethodResult(false, "Please enter a valid subcontracted department.");
+
+            return new ReturnMessage(false, "Please enter a valid subcontracted department.");
         }
 
         // Check for self contracts        
         if (currentJob.getDepartment().getName().equals(currentJob.getSubContractedDepartment().getName())) {
-            return new MethodResult(false, "The main and subcontracted departments cannot be the same.");
+            return new ReturnMessage(false, "The main and subcontracted departments cannot be the same.");
         }
 
         // TAT
         if ((currentJob.getEstimatedTurnAroundTimeInDays() == 0) && currentJob.getEstimatedTurnAroundTimeRequired()) {
-            return new MethodResult(false, "A valid estimated turnaround time (TAT) is required and must be provided.");
+            return new ReturnMessage(false, "A valid estimated turnaround time (TAT) is required and must be provided.");
         }
 
         // Assignee       
@@ -1834,55 +1781,55 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             if (assignee.getName().equals("--, --")
                     || assignee.getFirstName().trim().equals("")
                     || assignee.getLastName().trim().equals("")) {
-                return new MethodResult(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
+                return new ReturnMessage(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
             }
             em.refresh(assignee);
             currentJob.setAssignedTo(assignee);
         } else {
             currentJob.setAssignedTo(Employee.findDefaultEmployee(em, "--", "--", true));
-            
-            return new MethodResult(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
+
+            return new ReturnMessage(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
         }
 
         // Validate Instructions
         if (currentJob.getInstructions().trim().equals("")) {
-            return new MethodResult(false, "Please enter instructions for this job.");
+            return new ReturnMessage(false, "Please enter instructions for this job.");
         }
 
         // Classification objects
         Classification classn = Classification.findClassificationByName(em, currentJob.getClassification().getName());
         if (classn == null) {
-            return new MethodResult(false, "Please select/enter a job classification.");
+            return new ReturnMessage(false, "Please select/enter a job classification.");
         } else if (classn.getName().equals("--") || classn.getName().trim().equals("")) {
-            return new MethodResult(false, "Please select/enter a job classification.");
+            return new ReturnMessage(false, "Please select/enter a job classification.");
         } else {
             currentJob.setClassification(classn);
         }
-        
+
         Sector sect = Sector.findSectorById(em, currentJob.getSector().getId());
         if (sect == null) {
-            return new MethodResult(false, "Please select/enter a sector.\"");
+            return new ReturnMessage(false, "Please select/enter a sector.\"");
         } else {
             currentJob.setSector(sect);
         }
-        
+
         JobCategory category = JobCategory.findJobCategoryById(em, currentJob.getJobCategory().getId());
         if (category == null) {
-            return new MethodResult(false, "Please select/enter a job category.");
+            return new ReturnMessage(false, "Please select/enter a job category.");
         } else {
             currentJob.setJobCategory(category);
         }
-        
+
         JobSubCategory subCategory = JobSubCategory.findJobSubCategoryById(em, currentJob.getJobSubCategory().getId());
         if (subCategory == null) {
-            return new MethodResult(false, "Please select/enter a job subcategory.");
+            return new ReturnMessage(false, "Please select/enter a job subcategory.");
         } else {
             currentJob.setJobSubCategory(subCategory);
         }
 
         // Check for valid creation of sub contracts
         if (currentJob.getIsSubContracted() && currentJob.getJobSequenceNumber() == null) {
-            return new MethodResult(false, "A main/parent job must be created before creating a subcontracted job.");
+            return new ReturnMessage(false, "A main/parent job must be created before creating a subcontracted job.");
         }
 
         // Check if job as previously saved as parent job and prevent saving 
@@ -1891,26 +1838,26 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             Job jobFound = Job.findJobById(em, currentJob.getId());
             if (jobFound != null) {
                 if (!jobFound.getIsSubContracted() && currentJob.getIsSubContracted()) {
-                    return new MethodResult(false, "A main/parent job cannot be converted to a subcontracted job.\n"
+                    return new ReturnMessage(false, "A main/parent job cannot be converted to a subcontracted job.\n"
                             + "Create a copy of this job instead then convert the copied job to a subcontract.");
                 }
             }
         }
-        
+
         if (currentJob.getJobStatusAndTracking().getCompleted()
                 && currentJob.getJobCostingAndPayment().getFinalCost() == 0.0) {
-            
-            return new MethodResult(false, "A job cannot have a completed 'Work progress' without a final cost.");
+
+            return new ReturnMessage(false, "A job cannot have a completed 'Work progress' without a final cost.");
         }
-        
-        return new MethodResult();
+
+        return new ReturnMessage();
     }
-    
+
     public Boolean validateJobNumber(String jobNumber, Boolean auto) {
         Integer departmentCode = 0;
         Integer year = 0;
         Long sequenceNumber = 0L;
-        
+
         String parts[] = jobNumber.split("/");
         if (parts != null) {
             // check for correct number of parts
@@ -1974,5 +1921,5 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             return false;
         }
     }
-    
+
 }
