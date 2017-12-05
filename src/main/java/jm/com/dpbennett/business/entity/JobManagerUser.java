@@ -96,6 +96,20 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         userLastname = "";
     }
 
+    public static Boolean isUserDepartmentSupervisor(Job job, JobManagerUser user, EntityManager em) {
+
+        Job foundJob = Job.findJobById(em, job.getId());
+
+        if (Department.findDepartmentAssignedToJob(foundJob, em).getHead().getId().longValue() == user.getEmployee().getId().longValue()) {
+            return true;
+        } else if ((Department.findDepartmentAssignedToJob(foundJob, em).getActingHead().getId().longValue() == user.getEmployee().getId().longValue())
+                && Department.findDepartmentAssignedToJob(foundJob, em).getActingHeadActive()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public Boolean getFinancialAdminUnit() {
         if (financialAdminUnit == null) {
             financialAdminUnit = false;
@@ -262,7 +276,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     public Boolean isLoggedIn() {
         if (getPollTime() != null) {
-            Long currentTime = new Date().getTime();            
+            Long currentTime = new Date().getTime();
             Long diff = currentTime - getPollTime().getTime();
 
             if (diff <= 240000) { // tk get from system option
@@ -274,16 +288,15 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         } else {
             return false;
         }
-       
+
     }
 
     public String getStatus() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd, hh:mm:ss");
-        
+
         if (isLoggedIn()) {
             return "Checked in (" + formatter.format(getPollTime()) + ")";
-        }
-        else {
+        } else {
             return "Checked out (" + formatter.format(getPollTime()) + ")";
         }
 

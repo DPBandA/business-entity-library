@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import javax.faces.application.FacesMessage;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -129,6 +130,198 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.isToBeCopied = false;
         isClientDirty = false;
         jobSamples = new ArrayList<>();
+    }
+    
+    // tk find a better name for this method
+    public MethodResult prepareAndSave(EntityManager em, JobManagerUser user) {
+
+        Date now = new Date();
+        JobSequenceNumber nextJobSequenceNumber = null;
+        boolean jobEmailAlertsActivated = Boolean.parseBoolean(SystemOption.
+                findSystemOptionByName(em,
+                        "jobEmailAlertsActivated").getOptionValue());
+
+        try {
+            // Get employee for later use
+            Employee employee = user.getEmployee(); 
+
+            // Use the client's default billing address and main contact if the
+            // Job's billing address and contact are not valid.
+            // Validate and save address if required
+            if (!BusinessEntityUtils.validateName(this.getBillingAddress().getAddressLine1())) {
+                this.setBillingAddress(this.getClient().getBillingAddress());
+            }
+            if (this.getBillingAddress().getId() == null) {
+                this.getBillingAddress().save(em);
+            }
+
+            // Validate and save contact if required
+            if (!BusinessEntityUtils.validateName(this.getContact().getName())) {
+                this.setContact(this.getClient().getMainContact());
+            }
+            if (this.getContact().getId() == null) {
+                this.getContact().save(em);
+            }
+
+            // Do not save changed job if it's already marked as completed in the database
+            if (this.getId() != null) {
+                Job job = Job.findJobById(em, this.getId());
+                if (job.getJobStatusAndTracking().getWorkProgress().equals("Completed")
+                        && !user.getEmployee().isMemberOf(Department.findDepartmentBySystemOptionDeptId("invoicingDepartmentId", em))
+                        && !user.getPrivilege().getCanBeJMTSAdministrator()
+                        && !JobManagerUser.isUserDepartmentSupervisor(this, user, em)) {
+                    //setDirty(false);
+                    this.setIsDirty(false);
+                    
+                    addMessage("Job Cannot Be Saved",
+                            "This job is marked as completed so changes cannot be saved. You may contact your department's supervisor or a system administrator.",
+                            FacesMessage.SEVERITY_ERROR);
+
+                    return false;
+                }
+            }
+
+            em.getTransaction().begin();
+
+            // Set date entered
+            if (currentJob.getJobStatusAndTracking().getDateAndTimeEntered() == null) {
+                currentJob.getJobStatusAndTracking().setDateAndTimeEntered(now);
+            }
+
+            if (employee != null) {
+                if (currentJob.getJobStatusAndTracking().getEnteredBy().getId() == null) {
+                    // This means this this is a new job so set user and person who entered the job
+                    currentJob.getJobStatusAndTracking().setEnteredBy(employee);
+                    currentJob.getJobStatusAndTracking().setEditedBy(employee);
+                }
+            }
+
+            // Update re the person who last edited/entered the job etc.
+            if (isDirty()) {
+                currentJob.getJobStatusAndTracking().setDateStatusEdited(now);
+                currentJob.getJobStatusAndTracking().setEditedBy(employee);
+            }
+
+            // Modify job number with sequence number if required
+            if (currentJob.getAutoGenerateJobNumber()) {
+                if ((currentJob.getId() == null) && (currentJob.getJobSequenceNumber() == null)) {
+                    nextJobSequenceNumber = JobSequenceNumber.findNextJobSequenceNumber(em, currentJob.getYearReceived());
+                    currentJob.setJobSequenceNumber(nextJobSequenceNumber.getSequentialNumber());
+                    currentJob.setJobNumber(Job.getJobNumber(currentJob, em));
+                } else {
+                    currentJob.setJobNumber(Job.getJobNumber(currentJob, em));
+                }
+            }
+
+            // Save job samples
+            if (currentJob.getJobSamples().size() > 0) {
+                for (JobSample jobSample : currentJob.getJobSamples()) {
+                    /// Save newly entered samples 
+                    if (jobSample.getId() == null) {
+                        BusinessEntityUtils.saveBusinessEntity(em, jobSample);
+                    }
+                    // "Clean" sample
+                    jobSample.setIsDirty(false);
+                }
+            } 
+           
+            // Do actual save here and check for errors
+            Long id = BusinessEntityUtils.saveBusinessEntity(em, currentJob);
+
+            if (id == null) {
+                if (currentJob.getAutoGenerateJobNumber()) {
+                    currentJob.setJobNumber(Job.getJobNumber(currentJob, em));
+                }
+
+                addMessage("Job save error occured",
+                        "An error occured while saving job (Null ID)" + currentJob.getJobNumber(),
+                        FacesMessage.SEVERITY_ERROR);
+
+                if (jobEmailAlertsActivated) {
+                    sendErrorEmail("An error occured while saving job (Null ID)" + currentJob.getJobNumber(),
+                            "Job save error occured");
+                }
+
+                return false;
+
+            } else if (id == 0L) {
+                if (currentJob.getAutoGenerateJobNumber()) {
+                    currentJob.setJobNumber(Job.getJobNumber(currentJob, em));
+                }
+                addMessage("Job save error occured",
+                        "An error occured while saving job (0L ID)" + currentJob.getJobNumber(),
+                        FacesMessage.SEVERITY_ERROR);
+                if (jobEmailAlertsActivated) {
+                    sendErrorEmail("An error occured while saving job (0L ID)" + currentJob.getJobNumber(),
+                            "Job save error occured");
+                }
+
+                return false;
+            } else {
+                // Job was saved so save id for furture use
+                //currentJobId = id;
+
+                // Save job sequence number
+                if (nextJobSequenceNumber != null) {
+                    BusinessEntityUtils.saveBusinessEntity(em, nextJobSequenceNumber);
+                }
+
+                // Send job email alerts if the option is activated
+                try {
+                    // Send email alerts if any was flagged to be sent    
+                    // tk del this and other email alert code and find some other way to do this.
+                    if (jobEmailAlertsActivated) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                System.out.println("Generating and sending emails...");
+                                generateEmailAlerts();
+                            }
+                        }).start();
+
+                    } else {
+                        System.out.println("Email alerts will not be generated!");
+                    }
+                } catch (Exception e) {
+                    System.out.println(e);
+                    addMessage("Email Error!", "An error occurred while attempting to send an alert email.", FacesMessage.SEVERITY_ERROR);
+                }
+
+//                addMessage("Success!", "This job was saved.", FacesMessage.SEVERITY_INFO); // tk del
+            }
+
+            em.getTransaction().commit();
+
+            currentJob.clean();
+
+        } catch (Exception e) {
+            if (currentJob.getAutoGenerateJobNumber()) {
+                currentJob.setJobNumber(Job.getJobNumber(currentJob, em));
+            }
+            addMessage("Undefined Error!", "An undefined error occurred while saving this job. "
+                    + "Please contact the System Administrator", FacesMessage.SEVERITY_ERROR);
+
+            if (jobEmailAlertsActivated) {
+                try {
+                    sendErrorEmail("An exception occurred while saving a job!",
+                            "Job number: " + currentJob.getJobNumber()
+                            + "\nJMTS User: " + getUser().getUsername()
+                            + "\nDate/time: " + new Date()
+                            + "\nException detail: " + e);
+                } catch (Exception e2) {
+                    addMessage("Email Error!", "An error occurred while attempting to send an alert email.", FacesMessage.SEVERITY_ERROR);
+                    System.out.println(e2);
+                }
+
+            }
+
+            System.out.println(e);
+
+            return false;
+        }
+
+        return true;
+
     }
     
     public void clean() {

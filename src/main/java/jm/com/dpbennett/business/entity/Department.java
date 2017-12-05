@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -42,7 +41,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.MethodResult;
 
-
 /**
  *
  * @author Desmond
@@ -50,8 +48,10 @@ import jm.com.dpbennett.business.entity.utils.MethodResult;
 @Entity
 @Table(name = "department")
 @NamedQueries({
-    @NamedQuery(name = "findAllDepartments", query = "SELECT e FROM Department e ORDER BY e.name"),
-    @NamedQuery(name = "findAllActiveDepartments", query = "SELECT e FROM Department e WHERE e.active = :active ORDER BY e.name"),
+    @NamedQuery(name = "findAllDepartments", query = "SELECT e FROM Department e ORDER BY e.name")
+    ,
+    @NamedQuery(name = "findAllActiveDepartments", query = "SELECT e FROM Department e WHERE e.active = :active ORDER BY e.name")
+    ,
     @NamedQuery(name = "findBySubGroupCode", query = "SELECT e FROM Department e WHERE e.subGroupCode = :subGroupCode")
 })
 @XmlRootElement
@@ -82,7 +82,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     private Boolean actingHeadActive;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Privilege privilege;
-   
+
     public Department() {
         name = "";
         subGroupCode = "";
@@ -294,9 +294,9 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<Department> departments =
-                    em.createQuery("SELECT d FROM Department d where UPPER(d.name) like '%"
-                    + newName.toUpperCase().trim() + "%' ORDER BY d.name", Department.class).getResultList();
+            List<Department> departments
+                    = em.createQuery("SELECT d FROM Department d where UPPER(d.name) like '%"
+                            + newName.toUpperCase().trim() + "%' ORDER BY d.name", Department.class).getResultList();
             return departments;
         } catch (Exception e) {
             System.out.println(e);
@@ -309,9 +309,9 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<Department> departments =
-                    em.createQuery("SELECT d FROM Department d WHERE UPPER(d.name) LIKE '%"
-                    + newName.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Department.class).getResultList();
+            List<Department> departments
+                    = em.createQuery("SELECT d FROM Department d WHERE UPPER(d.name) LIKE '%"
+                            + newName.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Department.class).getResultList();
             return departments;
         } catch (Exception e) {
             System.out.println(e);
@@ -388,7 +388,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         } catch (Exception e) {
             return null;
         }
-    }    
+    }
 
     @Override
     public int compareTo(Object o) {
@@ -437,7 +437,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         BusinessEntityUtils.saveBusinessEntity(em, department);
         em.getTransaction().commit();
 
-
         return true;
     }
 
@@ -450,12 +449,12 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public MethodResult validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     /**
      * This method guards against returning very long names. This is used in an
-     * autocomplete JSF component for instance to prevent the list of entity names
-     * from extending beyond the screen. In the future, the maximum length of
-     * say 50 will be a value stored in the resource bundle of the BEL.
+     * autocomplete JSF component for instance to prevent the list of entity
+     * names from extending beyond the screen. In the future, the maximum length
+     * of say 50 will be a value stored in the resource bundle of the BEL.
      *
      * @return
      */
@@ -470,5 +469,40 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public void setTruncatedName(String name) {
         setName(name);
     }
+
+    public static Department findDepartmentBySystemOptionDeptId(String option, EntityManager em) {
+
+        Long id = Long.parseLong(SystemOption.findSystemOptionByName(em, option).getOptionValue());
+
+        Department department = Department.findDepartmentById(em, id);
+        em.refresh(department);
+
+        if (department != null) {
+            return department;
+        } else {
+            return new Department("");
+        }
+    }
     
+     public static Department findDepartmentAssignedToJob(Job job, EntityManager em) {
+
+        Department dept;
+
+        if (job.getSubContractedDepartment().getName().equals("--")
+                || job.getSubContractedDepartment().getName().equals("")) {
+            // This is not a subcontracted job see return to parent department            
+            dept = Department.findDepartmentByName(em, job.getDepartment().getName());
+            if (dept != null) {
+                em.refresh(dept);
+            }
+
+            return dept;
+        } else {
+            dept = Department.findDepartmentByName(em, job.getSubContractedDepartment().getName());
+            em.refresh(dept);
+
+            return dept;
+        }
+    }
+
 }
