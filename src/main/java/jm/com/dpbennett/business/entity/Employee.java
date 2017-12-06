@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -376,17 +375,17 @@ public class Employee implements Person, Serializable, BusinessEntity {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public static List<Employee> findEmployeesByName(EntityManager em, String name) {
 
         try {
             String newName = name.toUpperCase().trim().replaceAll("'", "''");
 
-            List<Employee> employees =
-                    em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
-                    + newName + "%'" + " OR UPPER(e.lastName) like '%"
-                    + newName + "%'"
-                    + " ORDER BY e.lastName", Employee.class).getResultList();
+            List<Employee> employees
+                    = em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
+                            + newName + "%'" + " OR UPPER(e.lastName) like '%"
+                            + newName + "%'"
+                            + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
         } catch (Exception e) {
             System.out.println(e);
@@ -399,12 +398,12 @@ public class Employee implements Person, Serializable, BusinessEntity {
         try {
             String newName = name.toUpperCase().trim().replaceAll("'", "''");
 
-            List<Employee> employees =
-                    em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '"
-                    + newName + "%'" + " OR UPPER(e.lastName) like '"
-                    + newName + "%'"
-                    + ") AND e.active = 1"
-                    + " ORDER BY e.lastName", Employee.class).getResultList();
+            List<Employee> employees
+                    = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '"
+                            + newName + "%'" + " OR UPPER(e.lastName) like '"
+                            + newName + "%'"
+                            + ") AND e.active = 1"
+                            + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
         } catch (Exception e) {
             System.out.println(e);
@@ -514,7 +513,7 @@ public class Employee implements Person, Serializable, BusinessEntity {
 
     public static Employee findEmployeeById(EntityManager em, Long Id) {
         return em.find(Employee.class, Id);
-    }    
+    }
 
     public static Employee findDefaultEmployee(
             EntityManager em,
@@ -551,8 +550,7 @@ public class Employee implements Person, Serializable, BusinessEntity {
                 return Employee.findEmployeeByName(em,
                         names[1].trim(),
                         names[0].trim());
-            }
-            else {
+            } else {
                 return null;
             }
         } else {
@@ -569,24 +567,6 @@ public class Employee implements Person, Serializable, BusinessEntity {
         return false;
     }
 
-//    public static List<EmployeeSearchResult> findActiveEmployeesByName(EntityManager em, String name, String type) {
-//
-//        try {
-//            String newName = name.toUpperCase().trim().replaceAll("'", "''");
-//
-//            List<EmployeeSearchResult> employees =
-//                    em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '"
-//                    + newName + "%'" + " OR UPPER(e.lastName) like '"
-//                    + newName + "%'"
-//                    + ") AND e.active = 1"
-//                    + " ORDER BY e.lastName", EmployeeSearchResult.class).getResultList();
-//            return employees;
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return new ArrayList<>();
-//        }
-//    }
-
     @Override
     public ReturnMessage save(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -596,4 +576,43 @@ public class Employee implements Person, Serializable, BusinessEntity {
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public static String findEmployeeDefaultEmailAdress(Employee employee, EntityManager em) {
+        String address = "";
+
+        // Get email1 which is treated as the employee's company email address
+        if (!employee.getInternet().getEmail1().trim().equals("")) {
+            address = employee.getInternet().getEmail1();
+        } else {
+            // Get and set default email using company domain   
+            String listAsString = SystemOption.findSystemOptionByName(em, "domainNames").getOptionValue();
+            String domainNames[] = listAsString.split(";");
+
+            JobManagerUser user = JobManagerUser.findJobManagerUserByEmployeeId(em, employee.getId());
+
+            // Build email address
+            if (user != null) {
+                address = user.getUsername();
+                if (domainNames.length > 0) {
+                    address = address + "@" + domainNames[0];
+                }
+            }
+
+        }
+
+        return address;
+    }
+
+    public static List<String> getDepartmentSupervisorsEmailAddresses(Department department, EntityManager em) {
+        List<String> emails = new ArrayList<>();
+
+        emails.add(Employee.findEmployeeDefaultEmailAdress(department.getHead(), em));
+        // Get the email of the acting head of he/she is currently acting
+        if (department.getActingHeadActive()) {
+            emails.add(Employee.findEmployeeDefaultEmailAdress(department.getActingHead(), em));
+        }
+
+        return emails;
+    }
+
 }

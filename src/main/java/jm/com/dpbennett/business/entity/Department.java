@@ -483,8 +483,8 @@ public class Department implements Serializable, BusinessEntity, Comparable {
             return new Department("");
         }
     }
-    
-     public static Department findDepartmentAssignedToJob(Job job, EntityManager em) {
+
+    public static Department findDepartmentAssignedToJob(Job job, EntityManager em) {
 
         Department dept;
 
@@ -503,6 +503,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
             return dept;
         }
-    }
+    }   
 
 }
