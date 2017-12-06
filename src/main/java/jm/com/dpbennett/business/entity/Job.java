@@ -132,7 +132,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         jobSamples = new ArrayList<>();
     }
 
-    // tk find a better name for this method
     public ReturnMessage prepareAndSave(EntityManager em, JobManagerUser user) {
 
         Date now = new Date();
@@ -177,8 +176,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 }
             }
 
-            em.getTransaction().begin();
-
             // Set date entered
             if (this.getJobStatusAndTracking().getDateAndTimeEntered() == null) {
                 this.getJobStatusAndTracking().setDateAndTimeEntered(now);
@@ -209,54 +206,21 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 }
             }
 
-            // Save job samples
-            if (this.getJobSamples().size() > 0) {
-                for (JobSample jobSample : this.getJobSamples()) {
-                    /// Save newly entered samples 
-                    if (jobSample.getId() == null) {
-                        BusinessEntityUtils.saveBusinessEntity(em, jobSample);
-                    }
-                    // "Clean" sample
-                    jobSample.setIsDirty(false);
-                }
-            }
-
-            // Do actual save here and check for errors
-            Long id = BusinessEntityUtils.saveBusinessEntity(em, this);
-
-            if (id == null) {
-                if (this.getAutoGenerateJobNumber()) {
-                    this.setJobNumber(Job.getJobNumber(this, em));
-                }
-
-                return new ReturnMessage(false,
-                        "Job save error occurred",
-                        "An error occurred while saving job (Null ID)" + this.getJobNumber(),
-                        FacesMessage.SEVERITY_ERROR);
-
-            } else if (id == 0L) {
-                if (this.getAutoGenerateJobNumber()) {
-                    this.setJobNumber(Job.getJobNumber(this, em));
-                }
-
-                return new ReturnMessage(false,
-                        "Job save error occurred",
-                        "An error occurred while saving job (0L ID)" + this.getJobNumber(),
-                        FacesMessage.SEVERITY_ERROR);
-
-            } else {               
-                // Save job sequence number
+            // Save sample(s) and job
+            if (this.save(em).isSuccess()) {
+                // Save job sequence number since it was used by this job
                 if (nextJobSequenceNumber != null) {
+                    em.getTransaction().begin(); // tk put in save() for JobSequenceNumber
                     BusinessEntityUtils.saveBusinessEntity(em, nextJobSequenceNumber);
+                    em.getTransaction().commit();
                 }
+
+                this.clean();
             }
-
-            em.getTransaction().commit();
-
-            this.clean();
 
         } catch (Exception e) {
             if (this.getAutoGenerateJobNumber()) {
+                // Reset job number
                 this.setJobNumber(Job.getJobNumber(this, em));
             }
 
@@ -1626,65 +1590,52 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     }
 
-    /*
-     public static List<Object[]> getAnalyticalServicesJobRecords(
-     EntityManager em,
-     String startDate,
-     String endDate,
-     Long departmentId) {
-
-     String reportSQL = "SELECT\n"
-     + "     GROUP_CONCAT(jobsample.`DESCRIPTION` SEPARATOR ', ') AS samples,\n" //0
-     + "     job.`ID` AS job_ID,\n" //1
-     + "     jobstatusandtracking.`ID` AS jobstatusandtracking_ID,\n" //2
-     + "     jobsample.`NAME` AS jobsample_NAME,\n" //3
-     + "     department.`NAME` AS department_NAME,\n" //4
-     + "     department_A.`NAME` AS department_A_NAME,\n" //5
-     + "     jobstatusandtracking.`DATEOFCOMPLETION` AS jobstatusandtracking_DATEOFCOMPLETION,\n" //6
-     + "     employee.`NAME` AS employee_NAME,\n" //7
-     + "     jobcostingandpayment.`FINALCOST` AS jobcostingandpayment_FINALCOST,\n" //8
-     + "     job.`NUMBEROFSAMPLES` AS job_NUMBEROFSAMPLES,\n" //9
-     + "     job.`NOOFTESTSORCALIBRATIONS` AS job_NOOFTESTSORCALIBRATIONS,\n" //10
-     + "     job.`NOOFTESTS` AS job_NOOFTESTS,\n" //11
-     + "     job.`NOOFCALIBRATIONS` AS job_NOOFCALIBRATIONS,\n" //12
-     + "     jobstatusandtracking.`EXPECTEDDATEOFCOMPLETION` AS jobstatusandtracking_EXPECTEDDATEOFCOMPLETION,\n" //13
-     + "     job.`JOBNUMBER` AS job_JOBNUMBER,\n" //14
-     + "     client.`NAME` AS client_NAME,\n" //15
-     + "     jobstatusandtracking.`DATESUBMITTED` AS jobstatusandtracking_DATESUBMITTED,\n" //16
-     + "     sector.`NAME` AS sector_NAME\n" //17
-     + "FROM\n"
-     + "     `jobstatusandtracking` jobstatusandtracking INNER JOIN `job` job ON jobstatusandtracking.`ID` = job.`JOBSTATUSANDTRACKING_ID`\n"
-     + "     INNER JOIN `job_jobsample` job_jobsample ON job.`ID` = job_jobsample.`Job_ID`\n"
-     + "     INNER JOIN `department` department ON job.`DEPARTMENT_ID` = department.`ID`\n"
-     + "     INNER JOIN `department` department_A ON job.`SUBCONTRACTEDDEPARTMENT_ID` = department_A.`ID`\n"
-     + "     INNER JOIN `employee` employee ON job.`ASSIGNEDTO_ID` = employee.`ID`\n"
-     + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON job.`JOBCOSTINGANDPAYMENT_ID` = jobcostingandpayment.`ID`\n"
-     + "     INNER JOIN `client` client ON job.`CLIENT_ID` = client.`ID`\n"
-     + "     INNER JOIN `sector` sector ON job.`SECTOR_ID` = sector.`ID`\n"
-     + "     RIGHT OUTER JOIN `jobsample` jobsample ON job_jobsample.`jobSamples_ID` = jobsample.`ID`\n"
-     + " WHERE"
-     + "     ((jobstatusandtracking.`DATEOFCOMPLETION` >= " + startDate
-     + " AND jobstatusandtracking.`DATEOFCOMPLETION` <= " + endDate + "))"
-     + " AND (department.`ID` = " + departmentId
-     + " OR department_A.`ID` = " + departmentId + ")"
-     + " GROUP BY"
-     + " job.`ID`"
-     + " ORDER BY"
-     + " employee.`NAME` ASC";
-        
-     try {
-     return em.createNativeQuery(reportSQL).getResultList();
-     } catch (Exception e) {
-     System.out.println(e);
-     return new ArrayList<>();
-     }
-
-     }
-    
-     */
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        em.getTransaction().begin();
+        // Save samples
+        if (this.getJobSamples().size() > 0) {
+            for (JobSample jobSample : this.getJobSamples()) {
+                /// Save newly entered samples 
+                if (jobSample.getId() == null) {
+                    // tk use save() in JobSample
+                    Long sampleId = BusinessEntityUtils.saveBusinessEntity(em, jobSample);
+                    if (sampleId == null || sampleId == 0L) {
+                        if (this.getAutoGenerateJobNumber()) {
+                            // Reset job number
+                            this.setJobNumber(Job.getJobNumber(this, em));
+                        }
+
+                        return new ReturnMessage(false,
+                                "Job sample save error occurred",
+                                "An error occurred while saving job sample (Null/OL ID)" + jobSample.getReference(),
+                                FacesMessage.SEVERITY_ERROR);
+
+                    }
+                }
+                // "Clean" sample
+                jobSample.setIsDirty(false);
+            }
+        }
+        // Save job         
+        Long jobId = BusinessEntityUtils.saveBusinessEntity(em, this);
+        em.getTransaction().commit();
+
+        if (jobId == null || jobId == 0L) {
+            if (this.getAutoGenerateJobNumber()) {
+                // Reset job number
+                this.setJobNumber(Job.getJobNumber(this, em));
+            }
+
+            return new ReturnMessage(false,
+                    "Job save error occurred",
+                    "An error occurred while saving job (Null/OL ID)" + this.getJobNumber(),
+                    FacesMessage.SEVERITY_ERROR);
+
+        }
+
+        return new ReturnMessage();
     }
 
     @Override

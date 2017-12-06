@@ -975,13 +975,20 @@ public class BusinessEntityUtils {
 
     public static Long saveBusinessEntity(EntityManager em, BusinessEntity businessEntity) {
 
-        if (businessEntity.getId() != null) {
-            em.merge(businessEntity);
-        } else {
-            em.persist(businessEntity);
-        }
+        try {
+            if (businessEntity.getId() != null) {
+                em.merge(businessEntity);
+            } else {
+                em.persist(businessEntity);
+            }
 
-        return businessEntity.getId();
+            return businessEntity.getId();
+        } catch (Exception e) {
+            System.out.println(e);
+
+            return null;
+        }
+        
     }
 
     public static Date createDate(int year, int monthIndex, int day) {
@@ -2117,6 +2124,6 @@ public class BusinessEntityUtils {
         }
 
         return true;
-    } 
+    }
 
 }

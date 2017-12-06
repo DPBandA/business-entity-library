@@ -24,6 +24,8 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import javax.faces.application.FacesMessage;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +41,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -102,7 +105,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     private Boolean isToBeAdded;
     @Transient
     private Boolean isDirty;
-   
+
     public JobSample() {
         tests = new ArrayList<>();
     }
@@ -128,7 +131,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
         return isDirty;
     }
 
-    public void setIsDirty(Boolean isDirty) {       
+    public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
 
@@ -336,7 +339,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     @Override
     public Long getSampleQuantity() {
         if (sampleQuantity == null) {
-            return new Long(1L);
+            return 1L;
         }
         return sampleQuantity;
     }
@@ -361,6 +364,9 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
 
     @Override
     public String getReference() {
+        if (reference == null) {
+            reference = "";
+        }
         return reference;
     }
 
@@ -408,7 +414,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     @Override
     public Long getQuantity() {
         if (quantity == null) {
-            quantity = new Long(0L);
+            quantity = 0L;
         }
         return quantity;
     }
@@ -437,15 +443,13 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+
         if (!(object instanceof JobSample)) {
             return false;
         }
         JobSample other = (JobSample) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -510,7 +514,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     public static boolean locateJobSampleById(ArrayList<JobSample> samples, Long id) {
 
         for (JobSample jobSample : samples) {
-            if (jobSample.getId() == id) {
+            if (Objects.equals(jobSample.getId(), id)) {
                 return true;
             }
         }
@@ -597,7 +601,19 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        em.getTransaction().begin();
+        Long sampleId = BusinessEntityUtils.saveBusinessEntity(em, this);
+        if (sampleId == null || sampleId == 0L) {
+
+            return new ReturnMessage(false,
+                    "Job sample save error occurred",
+                    "An error occurred while saving job sample (Null/OL ID)" + this.getReference(),
+                    FacesMessage.SEVERITY_ERROR);
+
+        }
+        em.getTransaction().commit();
+
+        return new ReturnMessage();
     }
 
     @Override
