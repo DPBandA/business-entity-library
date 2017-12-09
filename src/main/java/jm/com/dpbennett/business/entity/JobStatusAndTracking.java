@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -94,7 +93,7 @@ public class JobStatusAndTracking implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateCostingCompleted;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateCostingApproved ;
+    private Date dateCostingApproved;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date expectedStartDate;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -288,6 +287,9 @@ public class JobStatusAndTracking implements Serializable {
     }
 
     public Boolean getDocumentCollected() {
+        if (documentCollected == null) {
+            documentCollected = false;
+        }
         return documentCollected;
     }
 
@@ -343,6 +345,9 @@ public class JobStatusAndTracking implements Serializable {
     }
 
     public Boolean getSamplesCollected() {
+        if (samplesCollected == null) {
+            samplesCollected = false;
+        }
         return samplesCollected;
     }
 

@@ -96,6 +96,18 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         userLastname = "";
     }
 
+    public Boolean isJobsPreferredJobTableView() {
+        return getJobManagementAndTrackingUnit() && getJobTableViewPreference().equals("Jobs");
+    }
+
+    public Boolean isCashierPreferredJobTableView() {
+        return getJobManagementAndTrackingUnit() && getJobTableViewPreference().equals("Cashier View");
+    }
+
+    public Boolean isJobCostingsPreferredJobTableView() {
+        return getJobManagementAndTrackingUnit() && getJobTableViewPreference().equals("Job Costings");
+    }
+
     public static Boolean isUserDepartmentSupervisor(Job job, JobManagerUser user, EntityManager em) {
 
         Job foundJob = Job.findJobById(em, job.getId());
@@ -558,7 +570,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     /**
      * Determine if the current user is the department's supervisor. This is
      * done by determining if the user is the head/active acting head of the
@@ -570,12 +582,14 @@ public class JobManagerUser implements Serializable, BusinessEntity {
      */
     // tk del. Move to JobManagerUser and make static method
     public Boolean isUserDepartmentSupervisor(Job job, EntityManager em) {
-        
+
         Job foundJob = Job.findJobById(em, job.getId());
 
         if (Department.findDepartmentAssignedToJob(foundJob, em).getHead().getId().longValue() == this.getEmployee().getId().longValue()) {
             return true;
-        } else return (Department.findDepartmentAssignedToJob(foundJob, em).getActingHead().getId().longValue() == this.getEmployee().getId().longValue())
-                && Department.findDepartmentAssignedToJob(foundJob, em).getActingHeadActive();
+        } else {
+            return (Department.findDepartmentAssignedToJob(foundJob, em).getActingHead().getId().longValue() == this.getEmployee().getId().longValue())
+                    && Department.findDepartmentAssignedToJob(foundJob, em).getActingHeadActive();
+        }
     }
 }
