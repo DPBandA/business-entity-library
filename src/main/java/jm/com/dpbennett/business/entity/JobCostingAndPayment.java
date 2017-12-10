@@ -119,6 +119,25 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         this.id = id;
     }
 
+    public static void createSampleBasedJobCostings(Job currentJob) {
+        if (currentJob.getJobCostingAndPayment().getAllSortedCostComponents().isEmpty()) {
+            // Add all existing samples as cost oomponents            
+            for (JobSample jobSample : currentJob.getJobSamples()) {
+                currentJob.getJobCostingAndPayment().getAllSortedCostComponents().add(new CostComponent(jobSample.getDescription()));
+            }
+        } else if (currentJob.getJobSamples().size() > currentJob.getJobCostingAndPayment().getAllSortedCostComponents().size()) {
+        }
+    }
+
+    public static void createDefaultJobCostings(Job currentJob) {
+
+        if (currentJob.getJobCostingAndPayment().getCostComponents().isEmpty()) {
+            currentJob.getJobCostingAndPayment().getCostComponents().add(new CostComponent("List of Assessments", Boolean.TRUE));
+            currentJob.getJobCostingAndPayment().getCostComponents().add(new CostComponent(""));
+        }
+
+    }
+
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
