@@ -1873,6 +1873,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
     }
 
+    /*
     public void updateJobCostings(EntityManager em) {
         
         Department dept = Department.findDepartmentAssignedToJob(this, em);
@@ -1916,5 +1917,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         // taxes was changed
         this.getJobCostingAndPayment().calculateAmountDue();
     }
+ */
 
 }
