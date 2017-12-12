@@ -487,6 +487,65 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         return true;
     }
 
+    /**
+     * NB: This method gets jobs with year received and sequence number that are
+     * the same as this job. The parentJobId field will be created and used in
+     * future.
+     *
+     * @param em
+     * @return
+     */
+    public Boolean hasSubcontracts(EntityManager em) {
+        List<Job> jobs = Job.findJobsByYearReceivedAndJobSequenceNumber(em,
+                this.getYearReceived(),
+                this.getJobSequenceNumber());
+
+        if (jobs != null) {
+            for (Job job : jobs) {
+                // If this job is subcontracted and is a child of this job
+                // then it's a subcontract
+                if (job.getIsSubContracted() && !this.getIsSubContracted()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+// tk for use to create other methods dealing with subcontracts
+//    public Boolean hasSubcontracts(EntityManager em) {
+//        List<Job> jobs = Job.findJobsByYearReceivedAndJobSequenceNumber(em,
+//                this.getYearReceived(),
+//                this.getJobSequenceNumber());
+//
+//        if (jobs != null) {
+//            for (Job job : jobs) {
+//                // If this job is subcontracted and is a child of this job
+//                // then it's a subcontract
+//                if (job.getIsSubContracted() && !this.getIsSubContracted()) {
+//
+//                    String ccName = "Subcontract to " + job.getSubContractedDepartment().getName() + " (" + job.getJobNumber() + ")";
+//                    // Check that this cost component does not already exist.
+//                    // The assumption is that only one component will be found if any
+//                    if (!CostComponent.findCostComponentsByName(ccName,
+//                            currentJob.getJobCostingAndPayment().getCostComponents()).isEmpty()) {
+//                        deleteCostComponentByName(ccName);
+//                    }
+//                    CostComponent cc
+//                            = new CostComponent(
+//                                    ccName,
+//                                    job.getJobCostingAndPayment().getFinalCost(),
+//                                    true, false);
+//
+//                    currentJob.getJobCostingAndPayment().getCostComponents().add(cc);
+//                    setDirty(true);
+//                }
+//            }
+//        }
+//
+//        return false;
+//    }
     public Integer getNoOfTests() {
         if (noOfTests == null) {
             noOfTests = 0;
@@ -1917,6 +1976,5 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         // taxes was changed
         this.getJobCostingAndPayment().calculateAmountDue();
     }
- */
-
+     */
 }
