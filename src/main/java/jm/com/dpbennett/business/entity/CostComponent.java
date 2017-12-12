@@ -58,11 +58,12 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     public CostComponent() {
         name = "";
-        code = "";
+        code = "FIXED";
         category = "";
+        cost = 0.0;
         comments = "";
         isHeading = false;
-        isFixedCost = false;
+        isFixedCost = true;
         isEditable = true;
     }
  
@@ -72,16 +73,23 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     public CostComponent(String name) {
         this.name = name;
-        this.cost = 0.0;
-        isFixedCost = false;
+        code = "FIXED";
+        category = "";
+        cost = 0.0;
+        comments = "";
+        isHeading = false;
+        isFixedCost = true;
         isEditable = true;
     }
 
     public CostComponent(Long id, String name) {
         this.id = id;
         this.name = name;
-        this.cost = 0.0;
-        isFixedCost = false;
+        code = "FIXED";
+        cost = 0.0;
+        comments = "";
+        isHeading = false;
+        isFixedCost = true;
         isEditable = true;
     }
 
@@ -181,6 +189,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public String getCode() {
+        
         return code;
     }
 
