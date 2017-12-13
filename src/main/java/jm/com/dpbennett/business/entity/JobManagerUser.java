@@ -96,15 +96,15 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         userLastname = "";
     }
 
-    public Boolean isJobsPreferredJobTableView() {
+    public Boolean getIsJobsPreferredJobTableView() {
         return getJobManagementAndTrackingUnit() && getJobTableViewPreference().equals("Jobs");
     }
 
-    public Boolean isCashierPreferredJobTableView() {
+    public Boolean getIsCashierPreferredJobTableView() {
         return getJobManagementAndTrackingUnit() && getJobTableViewPreference().equals("Cashier View");
     }
 
-    public Boolean isJobCostingsPreferredJobTableView() {
+    public Boolean getIsJobCostingsPreferredJobTableView() {
         return getJobManagementAndTrackingUnit() && getJobTableViewPreference().equals("Job Costings");
     }
 
