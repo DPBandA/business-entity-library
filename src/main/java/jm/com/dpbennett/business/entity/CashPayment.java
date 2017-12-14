@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -31,6 +30,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -62,6 +63,8 @@ public class CashPayment implements Serializable, BusinessEntity {
     private Double discount;
     private String discountType;
     private String paymentTerms;
+    @Transient
+    private Boolean isDirty;
 
     public CashPayment() {
         this.discount = 0.0;
@@ -71,9 +74,9 @@ public class CashPayment implements Serializable, BusinessEntity {
         this.payeeTitle = "";
         this.receiptNumber = "";
         this.payment = 0.0;
-        this.type = "Cash";        
+        this.type = "Cash";
     }
-    
+
     @Override
     public Long getId() {
         return id;
@@ -82,6 +85,14 @@ public class CashPayment implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getIsDirty() {
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public String getPaymentTerms() {
@@ -236,12 +247,22 @@ public class CashPayment implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Cash payment not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 
 }

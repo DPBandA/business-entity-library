@@ -601,19 +601,20 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        em.getTransaction().begin();
-        Long sampleId = BusinessEntityUtils.saveBusinessEntity(em, this);
-        if (sampleId == null || sampleId == 0L) {
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);            
+            em.getTransaction().commit();
 
-            return new ReturnMessage(false,
-                    "Job sample save error occurred",
-                    "An error occurred while saving job sample (Null/OL ID)" + this.getReference(),
-                    FacesMessage.SEVERITY_ERROR);
-
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println("Job sample save error occurred: " + e);
         }
-        em.getTransaction().commit();
 
-        return new ReturnMessage();
+        return new ReturnMessage(false,
+                "Job sample save error occurred",
+                "An error occurred while saving job sample (Null/OL ID)" + this.getReference(),
+                FacesMessage.SEVERITY_ERROR);
     }
 
     @Override

@@ -210,9 +210,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             if (this.save(em).isSuccess()) {
                 // Save job sequence number since it was used by this job
                 if (nextJobSequenceNumber != null) {
-                    em.getTransaction().begin(); // tk put in save() for JobSequenceNumber
-                    BusinessEntityUtils.saveBusinessEntity(em, nextJobSequenceNumber);
-                    em.getTransaction().commit();
+                    nextJobSequenceNumber.save(em);
                 }
 
                 this.clean();
@@ -1652,49 +1650,38 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     @Override
     public ReturnMessage save(EntityManager em) {
 
-        em.getTransaction().begin();
-        // Save samples
-        if (this.getJobSamples().size() > 0) {
-            for (JobSample jobSample : this.getJobSamples()) {
-                /// Save newly entered samples 
-                if (jobSample.getId() == null) {
-                    // tk use save() in JobSample
-                    Long sampleId = BusinessEntityUtils.saveBusinessEntity(em, jobSample);
-                    if (sampleId == null || sampleId == 0L) {
-                        if (this.getAutoGenerateJobNumber()) {
-                            // Reset job number
-                            this.setJobNumber(Job.getJobNumber(this, em));
-                        }
-
+        try {
+            // Save samples
+            if (!this.getJobSamples().isEmpty()) {
+                for (JobSample jobSample : this.getJobSamples()) {
+                    /// Save newly entered samples 
+                    if (jobSample.getId() == null && !jobSample.save(em).isSuccess()) {
                         return new ReturnMessage(false,
                                 "Job sample save error occurred",
-                                "An error occurred while saving job sample (Null/OL ID)" + jobSample.getReference(),
+                                "An error occurred while saving job sample" + jobSample.getReference(),
                                 FacesMessage.SEVERITY_ERROR);
-
                     }
+                    // "Clean" sample
+                    jobSample.setIsDirty(false);
                 }
-                // "Clean" sample
-                jobSample.setIsDirty(false);
-            }
-        }
-        // Save job         
-        Long jobId = BusinessEntityUtils.saveBusinessEntity(em, this);
-        em.getTransaction().commit();
-
-        if (jobId == null || jobId == 0L) {
-            if (this.getAutoGenerateJobNumber()) {
-                // Reset job number
-                this.setJobNumber(Job.getJobNumber(this, em));
             }
 
-            return new ReturnMessage(false,
-                    "Job save error occurred",
-                    "An error occurred while saving job (Null/OL ID)" + this.getJobNumber(),
-                    FacesMessage.SEVERITY_ERROR);
+            // Save job    
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
 
+            return new ReturnMessage();
+
+        } catch (Exception e) {
+            System.out.println("An error occurred while saving job: " + e);
         }
 
-        return new ReturnMessage();
+        return new ReturnMessage(false,
+                "Job save error occurred!",
+                "An error occurred while saving job" + this.getJobNumber(),
+                FacesMessage.SEVERITY_ERROR);
+
     }
 
     @Override
@@ -1932,7 +1919,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
     }
 
-    /*
+    /* tk delete after using code.
     public void updateJobCostings(EntityManager em) {
         
         Department dept = Department.findDepartmentAssignedToJob(this, em);

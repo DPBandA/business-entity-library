@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -36,6 +35,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
@@ -64,6 +64,8 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     private String postalCode;
     private String country;
     private String name;
+    @Transient
+    private Boolean isDirty;
 
     public Address() {
         this.name = "";
@@ -99,6 +101,14 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         this.addressLine1 = "";
         this.type = " ";
         this.Id = null;
+    }
+
+    public Boolean getIsDirty() {
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Address prepare() {
@@ -264,8 +274,8 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
                     + "; " + getStateOrProvince();
         }
     }
-    
-     public String getDisplay() {
+
+    public String getDisplay() {
 
         if (getAddressLine1().trim().isEmpty()
                 && getAddressLine2().trim().isEmpty()

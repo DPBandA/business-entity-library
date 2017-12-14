@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -30,6 +29,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -55,6 +56,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private Boolean isHeading;
     private Boolean isFixedCost;
     private Boolean isEditable;
+    @Transient
+    private Boolean isDirty;
 
     public CostComponent() {
         name = "";
@@ -66,7 +69,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         isFixedCost = true;
         isEditable = true;
     }
- 
+
     public CostComponent(CostComponent src) {
         doCopy(src);
     }
@@ -108,14 +111,21 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.isEditable = isEditable;
         this.hours = 0.0;
         this.hoursOrQuantity = 0.0;
-        this.rate = 0.0;        
+        this.rate = 0.0;
     }
-    
+
+    public Boolean getIsDirty() {
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+
     public Boolean getRenderFixedCostingComponentFormFields() {
         if (!getIsHeading() && !getIsFixedCost()) {
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
@@ -189,7 +199,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public String getCode() {
-        
+
         return code;
     }
 
@@ -217,7 +227,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         if (!getIsFixedCost()) {
             cost = getRate().doubleValue() * getHoursOrQuantity().doubleValue();
         }
-        
+
         if (cost == null) {
             cost = 0.0;
         }
@@ -294,26 +304,36 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         //return Collator.getInstance().compare(this.name, ((CostComponent) o).name);
         return Collator.getInstance().compare(this.toString(), ((CostComponent) o).toString());
     }
-    
+
     public static List<CostComponent> findCostComponentsByName(String name, List<CostComponent> list) {
         ArrayList<CostComponent> foundComponents = new ArrayList<>();
-        
+
         for (CostComponent costComponent : list) {
             if (costComponent.getName().equals(name)) {
                 foundComponents.add(costComponent);
             }
         }
-        
+
         return foundComponents;
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Cost component not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 }

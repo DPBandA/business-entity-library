@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -380,6 +381,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     @XmlTransient
     @JsonIgnore
     public List<CashPayment> getCashPayments() {
+        if (cashPayments == null) {
+            cashPayments = new ArrayList<>();
+        }
         return cashPayments;
     }
 
@@ -663,11 +667,52 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        try {
+            // Save new payments 
+            if (!getCashPayments().isEmpty()) {
+                for (CashPayment payment : getCashPayments()) {
+                    if (payment.getId() == null && !payment.save(em).isSuccess()) {
+                        return new ReturnMessage(false,
+                                "Payment save error occurred",
+                                "An error occurred while saving a payment",
+                                FacesMessage.SEVERITY_ERROR);
+                    }
+                }
+            }
+
+            // Save new cost components
+            if (!getCostComponents().isEmpty()) {
+                for (CostComponent costComponent : getCostComponents()) {
+                    if (costComponent.getId() == null && !costComponent.save(em).isSuccess()) {
+                        return new ReturnMessage(false,
+                                "Cost component save error occurred",
+                                "An error occurred while saving a cost component",
+                                FacesMessage.SEVERITY_ERROR);
+                    }
+                }
+            }
+
+            // Save    
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+            
+        } catch (Exception e) {
+            System.out.println("An error occured while saving the job costing and payment" + e);
+        }
+
+        return new ReturnMessage(false,
+                "Costing and payment save error occurred!",
+                "An error occurred while saving the job costing and payment",
+                FacesMessage.SEVERITY_ERROR);
+
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 }
