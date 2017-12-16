@@ -303,13 +303,13 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     }
 
-    public String getStatus() {
+    public String getActivity() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd, hh:mm:ss");
 
         if (isLoggedIn()) {
-            return "Checked in (" + formatter.format(getPollTime()) + ")";
+            return "Checked/Logged in " + formatter.format(getPollTime());
         } else {
-            return "Checked out (" + formatter.format(getPollTime()) + ")";
+            return "--";
         }
 
     }

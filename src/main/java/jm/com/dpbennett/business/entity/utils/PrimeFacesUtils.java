@@ -7,6 +7,8 @@ package jm.com.dpbennett.business.entity.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -31,5 +33,10 @@ public class PrimeFacesUtils {
         options.put("contentWidth", contentWidth);
 
         RequestContext.getCurrentInstance().openDialog(outcome, options, null);
+    }
+
+    public static void addMessage(String summary, String detail, FacesMessage.Severity severity) {
+        FacesMessage message = new FacesMessage(severity, summary, detail);
+        FacesContext.getCurrentInstance().addMessage(null, message);
     }
 }

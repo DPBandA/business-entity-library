@@ -484,7 +484,7 @@ public class BusinessEntityUtils {
 
         return years;
     }
-
+    
     public static int characterCount(String str, char chr) {
         int count = 0;
 
