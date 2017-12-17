@@ -26,7 +26,6 @@ import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.Client;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 
 /**
@@ -41,16 +40,22 @@ public class JobClientValidator implements Validator {
 
         BusinessEntity entity = (BusinessEntity) value;
         if (entity != null) {
-           
+
             if (!BusinessEntityUtils.validateText(entity.getName())) {
                 throw new ValidatorException(getMessage(component.getId()));
             }
-            
+
         } else {
             throw new ValidatorException(getMessage(component.getId()));
         }
+
+        // Validate billing address and contact
+        Long clientBillingAddressId = (Long) component.getAttributes().get("clientBillingAddressId");
+        Long clientContactId = (Long) component.getAttributes().get("clientContactId");
         
-        // NB: Validation of billing address and contact may be implemented here
+        // tk
+        System.out.println("billing addr id: " + clientBillingAddressId);
+        System.out.println("contact addr id: " + clientContactId);
 
     }
 
@@ -59,9 +64,9 @@ public class JobClientValidator implements Validator {
             case "client":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Client", "Please enter a valid Client.");
             case "invalidBillingAddress":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Billing Address", "Please enter a valid Billing Address.");        
-            case "contact": 
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Contact", "Please enter a valid Contact.");                   
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Billing Address", "Please enter a valid Billing Address.");
+            case "contact":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Contact", "Please enter a valid Contact.");
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
         }
