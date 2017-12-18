@@ -39,7 +39,7 @@ public class ClientAddressConverter extends ConverterAdapter {
         try {
                             
             Long currentJobClientId = (Long) component.getAttributes().get("currentJobClientId");
-           
+                       
             if (currentJobClientId != null) {                
                 address = Address.findClientAddressById(getEntityManager(), value, currentJobClientId);
             }

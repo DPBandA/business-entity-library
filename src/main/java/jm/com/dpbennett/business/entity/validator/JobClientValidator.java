@@ -54,8 +54,8 @@ public class JobClientValidator implements Validator {
         Long clientContactId = (Long) component.getAttributes().get("clientContactId");
         
         // tk
-        System.out.println("billing addr id: " + clientBillingAddressId);
-        System.out.println("contact addr id: " + clientContactId);
+//        System.out.println("billing addr id: " + clientBillingAddressId);
+//        System.out.println("contact addr id: " + clientContactId);
 
     }
 
