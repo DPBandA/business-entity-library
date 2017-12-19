@@ -36,20 +36,25 @@ public class ContactValidator implements Validator {
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        validate(context, component.getId(), value);
+    }
+
+    public void validate(FacesContext context, String componentId, Object value) throws ValidatorException {
 
         if (value != null) {
             if (!BusinessEntityUtils.validateText(value.toString().trim())) {
-                throw new ValidatorException(getMessage(component.getId()));
+                throw new ValidatorException(getMessage(componentId));
             }
-        }
-        else {
-             throw new ValidatorException(getMessage(component.getId()));
+        } else {
+            throw new ValidatorException(getMessage(componentId));
         }
 
     }
 
     private FacesMessage getMessage(String componentId) {
         switch (componentId) {
+            case "contact":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contact Required", "Please enter a valid contact. The characters \" ' and ; are NOT allowed.");
             case "contactType":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contact Type Required", "Please enter a valid type. The characters \" ' and ; are NOT allowed.");
             case "contactFirstname":

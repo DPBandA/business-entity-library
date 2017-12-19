@@ -25,7 +25,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
+import jm.com.dpbennett.business.entity.Address;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Contact;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 
 /**
@@ -33,7 +35,7 @@ import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
  * @author desbenn
  */
 @FacesValidator("jobClientValidator")
-public class JobClientValidator implements Validator {
+public class JobClientValidator extends ValidatorAdapter {
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
@@ -48,14 +50,7 @@ public class JobClientValidator implements Validator {
         } else {
             throw new ValidatorException(getMessage(component.getId()));
         }
-
-        // Validate billing address and contact
-        Long clientBillingAddressId = (Long) component.getAttributes().get("clientBillingAddressId");
-        Long clientContactId = (Long) component.getAttributes().get("clientContactId");
-        
-        // tk
-//        System.out.println("billing addr id: " + clientBillingAddressId);
-//        System.out.println("contact addr id: " + clientContactId);
+           
 
     }
 

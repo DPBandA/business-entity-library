@@ -124,12 +124,22 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private Contact contact;
     @Transient
     private Boolean isDirty;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Job parent;
 
     public Job() {
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
         isClientDirty = false;
         jobSamples = new ArrayList<>();
+    }
+
+    public Job getParent() {
+        return parent;
+    }
+
+    public void setParent(Job parent) {
+        this.parent = parent;
     }
 
     public ReturnMessage prepareAndSave(EntityManager em, JobManagerUser user) {

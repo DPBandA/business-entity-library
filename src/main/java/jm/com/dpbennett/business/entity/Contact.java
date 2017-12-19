@@ -93,6 +93,18 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public Contact(Contact src) {
         doCopy(src);
     }
+    
+     public static Contact findContactById(EntityManager em, Long id) {
+
+        try {
+            Contact contact = em.find(Contact.class, id);
+
+            return contact;
+        } catch (Exception e) {
+
+            return null;
+        }
+    }
 
     public List getContactTypes() {
         throw new UnsupportedOperationException("Not supported yet: getContactTypes() to be put in Contact class");

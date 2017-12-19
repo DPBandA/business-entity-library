@@ -38,11 +38,15 @@ public class AddressValidator implements Validator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
-        Address address = (Address) value;
+        validate(context, component.getId(), (Address) value);
+
+    }
+    
+    public void validate(FacesContext context, String componentId, Address address) throws ValidatorException {
       
         if (address != null) {
             if (!BusinessEntityUtils.validateName(address.getAddressLine1())) {
-                throw new ValidatorException(getMessage(component.getId()));
+                throw new ValidatorException(getMessage(componentId));
             } 
         }
         else {
