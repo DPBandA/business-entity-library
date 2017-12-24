@@ -41,26 +41,38 @@ public class AddressValidator implements Validator {
         validate(context, component.getId(), (Address) value);
 
     }
-    
+
     public void validate(FacesContext context, String componentId, Address address) throws ValidatorException {
-      
+
         if (address != null) {
-            if (!BusinessEntityUtils.validateName(address.getAddressLine1())) {
+            if (!BusinessEntityUtils.validateName(address.getAddressLine1().trim())) {
                 throw new ValidatorException(getMessage(componentId));
-            } 
-        }
-        else {
+            }
+        } else {
             throw new ValidatorException(getMessage("invalidBillingAddress"));
         }
 
     }
 
+    public static Boolean validate(Address address) {
+
+        if (address != null) {
+            if (!BusinessEntityUtils.validateName(address.getAddressLine1().trim())) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+        return true;
+    }
+
     private FacesMessage getMessage(String componentId) {
-        switch (componentId) {            
+        switch (componentId) {
             case "billingAddress":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Billing Address", "Please ensure that all billing address fields are entered and contain valid characters. The characters \" ' and ; are NOT allowed.");
             case "invalidBillingAddress":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Billing Address", "Please enter a valid Billing Address.");    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Billing Address", "Please enter a valid Billing Address.");
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
         }

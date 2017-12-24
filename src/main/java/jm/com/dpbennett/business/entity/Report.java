@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -36,6 +35,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -233,8 +233,7 @@ public class Report implements Serializable, BusinessEntity {
     public String toString() {
         return "jm.org.bsj.entity.JobReport[id=" + id + "]";
     }
-    
-    
+
     public static List<Report> findAllReports(EntityManager em) {
 
         try {
@@ -244,7 +243,7 @@ public class Report implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static Report findReportById(EntityManager em, Long Id) {
 
         try {
@@ -256,14 +255,61 @@ public class Report implements Serializable, BusinessEntity {
         }
     }
 
+    public static Report findReportByName(EntityManager em, String reportName) {
+
+        try {
+            String newReportName = reportName.trim().replaceAll("'", "''");
+
+            List<Report> reports = em.createQuery("SELECT r FROM Report r "
+                    + "WHERE UPPER(r.name) "
+                    + "= '" + newReportName.toUpperCase() + "'", Report.class).getResultList();
+            if (reports.size() > 0) {
+                return reports.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static List<Report> findReportsByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Report> reports
+                    = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
+                            + newName.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+            return reports;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static Report findDefaultReport(EntityManager em, String name) {
+        Report report = Report.findReportByName(em, name);
+
+        if (report == null) {
+            report = new Report(name);
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, report);
+            em.getTransaction().commit();
+        }
+
+        return report;
+    }
+
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

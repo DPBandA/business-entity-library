@@ -25,6 +25,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
+import jm.com.dpbennett.business.entity.Contact;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 
 /**
@@ -49,6 +50,19 @@ public class ContactValidator implements Validator {
             throw new ValidatorException(getMessage(componentId));
         }
 
+    }
+    
+    public static Boolean validate(Contact contact) {
+
+        if (contact != null) {
+            if (!BusinessEntityUtils.validateText(contact.toString().trim())) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+        return true;
     }
 
     private FacesMessage getMessage(String componentId) {
