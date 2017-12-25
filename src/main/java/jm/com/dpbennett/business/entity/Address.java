@@ -293,9 +293,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     @Override
     public int compareTo(Object o) {
         if ((((Address) o).Id != null) && (this.Id != null)) {
-            return Collator.getInstance().compare(
-                    ((Address) o).Id.toString(),
-                    this.Id.toString());
+            return Collator.getInstance().compare(((Address) o).Id, this.Id);
         } else {
             return 0;
         }

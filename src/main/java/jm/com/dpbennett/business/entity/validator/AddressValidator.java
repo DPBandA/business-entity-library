@@ -44,7 +44,7 @@ public class AddressValidator implements Validator {
 
     public void validate(FacesContext context, String componentId, Address address) throws ValidatorException {
 
-        if (address != null) {
+        if (address != null) {            
             if (!BusinessEntityUtils.validateName(address.getAddressLine1().trim())) {
                 throw new ValidatorException(getMessage(componentId));
             }

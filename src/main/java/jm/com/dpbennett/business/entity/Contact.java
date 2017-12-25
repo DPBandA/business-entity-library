@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -93,8 +92,8 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public Contact(Contact src) {
         doCopy(src);
     }
-    
-     public static Contact findContactById(EntityManager em, Long id) {
+
+    public static Contact findContactById(EntityManager em, Long id) {
 
         try {
             Contact contact = em.find(Contact.class, id);
@@ -360,9 +359,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     @Override
     public int compareTo(Object o) {
         if ((((Contact) o).id != null) && (this.id != null)) {
-            return Collator.getInstance().compare(
-                    new Long(((Contact) o).id).toString(),
-                    new Long(this.id).toString());
+            return Collator.getInstance().compare(((Contact) o).id, this.id);
         } else {
             return 0;
         }
