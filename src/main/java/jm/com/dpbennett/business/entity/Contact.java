@@ -20,9 +20,9 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -366,8 +366,16 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
     @Override
     public int compareTo(Object o) {
-        if ((((Contact) o).id != null) && (this.id != null)) {
-            return Collator.getInstance().compare(((Contact) o).id.toString(), this.id.toString());
+        if ((((Contact) o).id != null) && (this.id != null)) {            
+            if (((Contact) o).id < this.id) {
+                return 1;
+            }
+            else if (Objects.equals(((Contact) o).id, this.id)) {
+                return 0;                
+            }
+            else {
+                return -1;
+            }
         } else {
             return 0;
         }

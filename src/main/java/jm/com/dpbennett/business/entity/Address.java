@@ -20,9 +20,9 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -55,7 +55,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     private static final long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Id;
+    private Long id;
     private String type;
     private String addressLine1;
     private String addressLine2;
@@ -87,7 +87,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         this.addressLine2 = "";
         this.addressLine1 = "";
         this.type = "";
-        this.Id = null;
+        this.id = null;
         doCopy(src);
     }
 
@@ -100,10 +100,10 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         this.addressLine2 = "";
         this.addressLine1 = "";
         this.type = "";
-        this.Id = null;
+        this.id = null;
     }
-    
-     public Address(String name, String type) {
+
+    public Address(String name, String type) {
         this.name = name;
         this.country = "";
         this.postalCode = "";
@@ -112,7 +112,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         this.addressLine2 = "";
         this.addressLine1 = "";
         this.type = type;
-        this.Id = null;
+        this.id = null;
     }
 
     public Boolean getIsDirty() {
@@ -147,12 +147,12 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     @Override
     public Long getId() {
-        return Id;
+        return id;
     }
 
     @Override
-    public void setId(Long Id) {
-        this.Id = Id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getAddressLine1() {
@@ -235,7 +235,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (Id != null ? Id.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -246,7 +246,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         }
         Address other = (Address) object;
 
-        return !((this.Id == null && other.Id != null) || (this.Id != null && !this.Id.equals(other.Id)));
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -304,8 +304,15 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
 
     @Override
     public int compareTo(Object o) {
-        if ((((Address) o).Id != null) && (this.Id != null)) {
-            return Collator.getInstance().compare(((Address) o).Id.toString(), this.Id.toString());
+        if ((((Address) o).id != null) && (this.id != null)) {
+//            return Collator.getInstance().compare(((Address) o).Id.toString(), this.Id.toString());
+            if (((Address) o).id < this.id) {
+                return 1;
+            } else if (Objects.equals(((Address) o).id, this.id)) {
+                return 0;
+            } else {
+                return -1;
+            }
         } else {
             return 0;
         }
