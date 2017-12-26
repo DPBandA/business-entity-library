@@ -170,30 +170,21 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
     }
 
 //    @Override
-//    public Address getBillingAddress() {
+//    public Address getDefaultAddress() {
 //        return billingAddress;
 //    }
 //
 //    @Override
-//    public void setBillingAddress(Address billingAddress) {
+//    public void setMainBillingAddress(Address billingAddress) {
 //        this.billingAddress = billingAddress;
 //    }
     @Override
-    public Address getBillingAddress() {
+    public Address getDefaultAddress() {
         if (!addresses.isEmpty()) {
             return addresses.get(0);
         } else {
             addresses.add(new Address());
             return addresses.get(0);
-        }
-    }
-
-    @Override
-    public void setBillingAddress(Address billingAddress) {
-        if (!addresses.isEmpty()) {
-            addresses.set(0, billingAddress);
-        } else {
-            addresses.add(billingAddress);
         }
     }
 
@@ -455,6 +446,11 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
 
     @Override
     public ReturnMessage validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Contact getDefaultContact() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

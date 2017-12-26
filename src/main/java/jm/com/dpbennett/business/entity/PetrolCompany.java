@@ -176,22 +176,12 @@ public class PetrolCompany implements Customer, Company, BusinessEntity, Seriali
     }
 
     @Override
-    public Address getBillingAddress() {
+    public Address getDefaultAddress() {
         if (!addresses.isEmpty()) {
             return addresses.get(0);
         } else {
             addresses.add(new Address());
             return addresses.get(0);
-        }
-    }
-
-    @Override
-    public void setBillingAddress(Address billingAddress) {
-        if (!addresses.isEmpty()) {
-            addresses.set(0, billingAddress);
-        }
-        else {
-            addresses.add(billingAddress);
         }
     }
 
@@ -339,4 +329,10 @@ public class PetrolCompany implements Customer, Company, BusinessEntity, Seriali
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public Contact getDefaultContact() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

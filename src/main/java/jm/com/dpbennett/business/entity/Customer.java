@@ -41,9 +41,9 @@ public interface Customer {
 
     public void setContacts(List<Contact> contacts);
 
-    public Address getBillingAddress();
-
-    public void setBillingAddress(Address billingAddress);
+    public Address getDefaultAddress();
+    
+    public Contact getDefaultContact();
 
     public Date getDateLastAccessed();
 

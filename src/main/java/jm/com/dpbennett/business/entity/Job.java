@@ -155,7 +155,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             // Job's billing address and contact are not valid.
             // Validate and save address if required
             if (!BusinessEntityUtils.validateName(this.getBillingAddress().getAddressLine1())) {
-                this.setBillingAddress(this.getClient().getBillingAddress());
+                this.setBillingAddress(this.getClient().getDefaultAddress());
             }
             if (this.getBillingAddress().getId() == null) {
                 this.getBillingAddress().save(em);
@@ -163,7 +163,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
             // Validate and save contact if required
             if (!BusinessEntityUtils.validateName(this.getContact().getName())) {
-                this.setContact(this.getClient().getMainContact());
+                this.setContact(this.getClient().getDefaultContact());
             }
             if (this.getContact().getId() == null) {
                 this.getContact().save(em);
@@ -312,8 +312,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
         Job job = new Job();
         job.setClient(new Client("", false));
-        job.setBillingAddress(job.getClient().getBillingAddress());
-        job.setContact(job.getClient().getMainContact());
+        job.setBillingAddress(job.getClient().getDefaultAddress());
+        job.setContact(job.getClient().getDefaultContact());
         job.setReportNumber("");
         job.setJobDescription("");
         job.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
@@ -426,7 +426,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     public Contact getContact() {
         if (contact == null) {
             if (client != null) {
-                setContact(client.getMainContact());
+                setContact(client.getDefaultContact());
             } else {
                 return new Contact();
             }
@@ -443,7 +443,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     public Address getBillingAddress() {
         if (billingAddress == null) {
             if (client != null) {
-                setBillingAddress(client.getBillingAddress());
+                setBillingAddress(client.getDefaultAddress());
             } else {
                 return new Address();
             }

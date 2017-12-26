@@ -88,6 +88,14 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         phoneNumbers = new ArrayList<>();
         addresses = new ArrayList<>();
     }
+    
+    public Contact(String firstName, String lastName, String type) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.type = type;
+        phoneNumbers = new ArrayList<>();
+        addresses = new ArrayList<>();
+    }
 
     public Contact(Contact src) {
         doCopy(src);
@@ -359,7 +367,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     @Override
     public int compareTo(Object o) {
         if ((((Contact) o).id != null) && (this.id != null)) {
-            return Collator.getInstance().compare(((Contact) o).id, this.id);
+            return Collator.getInstance().compare(((Contact) o).id.toString(), this.id.toString());
         } else {
             return 0;
         }

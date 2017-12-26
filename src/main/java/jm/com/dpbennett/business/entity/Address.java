@@ -99,7 +99,19 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         this.city = "";
         this.addressLine2 = "";
         this.addressLine1 = "";
-        this.type = " ";
+        this.type = "";
+        this.Id = null;
+    }
+    
+     public Address(String name, String type) {
+        this.name = name;
+        this.country = "";
+        this.postalCode = "";
+        this.stateOrProvince = "";
+        this.city = "";
+        this.addressLine2 = "";
+        this.addressLine1 = "";
+        this.type = type;
         this.Id = null;
     }
 
@@ -293,7 +305,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     @Override
     public int compareTo(Object o) {
         if ((((Address) o).Id != null) && (this.Id != null)) {
-            return Collator.getInstance().compare(((Address) o).Id, this.Id);
+            return Collator.getInstance().compare(((Address) o).Id.toString(), this.Id.toString());
         } else {
             return 0;
         }

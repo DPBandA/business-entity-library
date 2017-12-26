@@ -1353,10 +1353,10 @@ public class TestEntity {
      switch (cellCount) {
      case PARISH:
      if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
-     if (factory.getBillingAddress() == null) {
-     factory.setBillingAddress(new Address());
+     if (factory.getDefaultAddress() == null) {
+     factory.setMainBillingAddress(new Address());
      }
-     factory.getBillingAddress().setStateOrProvince(cell.getStringCellValue());
+     factory.getDefaultAddress().setStateOrProvince(cell.getStringCellValue());
      }
      break;
      case FACTORY: // add station only if name if valid
@@ -1368,7 +1368,7 @@ public class TestEntity {
      break;
      case ADDRESS:
      if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
-     factory.getBillingAddress().setAddressLine1(cell.getStringCellValue());
+     factory.getDefaultAddress().setAddressLine1(cell.getStringCellValue());
      }
      break;
      //                                        case CONTACT_PERSON:
@@ -1923,7 +1923,7 @@ public class TestEntity {
                                                 break;
                                             case PARISH:
                                                 if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-                                                    petrolStation.getBillingAddress().setStateOrProvince(cell.getStringCellValue());
+                                                    petrolStation.getDefaultAddress().setStateOrProvince(cell.getStringCellValue());
                                                 }
                                                 break;
                                             case STATION_NAME: // add station only if name if valid
@@ -1936,7 +1936,7 @@ public class TestEntity {
                                                 break;
                                             case ADDRESS:
                                                 if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-                                                    petrolStation.getBillingAddress().setAddressLine1(cell.getStringCellValue());
+                                                    petrolStation.getDefaultAddress().setAddressLine1(cell.getStringCellValue());
                                                 }
                                                 break;
                                             case NUMBER_OF_PUMPS:

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -80,7 +79,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
     private Date dateEdited;
     private Boolean tag;
     private String taxRegistrationNumber;
-    private Boolean active;    
+    private Boolean active;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -117,8 +116,6 @@ public class Client implements Customer, Serializable, BusinessEntity {
     public void setEditedBy(Employee editedBy) {
         this.editedBy = editedBy;
     }
-    
-    
 
     public Client(Client src, Boolean active) {
         doCopy(src);
@@ -233,7 +230,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
     public void setActive(Boolean active) {
         this.active = active;
     }
-    
+
     public String getIsActive() {
         if (getActive()) {
             return "Yes";
@@ -316,6 +313,18 @@ public class Client implements Customer, Serializable, BusinessEntity {
         return addresses;
     }
 
+    public List<Address> getBillingAddresses() {
+        ArrayList<Address> billingAddresses = new ArrayList<>();
+
+        for (Address address : getAddresses()) {
+            if (address.getType().equals("Billing")) {
+                billingAddresses.add(address);
+            }
+        }
+
+        return billingAddresses;
+    }
+
     @Override
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
@@ -356,83 +365,50 @@ public class Client implements Customer, Serializable, BusinessEntity {
     }
 
     /**
-     * Get the main contact which is treated as the main contact in the list of
-     * contacts.
+     * Get the first main contact which is treated as the main contact in the
+     * list of contacts.
      *
      * @return
      */
-    public Contact getMainContact() {
-        if (!getContacts().isEmpty()) {
-            //return getContacts().get(0);
-            for (Contact contact : getContacts()) {
-                if (contact.getType().equals("Main")) {
-                    return contact;
-                }
-            }
-            // use the first found address as the billing address
-            Contact contact = getContacts().get(0);
-            contact.setType("Main");
-            return contact;
-        } else {
-            Contact contact = new Contact();
-            contact.setType("Main");
-            getContacts().add(contact);
-            return getContacts().get(0);
-        }
-    }
-
-    public void setMainContact(Contact mainContact) {
-        int index = 0;
-
-        if (!getContacts().isEmpty()) {
-            for (Contact contact : getContacts()) {
-                if (contact.getType().equals("Main")) {
-                    getContacts().set(index, mainContact);
-                    return;
-                }
-                ++index;
-            }
-            mainContact.setType("Main");
-            getContacts().set(0, mainContact);
-        }
-    }
-
     @Override
-    public Address getBillingAddress() {
-        if (!getAddresses().isEmpty()) {
-            for (Address address : getAddresses()) {
-                if (address.getType().equals("Billing")) {
-                    return address;
-                }
-            }
-            // No billing address so use the first found address as the billing address
-            Address address = getAddresses().get(0);
-            address.setType("Billing");
-            return address;
+    public Contact getDefaultContact() {
+        if (!getContacts().isEmpty()) {
+            // Use the last found contact as the main contact if none was found.            
+            return getContacts().get(getContacts().size() - 1);
+        } else {
+            return addContact(new Contact("", "", "Main"));
+        }
+    }
+
+    public Contact addContact(Contact contact) {
+        getContacts().add(contact);
+        return getContacts().get(0);
+    }
+
+    /**
+     * Returns the first found address with billing type "Billing" as the main
+     * billing address.
+     *
+     * @return
+     */
+    @Override
+    public Address getDefaultAddress() {
+        if (!getBillingAddresses().isEmpty()) {
+
+            return getBillingAddresses().get(getBillingAddresses().size() - 1);
+
+        } else if (!getAddresses().isEmpty()) {
+
+            return getAddresses().get(getAddresses().size() - 1);
 
         } else {
-            Address address = new Address();
-            address.setType("Billing");
-            getAddresses().add(address);
-            return getAddresses().get(0);
+            return addAddress(new Address("", "Billing"));
         }
     }
 
-    @Override
-    public void setBillingAddress(Address billingAddress) {
-        int index = 0;
-
-        if (!getAddresses().isEmpty()) {
-            for (Address address : getAddresses()) {
-                if (address.getType().equals("Billing")) {
-                    getAddresses().set(index, billingAddress);
-                    return;
-                }
-                ++index;
-            }
-            billingAddress.setType("Billing");
-            getAddresses().set(0, billingAddress);
-        }
+    public Address addAddress(Address address) {
+        getAddresses().add(address);
+        return getAddresses().get(0);
     }
 
     @Override
@@ -595,7 +571,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Client> findClientsByAnyPartOfName(EntityManager em, String name) {
 
         try {
@@ -611,7 +587,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
- 
+
     // tk in client manager
     public static List<String> findClientNames(EntityManager em, String name) {
 
@@ -804,6 +780,6 @@ public class Client implements Customer, Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

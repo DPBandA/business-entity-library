@@ -153,28 +153,6 @@ public class Business implements Customer, BusinessEntity, Comparable, Serializa
     }
 
     @Override
-    public Address getBillingAddress() {
-        if (addresses != null) {
-            if (!addresses.isEmpty()) {
-                return addresses.get(0);
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void setBillingAddress(Address billingAddress) {
-        if (addresses != null) {
-            if (!addresses.isEmpty()) {
-                addresses.set(0, billingAddress);
-            }
-        }
-    }
-
-    @Override
     public Date getDateLastAccessed() {
         return dateLastAccessed;
     }
@@ -282,11 +260,22 @@ public class Business implements Customer, BusinessEntity, Comparable, Serializa
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
+
+    @Override
+    public Address getDefaultAddress() {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public Contact getDefaultContact() {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+    
 }

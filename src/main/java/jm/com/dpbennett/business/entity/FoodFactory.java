@@ -322,18 +322,11 @@ public class FoodFactory implements Customer, BusinessEntity, Comparable, Serial
     }
 
     @Override
-    public Address getBillingAddress() {
+    public Address getDefaultAddress() {
         if (!addresses.isEmpty()) {
             return addresses.get(0);
         } else {
             return null;
-        }
-    }
-
-    @Override
-    public void setBillingAddress(Address billingAddress) {
-        if (!addresses.isEmpty()) {
-            addresses.set(0, billingAddress);
         }
     }
 
@@ -510,4 +503,10 @@ public class FoodFactory implements Customer, BusinessEntity, Comparable, Serial
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public Contact getDefaultContact() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }
