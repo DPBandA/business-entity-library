@@ -35,6 +35,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -70,6 +71,8 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     private List<PhoneNumber> phoneNumbers;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
+    @Transient
+    private Boolean isDirty;
 
     public Contact() {
         phoneNumbers = new ArrayList<>();
@@ -88,7 +91,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         phoneNumbers = new ArrayList<>();
         addresses = new ArrayList<>();
     }
-    
+
     public Contact(String firstName, String lastName, String type) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -99,6 +102,14 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
     public Contact(Contact src) {
         doCopy(src);
+    }
+
+    public Boolean getIsDirty() {
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public static Contact findContactById(EntityManager em, Long id) {
@@ -366,14 +377,12 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
     @Override
     public int compareTo(Object o) {
-        if ((((Contact) o).id != null) && (this.id != null)) {            
+        if ((((Contact) o).id != null) && (this.id != null)) {
             if (((Contact) o).id < this.id) {
                 return 1;
-            }
-            else if (Objects.equals(((Contact) o).id, this.id)) {
-                return 0;                
-            }
-            else {
+            } else if (Objects.equals(((Contact) o).id, this.id)) {
+                return 0;
+            } else {
                 return -1;
             }
         } else {

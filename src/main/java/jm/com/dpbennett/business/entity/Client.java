@@ -36,6 +36,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -85,6 +86,8 @@ public class Client implements Customer, Serializable, BusinessEntity {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
     private Boolean international;
+    @Transient
+    private Boolean isDirty;
 
     public Client() {
         this.taxRegistrationNumber = "";
@@ -99,6 +102,14 @@ public class Client implements Customer, Serializable, BusinessEntity {
         internet = new Internet();
         active = true;
         international = false;
+    }
+
+    public Boolean getIsDirty() {
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Date getDateEdited() {

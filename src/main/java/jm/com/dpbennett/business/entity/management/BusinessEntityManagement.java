@@ -21,6 +21,6 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.management;
 
 public interface BusinessEntityManagement {
-     public void setDirty(Boolean dirty);
-     public Boolean isDirty();     
+     public void setIsDirty(Boolean isDirty);
+     public Boolean getIsDirty();     
 }
