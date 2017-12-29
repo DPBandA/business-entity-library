@@ -387,7 +387,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
             // Use the last found contact as the main contact if none was found.            
             return getContacts().get(getContacts().size() - 1);
         } else {
-            return addContact(new Contact("", "", "Main"));
+            return new Contact("", "", "Main");
         }
     }
 
@@ -413,7 +413,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
             return getAddresses().get(getAddresses().size() - 1);
 
         } else {
-            return addAddress(new Address("", "Billing"));
+            return new Address("", "Billing");
         }
     }
 

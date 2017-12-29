@@ -369,6 +369,15 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
             return getLastName() + ", " + getFirstName();
         }
     }
+    
+    public String getFriendlyName() {
+        if (!getName().isEmpty()) {
+            return getName();
+        }
+        else {
+            return "-- none --";
+        }
+    }
 
     @Override
     public void setName(String name) {

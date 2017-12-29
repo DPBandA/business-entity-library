@@ -162,6 +162,14 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         return addressLine1;
     }
 
+    public String getAddressLine1FriendlyDisplay() {
+        if (!getAddressLine1().trim().isEmpty()) {
+            return getAddressLine1().trim();
+        } else {
+            return "-- none --";
+        }
+    }
+
     public void setAddressLine1(String addressLine1) {
         this.addressLine1 = addressLine1;
     }
