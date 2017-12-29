@@ -216,7 +216,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 }
             }
 
-            // Save sample(s) and job
+            // Finally..save the job
             if (this.save(em).isSuccess()) {
                 // Save job sequence number since it was used by this job
                 if (nextJobSequenceNumber != null) {
@@ -1675,6 +1675,9 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                     jobSample.setIsDirty(false);
                 }
             }
+            
+            // Save job costing and payment
+            jobCostingAndPayment.save(em);
 
             // Save job    
             em.getTransaction().begin();

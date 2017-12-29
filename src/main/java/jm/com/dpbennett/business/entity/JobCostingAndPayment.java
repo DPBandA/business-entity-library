@@ -521,7 +521,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     public String getName() {
         return name;
     }
-
+   
     @Override
     public void setName(String name) {
         this.name = name;
