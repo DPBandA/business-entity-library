@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
@@ -558,18 +559,13 @@ public class Employee implements Person, Serializable, BusinessEntity {
         }
     }
 
-    public Boolean isMemberOf(Department department) {
-
-        if (getDepartment().getId() == department.getId()) {
-            return true;
-        }
-
-        return false;
+    public Boolean isMemberOf(Department department) {       
+        return Objects.equals(getDepartment().getId(), department.getId());
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
