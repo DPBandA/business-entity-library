@@ -51,6 +51,8 @@ public class RequiredFieldValidator implements Validator {
 
     private FacesMessage getMessage(String componentId) {
         switch (componentId) {
+            case "user":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Username Required", "Please enter a username");
             case "jobDescription":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Description Required", "Please enter a job description");
             case "businessOffice":

@@ -116,6 +116,9 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     }
 
     public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
         return isDirty;
     }
 

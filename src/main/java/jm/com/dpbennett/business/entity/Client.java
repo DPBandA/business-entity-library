@@ -105,6 +105,9 @@ public class Client implements Customer, Serializable, BusinessEntity {
     }
 
     public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
         return isDirty;
     }
 

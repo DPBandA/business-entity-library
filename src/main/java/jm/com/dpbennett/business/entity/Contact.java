@@ -105,6 +105,9 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     }
 
     public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
         return isDirty;
     }
 
@@ -369,12 +372,11 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
             return getLastName() + ", " + getFirstName();
         }
     }
-    
+
     public String getFriendlyName() {
         if (!getName().isEmpty()) {
             return getName();
-        }
-        else {
+        } else {
             return "-- none --";
         }
     }
