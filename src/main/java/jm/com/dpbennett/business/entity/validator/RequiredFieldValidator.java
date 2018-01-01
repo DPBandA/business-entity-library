@@ -51,18 +51,28 @@ public class RequiredFieldValidator implements Validator {
 
     private FacesMessage getMessage(String componentId) {
         switch (componentId) {
+            case "firstName":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "First name Required", "Please enter the first name");
+            case "lastName":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Last name Required", "Please enter the last name");    
             case "user":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Username Required", "Please enter a username");
             case "jobDescription":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Description Required", "Please enter a job description");
             case "businessOffice":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Business Office", "Please enter a valid Business Office.");
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Business Office", "Please enter a valid business office");
+            case "departmentName":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Required", "Please enter a department");    
+            case "departmentCode":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Code Required", "Please enter a department code");        
+            case "departmentHead":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Head Required", "Please enter the name of the department's head");        
             case "trn":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Taxpayer Registration Number", "Please enter a valid Taxpayer Registration Number or N/A.");
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Taxpayer Registration Number", "Please enter a valid Taxpayer Registration Number or N/A");
             case "instructions":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Instructions Required", "Please enter instructions for this job.");    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Instructions Required", "Please enter instructions for this job");    
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields");
         }
     }
 }
