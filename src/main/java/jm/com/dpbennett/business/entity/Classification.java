@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -33,6 +32,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -42,7 +42,8 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "classification")
 @NamedQueries({
-    @NamedQuery(name = "findAllClassifications", query = "SELECT c FROM Classification c ORDER BY c.name"),
+    @NamedQuery(name = "findAllClassifications", query = "SELECT c FROM Classification c ORDER BY c.name")
+    ,
     @NamedQuery(name = "findAllActiveClassifications", query = "SELECT c FROM Classification c WHERE c.active = 1 ORDER BY c.name")
 })
 @XmlRootElement
@@ -57,11 +58,16 @@ public class Classification implements BusinessEntity, Serializable {
     @Column(length = 1024)
     private String description;
     private Boolean isEarning;
+    private String category;
 
     public Classification() {
         this.name = "";
+        this.active = true;
+        this.description = "";
+        this.isEarning = true;
+        this.category = "";
     }
-    
+
     @Override
     public Long getId() {
         return id;
@@ -70,6 +76,17 @@ public class Classification implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCategory() {
+        if (category == null) {
+            category = "";
+        }
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public Boolean getIsEarning() {
@@ -109,7 +126,7 @@ public class Classification implements BusinessEntity, Serializable {
             setActive(false);
         }
     }
-    
+
     public String getEarning() {
         if (getIsEarning()) {
             return "Yes";
@@ -236,9 +253,9 @@ public class Classification implements BusinessEntity, Serializable {
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<Classification> classifications =
-                    em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
-                    + newName.toUpperCase().trim() + "%' ORDER BY c.name", Classification.class).getResultList();
+            List<Classification> classifications
+                    = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
+                            + newName.toUpperCase().trim() + "%' ORDER BY c.name", Classification.class).getResultList();
             return classifications;
         } catch (Exception e) {
             System.out.println(e);
@@ -251,9 +268,9 @@ public class Classification implements BusinessEntity, Serializable {
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<Classification> classifications =
-                    em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
-                    + newName.toUpperCase().trim() + "%' AND c.active = 1 ORDER BY c.name", Classification.class).getResultList();
+            List<Classification> classifications
+                    = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
+                            + newName.toUpperCase().trim() + "%' AND c.active = 1 ORDER BY c.name", Classification.class).getResultList();
             return classifications;
         } catch (Exception e) {
             System.out.println(e);
@@ -263,7 +280,17 @@ public class Classification implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Classification not saved");
     }
 
     @Override

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -35,6 +34,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -44,8 +44,10 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "jobcategory")
 @NamedQueries({
-    @NamedQuery(name = "findAllJobCategories", query = "SELECT e FROM JobCategory e ORDER BY e.category"),
-    @NamedQuery(name = "findAllActiveJobCategories", query = "SELECT e FROM JobCategory e WHERE e.active = 1 ORDER BY e.category"),
+    @NamedQuery(name = "findAllJobCategories", query = "SELECT e FROM JobCategory e ORDER BY e.category")
+    ,
+    @NamedQuery(name = "findAllActiveJobCategories", query = "SELECT e FROM JobCategory e WHERE e.active = 1 ORDER BY e.category")
+    ,
     @NamedQuery(name = "findByCategory", query = "SELECT e FROM JobCategory e WHERE e.category = :category")
 })
 @XmlRootElement
@@ -65,14 +67,23 @@ public class JobCategory implements Serializable, BusinessEntity {
     private String description;
 
     public JobCategory() {
+        this.classification = "";
+        this.category = "";
+        this.isEarning = true;
         departments = new ArrayList<>();
+        this.active = true;
+        this.description = "";
     }
 
     public JobCategory(String category) {
+        this.classification = "";
         this.category = category;
+        this.isEarning = true;
         departments = new ArrayList<>();
+        this.active = true;
+        this.description = "";
     }
-    
+
     @Override
     public Long getId() {
         return id;
@@ -276,10 +287,35 @@ public class JobCategory implements Serializable, BusinessEntity {
             return null;
         }
     }
+    
+    public static List<JobCategory> findJobCategoriesByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<JobCategory> jobCategories
+                    = em.createQuery("SELECT j FROM JobCategory j where UPPER(j.category) like '%"
+                            + newName.toUpperCase().trim() + "%' ORDER BY j.category", JobCategory.class).getResultList();
+            return jobCategories;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Job Category not saved");
     }
 
     @Override

@@ -62,15 +62,25 @@ public class RequiredFieldValidator implements Validator {
             case "businessOffice":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Business Office", "Please enter a valid business office");
             case "departmentName":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Required", "Please enter a department");    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Name Required", "Please enter a department name");    
             case "departmentCode":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Code Required", "Please enter a department code");        
             case "departmentHead":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Head Required", "Please enter the name of the department's head");        
+            case "departmentActingHead":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Acting/Deputy Head Required", "Please enter the name of the department's acting/deputy head");            
             case "trn":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Taxpayer Registration Number", "Please enter a valid Taxpayer Registration Number or N/A");
             case "instructions":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Instructions Required", "Please enter instructions for this job");    
+            case "classificationName":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Classification Name Required", "Please enter a classification name");        
+            case "classificationDescription":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Classification Description Required", "Please enter a classification description");        
+            case "jobCategoryName":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Category Name Required", "Please enter a job category name");        
+            case "jobCategoryDescription":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Category Description Required", "Please enter a job category description");        
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields");
         }
