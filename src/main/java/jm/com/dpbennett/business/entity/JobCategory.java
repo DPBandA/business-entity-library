@@ -294,8 +294,23 @@ public class JobCategory implements Serializable, BusinessEntity {
             String newName = name.replaceAll("'", "''");
 
             List<JobCategory> jobCategories
-                    = em.createQuery("SELECT j FROM JobCategory j where UPPER(j.category) like '%"
+                    = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"
                             + newName.toUpperCase().trim() + "%' ORDER BY j.category", JobCategory.class).getResultList();
+            return jobCategories;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<JobCategory> findActiveJobCategoriesByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<JobCategory> jobCategories
+                    = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"
+                            + newName.toUpperCase().trim() + "%' AND j.active = 1 ORDER BY j.category", JobCategory.class).getResultList();
             return jobCategories;
         } catch (Exception e) {
             System.out.println(e);

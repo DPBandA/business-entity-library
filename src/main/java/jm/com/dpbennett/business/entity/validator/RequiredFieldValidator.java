@@ -42,9 +42,8 @@ public class RequiredFieldValidator implements Validator {
             if (!BusinessEntityUtils.validateText(value.toString().trim())) {
                 throw new ValidatorException(getMessage(component.getId()));
             }
-        }
-        else {
-             throw new ValidatorException(getMessage(component.getId()));
+        } else {
+            throw new ValidatorException(getMessage(component.getId()));
         }
 
     }
@@ -54,7 +53,7 @@ public class RequiredFieldValidator implements Validator {
             case "firstName":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "First name Required", "Please enter the first name");
             case "lastName":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Last name Required", "Please enter the last name");    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Last name Required", "Please enter the last name");
             case "user":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Username Required", "Please enter a username");
             case "jobDescription":
@@ -62,33 +61,39 @@ public class RequiredFieldValidator implements Validator {
             case "businessOffice":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Business Office", "Please enter a valid business office");
             case "departmentName":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Name Required", "Please enter a department name");    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Name Required", "Please enter a department name");
             case "departmentCode":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Code Required", "Please enter a department code");        
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Code Required", "Please enter a department code");
             case "departmentHead":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Head Required", "Please enter the name of the department's head");        
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Head Required", "Please enter the name of the department's head");
             case "departmentActingHead":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Acting/Deputy Head Required", "Please enter the name of the department's acting/deputy head");            
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Department Acting/Deputy Head Required", "Please enter the name of the department's acting/deputy head");
             case "trn":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Taxpayer Registration Number", "Please enter a valid Taxpayer Registration Number or N/A");
             case "instructions":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Instructions Required", "Please enter instructions for this job");    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Instructions Required", "Please enter instructions for this job");
             case "classificationName":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Classification Name Required", "Please enter a classification name");        
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Classification Name Required", "Please enter a classification name");
             case "classificationDescription":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Classification Description Required", "Please enter a classification description");        
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Classification Description Required", "Please enter a classification description");
             case "jobCategoryName":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Category Name Required", "Please enter a job category name");        
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Category Name Required", "Please enter a job category name");
             case "jobCategoryDescription":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Category Description Required", "Please enter a job category description");        
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Category Description Required", "Please enter a job category description");
             case "jobSubcategoryName":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Subcategory Name Required", "Please enter a job subcategory name");        
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Subcategory Name Required", "Please enter a job subcategory name");
             case "jobSubcategoryDescription":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Subcategory Description Required", "Please enter a job subcategory description");        
-             case "sectorName":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sector Name Required", "Please enter a sector name");        
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Subcategory Description Required", "Please enter a job subcategory description");
+            case "sectorName":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sector Name Required", "Please enter a sector name");
             case "sectorDescription":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sector Description Required", "Please enter a sector description");        
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sector Description Required", "Please enter a sector description");
+            case "ldapName":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "LDAP Name Required", "Please enter an LDAP name");
+            case "ldapDomainName":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "LDAP Domain Name Required", "Please enter an LDAP domain name");    
+            case "ldapProviderUrl":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "LDAP URL Required", "Please enter an LDAP URL");    
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields");
         }

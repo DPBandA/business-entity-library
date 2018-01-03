@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -34,6 +33,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -44,6 +44,8 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Table(name = "ldapcontext")
 @NamedQueries({
     @NamedQuery(name = "findAllLdapContexts", query = "SELECT e FROM LdapContext e ORDER BY e.name")
+    ,
+    @NamedQuery(name = "findAllActiveLdapContexts", query = "SELECT e FROM LdapContext e WHERE e.active = 1 ORDER BY e.name")
 })
 public class LdapContext implements BusinessEntity, Serializable {
 
@@ -58,13 +60,26 @@ public class LdapContext implements BusinessEntity, Serializable {
     private String securityPrincipal;
     private String securityCredentials;
     private String providerUrl;
+    private Boolean active;
 
     public LdapContext() {
-        name = "unknown";
+        this.name = "";
+        this.domainName = "";
+        this.initialContextFactory = "";
+        this.securityAuthentication = "";
+        this.securityPrincipal = "";
+        this.securityCredentials = "";
+        this.providerUrl = "";
     }
 
     public LdapContext(String name) {
         this.name = name;
+        this.domainName = "";
+        this.initialContextFactory = "";
+        this.securityAuthentication = "";
+        this.securityPrincipal = "";
+        this.securityCredentials = "";
+        this.providerUrl = "";
     }
 
     @Override
@@ -75,6 +90,33 @@ public class LdapContext implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUsable() {
+        if (getActive()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+
+    public void setUsable(String usable) {
+        if (usable.equals("Yes")) {
+            setActive(true);
+        } else {
+            setActive(false);
+        }
+    }
+
+    public Boolean getActive() {
+        if (active == null) {
+            active = false;
+        }
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public String getDomainName() {
@@ -170,12 +212,60 @@ public class LdapContext implements BusinessEntity, Serializable {
         }
     }
 
+    public static List<LdapContext> findAllActiveLdapContexts(EntityManager em) {
+
+        try {
+            return em.createNamedQuery("findAllActiveLdapContexts", LdapContext.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<LdapContext> findActiveLdapContexts(EntityManager em, String queryString) {
+
+        try {
+            String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
+
+            List<LdapContext> ldapContexts
+                    = em.createQuery("SELECT l FROM LdapContext l WHERE "
+                            + "( UPPER(l.name) LIKE '%" + newQueryString + "%'"
+                            + " OR UPPER(l.domainName) like '%" + newQueryString + "%'"
+                            + " OR UPPER(l.initialContextFactory) like '%" + newQueryString + "%'"
+                            + " OR UPPER(l.providerUrl) LIKE '%" + newQueryString + "%'"
+                            + ") AND l.active = 1 ORDER BY l.name", LdapContext.class).getResultList();
+            return ldapContexts;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<LdapContext> findLdapContexts(EntityManager em, String queryString) {
+
+        try {
+            String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
+
+            List<LdapContext> ldapContexts
+                    = em.createQuery("SELECT l FROM LdapContext l WHERE "
+                            + "UPPER(l.name) LIKE '%" + newQueryString + "%'"
+                            + " OR UPPER(l.domainName) like '%" + newQueryString + "%'"
+                            + " OR UPPER(l.initialContextFactory) like '%" + newQueryString + "%'"
+                            + " OR UPPER(l.providerUrl) LIKE '%" + newQueryString + "%'"
+                            + " ORDER BY l.name", LdapContext.class).getResultList();
+            return ldapContexts;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     public InitialLdapContext getInitialLDAPContext(String username, String password) {
 
         try {
             Hashtable env = new Hashtable();
-            
-            String principal = username + "@" + this.domainName;            
+
+            String principal = username + "@" + this.domainName;
             env.put(Context.INITIAL_CONTEXT_FACTORY, this.initialContextFactory);
             env.put(Context.SECURITY_AUTHENTICATION, this.securityAuthentication);
             env.put(Context.SECURITY_PRINCIPAL, principal);
@@ -183,7 +273,7 @@ public class LdapContext implements BusinessEntity, Serializable {
             env.put(Context.PROVIDER_URL, this.providerUrl);
 
             return new InitialLdapContext(env, null);
-            
+
         } catch (Exception e) {
             System.out.println("Error getting InitialLdapContext: " + e);
         }
@@ -193,7 +283,17 @@ public class LdapContext implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "LDAP not saved");
     }
 
     @Override

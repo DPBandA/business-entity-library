@@ -273,6 +273,21 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
             return new ArrayList<>();
         }
     }
+    
+    public static List<JobSubCategory> findActiveJobSubcategoriesByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<JobSubCategory> jobSubcategories
+                    = em.createQuery("SELECT j FROM JobSubCategory j where UPPER(j.subCategory) like '%"
+                            + newName.toUpperCase().trim() + "%' AND j.active = 1 ORDER BY j.subCategory", JobSubCategory.class).getResultList();
+            return jobSubcategories;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     public static List<JobSubCategory> findAllJobSubCategoriesByDepartment(EntityManager em, Department department) {
         try {

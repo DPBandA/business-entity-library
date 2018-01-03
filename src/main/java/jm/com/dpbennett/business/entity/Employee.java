@@ -491,8 +491,9 @@ public class Employee implements Person, Serializable, BusinessEntity {
     public static List<Employee> findAllActiveEmployees(EntityManager em) {
 
         try {
-            return em.createQuery("select e from EMPLOYEE e where e.active = 1 order by e.lastname", Employee.class).getResultList();
+            return em.createQuery("SELECT e FROM Employee e WHERE e.active = 1 ORDER BY e.lastName", Employee.class).getResultList();
         } catch (Exception e) {
+            System.out.println(e);
             return null;
         }
     }

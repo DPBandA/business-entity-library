@@ -322,7 +322,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static List<Department> findAllActiveDepartments(EntityManager em) {
 
         try {
-            return em.createQuery("select d from DEPARTMENT d where d.active = 1 order by d.name", Department.class).getResultList();
+            return em.createQuery("SELECT d FROM Department d WHERE d.active = 1 ORDER BY d.name", Department.class).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
