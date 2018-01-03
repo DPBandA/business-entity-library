@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -38,6 +37,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -48,8 +48,10 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 @Entity
 @Table(name = "jobsubcategory")
 @NamedQueries({
-    @NamedQuery(name = "findAllJobSubCategories", query = "SELECT e FROM JobSubCategory e ORDER BY e.subCategory"),
-    @NamedQuery(name = "findAllActiveJobSubCategories", query = "SELECT e FROM JobSubCategory e WHERE e.active = 1 ORDER BY e.subCategory"),
+    @NamedQuery(name = "findAllJobSubCategories", query = "SELECT e FROM JobSubCategory e ORDER BY e.subCategory")
+    ,
+    @NamedQuery(name = "findAllActiveJobSubCategories", query = "SELECT e FROM JobSubCategory e WHERE e.active = 1 ORDER BY e.subCategory")
+    ,
     @NamedQuery(name = "findByCategoryId", query = "SELECT e FROM JobSubCategory e WHERE e.categoryId = :categoryId")
 })
 @XmlRootElement
@@ -72,12 +74,21 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     private String description;
 
     public JobSubCategory() {
-        departments = new ArrayList<>();
+        this.subCategory = "";
+        this.isEarning = true;
+        this.categoryId = null;
+        this.departments = new ArrayList<>();
+        this.active = true;
+        this.description = "";
     }
 
     public JobSubCategory(String subCategory) {
-        this.subCategory = subCategory;
-        departments = new ArrayList<>();
+         this.subCategory = subCategory;
+        this.isEarning = true;
+        this.categoryId = null;
+        this.departments = new ArrayList<>();
+        this.active = true;
+        this.description = "";
     }
 
     @Override
@@ -131,7 +142,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     }
 
     public Boolean getIsEarning() {
-         if (isEarning == null) {
+        if (isEarning == null) {
             isEarning = false;
         }
         return isEarning;
@@ -204,10 +215,10 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
         try {
             String newSubCategory = name.trim().replaceAll("'", "''");
 
-            List<JobSubCategory> jobSubCategories =
-                    em.createQuery("SELECT c FROM JobSubCategory c "
-                    + "WHERE UPPER(c.subCategory) "
-                    + "= '" + newSubCategory.toUpperCase() + "'", JobSubCategory.class).getResultList();
+            List<JobSubCategory> jobSubCategories
+                    = em.createQuery("SELECT c FROM JobSubCategory c "
+                            + "WHERE UPPER(c.subCategory) "
+                            + "= '" + newSubCategory.toUpperCase() + "'", JobSubCategory.class).getResultList();
             if (jobSubCategories.size() > 0) {
                 return jobSubCategories.get(0);
             } else {
@@ -247,14 +258,29 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
             return null;
         }
     }
+    
+    public static List<JobSubCategory> findJobSubcategoriesByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<JobSubCategory> jobSubcategories
+                    = em.createQuery("SELECT j FROM JobSubCategory j where UPPER(j.subCategory) like '%"
+                            + newName.toUpperCase().trim() + "%' ORDER BY j.subCategory", JobSubCategory.class).getResultList();
+            return jobSubcategories;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     public static List<JobSubCategory> findAllJobSubCategoriesByDepartment(EntityManager em, Department department) {
         try {
-            List<JobSubCategory> jobSubCategories =
-                    em.createQuery(
-                    "SELECT j FROM JobSubCategory j JOIN j.departments department"
-                    + " WHERE department.name = '" + department.getName().trim() + "'"
-                    + " ORDER BY j.subCategory", JobSubCategory.class).getResultList();
+            List<JobSubCategory> jobSubCategories
+                    = em.createQuery(
+                            "SELECT j FROM JobSubCategory j JOIN j.departments department"
+                            + " WHERE department.name = '" + department.getName().trim() + "'"
+                            + " ORDER BY j.subCategory", JobSubCategory.class).getResultList();
             return jobSubCategories;
         } catch (Exception e) {
             System.out.println(e);
@@ -266,11 +292,11 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
         try {
             List<JobSubCategory> earningJobSubCategories = new ArrayList<>();
             List<JobSubCategory> nonEarningJobSubCategories = new ArrayList<>();
-            List<JobSubCategory> jobSubCategories =
-                    em.createQuery(
-                    "SELECT j FROM JobSubCategory j JOIN j.departments department"
-                    + " WHERE department.name = '" + department.getName().trim() + "'",
-                    JobSubCategory.class).getResultList();
+            List<JobSubCategory> jobSubCategories
+                    = em.createQuery(
+                            "SELECT j FROM JobSubCategory j JOIN j.departments department"
+                            + " WHERE department.name = '" + department.getName().trim() + "'",
+                            JobSubCategory.class).getResultList();
 
             if (!jobSubCategories.isEmpty()) {
                 for (JobSubCategory jobSubCategory : jobSubCategories) {
@@ -324,24 +350,23 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
             return null;
         }
     }
-    
-     public String getIsBillable() {
+
+    public String getIsBillable() {
         if (getIsEarning()) {
             return "Yes";
         } else {
             return "No";
         }
     }
-    
+
     public void setIsBillable(String billable) {
         if (billable.equals("Yes")) {
             setIsEarning(true);
-        }
-        else {
+        } else {
             setIsEarning(false);
         }
     }
-    
+
     public String getUsable() {
         if (getActive()) {
             return "Yes";
@@ -360,7 +385,17 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Job Subcategory not saved");
     }
 
     @Override

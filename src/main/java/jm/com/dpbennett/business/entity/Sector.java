@@ -36,6 +36,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -64,12 +65,17 @@ public class Sector implements BusinessEntity, Serializable {
     private String description;
 
     public Sector() {
-        departments = new ArrayList<>();
+        this.name = "";
+        this.departments = new ArrayList<>();
+        this.active = true;
+        this.description = "";
     }
     
     public Sector(String name) {
         this.name = name;
-        departments = new ArrayList<>();
+        this.departments = new ArrayList<>();
+        this.active = true;
+        this.description = "";
     }
 
     @Override
@@ -217,6 +223,21 @@ public class Sector implements BusinessEntity, Serializable {
         }
 
     }
+    
+     public static List<Sector> findSectorsByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Sector> sectors
+                    = em.createQuery("SELECT s FROM Sector s where UPPER(s.name) like '%"
+                            + newName.toUpperCase().trim() + "%' ORDER BY s.name", Sector.class).getResultList();
+            return sectors;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     public String getUsable() {
         if (getActive()) {
@@ -236,7 +257,17 @@ public class Sector implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Sector not saved");
     }
 
     @Override

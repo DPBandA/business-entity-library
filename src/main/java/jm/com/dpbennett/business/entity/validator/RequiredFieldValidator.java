@@ -81,6 +81,14 @@ public class RequiredFieldValidator implements Validator {
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Category Name Required", "Please enter a job category name");        
             case "jobCategoryDescription":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Category Description Required", "Please enter a job category description");        
+            case "jobSubcategoryName":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Subcategory Name Required", "Please enter a job subcategory name");        
+            case "jobSubcategoryDescription":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Subcategory Description Required", "Please enter a job subcategory description");        
+             case "sectorName":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sector Name Required", "Please enter a sector name");        
+            case "sectorDescription":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sector Description Required", "Please enter a sector description");        
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields");
         }
