@@ -80,7 +80,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
     private Boolean actingHeadActive;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
 
     public Department() {
@@ -442,7 +442,18 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Department not saved");
     }
 
     @Override

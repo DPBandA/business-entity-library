@@ -70,7 +70,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     private String username;
     @Column(length = 1024)
     private String password;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date pollTime;
@@ -371,6 +371,9 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     @XmlTransient
     public Department getDepartment() {
+        if (department == null) {
+            department = getEmployee().getDepartment();
+        }
         return department;
     }
 
