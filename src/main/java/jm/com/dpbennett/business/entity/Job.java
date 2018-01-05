@@ -414,6 +414,11 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+        if (isDirty) {
+            this.getJobStatusAndTracking().setEditStatus("(edited)");
+        } else {
+            this.getJobStatusAndTracking().setEditStatus("");
+        }
     }
 
     public Job(String jobNumber) {
@@ -1675,7 +1680,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                     jobSample.setIsDirty(false);
                 }
             }
-            
+
             // Save job costing and payment
             jobCostingAndPayment.save(em);
 

@@ -30,6 +30,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -98,6 +99,8 @@ public class JobStatusAndTracking implements Serializable {
     private Date expectedStartDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
+    @Transient
+    private String editStatus;
 
     public Long getId() {
         return id;
@@ -105,6 +108,14 @@ public class JobStatusAndTracking implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getEditStatus() {
+        return editStatus;
+    }
+
+    public void setEditStatus(String editStatus) {
+        this.editStatus = editStatus;
     }
 
     public Date getStartDate() {
