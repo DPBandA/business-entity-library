@@ -37,15 +37,20 @@ public class RequiredFieldValidator implements Validator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
+        // If the custom attribute fieldRequired is set then use it.
+        Boolean fieldRequired = (Boolean) component.getAttributes().get("fieldRequired");
+
         // Check for valid names
-        if (value != null) {
-            if (!BusinessEntityUtils.validateText(value.toString().trim())) {
+        if (fieldRequired == null || fieldRequired == true) {
+            if (value != null) {
+                if (!BusinessEntityUtils.validateText(value.toString().trim())) {
+                    throw new ValidatorException(getMessage(component.getId()));
+                }
+            } else {
                 throw new ValidatorException(getMessage(component.getId()));
             }
-        } else {
-            throw new ValidatorException(getMessage(component.getId()));
         }
-
+        
     }
 
     private FacesMessage getMessage(String componentId) {
@@ -91,11 +96,19 @@ public class RequiredFieldValidator implements Validator {
             case "ldapName":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "LDAP Name Required", "Please enter an LDAP name");
             case "ldapDomainName":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "LDAP Domain Name Required", "Please enter an LDAP domain name");    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "LDAP Domain Name Required", "Please enter an LDAP domain name");
             case "ldapProviderUrl":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "LDAP URL Required", "Please enter an LDAP URL");    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "LDAP URL Required", "Please enter an LDAP URL");
+            case "costComponentName":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cost Component Name Required", "Please enter a cost component name");
+            case "costComponentHoursOrQuantity":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Cost Component Hours/Quantity", "Please enter valid hours/quantity");
+            case "costComponentRate":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Cost Component Rate", "Please enter a valid rate");
+            case "costComponentCost":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Cost Component Cost", "Please enter a valid cost");
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields");
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required fields");
         }
     }
 }
