@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.persistence.CascadeType;
@@ -108,7 +107,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private String jobDescription;
     @Column(length = 1024)
     private String instructions;
-    // Results summary
     private Integer noOfTests;
     private Integer noOfCalibrations;
     private Integer noOfTestsOrCalibrations;
@@ -289,8 +287,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         if (copySamples) {
             List<JobSample> samples = currentJob.getJobSamples();
             job.setNumberOfSamples(currentJob.getNumberOfSamples());
-            for (Iterator<JobSample> it = samples.iterator(); it.hasNext();) {
-                JobSample jobSample = it.next();
+            for (JobSample jobSample : samples) {
                 job.getJobSamples().add(new JobSample(jobSample));
             }
         }
@@ -491,6 +488,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.instructions = instructions;
     }
 
+    // tk Is this used for jobs that have been saved? If not make use of
+    //  hasSubcontracts() instead.
     public Boolean getIsSubContracted() {
         if (getSubContractedDepartment().getName().equals("")
                 || getSubContractedDepartment().getName().equals("--")) {
@@ -502,28 +501,19 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     /**
      * NB: This method gets jobs with year received and sequence number that are
-     * the same as this job. The parentJobId field will be created and used in
-     * future.
+     * the same as this job. The sequence number and year are used if the parent
+     * field is not set.
      *
      * @param em
      * @return
      */
     public Boolean hasSubcontracts(EntityManager em) {
-        List<Job> jobs = Job.findJobsByYearReceivedAndJobSequenceNumber(em,
-                this.getYearReceived(),
-                this.getJobSequenceNumber());
+        return !getSubcontracts(em).isEmpty();
+    }
 
-        if (jobs != null) {
-            for (Job job : jobs) {
-                // If this job is subcontracted and is a child of this job
-                // then it's a subcontract
-                if (job.getIsSubContracted() && !this.getIsSubContracted()) {
-                    return true;
-                }
-            }
-        }
+    public List<Job> getSubcontracts(EntityManager em) {
 
-        return false;
+        return findSubcontracts(em);
     }
 
 // tk for use to create other methods dealing with subcontracts
@@ -1432,6 +1422,70 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
     }
 
+    public List<Job> findSubcontracts(EntityManager em) {
+        try {
+
+            List<Job> jobs = em.createQuery("SELECT j FROM Job j "
+                    + "WHERE (j.parent.id = " + this.id + " AND j.id <> " + this.id + ")", Job.class).getResultList();
+
+            return jobs;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public List<Job> findPossibleSubcontracts(EntityManager em) {
+        List<Job> possibleSubcontracts = new ArrayList<>();
+
+        List<Job> jobs = Job.findJobsByYearReceivedAndJobSequenceNumber(em,
+                this.getYearReceived(),
+                this.getJobSequenceNumber());
+        if (jobs != null) {
+            for (Job job : jobs) {
+                if (job.getIsSubContracted() && !this.getIsSubContracted()) {
+                   possibleSubcontracts.add(job);
+                }
+            }
+        }
+
+        return possibleSubcontracts;
+    }
+
+//    public void findPossibleSubcontracts(EntityManager em) {
+//        
+//            List<Job> jobs = Job.findJobsByYearReceivedAndJobSequenceNumber(em,
+//                    this.getYearReceived(),
+//                    this.getJobSequenceNumber());
+//            if (jobs != null) {
+//                for (Job job : jobs) {
+//                    if (job.getIsSubContracted() && !this.getIsSubContracted()
+//                            && (job.getJobStatusAndTracking().getWorkProgress().equals("Completed"))) {
+//                        String ccName = "Subcontract to " + job.getSubContractedDepartment().getName() + " (" + job.getJobNumber() + ")";
+//                        // Check that this cost component does not already exist.
+//                        // The assumption is that only one component will be found if any
+//                        if (!CostComponent.findCostComponentsByName(ccName,
+//                                this.getJobCostingAndPayment().getCostComponents()).isEmpty()) {
+//                            //deleteCostComponentByName(ccName);
+//                        }
+//                        CostComponent cc
+//                                = new CostComponent(
+//                                        ccName,
+//                                        job.getJobCostingAndPayment().getFinalCost(),
+//                                        true, false);
+//
+//                        this.getJobCostingAndPayment().getCostComponents().add(cc);
+//                        //setDirty(true);
+//                        this.setIsDirty(true);
+//                    }
+//                }
+//            }
+//        //}
+//        // NB: Ensure that amount due is recalc. in case something affects
+//        // taxes was changed
+//        this.getJobCostingAndPayment().calculateAmountDue();
+//    }
     public static List<String> findJobNumbers(EntityManager em, String query) {
 
         try {
@@ -1937,49 +1991,4 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
     }
 
-    /* tk delete after using code.
-    public void updateJobCostings(EntityManager em) {
-        
-        Department dept = Department.findDepartmentAssignedToJob(this, em);
-        if (dept != null) {
-            // Create 
-            if (Department.findDepartmentAssignedToJob(this, em).getJobCostingType().equals("Sample-based")) {
-                JobCostingAndPayment.createSampleBasedJobCostings(this);
-            } else {
-                JobCostingAndPayment.createDefaultJobCostings(this);
-            }
-
-            // Add sub-contract costings if any
-            List<Job> jobs = Job.findJobsByYearReceivedAndJobSequenceNumber(em,
-                    this.getYearReceived(),
-                    this.getJobSequenceNumber());
-            if (jobs != null) {
-                for (Job job : jobs) {
-                    if (job.getIsSubContracted() && !this.getIsSubContracted()
-                            && (job.getJobStatusAndTracking().getWorkProgress().equals("Completed"))) {
-                        String ccName = "Subcontract to " + job.getSubContractedDepartment().getName() + " (" + job.getJobNumber() + ")";
-                        // Check that this cost component does not already exist.
-                        // The assumption is that only one component will be found if any
-                        if (!CostComponent.findCostComponentsByName(ccName,
-                                this.getJobCostingAndPayment().getCostComponents()).isEmpty()) {
-                            deleteCostComponentByName(ccName);
-                        }
-                        CostComponent cc
-                                = new CostComponent(
-                                        ccName,
-                                        job.getJobCostingAndPayment().getFinalCost(),
-                                        true, false);
-
-                        this.getJobCostingAndPayment().getCostComponents().add(cc);
-                        //setDirty(true);
-                        this.setIsDirty(true);
-                    }
-                }
-            }
-        }
-        // NB: Ensure that amount due is recalc. in case something affects
-        // taxes was changed
-        this.getJobCostingAndPayment().calculateAmountDue();
-    }
-     */
 }
