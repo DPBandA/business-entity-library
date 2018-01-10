@@ -1422,6 +1422,11 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
     }
 
+    /**
+     * 
+     * @param em
+     * @return 
+     */
     public List<Job> findSubcontracts(EntityManager em) {
         try {
 
