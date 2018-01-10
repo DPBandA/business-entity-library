@@ -10,3 +10,4 @@
 - Setup site using the GSWM sample project.
 - Create default constructors and do all member variables initializations there.
 - Rename JobManagerUser to User.
+- not commit
