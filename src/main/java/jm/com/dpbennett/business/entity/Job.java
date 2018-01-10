@@ -1436,6 +1436,11 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
     }
 
+    /**
+     * 
+     * @param em
+     * @return 
+     */
     public List<Job> findPossibleSubcontracts(EntityManager em) {
         List<Job> possibleSubcontracts = new ArrayList<>();
 
