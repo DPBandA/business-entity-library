@@ -568,7 +568,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
                             + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
                             + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
                             + " )"
-                            + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
+                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
             if (!jobs.isEmpty()) {
                 for (int i = 0; i < jobs.size(); i++) {
                     if (!jobs.get(i).getJobCostingAndPayment().getName().trim().equals("")) {
