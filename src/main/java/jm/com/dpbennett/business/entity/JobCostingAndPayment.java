@@ -20,6 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -319,6 +320,12 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         finalCost = getTotalJobCostingsAmount();
 
         return finalCost;
+    }
+    
+    public String getFormattedFinalCost() {
+        DecimalFormat formatter = new DecimalFormat("$#,##0.00");
+        
+        return formatter.format(getFinalCost());
     }
 
     public void setFinalCost(Double finalCost) {

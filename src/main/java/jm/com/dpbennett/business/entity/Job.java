@@ -21,7 +21,6 @@ package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -126,12 +125,33 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private Boolean isDirty;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Job parent;
+    @Transient
+    private String name;
 
     public Job() {
+        this.name = "";
+        this.jobNumber = "";
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
-        isClientDirty = false;
-        jobSamples = new ArrayList<>();
+        this.isClientDirty = false;
+        this.jobSamples = new ArrayList<>();
+    }
+
+    public Job(String name) {
+        this.name = name;
+        this.jobNumber = name;
+        this.isToBeSubcontracted = false;
+        this.isToBeCopied = false;
+        this.isClientDirty = false;
+        this.jobSamples = new ArrayList<>();
+    }
+
+    public String getJobNumberWithCostLabel() {
+        if (getId() != null) {
+            return getJobNumber() + " (" + getJobCostingAndPayment().getFormattedFinalCost() + ")";
+        } else {
+            return name;
+        }
     }
 
     public Job getParent() {
@@ -306,6 +326,17 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     }
 
     public static Job create(EntityManager em,
+            String name,
+            JobManagerUser user,
+            Boolean autoGenerateJobNumber) {
+
+        Job job = Job.create(em, user, autoGenerateJobNumber);
+        job.name = name;
+
+        return job;
+    }
+
+    public static Job create(EntityManager em,
             JobManagerUser user,
             Boolean autoGenerateJobNumber) {
 
@@ -342,7 +373,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
         return job;
     }
-   
+
     public static String getJobNumber(Job job, EntityManager em) {
         Calendar c = Calendar.getInstance();
         String departmentOrCompanyCode;
@@ -418,12 +449,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         } else {
             this.getJobStatusAndTracking().setEditStatus("");
         }
-    }
-
-    public Job(String jobNumber) {
-        this.isToBeSubcontracted = false;
-        this.jobNumber = jobNumber;
-        jobSamples = new ArrayList<>();
     }
 
     @Override
@@ -502,6 +527,11 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     public List<Job> getSubcontracts(EntityManager em) {
 
         return findSubcontracts(em);
+    }
+
+    public List<Job> getPossibleSubcontracts(EntityManager em) {
+
+        return findPossibleSubcontracts(em);
     }
 
 // tk for use to create other methods dealing with subcontracts
@@ -939,16 +969,21 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     @Override
     public String toString() {
-        return getJobNumber();
+        if (id == null) {
+            return "null";
+        }
+
+        return id.toString();
     }
 
     @Override
     public String getName() {
-        return "";
+        return name;
     }
 
     @Override
     public void setName(String name) {
+        this.name = name;
     }
 
     public static Job findLastClientJob(EntityManager em, Client client) {

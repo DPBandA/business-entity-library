@@ -155,6 +155,10 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         return getCode().equals("SUBCONTRACT");
     }
 
+    public Boolean getIsVariable() {
+        return getCode().equals("VARIABLE");
+    }
+
     public static List getCostCodeList() {
         ArrayList costCodes = new ArrayList();
 
@@ -172,6 +176,10 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
             isFixedCost = false;
         }
         return isFixedCost;
+    }
+
+    public Boolean getIsCostReadOnly() {
+        return getIsSubcontract() || getIsVariable();
     }
 
     public void setIsFixedCost(Boolean isFixedCost) {
@@ -212,7 +220,9 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public String getCode() {
-
+        if (code == null) {
+            code = "--";
+        }
         return code;
     }
 
