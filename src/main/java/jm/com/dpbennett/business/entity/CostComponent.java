@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.model.SelectItem;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -123,11 +124,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Boolean getRenderFixedCostingComponentFormFields() {
-        if (!getIsHeading() && !getIsFixedCost()) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(!getIsHeading() && !getIsFixedCost());
     }
 
     @Override
@@ -152,6 +149,22 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.isHeading = src.isHeading;
         this.isFixedCost = src.isFixedCost;
         this.isEditable = src.isEditable;
+    }
+
+    public Boolean getIsSubcontract() {
+        return getCode().equals("SUBCONTRACT");
+    }
+
+    public static List getCostCodeList() {
+        ArrayList costCodes = new ArrayList();
+
+        costCodes.add(new SelectItem("--", "--"));
+        costCodes.add(new SelectItem("FIXED", "Fixed"));
+        costCodes.add(new SelectItem("HEADING", "Heading"));
+        costCodes.add(new SelectItem("VARIABLE", "Variable"));
+        costCodes.add(new SelectItem("SUBCONTRACT", "Subcontract"));
+
+        return costCodes;
     }
 
     public Boolean getIsFixedCost() {
@@ -225,7 +238,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     public Double getCost() {
         if (!getIsFixedCost()) {
-            cost = getRate().doubleValue() * getHoursOrQuantity().doubleValue();
+            cost = getRate() * getHoursOrQuantity();
         }
 
         if (cost == null) {
@@ -288,10 +301,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
             return false;
         }
         CostComponent other = (CostComponent) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override

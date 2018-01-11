@@ -49,17 +49,17 @@ public class SubcontractedDepartmentValidator extends ValidatorAdapter {
         }
 
         Long currentJobId = (Long) component.getAttributes().get("currentJobId");
-        Boolean isSubContracted = (Boolean) component.getAttributes().get("isSubContracted");
+        Boolean isSubContract = (Boolean) component.getAttributes().get("isSubContract");
         Boolean isToBeSubcontracted = (Boolean) component.getAttributes().get("isToBeSubcontracted");
         String departmentName = (String) component.getAttributes().get("departmentName");
 
         if (currentJobId != null) {
             Job currentlySavedJob = Job.findJobById(getEntityManager(), currentJobId);
             if (currentlySavedJob != null) {
-                if (isSubContracted && isToBeSubcontracted) {
+                if (isSubContract && isToBeSubcontracted) {
                     throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Subcontracted Department", "Please enter a valid Subcontracted Department."));
                 }
-                if (!isSubContracted && currentlySavedJob.getIsSubContracted()) {
+                if (!isSubContract && currentlySavedJob.getIsSubContract()) {
                     throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Subcontracted Department", "Please enter a valid Subcontracted Department."));
                 }
             }

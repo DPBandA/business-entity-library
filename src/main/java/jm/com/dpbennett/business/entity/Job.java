@@ -20,6 +20,8 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -340,7 +342,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
         return job;
     }
-
+   
     public static String getJobNumber(Job job, EntityManager em) {
         Calendar c = Calendar.getInstance();
         String departmentOrCompanyCode;
@@ -488,27 +490,13 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.instructions = instructions;
     }
 
-    // tk Is this used for jobs that have been saved? If not make use of
-    //  hasSubcontracts() instead.
-    public Boolean getIsSubContracted() {
+    public Boolean getIsSubContract() {
         if (getSubContractedDepartment().getName().equals("")
                 || getSubContractedDepartment().getName().equals("--")) {
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * NB: This method gets jobs with year received and sequence number that are
-     * the same as this job. The sequence number and year are used if the parent
-     * field is not set.
-     *
-     * @param em
-     * @return
-     */
-    public Boolean hasSubcontracts(EntityManager em) {
-        return !getSubcontracts(em).isEmpty();
     }
 
     public List<Job> getSubcontracts(EntityManager em) {
@@ -526,7 +514,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 //            for (Job job : jobs) {
 //                // If this job is subcontracted and is a child of this job
 //                // then it's a subcontract
-//                if (job.getIsSubContracted() && !this.getIsSubContracted()) {
+//                if (job.getIsSubContract() && !this.getIsSubContract()) {
 //
 //                    String ccName = "Subcontract to " + job.getSubContractedDepartment().getName() + " (" + job.getJobNumber() + ")";
 //                    // Check that this cost component does not already exist.
@@ -1392,7 +1380,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
         foundJobs = findJobsByYearReceivedAndJobSequenceNumber(em, job.yearReceived, job.jobSequenceNumber);
         for (Job foundJob : foundJobs) {
-            if (foundJob.getIsSubContracted() && !foundJob.getJobStatusAndTracking().getCompleted()) {
+            if (foundJob.getIsSubContract() && !foundJob.getJobStatusAndTracking().getCompleted()) {
                 incompleteSubcontracts.add(foundJob);
             }
         }
@@ -1411,21 +1399,17 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                     + yearReceived.toString() + " AND j.jobSequenceNumber = "
                     + jobSequenceNumber.toString(), Job.class).getResultList();
 
-            if (!jobs.isEmpty()) {
-                return jobs;
-            } else {
-                return null;
-            }
+            return jobs;
         } catch (Exception e) {
             System.out.println(e);
-            return null;
+            return new ArrayList<>();
         }
     }
 
     /**
-     * 
+     *
      * @param em
-     * @return 
+     * @return
      */
     public List<Job> findSubcontracts(EntityManager em) {
         try {
@@ -1442,9 +1426,9 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     }
 
     /**
-     * 
+     *
      * @param em
-     * @return 
+     * @return
      */
     public List<Job> findPossibleSubcontracts(EntityManager em) {
         List<Job> possibleSubcontracts = new ArrayList<>();
@@ -1454,13 +1438,25 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 this.getJobSequenceNumber());
         if (jobs != null) {
             for (Job job : jobs) {
-                if (job.getIsSubContracted() && !this.getIsSubContracted()) {
-                   possibleSubcontracts.add(job);
+                if (job.getIsSubContract() && !this.getIsSubContract()) {
+                    possibleSubcontracts.add(job);
                 }
             }
         }
 
         return possibleSubcontracts;
+    }
+
+    public static List<String> getJobNumbersWithCosts(List<Job> jobs) {
+        List<String> jobNumbersWithCosts = new ArrayList<>();
+        DecimalFormat formatter = new DecimalFormat("$#,##0.00");
+
+        for (Job job : jobs) {
+            jobNumbersWithCosts.add(job.getJobNumber()
+                    + " (" + formatter.format(job.getJobCostingAndPayment().getFinalCost()) + ")");
+        }
+
+        return jobNumbersWithCosts;
     }
 
 //    public void findPossibleSubcontracts(EntityManager em) {
@@ -1470,7 +1466,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 //                    this.getJobSequenceNumber());
 //            if (jobs != null) {
 //                for (Job job : jobs) {
-//                    if (job.getIsSubContracted() && !this.getIsSubContracted()
+//                    if (job.getIsSubContract() && !this.getIsSubContract()
 //                            && (job.getJobStatusAndTracking().getWorkProgress().equals("Completed"))) {
 //                        String ccName = "Subcontract to " + job.getSubContractedDepartment().getName() + " (" + job.getJobNumber() + ")";
 //                        // Check that this cost component does not already exist.
@@ -1832,11 +1828,11 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
         // Check for valid subcontracted department
         // tk impl isToBeSubcontracted in Job use it as it is used in JobManager
-        if (!currentJob.getIsSubContracted() && getIsToBeSubcontracted()) {
+        if (!currentJob.getIsSubContract() && getIsToBeSubcontracted()) {
             return new ReturnMessage(false, "Please enter a valid subcontracted department.");
         } else if ((currentlySavedJob != null)
-                && !currentJob.getIsSubContracted()
-                && currentlySavedJob.getIsSubContracted()) {
+                && !currentJob.getIsSubContract()
+                && currentlySavedJob.getIsSubContract()) {
 
             // Reset current subcontracted department
             currentJob.setSubContractedDepartment(currentlySavedJob.getSubContractedDepartment());
@@ -1907,7 +1903,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
 
         // Check for valid creation of sub contracts
-        if (currentJob.getIsSubContracted() && currentJob.getJobSequenceNumber() == null) {
+        if (currentJob.getIsSubContract() && currentJob.getJobSequenceNumber() == null) {
             return new ReturnMessage(false, "A main/parent job must be created before creating a subcontracted job.");
         }
 
@@ -1916,7 +1912,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         if (currentJob.getId() != null) {
             Job jobFound = Job.findJobById(em, currentJob.getId());
             if (jobFound != null) {
-                if (!jobFound.getIsSubContracted() && currentJob.getIsSubContracted()) {
+                if (!jobFound.getIsSubContract() && currentJob.getIsSubContract()) {
                     return new ReturnMessage(false, "A main/parent job cannot be converted to a subcontracted job.\n"
                             + "Create a copy of this job instead then convert the copied job to a subcontract.");
                 }
