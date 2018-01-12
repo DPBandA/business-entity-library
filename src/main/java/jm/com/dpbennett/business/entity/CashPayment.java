@@ -20,7 +20,10 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import javax.faces.model.SelectItem;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -63,6 +66,7 @@ public class CashPayment implements Serializable, BusinessEntity {
     private Double discount;
     private String discountType;
     private String paymentTerms;
+    private String paymentPurpose;
     @Transient
     private Boolean isDirty;
 
@@ -75,6 +79,7 @@ public class CashPayment implements Serializable, BusinessEntity {
         this.receiptNumber = "";
         this.payment = 0.0;
         this.type = "Cash";
+        this.paymentPurpose = "Final";
     }
 
     @Override
@@ -85,6 +90,45 @@ public class CashPayment implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * NB: Payment types to be put in database...
+     *
+     * @return
+     */
+    public static List getPaymentTypes() {
+        ArrayList paymentTypes = new ArrayList();
+
+        paymentTypes.add(new SelectItem("Cash", "Cash"));
+        paymentTypes.add(new SelectItem("Cheque", "Cheque"));
+        paymentTypes.add(new SelectItem("Credit Card", "Credit Card"));
+        paymentTypes.add(new SelectItem("Debit Card", "Debit Card"));
+
+        return paymentTypes;
+    }
+    
+    /**
+     * NB: Payment purposes to be put in database...
+     *
+     * @return
+     */
+    public static List getPaymentPurposes() {
+        ArrayList paymentPurposes = new ArrayList();
+
+        paymentPurposes.add(new SelectItem("Deposit", "Deposit"));
+        paymentPurposes.add(new SelectItem("Intermediate", "Intermediate payment"));
+        paymentPurposes.add(new SelectItem("Final", "Final payment"));
+       
+        return paymentPurposes;
+    }
+
+    public String getPaymentPurpose() {
+        return paymentPurpose;
+    }
+
+    public void setPaymentPurpose(String paymentPurpose) {
+        this.paymentPurpose = paymentPurpose;
     }
 
     public Boolean getIsDirty() {

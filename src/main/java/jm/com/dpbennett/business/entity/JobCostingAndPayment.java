@@ -28,6 +28,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+import javax.faces.model.SelectItem;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -243,6 +244,20 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         }
         return discount;
     }
+    
+    /**
+     * Returns the discount type that can be applied to a payment/amount
+     *
+     * @return
+     */
+    public static List getDiscountTypes() {
+        ArrayList discountTypes = new ArrayList();
+
+        discountTypes.add(new SelectItem("Fixed Cost", "Currency ($): "));
+        discountTypes.add(new SelectItem("Percentage", "Percentage (%): "));
+
+        return discountTypes;
+    }
 
     public void setDiscount(Double discount) {
         this.discount = discount;
@@ -342,7 +357,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         setTotalTax(BusinessEntityUtils.roundTo2DecimalPlaces(finalCostWithDiscount * getPercentageGCT() / 100.0));
         setTotalCost(finalCostWithDiscount + getTotalTax());
 
-        // Remove desposit(s) if any       
+        // Remove deposit(s)/total payments if any       
         setAmountDue(getTotalCost() - BusinessEntityUtils.roundTo2DecimalPlaces(getDeposit()));
 
         return getAmountDue();
