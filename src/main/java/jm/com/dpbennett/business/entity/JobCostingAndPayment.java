@@ -244,7 +244,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         }
         return discount;
     }
-    
+
     /**
      * Returns the discount type that can be applied to a payment/amount
      *
@@ -336,10 +336,10 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
         return finalCost;
     }
-    
+
     public String getFormattedFinalCost() {
         DecimalFormat formatter = new DecimalFormat("$#,##0.00");
-        
+
         return formatter.format(getFinalCost());
     }
 
@@ -358,7 +358,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         setTotalCost(finalCostWithDiscount + getTotalTax());
 
         // Remove deposit(s)/total payments if any       
-        setAmountDue(getTotalCost() - BusinessEntityUtils.roundTo2DecimalPlaces(getDeposit()));
+        setAmountDue(getTotalCost() - BusinessEntityUtils.roundTo2DecimalPlaces(getPayment()));
 
         return getAmountDue();
     }
@@ -400,12 +400,25 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         this.completed = completed;
     }
 
+    /**
+     * Gets the cash payments made. Note that if there are no cash payments but
+     * a deposit exists, the deposit is created as a "Final" payment.
+     *
+     * @return
+     */
     @XmlTransient
     @JsonIgnore
     public List<CashPayment> getCashPayments() {
         if (cashPayments == null) {
             cashPayments = new ArrayList<>();
         }
+
+        if (deposit != null) {
+            if (cashPayments.isEmpty() && deposit > 0.0) {
+                cashPayments.add(new CashPayment(deposit));
+            }
+        }
+
         return cashPayments;
     }
 
@@ -413,15 +426,37 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         this.cashPayments = cashPayments;
     }
 
+    /**
+     * Get the total deposit payments from cash payments
+     *
+     * @return
+     */
     public Double getDeposit() {
-        if (deposit == null) {
-            deposit = 0.0;
+
+        deposit = 0.0;
+
+        for (CashPayment cashPayment : cashPayments) {
+            if (cashPayment.getPaymentPurpose().equals("Deposit")) {
+                deposit = deposit + cashPayment.getPayment();
+            }
         }
+
         return deposit;
     }
 
-    public void setDeposit(Double deposit) {
-        this.deposit = deposit;
+    /**
+     * Get the total payments from cash payments
+     *
+     * @return
+     */
+    public Double getPayment() {
+        Double payment = 0.0;
+
+        for (CashPayment cashPayment : getCashPayments()) {
+            payment = payment + cashPayment.getPayment();            
+        }
+
+        return payment;
     }
 
     public Double getEstimatedCost() {
@@ -543,7 +578,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     public String getName() {
         return name;
     }
-   
+
     @Override
     public void setName(String name) {
         this.name = name;
@@ -721,7 +756,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println("An error occured while saving the job costing and payment" + e);
         }

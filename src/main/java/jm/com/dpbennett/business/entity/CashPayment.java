@@ -79,6 +79,18 @@ public class CashPayment implements Serializable, BusinessEntity {
         this.receiptNumber = "";
         this.payment = 0.0;
         this.type = "Cash";
+        this.paymentPurpose = "Deposit";
+    }
+
+    public CashPayment(Double payment) {
+        this.discount = 0.0;
+        this.comment = "";
+        this.payeeLastname = "";
+        this.payeeFirstname = "";
+        this.payeeTitle = "";
+        this.receiptNumber = "";
+        this.payment = payment;
+        this.type = "Cash";
         this.paymentPurpose = "Final";
     }
 
@@ -104,10 +116,11 @@ public class CashPayment implements Serializable, BusinessEntity {
         paymentTypes.add(new SelectItem("Cheque", "Cheque"));
         paymentTypes.add(new SelectItem("Credit Card", "Credit Card"));
         paymentTypes.add(new SelectItem("Debit Card", "Debit Card"));
+        paymentTypes.add(new SelectItem("Other", "Other"));
 
         return paymentTypes;
     }
-    
+
     /**
      * NB: Payment purposes to be put in database...
      *
@@ -119,7 +132,8 @@ public class CashPayment implements Serializable, BusinessEntity {
         paymentPurposes.add(new SelectItem("Deposit", "Deposit"));
         paymentPurposes.add(new SelectItem("Intermediate", "Intermediate payment"));
         paymentPurposes.add(new SelectItem("Final", "Final payment"));
-       
+        paymentPurposes.add(new SelectItem("Other", "Other"));
+
         return paymentPurposes;
     }
 
@@ -194,6 +208,9 @@ public class CashPayment implements Serializable, BusinessEntity {
     }
 
     public Date getDateOfPayment() {
+        if (dateOfPayment == null) {
+            dateOfPayment = new Date();
+        }
         return dateOfPayment;
     }
 

@@ -107,6 +107,10 @@ public class RequiredFieldValidator implements Validator {
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Cost Component Rate", "Please enter a valid rate");
             case "costComponentCost":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Cost Component Cost", "Please enter a valid cost");
+            case "paymentAmount":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Payment Amount", "Please enter a valid payment amount");
+            case "discountAmount":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Discount Amount", "Please enter a valid discount amount");
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required fields");
         }
