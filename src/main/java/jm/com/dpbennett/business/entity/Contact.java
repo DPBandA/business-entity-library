@@ -48,7 +48,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "contact")
 @XmlRootElement
-public class Contact implements Person, BusinessEntity, Serializable, Comparable, Converter {
+public class Contact implements Person, BusinessEntity, Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -512,22 +512,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         }
 
         return contact;
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        Contact contact = new Contact();
-
-        if (value != null) {
-            contact.setName(value);
-        }
-
-        return contact;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((Contact) value).getName();
     }
 
     @Override
