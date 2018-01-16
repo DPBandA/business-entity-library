@@ -419,6 +419,11 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             }
         }
 
+        // tk        
+        for (CashPayment cashPayment : cashPayments) {
+            System.out.println("cash payment id: " + cashPayment.getId());
+        }
+
         return cashPayments;
     }
 
@@ -453,7 +458,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         Double payment = 0.0;
 
         for (CashPayment cashPayment : getCashPayments()) {
-            payment = payment + cashPayment.getPayment();            
+            payment = payment + cashPayment.getPayment();
         }
 
         return payment;

@@ -44,7 +44,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
- * @author Desmond
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "client")
@@ -485,10 +485,8 @@ public class Client implements Customer, Serializable, BusinessEntity {
             return false;
         }
         Client other = (Client) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -525,9 +523,9 @@ public class Client implements Customer, Serializable, BusinessEntity {
         try {
             String newTrn = trn.replaceAll("'", "''");
 
-            List<Client> clients
-                    = em.createQuery("SELECT c FROM Client c where UPPER(c.taxRegistrationNumber) like '"
-                            + newTrn.toUpperCase() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
+            List<Client> clients;
+            clients = em.createQuery("SELECT c FROM Client c where UPPER(c.taxRegistrationNumber) like '"
+                    + newTrn.toUpperCase() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -31,8 +30,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- *
- * @author dbennett
+ * This class encapsulates the fields of the ARCUS database table as an
+ * AccPacCustomer.
+ * @author Desmond Bennett
+ * @version 1.0
  */
 @Entity
 @Table(name = "ARCUS")
@@ -40,7 +41,6 @@ public class AccPacCustomer implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(length = 12, name = "IDCUST")
     private String id;
     @Column(length = 60, name = "NAMECUST")
@@ -66,12 +66,19 @@ public class AccPacCustomer implements Serializable {
     @Column(length = 6, name = "IDACCTSET")
     private String IDACCTSET;
 
+    /**
+     * Constructs an AccPacCustomer and initializes important fields.
+     */
     public AccPacCustomer() {
         balanceDueInCust = new BigDecimal(0.0);
         balanceDueInFunc = new BigDecimal(0.0);
         creditLimit = new BigDecimal(0.0);
     }
 
+    /**
+     * Constructs an AccPacCustomer and initializes important fields.
+     * @param customerName The name of the customer
+     */
     public AccPacCustomer(String customerName) {
         this.customerName = customerName;
         balanceDueInCust = new BigDecimal(0.0);
@@ -79,10 +86,18 @@ public class AccPacCustomer implements Serializable {
         creditLimit = new BigDecimal(0.0);
     }
 
+    /**
+     * Gets the AccPacCustomer id string.
+     * @return The id of the customer.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets the AccPacCustomer id string.
+     * @param id 
+     */
     public void setId(String id) {
         this.id = id;
     }
@@ -221,11 +236,6 @@ public class AccPacCustomer implements Serializable {
 
     @Override
     public String toString() {
-//        if (customerName != null) {
-//            return customerName.replaceAll("&#38;", "&");
-//        } else {
-//            return "";
-//        }
         return customerName;
     }
 
@@ -234,8 +244,8 @@ public class AccPacCustomer implements Serializable {
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<AccPacCustomer> clients =
-                    em.createQuery("SELECT a FROM AccPacCustomer a where UPPER(a.customerName) like '"
+            List<AccPacCustomer> clients;
+            clients = em.createQuery("SELECT a FROM AccPacCustomer a where UPPER(a.customerName) like '"
                     + newName.toUpperCase().trim() + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
             return clients;
         } catch (Exception e) {
@@ -263,28 +273,4 @@ public class AccPacCustomer implements Serializable {
         }
     }
 
-//    @Override
-//    public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
-//        if (submittedValue.trim().equals("")) {
-//            return null;
-//        } else {
-//            AccPacCustomer customer = new AccPacCustomer();
-//            customer.setCustomerName(submittedValue.trim());
-//
-//            return customer;
-//        }
-//    }
-//
-//    @Override
-//    public String getAsString(FacesContext context, UIComponent component, Object value) {
-//        if (value == null || value.equals("")) {
-//            return "";
-//        } else {
-//            if (((AccPacCustomer) value).getCustomerName() != null) {
-//                return ((AccPacCustomer) value).getCustomerName().replaceAll("&amp;", "&&"); // org &#38;
-//            } else {
-//                return "";
-//            }
-//        }
-//    }
 }
