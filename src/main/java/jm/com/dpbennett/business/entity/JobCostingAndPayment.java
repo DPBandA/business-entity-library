@@ -174,7 +174,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
     public Double getMinDepositIncludingTaxes() {
         minDepositIncludingTaxes
-                = BusinessEntityUtils.roundTo2DecimalPlaces(getMinDeposit() + getMinDeposit() * getPercentageGCT() / 100.0);
+                = getMinDeposit() + getMinDeposit() * getPercentageGCT() / 100.0;
+                //= BusinessEntityUtils.roundTo2DecimalPlaces(getMinDeposit() + getMinDeposit() * getPercentageGCT() / 100.0);
 
         return minDepositIncludingTaxes;
     }
@@ -351,14 +352,16 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
         // NB: Remove discount before taxes are applied
         // Take into account discount when it is a percentage       
-        Double finalCostWithDiscount = getFinalCost() - BusinessEntityUtils.roundTo2DecimalPlaces(getDiscountValue());
+        Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); //BusinessEntityUtils.roundTo2DecimalPlaces(getDiscountValue());
 
         // Add taxes to total (eg GCT)
-        setTotalTax(BusinessEntityUtils.roundTo2DecimalPlaces(finalCostWithDiscount * getPercentageGCT() / 100.0));
+        //setTotalTax(BusinessEntityUtils.roundTo2DecimalPlaces(finalCostWithDiscount * getPercentageGCT() / 100.0));
+        setTotalTax(finalCostWithDiscount * getPercentageGCT() / 100.0);
         setTotalCost(finalCostWithDiscount + getTotalTax());
 
         // Remove deposit(s)/total payments if any       
-        setAmountDue(getTotalCost() - BusinessEntityUtils.roundTo2DecimalPlaces(getPayment()));
+        //setAmountDue(getTotalCost() - BusinessEntityUtils.roundTo2DecimalPlaces(getPayment()));
+        setAmountDue(getTotalCost() - getPayment());
 
         return getAmountDue();
     }
@@ -413,17 +416,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             cashPayments = new ArrayList<>();
         }
 
-        if (deposit != null) {
-            if (cashPayments.isEmpty() && deposit > 0.0) {
-                cashPayments.add(new CashPayment(deposit));
-            }
-        }
-
-        // tk        
-        for (CashPayment cashPayment : cashPayments) {
-            System.out.println("cash payment id: " + cashPayment.getId());
-        }
-
         return cashPayments;
     }
 
@@ -432,35 +424,30 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     /**
-     * Get the total deposit payments from cash payments
-     *
+     * Get the deposit payment for the job.
+     * 
      * @return
      */
     public Double getDeposit() {
-
-        deposit = 0.0;
-
-        for (CashPayment cashPayment : cashPayments) {
-            if (cashPayment.getPaymentPurpose().equals("Deposit")) {
-                deposit = deposit + cashPayment.getPayment();
-            }
+        if (deposit == null) {
+            deposit = 0.0;
         }
 
         return deposit;
     }
 
     /**
-     * Get the total payments from cash payments
+     * Get the total payments from cash payments and deposit if any.
      *
      * @return
      */
     public Double getPayment() {
-        Double payment = 0.0;
+        Double payment = getDeposit();
 
         for (CashPayment cashPayment : getCashPayments()) {
             payment = payment + cashPayment.getPayment();
         }
-
+        
         return payment;
     }
 
@@ -474,7 +461,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
     public Double getEstimatedCostIncludingTaxes() {
         estimatedCostIncludingTaxes
-                = BusinessEntityUtils.roundTo2DecimalPlaces(getEstimatedCost() + getEstimatedCost() * getPercentageGCT() / 100.0);
+                = getEstimatedCost() + getEstimatedCost() * getPercentageGCT() / 100.0;
+                //= BusinessEntityUtils.roundTo2DecimalPlaces(getEstimatedCost() + getEstimatedCost() * getPercentageGCT() / 100.0);
 
         return estimatedCostIncludingTaxes;
     }
