@@ -259,6 +259,9 @@ public class CashPayment implements Serializable, BusinessEntity {
     }
 
     public String getReceiptNumber() {
+        if (receiptNumber == null) {
+            receiptNumber = "";
+        }
         return receiptNumber;
     }
 

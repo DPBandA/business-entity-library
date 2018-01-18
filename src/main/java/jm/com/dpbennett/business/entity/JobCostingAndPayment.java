@@ -360,8 +360,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         setTotalCost(finalCostWithDiscount + getTotalTax());
 
         // Remove deposit(s)/total payments if any       
-        //setAmountDue(getTotalCost() - BusinessEntityUtils.roundTo2DecimalPlaces(getPayment()));
-        setAmountDue(getTotalCost() - getPayment());
+        //setAmountDue(getTotalCost() - BusinessEntityUtils.roundTo2DecimalPlaces(getTotalPayment()));
+        setAmountDue(getTotalCost() - getTotalPayment());
 
         return getAmountDue();
     }
@@ -441,7 +441,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
      *
      * @return
      */
-    public Double getPayment() {
+    public Double getTotalPayment() {
         Double payment = getDeposit();
 
         for (CashPayment cashPayment : getCashPayments()) {
@@ -538,6 +538,12 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public String getReceiptNumber() {
+        //receiptNumber = "";
+        
+        //for (CashPayment cashPayment : getCashPayments()) {
+        //    setReceiptNumber(receiptNumber + " " + cashPayment.getReceiptNumber());
+        //}
+        
         return receiptNumber;
     }
 
