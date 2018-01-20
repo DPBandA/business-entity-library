@@ -88,6 +88,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     private String userInterfaceThemeName;
     private String jobTableViewPreference;
     private Boolean authenticate;
+    private String activity;
 
     public JobManagerUser() {
         employee = new Employee();
@@ -286,32 +287,44 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         this.legalMetrologyUnit = legalMetrologyUnit;
     }
 
-    public Boolean isLoggedIn() {
-        if (getPollTime() != null) {
-            Long currentTime = new Date().getTime();
-            Long diff = currentTime - getPollTime().getTime();
+    /**
+     * Logs the poll time and activity of a user. The user is saved after the
+     * activity is logged.
+     *
+     * @param activity
+     * @param em
+     */
+    public void logActivity(String activity, EntityManager em) {
+        this.setPollTime(new Date());
+        this.setActivity(activity);
+        this.save(em);
+    }
 
-            if (diff <= 240000) { // tk get from system option
-                return true;
-            } else {
+    /**
+     * Gets the activity and poll time of a user
+     *
+     * @return
+     */
+    public String getLoggedActivity() {
 
-                return false;
-            }
+        if (pollTime != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy");
+            
+            return getActivity() + " (" + formatter.format(pollTime) + ")";
         } else {
-            return false;
+            return getActivity();
         }
-
     }
 
     public String getActivity() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd, hh:mm:ss");
-
-        if (isLoggedIn()) {
-            return "Checked/Logged in " + formatter.format(getPollTime());
-        } else {
-            return "--";
+        if (activity == null) {
+            activity = "--";
         }
+        return activity;
+    }
 
+    public void setActivity(String activity) {
+        this.activity = activity;
     }
 
     public String getEmployeeFirstname() {

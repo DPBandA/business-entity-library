@@ -69,6 +69,8 @@ public class ContactValidator implements Validator {
         switch (componentId) {
             case "contact":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contact Required", "Please enter a valid contact. The characters \" ' and ; are NOT allowed.");
+            case "clientContact":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contact Required", "Please enter a valid contact. The characters \" ' and ; are NOT allowed.");
             case "contactType":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contact Type Required", "Please enter a valid type. The characters \" ' and ; are NOT allowed.");
             case "contactFirstname":
