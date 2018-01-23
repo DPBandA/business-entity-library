@@ -39,5 +39,9 @@ public interface BusinessEntity {
 
     public ReturnMessage save(EntityManager em);
 
-    public ReturnMessage validate(EntityManager em);      
+    public ReturnMessage validate(EntityManager em);  
+
+//    public Boolean getIsDirty();
+//    
+//    public void setIsDirty(Boolean isDirty);
 }

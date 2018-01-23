@@ -65,9 +65,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     private String purchaseOrderNumber;
     private String receiptNumber;
     private String paymentTerms;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<CashPayment> cashPayments;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<CostComponent> costComponents;
     private Double estimatedCost;
     private String estimatedCostDoneBy;
@@ -145,6 +145,10 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         if (isDirty == null) {
             isDirty = false;
         }
+        
+        isDirty = isDirty || isCostComponentDirty();
+        isDirty = isDirty || isCashPaymentDirty();
+        
         return isDirty;
     }
 
@@ -175,7 +179,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     public Double getMinDepositIncludingTaxes() {
         minDepositIncludingTaxes
                 = getMinDeposit() + getMinDeposit() * getPercentageGCT() / 100.0;
-                //= BusinessEntityUtils.roundTo2DecimalPlaces(getMinDeposit() + getMinDeposit() * getPercentageGCT() / 100.0);
+        //= BusinessEntityUtils.roundTo2DecimalPlaces(getMinDeposit() + getMinDeposit() * getPercentageGCT() / 100.0);
 
         return minDepositIncludingTaxes;
     }
@@ -425,7 +429,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
     /**
      * Get the deposit payment for the job.
-     * 
+     *
      * @return
      */
     public Double getDeposit() {
@@ -447,7 +451,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         for (CashPayment cashPayment : getCashPayments()) {
             payment = payment + cashPayment.getPayment();
         }
-        
+
         return payment;
     }
 
@@ -462,7 +466,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     public Double getEstimatedCostIncludingTaxes() {
         estimatedCostIncludingTaxes
                 = getEstimatedCost() + getEstimatedCost() * getPercentageGCT() / 100.0;
-                //= BusinessEntityUtils.roundTo2DecimalPlaces(getEstimatedCost() + getEstimatedCost() * getPercentageGCT() / 100.0);
+        //= BusinessEntityUtils.roundTo2DecimalPlaces(getEstimatedCost() + getEstimatedCost() * getPercentageGCT() / 100.0);
 
         return estimatedCostIncludingTaxes;
     }
@@ -539,11 +543,10 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
     public String getReceiptNumber() {
         //receiptNumber = "";
-        
+
         //for (CashPayment cashPayment : getCashPayments()) {
         //    setReceiptNumber(receiptNumber + " " + cashPayment.getReceiptNumber());
         //}
-        
         return receiptNumber;
     }
 
@@ -728,7 +731,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             // Save new payments 
             if (!getCashPayments().isEmpty()) {
                 for (CashPayment payment : getCashPayments()) {
-                    if (payment.getId() == null && !payment.save(em).isSuccess()) {
+                    if (payment.getIsDirty() && !payment.save(em).isSuccess()) {
                         return new ReturnMessage(false,
                                 "Payment save error occurred",
                                 "An error occurred while saving a payment",
@@ -740,7 +743,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             // Save new cost components
             if (!getCostComponents().isEmpty()) {
                 for (CostComponent costComponent : getCostComponents()) {
-                    if (costComponent.getId() == null && !costComponent.save(em).isSuccess()) {
+                    if (costComponent.getIsDirty() && !costComponent.save(em).isSuccess()) {
                         return new ReturnMessage(false,
                                 "Cost component save error occurred",
                                 "An error occurred while saving a cost component",
@@ -749,12 +752,20 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
                 }
             }
 
-            // Save    
-            em.getTransaction().begin();
-            BusinessEntityUtils.saveBusinessEntity(em, this);
-            em.getTransaction().commit();
+            // Save   
+            if (isDirty) {
+                em.getTransaction().begin();
+                isDirty = false;
+                BusinessEntityUtils.saveBusinessEntity(em, this);
+                em.getTransaction().commit();
 
-            return new ReturnMessage();
+                return new ReturnMessage();
+            } else {
+                return new ReturnMessage(true,
+                        "Costing and payment NOT saved",
+                        "Not saved because it was not edited",
+                        FacesMessage.SEVERITY_INFO);
+            }
 
         } catch (Exception e) {
             System.out.println("An error occured while saving the job costing and payment" + e);
@@ -765,6 +776,30 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
                 "An error occurred while saving the job costing and payment",
                 FacesMessage.SEVERITY_ERROR);
 
+    }
+
+    public Boolean isCostComponentDirty() {
+        boolean dirty = false;
+
+        if (!getCostComponents().isEmpty()) {
+            for (CostComponent costComponent : getCostComponents()) {
+                dirty = dirty || costComponent.getIsDirty();
+            }
+        }
+
+        return dirty;
+    }
+    
+    public Boolean isCashPaymentDirty() {
+        boolean dirty = false;
+
+        if (!getCashPayments().isEmpty()) {
+            for (CashPayment payment : getCashPayments()) {
+                dirty = dirty || payment.getIsDirty();
+            }
+        }
+
+        return dirty;
     }
 
     @Override

@@ -313,6 +313,7 @@ public class CashPayment implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
             em.getTransaction().begin();
+            isDirty = false;
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 

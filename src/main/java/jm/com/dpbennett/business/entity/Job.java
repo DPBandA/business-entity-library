@@ -96,7 +96,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private List<JobSample> jobSamples;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedTo;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private JobCostingAndPayment jobCostingAndPayment;
     @OneToOne(cascade = CascadeType.ALL)
     private ServiceContract serviceContract;

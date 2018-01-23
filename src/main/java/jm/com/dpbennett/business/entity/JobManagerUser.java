@@ -318,7 +318,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     public String getActivity() {
         if (activity == null) {
-            activity = "--";
+            activity = "";
         }
         return activity;
     }
