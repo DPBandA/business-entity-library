@@ -116,6 +116,9 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
         return isDirty;
     }
 

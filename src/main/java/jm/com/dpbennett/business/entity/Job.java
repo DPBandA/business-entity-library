@@ -438,6 +438,9 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         if (isDirty == null) {
             isDirty = false;
         }
+        
+        isDirty = isDirty || getJobCostingAndPayment().getIsDirty();
+        
         return isDirty;
     }
 
