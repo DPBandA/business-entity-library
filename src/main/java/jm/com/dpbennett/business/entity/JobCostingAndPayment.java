@@ -145,10 +145,10 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         if (isDirty == null) {
             isDirty = false;
         }
-        
+
         isDirty = isDirty || isCostComponentDirty();
         isDirty = isDirty || isCashPaymentDirty();
-        
+
         return isDirty;
     }
 
@@ -710,7 +710,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
                 && job.getClassification().getIsEarning()
                 && job.getDepartment().getPrivilege().getCanApplyTaxesToJobCosting()
                 && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option
-                <= BusinessEntityUtils.getMediumDateStringAsLong(
+
+                <= BusinessEntityUtils.getMediumDateStringAsLong( // tk why on earth is this here??
                         BusinessEntityUtils.getDateInMediumDateFormat(job.getJobStatusAndTracking().getDateSubmitted())));
     }
 
@@ -754,7 +755,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
             // Save   
             if (isDirty) {
-                em.getTransaction().begin();               
+                em.getTransaction().begin();
                 isDirty = false;
                 BusinessEntityUtils.saveBusinessEntity(em, this);
                 em.getTransaction().commit();
@@ -789,7 +790,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
         return dirty;
     }
-    
+
     public Boolean isCashPaymentDirty() {
         boolean dirty = false;
 
