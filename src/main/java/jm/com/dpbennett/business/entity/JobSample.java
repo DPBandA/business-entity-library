@@ -82,7 +82,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     private String sampleSize;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client client;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<ProductTest> tests;
     // end new
     @Temporal(javax.persistence.TemporalType.DATE)

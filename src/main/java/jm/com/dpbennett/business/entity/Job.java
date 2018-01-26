@@ -31,7 +31,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -86,13 +85,13 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department subContractedDepartment;
     private Integer yearReceived;
-    @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client client;
     @OneToOne(cascade = CascadeType.REFRESH)
     private JobCategory jobCategory;
     @OneToOne(cascade = CascadeType.REFRESH)
     private JobSubCategory jobSubCategory;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany (cascade = CascadeType.REFRESH)
     private List<JobSample> jobSamples;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedTo;
@@ -737,6 +736,10 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         }
 
         return jobSamples;
+    }
+    
+    public void setJobSamples (List<JobSample> jobSamples) {
+        this.jobSamples = jobSamples;
     }
 
     public BusinessOffice getBusinessOffice() {
@@ -1768,7 +1771,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             if (!this.getJobSamples().isEmpty()) {
                 for (JobSample jobSample : this.getJobSamples()) {
                     /// Save newly entered samples 
-                    if (jobSample.getId() == null && !jobSample.save(em).isSuccess()) {
+                    if (jobSample.getIsDirty() && !jobSample.save(em).isSuccess()) {
                         return new ReturnMessage(false,
                                 "Job sample save error occurred",
                                 "An error occurred while saving job sample" + jobSample.getReference(),
