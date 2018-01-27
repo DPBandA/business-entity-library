@@ -211,9 +211,11 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public Double getAmountDue() {
-        if (amountDue == null) {
-            amountDue = 0.0;
-        }
+//        if (amountDue == null) {
+//            amountDue = 0.0;
+//        }
+        amountDue = getTotalCost() - getTotalPayment();
+
         return amountDue;
     }
 
@@ -352,24 +354,23 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         this.finalCost = finalCost;
     }
 
-    public Double calculateAmountDue() {
-
-        // NB: Remove discount before taxes are applied
-        // Take into account discount when it is a percentage       
-        Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); //BusinessEntityUtils.roundTo2DecimalPlaces(getDiscountValue());
-
-        // Add taxes to total (eg GCT)
-        //setTotalTax(BusinessEntityUtils.roundTo2DecimalPlaces(finalCostWithDiscount * getPercentageGCT() / 100.0));
-        setTotalTax(finalCostWithDiscount * getPercentageGCT() / 100.0);
-        setTotalCost(finalCostWithDiscount + getTotalTax());
-
-        // Remove deposit(s)/total payments if any       
-        //setAmountDue(getTotalCost() - BusinessEntityUtils.roundTo2DecimalPlaces(getTotalPayment()));
-        setAmountDue(getTotalCost() - getTotalPayment());
-
-        return getAmountDue();
-    }
-
+//    public Double calculateAmountDue() {
+//
+//        // NB: Remove discount before taxes are applied
+//        // Take into account discount when it is a percentage       
+////        Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); //BusinessEntityUtils.roundTo2DecimalPlaces(getDiscountValue());
+////
+////        // Add taxes to total (eg GCT)
+////        //setTotalTax(BusinessEntityUtils.roundTo2DecimalPlaces(finalCostWithDiscount * getPercentageGCT() / 100.0));
+////        setTotalTax(finalCostWithDiscount * getPercentageGCT() / 100.0);
+////        setTotalCost(finalCostWithDiscount + getTotalTax());
+//
+//        // Remove deposit(s)/total payments if any       
+//        //setAmountDue(getTotalCost() - BusinessEntityUtils.roundTo2DecimalPlaces(getTotalPayment()));
+//        setAmountDue(getTotalCost() - getTotalPayment());
+//
+//        return getAmountDue();
+//    }
     public Double getTotalJobCostingsAmount() {
         Double total = 0.0;
 
@@ -542,11 +543,12 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public String getReceiptNumber() {
-        //receiptNumber = "";
+        receiptNumber = "";
 
-        //for (CashPayment cashPayment : getCashPayments()) {
-        //    setReceiptNumber(receiptNumber + " " + cashPayment.getReceiptNumber());
-        //}
+        for (CashPayment cashPayment : getCashPayments()) {
+            setReceiptNumber(receiptNumber + " " + cashPayment.getReceiptNumber());
+        }
+
         return receiptNumber;
     }
 
@@ -685,19 +687,31 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public Double getTotalTax() {
+        Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); //BusinessEntityUtils.roundTo2DecimalPlaces(getDiscountValue());
+
+        // Add taxes to total (eg GCT)
+        //setTotalTax(BusinessEntityUtils.roundTo2DecimalPlaces(finalCostWithDiscount * getPercentageGCT() / 100.0));
+        totalTax = finalCostWithDiscount * getPercentageGCT() / 100.0;
+
         return totalTax;
     }
 
-    public void setTotalTax(Double totalTax) {
-        this.totalTax = totalTax;
-    }
-
+//    public void setTotalTax(Double totalTax) {
+//        this.totalTax = totalTax;
+//    }
     /**
      * Get total cost. Total cost includes total tax
      *
      * @return
      */
     public Double getTotalCost() {
+        Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); //BusinessEntityUtils.roundTo2DecimalPlaces(getDiscountValue());
+//
+//        // Add taxes to total (eg GCT)
+//        //setTotalTax(BusinessEntityUtils.roundTo2DecimalPlaces(finalCostWithDiscount * getPercentageGCT() / 100.0));
+//        setTotalTax(finalCostWithDiscount * getPercentageGCT() / 100.0);
+        totalCost = finalCostWithDiscount + getTotalTax();
+
         return totalCost;
     }
 
@@ -732,7 +746,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             // Save new payments 
             if (!getCashPayments().isEmpty()) {
                 for (CashPayment payment : getCashPayments()) {
-                    if (payment.getIsDirty() && !payment.save(em).isSuccess()) {
+                    if ((payment.getIsDirty() || payment.getId() == null)
+                            && !payment.save(em).isSuccess()) {
                         return new ReturnMessage(false,
                                 "Payment save error occurred",
                                 "An error occurred while saving a payment",
@@ -744,7 +759,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             // Save new cost components
             if (!getCostComponents().isEmpty()) {
                 for (CostComponent costComponent : getCostComponents()) {
-                    if (costComponent.getIsDirty() && !costComponent.save(em).isSuccess()) {
+                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
+                            && !costComponent.save(em).isSuccess()) {
                         return new ReturnMessage(false,
                                 "Cost component save error occurred",
                                 "An error occurred while saving a cost component",

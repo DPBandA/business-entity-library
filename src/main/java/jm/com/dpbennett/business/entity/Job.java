@@ -451,12 +451,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     @Override
     public void setIsDirty(Boolean isDirty) {
-        this.isDirty = isDirty;
-        if (isDirty) {
-            this.getJobStatusAndTracking().setEditStatus("(edited)");
-        } else {
-            this.getJobStatusAndTracking().setEditStatus("");
-        }
+        this.isDirty = isDirty;       
     }
 
     @Override
@@ -1777,7 +1772,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             if (!this.getJobSamples().isEmpty()) {
                 for (JobSample jobSample : this.getJobSamples()) {
                     /// Save newly entered samples 
-                    if (jobSample.getIsDirty() && !jobSample.save(em).isSuccess()) {
+                    if ((jobSample.getIsDirty() || jobSample.getId() == null) 
+                            && !jobSample.save(em).isSuccess()) {
                         return new ReturnMessage(false,
                                 "Job sample save error occurred",
                                 "An error occurred while saving job sample" + jobSample.getReference(),
