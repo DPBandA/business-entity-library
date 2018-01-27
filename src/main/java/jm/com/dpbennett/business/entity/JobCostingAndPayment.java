@@ -754,7 +754,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             }
 
             // Save   
-            if (isDirty) {
+            if (isDirty || id == null) {
                 em.getTransaction().begin();
                 isDirty = false;
                 BusinessEntityUtils.saveBusinessEntity(em, this);

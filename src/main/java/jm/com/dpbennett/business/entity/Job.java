@@ -91,7 +91,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private JobCategory jobCategory;
     @OneToOne(cascade = CascadeType.REFRESH)
     private JobSubCategory jobSubCategory;
-    @OneToMany (cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<JobSample> jobSamples;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedTo;
@@ -243,6 +243,12 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 }
 
                 this.clean();
+            } else {
+                return new ReturnMessage(false,
+                        "Undefined Error!",
+                        "An undefined error occurred while saving this job. "
+                        + "Please contact the System Administrator",
+                        FacesMessage.SEVERITY_ERROR);
             }
 
         } catch (Exception e) {
@@ -437,9 +443,9 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         if (isDirty == null) {
             isDirty = false;
         }
-        
+
         isDirty = isDirty || getJobCostingAndPayment().getIsDirty();
-        
+
         return isDirty;
     }
 
@@ -737,8 +743,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
         return jobSamples;
     }
-    
-    public void setJobSamples (List<JobSample> jobSamples) {
+
+    public void setJobSamples(List<JobSample> jobSamples) {
         this.jobSamples = jobSamples;
     }
 
