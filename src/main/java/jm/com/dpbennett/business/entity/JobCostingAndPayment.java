@@ -254,14 +254,14 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
     /**
      * Returns the discount type that can be applied to a payment/amount
-     *
+     * NB: To be deprecated
      * @return
      */
     public static List getDiscountTypes() {
         ArrayList discountTypes = new ArrayList();
 
-        discountTypes.add(new SelectItem("Fixed Cost", "Currency ($): "));
-        discountTypes.add(new SelectItem("Percentage", "Percentage (%): "));
+        discountTypes.add(new SelectItem("Currency", "Currency: "));
+        discountTypes.add(new SelectItem("Percentage", "Percentage: "));
 
         return discountTypes;
     }
@@ -271,7 +271,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public Double getDiscountValue() {
-        if (getDiscountType().equals("Fixed Cost")) {
+        if (getDiscountType().equals("Currency")) {
             return getDiscount();
         } else {
             return getFinalCost() * getDiscount() / 100.0;
