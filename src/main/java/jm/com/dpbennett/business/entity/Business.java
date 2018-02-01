@@ -56,11 +56,11 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private String type = "";
     private String notes = "";
     private String taxRegistrationNumber = "";
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Address> addresses;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Contact> contacts = null;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastAccessed = null;
