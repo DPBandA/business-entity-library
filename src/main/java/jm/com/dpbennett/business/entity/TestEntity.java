@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.File;
@@ -1471,7 +1470,6 @@ public class TestEntity {
      }
      }
      */
-
     public static Employee getEmployeeById(EntityManager em, Long Id) {
 
         return em.find(Employee.class, Id);
@@ -2173,17 +2171,11 @@ public class TestEntity {
     public static void main(String[] args) {
         if (setupDatabaseConnection("PU")) {
             EntityManager em = EMF.createEntityManager();
-            
-            Client client = Client.findClientById(em, 1088587L);
-            System.out.println("Client name: " + client.getName());
-            System.out.println("Addresses: " + client.getAddresses().size());
-            
-            System.out.println("Client address found: " + 
-                    Address.findClientAddressById(em, 
-                            "Another address for testing;  line 2;  city; Saint Elizabeth", 
-                            client.getId()));
-            
-            // Another address for testing;  line 2;  city; Saint Elizabeth
+            em.getTransaction().begin();
+            Business business = new Business("NCRA2");
+            business.getDepartments().add(new Department("Test Dept2."));
+            BusinessEntityUtils.saveBusinessEntity(em, business);
+            em.getTransaction().commit();
         }
     }
 }

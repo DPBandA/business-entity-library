@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -39,7 +38,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
-
 /**
  *
  * @author dbennett
@@ -47,29 +45,47 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "business")
 @XmlRootElement
-public class Business implements Customer, BusinessEntity, Comparable, Serializable {
+public class Business implements Customer, Company, BusinessEntity, Comparable, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id = null;
+    private String name = "";
+    private String number = "";
+    private String type = "";
+    private String notes = "";
+    private String taxRegistrationNumber = "";
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Department> departments;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
-    private String name = "";
     @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts = null;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastAccessed = null;
-    private String number = "";
-    private String type = "";
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateFirstReceived = null;
-    private String notes = "";
-    private String taxRegistrationNumber = "";
 
     public Business() {
-        addresses = new ArrayList<>();
-        contacts = new ArrayList<>();
+        this.addresses = new ArrayList<>();
+        this.contacts = new ArrayList<>();
+        this.departments = new ArrayList<>();
+    }
+
+    public Business(String name) {
+        this.name = name;
+        this.addresses = new ArrayList<>();
+        this.contacts = new ArrayList<>();
+        this.departments = new ArrayList<>();
+    }
+
+    public List<Department> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(List<Department> departments) {
+        this.departments = departments;
     }
 
     @Override
@@ -217,7 +233,7 @@ public class Business implements Customer, BusinessEntity, Comparable, Serializa
             return null;
         }
     }
-    
+
     // Get the first business that matches the given name
     public static Business findBusinessByName(EntityManager em, String name) {
 
@@ -236,7 +252,7 @@ public class Business implements Customer, BusinessEntity, Comparable, Serializa
             return null;
         }
     }
-    
+
     public static Business findDefaultBusiness(EntityManager em,
             String name,
             Boolean useTransaction) {
@@ -260,22 +276,32 @@ public class Business implements Customer, BusinessEntity, Comparable, Serializa
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Address getDefaultAddress() {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Contact getDefaultContact() {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
+    @Override
+    public List<BusinessOffice> getBusinessOffices() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setBusinessOffices(List<BusinessOffice> businessOffices) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }
