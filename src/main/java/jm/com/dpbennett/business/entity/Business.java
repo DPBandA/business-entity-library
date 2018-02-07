@@ -50,24 +50,29 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id = null;
-    private String name = "";
-    private String number = "";
-    private String type = "";
-    private String notes = "";
-    private String taxRegistrationNumber = "";
+    private Long id;
+    private String name;
+    private String number;
+    private String type;
+    private String notes;
+    private String taxRegistrationNumber;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Address> addresses;
     @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Contact> contacts = null;
+    private List<Contact> contacts;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastAccessed = null;
+    private Date dateLastAccessed;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateFirstReceived = null;
+    private Date dateFirstReceived;
 
     public Business() {
+        this.name = "";
+        this.number = "";
+        this.type = "";
+        this.notes = "";
+        this.taxRegistrationNumber = "";
         this.addresses = new ArrayList<>();
         this.contacts = new ArrayList<>();
         this.departments = new ArrayList<>();
@@ -75,6 +80,9 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     public Business(String name) {
         this.name = name;
+        this.number = "";
+        this.type = "";
+        this.notes = "";
         this.addresses = new ArrayList<>();
         this.contacts = new ArrayList<>();
         this.departments = new ArrayList<>();
@@ -272,6 +280,16 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
 
         return business;
+    }
+    
+    public static List<Business> findAllBusinesses(EntityManager em) {
+
+        try {
+            return em.createQuery("SELECT b FROM Business b ORDER BY b.name", Business.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
     }
 
     @Override

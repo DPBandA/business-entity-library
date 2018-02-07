@@ -61,21 +61,25 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Department department;
+    private String userFirstname; // tk remove cause not used?
+    private String userLastname; // tk remove cause not used?
+    private String username;
+    private String userInterfaceThemeName;
+    private String jobTableViewPreference; // rename?
+    private Boolean authenticate;
+    private String activity;
+    @Column(length = 255)
+    private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-    private String userFirstname;
-    private String userLastname;
-    private String username;
-    @Column(length = 1024)
-    private String password;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Department department;
     @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date pollTime;
     private Long lastDatabaseModuleId;
-    // Units
+    // Tk Units to be put in units/modules collection/list
     private Boolean legalMetrologyUnit;
     private Boolean jobManagementAndTrackingUnit;
     private Boolean complianceUnit;
@@ -84,11 +88,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     private Boolean serviceRequestUnit;
     private Boolean adminUnit;
     private Boolean financialAdminUnit;
-    //////////////////////////////////////////////
-    private String userInterfaceThemeName;
-    private String jobTableViewPreference;
-    private Boolean authenticate;
-    private String activity;
 
     public JobManagerUser() {
         employee = new Employee();
@@ -309,7 +308,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
         if (pollTime != null) {
             SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy");
-            
+
             return getActivity() + " (" + formatter.format(pollTime) + ")";
         } else {
             return getActivity();
