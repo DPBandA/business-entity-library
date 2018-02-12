@@ -102,6 +102,10 @@ public class AccPacCustomer implements Serializable {
         this.id = id;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public String getIDACCTSET() {
         if (IDACCTSET == null) {
             IDACCTSET = "";
