@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -40,7 +39,8 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "privilege")
 @NamedQueries({
-    @NamedQuery(name = "findAllPrivileges", query = "SELECT p FROM Privilege p ORDER BY p.name"),
+    @NamedQuery(name = "findAllPrivileges", query = "SELECT p FROM Privilege p ORDER BY p.name")
+    ,
     @NamedQuery(name = "findByPrivilegesName", query = "SELECT p FROM Privilege p WHERE p.name = :name")
 })
 @XmlRootElement
@@ -69,7 +69,6 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canDeleteEmployee;
     private Boolean canAddDepartment;
     private Boolean canDeleteDepartment;
-    private Boolean canBeJMTSAdministrator;
     private Boolean canBeSuperUser;
     private Boolean canApproveJobCosting;
     private Boolean canEnterParentJob;
@@ -78,7 +77,17 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canAuthDetentionNotice; //CANAUTHDETENTIONNOTICE, Authorize detention notice/release
     private Boolean canApprvReleaseRequest; //CANAPPRVRELEASEREQUEST, Approve release request
     private Boolean canApplyTaxesToJobCosting;
+    // Unit/Module access     
+    private Boolean canBeJMTSAdministrator;
     private Boolean canBeFinancialAdministrator;
+    private Boolean canAccessLegalMetrologyUnit;
+    private Boolean canAccessJobManagementUnit;
+    private Boolean canAccessComplianceUnit;
+    private Boolean canAccessFoodsUnit;
+    private Boolean canAccessStandardsUnit;
+    private Boolean canAccessCertificationUnit;
+    private Boolean canAccessServiceRequestUnit;
+    private Boolean canAccessLegalOfficeUnit;
     // End privilges
 
     public Privilege() {
@@ -87,6 +96,94 @@ public class Privilege implements Serializable, BusinessEntity {
 
     public Privilege(String name) {
         init(name);
+    }
+
+    public Boolean getCanAccessLegalMetrologyUnit() {
+        if (canAccessLegalMetrologyUnit == null) {
+            canAccessLegalMetrologyUnit = false;
+        }
+        return canAccessLegalMetrologyUnit;
+    }
+
+    public void setCanAccessLegalMetrologyUnit(Boolean canAccessLegalMetrologyUnit) {
+        this.canAccessLegalMetrologyUnit = canAccessLegalMetrologyUnit;
+    }
+
+    public Boolean getCanAccessJobManagementUnit() {
+        if (canAccessJobManagementUnit == null) {
+            canAccessJobManagementUnit = false;
+        }
+        return canAccessJobManagementUnit;
+    }
+
+    public void setCanAccessJobManagementUnit(Boolean canAccessJobManagementUnit) {
+        this.canAccessJobManagementUnit = canAccessJobManagementUnit;
+    }
+
+    public Boolean getCanAccessComplianceUnit() {
+        if (canAccessComplianceUnit == null) {
+            canAccessComplianceUnit = false;
+        }
+        return canAccessComplianceUnit;
+    }
+
+    public void setCanAccessComplianceUnit(Boolean canAccessComplianceUnit) {
+        this.canAccessComplianceUnit = canAccessComplianceUnit;
+    }
+
+    public Boolean getCanAccessFoodsUnit() {
+        if (canAccessFoodsUnit == null) {
+            canAccessFoodsUnit = false;
+        }
+        return canAccessFoodsUnit;
+    }
+
+    public void setCanAccessFoodsUnit(Boolean canAccessFoodsUnit) {
+        this.canAccessFoodsUnit = canAccessFoodsUnit;
+    }
+
+    public Boolean getCanAccessStandardsUnit() {
+        if (canAccessStandardsUnit == null) {
+            canAccessStandardsUnit = false;
+        }
+        return canAccessStandardsUnit;
+    }
+
+    public void setCanAccessStandardsUnit(Boolean canAccessStandardsUnit) {
+        this.canAccessStandardsUnit = canAccessStandardsUnit;
+    }
+
+    public Boolean getCanAccessCertificationUnit() {
+        if (canAccessCertificationUnit == null) {
+            canAccessCertificationUnit = false;
+        }
+        return canAccessCertificationUnit;
+    }
+
+    public void setCanAccessCertificationUnit(Boolean canAccessCertificationUnit) {
+        this.canAccessCertificationUnit = canAccessCertificationUnit;
+    }
+
+    public Boolean getCanAccessServiceRequestUnit() {
+        if (canAccessServiceRequestUnit == null) {
+            canAccessServiceRequestUnit = false;
+        }
+        return canAccessServiceRequestUnit;
+    }
+
+    public void setCanAccessServiceRequestUnit(Boolean canAccessServiceRequestUnit) {
+        this.canAccessServiceRequestUnit = canAccessServiceRequestUnit;
+    }
+
+    public Boolean getCanAccessLegalOfficeUnit() {
+        if (canAccessLegalOfficeUnit == null) {
+            canAccessLegalOfficeUnit = false;
+        }
+        return canAccessLegalOfficeUnit;
+    }
+
+    public void setCanAccessLegalOfficeUnit(Boolean canAccessLegalOfficeUnit) {
+        this.canAccessLegalOfficeUnit = canAccessLegalOfficeUnit;
     }
 
     /**

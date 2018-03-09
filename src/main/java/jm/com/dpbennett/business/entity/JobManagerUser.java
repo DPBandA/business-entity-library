@@ -61,8 +61,8 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String userFirstname; // tk remove cause not used?
-    private String userLastname; // tk remove cause not used?
+//    private String userFirstname; // tk remove cause not used?
+//    private String userLastname; // tk remove cause not used?
     private String username;
     private String userInterfaceThemeName;
     private String jobTableViewPreference; // rename?
@@ -79,21 +79,32 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date pollTime;
     private Long lastDatabaseModuleId;
-    // Tk Units to be put in units/modules collection/list
+    // Units that can be accessed by user based on privileges
     private Boolean legalMetrologyUnit;
     private Boolean jobManagementAndTrackingUnit;
     private Boolean complianceUnit;
     private Boolean foodsUnit;
-    private Boolean standardsAndCertificationUnit;
+    private Boolean standardsUnit;
+    private Boolean certificationUnit;
     private Boolean serviceRequestUnit;
     private Boolean adminUnit;
     private Boolean financialAdminUnit;
+    private Boolean legalOfficeUnit;
 
     public JobManagerUser() {
         employee = new Employee();
         username = "";
-        userFirstname = "";
-        userLastname = "";
+    }
+
+    public Boolean getLegalOfficeUnit() {
+        if (legalOfficeUnit == null) {
+            legalOfficeUnit = false;
+        }
+        return legalOfficeUnit;
+    }
+
+    public void setLegalOfficeUnit(Boolean legalOfficeUnit) {
+        this.legalOfficeUnit = legalOfficeUnit;
     }
 
     public Boolean getIsJobsPreferredJobTableView() {
@@ -248,15 +259,26 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         this.foodsUnit = foodsUnit;
     }
 
-    public Boolean getStandardsAndCertificationUnit() {
-        if (standardsAndCertificationUnit == null) {
-            return false;
+    public Boolean getStandardsUnit() {
+        if (standardsUnit == null) {
+            standardsUnit = false;
         }
-        return standardsAndCertificationUnit;
+        return standardsUnit;
     }
 
-    public void setStandardsAndCertificationUnit(Boolean standardsAndCertificationUnit) {
-        this.standardsAndCertificationUnit = standardsAndCertificationUnit;
+    public void setStandardsUnit(Boolean standardsUnit) {
+        this.standardsUnit = standardsUnit;
+    }
+
+    public Boolean getCertificationUnit() {
+        if (certificationUnit == null) {
+            certificationUnit = false;
+        }
+        return certificationUnit;
+    }
+
+    public void setCertificationUnit(Boolean certificationUnit) {
+        this.certificationUnit = certificationUnit;
     }
 
     public Long getLastDatabaseModuleId() {
@@ -393,22 +415,21 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         this.department = department;
     }
 
-    public String getUserFirstname() {
-        return userFirstname;
-    }
-
-    public void setUserFirstname(String userFirstname) {
-        this.userFirstname = userFirstname;
-    }
-
-    public String getUserLastname() {
-        return userLastname;
-    }
-
-    public void setUserLastname(String userLastname) {
-        this.userLastname = userLastname;
-    }
-
+//    public String getUserFirstname() {
+//        return userFirstname;
+//    }
+//
+//    public void setUserFirstname(String userFirstname) {
+//        this.userFirstname = userFirstname;
+//    }
+//
+//    public String getUserLastname() {
+//        return userLastname;
+//    }
+//
+//    public void setUserLastname(String userLastname) {
+//        this.userLastname = userLastname;
+//    }
     public String getUsername() {
         if (username == null) {
             username = "";
@@ -442,7 +463,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     @Override
     public String toString() {
-        return userFirstname + " " + userLastname + " (" + username + ")";
+        return username;
     }
 
     @Override
