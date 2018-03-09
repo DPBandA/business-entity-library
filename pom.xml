@@ -20,7 +20,29 @@
             </plugin>
         </plugins>
     </build>
-    <dependencies>       
+    <dependencies>     
+        <dependency>
+  		<groupId>org.activiti</groupId>
+  		<artifactId>activiti-engine</artifactId>
+  		<version>5.22.0</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.slf4j</groupId>
+  		<artifactId>slf4j-api</artifactId>
+  		<version>1.7.21</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.slf4j</groupId>
+  		<artifactId>slf4j-log4j12</artifactId>
+  		<version>1.7.21</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.h2database</groupId>
+  		<artifactId>h2</artifactId>
+  		<version>1.4.193</version>
+  	</dependency>
+        
+          
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
