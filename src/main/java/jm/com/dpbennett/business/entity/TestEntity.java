@@ -39,6 +39,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngineConfiguration;
+import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -2169,13 +2172,25 @@ public class TestEntity {
     }
 
     public static void main(String[] args) {
-        if (setupDatabaseConnection("PU")) {
-            EntityManager em = EMF.createEntityManager();
-            em.getTransaction().begin();
-            Business business = new Business("NCRA2");
-            business.getDepartments().add(new Department("Test Dept2."));
-            BusinessEntityUtils.saveBusinessEntity(em, business);
-            em.getTransaction().commit();
-        }
+        ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration()
+                .setJdbcUrl("jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000")
+                .setJdbcUsername("sa")
+                .setJdbcPassword("")
+                .setJdbcDriver("org.h2.Driver")
+                .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
+        
+        ProcessEngine processEngine = cfg.buildProcessEngine();
+        String pName = processEngine.getName();
+        String ver = ProcessEngine.VERSION;
+        System.out.println("ProcessEngine [" + pName + "] Version: [" + ver + "]");
+
+//        if (setupDatabaseConnection("PU")) {
+//            EntityManager em = EMF.createEntityManager();
+//            em.getTransaction().begin();
+//            Business business = new Business("NCRA2");
+//            business.getDepartments().add(new Department("Test Dept2."));
+//            BusinessEntityUtils.saveBusinessEntity(em, business);
+//            em.getTransaction().commit();
+//        }
     }
 }
