@@ -61,8 +61,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-//    private String userFirstname; // tk remove cause not used?
-//    private String userLastname; // tk remove cause not used?
     private String username;
     private String userInterfaceThemeName;
     private String jobTableViewPreference; // rename?
@@ -90,10 +88,22 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     private Boolean adminUnit;
     private Boolean financialAdminUnit;
     private Boolean legalOfficeUnit;
+    private Boolean crmUnit;
 
     public JobManagerUser() {
         employee = new Employee();
         username = "";
+    }
+
+    public Boolean getCrmUnit() {
+        if (crmUnit == null) {
+            crmUnit = false;
+        }
+        return crmUnit;
+    }
+
+    public void setCrmUnit(Boolean crmUnit) {
+        this.crmUnit = crmUnit;
     }
 
     public Boolean getLegalOfficeUnit() {
@@ -415,21 +425,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         this.department = department;
     }
 
-//    public String getUserFirstname() {
-//        return userFirstname;
-//    }
-//
-//    public void setUserFirstname(String userFirstname) {
-//        this.userFirstname = userFirstname;
-//    }
-//
-//    public String getUserLastname() {
-//        return userLastname;
-//    }
-//
-//    public void setUserLastname(String userLastname) {
-//        this.userLastname = userLastname;
-//    }
     public String getUsername() {
         if (username == null) {
             username = "";

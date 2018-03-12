@@ -88,6 +88,7 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canAccessCertificationUnit;
     private Boolean canAccessServiceRequestUnit;
     private Boolean canAccessLegalOfficeUnit;
+    private Boolean canAccessCRMUnit;
     // End privilges
 
     public Privilege() {
@@ -96,6 +97,17 @@ public class Privilege implements Serializable, BusinessEntity {
 
     public Privilege(String name) {
         init(name);
+    }
+
+    public Boolean getCanAccessCRMUnit() {
+        if (canAccessCRMUnit == null) {
+            canAccessCRMUnit = false;
+        }
+        return canAccessCRMUnit;
+    }
+
+    public void setCanAccessCRMUnit(Boolean canAccessCRMUnit) {
+        this.canAccessCRMUnit = canAccessCRMUnit;
     }
 
     public Boolean getCanAccessLegalMetrologyUnit() {
@@ -199,27 +211,14 @@ public class Privilege implements Serializable, BusinessEntity {
         canEditJob = false;
         canEditOwnJob = true;
         canEditDepartmentJob = true;
-        if (name.equals("Customer Service") || name.equals("Finance & Accounting Services")) {
-            canAddClient = true;
-        } else {
-            canAddClient = false;
-        }
+        canAddClient = false;
         canDeleteClient = false;
         canAddEmployee = false;
         canDeleteEmployee = false;
         canAddDepartment = false;
         canDeleteDepartment = false;
-        // NB: This is to be removed
-        if (name.equals("dbennett")
-                || name.equals("gallen")
-                || name.equals("ggale")
-                || name.equals("rdixon")) {
-            canBeJMTSAdministrator = true;
-            canBeSuperUser = true;
-        } else {
-            canBeJMTSAdministrator = false;
-            canBeSuperUser = false;
-        }
+        canBeJMTSAdministrator = false;
+        canBeSuperUser = false;
         canApproveJobCosting = false;
         canEnterParentJob = true;
     }
