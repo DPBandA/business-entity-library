@@ -29,7 +29,9 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -90,6 +92,8 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canAccessLegalOfficeUnit;
     private Boolean canAccessCRMUnit;
     // End privilges
+    @Transient
+    private Boolean isDirty;
 
     public Privilege() {
         init("");
@@ -97,6 +101,17 @@ public class Privilege implements Serializable, BusinessEntity {
 
     public Privilege(String name) {
         init(name);
+    }
+
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Boolean getCanAccessCRMUnit() {
@@ -580,7 +595,17 @@ public class Privilege implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Privilege not saved");
     }
 
     @Override

@@ -90,6 +90,7 @@
     <class>jm.com.dpbennett.business.entity.SystemOption</class>
     <class>jm.com.dpbennett.business.entity.TestMeasure</class>
     <class>jm.com.dpbennett.business.entity.UnitCost</class>
+    <class>jm.com.dpbennett.business.entity.Modules</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jmts"/>
       <property name="javax.persistence.jdbc.password" value="?Des12300!"/>
