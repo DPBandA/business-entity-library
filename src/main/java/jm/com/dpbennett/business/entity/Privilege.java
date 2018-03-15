@@ -138,7 +138,7 @@ public class Privilege implements Serializable, BusinessEntity {
 
     public Boolean getCanAccessJobManagementUnit() {
         if (canAccessJobManagementUnit == null) {
-            canAccessJobManagementUnit = false;
+            canAccessJobManagementUnit = true;
         }
         return canAccessJobManagementUnit;
     }
