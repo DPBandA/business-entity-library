@@ -73,10 +73,12 @@ public class Division implements BusinessEntity, Serializable {
         this.departments = departments;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }

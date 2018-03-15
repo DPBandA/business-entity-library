@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
@@ -20,6 +21,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
+@Table(name = "modules")
 public class Modules implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;

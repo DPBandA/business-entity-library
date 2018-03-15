@@ -66,6 +66,8 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     private String jobTableViewPreference; // rename?
     private Boolean authenticate;
     private String activity;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date pollTime;
     @Column(length = 255)
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -76,23 +78,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     private Privilege privilege;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Modules modules;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date pollTime; // tk put in Tracking class?
-    //private Long lastDatabaseModuleId;
-    // Units that can be accessed by user based on privileges
-    // tk Units to be retired and replace with the Module class in which
-    // modules a placed.
-//    private Boolean legalMetrologyUnit;
-//    private Boolean jobManagementAndTrackingUnit;
-//    private Boolean complianceUnit;
-//    private Boolean foodsUnit;
-//    private Boolean standardsUnit;
-//    private Boolean certificationUnit;
-//    private Boolean serviceRequestUnit;
-//    private Boolean adminUnit;
-//    private Boolean financialAdminUnit;
-//    private Boolean legalOfficeUnit;
-//    private Boolean crmUnit;
 
     public JobManagerUser() {
         privilege = new Privilege();
@@ -111,27 +96,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         this.modules = modules;
     }
 
-//    public Boolean getCrmUnit() {
-//        if (crmUnit == null) {
-//            crmUnit = false;
-//        }
-//        return crmUnit;
-//    }
-//
-//    public void setCrmUnit(Boolean crmUnit) {
-//        this.crmUnit = crmUnit;
-//    }
-//
-//    public Boolean getLegalOfficeUnit() {
-//        if (legalOfficeUnit == null) {
-//            legalOfficeUnit = false;
-//        }
-//        return legalOfficeUnit;
-//    }
-//
-//    public void setLegalOfficeUnit(Boolean legalOfficeUnit) {
-//        this.legalOfficeUnit = legalOfficeUnit;
-//    }
     public Boolean getIsJobsPreferredJobTableView() {
         return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Jobs");
     }
@@ -158,16 +122,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         }
     }
 
-//    public Boolean getFinancialAdminUnit() {
-//        if (financialAdminUnit == null) {
-//            financialAdminUnit = false;
-//        }
-//        return financialAdminUnit;
-//    }
-//
-//    public void setFinancialAdminUnit(Boolean financialAdminUnit) {
-//        this.financialAdminUnit = financialAdminUnit;
-//    }
     public Boolean checkEffectiveJobPrivilege(int privilege, Job job) {
         switch (privilege) {
             case CANENTERJOB:
@@ -193,26 +147,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         this.privilege = privilege;
     }
 
-//    public Boolean getAdminUnit() {
-//        if (adminUnit == null) {
-//            adminUnit = false;
-//        }
-//        if (!getPrivilege().getCanBeJMTSAdministrator()) {
-//            adminUnit = false;
-//        }
-//        return adminUnit;
-//    }
-//    public Boolean getRenderAdminUnit() {
-//        if (getAdminUnit() && getPrivilege().getCanBeJMTSAdministrator()) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
-//
-//    public void setAdminUnit(Boolean adminUnit) {
-//        this.adminUnit = adminUnit;
-//    }
     public Boolean getAuthenticate() {
         if (authenticate == null) {
             authenticate = true;
@@ -247,88 +181,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         this.userInterfaceThemeName = userInterfaceThemeName;
     }
 
-//    public Boolean getServiceRequestUnit() {
-//        if (serviceRequestUnit == null) {
-//            return false;
-//        }
-//        return serviceRequestUnit;
-//    }
-//
-//    public void setServiceRequestUnit(Boolean serviceRequestUnit) {
-//        this.serviceRequestUnit = serviceRequestUnit;
-//    }
-//
-//    public Boolean getComplianceUnit() {
-//        if (complianceUnit == null) {
-//            return false;
-//        }
-//        return complianceUnit;
-//    }
-//
-//    public void setComplianceUnit(Boolean complianceUnit) {
-//        this.complianceUnit = complianceUnit;
-//    }
-//
-//    public Boolean getFoodsUnit() {
-//        if (foodsUnit == null) {
-//            return false;
-//        }
-//        return foodsUnit;
-//
-//    }
-//
-//    public void setFoodsUnit(Boolean foodsUnit) {
-//        this.foodsUnit = foodsUnit;
-//    }
-//
-//    public Boolean getStandardsUnit() {
-//        if (standardsUnit == null) {
-//            standardsUnit = false;
-//        }
-//        return standardsUnit;
-//    }
-//
-//    public void setStandardsUnit(Boolean standardsUnit) {
-//        this.standardsUnit = standardsUnit;
-//    }
-//
-//    public Boolean getCertificationUnit() {
-//        if (certificationUnit == null) {
-//            certificationUnit = false;
-//        }
-//        return certificationUnit;
-//    }
-//
-//    public void setCertificationUnit(Boolean certificationUnit) {
-//        this.certificationUnit = certificationUnit;
-//    }
-//
-//    public Long getLastDatabaseModuleId() {
-//        return lastDatabaseModuleId;
-//    }
-//
-//    public void setLastDatabaseModuleId(Long lastDatabaseModuleId) {
-//        this.lastDatabaseModuleId = lastDatabaseModuleId;
-//    }
-//
-//    public Boolean getJobManagementAndTrackingUnit() {
-//        if ((jobManagementAndTrackingUnit == null) && (id != null)) {
-//            jobManagementAndTrackingUnit = true;
-//        }
-//        return jobManagementAndTrackingUnit;
-//    }
-//
-//    public void setJobManagementAndTrackingUnit(Boolean jobManagementAndTrackingUnit) {
-//        this.jobManagementAndTrackingUnit = jobManagementAndTrackingUnit;
-//    }
-//
-//    public Boolean getLegalMetrologyUnit() {
-//        return legalMetrologyUnit;
-//    }
-//
-//    public void setLegalMetrologyUnit(Boolean legalMetrologyUnit) {
-//        this.legalMetrologyUnit = legalMetrologyUnit;
-//    }
     /**
      * Logs the poll time and activity of a user. The user is saved after the
      * activity is logged.
@@ -570,8 +422,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        
-        System.out.println("saving user: module dirty?: " + getModules().getIsDirty()); // tk
 
         try {
 
@@ -581,7 +431,6 @@ public class JobManagerUser implements Serializable, BusinessEntity {
             }
 
             if (getModules().getId() == null || getModules().getIsDirty()) {
-                System.out.println("module..."); // tk
                 getModules().save(em);
                 getModules().setIsDirty(false);
             }
