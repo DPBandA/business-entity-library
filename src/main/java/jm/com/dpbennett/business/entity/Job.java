@@ -451,17 +451,17 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     @Override
     public void setIsDirty(Boolean isDirty) {
-        this.isDirty = isDirty;       
+        this.isDirty = isDirty;
     }
 
     @Override
     public Contact getContact() {
         if (contact == null) {
-            if (client != null) {
-                setContact(client.getDefaultContact());
-            } else {
-                return new Contact();
-            }
+            //if (client != null) {
+            //    setContact(client.getDefaultContact());
+            //} else {
+            return new Contact();
+            //}
         }
         return contact;
     }
@@ -1772,7 +1772,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             if (!this.getJobSamples().isEmpty()) {
                 for (JobSample jobSample : this.getJobSamples()) {
                     /// Save newly entered samples 
-                    if ((jobSample.getIsDirty() || jobSample.getId() == null) 
+                    if ((jobSample.getIsDirty() || jobSample.getId() == null)
                             && !jobSample.save(em).isSuccess()) {
                         return new ReturnMessage(false,
                                 "Job sample save error occurred",
