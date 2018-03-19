@@ -70,6 +70,7 @@ public class Client implements Customer, Serializable, BusinessEntity {
     private Internet internet;
     private String notes;
     private Boolean internal;
+    // tk to be put in tracking class
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateFirstReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -78,13 +79,14 @@ public class Client implements Customer, Serializable, BusinessEntity {
     private Date dateEntered;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
-    private Boolean tag;
-    private String taxRegistrationNumber;
-    private Boolean active;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
+    // end tracking info
+    private Boolean tag;
+    private String taxRegistrationNumber;
+    private Boolean active;    
     private Boolean international;
     @Transient
     private Boolean isDirty;
