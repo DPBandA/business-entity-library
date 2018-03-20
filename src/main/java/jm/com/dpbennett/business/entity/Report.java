@@ -75,6 +75,7 @@ public class Report implements Serializable, BusinessEntity {
     private String databaseDriverClass = "";
     private String databaseUsername = "";
     private String databasePassword = "";
+    private Boolean active;
 
     public Report() {
         reportColumns = new ArrayList<>();
@@ -83,6 +84,17 @@ public class Report implements Serializable, BusinessEntity {
     public Report(String name) {
         this.name = name;
         reportColumns = new ArrayList<>();
+    }
+
+    public Boolean getActive() {
+        if (active == null) {
+            active = true;
+        }
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     @Override
@@ -280,6 +292,21 @@ public class Report implements Serializable, BusinessEntity {
 
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
+                            + newName.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+            return reports;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<Report> findActiveReportsByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Report> reports
+                    = em.createQuery("SELECT r FROM Report r where r.active = 1 AND UPPER(r.name) like '%"
                             + newName.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
             return reports;
         } catch (Exception e) {
