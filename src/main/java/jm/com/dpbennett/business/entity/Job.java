@@ -1785,7 +1785,10 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             }
 
             // Save job costing and payment
-            jobCostingAndPayment.save(em);
+            ReturnMessage message = jobCostingAndPayment.save(em);
+            if (!message.isSuccess()) {
+                return message;
+            }
 
             // Save job    
             em.getTransaction().begin();

@@ -253,8 +253,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     /**
-     * Returns the discount type that can be applied to a payment/amount
-     * NB: To be deprecated
+     * Returns the discount type that can be applied to a payment/amount NB: To
+     * be deprecated
+     *
      * @return
      */
     public static List getDiscountTypes() {
@@ -785,13 +786,11 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             }
 
         } catch (Exception e) {
-            System.out.println("An error occured while saving the job costing and payment" + e);
+            return new ReturnMessage(false,
+                    "Costing and payment save error occurred!",
+                    "An error occurred while saving the job costing and payment: " + e,
+                    FacesMessage.SEVERITY_ERROR);
         }
-
-        return new ReturnMessage(false,
-                "Costing and payment save error occurred!",
-                "An error occurred while saving the job costing and payment",
-                FacesMessage.SEVERITY_ERROR);
 
     }
 
