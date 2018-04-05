@@ -80,8 +80,8 @@ public class Employee implements Person, Serializable, BusinessEntity {
     private List<PhoneNumber> phoneNumbers;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department department;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private BusinessOffice businessOffice;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private BusinessOffice businessOffice;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date birthDate;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -90,8 +90,8 @@ public class Employee implements Person, Serializable, BusinessEntity {
     private String notes;
     private Boolean active;
     private String employmentType;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Business business;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Business business;
     @OneToOne(cascade = CascadeType.ALL)
     private Signature signature;
     private String post;
@@ -99,7 +99,7 @@ public class Employee implements Person, Serializable, BusinessEntity {
     public Employee() {
         firstName = "";
         lastName = "";
-        businessOffice = new BusinessOffice();
+        //businessOffice = new BusinessOffice();
         internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
@@ -109,7 +109,7 @@ public class Employee implements Person, Serializable, BusinessEntity {
     public Employee(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        businessOffice = new BusinessOffice();
+        //businessOffice = new BusinessOffice();
         internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
@@ -132,13 +132,13 @@ public class Employee implements Person, Serializable, BusinessEntity {
         this.signature = signature;
     }
 
-    public Business getBusiness() {
-        return business;
-    }
-
-    public void setBusiness(Business business) {
-        this.business = business;
-    }
+//    public Business getBusiness() {
+//        return business;
+//    }
+//
+//    public void setBusiness(Business business) {
+//        this.business = business;
+//    }
 
     public String getEmploymentType() {
         return employmentType;
@@ -167,16 +167,16 @@ public class Employee implements Person, Serializable, BusinessEntity {
         this.internet = internet;
     }
 
-    public BusinessOffice getBusinessOffice() {
-        if (businessOffice == null) {
-            businessOffice = new BusinessOffice();
-        }
-        return businessOffice;
-    }
-
-    public void setBusinessOffice(BusinessOffice businessOffice) {
-        this.businessOffice = businessOffice;
-    }
+//    public BusinessOffice getBusinessOffice() {
+//        if (businessOffice == null) {
+//            businessOffice = new BusinessOffice();
+//        }
+//        return businessOffice;
+//    }
+//
+//    public void setBusinessOffice(BusinessOffice businessOffice) {
+//        this.businessOffice = businessOffice;
+//    }
 
     @JsonBackReference
     @XmlTransient
@@ -529,7 +529,7 @@ public class Employee implements Person, Serializable, BusinessEntity {
             employee = new Employee();
             employee.setFirstName(firstName);
             employee.setLastName(lastName);
-            employee.setBusinessOffice(BusinessOffice.findDefaultBusinessOffice(em, "--"));
+            //employee.setBusinessOffice(BusinessOffice.findDefaultBusinessOffice(em, "--"));
 
             employee.setDepartment(Department.findDefaultDepartment(em, "--"));
             // save
