@@ -57,8 +57,8 @@ public class DatePeriodJobReport {
         this.reportingDepartment = reportingDepartment;
         this.datePeriods = datePeriods;
         this.reportPeriod = BusinessEntityUtils.getMonthAndYearString(datePeriods[0].getEndDate());
-        this.reportColumnData = new HashMap<Object, List>();
-        this.jobReportItems = new HashMap<String, JobReportItem>();
+        this.reportColumnData = new HashMap<>();
+        this.jobReportItems = new HashMap<>();
 
         if (jobSubCategories != null) {
             initSubCategoriesReport(jobSubCategories);

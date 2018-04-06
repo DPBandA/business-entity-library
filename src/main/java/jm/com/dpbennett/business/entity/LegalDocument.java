@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -59,19 +60,19 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToOne
+   @OneToOne(cascade=CascadeType.REFRESH)
     private DocumentType type;
     private String number;
     private Boolean autoGenerateNumber;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateReceived;
-    @OneToOne
+    @OneToOne(cascade=CascadeType.REFRESH)
     private Department requestingDepartment;
-    @OneToOne
+    @OneToOne(cascade=CascadeType.REFRESH)
     private Department responsibleDepartment;
-    @OneToOne
+    @OneToOne(cascade=CascadeType.REFRESH)
     private Employee responsibleOfficer;
-    @OneToOne
+    @OneToOne(cascade=CascadeType.REFRESH)
     private Employee submittedBy;
     @Column(length = 1024)
     private String description;
@@ -82,7 +83,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfCompletion;
     private String url;
-    @OneToOne
+    @OneToOne(cascade=CascadeType.REFRESH)
     private Classification classification;
     @Column(length = 1024)
     private String comments;
@@ -93,14 +94,14 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     private Integer yearReceived;
     private Integer turnAroundTime;
     private Long numberOfDocuments;
-    @OneToOne
+    @OneToOne(cascade=CascadeType.REFRESH)
     private Client externalClient;
     @Column(length = 1024)
     private String goal;
     @Column(length = 1024)
     private String status;
     private String priorityLevel;
-    @OneToOne
+    @OneToOne(cascade=CascadeType.REFRESH)
     private Employee editedBy;
 
     public LegalDocument() {
