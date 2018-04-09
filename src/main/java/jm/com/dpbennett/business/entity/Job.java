@@ -126,6 +126,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private Job parent;
     @Transient
     private String name;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Employee> representatives;
 
     public Job() {
         this.name = "";
@@ -143,6 +145,25 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.isToBeCopied = false;
         this.isClientDirty = false;
         this.jobSamples = new ArrayList<>();
+    }
+
+    public String getColorCode() {
+        if (getJobStatusAndTracking().getExpectedDateOfCompletion() != null) {
+            return "";
+        } else {
+            return "";
+        }
+    }
+
+    public List<Employee> getRepresentatives() {
+        if (representatives == null) {
+            representatives = new ArrayList<>();
+        }
+        return representatives;
+    }
+
+    public void setRepresentatives(List<Employee> representatives) {
+        this.representatives = representatives;
     }
 
     public String getJobNumberWithCostLabel() {
