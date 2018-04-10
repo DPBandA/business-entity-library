@@ -128,6 +128,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private String name;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> representatives;
+    @Transient
+    private Boolean visited;
 
     public Job() {
         this.name = "";
@@ -146,13 +148,39 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.isClientDirty = false;
         this.jobSamples = new ArrayList<>();
     }
+    
+    public Date getNow() {
+        return new Date();
+    }
 
-    public String getColorCode() {
-        if (getJobStatusAndTracking().getExpectedDateOfCompletion() != null) {
-            return "";
-        } else {
-            return "";
+    public String getRowStyle() {
+
+        if (getVisited()) {
+            visited = false;
+            return "lightgreybg";
+        } else if (getJobStatusAndTracking().getExpectedDateOfCompletion() != null) {
+            // Due or overdue
+            if (getNow().compareTo(getJobStatusAndTracking().getExpectedDateOfCompletion()) >= 0) {
+               return "orangeredbg"; 
+            }      
+            else {
+                return "";  
+            }
+                
+        } else { // EDOC possibly not set so warn
+            return "lightyellowbg";
+        }  
+    }
+
+    public Boolean getVisited() {
+        if (visited == null) {
+            visited = false;
         }
+        return visited;
+    }
+
+    public void setVisited(Boolean visited) {
+        this.visited = visited;
     }
 
     public List<Employee> getRepresentatives() {
