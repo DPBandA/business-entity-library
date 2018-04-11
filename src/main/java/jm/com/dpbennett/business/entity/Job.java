@@ -148,7 +148,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.isClientDirty = false;
         this.jobSamples = new ArrayList<>();
     }
-    
+
     public Date getNow() {
         return new Date();
     }
@@ -158,18 +158,22 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         if (getVisited()) {
             visited = false;
             return "lightgreybg";
+        } else if (getJobStatusAndTracking().getCompleted()) {
+            return "lightgreenbg";
         } else if (getJobStatusAndTracking().getExpectedDateOfCompletion() != null) {
-            // Due or overdue
             if (getNow().compareTo(getJobStatusAndTracking().getExpectedDateOfCompletion()) >= 0) {
-               return "orangeredbg"; 
-            }      
-            else {
-                return "";  
+                // Due or overdue
+                return "orangeredbg";
+            } else if (getNow().compareTo(BusinessEntityUtils.adjustDate(getJobStatusAndTracking().getExpectedDateOfCompletion(), Calendar.DATE, -3)) >= 0) { // tk impl "soon due" adjustment as system option
+                // Soon due 
+                return "yellow";
+            } else {
+                return "";
             }
-                
+
         } else { // EDOC possibly not set so warn
             return "lightyellowbg";
-        }  
+        }
     }
 
     public Boolean getVisited() {
