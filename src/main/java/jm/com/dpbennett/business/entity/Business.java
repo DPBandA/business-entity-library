@@ -97,9 +97,15 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     public String getDepartmentList() {
         String listStr = "";
+        int index = 0;
 
         for (Department department : departments) {
-            listStr = listStr + department.getName() + " ";
+            if (index == 0) {
+                listStr = department.getName();
+            } else {
+                listStr = listStr + ", " + department.getName();
+            }
+            ++index;
         }
 
         return listStr;
