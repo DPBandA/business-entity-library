@@ -83,6 +83,10 @@ public class BusinessEntityUtils {
         "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
 
+    public static Date getNow() {
+        return new Date();
+    }
+
     public static int getLetterIndex(String letter) {
         for (int i = 0; i < ALPHABET.length; i++) {
             if (ALPHABET[i].equals(letter)) {
@@ -481,7 +485,7 @@ public class BusinessEntityUtils {
 
         return years;
     }
-    
+
     public static int characterCount(String str, char chr) {
         int count = 0;
 
@@ -985,7 +989,7 @@ public class BusinessEntityUtils {
 
             return null;
         }
-        
+
     }
 
     public static Date createDate(int year, int monthIndex, int day) {

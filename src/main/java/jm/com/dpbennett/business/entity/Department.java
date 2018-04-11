@@ -90,6 +90,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         staff = new ArrayList<>();
         laboratories = new ArrayList<>();
         departmentUnits = new ArrayList<>();
+        active = true;
     }
 
     public Department(String name) {
@@ -99,6 +100,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         staff = new ArrayList<>();
         laboratories = new ArrayList<>();
         departmentUnits = new ArrayList<>();
+        active = true;
     }
 
     public Privilege getPrivilege() {

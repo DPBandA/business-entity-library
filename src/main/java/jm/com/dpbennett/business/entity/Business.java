@@ -89,16 +89,19 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     public List<Department> getDepartments() {
+        if (departments == null) {
+            departments = new ArrayList<>();
+        }
         return departments;
     }
-    
+
     public String getDepartmentList() {
         String listStr = "";
-        
+
         for (Department department : departments) {
             listStr = listStr + department.getName() + " ";
         }
-        
+
         return listStr;
     }
 
@@ -296,6 +299,21 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
         try {
             return em.createQuery("SELECT b FROM Business b ORDER BY b.name", Business.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Business> findBusinessesByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Business> businesses
+                    = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
+                            + newName.toUpperCase().trim() + "%' ORDER BY b.name", Business.class).getResultList();
+            return businesses;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();

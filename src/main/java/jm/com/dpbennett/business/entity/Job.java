@@ -149,11 +149,18 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.jobSamples = new ArrayList<>();
     }
 
-    public Date getNow() {
-        return new Date();
-    }
-
     public String getRowStyle() {
+
+        // tk 
+        System.out.println("Now: " + BusinessEntityUtils.getNow());
+        if (getJobStatusAndTracking().getExpectedDateOfCompletion() != null) {
+            System.out.println("Expected Date of completion: " + getJobStatusAndTracking().
+                    getExpectedDateOfCompletion());
+            System.out.println("Expected Date of completion -3: " + BusinessEntityUtils.adjustDate(getJobStatusAndTracking().
+                    getExpectedDateOfCompletion(), Calendar.DATE, -3));
+        } else {
+
+        }
 
         if (getVisited()) {
             visited = false;
@@ -161,13 +168,15 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         } else if (getJobStatusAndTracking().getCompleted()) {
             return "lightgreenbg";
         } else if (getJobStatusAndTracking().getExpectedDateOfCompletion() != null) {
-            if (getNow().compareTo(getJobStatusAndTracking().getExpectedDateOfCompletion()) >= 0) {
+            if (BusinessEntityUtils.getNow().compareTo(getJobStatusAndTracking().getExpectedDateOfCompletion()) >= 0) {
                 // Due or overdue
                 return "orangeredbg";
-            } else if (getNow().compareTo(BusinessEntityUtils.adjustDate(getJobStatusAndTracking().getExpectedDateOfCompletion(), Calendar.DATE, -3)) >= 0) { // tk impl "soon due" adjustment as system option
+            } else if (BusinessEntityUtils.getNow().compareTo(BusinessEntityUtils.adjustDate(getJobStatusAndTracking().
+                    getExpectedDateOfCompletion(), Calendar.DATE, -3)) >= 0) {
                 // Soon due 
-                return "yellow";
+                return "yellowbg";
             } else {
+                // It's all good!
                 return "";
             }
 
