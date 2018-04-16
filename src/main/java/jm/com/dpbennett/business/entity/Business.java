@@ -31,6 +31,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -66,6 +67,9 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private Date dateLastAccessed;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateFirstReceived;
+    private Boolean active;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee head;
 
     public Business() {
         this.name = "";
@@ -86,6 +90,29 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         this.addresses = new ArrayList<>();
         this.contacts = new ArrayList<>();
         this.departments = new ArrayList<>();
+    }
+
+    public Boolean getActive() {
+        if (active == null) {
+            active = false;
+        }
+
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Employee getHead() {
+        if (head == null) {
+            head = new Employee("--", "--");
+        }
+        return head;
+    }
+
+    public void setHead(Employee head) {
+        this.head = head;
     }
 
     public List<Department> getDepartments() {

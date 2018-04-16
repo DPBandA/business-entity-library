@@ -166,7 +166,7 @@ public class CashPayment implements Serializable, BusinessEntity {
 
     public String getDiscountType() {
         if (discountType == null) {
-            discountType = "Fixed Cost";
+            discountType = "Percentage";
         }
         return discountType;
     }

@@ -167,7 +167,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
 
     public String getDiscountType() {
         if (discountType == null) {
-            discountType = "Fixed Cost";
+            discountType = "Percentage";
         }
         return discountType;
     }
