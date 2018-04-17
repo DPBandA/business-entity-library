@@ -519,11 +519,11 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     @Override
     public Contact getContact() {
         if (contact == null) {
-            //if (client != null) {
-            //    setContact(client.getDefaultContact());
-            //} else {
-            return new Contact();
-            //}
+            if (client != null) {
+                setContact(client.getMainContact());
+            } else {
+                return new Contact();
+            }
         }
         return contact;
     }

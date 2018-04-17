@@ -395,6 +395,33 @@ public class Client implements Customer, Serializable, BusinessEntity {
             return new Contact("", "", "Main");
         }
     }
+    
+    /**
+     * Get the main contact which is treated as the main contact in the list of
+     * contacts.
+     *
+     * @return
+     */
+    public Contact getMainContact() {
+        if (!getContacts().isEmpty()) {
+            //return getContacts().get(0);
+            for (Contact contact : getContacts()) {
+                if (contact.getType().equals("Main")) {
+                    return contact;
+                }
+            }
+            // use the first found address as the billing address
+            Contact contact = getContacts().get(0);
+            contact.setType("Main");
+            return contact;
+        } else {
+            Contact contact = new Contact();
+            contact.setType("Main");
+            getContacts().add(contact);
+            return getContacts().get(0);
+        }
+    }
+    
 
     public Contact addContact(Contact contact) {
         getContacts().add(contact);
