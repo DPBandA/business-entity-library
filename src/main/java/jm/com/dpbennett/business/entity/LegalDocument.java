@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -60,19 +59,19 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-   @OneToOne(cascade=CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private DocumentType type;
     private String number;
     private Boolean autoGenerateNumber;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateReceived;
-    @OneToOne(cascade=CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Department requestingDepartment;
-    @OneToOne(cascade=CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Department responsibleDepartment;
-    @OneToOne(cascade=CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee responsibleOfficer;
-    @OneToOne(cascade=CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee submittedBy;
     @Column(length = 1024)
     private String description;
@@ -83,7 +82,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfCompletion;
     private String url;
-    @OneToOne(cascade=CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Classification classification;
     @Column(length = 1024)
     private String comments;
@@ -94,14 +93,14 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     private Integer yearReceived;
     private Integer turnAroundTime;
     private Long numberOfDocuments;
-    @OneToOne(cascade=CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client externalClient;
     @Column(length = 1024)
     private String goal;
     @Column(length = 1024)
     private String status;
     private String priorityLevel;
-    @OneToOne(cascade=CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
 
     public LegalDocument() {
@@ -113,9 +112,9 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         }
         return editedBy;
     }
-    
+
     public void setEditedBy(Employee employee) {
-       editedBy =  employee;
+        editedBy = employee;
     }
 
     public String getStatus() {
@@ -426,7 +425,6 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     public Integer getCurrentDocumentTurnaroundTime() {
         //Integer workingDays = null;
 
-
         // if exp. date not set just return null
         if (getDateReceived() == null) {
             return null;
@@ -496,8 +494,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
 
         if (searchType.equals("General")) {
 
-            searchQuery =
-                    "SELECT new jm.com.dpbennett.entity.LegalDocument(doc.type, COUNT(doc.type)) FROM LegalDocument doc"
+            searchQuery
+                    = "SELECT new jm.com.dpbennett.entity.LegalDocument(doc.type, COUNT(doc.type)) FROM LegalDocument doc"
                     + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                     + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                     + " GROUP BY doc.type";
@@ -533,8 +531,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
 
         if (searchType.equals("General")) {
             if (!searchText.equals("")) {
-                searchTextAndClause =
-                        " AND ("
+                searchTextAndClause
+                        = " AND ("
                         + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(responsibleDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(responsibleOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -552,8 +550,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
                         + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
             }
-            searchQuery =
-                    "SELECT doc FROM LegalDocument doc"
+            searchQuery
+                    = "SELECT doc FROM LegalDocument doc"
                     + " JOIN doc.responsibleDepartment responsibleDepartment"
                     + " JOIN doc.responsibleOfficer responsibleOfficer"
                     + " JOIN doc.submittedBy submittedBy"
@@ -563,12 +561,12 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
                     + searchTextAndClause
                     + " ORDER BY doc.dateReceived DESC";
         } else if (searchType.equals("By type")) {
-            searchTextAndClause =
-                    " AND ("
+            searchTextAndClause
+                    = " AND ("
                     + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
                     + " )";
-            searchQuery =
-                    "SELECT doc FROM LegalDocument doc"
+            searchQuery
+                    = "SELECT doc FROM LegalDocument doc"
                     + " JOIN doc.type t"
                     + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                     + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
@@ -580,7 +578,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         try {
             foundDocuments = em.createQuery(searchQuery, LegalDocument.class).getResultList();
             if (foundDocuments == null) {
-                foundDocuments = new ArrayList<LegalDocument>();
+                foundDocuments = new ArrayList<>();
             }
         } catch (Exception e) {
             System.out.println(e);

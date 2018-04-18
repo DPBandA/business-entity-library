@@ -53,6 +53,18 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
     private String type;
     private String code;
 
+    public DocumentType() {
+        this.name = "";
+        this.type = "";
+        this.code = "";
+    }
+    
+    public DocumentType(String name) {
+        this.name = name;
+        this.type = "";
+        this.code = "";
+    }
+    
     @Override
     public Long getId() {
         return id;

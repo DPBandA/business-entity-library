@@ -289,12 +289,10 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter {
                 setEndDateDisabled(true);
                 break;
             case "Financial year to date":
-                if (endDate == null) {
                     endDate = BusinessEntityUtils.createDate(new Date());
-                }
                 initFinancialYearPeriod(endDate);
                 setStartDateDisabled(true);
-                setEndDateDisabled(false);
+                setEndDateDisabled(true);
                 break;
             case "This month (last year)":
                 setStartDate(BusinessEntityUtils.getStartOfCurrentMonthPreviousYear());
@@ -303,12 +301,6 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter {
                 setEndDateDisabled(true);
                 break;
             case "Custom":
-                if (startDate == null) {
-                    setStartDate(BusinessEntityUtils.createDate(new Date()));
-                }
-                if (endDate == null) {
-                    setEndDate(BusinessEntityUtils.createDate(new Date()));
-                }
                 setStartDateDisabled(false);
                 setEndDateDisabled(false);
                 break;
