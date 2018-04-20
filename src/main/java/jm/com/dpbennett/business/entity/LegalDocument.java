@@ -210,9 +210,6 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         this.requestingDepartment = requestingDepartment;
     }
 
-    public void saveDocument() {
-    }
-
     public Integer getMonthReceived() {
         Calendar c = Calendar.getInstance();
 
@@ -639,11 +636,21 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Document not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 }
