@@ -151,17 +151,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     public String getRowStyle() {
 
-        // tk 
-        System.out.println("Now: " + BusinessEntityUtils.getNow());
-        if (getJobStatusAndTracking().getExpectedDateOfCompletion() != null) {
-            System.out.println("Expected Date of completion: " + getJobStatusAndTracking().
-                    getExpectedDateOfCompletion());
-            System.out.println("Expected Date of completion -3: " + BusinessEntityUtils.adjustDate(getJobStatusAndTracking().
-                    getExpectedDateOfCompletion(), Calendar.DATE, -3));
-        } else {
-
-        }
-
         if (getVisited()) {
             visited = false;
             return "lightgreybg";

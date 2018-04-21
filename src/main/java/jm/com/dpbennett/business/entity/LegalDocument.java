@@ -39,6 +39,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
@@ -102,8 +103,62 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     private String priorityLevel;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
+    @Transient
+    private Boolean isDirty;
+    @Transient
+    private Boolean visited;
 
     public LegalDocument() {
+    }
+
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+
+    public Boolean getVisited() {
+        if (visited == null) {
+            visited = false;
+        }
+        return visited;
+    }
+
+    public void setVisited(Boolean visited) {
+        this.visited = visited;
+    }
+    
+    private Boolean getCompleted() {
+        return dateOfCompletion != null;
+    }
+
+    public String getRowStyle() {
+
+        if (getVisited()) {
+            visited = false;
+            return "lightgreybg";
+        } else if (getCompleted()) {
+            return "lightgreenbg";
+        } else if (getExpectedDateOfCompletion() != null) {
+            if (BusinessEntityUtils.getNow().compareTo(getExpectedDateOfCompletion()) >= 0) {
+                // Due or overdue
+                return "orangeredbg";
+            } else if (BusinessEntityUtils.getNow().compareTo(BusinessEntityUtils.adjustDate(getExpectedDateOfCompletion(), Calendar.DATE, -3)) >= 0) {
+                // Soon due 
+                return "yellowbg";
+            } else {
+                // It's all good!
+                return "";
+            }
+
+        } else { // EDOC possibly not set so warn
+            return "lightyellowbg";
+        }
     }
 
     public Employee getEditedBy() {
