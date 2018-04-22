@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -33,6 +32,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
@@ -53,19 +53,21 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
     private String name;
     private String type;
     private String code;
+    @Transient
+    private Boolean isDirty;
 
     public DocumentType() {
         this.name = "";
         this.type = "";
         this.code = "";
     }
-    
+
     public DocumentType(String name) {
         this.name = name;
         this.type = "";
         this.code = "";
     }
-    
+
     @Override
     public Long getId() {
         return id;
@@ -74,6 +76,17 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public String getCode() {
@@ -135,9 +148,9 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
     public static List<DocumentType> findDocumentTypesByCode(EntityManager em, String code) {
 
         try {
-            List<DocumentType> types =
-                    em.createQuery("SELECT d FROM DocumentType d where UPPER(d.code) like '"
-                    + code.toUpperCase().trim() + "%' ORDER BY d.code", DocumentType.class).getResultList();
+            List<DocumentType> types
+                    = em.createQuery("SELECT d FROM DocumentType d where UPPER(d.code) like '"
+                            + code.toUpperCase().trim() + "%' ORDER BY d.code", DocumentType.class).getResultList();
             return types;
         } catch (Exception e) {
             System.out.println(e);
@@ -148,9 +161,9 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
     public static List<DocumentType> findDocumentTypesByName(EntityManager em, String name) {
 
         try {
-            List<DocumentType> types =
-                    em.createQuery("SELECT d FROM DocumentType d where UPPER(d.name) like '"
-                    + name.toUpperCase().trim() + "%' ORDER BY d.name", DocumentType.class).getResultList();
+            List<DocumentType> types
+                    = em.createQuery("SELECT d FROM DocumentType d where UPPER(d.name) like '"
+                            + name.toUpperCase().trim() + "%' ORDER BY d.name", DocumentType.class).getResultList();
             return types;
         } catch (Exception e) {
             System.out.println(e);
@@ -163,11 +176,11 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
         String trimmedCode = code.trim();
 
         try {
-            List<DocumentType> types =
-                    em.createQuery("SELECT d FROM DocumentType d WHERE d.name = '"
-                    + trimmedName + "'" + " AND d.code = '"
-                    + trimmedCode + "'"
-                    + " ORDER BY d.name", DocumentType.class).getResultList();
+            List<DocumentType> types
+                    = em.createQuery("SELECT d FROM DocumentType d WHERE d.name = '"
+                            + trimmedName + "'" + " AND d.code = '"
+                            + trimmedCode + "'"
+                            + " ORDER BY d.name", DocumentType.class).getResultList();
             if (types != null) {
                 if (!types.isEmpty()) {
                     return types.get(0);
@@ -192,8 +205,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
             return null;
         }
     }
-    
-    
+
     public static DocumentType findDocumentTypeByName(EntityManager em, String documentTypeName) {
 
         try {
@@ -230,7 +242,6 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
 
     }
 
-    
     public static List<DocumentType> findAllDocumentTypes(EntityManager em) {
 
         try {
@@ -242,9 +253,10 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
             return new ArrayList<>();
         }
     }
+
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {        
-        
+    public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
+
         if (submittedValue.trim().equals("")) {
             return null;
         } else {
@@ -257,7 +269,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-       
+
         if (value == null || value.equals("")) {
             return "";
         } else {
@@ -271,7 +283,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
 
     @Override
     public ReturnMessage save(EntityManager em) {
-         try {
+        try {
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
