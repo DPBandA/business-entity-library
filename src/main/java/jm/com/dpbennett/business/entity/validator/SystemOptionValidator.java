@@ -55,7 +55,7 @@ public class SystemOptionValidator implements Validator {
             case "systemOptionComment":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Comment Required", "Please enter an option comment.");      
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required fields.");
         }
     }
 }

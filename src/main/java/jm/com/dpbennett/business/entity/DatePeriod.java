@@ -76,6 +76,7 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter {
             Boolean startDateDisabled,
             Boolean endDateDisabled,
             Boolean init) {
+        
         this.name = name;
         this.type = type;
         this.startDate = startDate;

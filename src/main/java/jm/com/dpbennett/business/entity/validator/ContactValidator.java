@@ -78,7 +78,7 @@ public class ContactValidator implements Validator {
             case "contactLastname":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Lastname Required", "Please enter a valid lastname. The characters \" ' and ; are NOT allowed.");
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required fields.");
         }
     }
 }

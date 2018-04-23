@@ -69,7 +69,7 @@ public class BusinessEntityValidator implements Validator {
             case "assignee": 
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Assignee/Department Representative", "This job cannot be saved because a valid assignee/department representative was not entered.");      
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required fields.");
         }
     }
 }

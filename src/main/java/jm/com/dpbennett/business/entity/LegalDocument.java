@@ -132,7 +132,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     public void setVisited(Boolean visited) {
         this.visited = visited;
     }
-    
+
     private Boolean getCompleted() {
         return dateOfCompletion != null;
     }
@@ -235,6 +235,9 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     }
 
     public Integer getTurnAroundTime() {
+        if (turnAroundTime == null) {
+            turnAroundTime = 0;
+        }
         return turnAroundTime;
     }
 
@@ -445,10 +448,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
             return false;
         }
         LegalDocument other = (LegalDocument) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -489,41 +490,6 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         return BusinessEntityUtils.calculatePeriodInWorkingDays(dateReceived, dateOfCompletion);
     }
 
-    // tk put b entity utils
-//    private int calculatePeriodInWorkingDays(Date startDate, Date endDate) {
-//        Calendar startCal = Calendar.getInstance();
-//        startCal.setTime(startDate);
-//
-//        Calendar endCal = Calendar.getInstance();
-//        endCal.setTime(endDate);
-//
-//        int workDays = 0;
-//
-//        // return 0 if end date is earlier that start date
-//        if (startCal.getTimeInMillis() > endCal.getTimeInMillis()) {
-//            return 0;
-//        }
-//
-//        // check if start date is a working day
-//        if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
-//                && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-//            workDays++;
-//        }
-//        startCal.add(Calendar.DAY_OF_MONTH, 1);
-//        // count days excluding sat. and sun.
-//        while ((startCal.get(Calendar.DAY_OF_MONTH) < endCal.get(Calendar.DAY_OF_MONTH))
-//                || (startCal.get(Calendar.MONTH) < endCal.get(Calendar.MONTH))
-//                || (startCal.get(Calendar.YEAR) < endCal.get(Calendar.YEAR))) {
-//
-//            if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
-//                    && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-//                workDays++;
-//            }
-//            startCal.add(Calendar.DAY_OF_MONTH, 1);
-//        }
-//
-//        return workDays;
-//    }
     @Override
     public String getName() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -541,24 +507,29 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
             Date startDate,
             Date endDate) {
 
-        List<LegalDocument> foundDocuments = null;
+        List<LegalDocument> foundDocuments;
         String searchQuery = null;
 
-        if (searchType.equals("General")) {
-
-            searchQuery
-                    = "SELECT new jm.com.dpbennett.entity.LegalDocument(doc.type, COUNT(doc.type)) FROM LegalDocument doc"
-                    + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                    + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                    + " GROUP BY doc.type";
-        } else if (searchType.equals("My documents")) {
-        } else if (searchType.equals("My department's documents")) {
+        switch (searchType) {
+            case "General":
+                searchQuery
+                        = "SELECT new jm.com.dpbennett.entity.LegalDocument(doc.type, COUNT(doc.type)) FROM LegalDocument doc"
+                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " GROUP BY doc.type";
+                break;
+            case "My documents":
+                break;
+            case "My department's documents":
+                break;
+            default:
+                break;
         }
 
         try {
             foundDocuments = em.createQuery(searchQuery, LegalDocument.class).getResultList();
             if (foundDocuments == null) {
-                foundDocuments = new ArrayList<LegalDocument>();
+                foundDocuments = new ArrayList<>();
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -576,55 +547,60 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
             Date startDate,
             Date endDate) {
 
-        List<LegalDocument> foundDocuments = null;
+        List<LegalDocument> foundDocuments;
         String searchQuery = null;
         String searchTextAndClause = "";
         String searchText = originalSearchText.replaceAll("'", "''");
 
-        if (searchType.equals("General")) {
-            if (!searchText.equals("")) {
+        switch (searchType) {
+            case "General":
+                if (!searchText.equals("")) {
+                    searchTextAndClause
+                            = " AND ("
+                            + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(responsibleDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(responsibleOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(responsibleOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(submittedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(submittedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.description) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.status) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.priorityLevel) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.url) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " )";
+                }   searchQuery
+                        = "SELECT doc FROM LegalDocument doc"
+                        + " JOIN doc.responsibleDepartment responsibleDepartment"
+                        + " JOIN doc.responsibleOfficer responsibleOfficer"
+                        + " JOIN doc.submittedBy submittedBy"
+                        + " JOIN doc.classification classification"
+                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY doc.dateReceived DESC";
+                break;
+            case "By type":
                 searchTextAndClause
                         = " AND ("
-                        + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(responsibleDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(responsibleOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(responsibleOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(submittedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(submittedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.status) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.priorityLevel) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.url) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
                         + " )";
-            }
-            searchQuery
-                    = "SELECT doc FROM LegalDocument doc"
-                    + " JOIN doc.responsibleDepartment responsibleDepartment"
-                    + " JOIN doc.responsibleOfficer responsibleOfficer"
-                    + " JOIN doc.submittedBy submittedBy"
-                    + " JOIN doc.classification classification"
-                    + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                    + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                    + searchTextAndClause
-                    + " ORDER BY doc.dateReceived DESC";
-        } else if (searchType.equals("By type")) {
-            searchTextAndClause
-                    = " AND ("
-                    + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
-                    + " )";
-            searchQuery
-                    = "SELECT doc FROM LegalDocument doc"
-                    + " JOIN doc.type t"
-                    + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                    + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                    + searchTextAndClause
-                    + " ORDER BY doc.dateReceived DESC";
-        } else if (searchType.equals("My department's documents")) {
+                searchQuery
+                        = "SELECT doc FROM LegalDocument doc"
+                        + " JOIN doc.type t"
+                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY doc.dateReceived DESC";
+                break;
+            case "My department's documents":
+                break;
+            default:
+                break;
         }
 
         try {

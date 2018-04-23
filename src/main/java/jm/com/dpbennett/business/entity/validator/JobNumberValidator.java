@@ -73,7 +73,7 @@ public class JobNumberValidator extends ValidatorAdapter {
             case "exist":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Job Number Not Unique", "This job cannot be saved because the job number is not unique.");
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required fields.");
         }
     }
 

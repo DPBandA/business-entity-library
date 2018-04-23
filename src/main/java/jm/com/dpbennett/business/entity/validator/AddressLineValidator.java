@@ -59,7 +59,7 @@ public class AddressLineValidator implements Validator {
             case "parishStateProvince":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Parish/State/Province Required", "Please enter a valid parish/state/province. The characters \" ' and ; are NOT allowed.");    
             default:
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required (*) fields.");
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required fields.");
         }
     }
 }
