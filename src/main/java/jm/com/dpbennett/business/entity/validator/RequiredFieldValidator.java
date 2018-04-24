@@ -79,6 +79,8 @@ public class RequiredFieldValidator implements Validator {
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Instructions Required", "Please enter instructions for this job");
             case "classificationName":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Classification Name Required", "Please enter a classification name");
+            case "classificationCategory":
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Classification Category Required", "Please enter a classification category");    
             case "classificationDescription":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Classification Description Required", "Please enter a classification description");
             case "jobCategoryName":

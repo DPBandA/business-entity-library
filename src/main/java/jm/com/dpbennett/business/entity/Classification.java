@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.model.SelectItem;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -262,6 +263,21 @@ public class Classification implements BusinessEntity, Serializable {
             return new ArrayList<>();
         }
     }
+    
+    public static List<Classification> findClassificationsByNameAndCategory(EntityManager em, String name, String category) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Classification> classifications
+                    = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '%"
+                            + newName.toUpperCase().trim() + "%' AND c.category = " + category + " ORDER BY c.name", Classification.class).getResultList();
+            return classifications;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     public static List<Classification> findActiveClassificationsByName(EntityManager em, String name) {
 
@@ -271,6 +287,21 @@ public class Classification implements BusinessEntity, Serializable {
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
                             + newName.toUpperCase().trim() + "%' AND c.active = 1 ORDER BY c.name", Classification.class).getResultList();
+            return classifications;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<Classification> findActiveClassificationsByNameAndCategory(EntityManager em, String name, String category) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Classification> classifications
+                    = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
+                            + newName.toUpperCase().trim() + "%' AND c.active = 1 AND c.category = '" + category + "' ORDER BY c.name", Classification.class).getResultList();
             return classifications;
         } catch (Exception e) {
             System.out.println(e);
@@ -295,6 +326,16 @@ public class Classification implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
+    }
+
+    public static List getCategories() {
+        ArrayList categories = new ArrayList();
+
+        categories.add(new SelectItem("", ""));
+        categories.add(new SelectItem("Job", "Job"));
+        categories.add(new SelectItem("Legal", "Legal"));
+
+        return categories;
     }
 }
