@@ -2172,13 +2172,20 @@ public class TestEntity {
     }
 
     public static void main(String[] args) {
+//        ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration()
+//                .setJdbcUrl("jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000")
+//                .setJdbcUsername("sa")
+//                .setJdbcPassword("")
+//                .setJdbcDriver("org.h2.Driver")
+//                .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
+
         ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration()
-                .setJdbcUrl("jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000")
-                .setJdbcUsername("sa")
-                .setJdbcPassword("")
-                .setJdbcDriver("org.h2.Driver")
+                .setJdbcUrl("jdbc:mysql://172.16.16.13:3306/activiti")
+                .setJdbcUsername("root")
+                .setJdbcPassword("?bsj0001!")
+                .setJdbcDriver("com.mysql.jdbc.Driver")
                 .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
-        
+
         ProcessEngine processEngine = cfg.buildProcessEngine();
         String pName = processEngine.getName();
         String ver = ProcessEngine.VERSION;

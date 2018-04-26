@@ -20,6 +20,17 @@
             </plugin>
         </plugins>
     </build>
+    
+    <name>Business Entity Library</name>
+    <description>A library of business entities and utilities.</description>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <activiti-version>5.22.0</activiti-version>
+    </properties>
+    
     <dependencies>     
         <dependency>
             <groupId>org.activiti</groupId>
@@ -45,8 +56,7 @@
             <groupId>org.activiti</groupId>
             <artifactId>activiti-ldap</artifactId>
             <version>5.22.0</version>
-        </dependency>
-          
+        </dependency>          
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
@@ -101,11 +111,4 @@
        
     </dependencies>
     
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-    </properties>
-    <name>Business Entity Library</name>
-    <description>A library of business entities and utilities.</description>
 </project>
