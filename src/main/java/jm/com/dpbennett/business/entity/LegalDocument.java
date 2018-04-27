@@ -235,14 +235,14 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     }
 
     public Integer getTurnAroundTime() {
-        if (turnAroundTime == null) {
+
+        if (dateReceived != null && expectedDateOfCompletion != null) {
+            turnAroundTime = BusinessEntityUtils.calculatePeriodInWorkingDays(dateReceived, expectedDateOfCompletion);
+        } else {
             turnAroundTime = 0;
         }
-        return turnAroundTime;
-    }
 
-    public void setTurnAroundTime(Integer turnAroundTime) {
-        this.turnAroundTime = turnAroundTime;
+        return turnAroundTime;
     }
 
     public Boolean getAutoGenerateNumber() {
@@ -448,7 +448,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
             return false;
         }
         LegalDocument other = (LegalDocument) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -476,18 +476,11 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     }
 
     public Integer getCurrentDocumentTurnaroundTime() {
-        //Integer workingDays = null;
-
-        // if exp. date not set just return null
-        if (getDateReceived() == null) {
-            return null;
+        if (dateReceived != null && dateOfCompletion != null) {
+            return BusinessEntityUtils.calculatePeriodInWorkingDays(dateReceived, dateOfCompletion);
+        } else {
+            return 0;
         }
-        // if date of completion not set then use current date
-        if (getDateOfCompletion() == null) {
-            return null;
-        }
-
-        return BusinessEntityUtils.calculatePeriodInWorkingDays(dateReceived, dateOfCompletion);
     }
 
     @Override
@@ -573,7 +566,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
                             + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " )";
-                }   searchQuery
+                }
+                searchQuery
                         = "SELECT doc FROM LegalDocument doc"
                         + " JOIN doc.responsibleDepartment responsibleDepartment"
                         + " JOIN doc.responsibleOfficer responsibleOfficer"
