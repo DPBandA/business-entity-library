@@ -149,6 +149,33 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.jobSamples = new ArrayList<>();
     }
 
+    public List<CashPayment> getCashPayments() {
+
+        // Add deposits if any
+        if (getJobCostingAndPayment().getDeposit() != 0.0) {
+            getJobCostingAndPayment().getCashPayments().add(
+                    new CashPayment(getJobCostingAndPayment().getDeposit(),
+                            getJobCostingAndPayment().getReceiptNumber(),
+                            getJobStatusAndTracking().getDepositDate(),
+                            getJobCostingAndPayment().getPaymentTerms()));
+
+            // Reset deposit related fields because the payment was added to the 
+            // cash payments. Set the costing and payment dirty so it will be 
+            // saved when the job is next saved.
+            getJobCostingAndPayment().setDeposit(0.0);
+            getJobCostingAndPayment().setReceiptNumber("");
+            getJobStatusAndTracking().setDepositDate(null);
+            getJobCostingAndPayment().setPaymentTerms("");
+            getJobCostingAndPayment().setIsDirty(true);           
+        }
+
+        return getJobCostingAndPayment().getCashPayments();
+    }
+
+    public void setCashPayments(List<CashPayment> cashPayments) {
+        getJobCostingAndPayment().setCashPayments(cashPayments);
+    }
+
     public String getRowStyle() {
 
         if (getVisited()) {
@@ -1134,7 +1161,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(assignedTo.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"                        
+                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
                 searchQuery

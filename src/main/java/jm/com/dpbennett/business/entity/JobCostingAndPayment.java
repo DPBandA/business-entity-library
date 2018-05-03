@@ -160,7 +160,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         JobCostingAndPayment jobCostingAndPayment = new JobCostingAndPayment();
 
         jobCostingAndPayment.setPurchaseOrderNumber("");
-        jobCostingAndPayment.setReceiptNumber("");
 
         return jobCostingAndPayment;
     }
@@ -272,10 +271,10 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public Double getDiscountValue() {
-        if (getDiscountType().equals("Currency")) {
-            return getDiscount();
-        } else {
+        if (getDiscountType().equals("Percentage")) {
             return getFinalCost() * getDiscount() / 100.0;
+        } else {
+            return getDiscount();
         }
     }
 
@@ -442,13 +441,17 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         return deposit;
     }
 
+    public void setDeposit(Double deposit) {
+        this.deposit = deposit;
+    }
+    
     /**
      * Get the total payments from cash payments and deposit if any.
      *
      * @return
      */
     public Double getTotalPayment() {
-        Double payment = getDeposit();
+        Double payment = 0.0; //getDeposit();
 
         for (CashPayment cashPayment : getCashPayments()) {
             payment = payment + cashPayment.getPayment();
@@ -544,10 +547,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public String getReceiptNumber() {
-        receiptNumber = "";
 
-        for (CashPayment cashPayment : getCashPayments()) {
-            setReceiptNumber(receiptNumber + " " + cashPayment.getReceiptNumber());
+        if (receiptNumber == null) {
+            receiptNumber = "";
         }
 
         return receiptNumber;

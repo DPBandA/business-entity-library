@@ -94,6 +94,22 @@ public class CashPayment implements Serializable, BusinessEntity {
         this.paymentPurpose = "Final";
     }
 
+    public CashPayment(Double payment, String receiptNumber,
+            Date dateOfPayment, String paymentTerms) {
+
+        this.discount = 0.0;
+        this.comment = "";
+        this.payeeLastname = "";
+        this.payeeFirstname = "";
+        this.payeeTitle = "";
+        this.receiptNumber = receiptNumber;
+        this.dateOfPayment = dateOfPayment;
+        this.payment = payment;
+        this.paymentTerms = paymentTerms;
+        this.type = "";
+        this.paymentPurpose = "Deposit";
+    }
+
     @Override
     public Long getId() {
         return id;
