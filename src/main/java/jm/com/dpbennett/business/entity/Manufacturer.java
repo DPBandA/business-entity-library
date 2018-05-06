@@ -56,6 +56,8 @@ public class Manufacturer implements Serializable, BusinessEntity, Converter {
     private Long id = null;
     @Column(name = "Name")
     private String name = "";
+    // tk replace all of these fields with Address, Contact, Internet classes
+    // see Client class for ideas.
     @Column(name = "Street")
     private String street = "";
     @Column(name = "PO")

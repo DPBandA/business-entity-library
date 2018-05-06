@@ -92,7 +92,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     private Long sequenceNumber;
     private Integer monthReceived;
     private Integer yearReceived;
-    private Integer turnAroundTime;
+    private Integer turnaroundTime;
+    private Integer actualTurnaroundTime;
     private Long numberOfDocuments;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client externalClient;
@@ -109,6 +110,16 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     private Boolean visited;
 
     public LegalDocument() {
+    }
+
+    public Integer getActualTurnaroundTime() {
+        actualTurnaroundTime = getCurrentDocumentActualTurnaroundTime();
+        
+        return actualTurnaroundTime;
+    }
+
+    public void setActualTurnaroundTime(Integer actualTurnaroundTime) {
+        this.actualTurnaroundTime = actualTurnaroundTime;
     }
 
     public Boolean getIsDirty() {
@@ -233,16 +244,23 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     public void setNumberOfDocuments(Long numberOfDocuments) {
         this.numberOfDocuments = numberOfDocuments;
     }
-
-    public Integer getTurnAroundTime() {
-
+    
+     public Integer getCurrentDocumentTurnaroundTime() {
         if (dateReceived != null && expectedDateOfCompletion != null) {
-            turnAroundTime = BusinessEntityUtils.calculatePeriodInWorkingDays(dateReceived, expectedDateOfCompletion);
+            return BusinessEntityUtils.calculatePeriodInWorkingDays(dateReceived, expectedDateOfCompletion);
         } else {
-            turnAroundTime = 0;
+            return 0;
         }
+    }
 
-        return turnAroundTime;
+    public Integer getTurnaroundTime() {
+        turnaroundTime = getCurrentDocumentTurnaroundTime(); 
+        
+        return turnaroundTime;
+    }
+
+    public void setTurnaroundTime(Integer turnaroundTime) {
+        this.turnaroundTime = turnaroundTime;
     }
 
     public Boolean getAutoGenerateNumber() {
@@ -475,7 +493,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         this.classification = classification;
     }
 
-    public Integer getCurrentDocumentTurnaroundTime() {
+    public Integer getCurrentDocumentActualTurnaroundTime() {
         if (dateReceived != null && dateOfCompletion != null) {
             return BusinessEntityUtils.calculatePeriodInWorkingDays(dateReceived, dateOfCompletion);
         } else {
