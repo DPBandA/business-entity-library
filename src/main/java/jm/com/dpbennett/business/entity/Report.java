@@ -21,7 +21,6 @@ package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -34,7 +33,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -55,12 +53,12 @@ public class Report implements Serializable, BusinessEntity {
     private Long id;
     private String name = "";
     private String category = "";
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date startDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date endDate;
-    @Column(length = 1024)
-    private String sqlText = "";
+//    @Temporal(javax.persistence.TemporalType.DATE)
+//    private Date startDate;
+//    @Temporal(javax.persistence.TemporalType.DATE)
+//    private Date endDate;
+//    @Column(length = 1024)
+//    private String sqlText = "";
     @Column(length = 1024)
     private String reportFileTemplate = "";
     @Column(length = 1024)
@@ -186,14 +184,14 @@ public class Report implements Serializable, BusinessEntity {
     public void setReportFile(String reportFile) {
         this.reportFile = reportFile;
     }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
+//
+//    public Date getEndDate() {
+//        return endDate;
+//    }
+//
+//    public void setEndDate(Date endDate) {
+//        this.endDate = endDate;
+//    }
 
     @Override
     public String getName() {
@@ -205,21 +203,21 @@ public class Report implements Serializable, BusinessEntity {
         this.name = name;
     }
 
-    public String getSqlText() {
-        return sqlText;
-    }
-
-    public void setSqlText(String sqlText) {
-        this.sqlText = sqlText;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
+//    public String getSqlText() {
+//        return sqlText;
+//    }
+//
+//    public void setSqlText(String sqlText) {
+//        this.sqlText = sqlText;
+//    }
+//
+//    public Date getStartDate() {
+//        return startDate;
+//    }
+//
+//    public void setStartDate(Date startDate) {
+//        this.startDate = startDate;
+//    }
 
     @Override
     public int hashCode() {
