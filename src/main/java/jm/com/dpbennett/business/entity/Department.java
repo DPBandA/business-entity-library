@@ -444,7 +444,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-         try {
+        try {
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -516,6 +516,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
             return dept;
         }
-    }   
+    }
 
 }

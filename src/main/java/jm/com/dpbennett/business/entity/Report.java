@@ -68,7 +68,7 @@ public class Report implements Serializable, BusinessEntity {
     private String reportFileMimeType = "";
     private String dateFormat = "MMM dd, yyyy";
     @OneToMany(cascade = CascadeType.ALL)
-    private List<ReportTableColumn> reportColumns;
+    private List<ReportTableColumn> reportColumns; // tk retire use of this
     @Column(length = 1024)
     private String databaseURL = "";
     @Column(length = 1024)
@@ -78,12 +78,12 @@ public class Report implements Serializable, BusinessEntity {
     private Boolean active;
 
     public Report() {
-        reportColumns = new ArrayList<>();
+        reportColumns = new ArrayList<>(); // tk retire use of this
     }
 
     public Report(String name) {
         this.name = name;
-        reportColumns = new ArrayList<>();
+        reportColumns = new ArrayList<>(); // tk retire use of this
     }
 
     public Boolean getActive() {
@@ -255,6 +255,16 @@ public class Report implements Serializable, BusinessEntity {
             return null;
         }
     }
+    
+    public static List<Report> findAllActiveReports(EntityManager em) {
+
+        try {
+            return em.createQuery("SELECT r FROM Report r WHERE r.active = 1 ORDER BY r.name", Report.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     public static Report findReportById(EntityManager em, Long Id) {
 
@@ -299,7 +309,7 @@ public class Report implements Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Report> findActiveReportsByName(EntityManager em, String name) {
 
         try {
@@ -314,7 +324,7 @@ public class Report implements Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-
+      
     public static Report findDefaultReport(EntityManager em, String name) {
         Report report = Report.findReportByName(em, name);
 
@@ -331,12 +341,22 @@ public class Report implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Report not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new ReturnMessage();
     }
 
 }
