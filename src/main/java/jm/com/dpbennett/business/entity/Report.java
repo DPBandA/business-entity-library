@@ -61,16 +61,8 @@ public class Report implements Serializable, BusinessEntity {
     @Column(length = 1024)
     private String reportFile = "";
     private String reportFileMimeType = "";
-    //private String dateFormat = "MMM dd, yyyy";
     @OneToMany(cascade = CascadeType.ALL)
-    private List<ReportTableColumn> reportColumns; // tk retire use of this
-    // tk remove these database connection fields and use sys option
-//    @Column(length = 1024)
-//    private String databaseURL = "";
-//    @Column(length = 1024)
-//    private String databaseDriverClass = "";
-//    private String databaseUsername = "";
-//    private String databasePassword = "";
+    private List<ReportTableColumn> reportColumns; // tk retire this 
     private Boolean active;
 
     public Report() {
@@ -132,38 +124,6 @@ public class Report implements Serializable, BusinessEntity {
         this.id = id;
     }
 
-//    public String getDatabasePassword() {
-//        return databasePassword;
-//    }
-//
-//    public void setDatabasePassword(String databasePassword) {
-//        this.databasePassword = databasePassword;
-//    }
-//
-//    public String getDatabaseUsername() {
-//        return databaseUsername;
-//    }
-//
-//    public void setDatabaseUsername(String databaseUsername) {
-//        this.databaseUsername = databaseUsername;
-//    }
-//
-//    public String getDatabaseDriverClass() {
-//        return databaseDriverClass;
-//    }
-//
-//    public void setDatabaseDriverClass(String databaseDriverClass) {
-//        this.databaseDriverClass = databaseDriverClass;
-//    }
-//
-//    public String getDatabaseURL() {
-//        return databaseURL;
-//    }
-//
-//    public void setDatabaseURL(String databaseURL) {
-//        this.databaseURL = databaseURL;
-//    }
-
     public String getCategory() {
         return category;
     }
@@ -188,13 +148,6 @@ public class Report implements Serializable, BusinessEntity {
         this.reportFileMimeType = reportFileMimeType;
     }
 
-//    public String getDateFormat() {
-//        return dateFormat;
-//    }
-//
-//    public void setDateFormat(String dateFormat) {
-//        this.dateFormat = dateFormat;
-//    }
     public String getReportFileTemplate() {
         return reportFileTemplate;
     }
@@ -210,14 +163,6 @@ public class Report implements Serializable, BusinessEntity {
     public void setReportFile(String reportFile) {
         this.reportFile = reportFile;
     }
-//
-//    public Date getEndDate() {
-//        return endDate;
-//    }
-//
-//    public void setEndDate(Date endDate) {
-//        this.endDate = endDate;
-//    }
 
     @Override
     public String getName() {
@@ -229,21 +174,6 @@ public class Report implements Serializable, BusinessEntity {
         this.name = name;
     }
 
-//    public String getSqlText() {
-//        return sqlText;
-//    }
-//
-//    public void setSqlText(String sqlText) {
-//        this.sqlText = sqlText;
-//    }
-//
-//    public Date getStartDate() {
-//        return startDate;
-//    }
-//
-//    public void setStartDate(Date startDate) {
-//        this.startDate = startDate;
-//    }
     @Override
     public int hashCode() {
         int hash = 0;
@@ -349,7 +279,22 @@ public class Report implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<Report> findActiveReportsByName(EntityManager em, String name) {
+    public static List<Report> findActiveReportsByName(EntityManager em, String query) {
+
+        try {
+            String newQuery = query.replaceAll("'", "''");
+
+            List<Report> reports
+                    = em.createQuery("SELECT r FROM Report r where r.active = 1 AND UPPER(r.name) like '%"
+                            + newQuery.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+            return reports;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<Report> findActiveReportsByCategoryAndName(EntityManager em, String category, String name) {
 
         try {
             String newName = name.replaceAll("'", "''");

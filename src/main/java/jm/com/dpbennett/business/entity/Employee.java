@@ -139,7 +139,6 @@ public class Employee implements Person, Serializable, BusinessEntity {
 //    public void setBusiness(Business business) {
 //        this.business = business;
 //    }
-
     public String getEmploymentType() {
         return employmentType;
     }
@@ -177,7 +176,6 @@ public class Employee implements Person, Serializable, BusinessEntity {
 //    public void setBusinessOffice(BusinessOffice businessOffice) {
 //        this.businessOffice = businessOffice;
 //    }
-
     @JsonBackReference
     @XmlTransient
     public Department getDepartment() {
@@ -394,6 +392,24 @@ public class Employee implements Person, Serializable, BusinessEntity {
         }
     }
 
+    public static List<Employee> findEmployees(EntityManager em, String query) {
+
+        try {
+            String newQuery = query.toUpperCase().trim().replaceAll("'", "''");
+
+            List<Employee> employees
+                    = em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
+                            + newQuery + "%'" + " OR UPPER(e.lastName) like '%"
+                            + newQuery + "%'" + " OR UPPER(e.department.name) like '%"
+                            + newQuery + "%'"
+                            + " ORDER BY e.lastName", Employee.class).getResultList();
+            return employees;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     public static List<Employee> findActiveEmployeesByName(EntityManager em, String name) {
 
         try {
@@ -403,6 +419,25 @@ public class Employee implements Person, Serializable, BusinessEntity {
                     = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '"
                             + newName + "%'" + " OR UPPER(e.lastName) like '"
                             + newName + "%'"
+                            + ") AND e.active = 1"
+                            + " ORDER BY e.lastName", Employee.class).getResultList();
+            return employees;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Employee> findActiveEmployees(EntityManager em, String query) {
+
+        try {
+            String newQuery = query.toUpperCase().trim().replaceAll("'", "''");
+
+            List<Employee> employees
+                    = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '"
+                            + newQuery + "%'" + " OR UPPER(e.lastName) like '"
+                            + newQuery + "%'" + " OR UPPER(e.department.name) like '"
+                            + newQuery + "%'"
                             + ") AND e.active = 1"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
@@ -560,7 +595,7 @@ public class Employee implements Person, Serializable, BusinessEntity {
         }
     }
 
-    public Boolean isMemberOf(Department department) {       
+    public Boolean isMemberOf(Department department) {
         return Objects.equals(getDepartment().getId(), department.getId());
     }
 
