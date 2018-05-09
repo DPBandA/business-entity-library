@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.model.SelectItem;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,26 +54,23 @@ public class Report implements Serializable, BusinessEntity {
     private Long id;
     private String name = "";
     private String category = "";
-//    @Temporal(javax.persistence.TemporalType.DATE)
-//    private Date startDate;
-//    @Temporal(javax.persistence.TemporalType.DATE)
-//    private Date endDate;
-//    @Column(length = 1024)
-//    private String sqlText = "";
+    @Column(length = 1024)
+    private String description = "";
     @Column(length = 1024)
     private String reportFileTemplate = "";
     @Column(length = 1024)
     private String reportFile = "";
     private String reportFileMimeType = "";
-    private String dateFormat = "MMM dd, yyyy";
+    //private String dateFormat = "MMM dd, yyyy";
     @OneToMany(cascade = CascadeType.ALL)
     private List<ReportTableColumn> reportColumns; // tk retire use of this
-    @Column(length = 1024)
-    private String databaseURL = "";
-    @Column(length = 1024)
-    private String databaseDriverClass = "";
-    private String databaseUsername = "";
-    private String databasePassword = "";
+    // tk remove these database connection fields and use sys option
+//    @Column(length = 1024)
+//    private String databaseURL = "";
+//    @Column(length = 1024)
+//    private String databaseDriverClass = "";
+//    private String databaseUsername = "";
+//    private String databasePassword = "";
     private Boolean active;
 
     public Report() {
@@ -82,6 +80,35 @@ public class Report implements Serializable, BusinessEntity {
     public Report(String name) {
         this.name = name;
         reportColumns = new ArrayList<>(); // tk retire use of this
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public static List getCategories() {
+        ArrayList categories = new ArrayList();
+
+        categories.add(new SelectItem("--", "--"));
+        categories.add(new SelectItem("Job", "Job"));
+        categories.add(new SelectItem("Legal", "Legal"));
+
+        return categories;
+    }
+
+    public static List getMimeTypes() {
+        ArrayList categories = new ArrayList();
+
+        categories.add(new SelectItem("--", "--"));
+        categories.add(new SelectItem("application/jasper", "application/jasper"));
+        categories.add(new SelectItem("application/xls", "application/xls"));
+        categories.add(new SelectItem("application/xlsx", "application/xlsx"));
+
+        return categories;
     }
 
     public Boolean getActive() {
@@ -105,37 +132,37 @@ public class Report implements Serializable, BusinessEntity {
         this.id = id;
     }
 
-    public String getDatabasePassword() {
-        return databasePassword;
-    }
-
-    public void setDatabasePassword(String databasePassword) {
-        this.databasePassword = databasePassword;
-    }
-
-    public String getDatabaseUsername() {
-        return databaseUsername;
-    }
-
-    public void setDatabaseUsername(String databaseUsername) {
-        this.databaseUsername = databaseUsername;
-    }
-
-    public String getDatabaseDriverClass() {
-        return databaseDriverClass;
-    }
-
-    public void setDatabaseDriverClass(String databaseDriverClass) {
-        this.databaseDriverClass = databaseDriverClass;
-    }
-
-    public String getDatabaseURL() {
-        return databaseURL;
-    }
-
-    public void setDatabaseURL(String databaseURL) {
-        this.databaseURL = databaseURL;
-    }
+//    public String getDatabasePassword() {
+//        return databasePassword;
+//    }
+//
+//    public void setDatabasePassword(String databasePassword) {
+//        this.databasePassword = databasePassword;
+//    }
+//
+//    public String getDatabaseUsername() {
+//        return databaseUsername;
+//    }
+//
+//    public void setDatabaseUsername(String databaseUsername) {
+//        this.databaseUsername = databaseUsername;
+//    }
+//
+//    public String getDatabaseDriverClass() {
+//        return databaseDriverClass;
+//    }
+//
+//    public void setDatabaseDriverClass(String databaseDriverClass) {
+//        this.databaseDriverClass = databaseDriverClass;
+//    }
+//
+//    public String getDatabaseURL() {
+//        return databaseURL;
+//    }
+//
+//    public void setDatabaseURL(String databaseURL) {
+//        this.databaseURL = databaseURL;
+//    }
 
     public String getCategory() {
         return category;
@@ -161,14 +188,13 @@ public class Report implements Serializable, BusinessEntity {
         this.reportFileMimeType = reportFileMimeType;
     }
 
-    public String getDateFormat() {
-        return dateFormat;
-    }
-
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
-    }
-
+//    public String getDateFormat() {
+//        return dateFormat;
+//    }
+//
+//    public void setDateFormat(String dateFormat) {
+//        this.dateFormat = dateFormat;
+//    }
     public String getReportFileTemplate() {
         return reportFileTemplate;
     }
@@ -218,7 +244,6 @@ public class Report implements Serializable, BusinessEntity {
 //    public void setStartDate(Date startDate) {
 //        this.startDate = startDate;
 //    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -253,7 +278,7 @@ public class Report implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static List<Report> findAllActiveReports(EntityManager em) {
 
         try {
@@ -308,6 +333,22 @@ public class Report implements Serializable, BusinessEntity {
         }
     }
 
+    public static List<Report> findReports(EntityManager em, String query) {
+
+        try {
+            String newQuery = query.replaceAll("'", "''");
+
+             List<Report> reports
+                    = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
+                            + newQuery.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
+                            + newQuery.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+            return reports;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     public static List<Report> findActiveReportsByName(EntityManager em, String name) {
 
         try {
@@ -322,7 +363,23 @@ public class Report implements Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-      
+
+    public static List<Report> findActiveReports(EntityManager em, String query) {
+
+        try {
+            String newQuery = query.replaceAll("'", "''");
+
+            List<Report> reports
+                    = em.createQuery("SELECT r FROM Report r where r.active = 1 AND (UPPER(r.name) like '%"
+                            + newQuery.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
+                            + newQuery.toUpperCase().trim() + "%') ORDER BY r.name", Report.class).getResultList();
+            return reports;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     public static Report findDefaultReport(EntityManager em, String name) {
         Report report = Report.findReportByName(em, name);
 
