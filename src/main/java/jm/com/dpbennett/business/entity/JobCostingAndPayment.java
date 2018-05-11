@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -210,10 +211,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public Double getAmountDue() {
-//        if (amountDue == null) {
-//            amountDue = 0.0;
-//        }
-        amountDue = getTotalCost() - getTotalPayment();
+
+        amountDue = BusinessEntityUtils.roundTo2DecimalPlaces(getTotalCost())
+                - BusinessEntityUtils.roundTo2DecimalPlaces(getTotalPayment());
 
         return amountDue;
     }
@@ -417,7 +417,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     @XmlTransient
     @JsonIgnore
     public List<CashPayment> getCashPayments() {
-        if (cashPayments == null) {
+        if (cashPayments != null) {
+            Collections.sort(cashPayments);
+        } else {
             cashPayments = new ArrayList<>();
         }
 
@@ -444,7 +446,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     public void setDeposit(Double deposit) {
         this.deposit = deposit;
     }
-    
+
     /**
      * Get the total payments from cash payments and deposit if any.
      *
@@ -531,6 +533,27 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         return paymentTerms;
     }
 
+    public String getAllPaymentTerms() {
+        
+        paymentTerms = "";
+
+        int index = 0;
+
+        for (CashPayment cashPayment : getCashPayments()) {
+            if (index == 0) {
+                paymentTerms = "(" + (index + 1) + ") " + cashPayment.getPaymentTerms();
+            } else {
+                if (!cashPayment.getPaymentTerms().trim().equals("")) {
+                    paymentTerms = paymentTerms + ", " + "(" + (index + 1) + ") " + cashPayment.getPaymentTerms();
+                }
+            }
+
+            index++;
+        }
+
+        return paymentTerms;
+    }
+
     public void setPaymentTerms(String paymentTerms) {
         this.paymentTerms = paymentTerms;
     }
@@ -546,8 +569,33 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         this.purchaseOrderNumber = purchaseOrderNumber;
     }
 
-    public String getReceiptNumber() {
+    public String getReceiptNumbers() {
+        int index = 0;
 
+        for (CashPayment cashPayment : getCashPayments()) {
+            if (index == 0) {
+                receiptNumber = cashPayment.getReceiptNumber();
+            } else {
+                if (!cashPayment.getReceiptNumber().trim().equals("")) {
+                    receiptNumber = receiptNumber + ", " + cashPayment.getReceiptNumber();
+                }
+            }
+
+            index++;
+        }
+
+        return receiptNumber;
+    }
+
+    public Date getLastPaymentDate() {
+        if (!getCashPayments().isEmpty()) {
+            return getCashPayments().get(getCashPayments().size() - 1).getDateOfPayment();
+        } else {
+            return null;
+        }
+    }
+
+    public String getReceiptNumber() {
         if (receiptNumber == null) {
             receiptNumber = "";
         }

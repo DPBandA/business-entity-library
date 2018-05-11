@@ -316,7 +316,6 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     @Override
     public int compareTo(Object o) {
         if ((((Address) o).id != null) && (this.id != null)) {
-//            return Collator.getInstance().compare(((Address) o).Id.toString(), this.Id.toString());
             if (((Address) o).id < this.id) {
                 return 1;
             } else if (Objects.equals(((Address) o).id, this.id)) {
@@ -435,8 +434,8 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     public static Address findClientAddressById(EntityManager em, String query, Long clientId) {
 
         try {
-            String newQuery = query.replaceAll("'", "''");
-            String address[] = newQuery.split("; ");
+            //String newQuery = query.replaceAll("'", "''"); // tk org query.replaceAll("'", "''"); does not work
+            String address[] = query.split("; ");
             String addressLine1 = address[0];
             String addressLine2 = address[1];
             String city = address[2];

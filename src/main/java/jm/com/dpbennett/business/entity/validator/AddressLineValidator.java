@@ -38,12 +38,11 @@ public class AddressLineValidator implements Validator {
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
         if (value != null) {
-            if (!BusinessEntityUtils.validateAddressLine(value.toString().trim())) {
+            if (!BusinessEntityUtils.validateAddressLine(value.toString().trim())) {           
                 throw new ValidatorException(getMessage(component.getId()));
             }
-        }
-        else {
-             throw new ValidatorException(getMessage(component.getId()));
+        } else {
+            throw new ValidatorException(getMessage(component.getId()));
         }
 
     }
@@ -57,7 +56,7 @@ public class AddressLineValidator implements Validator {
             case "addressCity":
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "City/Town Required", "Please enter a valid city. The characters \" ' and ; are NOT allowed.");
             case "parishStateProvince":
-                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Parish/State/Province Required", "Please enter a valid parish/state/province. The characters \" ' and ; are NOT allowed.");    
+                return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Parish/State/Province Required", "Please enter a valid parish/state/province. The characters \" ' and ; are NOT allowed.");
             default:
                 return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field Value Required", "Please enter all required fields.");
         }

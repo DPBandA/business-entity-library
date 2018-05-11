@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.faces.model.SelectItem;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -46,7 +47,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllCashPayments", query = "SELECT e FROM CashPayment e ORDER BY e.type")
 })
-public class CashPayment implements Serializable, BusinessEntity {
+public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;
     @Id
@@ -347,6 +348,26 @@ public class CashPayment implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
+    }
+
+    /**
+     * Compare payments using the date of payment
+     * @param o
+     * @return 
+     */
+    @Override
+    public int compareTo(Object o) {
+        if ((((CashPayment) o).dateOfPayment != null) && (this.dateOfPayment != null)) {
+            if (((CashPayment) o).dateOfPayment.getTime() < this.dateOfPayment.getTime()) {
+                return 1;
+            } else if (((CashPayment) o).dateOfPayment.getTime() == this.dateOfPayment.getTime()) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else {
+            return 0;
+        }
     }
 
 }
