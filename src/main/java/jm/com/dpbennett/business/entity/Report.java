@@ -64,6 +64,7 @@ public class Report implements Serializable, BusinessEntity {
     @OneToMany(cascade = CascadeType.ALL)
     private List<ReportTableColumn> reportColumns; // tk retire this 
     private Boolean active;
+    private Boolean usePackagedReportFileTemplate;
 
     public Report() {
         reportColumns = new ArrayList<>(); // tk retire use of this
@@ -72,6 +73,17 @@ public class Report implements Serializable, BusinessEntity {
     public Report(String name) {
         this.name = name;
         reportColumns = new ArrayList<>(); // tk retire use of this
+    }
+
+    public Boolean getUsePackagedReportFileTemplate() {
+        if (usePackagedReportFileTemplate == null) {
+            usePackagedReportFileTemplate = true;
+        }
+        return usePackagedReportFileTemplate;
+    }
+
+    public void setUsePackagedReportFileTemplate(Boolean usePackagedReportFileTemplate) {
+        this.usePackagedReportFileTemplate = usePackagedReportFileTemplate;
     }
 
     public String getDescription() {
@@ -268,7 +280,7 @@ public class Report implements Serializable, BusinessEntity {
         try {
             String newQuery = query.replaceAll("'", "''");
 
-             List<Report> reports
+            List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
                             + newQuery.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
                             + newQuery.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
@@ -293,7 +305,7 @@ public class Report implements Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Report> findActiveReportsByCategoryAndName(EntityManager em, String category, String name) {
 
         try {
