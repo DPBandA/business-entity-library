@@ -61,6 +61,7 @@ public class Report implements Serializable, BusinessEntity {
     @Column(length = 1024)
     private String reportFile = "";
     private String reportFileMimeType = "";
+    private String reportOutputFileMimeType = "";
     @OneToMany(cascade = CascadeType.ALL)
     private List<ReportTableColumn> reportColumns; // tk retire this 
     private Boolean active;
@@ -73,6 +74,14 @@ public class Report implements Serializable, BusinessEntity {
     public Report(String name) {
         this.name = name;
         reportColumns = new ArrayList<>(); // tk retire use of this
+    }
+
+    public String getReportOutputFileMimeType() {
+        return reportOutputFileMimeType;
+    }
+
+    public void setReportOutputFileMimeType(String reportOutputFileMimeType) {
+        this.reportOutputFileMimeType = reportOutputFileMimeType;
     }
 
     public Boolean getUsePackagedReportFileTemplate() {
@@ -97,7 +106,6 @@ public class Report implements Serializable, BusinessEntity {
     public static List getCategories() {
         ArrayList categories = new ArrayList();
 
-        categories.add(new SelectItem("--", "--"));
         categories.add(new SelectItem("Job", "Job"));
         categories.add(new SelectItem("Legal", "Legal"));
 
@@ -111,6 +119,7 @@ public class Report implements Serializable, BusinessEntity {
         categories.add(new SelectItem("application/jasper", "application/jasper"));
         categories.add(new SelectItem("application/xls", "application/xls"));
         categories.add(new SelectItem("application/xlsx", "application/xlsx"));
+        categories.add(new SelectItem("application/pdf", "application/pdf"));
 
         return categories;
     }
