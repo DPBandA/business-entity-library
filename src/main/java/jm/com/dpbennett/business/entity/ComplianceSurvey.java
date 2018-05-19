@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -77,12 +76,20 @@ public class ComplianceSurvey
     private Date surveyStartTime = null;
     @Temporal(javax.persistence.TemporalType.TIME)
     private Date surveyEndTime = null;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateSigned = null;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date releaseRequestReportDate = null;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date releaseDateDomesticMarket = null;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date releaseFromDetentionReportDate = null;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateOfDetention = null;
     @OneToMany(cascade = CascadeType.ALL)
     private List<ProductInspection> productInspections = null;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspector = null;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateSigned = null;
     @Column(length = 1024)
     private String comments = "";
     private String typeOfPortOfEntry = "";
@@ -103,23 +110,15 @@ public class ComplianceSurvey
     private String reasonForDetention = "";
     @OneToOne(cascade = CascadeType.ALL)
     private Address specifiedReleaseLocation = null;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date releaseRequestReportDate = null;
     // notice of refease from detention
     @OneToOne(cascade = CascadeType.ALL)
     private Address specifiedReleaseLocationDomesticMarket = null;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date releaseDateDomesticMarket = null;
     @OneToOne(cascade = CascadeType.ALL)
     private Address locationOfDetainedProductDomesticMarket = null;
     private Boolean retailer = null;
     private Boolean distributor = null;
     private Boolean otherCompanyTypes = null;
     private String companyTypes = "";
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date releaseFromDetentionReportDate = null;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfDetention = null;
     private Boolean fullRelease = null;
     private Boolean samplesToBeDisposed = null;
     private Boolean samplesToBeCollected = null;
@@ -798,7 +797,7 @@ public class ComplianceSurvey
     @XmlTransient
     public List<ProductInspection> getProductInspections() {
         if (productInspections != null) {
-            Collections.sort(productInspections); 
+            Collections.sort(productInspections);
         } else {
             productInspections = new ArrayList<>();
         }
@@ -1014,8 +1013,8 @@ public class ComplianceSurvey
             searchText = "";
         }
 
-        joinClause =
-                " JOIN complianceSurvey.retailOutlet retailOutlet"
+        joinClause
+                = " JOIN complianceSurvey.retailOutlet retailOutlet"
                 + " JOIN complianceSurvey.retailRepresentative retailRepresentative"
                 + " JOIN complianceSurvey.consignee consignee"
                 + " JOIN complianceSurvey.consigneeRepresentative consigneeRepresentative"
@@ -1029,8 +1028,8 @@ public class ComplianceSurvey
         switch (searchType) {
             case "General":
                 if (!searchText.equals("")) {
-                    searchTextAndClause =
-                            " AND ("
+                    searchTextAndClause
+                            = " AND ("
                             + " UPPER(complianceSurvey.portOfEntry) LIKE '%" + searchText.toUpperCase() + "%'"
                             + (includeProductInspectionSearch ? " OR UPPER(productInspections.name) LIKE '%" + searchText.toUpperCase() + "%'" : "")
                             + " OR UPPER(complianceSurvey.inspectionPoint) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -1054,15 +1053,15 @@ public class ComplianceSurvey
                             + " )";
                 }
                 if ((startDate == null) || (endDate == null)) {
-                    searchQuery =
-                            "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
+                    searchQuery
+                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
                             + joinClause
                             + " WHERE (0 = 0)" // used as place holder
                             + searchTextAndClause
                             + " ORDER BY complianceSurvey.id DESC";
                 } else {
-                    searchQuery =
-                            "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
+                    searchQuery
+                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
                             + joinClause
                             + " WHERE (complianceSurvey." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                             + " AND complianceSurvey." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
@@ -1111,8 +1110,8 @@ public class ComplianceSurvey
             searchText = "";
         }
 
-        joinClause =
-                " JOIN complianceSurvey.retailOutlet retailOutlet"
+        joinClause
+                = " JOIN complianceSurvey.retailOutlet retailOutlet"
                 + " JOIN complianceSurvey.retailRepresentative retailRepresentative"
                 + " JOIN complianceSurvey.consignee consignee"
                 + " JOIN complianceSurvey.consigneeRepresentative consigneeRepresentative"
@@ -1126,8 +1125,8 @@ public class ComplianceSurvey
         switch (searchType) {
             case "General":
                 if (!searchText.equals("")) {
-                    searchTextAndClause =
-                            " AND ("
+                    searchTextAndClause
+                            = " AND ("
                             + " UPPER(complianceSurvey.portOfEntry) LIKE '%" + searchText.toUpperCase() + "%'"
                             + (includeProductInspectionSearch ? " OR UPPER(productInspections.name) LIKE '%" + searchText.toUpperCase() + "%'" : "")
                             + " OR UPPER(complianceSurvey.inspectionPoint) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -1151,15 +1150,15 @@ public class ComplianceSurvey
                             + " )";
                 }
                 if ((startDate == null) || (endDate == null)) {
-                    searchQuery =
-                            "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
+                    searchQuery
+                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
                             + joinClause
                             + " WHERE (0 = 0)" // used as place holder
                             + searchTextAndClause
                             + " ORDER BY complianceSurvey.id DESC";
                 } else {
-                    searchQuery =
-                            "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
+                    searchQuery
+                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
                             + joinClause
                             + " WHERE (complianceSurvey." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                             + " AND complianceSurvey." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
@@ -1224,18 +1223,18 @@ public class ComplianceSurvey
 
         return true;
     }
-    
-     public static ComplianceSurvey findDefaultComplianceSurvey(
+
+    public static ComplianceSurvey findDefaultComplianceSurvey(
             EntityManager em,
             String name,
             Boolean useTransaction) {
-         
+
         ComplianceSurvey complianceSurvey = findComplianceSurveyByName(em, name);
 
         if (complianceSurvey == null) {
             complianceSurvey = new ComplianceSurvey();
             complianceSurvey.setName(name);
-            
+
             if (useTransaction) {
                 em.getTransaction().begin();
                 BusinessEntityUtils.saveBusinessEntity(em, complianceSurvey);
