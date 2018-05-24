@@ -166,7 +166,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             getJobCostingAndPayment().setReceiptNumber("");
             getJobStatusAndTracking().setDepositDate(null);
             getJobCostingAndPayment().setPaymentTerms("");
-            getJobCostingAndPayment().setIsDirty(true); 
             // This method is called to update the amount due
             getJobCostingAndPayment().getAmountDue();
         }

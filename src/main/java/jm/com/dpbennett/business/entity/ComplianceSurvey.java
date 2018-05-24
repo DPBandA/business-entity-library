@@ -51,78 +51,76 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlRootElement
 public class ComplianceSurvey
-        extends ComplianceSurveySearchResult
         implements
         Serializable,
-        BusinessEntity,
-        Form,
-        GeneralComplianceSurvey {
+        BusinessEntity /*,
+        GeneralComplianceSurvey */ {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id = null;
-    private String name = "";
-    private String surveyType = "";
-    private String surveyLocationType = "";
-    private String typeOfEstablishment = "";
-    @OneToOne(cascade = CascadeType.ALL)
-    private Client retailOutlet = null;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Contact retailRepresentative = null;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfSurvey = null;
-    @Temporal(javax.persistence.TemporalType.TIME)
-    private Date surveyStartTime = null;
-    @Temporal(javax.persistence.TemporalType.TIME)
-    private Date surveyEndTime = null;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateSigned = null;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date releaseRequestReportDate = null;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date releaseDateDomesticMarket = null;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date releaseFromDetentionReportDate = null;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfDetention = null;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<ProductInspection> productInspections = null;
+    private Long id;
+    private String name;
+    private String surveyType;
+    private String surveyLocationType;
+    private String typeOfEstablishment;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee inspector = null;
+    private Client retailOutlet;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Contact retailRepresentative;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateOfSurvey;
+    @Temporal(javax.persistence.TemporalType.TIME)
+    private Date surveyStartTime;
+    @Temporal(javax.persistence.TemporalType.TIME)
+    private Date surveyEndTime;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateSigned;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date releaseRequestReportDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date releaseDateDomesticMarket;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date releaseFromDetentionReportDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateOfDetention;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<ProductInspection> productInspections;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee inspector;
     @Column(length = 1024)
-    private String comments = "";
-    private String typeOfPortOfEntry = "";
-    private String portOfEntry = "";
-    private String inspectionPoint = "";
-    @OneToOne(cascade = CascadeType.ALL)
-    private Address inspectionAddress = null;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Client broker = null;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Contact brokerRepresentative = null;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Client consignee = null;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Contact consigneeRepresentative = null;
-    private String referenceNumber = "";
+    private String comments;
+    private String typeOfPortOfEntry;
+    private String portOfEntry;
+    private String inspectionPoint;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Address inspectionAddress;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Client broker;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Contact brokerRepresentative;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Client consignee;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Contact consigneeRepresentative;
+    private String referenceNumber;
     @Column(length = 1024)
-    private String reasonForDetention = "";
-    @OneToOne(cascade = CascadeType.ALL)
-    private Address specifiedReleaseLocation = null;
-    // notice of refease from detention
-    @OneToOne(cascade = CascadeType.ALL)
-    private Address specifiedReleaseLocationDomesticMarket = null;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Address locationOfDetainedProductDomesticMarket = null;
-    private Boolean retailer = null;
-    private Boolean distributor = null;
-    private Boolean otherCompanyTypes = null;
-    private String companyTypes = "";
-    private Boolean fullRelease = null;
-    private Boolean samplesToBeDisposed = null;
-    private Boolean samplesToBeCollected = null;
-    private Boolean requestForDetentionIssuedForPortOfEntry = null;
+    private String reasonForDetention;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Address specifiedReleaseLocation;
+    // Notice of refease from detention
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Address specifiedReleaseLocationDomesticMarket;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Address locationOfDetainedProductDomesticMarket;
+    private Boolean retailer;
+    private Boolean distributor;
+    private Boolean otherCompanyTypes;
+    private String companyTypes;
+    private Boolean fullRelease;
+    private Boolean samplesToBeDisposed;
+    private Boolean samplesToBeCollected;
+    private Boolean requestForDetentionIssuedForPortOfEntry;
     private Boolean requestForSampleIssuedForPortOfEntry;
     private Boolean requestForReleaseIssuedForPortOfEntry;
     private Boolean noticeOfDetentionIssuedForDomesticMarket;
@@ -131,39 +129,39 @@ public class ComplianceSurvey
     private String domesticMarketDetentionNumber;
     // Signatures, dates and names
     // Detention Request - Port of Entry
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Signature authSigForDetentionRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date authSigDateForDetentionRequestPOE;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee authEmployeeForDetentionRequestPOE;
     // Sample Request - Port of Entry
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Signature inspectorSigForSampleRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date inspectorSigDateForSampleRequestPOE;
     // Release Request - Port of Entry
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Signature preparedBySigForReleaseRequestPOE;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee preparedByEmployeeForReleaseRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date preparedBySigDateForReleaseRequestPOE;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Signature approvedBySigForReleaseRequestPOE;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approvedByEmployeeForReleaseRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date approvedBySigDateForReleaseRequestPOE;
     // Notice of Detention - Domestic Market
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Signature authSigForNoticeOfDentionDM;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date authSigDateForNoticeOfDentionDM;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee authEmployeeForNoticeOfDentionDM;
     // Notice of Release from Detention - Domestic Market
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Signature authSigForNoticeOfReleaseFromDentionDM;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date authSigDateForNoticeOfReleaseFromDentionDM;
@@ -174,21 +172,21 @@ public class ComplianceSurvey
     private Employee editedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private EntryDocumentInspection entryDocumentInspection;
-    private String jobNumber;
+    private String jobNumber; // tk replace with Job field
     @OneToMany(cascade = CascadeType.REFRESH)
-    private List<DocumentStandard> standardsBreached = null;
+    private List<DocumentStandard> standardsBreached;
     private String otherInspectionLocation;
 
     public ComplianceSurvey() {
+        this.surveyType = "";
     }
 
-    public ComplianceSurvey(GeneralComplianceSurvey generalComplianceSurvey, Long id) {
-        this.id = id;
-        this.surveyType = generalComplianceSurvey.getSurveyType();
-    }
-
+//    public ComplianceSurvey(GeneralComplianceSurvey generalComplianceSurvey, Long id) {
+//        this.id = id;
+//        this.surveyType = generalComplianceSurvey.getSurveyType();
+//    }
     @Override
     public Long getId() {
         return id;
@@ -251,7 +249,6 @@ public class ComplianceSurvey
         this.typeOfEstablishment = typeOfEstablishment;
     }
 
-    @Override
     public String getSurveyType() {
         if (surveyType == null) {
             surveyType = "";
@@ -259,7 +256,6 @@ public class ComplianceSurvey
         return surveyType;
     }
 
-    @Override
     public void setSurveyType(String surveyType) {
         this.surveyType = surveyType;
     }
@@ -763,12 +759,10 @@ public class ComplianceSurvey
         this.comments = comments;
     }
 
-    @Override
     public Date getDateOfSurvey() {
         return dateOfSurvey;
     }
 
-    @Override
     public void setDateOfSurvey(Date dateOfSurvey) {
         this.dateOfSurvey = dateOfSurvey;
     }
@@ -781,7 +775,6 @@ public class ComplianceSurvey
         this.dateSigned = dateSigned;
     }
 
-    @Override
     public Employee getInspector() {
         if (inspector == null) {
             return new Employee();
@@ -789,7 +782,6 @@ public class ComplianceSurvey
         return inspector;
     }
 
-    @Override
     public void setInspector(Employee inspector) {
         this.inspector = inspector;
     }
@@ -1271,11 +1263,22 @@ public class ComplianceSurvey
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Compliance Survey not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 }

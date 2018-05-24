@@ -70,6 +70,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private Boolean active;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee head;
+    private String domainName;
 
     public Business() {
         this.name = "";
@@ -80,6 +81,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         this.addresses = new ArrayList<>();
         this.contacts = new ArrayList<>();
         this.departments = new ArrayList<>();
+        this.domainName = "";
     }
 
     public Business(String name) {
@@ -90,6 +92,17 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         this.addresses = new ArrayList<>();
         this.contacts = new ArrayList<>();
         this.departments = new ArrayList<>();
+    }
+
+    public String getDomainName() {
+        if (domainName == null) {
+            domainName = "";
+        }
+        return domainName;
+    }
+
+    public void setDomainName(String domainName) {
+        this.domainName = domainName;
     }
 
     public Boolean getActive() {

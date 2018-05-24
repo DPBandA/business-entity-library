@@ -412,36 +412,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
         return department;
     }
-
-    public static boolean save(EntityManager em, Department department) {
-        if (!BusinessEntityUtils.validateName(department.getName())) {
-            return false;
-        }
-
-        // Head
-        Employee head = Employee.findEmployeeByName(em, department.getHead().getName());
-        if (head != null) {
-            department.setHead(head);
-        } else {
-            department.setHead(Employee.findDefaultEmployee(em, "--", "--", false));
-        }
-
-        // Acting head
-        Employee actinghead = Employee.findEmployeeByName(em, department.getActingHead().getName());
-        if (head != null) {
-            department.setActingHead(actinghead);
-        } else {
-            department.setActingHead(Employee.findDefaultEmployee(em, "--", "--", false));
-        }
-
-        em.getTransaction().begin();
-        BusinessEntityUtils.saveBusinessEntity(em, department.getPrivilege());
-        BusinessEntityUtils.saveBusinessEntity(em, department);
-        em.getTransaction().commit();
-
-        return true;
-    }
-
+    
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
