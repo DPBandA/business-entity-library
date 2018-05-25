@@ -35,6 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -178,15 +179,13 @@ public class ComplianceSurvey
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<DocumentStandard> standardsBreached;
     private String otherInspectionLocation;
+    @Transient
+    private Boolean isDirty;
 
     public ComplianceSurvey() {
         this.surveyType = "";
     }
 
-//    public ComplianceSurvey(GeneralComplianceSurvey generalComplianceSurvey, Long id) {
-//        this.id = id;
-//        this.surveyType = generalComplianceSurvey.getSurveyType();
-//    }
     @Override
     public Long getId() {
         return id;
@@ -195,6 +194,17 @@ public class ComplianceSurvey
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public String getOtherInspectionLocation() {

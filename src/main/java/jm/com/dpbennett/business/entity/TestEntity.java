@@ -2180,7 +2180,7 @@ public class TestEntity {
 //                .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
 
         ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration()
-                .setJdbcUrl("jdbc:mysql://172.16.16.13:3306/activiti")
+                .setJdbcUrl("jdbc:mysql://DESKTOP50.BOS.local:3306/activiti")
                 .setJdbcUsername("root")
                 .setJdbcPassword("?bsj0001!")
                 .setJdbcDriver("com.mysql.jdbc.Driver")
