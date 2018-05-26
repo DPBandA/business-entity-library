@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -27,7 +26,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -51,6 +52,8 @@ public class ShippingContainer implements Serializable, BusinessEntity {
     private Integer H;
     private String dimensionUnit;
     private Double percentageDetained;
+    @Transient
+    private Boolean isDirty;
 
     public ShippingContainer() {
     }
@@ -67,6 +70,17 @@ public class ShippingContainer implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Double getPercentageDetained() {
@@ -209,8 +223,8 @@ public class ShippingContainer implements Serializable, BusinessEntity {
         }
 
     }
-    
-     public static ShippingContainer findShippingContainerByNumber(EntityManager em, String shippingContainerByNumber) {
+
+    public static ShippingContainer findShippingContainerByNumber(EntityManager em, String shippingContainerByNumber) {
 
         try {
             String newShippingContainerByNumber = shippingContainerByNumber.trim().replaceAll("'", "''");
@@ -230,12 +244,23 @@ public class ShippingContainer implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Shipping Container not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
-     
+
 }

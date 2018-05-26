@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -26,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import javax.faces.application.FacesMessage;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -35,8 +35,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -71,6 +73,8 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
     private Date invoiceDate = null;
     private String SCFFreeCode;
     private Double SCFAmountCalculated;
+    @Transient
+    private Boolean isDirty;
 
     public EntryDocumentInspection() {
         shippingContainers = new ArrayList<>();
@@ -84,6 +88,17 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public String getSCFFreeCode() {
@@ -209,6 +224,10 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
 
     @XmlTransient
     public List<ShippingContainer> getShippingContainers() {
+        if (shippingContainers == null) {
+            shippingContainers = new ArrayList<>();
+        }
+
         return shippingContainers;
     }
 
@@ -277,11 +296,46 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            // Save new cost components
+            if (!getShippingContainers().isEmpty()) {
+                for (ShippingContainer shippingContainer : getShippingContainers()) {
+                    if ((shippingContainer.getIsDirty() || shippingContainer.getId() == null)
+                            && !shippingContainer.save(em).isSuccess()) {
+                        return new ReturnMessage(false,
+                                "Shipping container save error occurred",
+                                "An error occurred while saving a Shipping container",
+                                FacesMessage.SEVERITY_ERROR);
+                    }
+                }
+            }
+
+            // Save   
+            if (isDirty || id == null) {
+                em.getTransaction().begin();
+                isDirty = false;
+                BusinessEntityUtils.saveBusinessEntity(em, this);
+                em.getTransaction().commit();
+
+                return new ReturnMessage();
+            } else {
+                return new ReturnMessage(true,
+                        "Entry document NOT saved",
+                        "Not saved because it was not edited or an error occurred",
+                        FacesMessage.SEVERITY_INFO);
+            }
+
+        } catch (Exception e) {
+            return new ReturnMessage(false,
+                    "Entry document save error occurred!",
+                    "An error occurred while saving the Entry document: " + e,
+                    FacesMessage.SEVERITY_ERROR);
+        }
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 }

@@ -1274,6 +1274,11 @@ public class ComplianceSurvey
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
+            // Save contained entities where necessary
+            if (getEntryDocumentInspection().getIsDirty()) {
+                getEntryDocumentInspection().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
