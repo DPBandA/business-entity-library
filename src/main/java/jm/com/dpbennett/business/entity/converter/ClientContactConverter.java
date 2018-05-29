@@ -37,10 +37,10 @@ public class ClientContactConverter extends ConverterAdapter {
         Contact contact = null;
 
         try {
-            Long currentJobClientId = (Long) component.getAttributes().get("currentJobClientId");
+            Long currentClientId = (Long) component.getAttributes().get("currentClientId");
             
-            if (currentJobClientId != null) {                
-                contact = Contact.findClientContactById(getEntityManager(), value, currentJobClientId);
+            if (currentClientId != null) {                
+                contact = Contact.findClientContactById(getEntityManager(), value, currentClientId);
             }
            
             if (contact == null) {
