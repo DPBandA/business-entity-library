@@ -2184,7 +2184,7 @@ public class TestEntity {
                 .setJdbcUsername("root")
                 .setJdbcPassword("?bsj0001!")
                 .setJdbcDriver("com.mysql.jdbc.Driver")
-                .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
+                .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_FALSE);
 
         ProcessEngine processEngine = cfg.buildProcessEngine();
         String pName = processEngine.getName();
