@@ -111,7 +111,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private Integer noOfCalibrations;
     private Integer noOfTestsOrCalibrations;
     @Transient
-    private Boolean isClientDirty;
+    private Boolean isClientDirty; // tk check if needed and del if not
     @Transient
     private Boolean isToBeSubcontracted;
     @Transient

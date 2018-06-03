@@ -35,6 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -71,6 +72,8 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     private String actionsTaken;
     @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice businessOffice;
+    @Transient
+    private Boolean isDirty;
 
     public FactoryInspection() {
         inspectionComponents = new ArrayList<>();
@@ -84,6 +87,20 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public BusinessOffice getBusinessOffice() {

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -28,6 +27,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -44,6 +44,8 @@ public class Category implements BusinessEntity, Serializable {
     private Long id = null;
     private String name = "";
     private String type = "";
+    @Transient
+    private Boolean isDirty;
 
     @Override
     public Long getId() {
@@ -108,7 +110,6 @@ public class Category implements BusinessEntity, Serializable {
                     + "WHERE UPPER(c.type) "
                     + "= '" + newType.toUpperCase() + "' ORDER BY c.name", Category.class).getResultList();
 
-            
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -128,5 +129,19 @@ public class Category implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 }

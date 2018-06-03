@@ -33,6 +33,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -62,6 +63,8 @@ public class Certification implements BusinessEntity, Serializable, Comparable {
     private Date expiryDate = null;
     @OneToOne(cascade = CascadeType.ALL)
     private Client applicant = null;
+    @Transient
+    private Boolean isDirty;
 
     public Certification() {
     }
@@ -244,5 +247,19 @@ public class Certification implements BusinessEntity, Serializable, Comparable {
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 }

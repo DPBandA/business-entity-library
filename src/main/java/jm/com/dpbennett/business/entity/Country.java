@@ -31,6 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -51,6 +52,8 @@ public class Country implements Serializable, BusinessEntity {
     private Long id;
     private String name;
     private String twoDigitCode;
+    @Transient
+    private Boolean isDirty;
 
     public Country() {
         name = "";
@@ -70,6 +73,19 @@ public class Country implements Serializable, BusinessEntity {
         this.id = id;
     }
 
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
     public String getTwoDigitCode() {
         return twoDigitCode;
     }

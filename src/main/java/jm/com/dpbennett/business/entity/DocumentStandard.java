@@ -40,6 +40,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -94,12 +95,28 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
     private Long sequenceNumber;
     private String name;
     private Boolean active;
+    @Transient
+    private Boolean isDirty;
 
     public DocumentStandard() {
     }
 
     public DocumentStandard(DocumentType documentType) {
         this.documentType = documentType;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Boolean getActive() {

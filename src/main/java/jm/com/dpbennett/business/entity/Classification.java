@@ -32,6 +32,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
@@ -60,6 +61,8 @@ public class Classification implements BusinessEntity, Serializable {
     private String description;
     private Boolean isEarning;
     private String category;
+    @Transient
+    private Boolean isDirty;
 
     public Classification() {
         this.name = "";
@@ -337,5 +340,19 @@ public class Classification implements BusinessEntity, Serializable {
         categories.add(new SelectItem("Legal", "Legal"));
 
         return categories;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 }

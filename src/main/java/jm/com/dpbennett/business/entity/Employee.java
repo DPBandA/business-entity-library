@@ -40,6 +40,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -95,6 +96,8 @@ public class Employee implements Person, Serializable, BusinessEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private Signature signature;
     private String post;
+    @Transient
+    private Boolean isDirty;
 
     public Employee() {
         firstName = "";
@@ -114,6 +117,20 @@ public class Employee implements Person, Serializable, BusinessEntity {
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
         active = true;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public String getPost() {

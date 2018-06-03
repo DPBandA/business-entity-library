@@ -35,6 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -64,6 +65,8 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     private List<Category> categories;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
+    @Transient
+    private Boolean isDirty;
 
     public FoodProduct() {
         categories = new ArrayList<>();
@@ -82,6 +85,20 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public String getBrand() {

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -36,10 +35,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-
 
 /**
  *
@@ -64,6 +63,8 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     private Address address;
     private String code;
     private Boolean active;
+    @Transient
+    private Boolean isDirty;
 
     public BusinessOffice() {
         this.active = false;
@@ -216,24 +217,24 @@ public class BusinessOffice implements Serializable, BusinessEntity {
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<BusinessOffice> businessOffices =
-                    em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '"
-                    + newName.toUpperCase().trim() + "%' ORDER BY b.name", BusinessOffice.class).getResultList();
+            List<BusinessOffice> businessOffices
+                    = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '"
+                            + newName.toUpperCase().trim() + "%' ORDER BY b.name", BusinessOffice.class).getResultList();
             return businessOffices;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
-    
+
     public static List<BusinessOffice> findActiveBusinessOfficesByName(EntityManager em, String name) {
 
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<BusinessOffice> businessOffices =
-                    em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '"
-                    + newName.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", BusinessOffice.class).getResultList();
+            List<BusinessOffice> businessOffices
+                    = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '"
+                            + newName.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", BusinessOffice.class).getResultList();
             return businessOffices;
         } catch (Exception e) {
             System.out.println(e);
@@ -303,7 +304,6 @@ public class BusinessOffice implements Serializable, BusinessEntity {
             return null;
         }
     }
-  
 
     public static BusinessOffice findDefaultBusinessOffice(EntityManager em, String name) {
         BusinessOffice office = BusinessOffice.findBusinessOfficeByName(em, name);
@@ -327,5 +327,19 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 }

@@ -34,6 +34,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -71,6 +72,8 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee head;
     private String domainName;
+    @Transient
+    private Boolean isDirty;
 
     public Business() {
         this.name = "";
@@ -404,6 +407,20 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     @Override
     public void setBusinessOffices(List<BusinessOffice> businessOffices) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
 }

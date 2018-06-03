@@ -37,6 +37,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -88,6 +89,8 @@ public class FoodFactory implements Customer, BusinessEntity, Comparable, Serial
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
     private String taxRegistrationNumber;
+    @Transient
+    private Boolean isDirty;
 
     public FoodFactory() {
         contacts = new ArrayList<>();
@@ -116,6 +119,20 @@ public class FoodFactory implements Customer, BusinessEntity, Comparable, Serial
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     /**

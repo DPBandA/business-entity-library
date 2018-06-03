@@ -25,7 +25,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
- * @author Desmond
+ * @author Desmond Bennett
  */
 public interface BusinessEntity {
    
@@ -41,7 +41,8 @@ public interface BusinessEntity {
 
     public ReturnMessage validate(EntityManager em);  
 
-//    public Boolean getIsDirty();
-//    
-//    public void setIsDirty(Boolean isDirty);
+    public Boolean getIsDirty();
+    
+    public void setIsDirty(Boolean isDirty);
+    
 }

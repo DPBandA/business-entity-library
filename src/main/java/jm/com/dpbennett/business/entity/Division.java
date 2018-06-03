@@ -31,13 +31,14 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
- * @author Desmond
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "division")
@@ -54,6 +55,9 @@ public class Division implements BusinessEntity, Serializable {
     private String name;
     @OneToMany
     private List<Department> departments;
+    // tk add "Head"
+    @Transient
+    private Boolean isDirty;
 
     @Override
     public Long getId() {
@@ -65,6 +69,20 @@ public class Division implements BusinessEntity, Serializable {
         this.id = id;
     }
 
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+    
     public List<Department> getDepartments() {
         return departments;
     }

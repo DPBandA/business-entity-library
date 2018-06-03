@@ -40,6 +40,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -101,8 +102,24 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     private String priorityLevel;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
+    @Transient
+    private Boolean isDirty;
 
     public DocumentTracking() {
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Employee getEditedBy() {

@@ -30,6 +30,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -50,6 +51,8 @@ public class CostCode implements BusinessEntity, Serializable {
     private Double cost;
     private Double rate;
     private String description;
+    @Transient
+    private Boolean isDirty;
 
     @Override
     public Long getId() {
@@ -181,6 +184,18 @@ public class CostCode implements BusinessEntity, Serializable {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
 
 }

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -73,6 +72,8 @@ public class Alert implements Serializable, BusinessEntity {
     private ArrayList<String> statuses;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recipient;
+    @Transient
+    private Boolean isDirty;
 
     public Alert() {
         this.statuses = new ArrayList<>();
@@ -91,7 +92,7 @@ public class Alert implements Serializable, BusinessEntity {
         this.type = "";
         this.name = "";
         this.ownerId = 0L;
-        active = true;        
+        active = true;
     }
 
     public Alert(Long ownerId,
@@ -113,9 +114,8 @@ public class Alert implements Serializable, BusinessEntity {
         this.type = "";
         this.name = "";
         this.ownerId = 0L;
-
         active = true;
-        statuses = new ArrayList<String>();
+        statuses = new ArrayList<>();
         this.ownerId = ownerId;
         this.dueTime = dueTime;
         this.status = status;
@@ -129,6 +129,19 @@ public class Alert implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Employee getRecipient() {
@@ -154,7 +167,6 @@ public class Alert implements Serializable, BusinessEntity {
 //
 //        return statuses;
 //    }
-
     public Long getOwnerId() {
         return ownerId;
     }

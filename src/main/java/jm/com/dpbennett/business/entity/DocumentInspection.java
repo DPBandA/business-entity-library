@@ -35,6 +35,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -62,6 +63,8 @@ public class DocumentInspection implements Comparable, BusinessEntity, Serializa
     private String comments;
     @OneToOne(cascade = CascadeType.ALL)
     private Client consignee;
+    @Transient
+    private Boolean isDirty;
 
     @Override
     public Long getId() {
@@ -71,6 +74,20 @@ public class DocumentInspection implements Comparable, BusinessEntity, Serializa
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Client getConsignee() {

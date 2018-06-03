@@ -37,6 +37,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
@@ -64,6 +65,8 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter {
     private Boolean startDateDisabled;
     private Boolean endDateDisabled;
     private Boolean init;
+    @Transient
+    private Boolean isDirty;
 
     public DatePeriod() {
     }
@@ -88,6 +91,20 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter {
         if (init) {
             init();
         }
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     @Override

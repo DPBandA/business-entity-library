@@ -28,6 +28,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -48,6 +49,8 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable 
     private String comments;
     private Boolean isHeading;
     private String results;
+    @Transient
+    private Boolean isDirty;
 
     public FactoryInspectionComponent() {
     }
@@ -66,6 +69,20 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable 
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public String getCategory() {

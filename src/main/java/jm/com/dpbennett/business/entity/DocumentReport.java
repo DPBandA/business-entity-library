@@ -33,6 +33,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -80,6 +81,8 @@ public class DocumentReport implements Serializable, BusinessEntity {
     private Boolean showNumberOfDocuments = false;
     @Column(length = 1024)
     private String columnsToExclude = "";
+    @Transient
+    private Boolean isDirty;
 
     @Override
     public Long getId() {
@@ -91,6 +94,20 @@ public class DocumentReport implements Serializable, BusinessEntity {
         this.id = id;
     }
 
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+    
     public String getColumnsToExclude() {
         return columnsToExclude;
     }

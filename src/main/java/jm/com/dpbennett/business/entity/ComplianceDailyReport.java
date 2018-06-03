@@ -29,10 +29,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
- *
+ * tk may no longer be needed and should be deleted
  * @author dbennett
  */
 @Entity
@@ -57,6 +58,8 @@ public class ComplianceDailyReport implements Serializable, BusinessEntity {
     private String location = "";
     private String teamMembers = "";
     private String driver = "";
+    @Transient
+    private Boolean isDirty;
 
     public ComplianceDailyReport() {
         this.name = "";
@@ -208,5 +211,19 @@ public class ComplianceDailyReport implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 }
