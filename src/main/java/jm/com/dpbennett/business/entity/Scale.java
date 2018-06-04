@@ -36,6 +36,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -70,9 +71,24 @@ public class Scale implements Product, BusinessEntity, Comparable, Serializable 
     private String name;
     @OneToOne(cascade = CascadeType.ALL)
     private Client client;
+    @Transient
+    private Boolean isDirty;
 
     public Scale() {
         stickers = new ArrayList<>();
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Client getClient() {

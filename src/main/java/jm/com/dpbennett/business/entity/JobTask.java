@@ -31,6 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -55,6 +56,8 @@ public class JobTask implements BusinessEntity, Serializable {
     private Department departmentResponsible;
     @OneToOne(cascade=CascadeType.REFRESH)
     private Employee employeeResponsible;
+    @Transient
+    private Boolean isDirty;
 
     @Override
     public Long getId() {
@@ -64,6 +67,19 @@ public class JobTask implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Boolean getCompleted() {

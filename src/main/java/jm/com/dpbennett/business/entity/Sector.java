@@ -33,6 +33,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -63,6 +64,8 @@ public class Sector implements BusinessEntity, Serializable {
     private Boolean active;
     @Column(length = 1024)
     private String description;
+    @Transient
+    private Boolean isDirty;
 
     public Sector() {
         this.name = "";
@@ -86,6 +89,19 @@ public class Sector implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public String getDescription() {
@@ -238,7 +254,7 @@ public class Sector implements BusinessEntity, Serializable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Sector> findActiveSectorsByName(EntityManager em, String name) {
 
         try {

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -32,6 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -42,7 +42,8 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "systemoptions")
 @NamedQueries({
-    @NamedQuery(name = "findAllSystemOptions", query = "SELECT s FROM SystemOption s ORDER BY s.name"),
+    @NamedQuery(name = "findAllSystemOptions", query = "SELECT s FROM SystemOption s ORDER BY s.name")
+    ,
     @NamedQuery(name = "findAllFinancialSystemOptions", query = "SELECT s FROM SystemOption s WHERE s.category = 'FINANCE' ORDER BY s.name")
 })
 public class SystemOption implements BusinessEntity, Serializable {
@@ -57,6 +58,8 @@ public class SystemOption implements BusinessEntity, Serializable {
     private String category;
     @Column(length = 1024)
     private String comments;
+    @Transient
+    private Boolean isDirty;
 
     public SystemOption() {
         name = "";
@@ -74,6 +77,19 @@ public class SystemOption implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public String getComments() {
@@ -161,7 +177,7 @@ public class SystemOption implements BusinessEntity, Serializable {
             if (options.size() > 0) {
                 // Make sure this is the current option stored in the database
                 SystemOption option = options.get(0);
-                em.refresh(option); 
+                em.refresh(option);
 
                 return option;
             }
@@ -184,7 +200,7 @@ public class SystemOption implements BusinessEntity, Serializable {
             return null;
         }
     }
-    
+
     public static List<SystemOption> findAllFinancialSystemOptions(EntityManager em) {
 
         try {
@@ -202,38 +218,38 @@ public class SystemOption implements BusinessEntity, Serializable {
         try {
             String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
 
-            List<SystemOption> systemOptions =
-                    em.createQuery("SELECT o FROM SystemOption o WHERE "
-                    + "UPPER(o.name) LIKE '%" + newQueryString + "%'"
-                    + " OR UPPER(o.optionValue) like '%" + newQueryString + "%'"
-                    + " OR UPPER(o.comments) like '%" + newQueryString + "%'"
-                    + " OR UPPER(o.category) LIKE '%" + newQueryString + "%'"
-                    + " ORDER BY o.comments", SystemOption.class).getResultList();
+            List<SystemOption> systemOptions
+                    = em.createQuery("SELECT o FROM SystemOption o WHERE "
+                            + "UPPER(o.name) LIKE '%" + newQueryString + "%'"
+                            + " OR UPPER(o.optionValue) like '%" + newQueryString + "%'"
+                            + " OR UPPER(o.comments) like '%" + newQueryString + "%'"
+                            + " OR UPPER(o.category) LIKE '%" + newQueryString + "%'"
+                            + " ORDER BY o.comments", SystemOption.class).getResultList();
             return systemOptions;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
-    
-     public static List<SystemOption> findFinancialSystemOptions(EntityManager em, String queryString) {
+
+    public static List<SystemOption> findFinancialSystemOptions(EntityManager em, String queryString) {
 
         try {
             String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
 
-            List<SystemOption> systemOptions =
-                    em.createQuery("SELECT o FROM SystemOption o WHERE o.category = 'FINANCE' AND ("
-                    + " UPPER(o.name) LIKE '%" + newQueryString + "%'"
-                    + " OR UPPER(o.optionValue) like '%" + newQueryString + "%'"
-                    + " OR UPPER(o.comments) like '%" + newQueryString + "%'"         
-                    + " ) ORDER BY o.comments", SystemOption.class).getResultList();
+            List<SystemOption> systemOptions
+                    = em.createQuery("SELECT o FROM SystemOption o WHERE o.category = 'FINANCE' AND ("
+                            + " UPPER(o.name) LIKE '%" + newQueryString + "%'"
+                            + " OR UPPER(o.optionValue) like '%" + newQueryString + "%'"
+                            + " OR UPPER(o.comments) like '%" + newQueryString + "%'"
+                            + " ) ORDER BY o.comments", SystemOption.class).getResultList();
             return systemOptions;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
-    
+
     public static Double getGCTPercentage(EntityManager em) {
         Double percentGCT;
 
@@ -244,7 +260,7 @@ public class SystemOption implements BusinessEntity, Serializable {
             percentGCT = 0.0;
             System.out.println("Exception occurred while getting GCT percentage");
         }
-        
+
         return percentGCT;
     }
 
@@ -268,6 +284,5 @@ public class SystemOption implements BusinessEntity, Serializable {
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
 }

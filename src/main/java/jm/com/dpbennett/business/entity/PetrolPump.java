@@ -36,6 +36,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -63,10 +64,12 @@ public class PetrolPump implements Product, BusinessEntity, Comparable, Serializ
     private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Certification certification;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<PetrolPumpNozzle> nozzles;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Sticker> stickers;
+    @Transient
+    private Boolean isDirty;
 
     public PetrolPump(PetrolPump src, Long id) {
         this.id = id;
@@ -78,7 +81,6 @@ public class PetrolPump implements Product, BusinessEntity, Comparable, Serializ
         this.rate = src.rate;
         this.dateScheduledForTest = src.dateScheduledForTest;
         this.name = src.name;
-
         this.nozzles = new ArrayList<>();
         this.stickers = new ArrayList<>();
     }
@@ -97,7 +99,20 @@ public class PetrolPump implements Product, BusinessEntity, Comparable, Serializ
     public void setId(Long id) {
         this.id = id;
     }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
 
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+    
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {

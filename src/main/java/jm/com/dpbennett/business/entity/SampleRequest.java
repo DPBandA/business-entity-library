@@ -35,6 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -64,9 +65,24 @@ public class SampleRequest implements Serializable, BusinessEntity, Form {
     private List<ProductInspection> products;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfRequest;
+    @Transient
+    private Boolean isDirty;
 
     public SampleRequest() {
-        products = new ArrayList<ProductInspection>();
+        products = new ArrayList<>();
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Date getDateOfRequest() {

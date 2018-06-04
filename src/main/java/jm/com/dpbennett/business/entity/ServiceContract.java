@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -31,6 +30,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -41,7 +41,8 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "servicecontract")
 @NamedQueries({
-    @NamedQuery(name = "findAllServiceContracts", query = "SELECT s FROM ServiceContract s ORDER BY s.id"),
+    @NamedQuery(name = "findAllServiceContracts", query = "SELECT s FROM ServiceContract s ORDER BY s.id")
+    ,
     @NamedQuery(name = "findByJobId", query = "SELECT s FROM ServiceContract s WHERE s.jobId = :jobId")
 })
 @XmlRootElement
@@ -82,11 +83,26 @@ public class ServiceContract implements Serializable, BusinessEntity {
     private String serviceRequestedOtherText;
     private String serviceRequestedDetails;
     private Boolean autoAddSampleInformation;
+    @Transient
+    private Boolean isDirty;
 
     public ServiceContract() {
     }
-    
-     public static ServiceContract create() {
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+
+    public static ServiceContract create() {
         ServiceContract serviceContract = new ServiceContract();
         // init service contract
         serviceContract.setIntendedMarketLocal(true);

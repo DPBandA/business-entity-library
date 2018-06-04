@@ -124,6 +124,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
         this.id = id;
     }
 
+    @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
@@ -131,6 +132,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
         return isDirty;
     }
 
+    @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }

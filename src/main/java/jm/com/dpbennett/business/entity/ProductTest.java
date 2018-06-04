@@ -32,6 +32,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -55,6 +56,8 @@ public class ProductTest implements Test, Serializable, Comparable, BusinessEnti
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date reTestDate;
     private String category;
+    @Transient
+    private Boolean isDirty;
 
     @Override
     public Long getId() {
@@ -64,6 +67,19 @@ public class ProductTest implements Test, Serializable, Comparable, BusinessEnti
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     @Override

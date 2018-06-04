@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -31,6 +30,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -52,9 +52,11 @@ public class StandardsOrganization implements BusinessEntity, Company, Serializa
     private List<BusinessOffice> businessOffices;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Division> divisions;
+    @Transient
+    private Boolean isDirty;
 
     public StandardsOrganization() {
-        businessOffices = new ArrayList<BusinessOffice>();
+        businessOffices = new ArrayList<>();
     }
 
     @Override
@@ -65,6 +67,19 @@ public class StandardsOrganization implements BusinessEntity, Company, Serializa
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public List<Division> getDivisions() {

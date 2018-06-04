@@ -36,6 +36,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
@@ -62,6 +63,8 @@ public class Laboratory implements BusinessEntity, Company, Serializable, Conver
     @OneToMany(cascade = CascadeType.ALL)
     private List<BusinessOffice> businessOffices;
     private Boolean active;
+    @Transient
+    private Boolean isDirty;
 
     public Laboratory() {
         businessOffices = new ArrayList<BusinessOffice>();
@@ -75,6 +78,19 @@ public class Laboratory implements BusinessEntity, Company, Serializable, Conver
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Boolean getActive() {

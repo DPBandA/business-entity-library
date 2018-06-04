@@ -34,6 +34,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -63,6 +64,8 @@ public class UnitCost implements Serializable, BusinessEntity {
     private Laboratory laboratory;
     @OneToOne(cascade = CascadeType.REFRESH)
     private DepartmentUnit departmentUnit;
+    @Transient
+    private Boolean isDirty;
 
     @Override
     public Long getId() {
@@ -72,6 +75,19 @@ public class UnitCost implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Laboratory getLaboratory() {

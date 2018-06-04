@@ -29,6 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -52,6 +53,8 @@ public class SequenceNumber implements Serializable, BusinessEntity {
     private String name;
     private Integer yearReceived;
     private Long sequentialNumber;
+    @Transient
+    private Boolean isDirty;
 
     @Override
     public Long getId() {
@@ -61,6 +64,19 @@ public class SequenceNumber implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Integer getYearReceived() {

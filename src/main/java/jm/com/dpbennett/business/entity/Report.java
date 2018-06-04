@@ -34,6 +34,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -66,6 +67,8 @@ public class Report implements Serializable, BusinessEntity {
     private List<ReportTableColumn> reportColumns; // tk retire this 
     private Boolean active;
     private Boolean usePackagedReportFileTemplate;
+    @Transient
+    private Boolean isDirty;
 
     public Report() {
         reportColumns = new ArrayList<>(); // tk retire use of this
@@ -74,6 +77,19 @@ public class Report implements Serializable, BusinessEntity {
     public Report(String name) {
         this.name = name;
         reportColumns = new ArrayList<>(); // tk retire use of this
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public String getReportOutputFileMimeType() {

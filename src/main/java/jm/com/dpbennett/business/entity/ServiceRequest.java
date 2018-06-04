@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -37,9 +36,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-
 
 /**
  *
@@ -48,7 +47,8 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "servicerequest")
 @NamedQueries({
-    @NamedQuery(name = "findAllServiceRequests", query = "SELECT s FROM ServiceRequest s ORDER BY s.serviceRequestNumber"),
+    @NamedQuery(name = "findAllServiceRequests", query = "SELECT s FROM ServiceRequest s ORDER BY s.serviceRequestNumber")
+    ,
     @NamedQuery(name = "findByServiceRequestNumber", query = "SELECT s FROM ServiceRequest s WHERE s.serviceRequestNumber = :serviceRequestNumber")
 })
 public class ServiceRequest implements Serializable, BusinessEntity {
@@ -107,12 +107,27 @@ public class ServiceRequest implements Serializable, BusinessEntity {
     private Date dateStatusEdited;
     @Column(length = 1024)
     private String purpose;
+    @Transient
+    private Boolean isDirty;
 
-    public ServiceRequest() {       
+    public ServiceRequest() {
     }
 
     public ServiceRequest(String serviceRequestNumber) {
         this.serviceRequestNumber = serviceRequestNumber;
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public ServiceRequest(JobSubCategory jobSubCategory) {
@@ -287,7 +302,6 @@ public class ServiceRequest implements Serializable, BusinessEntity {
 //    public void setServices(List<Service> services) {
 //        this.services = services;
 //    }
-
 //    public String getServiceRequestNumber() {
 //        return serviceRequestNumber;
 //    }
@@ -516,8 +530,8 @@ public class ServiceRequest implements Serializable, BusinessEntity {
         if (searchType.equals("General")) {
 
             if (!searchText.equals("")) {
-                searchTextAndClause =
-                        " AND ("
+                searchTextAndClause
+                        = " AND ("
                         + " UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(serviceRequest.serviceRequestNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(serviceRequest.comment) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -533,8 +547,8 @@ public class ServiceRequest implements Serializable, BusinessEntity {
                         + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
             }
-            searchQuery =
-                    "SELECT serviceRequest FROM ServiceRequest serviceRequest"
+            searchQuery
+                    = "SELECT serviceRequest FROM ServiceRequest serviceRequest"
                     + " JOIN serviceRequest.department department"
                     + " JOIN serviceRequest.classification classification"
                     + " JOIN serviceRequest.sector sector"

@@ -29,10 +29,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
- *
+ * tk get rid of this class if it's no longer being used
  * @author dbennett
  */
 @Entity
@@ -53,6 +54,8 @@ public class GeneratedForm implements Serializable, BusinessEntity, Form {
     private String databaseDriverClass = "";
     private String databaseUsername = "";
     private String databasePassword = "";
+    @Transient
+    private Boolean isDirty;
 
     @Override
     public Long getId() {
@@ -62,6 +65,20 @@ public class GeneratedForm implements Serializable, BusinessEntity, Form {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Date getEndDate() {

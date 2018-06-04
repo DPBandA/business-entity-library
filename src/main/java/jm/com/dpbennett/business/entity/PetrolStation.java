@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -39,6 +38,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -75,6 +75,8 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
     private Employee lastAssignee;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Certification certification;
+    @Transient
+    private Boolean isDirty;
 
     public PetrolStation() {
         contacts = new ArrayList<>();
@@ -84,9 +86,22 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
 
     public PetrolStation(String name) {
         this.name = name;
-        contacts = new ArrayList<Contact>();
-        addresses = new ArrayList<Address>();
-        petrolPumps = new ArrayList<PetrolPump>();
+        contacts = new ArrayList<>();
+        addresses = new ArrayList<>();
+        petrolPumps = new ArrayList<>();
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Certification getCertification() {
@@ -112,7 +127,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
 
     public Integer getNumberOfPetrolPumpNozzlesNotWorking() {
         Integer numOfNozzles = 0;
-       
+
         for (PetrolPump pump : getPetrolPumps()) {
             for (PetrolPumpNozzle nozzle : pump.getNozzles()) {
                 if (nozzle.getStatus() != null) {
@@ -310,25 +325,22 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
     public void setTaxRegistrationNumber(String taxRegistrationNumber) {
         this.taxRegistrationNumber = taxRegistrationNumber;
     }
-    
+
     public static List<PetrolStation> findPetrolStationsByName(EntityManager em, String name) {
 
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<PetrolStation> stations =
-                    em.createQuery("SELECT p FROM PetrolStation p where UPPER(p.name) like '"
-                    + newName.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class).getResultList();
+            List<PetrolStation> stations
+                    = em.createQuery("SELECT p FROM PetrolStation p where UPPER(p.name) like '"
+                            + newName.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class).getResultList();
             return stations;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<PetrolStation>();
         }
-    } 
-    
-    
-    
-    
+    }
+
     public static List<PetrolStation> findPetrolStationsByDateSearchField(
             EntityManager em,
             JobManagerUser user,
@@ -354,10 +366,9 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
 
         if (searchType.equals("General")) {
 
-
             if (!searchText.equals("")) {
-                searchTextAndClause =
-                        " AND ("
+                searchTextAndClause
+                        = " AND ("
                         + " UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(petrolStation.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(lastAssignee.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -365,8 +376,8 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
                         + " )";
             }
 
-            searchQuery =
-                    "SELECT petrolStation FROM PetrolStation petrolStation"
+            searchQuery
+                    = "SELECT petrolStation FROM PetrolStation petrolStation"
                     + " JOIN petrolStation.client client"
                     + " JOIN petrolStation.certification certification"
                     + " JOIN petrolStation.lastAssignee lastAssignee"
@@ -387,8 +398,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
 
         return stations;
     }
-    
-    
+
     public static PetrolStation findPetrolStationByName(EntityManager em, String name) {
 
         try {
@@ -407,7 +417,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
         }
 
     }
-    
+
     public static PetrolStation findPetrolStationById(EntityManager em, Long id) {
 
         try {
@@ -419,15 +429,14 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
             return null;
         }
     }
-    
-     @Override
+
+    @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         PetrolStation station = new PetrolStation();
 
         if (value != null) {
             station.setName(value);
-        }
-        else {
+        } else {
             station.setName("");
         }
 
@@ -436,7 +445,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-         return ((PetrolStation) value).getName();
+        return ((PetrolStation) value).getName();
     }
 
     @Override

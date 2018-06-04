@@ -35,6 +35,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -77,6 +78,8 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable, Se
     private PetrolPumpNozzleCalibration lastCalibration;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Certification> certifications;
+    @Transient
+    private Boolean isDirty;
 
      public PetrolPumpNozzle(PetrolPumpNozzle src, Long id) {
         this.id = id; 
@@ -117,6 +120,19 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable, Se
         testMeasures = testMeasures + "," + measures.get(1).getCapacity().toString();
         
         lastCalibration = new PetrolPumpNozzleCalibration(measures);
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public List<Certification> getCertifications() {

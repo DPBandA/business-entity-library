@@ -35,6 +35,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -59,6 +60,8 @@ public class Preference implements Serializable, BusinessEntity, Converter {
     private String category;
     private String roles;
     private String description;
+    @Transient
+    private Boolean isDirty;
 
     public Preference() {
     }
@@ -76,6 +79,19 @@ public class Preference implements Serializable, BusinessEntity, Converter {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public String getPreferenceValue() {

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -27,6 +26,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -48,12 +48,27 @@ public class PhoneNumber implements BusinessEntity, Serializable {
     private String cityOrAreaCode;
     private String localNumber;
     private String extension;
+    @Transient
+    private Boolean isDirty;
 
     public PhoneNumber() {
     }
 
     public PhoneNumber(PhoneNumber src) {
         doCopy(src);
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public final void doCopy(PhoneNumber src) {
@@ -165,7 +180,7 @@ public class PhoneNumber implements BusinessEntity, Serializable {
 
     @Override
     public void setName(String name) {
-        
+
     }
 
     @Override

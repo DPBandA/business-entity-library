@@ -32,6 +32,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -49,6 +50,8 @@ public class JobCosting implements Serializable, BusinessEntity {
     private String name;
     @OneToMany(cascade = CascadeType.ALL)
     private List<CostComponent> costComponents;
+    @Transient
+    private Boolean isDirty;
 
     public JobCosting() {
         costComponents = new ArrayList<CostComponent>();
@@ -68,6 +71,20 @@ public class JobCosting implements Serializable, BusinessEntity {
         this.id = id;
         this.name = name;
         costComponents = new ArrayList<CostComponent>();
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Double getTotalCost() {

@@ -33,6 +33,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -54,9 +55,11 @@ public class JobReportItem implements Serializable, BusinessEntity, Comparable {
     private Double itemValue;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Department> departments;
+    @Transient
+    private Boolean isDirty;
 
     public JobReportItem() {
-        departments = new ArrayList<Department>();
+        departments = new ArrayList<>();
     }
 
     @Override
@@ -67,6 +70,20 @@ public class JobReportItem implements Serializable, BusinessEntity, Comparable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Double getItemValue() {
@@ -79,7 +96,7 @@ public class JobReportItem implements Serializable, BusinessEntity, Comparable {
 
     public List<Department> getDepartments() {
         if (departments == null) {
-            departments = new ArrayList<Department>();
+            departments = new ArrayList<>();
         }
         return departments;
     }

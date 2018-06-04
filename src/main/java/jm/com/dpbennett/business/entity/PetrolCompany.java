@@ -37,6 +37,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -71,6 +72,8 @@ public class PetrolCompany implements Customer, Company, BusinessEntity, Seriali
     @OneToOne(cascade = CascadeType.REFRESH)
     private Internet internet;
     private String taxRegistrationNumber;
+    @Transient
+    private Boolean isDirty;
 
     public PetrolCompany() {
         petrolStations = new ArrayList<>();
@@ -81,11 +84,10 @@ public class PetrolCompany implements Customer, Company, BusinessEntity, Seriali
 
      public PetrolCompany(String name) {
          this.name = name;
-        petrolStations = new ArrayList<PetrolStation>();
-        businessOffices = new ArrayList<BusinessOffice>();
-        addresses = new ArrayList<Address>();
-        contacts = new ArrayList<Contact>();
-        //internet = new Internet();
+        petrolStations = new ArrayList<>();
+        businessOffices = new ArrayList<>();
+        addresses = new ArrayList<>();
+        contacts = new ArrayList<>();
     }
 
     @Override
@@ -96,6 +98,19 @@ public class PetrolCompany implements Customer, Company, BusinessEntity, Seriali
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
     public Internet getInternet() {
