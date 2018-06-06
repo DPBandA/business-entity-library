@@ -335,10 +335,13 @@ public class Report implements Serializable, BusinessEntity {
 
         try {
             String newName = name.replaceAll("'", "''");
+            String newCategory = category.replaceAll("'", "''");
 
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where r.active = 1 AND UPPER(r.name) like '%"
-                            + newName.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+                            + newName.toUpperCase().trim() + "%'"
+                            + " AND UPPER(r.category) like '%"
+                            + newCategory.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
             return reports;
         } catch (Exception e) {
             System.out.println(e);
