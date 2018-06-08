@@ -20,6 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,7 +59,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "findAllEmployees", query = "SELECT e FROM Employee e ORDER BY e.lastName")
 })
 @XmlRootElement
-public class Employee implements Person, Serializable, BusinessEntity {
+public class Employee implements Person, Serializable, Comparable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;
     @Id
@@ -118,7 +119,7 @@ public class Employee implements Person, Serializable, BusinessEntity {
         phoneNumbers = new ArrayList<>();
         active = true;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -381,9 +382,8 @@ public class Employee implements Person, Serializable, BusinessEntity {
 
     @Override
     public String getName() {
-        if (name == null) {
-            name = toString();
-        }
+        name = toString();
+        
         return name;
     }
 
@@ -673,6 +673,11 @@ public class Employee implements Person, Serializable, BusinessEntity {
         }
 
         return emails;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.getName(), ((Employee) o).getName());
     }
 
 }

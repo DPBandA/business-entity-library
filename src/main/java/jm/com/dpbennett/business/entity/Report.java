@@ -69,6 +69,16 @@ public class Report implements Serializable, BusinessEntity {
     private Boolean usePackagedReportFileTemplate;
     @Transient
     private Boolean isDirty;
+    // Report parameters
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Department> departments;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Employee> employees;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Client> clients;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<DatePeriod> datePeriods;
+    
 
     public Report() {
         reportColumns = new ArrayList<>(); // tk retire use of this
