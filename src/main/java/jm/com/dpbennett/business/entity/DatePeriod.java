@@ -21,6 +21,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
+import java.text.Collator;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "dateperiod")
 @XmlRootElement
-public class DatePeriod implements BusinessEntity, Serializable, Converter {
+public class DatePeriod implements BusinessEntity, Serializable, Converter, Comparable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -395,11 +396,26 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Date period not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.name, ((DatePeriod) o).name);
     }
 }

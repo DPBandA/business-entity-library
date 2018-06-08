@@ -21,6 +21,7 @@ package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.faces.model.SelectItem;
 import javax.persistence.CascadeType;
@@ -78,7 +79,6 @@ public class Report implements Serializable, BusinessEntity {
     private List<Client> clients;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<DatePeriod> datePeriods;
-    
 
     public Report() {
         reportColumns = new ArrayList<>(); // tk retire use of this
@@ -88,7 +88,35 @@ public class Report implements Serializable, BusinessEntity {
         this.name = name;
         reportColumns = new ArrayList<>(); // tk retire use of this
     }
-    
+
+    public List<Department> getDepartments() {
+        if (departments != null) {
+            Collections.sort(departments);
+        } else {
+            departments = new ArrayList<>();
+        }
+
+        return departments;
+    }
+
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
+    public List<Client> getClients() {
+        if (clients != null) {
+            Collections.sort(clients);
+        } else {
+            clients = new ArrayList<>();
+        }
+
+        return clients;
+    }
+
+    public List<DatePeriod> getDatePeriods() {
+        return datePeriods;
+    }
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
