@@ -59,6 +59,8 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     private Long id;
     private String name;
     private String type;
+    private String dateField;
+    private String label;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -75,6 +77,8 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     public DatePeriod(
             String name,
             String type,
+            String dateField,
+            String label,
             Date startDate,
             Date endDate,
             Boolean startDateDisabled,
@@ -83,6 +87,8 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
         
         this.name = name;
         this.type = type;
+        this.dateField = dateField;
+        this.label = label;
         this.startDate = startDate;
         this.endDate = endDate;
         this.startDateDisabled = startDateDisabled;
@@ -92,6 +98,22 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
         if (init) {
             init();
         }
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+    
+    public String getDateField() {
+        return dateField;
+    }
+
+    public void setDateField(String dateField) {
+        this.dateField = dateField;
     }
     
     @Override
@@ -372,7 +394,8 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
 
     public static void main(String[] args) {
 
-        DatePeriod dp = new DatePeriod("Last financial year to date", "year", null, null, false, false, true);
+        DatePeriod dp = new DatePeriod("Last financial year to date", "year", 
+                null, null, null, null, false, false, true);
 
         System.out.println(dp.getStartDate());
         System.out.println(dp.getEndDate());
@@ -416,6 +439,6 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
 
     @Override
     public int compareTo(Object o) {
-        return Collator.getInstance().compare(this.name, ((DatePeriod) o).name);
+        return Collator.getInstance().compare(this.getName(), ((DatePeriod) o).getName());
     }
 }

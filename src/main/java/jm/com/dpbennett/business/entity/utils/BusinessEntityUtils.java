@@ -1500,7 +1500,7 @@ public class BusinessEntityUtils {
 
         // previous reporting period
         DatePeriod previousReportingPeriod
-                = new DatePeriod("Previous reporting period", "month",
+                = new DatePeriod("Previous reporting period", "month", null, null,
                         BusinessEntityUtils.adjustDate(reportingPeriod.getStartDate(), Calendar.MONTH, -1),
                         BusinessEntityUtils.adjustDate(reportingPeriod.getEndDate(), Calendar.MONTH, -1),
                         false, false, true);
@@ -1517,11 +1517,13 @@ public class BusinessEntityUtils {
         DatePeriod reportingPeriodYTD = new DatePeriod("Financial year to date",
                 "month",
                 null,
+                null,
+                null,
                 BusinessEntityUtils.createDate(year, monthIndex, day),
                 false, false, true);
 
         // reporting period last year
-        DatePeriod reportingPeriodLastYear = new DatePeriod("Reporting period last year", "year",
+        DatePeriod reportingPeriodLastYear = new DatePeriod("Reporting period last year", "year", null, null,
                 BusinessEntityUtils.adjustDate(reportingPeriod.getStartDate(), Calendar.YEAR, -1),
                 BusinessEntityUtils.adjustDate(reportingPeriod.getEndDate(), Calendar.YEAR, -1),
                 false, false, true);
@@ -1529,6 +1531,8 @@ public class BusinessEntityUtils {
         // Last financial year to date
         DatePeriod lastFinancialYTD = new DatePeriod("Financial year to date",
                 "year",
+                null,
+                null,
                 null,
                 BusinessEntityUtils.createDate(year - 1, monthIndex, day),
                 false, false, true);

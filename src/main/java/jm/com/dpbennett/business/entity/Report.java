@@ -99,8 +99,16 @@ public class Report implements Serializable, BusinessEntity {
         return departments;
     }
 
+    public void setDepartments(List<Department> departments) {
+        this.departments = departments;
+    }
+
     public List<Employee> getEmployees() {
         return employees;
+    }
+
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
     }
 
     public List<Client> getClients() {

@@ -411,7 +411,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     @Override
     public int compareTo(Object o) {
-        return Collator.getInstance().compare(this.name, ((Department) o).name);
+        return Collator.getInstance().compare(this.getName(), ((Department) o).getName());
     }
 
     public static Department findDefaultDepartment(EntityManager em,

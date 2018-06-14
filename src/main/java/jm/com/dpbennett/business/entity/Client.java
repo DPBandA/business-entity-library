@@ -827,6 +827,6 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
 
     @Override
     public int compareTo(Object o) {
-        return Collator.getInstance().compare(this.name, ((Client) o).name);
+        return Collator.getInstance().compare(this.getName(), ((Client) o).getName());
     }
 }

@@ -1296,6 +1296,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " )";
                 searchQuery
                         = "SELECT job FROM Job job"
+                       // = "SELECT job.id, job.jobNumber, job.client, job.instructions, job.jobStatusAndTracking.dateSubmitted, job.jobStatusAndTracking.expectedDateOfCompletion, job.jobStatusAndTracking.workProgress FROM Job job"
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + sampleSearchJoinClause
                         + " JOIN job.businessOffice businessOffice"
@@ -1450,6 +1451,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
      * an alert date set is considered new.
      *
      * @param em
+     * @param datePeriod
      * @return
      */
     public static List<Job> findAllNewJobs(EntityManager em, DatePeriod datePeriod) {

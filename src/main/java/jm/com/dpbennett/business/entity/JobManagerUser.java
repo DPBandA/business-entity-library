@@ -50,8 +50,8 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Table(name = "jobmanageruser")
 @NamedQueries({
     @NamedQuery(name = "findAllJobManagerUsers", query = "SELECT e FROM JobManagerUser e ORDER BY e.username")
-    ,
-    @NamedQuery(name = "findByJobManagerUsername", query = "SELECT e FROM JobManagerUser e WHERE UPPER(e.username) = :username")
+    ,@NamedQuery(name = "findByJobManagerUsername", query = "SELECT e FROM JobManagerUser e WHERE UPPER(e.username) = :username")
+
 })
 @XmlRootElement
 public class JobManagerUser implements Serializable, BusinessEntity {
@@ -64,7 +64,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     private Long id;
     private String username;
     private String userInterfaceThemeName;
-    private String jobTableViewPreference; // rename?
+    private String jobTableViewPreference;
     private Boolean authenticate;
     private String activity;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -74,20 +74,32 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Department department; // tk remove eventually.
+    private Department department; // tk remove eventually when not used.
     @OneToOne(cascade = CascadeType.REFRESH)
     private Privilege privilege;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Modules modules;
     @Transient
     private Boolean isDirty;
+    private Boolean active;
 
     public JobManagerUser() {
         privilege = new Privilege();
         modules = new Modules();
         username = "";
     }
-    
+
+    public Boolean getActive() {
+        if (active == null) {
+            active = true;
+        }
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -390,6 +402,26 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     }
 
+    public static JobManagerUser findActiveJobManagerUserByUsername(EntityManager em, String username) {
+
+        String newUsername = username.replaceAll("'", "''");
+        try {
+
+            List<JobManagerUser> users = em.createQuery(
+                    "SELECT j FROM JobManagerUser j WHERE j.active = 1 AND j.username = '" + 
+                            newUsername + "'", JobManagerUser.class).getResultList();
+
+            if (users.size() > 0) {
+                return users.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
+    }
+
     public static JobManagerUser findJobManagerUserByEmployeeId(EntityManager em, Long employeeId) {
         try {
             List<JobManagerUser> users = em.createQuery(
@@ -408,7 +440,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<JobManagerUser> findJobManagerUserByName(EntityManager em, String name) {
+    public static List<JobManagerUser> findJobManagerUsersByName(EntityManager em, String name) {
         try {
             String newName = name.toUpperCase().trim().replaceAll("'", "''");
 
@@ -428,10 +460,49 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         }
     }
 
+    public static List<JobManagerUser> findActiveJobManagerUsersByName(EntityManager em, String name) {
+        try {
+            String newName = name.toUpperCase().trim().replaceAll("'", "''");
+
+            List<JobManagerUser> users = em.createQuery(
+                    "SELECT j FROM JobManagerUser j"
+                    + " JOIN j.employee e"
+                    + " WHERE (j.active = 1 OR j.active IS NULL) AND (UPPER(e.firstName) like '%"
+                    + newName + "%'" + " OR UPPER(e.lastName) like '%"
+                    + newName + "%'" + " OR UPPER(j.username) like '%"
+                    + newName + "%')", JobManagerUser.class).getResultList();
+
+            return users;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static List<JobManagerUser> findAllActiveJobManagerUsers(EntityManager em) {
+
+        try {
+
+            List<JobManagerUser> users = em.createQuery(
+                    "SELECT j FROM JobManagerUser j WHERE j.active = 1 OR j.active IS NULL", JobManagerUser.class).getResultList();
+
+            return users;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static List<JobManagerUser> findAllJobManagerUsers(EntityManager em) {
 
         try {
-            return em.createNamedQuery("findAllJobManagerUsers", JobManagerUser.class).getResultList();
+
+            List<JobManagerUser> users = em.createQuery(
+                    "SELECT j FROM JobManagerUser j WHERE j.active = 1", JobManagerUser.class).getResultList();
+
+            return users;
+
         } catch (Exception e) {
             return null;
         }
