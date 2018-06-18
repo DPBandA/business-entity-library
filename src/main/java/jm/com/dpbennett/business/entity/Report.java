@@ -28,6 +28,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -71,13 +72,13 @@ public class Report implements Serializable, BusinessEntity {
     @Transient
     private Boolean isDirty;
     // Report parameters
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     private List<Department> departments;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     private List<Employee> employees;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     private List<Client> clients;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     private List<DatePeriod> datePeriods;
     private Boolean departmentRequired;
     private Boolean employeeRequired;

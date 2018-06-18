@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -42,7 +41,6 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-
 
 /**
  *
@@ -85,7 +83,7 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
             Boolean startDateDisabled,
             Boolean endDateDisabled,
             Boolean init) {
-        
+
         this.name = name;
         this.type = type;
         this.dateField = dateField;
@@ -108,7 +106,7 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     public void setLabel(String label) {
         this.label = label;
     }
-    
+
     public String getDateField() {
         return dateField;
     }
@@ -116,7 +114,7 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     public void setDateField(String dateField) {
         this.dateField = dateField;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -331,7 +329,7 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
                 setEndDateDisabled(true);
                 break;
             case "Financial year to date":
-                    endDate = BusinessEntityUtils.createDate(new Date());
+                endDate = BusinessEntityUtils.createDate(new Date());
                 initFinancialYearPeriod(endDate);
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
@@ -379,6 +377,9 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
 
     @Override
     public String getName() {
+        if (name == null) {
+            name = "";
+        }
         return name;
     }
 
@@ -395,7 +396,7 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
 
     public static void main(String[] args) {
 
-        DatePeriod dp = new DatePeriod("Last financial year to date", "year", 
+        DatePeriod dp = new DatePeriod("Last financial year to date", "year",
                 null, null, null, null, false, false, true);
 
         System.out.println(dp.getStartDate());
