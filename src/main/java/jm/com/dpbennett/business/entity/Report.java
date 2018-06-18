@@ -169,10 +169,24 @@ public class Report implements Serializable, BusinessEntity {
         return clients;
     }
 
+    public void setClients(List<Client> clients) {
+        this.clients = clients;
+    }
+    
+    
+
     public List<DatePeriod> getDatePeriods() {
+        if (datePeriods == null) {
+            datePeriods = new ArrayList<>();
+        }
+
         return datePeriods;
     }
 
+    public void setDatePeriods(List<DatePeriod> datePeriods) {
+        this.datePeriods = datePeriods;
+    }
+    
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {

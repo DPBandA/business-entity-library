@@ -67,6 +67,7 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     private Date endDate;
     private Boolean startDateDisabled;
     private Boolean endDateDisabled;
+    @Transient
     private Boolean init;
     @Transient
     private Boolean isDirty;
