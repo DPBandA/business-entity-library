@@ -79,6 +79,10 @@ public class Report implements Serializable, BusinessEntity {
     private List<Client> clients;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<DatePeriod> datePeriods;
+    private Boolean departmentRequired;
+    private Boolean employeeRequired;
+    private Boolean clientRequired;
+    private Boolean datePeriodRequired;
 
     public Report() {
         reportColumns = new ArrayList<>(); // tk retire use of this
@@ -87,6 +91,50 @@ public class Report implements Serializable, BusinessEntity {
     public Report(String name) {
         this.name = name;
         reportColumns = new ArrayList<>(); // tk retire use of this
+    }
+
+    public Boolean getDepartmentRequired() {
+        if (departmentRequired == null) {
+            departmentRequired = false;
+        }
+        return departmentRequired;
+    }
+
+    public void setDepartmentRequired(Boolean departmentRequired) {
+        this.departmentRequired = departmentRequired;
+    }
+
+    public Boolean getEmployeeRequired() {
+        if (employeeRequired == null) {
+            employeeRequired = false;
+        }
+        return employeeRequired;
+    }
+
+    public void setEmployeeRequired(Boolean employeeRequired) {
+        this.employeeRequired = employeeRequired;
+    }
+
+    public Boolean getClientRequired() {
+        if (clientRequired == null) {
+            clientRequired = false;
+        }
+        return clientRequired;
+    }
+
+    public void setClientRequired(Boolean clientRequired) {
+        this.clientRequired = clientRequired;
+    }
+
+    public Boolean getDatePeriodRequired() {
+        if (datePeriodRequired == null) {
+            datePeriodRequired = false;
+        }
+        return datePeriodRequired;
+    }
+
+    public void setDatePeriodRequired(Boolean datePeriodRequired) {
+        this.datePeriodRequired = datePeriodRequired;
     }
 
     public List<Department> getDepartments() {
