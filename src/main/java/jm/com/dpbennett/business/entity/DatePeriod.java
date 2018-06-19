@@ -100,6 +100,9 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     }
 
     public String getLabel() {
+        if (label == null) {
+            label = "";
+        }
         return label;
     }
 
@@ -441,6 +444,6 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
 
     @Override
     public int compareTo(Object o) {
-        return Collator.getInstance().compare(this.getName(), ((DatePeriod) o).getName());
+        return Collator.getInstance().compare(this.getLabel(), ((DatePeriod) o).getLabel());
     }
 }

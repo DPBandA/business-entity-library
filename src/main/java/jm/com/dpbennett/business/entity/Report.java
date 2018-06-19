@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.faces.application.FacesMessage;
 import javax.faces.model.SelectItem;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -173,11 +174,11 @@ public class Report implements Serializable, BusinessEntity {
     public void setClients(List<Client> clients) {
         this.clients = clients;
     }
-    
-    
 
     public List<DatePeriod> getDatePeriods() {
-        if (datePeriods == null) {
+        if (datePeriods != null) {
+            Collections.sort(datePeriods);
+        } else {
             datePeriods = new ArrayList<>();
         }
 
@@ -187,7 +188,7 @@ public class Report implements Serializable, BusinessEntity {
     public void setDatePeriods(List<DatePeriod> datePeriods) {
         this.datePeriods = datePeriods;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -491,6 +492,21 @@ public class Report implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            // Save new/edited date periods 
+            if (!getDatePeriods().isEmpty()) {
+                for (DatePeriod datePeriod : getDatePeriods()) {
+                    if ((datePeriod.getIsDirty() || datePeriod.getId() == null)
+                            && !datePeriod.save(em).isSuccess()) {
+                        
+                        return new ReturnMessage(false,
+                                "Date period save error occurred",
+                                "An error occurred while saving a date period",
+                                FacesMessage.SEVERITY_ERROR);
+                        
+                    }
+                }
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
