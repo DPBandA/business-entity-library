@@ -99,6 +99,10 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
         }
     }
 
+    public static DatePeriod findById(EntityManager em, Long id) {
+        return em.find(DatePeriod.class, id);
+    }
+
     public String getLabel() {
         if (label == null) {
             label = "";
