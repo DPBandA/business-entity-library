@@ -188,7 +188,7 @@ public class Preference implements Serializable, BusinessEntity, Converter {
             String newValue = value.replaceAll("'", "''");
 
             List<Preference> preferences =
-                    em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '"
+                    em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '%"
                     + newValue.toUpperCase().trim() + "%' ORDER BY p.preferenceValue", Preference.class).getResultList();
             return preferences;
         } catch (Exception e) {
