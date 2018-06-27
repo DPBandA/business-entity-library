@@ -1120,6 +1120,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         String searchTextAndClause;
         String sampleSearchWhereClause = "";
         String sampleSearchJoinClause = "";
+        String selectClause = "SELECT DISTINCT job FROM Job job";
 
         // get rid of any single quotes from text and ensure
         // that it is not null
@@ -1128,19 +1129,21 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         } else {
             searchText = "";
         }
-
+        
         // include the search for samples?
         if (includeSampleSearch) {
             sampleSearchWhereClause
                     = " OR UPPER(jobSamples.reference) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.description) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.productBrand) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(jobSamples.name) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.productModel) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.productSerialNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.productCode) LIKE '%" + searchText.toUpperCase() + "%'";
 
             sampleSearchJoinClause = " JOIN job.jobSamples jobSamples";
         }
+        
         switch (searchType) {
             case "Unapproved job costings":
                 searchTextAndClause
@@ -1166,7 +1169,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
                 searchQuery
-                        = "SELECT job FROM Job job"
+                        = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + sampleSearchJoinClause
                         + " JOIN job.businessOffice businessOffice"
@@ -1210,7 +1213,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
                 searchQuery
-                        = "SELECT job FROM Job job"
+                        = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + sampleSearchJoinClause
                         + " JOIN job.businessOffice businessOffice"
@@ -1253,7 +1256,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
                 searchQuery
-                        = "SELECT job FROM Job job"
+                        = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + sampleSearchJoinClause
                         + " JOIN job.businessOffice businessOffice"
@@ -1295,8 +1298,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
                 searchQuery
-                        = "SELECT job FROM Job job"
-                       // = "SELECT job.id, job.jobNumber, job.client, job.instructions, job.jobStatusAndTracking.dateSubmitted, job.jobStatusAndTracking.expectedDateOfCompletion, job.jobStatusAndTracking.workProgress FROM Job job"
+                        = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + sampleSearchJoinClause
                         + " JOIN job.businessOffice businessOffice"
@@ -1316,7 +1318,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 break;
             case "Jobs in period":
                 searchQuery
-                        = "SELECT job FROM Job job"
+                        = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                         + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
@@ -1325,7 +1327,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             case "Monthly report":
                 System.out.println("search text: " + searchText);
                 searchQuery
-                        = "SELECT job FROM Job job"
+                        = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + " JOIN job.department department"
                         + " JOIN job.subContractedDepartment subContractedDepartment"
@@ -1356,7 +1358,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
                 searchQuery
-                        = "SELECT job FROM Job job"
+                        = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + sampleSearchJoinClause
                         + " JOIN job.department department"
@@ -1396,7 +1398,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
                 searchQuery
-                        = "SELECT job FROM Job job"
+                        = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + sampleSearchJoinClause
                         + " JOIN job.department department"
@@ -1419,7 +1421,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             case "Jobs for my department":
                 searchText = user.getEmployee().getDepartment().getName().replaceAll("'", "''");
                 searchQuery
-                        = "SELECT job FROM Job job"
+                        = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + " JOIN job.department department"
                         + " JOIN job.subContractedDepartment subContractedDepartment"
