@@ -1132,6 +1132,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         
         // include the search for samples?
         if (includeSampleSearch) {
+            
             sampleSearchWhereClause
                     = " OR UPPER(jobSamples.reference) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.description) LIKE '%" + searchText.toUpperCase() + "%'"

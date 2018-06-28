@@ -87,10 +87,11 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     // end tracking info
     private Boolean tag;
     private String taxRegistrationNumber;
-    private Boolean active;    
+    private Boolean active;
     private Boolean international;
     @Transient
     private Boolean isDirty;
+    private String accountingId;
 
     public Client() {
         this.taxRegistrationNumber = "";
@@ -107,6 +108,19 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         international = false;
     }
 
+    public String getAccountingId() {
+        if (accountingId == null) {
+            accountingId = "";
+        }
+
+        return accountingId;
+    }
+
+    public void setAccountingId(String accountingId) {
+        this.accountingId = accountingId;
+    }
+
+    @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
@@ -114,6 +128,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return isDirty;
     }
 
+    @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
@@ -396,7 +411,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
             return new Contact("", "", "Main");
         }
     }
-    
+
     /**
      * Get the main contact which is treated as the main contact in the list of
      * contacts.
@@ -422,7 +437,6 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
             return getContacts().get(0);
         }
     }
-    
 
     public Contact addContact(Contact contact) {
         getContacts().add(contact);
@@ -515,7 +529,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
             return false;
         }
         Client other = (Client) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
