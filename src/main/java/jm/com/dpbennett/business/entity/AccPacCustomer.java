@@ -240,7 +240,7 @@ public class AccPacCustomer implements Serializable {
 
     @Override
     public String toString() {
-        return customerName;
+        return getCustomerName();
     }
 
     public static List<AccPacCustomer> findAccPacCustomersByName(EntityManager em, String name) {
