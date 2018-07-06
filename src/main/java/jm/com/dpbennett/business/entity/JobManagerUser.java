@@ -408,7 +408,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         try {
 
             List<JobManagerUser> users = em.createQuery(
-                    "SELECT j FROM JobManagerUser j WHERE j.active = 1 AND j.username = '" + 
+                    "SELECT j FROM JobManagerUser j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '" + 
                             newUsername + "'", JobManagerUser.class).getResultList();
 
             if (users.size() > 0) {
