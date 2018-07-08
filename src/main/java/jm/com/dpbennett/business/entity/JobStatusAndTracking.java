@@ -59,6 +59,8 @@ public class JobStatusAndTracking implements Serializable {
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee completedBy;
     private String productOrSampleReceivedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateProductOrSampleReceived;
@@ -108,6 +110,14 @@ public class JobStatusAndTracking implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Employee getCompletedBy() {
+        return completedBy;
+    }
+
+    public void setCompletedBy(Employee completedBy) {
+        this.completedBy = completedBy;
     }
 
     public String getEditStatus() {

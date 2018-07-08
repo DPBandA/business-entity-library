@@ -490,13 +490,9 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             job.setJobNumber(job.getJobNumber() + "/" + subContractedDepartmenyOrCompanyCode);
         }
 
-        SystemOption sysOption = SystemOption.findSystemOptionByName(em,
+        Boolean includeRef = (Boolean) SystemOption.getOptionValueObject(em,
                 "includeSampleReference");
 
-        Boolean includeRef = true;
-        if (sysOption != null) {
-            includeRef = Boolean.parseBoolean(sysOption.getOptionValue());
-        }
         // Append sample codes if any
         if (includeRef) {
             if ((job.getNumberOfSamples() != null) && (job.getNumberOfSamples() > 1)) {

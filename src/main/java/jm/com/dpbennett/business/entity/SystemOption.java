@@ -21,7 +21,9 @@ package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import javax.faces.model.SelectItem;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -109,6 +111,9 @@ public class SystemOption implements BusinessEntity, Serializable {
     }
 
     public String getOptionValue() {
+        if (optionValue == null) {
+            optionValue = "";
+        }
         return optionValue;
     }
 
@@ -116,7 +121,46 @@ public class SystemOption implements BusinessEntity, Serializable {
         this.optionValue = optionValue;
     }
 
+    public static Object getOptionValueObject(EntityManager em, String name) {
+        SystemOption option = SystemOption.findSystemOptionByName(em,
+                name);
+
+        if (option != null) {
+            switch (option.getOptionValueType()) {
+                case "String":
+                    return option.getOptionValue();
+                case "Long":
+                    return Long.parseLong(option.getOptionValue());
+                case "Boolean":
+                    return Boolean.parseBoolean(option.getOptionValue());
+                case "List<String>":
+                    return getOptionValueListObject(em, option.getOptionValue());
+                default:
+                    return option.getOptionValue();
+            }
+
+        } else {
+            return "";
+        }
+    }
+
+    public static List<String> getOptionValueListObject(EntityManager em,
+            String optionValue) {
+        ArrayList list = new ArrayList();
+        String itemSep = (String) SystemOption.getOptionValueObject(em,
+                "defaultListItemSeparationCharacter");
+
+        String items[] = optionValue.split(itemSep);
+
+        list.addAll(Arrays.asList(items));
+
+        return list;
+    }
+
     public String getOptionValueType() {
+        if (optionValueType == null) {
+            optionValueType = "";
+        }
         return optionValueType;
     }
 
@@ -146,7 +190,7 @@ public class SystemOption implements BusinessEntity, Serializable {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.SystemOptions[id=" + id + "]";
+        return getOptionValue();
     }
 
     @Override
@@ -165,7 +209,7 @@ public class SystemOption implements BusinessEntity, Serializable {
      * @param name
      * @return
      */
-    public static SystemOption findSystemOptionByName(EntityManager em, String name) {
+    private static SystemOption findSystemOptionByName(EntityManager em, String name) {
 
         try {
             String newName = name.replaceAll("'", "''").trim();

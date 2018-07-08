@@ -473,7 +473,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     public static Department findDepartmentBySystemOptionDeptId(String option, EntityManager em) {
 
-        Long id = Long.parseLong(SystemOption.findSystemOptionByName(em, option).getOptionValue());
+        Long id = (Long)SystemOption.getOptionValueObject(em, option);
 
         Department department = Department.findDepartmentById(em, id);
         em.refresh(department);

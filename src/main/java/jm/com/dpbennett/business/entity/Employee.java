@@ -645,7 +645,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
             address = employee.getInternet().getEmail1();
         } else {
             // Get and set default email using company domain   
-            String listAsString = SystemOption.findSystemOptionByName(em, "domainNames").getOptionValue();
+            String listAsString = (String) SystemOption.getOptionValueObject(em, "domainNames");
             String domainNames[] = listAsString.split(";");
 
             JobManagerUser user = JobManagerUser.findJobManagerUserByEmployeeId(em, employee.getId());
