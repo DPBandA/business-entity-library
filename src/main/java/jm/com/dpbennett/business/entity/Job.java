@@ -1322,7 +1322,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " ORDER BY job.id DESC";
                 break;
             case "Monthly report":
-                System.out.println("search text: " + searchText);
                 searchQuery
                         = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
@@ -1965,7 +1964,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             return new ReturnMessage();
 
         } catch (Exception e) {
-            System.out.println("An error occurred while saving job: " + e);
+            System.out.println(e);
         }
 
         return new ReturnMessage(false,
@@ -2001,7 +2000,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         // Check if job nunmber is already associated with a job        
         Job existingJob = Job.findJobByJobNumber(em, currentJob.getJobNumber());
         if (existingJob != null) {
-            //System.out.println("exist id: " + existingJob.getId());
             long current_jobid = currentJob.getId() != null ? currentJob.getId() : -1L;
             if (existingJob.getId() != current_jobid) {
                 return new ReturnMessage(false, "This job cannot be saved because the job number is not unique.");
@@ -2195,7 +2193,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                             return false;
                         }
                     } catch (NumberFormatException e) {
-                        // this means 4th part is not a department code
+                        // This means 4th part is not a department code
                         // and that's ok for now.
                         System.out.println("Job number validation error: This means 4th part is not a department code.: " + e);
                     }

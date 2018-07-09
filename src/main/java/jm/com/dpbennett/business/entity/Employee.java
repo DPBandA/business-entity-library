@@ -480,7 +480,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
                 Attributes attrs = ((SearchResult) answer.next()).getAttributes();
                 // return the employee for the given first and last names
                 String name[] = attrs.get("displayName").get().toString().split(" ");
-                //System.out.println(name[0] + " " + name[1]);
                 if (name.length == 2) { // simple first and last names
                     return findEmployeeByName(em, name[0].trim(), name[1].trim());
                 } else if (name.length == 3) { // double barrel first name without hyphen and last name
@@ -490,7 +489,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
                 }
 
             } else {
-                System.out.println("Employee not found.");
                 return null;
             }
 

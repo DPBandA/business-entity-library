@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.faces.model.SelectItem;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -46,7 +45,8 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllSystemOptions", query = "SELECT s FROM SystemOption s ORDER BY s.name")
     ,
-    @NamedQuery(name = "findAllFinancialSystemOptions", query = "SELECT s FROM SystemOption s WHERE s.category = 'FINANCE' ORDER BY s.name")
+    @NamedQuery(name = "findAllFinancialSystemOptions", 
+            query = "SELECT s FROM SystemOption s WHERE s.category LIKE '%FINANCE%' OR s.category LIKE '%Finance%' ORDER BY s.name")
 })
 public class SystemOption implements BusinessEntity, Serializable {
 
@@ -130,7 +130,9 @@ public class SystemOption implements BusinessEntity, Serializable {
                 case "String":
                     return option.getOptionValue();
                 case "Long":
-                    return Long.parseLong(option.getOptionValue());
+                    return Long.parseLong(option.getOptionValue());    
+                case "Integer":
+                    return Integer.parseInt(option.getOptionValue());
                 case "Boolean":
                     return Boolean.parseBoolean(option.getOptionValue());
                 case "List<String>":
@@ -300,9 +302,9 @@ public class SystemOption implements BusinessEntity, Serializable {
         // Get percentage GCT for use by job costing and payment
         try {
             percentGCT = Double.parseDouble(SystemOption.findSystemOptionByName(em, "GCT").getOptionValue());
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             percentGCT = 0.0;
-            System.out.println("Exception occurred while getting GCT percentage");
+            System.out.println("Exception occurred while getting GCT percentage: " + e);
         }
 
         return percentGCT;

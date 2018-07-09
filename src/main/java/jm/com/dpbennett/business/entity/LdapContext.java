@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.naming.ldap.InitialLdapContext;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -290,7 +291,7 @@ public class LdapContext implements BusinessEntity, Serializable {
 
             return new InitialLdapContext(env, null);
 
-        } catch (Exception e) {
+        } catch (NamingException e) {
             System.out.println("Error getting InitialLdapContext: " + e);
         }
 

@@ -711,7 +711,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
             }
             return null;
         } catch (Exception e) {
-            System.out.println("Error getting client: possibly null name");
+            System.out.println(e);
             return null;
         }
     }
@@ -753,7 +753,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
             }
             return null;
         } catch (Exception e) {
-            System.out.println("Error getting client: possibly null name");
+            System.out.println(e);
             return null;
         }
     }

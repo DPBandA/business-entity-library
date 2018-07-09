@@ -183,13 +183,11 @@ public class AccPacDocument implements Serializable {
             } else {
                 return daysOverdue;
             }
-            // determine days overdue
-            //System.out.println(formatter.parse(dateString2));
+      
         } catch (ParseException ex) {
             System.out.println(ex);
             return 0;
         }
-        //System.out.println(formatter.parse(dateString2));
 
         return daysOverdue;
     }

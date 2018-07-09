@@ -176,14 +176,7 @@ public class Preference implements Serializable, BusinessEntity, Converter {
     }
 
     public static List<Preference> findAllPreferencesByValue(EntityManager em, String value) {
-//        try {
-//            Query query = em.createNamedQuery("findAllPreferencesByName");
-//            query.setParameter("name", name);
-//            return query.getResultList();
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return null;
-//        }
+
         try {
             String newValue = value.replaceAll("'", "''");
 
