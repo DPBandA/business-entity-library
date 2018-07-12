@@ -848,6 +848,7 @@ public class BusinessEntityUtils {
 
                 cell.setCellStyle(newStyle);
             }
+            
         } catch (Exception e) {
             System.out.println(e);
         }
