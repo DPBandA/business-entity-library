@@ -823,7 +823,7 @@ public class BusinessEntityUtils {
 
         XSSFCellStyle newStyle;
         if (style != null) {
-            newStyle = setExcelCellDataFormat(wb, dataType, style);
+            newStyle = style; //setExcelCellDataFormat(wb, dataType, style);
         } else {
             newStyle = cell.getCellStyle();
         }
@@ -847,6 +847,7 @@ public class BusinessEntityUtils {
                 }
 
                 cell.setCellStyle(newStyle);
+               
             }
             
         } catch (Exception e) {
