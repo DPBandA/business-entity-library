@@ -28,10 +28,12 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * This class encapsulates the fields of the ARCUS database table as an
  * AccPacCustomer.
+ *
  * @author Desmond Bennett
  * @version 1.0
  */
@@ -65,6 +67,8 @@ public class AccPacCustomer implements Serializable {
     private BigDecimal lastInvoiceAmt;
     @Column(length = 6, name = "IDACCTSET")
     private String IDACCTSET;
+    @Transient
+    private Boolean isDirty;
 
     /**
      * Constructs an AccPacCustomer and initializes important fields.
@@ -77,6 +81,7 @@ public class AccPacCustomer implements Serializable {
 
     /**
      * Constructs an AccPacCustomer and initializes important fields.
+     *
      * @param customerName The name of the customer
      */
     public AccPacCustomer(String customerName) {
@@ -88,6 +93,7 @@ public class AccPacCustomer implements Serializable {
 
     /**
      * Gets the AccPacCustomer id string.
+     *
      * @return The id of the customer.
      */
     public String getId() {
@@ -96,15 +102,16 @@ public class AccPacCustomer implements Serializable {
 
     /**
      * Sets the AccPacCustomer id string.
-     * @param id 
+     *
+     * @param id
      */
     public void setId(String id) {
         this.id = id;
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getIDACCTSET() {
         if (IDACCTSET == null) {
@@ -275,6 +282,17 @@ public class AccPacCustomer implements Serializable {
             System.out.println(e);
             return null;
         }
+    }
+
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
 }

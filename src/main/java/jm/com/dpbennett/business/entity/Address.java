@@ -115,6 +115,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         this.id = null;
     }
 
+    @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
@@ -122,6 +123,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         return isDirty;
     }
 
+    @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }

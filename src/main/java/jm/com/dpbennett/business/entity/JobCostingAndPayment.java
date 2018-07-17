@@ -96,6 +96,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     private String discountType;
     @Transient
     private Boolean isDirty;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private AccountingCode accountingCode;
 
     public JobCostingAndPayment() {
         this.percentageGCT = 0.0;
@@ -121,6 +123,17 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public AccountingCode getAccountingCode() {
+        if (accountingCode == null) {
+            accountingCode = new AccountingCode();
+        }
+        return accountingCode;
+    }
+
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
     }
 
     public static void createSampleBasedJobCostings(Job currentJob) {
@@ -534,7 +547,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     public String getAllPaymentTerms() {
-        
+
         paymentTerms = "";
 
         int index = 0;
