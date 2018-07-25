@@ -94,7 +94,7 @@ public class Report implements Serializable, BusinessEntity {
         this.name = name;
         reportColumns = new ArrayList<>(); // tk retire use of this
     }
-
+    
     public Boolean getDepartmentRequired() {
         if (departmentRequired == null) {
             departmentRequired = false;
