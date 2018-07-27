@@ -154,6 +154,12 @@ public class Report implements Serializable, BusinessEntity {
     }
 
     public List<Employee> getEmployees() {
+        if (employees != null) {
+            Collections.sort(employees);
+        } else {
+            employees = new ArrayList<>();
+        }
+        
         return employees;
     }
 

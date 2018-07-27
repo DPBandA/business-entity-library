@@ -223,6 +223,14 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
+    
+    public String getFormattedStartDate() {
+        return BusinessEntityUtils.getDateInMediumDateFormat(getStartDate());
+    }
+    
+    public String getFormattedEndDate() {
+        return BusinessEntityUtils.getDateInMediumDateFormat(getEndDate());
+    }
 
     public void initFinancialMonthPeriod(Date baseDate) {
         Calendar c = Calendar.getInstance();
@@ -274,7 +282,8 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
         setEndDate(edate);
     }
 
-    public void initDatePeriod() {
+    public DatePeriod initDatePeriod() {
+        
         switch (getName()) {
             case "This year":
                 setStartDate(BusinessEntityUtils.getStartOfCurrentYear());
@@ -348,10 +357,18 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
                 setEndDateDisabled(true);
                 break;
             case "Custom":
+                if (startDate == null) {
+                    startDate = new Date();
+                }
+                if (endDate == null) {
+                    endDate = new Date();
+                }
                 setStartDateDisabled(false);
                 setEndDateDisabled(false);
                 break;
         }
+        
+        return this;
 
     }
 
