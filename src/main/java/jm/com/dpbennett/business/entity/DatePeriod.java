@@ -281,6 +281,9 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
         setStartDate(sdate);
         setEndDate(edate);
     }
+    public DatePeriod getInitDatePeriod() {
+        return initDatePeriod();
+    }
 
     public DatePeriod initDatePeriod() {
         
