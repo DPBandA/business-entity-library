@@ -94,7 +94,7 @@ public class Report implements Serializable, BusinessEntity {
         this.name = name;
         reportColumns = new ArrayList<>(); // tk retire use of this
     }
-    
+
     public Boolean getDepartmentRequired() {
         if (departmentRequired == null) {
             departmentRequired = false;
@@ -154,12 +154,12 @@ public class Report implements Serializable, BusinessEntity {
     }
 
     public List<Employee> getEmployees() {
-        if (employees != null) {
-            Collections.sort(employees);
+        if (employees != null) {           
+                Collections.sort(employees);
         } else {
             employees = new ArrayList<>();
         }
-        
+
         return employees;
     }
 
@@ -503,12 +503,12 @@ public class Report implements Serializable, BusinessEntity {
                 for (DatePeriod datePeriod : getDatePeriods()) {
                     if ((datePeriod.getIsDirty() || datePeriod.getId() == null)
                             && !datePeriod.save(em).isSuccess()) {
-                        
+
                         return new ReturnMessage(false,
                                 "Date period save error occurred",
                                 "An error occurred while saving a date period",
                                 FacesMessage.SEVERITY_ERROR);
-                        
+
                     }
                 }
             }
