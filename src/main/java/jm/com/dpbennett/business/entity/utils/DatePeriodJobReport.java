@@ -289,7 +289,7 @@ public class DatePeriodJobReport {
         }
 
         if (item.getName().equals("Clients served in period")) {
-            HashSet<String> clients = new HashSet<String>();
+            HashSet<String> clients = new HashSet<>();
 
             for (DatePeriodJobReportColumnData datePeriodJobReportColumnData : reportColumnData) {
                 // collect clients
@@ -316,7 +316,7 @@ public class DatePeriodJobReport {
 
         for (int i = 0; i < datePeriods.length; i++) {
             // add report data for each date period
-            List<DatePeriodJobReportColumnData> data = new ArrayList<DatePeriodJobReportColumnData>();
+            List<DatePeriodJobReportColumnData> data = new ArrayList<>();
             for (JobSubCategory subCategory : jobSubCategories) {
                 data.add(new DatePeriodJobReportColumnData(subCategory, 0.0, 0L));
             }
@@ -328,7 +328,7 @@ public class DatePeriodJobReport {
 
         for (int i = 0; i < datePeriods.length; i++) {
             // add report data for each date period
-            List<DatePeriodJobReportColumnData> data = new ArrayList<DatePeriodJobReportColumnData>();
+            List<DatePeriodJobReportColumnData> data = new ArrayList<>();
             for (Sector sector : sectors) {
                 data.add(new DatePeriodJobReportColumnData(sector, 0L));
             }
@@ -386,15 +386,12 @@ public class DatePeriodJobReport {
         if (reportColumnData.containsKey(key)) {
             return (List<DatePeriodJobReportColumnData>) reportColumnData.get(key);
         } else {
-            return new ArrayList<DatePeriodJobReportColumnData>();
+            return new ArrayList<>();
         }
     }
 
     public void setReportColumnData(Object key, List<DatePeriodJobReportColumnData> rowData) {
         reportColumnData.put(key, rowData);
-//
-//        if (jobReportItems != null) {
-//        }
     }
 
     public void updateSubCategoriesReportColumnData(Object key, List<DatePeriodJobReportColumnData> rowData) {
