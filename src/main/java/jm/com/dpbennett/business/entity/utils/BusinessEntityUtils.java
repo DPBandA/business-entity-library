@@ -1478,6 +1478,8 @@ public class BusinessEntityUtils {
         return workDays;
     }
 
+    // tk put this method in DatePerio class as a static or done away with the method
+    // and use the periods in selectedReport??
     public static DatePeriod[] getMonthlyReportDatePeriods(DatePeriod reportingPeriod) {
 
         // previous reporting period

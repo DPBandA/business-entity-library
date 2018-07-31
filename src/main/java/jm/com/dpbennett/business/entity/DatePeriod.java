@@ -30,6 +30,7 @@ import java.util.List;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+import javax.faces.model.SelectItem;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -97,6 +98,20 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
         if (init) {
             init();
         }
+    }
+    
+    public static ArrayList getDateSearchFields() {
+        ArrayList dateSearchFields = new ArrayList();
+
+        dateSearchFields.add(new SelectItem("dateAndTimeEntered", "Date entered"));
+        dateSearchFields.add(new SelectItem("dateSubmitted", "Date submitted"));
+        dateSearchFields.add(new SelectItem("dateCostingApproved", "Date costing approved"));
+        dateSearchFields.add(new SelectItem("dateOfCompletion", "Date completed"));
+        dateSearchFields.add(new SelectItem("expectedDateOfCompletion", "Exp'ted date of completion"));
+        dateSearchFields.add(new SelectItem("dateSamplesCollected", "Date sample(s) collected"));
+        dateSearchFields.add(new SelectItem("dateDocumentCollected", "Date document(s) collected"));
+
+        return dateSearchFields;
     }
 
     public static DatePeriod findById(EntityManager em, Long id) {
