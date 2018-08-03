@@ -847,9 +847,9 @@ public class BusinessEntityUtils {
                 }
 
                 cell.setCellStyle(newStyle);
-               
+
             }
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -1227,13 +1227,21 @@ public class BusinessEntityUtils {
     public static String getDateInMediumDateFormat(Date date) {
         DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy");
 
-        return formatter.format(date);
+        if (date != null) {
+            return formatter.format(date);
+        } else {
+            return "";
+        }
     }
 
     public static String getDateInMediumDateAndTimeFormat(Date date) {
         DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy, h:mm a");
 
-        return formatter.format(date);
+        if (date != null) {
+            return formatter.format(date);
+        } else {
+            return "";
+        }
     }
 
     public static String getDateString(Calendar c, String delim, String format, String sep) {

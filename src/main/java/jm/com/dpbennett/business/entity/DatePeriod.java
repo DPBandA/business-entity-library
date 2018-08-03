@@ -70,6 +70,8 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     private Boolean init;
     @Transient
     private Boolean isDirty;
+    @Transient
+    private Boolean show;
 
     public DatePeriod() {
     }
@@ -99,7 +101,18 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
             init();
         }
     }
-    
+
+    public Boolean getShow() {
+        if (show == null) {
+            show = true;
+        }
+        return show;
+    }
+
+    public void setShow(Boolean show) {
+        this.show = show;
+    }
+
     public static ArrayList getDateSearchFields() {
         ArrayList dateSearchFields = new ArrayList();
 
@@ -238,11 +251,11 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
-    
+
     public String getFormattedStartDate() {
         return BusinessEntityUtils.getDateInMediumDateFormat(getStartDate());
     }
-    
+
     public String getFormattedEndDate() {
         return BusinessEntityUtils.getDateInMediumDateFormat(getEndDate());
     }
@@ -296,12 +309,13 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
         setStartDate(sdate);
         setEndDate(edate);
     }
+
     public DatePeriod getInitDatePeriod() {
         return initDatePeriod();
     }
 
     public DatePeriod initDatePeriod() {
-        
+
         switch (getName()) {
             case "This year":
                 setStartDate(BusinessEntityUtils.getStartOfCurrentYear());
@@ -375,17 +389,17 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
                 setEndDateDisabled(true);
                 break;
             case "Custom":
-                if (startDate == null) {
-                    startDate = new Date();
-                }
-                if (endDate == null) {
-                    endDate = new Date();
-                }
+//                if (startDate == null) {
+//                    startDate = new Date();
+//                }
+//                if (endDate == null) {
+//                    endDate = new Date();
+//                }
                 setStartDateDisabled(false);
                 setEndDateDisabled(false);
                 break;
         }
-        
+
         return this;
 
     }
