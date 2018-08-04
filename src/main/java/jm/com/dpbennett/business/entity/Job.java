@@ -130,6 +130,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private List<Employee> representatives;
     @Transient
     private Boolean visited;
+    @Transient
+    private Employee openedBy;
 
     public Job() {
         this.name = "";
@@ -147,6 +149,14 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.isToBeCopied = false;
         this.isClientDirty = false;
         this.jobSamples = new ArrayList<>();
+    }
+
+    public Employee getOpenedBy() {
+        return openedBy;
+    }
+
+    public void setOpenedBy(Employee openedBy) {
+        this.openedBy = openedBy;
     }
 
     public List<CashPayment> getCashPayments() {
