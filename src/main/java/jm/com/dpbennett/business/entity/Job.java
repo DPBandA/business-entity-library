@@ -131,7 +131,9 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     @Transient
     private Boolean visited;
     @Transient
-    private Employee openedBy;
+    private JobManagerUser openedBy;
+    @Transient
+    private Date dateOpened;
 
     public Job() {
         this.name = "";
@@ -142,6 +144,16 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.jobSamples = new ArrayList<>();
     }
 
+    public Date getDateOpened() {
+        return dateOpened;
+    }
+
+    public void setDateOpened(Date dateOpened) {
+        this.dateOpened = dateOpened;
+    }
+    
+    
+
     public Job(String name) {
         this.name = name;
         this.jobNumber = name;
@@ -151,11 +163,11 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.jobSamples = new ArrayList<>();
     }
 
-    public Employee getOpenedBy() {
+    public JobManagerUser getOpenedBy() {
         return openedBy;
     }
 
-    public void setOpenedBy(Employee openedBy) {
+    public void setOpenedBy(JobManagerUser openedBy) {
         this.openedBy = openedBy;
     }
 
