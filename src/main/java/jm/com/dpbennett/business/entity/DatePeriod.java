@@ -450,15 +450,6 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
         this.name = name;
     }
 
-    public static void main(String[] args) {
-
-        DatePeriod dp = new DatePeriod("Last financial year to date", "year",
-                null, null, null, null, false, false, true);
-
-        System.out.println(dp.getStartDate());
-        System.out.println(dp.getEndDate());
-    }
-
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         DatePeriod period = new DatePeriod();
@@ -497,6 +488,11 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
 
     @Override
     public int compareTo(Object o) {
-        return Collator.getInstance().compare(this.getLabel(), ((DatePeriod) o).getLabel());
+//        return Collator.getInstance().compare(this.getLabel(), ((DatePeriod) o).getLabel());
+        if (((DatePeriod) o).getId() != null && this.getId() != null) {
+            return Collator.getInstance().compare(this.getId().toString(), ((DatePeriod) o).getId().toString());
+        } else {
+            return 1;
+        }
     }
 }
