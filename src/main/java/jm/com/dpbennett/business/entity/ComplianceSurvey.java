@@ -1267,10 +1267,6 @@ public class ComplianceSurvey
         }
     }
 
-    public static void main(String[] args) {
-        ComplianceSurvey c = new ComplianceSurvey();
-    }
-
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
