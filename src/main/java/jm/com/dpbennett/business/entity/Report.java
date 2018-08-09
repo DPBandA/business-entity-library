@@ -140,7 +140,7 @@ public class Report implements Serializable, BusinessEntity {
     }
 
     public List<Department> getDepartments() {
-        if (departments != null) {
+        if (departments != null && !departments.isEmpty()) {
             Collections.sort(departments);
         } else {
             departments = new ArrayList<>();

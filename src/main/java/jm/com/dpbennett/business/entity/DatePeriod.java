@@ -389,12 +389,6 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
                 setEndDateDisabled(true);
                 break;
             case "Custom":
-//                if (startDate == null) {
-//                    startDate = new Date();
-//                }
-//                if (endDate == null) {
-//                    endDate = new Date();
-//                }
                 setStartDateDisabled(false);
                 setEndDateDisabled(false);
                 break;
