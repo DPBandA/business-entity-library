@@ -249,6 +249,7 @@ public class Report implements Serializable, BusinessEntity {
 
         categories.add(new SelectItem("--", "--"));
         categories.add(new SelectItem("application/jasper", "application/jasper"));
+        categories.add(new SelectItem("application/jrxml", "application/jrxml"));
         categories.add(new SelectItem("application/xls", "application/xls"));
         categories.add(new SelectItem("application/xlsx", "application/xlsx"));
         categories.add(new SelectItem("application/pdf", "application/pdf"));
