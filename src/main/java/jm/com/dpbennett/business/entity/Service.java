@@ -49,7 +49,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departmentsOfferingService;
     @Transient
     private Boolean isDirty;
