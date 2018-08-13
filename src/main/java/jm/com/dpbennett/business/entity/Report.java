@@ -168,7 +168,7 @@ public class Report implements Serializable, BusinessEntity {
     }
 
     public List<Client> getClients() {
-        if (clients != null) {
+        if (clients != null && !clients.isEmpty()) {
             Collections.sort(clients);
         } else {
             clients = new ArrayList<>();
