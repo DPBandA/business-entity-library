@@ -22,7 +22,6 @@ package jm.com.dpbennett.business.entity;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -33,10 +32,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
@@ -45,9 +42,9 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
  * @author dbennett
  */
 @Entity
-@Table(name = "business")
+@Table(name = "subgroup")
 @XmlRootElement
-public class Business implements Customer, Company, BusinessEntity, Comparable, Serializable {
+public class Subgroup implements BusinessEntity, Comparable, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -57,55 +54,28 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private String number;
     private String type;
     private String notes;
-    private String taxRegistrationNumber;
     @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Department> departments;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Address> addresses;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Contact> contacts;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastAccessed;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateFirstReceived;
+    private List<Department> departments;        
     private Boolean active;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee head;
-    private String domainName;
     @Transient
     private Boolean isDirty;
 
-    public Business() {
+    public Subgroup() {
         this.name = "";
         this.number = "";
         this.type = "";
         this.notes = "";
-        this.taxRegistrationNumber = "";
-        this.addresses = new ArrayList<>();
-        this.contacts = new ArrayList<>();
         this.departments = new ArrayList<>();
-        this.domainName = "";
     }
 
-    public Business(String name) {
+    public Subgroup(String name) {
         this.name = name;
         this.number = "";
         this.type = "";
         this.notes = "";
-        this.addresses = new ArrayList<>();
-        this.contacts = new ArrayList<>();
         this.departments = new ArrayList<>();
-    }
-
-    public String getDomainName() {
-        if (domainName == null) {
-            domainName = "";
-        }
-        return domainName;
-    }
-
-    public void setDomainName(String domainName) {
-        this.domainName = domainName;
     }
 
     public Boolean getActive() {
@@ -169,16 +139,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     @Override
-    public String getTaxRegistrationNumber() {
-        return taxRegistrationNumber;
-    }
-
-    @Override
-    public void setTaxRegistrationNumber(String taxRegistrationNumber) {
-        this.taxRegistrationNumber = taxRegistrationNumber;
-    }
-
-    @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
@@ -188,10 +148,10 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Business)) {
+        if (!(object instanceof Subgroup)) {
             return false;
         }
-        Business other = (Business) object;
+        Subgroup other = (Subgroup) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -200,7 +160,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.Business[id=" + id + "]";
+        return getName();
     }
 
     @Override
@@ -216,74 +176,26 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         this.name = name;
     }
 
-    @Override
-    @XmlTransient
-    public List<Address> getAddresses() {
-        return addresses;
-    }
-
-    @Override
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
-    }
-
-    @Override
-    @XmlTransient
-    public List<Contact> getContacts() {
-        return contacts;
-    }
-
-    @Override
-    public void setContacts(List<Contact> contacts) {
-        this.contacts = contacts;
-    }
-
-    @Override
-    public Date getDateLastAccessed() {
-        return dateLastAccessed;
-    }
-
-    @Override
-    public void setDateLastAccessed(Date dateLastAccessed) {
-        this.dateLastAccessed = dateLastAccessed;
-    }
-
-    @Override
     public String getNumber() {
         return number;
     }
 
-    @Override
     public void setNumber(String number) {
         this.number = number;
     }
 
-    @Override
     public String getType() {
         return type;
     }
 
-    @Override
     public void setType(String type) {
         this.type = type;
     }
-
-    @Override
-    public Date getDateFirstReceived() {
-        return dateFirstReceived;
-    }
-
-    @Override
-    public void setDateFirstReceived(Date dateFirstReceived) {
-        this.dateFirstReceived = dateFirstReceived;
-    }
-
-    @Override
+   
     public String getNotes() {
         return notes;
     }
 
-    @Override
     public void setNotes(String notes) {
         this.notes = notes;
     }
@@ -293,11 +205,11 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
 
-    public static Business findBusinessById(EntityManager em, Long id) {
+    public static Subgroup findById(EntityManager em, Long id) {
 
         try {
-            Business business = em.find(Business.class, id);
-            return business;
+            Subgroup subgroup = em.find(Subgroup.class, id);
+            return subgroup;
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -305,16 +217,16 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     // Get the first business that matches the given name
-    public static Business findBusinessByName(EntityManager em, String name) {
+    public static Subgroup findByName(EntityManager em, String name) {
 
         try {
             String newName = name.trim().replaceAll("'", "''");
 
-            List<Business> businesses = em.createQuery("SELECT b FROM Business b "
-                    + "WHERE UPPER(b.name) "
-                    + "= '" + newName.toUpperCase() + "'", Business.class).getResultList();
-            if (businesses.size() > 0) {
-                return businesses.get(0);
+            List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
+                    + "WHERE UPPER(s.name) "
+                    + "= '" + newName.toUpperCase() + "'", Subgroup.class).getResultList();
+            if (subgroups.size() > 0) {
+                return subgroups.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -323,46 +235,56 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
     }
 
-    public static Business findDefaultBusiness(EntityManager em,
+    public static Subgroup findDefault(EntityManager em,
             String name,
             Boolean useTransaction) {
-        Business business = Business.findBusinessByName(em, name);
+        Subgroup subgroup = Subgroup.findByName(em, name);
 
-        if (business == null) {
-            business = new Business();
-            business.setName(name);
+        if (subgroup == null) {
+            subgroup = new Subgroup();
+            subgroup.setName(name);
 
             if (useTransaction) {
                 em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, business);
+                BusinessEntityUtils.saveBusinessEntity(em, subgroup);
                 em.getTransaction().commit();
             } else {
-                BusinessEntityUtils.saveBusinessEntity(em, business);
+                BusinessEntityUtils.saveBusinessEntity(em, subgroup);
             }
         }
 
-        return business;
+        return subgroup;
     }
 
-    public static List<Business> findAllBusinesses(EntityManager em) {
+    public static List<Subgroup> findAll(EntityManager em) {
 
         try {
-            return em.createQuery("SELECT b FROM Business b ORDER BY b.name", Business.class).getResultList();
+            return em.createQuery("SELECT s FROM Subgroup s ORDER BY s.name", Subgroup.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<Subgroup> findAllActive(EntityManager em) {
+
+        try {
+            return em.createQuery("SELECT s FROM Subgroup s WHERE s.active = 1 ORDER BY s.name", Subgroup.class).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
 
-    public static List<Business> findBusinessesByName(EntityManager em, String name) {
+    public static List<Subgroup> findAllByName(EntityManager em, String name) {
 
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<Business> businesses
-                    = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
-                            + newName.toUpperCase().trim() + "%' ORDER BY b.name", Business.class).getResultList();
-            return businesses;
+            List<Subgroup> subgroups
+                    = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
+                            + newName.toUpperCase().trim() + "%' ORDER BY s.name", Subgroup.class).getResultList();
+            return subgroups;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -381,32 +303,12 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Business not saved");
+        return new ReturnMessage(false, "Subgroup not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Address getDefaultAddress() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Contact getDefaultContact() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<BusinessOffice> getBusinessOffices() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setBusinessOffices(List<BusinessOffice> businessOffices) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 
     @Override
