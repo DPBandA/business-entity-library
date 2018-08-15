@@ -51,7 +51,7 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private String number;
+    private String code;
     private String type;
     private String notes;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -64,7 +64,7 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
 
     public Subgroup() {
         this.name = "";
-        this.number = "";
+        this.code = "";
         this.type = "";
         this.notes = "";
         this.departments = new ArrayList<>();
@@ -72,7 +72,7 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
 
     public Subgroup(String name) {
         this.name = name;
-        this.number = "";
+        this.code = "";
         this.type = "";
         this.notes = "";
         this.departments = new ArrayList<>();
@@ -176,12 +176,12 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
         this.name = name;
     }
 
-    public String getNumber() {
-        return number;
+    public String getCode() {
+        return code;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getType() {
