@@ -17,11 +17,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
+import java.text.Collator;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -30,10 +32,11 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -46,18 +49,43 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
     @NamedQuery(name = "findAllDivisions", query = "SELECT e FROM Division e ORDER BY e.name")
 })
 @XmlRootElement
-public class Division implements BusinessEntity, Serializable {
+public class Division implements BusinessEntity, Comparable, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @OneToMany
+    private String code;
+    private String type;
+    private String notes;
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
-    // tk add "Head"
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Subgroup> subgroups;
+    private Boolean active;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee head;
     @Transient
     private Boolean isDirty;
+
+    public Division() {
+        this.name = "";
+        this.code = "";
+        this.type = "";
+        this.notes = "";
+        this.departments = new ArrayList<>();
+        this.subgroups = new ArrayList<>();
+    }
+    
+    public Division(String name) {
+        this.name = name;
+        this.code = "";
+        this.type = "";
+        this.notes = "";
+        this.departments = new ArrayList<>();
+        this.subgroups = new ArrayList<>();
+    }
 
     @Override
     public Long getId() {
@@ -67,6 +95,62 @@ public class Division implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public List<Subgroup> getSubgroups() {
+        return subgroups;
+    }
+
+    public void setSubgroups(List<Subgroup> subgroups) {
+        this.subgroups = subgroups;
+    }
+
+    public Boolean getActive() {
+        if (active == null) {
+            active = true;
+        }
+        
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Employee getHead() {
+        if (head == null) {
+            head = new Employee("--", "--");
+        }
+        
+        return head;
+    }
+
+    public void setHead(Employee head) {
+        this.head = head;
     }
 
     @Override
@@ -82,17 +166,40 @@ public class Division implements BusinessEntity, Serializable {
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
-    
+
     public List<Department> getDepartments() {
+        if (departments == null) {
+            departments = new ArrayList<>();
+        }
+        
         return departments;
     }
 
     public void setDepartments(List<Department> departments) {
         this.departments = departments;
     }
+    
+    public String getDepartmentList() {
+        String listStr = "";
+        int index = 0;
+
+        for (Department department : departments) {
+            if (index == 0) {
+                listStr = department.getName();
+            } else {
+                listStr = listStr + ", " + department.getName();
+            }
+            ++index;
+        }
+
+        return listStr;
+    }
 
     @Override
     public String getName() {
+        if (name == null) {
+            name = "";
+        }
         return name;
     }
 
@@ -123,10 +230,10 @@ public class Division implements BusinessEntity, Serializable {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.Division[id=" + id + "]";
+        return getName();
     }
 
-    public static Division findDivisionById(EntityManager em, Long Id) {
+    public static Division findById(EntityManager em, Long Id) {
 
         try {
             Division division = em.find(Division.class, Id);
@@ -137,8 +244,55 @@ public class Division implements BusinessEntity, Serializable {
             return null;
         }
     }
+    
+    /**
+     * Get the first division that matches the given name
+     * @param em
+     * @param name
+     * @return 
+     */
+    public static Division findByName(EntityManager em, String name) {
 
-    public static List<Division> findAllDivisions(EntityManager em) {
+        try {
+            String newName = name.trim().replaceAll("'", "''");
+
+            List<Division> divisions = em.createQuery("SELECT d FROM Division d "
+                    + "WHERE UPPER(d.name) "
+                    + "= '" + newName.toUpperCase() + "'", Division.class).getResultList();
+            
+            if (divisions.size() > 0) {
+                return divisions.get(0);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static Division findDefault(EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        
+        Division division = Division.findByName(em, name);
+
+        if (division == null) {
+            division = new Division(name);
+            
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, division);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, division);
+            }
+        }
+
+        return division;
+    }
+
+    public static List<Division> findAll(EntityManager em) {
 
         try {
             return em.createNamedQuery("findAllDivisions", Division.class).getResultList();
@@ -146,28 +300,39 @@ public class Division implements BusinessEntity, Serializable {
             return null;
         }
     }
-
-    public static List<Distributor> findDistributorsBySearchPattern(EntityManager em, String searchPattern) {
+    
+    public static List<Division> findAllActive(EntityManager em) {
 
         try {
-            List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
-                    + "WHERE UPPER(d.name) "
-                    + "LIKE '" + searchPattern.toUpperCase() + "%' "
-                    + "ORDER BY d.name", Distributor.class).getResultList();
-            return distributors;
+            return em.createQuery("SELECT d FROM Subgroup d WHERE d.active = 1 ORDER BY d.name", Division.class).getResultList();
         } catch (Exception e) {
             System.out.println(e);
-            return null;
+            return new ArrayList<>();
         }
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Division not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.toString(), o.toString());
     }
 }

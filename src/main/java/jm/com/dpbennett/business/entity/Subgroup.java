@@ -216,7 +216,12 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
         }
     }
 
-    // Get the first business that matches the given name
+    /**
+     * Get the first subgroup that matches the given name
+     * @param em
+     * @param name
+     * @return 
+     */
     public static Subgroup findByName(EntityManager em, String name) {
 
         try {
