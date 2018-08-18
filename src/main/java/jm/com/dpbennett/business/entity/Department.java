@@ -62,6 +62,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    // tk to be rename to code in here and in the database
     private String subGroupCode;
     private String jobCostingType;
     private String name;

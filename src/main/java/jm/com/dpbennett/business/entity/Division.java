@@ -77,7 +77,7 @@ public class Division implements BusinessEntity, Comparable, Serializable {
         this.departments = new ArrayList<>();
         this.subgroups = new ArrayList<>();
     }
-    
+
     public Division(String name) {
         this.name = name;
         this.code = "";
@@ -133,7 +133,7 @@ public class Division implements BusinessEntity, Comparable, Serializable {
         if (active == null) {
             active = true;
         }
-        
+
         return active;
     }
 
@@ -145,7 +145,7 @@ public class Division implements BusinessEntity, Comparable, Serializable {
         if (head == null) {
             head = new Employee("--", "--");
         }
-        
+
         return head;
     }
 
@@ -171,14 +171,14 @@ public class Division implements BusinessEntity, Comparable, Serializable {
         if (departments == null) {
             departments = new ArrayList<>();
         }
-        
+
         return departments;
     }
 
     public void setDepartments(List<Department> departments) {
         this.departments = departments;
     }
-    
+
     public String getDepartmentList() {
         String listStr = "";
         int index = 0;
@@ -244,12 +244,13 @@ public class Division implements BusinessEntity, Comparable, Serializable {
             return null;
         }
     }
-    
+
     /**
      * Get the first division that matches the given name
+     *
      * @param em
      * @param name
-     * @return 
+     * @return
      */
     public static Division findByName(EntityManager em, String name) {
 
@@ -259,27 +260,27 @@ public class Division implements BusinessEntity, Comparable, Serializable {
             List<Division> divisions = em.createQuery("SELECT d FROM Division d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + newName.toUpperCase() + "'", Division.class).getResultList();
-            
+
             if (divisions.size() > 0) {
                 return divisions.get(0);
             }
-            
+
             return null;
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
-    
+
     public static Division findDefault(EntityManager em,
             String name,
             Boolean useTransaction) {
-        
+
         Division division = Division.findByName(em, name);
 
         if (division == null) {
             division = new Division(name);
-            
+
             if (useTransaction) {
                 em.getTransaction().begin();
                 BusinessEntityUtils.saveBusinessEntity(em, division);
@@ -300,7 +301,22 @@ public class Division implements BusinessEntity, Comparable, Serializable {
             return null;
         }
     }
-    
+
+    public static List<Division> findAllByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Division> divisions
+                    = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
+                            + newName.toUpperCase().trim() + "%' ORDER BY d.name", Division.class).getResultList();
+            return divisions;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     public static List<Division> findAllActive(EntityManager em) {
 
         try {
