@@ -122,6 +122,10 @@ public class Division implements BusinessEntity, Comparable, Serializable {
     }
 
     public List<Subgroup> getSubgroups() {
+         if (subgroups == null) {
+            subgroups = new ArrayList<>();
+        }
+        
         return subgroups;
     }
 

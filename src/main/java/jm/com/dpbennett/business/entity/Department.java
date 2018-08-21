@@ -311,14 +311,14 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     }
 
-    public static List<Department> findDepartmentsByName(EntityManager em, String name) {
+    public static List<Department> findDepartmentsByName(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Department> departments
                     = em.createQuery("SELECT d FROM Department d where UPPER(d.name) like '%"
-                            + newName.toUpperCase().trim() + "%' ORDER BY d.name", Department.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY d.name", Department.class).getResultList();
             return departments;
         } catch (Exception e) {
             System.out.println(e);
@@ -326,14 +326,14 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static List<Department> findActiveDepartmentsByName(EntityManager em, String name) {
+    public static List<Department> findActiveDepartmentsByName(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Department> departments
                     = em.createQuery("SELECT d FROM Department d WHERE UPPER(d.name) LIKE '%"
-                            + newName.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Department.class).getResultList();
+                            + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Department.class).getResultList();
             return departments;
         } catch (Exception e) {
             System.out.println(e);
@@ -351,14 +351,14 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static Department findDepartmentByName(EntityManager em, String departmentName) {
+    public static Department findDepartmentByName(EntityManager em, String value) {
 
         try {
-            String newDepartmentName = departmentName.trim().replaceAll("'", "''");
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Department> departments = em.createQuery("SELECT d FROM Department d "
                     + "WHERE UPPER(d.name) "
-                    + "= '" + newDepartmentName.toUpperCase() + "'", Department.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Department.class).getResultList();
             if (departments.size() > 0) {
                 return departments.get(0);
             }
@@ -372,9 +372,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static Department findActiveDepartmentByName(EntityManager em, String value) {
 
         try {
-           
-//            String newDepartmentName = departmentName.trim().replaceAll("'", "''");  
-//            newDepartmentName = newDepartmentName.replaceAll("&amp;", "&");   
+            
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Department> departments = em.createQuery("SELECT d FROM Department d "

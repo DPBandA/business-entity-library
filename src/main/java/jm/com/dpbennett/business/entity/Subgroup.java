@@ -219,8 +219,7 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
     public static Subgroup findActiveSubgroupByName(EntityManager em, String value) {
 
         try {
-
-  
+            
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
@@ -245,14 +244,14 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
      * @param name
      * @return
      */
-    public static Subgroup findByName(EntityManager em, String name) {
+    public static Subgroup findByName(EntityManager em, String value) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
                     + "WHERE UPPER(s.name) "
-                    + "= '" + newName.toUpperCase() + "'", Subgroup.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Subgroup.class).getResultList();
             if (subgroups.size() > 0) {
                 return subgroups.get(0);
             }
@@ -304,14 +303,14 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
         }
     }
 
-    public static List<Subgroup> findAllByName(EntityManager em, String name) {
+    public static List<Subgroup> findAllByName(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Subgroup> subgroups
                     = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
-                            + newName.toUpperCase().trim() + "%' ORDER BY s.name", Subgroup.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY s.name", Subgroup.class).getResultList();
             return subgroups;
         } catch (Exception e) {
             System.out.println(e);
