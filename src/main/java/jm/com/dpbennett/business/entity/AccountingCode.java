@@ -70,7 +70,7 @@ public class AccountingCode implements Serializable, BusinessEntity {
     public static List<AccountingCode> findAccountingCodesByNameAndDescription(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<AccountingCode> accountingCodes
                     = em.createQuery("SELECT a FROM AccountingCode a WHERE UPPER(a.name) LIKE '%"

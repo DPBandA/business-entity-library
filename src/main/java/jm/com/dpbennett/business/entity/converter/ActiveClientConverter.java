@@ -29,7 +29,7 @@ import jm.com.dpbennett.business.entity.Client;
  *
  * @author desbenn
  */
-@FacesConverter("clientConverter")
+@FacesConverter("activeClientConverter")
 public class ActiveClientConverter extends ConverterAdapter {
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {

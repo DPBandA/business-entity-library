@@ -357,7 +357,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public static List<Business> findBusinessesByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Business> businesses
                     = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"

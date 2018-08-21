@@ -255,7 +255,7 @@ public class Classification implements BusinessEntity, Serializable {
     public static List<Classification> findClassificationsByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '%"
@@ -270,7 +270,7 @@ public class Classification implements BusinessEntity, Serializable {
     public static List<Classification> findClassificationsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '%"
@@ -285,7 +285,7 @@ public class Classification implements BusinessEntity, Serializable {
     public static List<Classification> findActiveClassificationsByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
@@ -300,7 +300,7 @@ public class Classification implements BusinessEntity, Serializable {
     public static List<Classification> findActiveClassificationsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
