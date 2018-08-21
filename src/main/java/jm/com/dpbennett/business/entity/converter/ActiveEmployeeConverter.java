@@ -17,42 +17,29 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.converter;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.BusinessEntity;
+import javax.faces.convert.FacesConverter;
+import jm.com.dpbennett.business.entity.Employee;
 
 /**
  *
  * @author desbenn
  */
-public class ConverterAdapter implements Converter {
-    private final EntityManagerFactory emf;
-    private final EntityManager em;
-
-    public ConverterAdapter() {        
-        emf = Persistence.createEntityManagerFactory("JMTSPU");     
-        em = emf.createEntityManager();
-    }
-
-    public EntityManager getEntityManager() {
-        return em;
-    }
+@FacesConverter("activeEmployeeConverter")
+public class ActiveEmployeeConverter extends ConverterAdapter {
     
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        return null;
-    }
+                
+        Employee employee = Employee.findActiveEmployeeByName(getEntityManager(), value);
 
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((BusinessEntity) value).getName();
-    }
-    
+        if (value == null) {
+            employee = new Employee("--", "--");
+        }
+
+        return employee;
+    }    
 }

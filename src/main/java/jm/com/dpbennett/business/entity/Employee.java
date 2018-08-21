@@ -528,6 +528,36 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
         return null;
     }
+    
+    /**
+     * Gets first active employee with the given firstname and lasname
+     *
+     * @param em
+     * @param firstName
+     * @param lastName
+     * @return
+     */
+    public static Employee findActiveEmployeeByName(EntityManager em, String firstName, String lastName) {
+
+        if (firstName != null && lastName != null) {
+            String newFirstName = firstName.replaceAll("'", "''").trim().toUpperCase();
+            String newLastName = lastName.replaceAll("'", "''").trim().toUpperCase();
+            try {
+                List<Employee> employees = em.createQuery("SELECT e FROM Employee e "
+                        + "WHERE e.active = 1 AND UPPER(e.firstName) "
+                        + "= '" + newFirstName + "' AND UPPER(e.lastName) = '" + newLastName + "'",
+                        Employee.class).getResultList();
+                if (employees.size() > 0) {
+                    Employee employee = employees.get(0);
+                    return employee;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        return null;
+    }
 
     public static List<Employee> findAllEmployees(EntityManager em) {
 
@@ -600,6 +630,21 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         if (names.length == 2) {
             if (!names[1].trim().equals("") && !names[0].trim().equals("")) {
                 return Employee.findEmployeeByName(em,
+                        names[1].trim(),
+                        names[0].trim());
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+    
+    public static Employee findActiveEmployeeByName(EntityManager em, String name) {
+        String names[] = name.split(",");
+        if (names.length == 2) {
+            if (!names[1].trim().equals("") && !names[0].trim().equals("")) {
+                return Employee.findActiveEmployeeByName(em,
                         names[1].trim(),
                         names[0].trim());
             } else {

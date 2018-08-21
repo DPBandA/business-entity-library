@@ -22,24 +22,25 @@ package jm.com.dpbennett.business.entity.converter;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.FacesConverter;
-import jm.com.dpbennett.business.entity.Employee;
+import jm.com.dpbennett.business.entity.Subgroup;
 
 /**
  *
  * @author desbenn
  */
-@FacesConverter("employeeConverter")
-public class EmployeeConverter extends ConverterAdapter {
-    
+@FacesConverter("activeSubgroupConverter")
+public class ActiveSubgroupConverter extends ConverterAdapter {
+
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-                
-        Employee employee = Employee.findEmployeeByName(getEntityManager(), value);
+     
+        Subgroup subgroup = Subgroup.findActiveSubgroupByName(getEntityManager(), value);
 
-        if (value == null) {
-            employee = new Employee("--", "--");
+        if (subgroup == null) {
+            subgroup = new Subgroup(value);
         }
 
-        return employee;
-    }    
+        return subgroup;
+    }
+
 }

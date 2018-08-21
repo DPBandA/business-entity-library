@@ -55,7 +55,7 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
     private String type;
     private String notes;
     @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Department> departments;        
+    private List<Department> departments;
     private Boolean active;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee head;
@@ -191,7 +191,7 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
     public void setType(String type) {
         this.type = type;
     }
-   
+
     public String getNotes() {
         return notes;
     }
@@ -216,11 +216,34 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
         }
     }
 
+    public static Subgroup findActiveSubgroupByName(EntityManager em, String value) {
+
+        try {
+
+  
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
+                    + "WHERE s.active = 1 AND UPPER(s.name) "
+                    + "= '" + value.toUpperCase() + "'", Subgroup.class).getResultList();
+            
+            if (subgroups.size() > 0) {
+                return subgroups.get(0);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     /**
      * Get the first subgroup that matches the given name
+     *
      * @param em
      * @param name
-     * @return 
+     * @return
      */
     public static Subgroup findByName(EntityManager em, String name) {
 
@@ -270,7 +293,7 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Subgroup> findAllActive(EntityManager em) {
 
         try {
