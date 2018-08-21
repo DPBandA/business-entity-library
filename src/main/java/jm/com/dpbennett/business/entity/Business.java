@@ -305,14 +305,14 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     // Get the first business that matches the given name
-    public static Business findBusinessByName(EntityManager em, String name) {
+    public static Business findBusinessByName(EntityManager em, String value) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Business> businesses = em.createQuery("SELECT b FROM Business b "
                     + "WHERE UPPER(b.name) "
-                    + "= '" + newName.toUpperCase() + "'", Business.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Business.class).getResultList();
             if (businesses.size() > 0) {
                 return businesses.get(0);
             }
@@ -354,14 +354,14 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
     }
 
-    public static List<Business> findBusinessesByName(EntityManager em, String name) {
+    public static List<Business> findBusinessesByName(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Business> businesses
                     = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
-                            + newName.toUpperCase().trim() + "%' ORDER BY b.name", Business.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY b.name", Business.class).getResultList();
             return businesses;
         } catch (Exception e) {
             System.out.println(e);

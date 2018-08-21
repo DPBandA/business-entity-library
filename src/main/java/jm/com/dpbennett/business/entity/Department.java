@@ -106,7 +106,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         departmentUnits = new ArrayList<>();
         active = true;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -247,6 +247,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         if (name == null) {
             name = "";
         }
+               
         return name;
     }
 
@@ -307,6 +308,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
                 return "";
             }
         }
+
     }
 
     public static List<Department> findDepartmentsByName(EntityManager em, String name) {
@@ -357,6 +359,27 @@ public class Department implements Serializable, BusinessEntity, Comparable {
             List<Department> departments = em.createQuery("SELECT d FROM Department d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + newDepartmentName.toUpperCase() + "'", Department.class).getResultList();
+            if (departments.size() > 0) {
+                return departments.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Department findActiveDepartmentByName(EntityManager em, String value) {
+
+        try {
+           
+//            String newDepartmentName = departmentName.trim().replaceAll("'", "''");  
+//            newDepartmentName = newDepartmentName.replaceAll("&amp;", "&");   
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Department> departments = em.createQuery("SELECT d FROM Department d "
+                    + "WHERE d.active = 1 AND UPPER(d.name) "
+                    + "= '" + value.toUpperCase() + "'", Department.class).getResultList();
             if (departments.size() > 0) {
                 return departments.get(0);
             }
@@ -430,7 +453,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
         return department;
     }
-    
+
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
@@ -474,7 +497,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     public static Department findDepartmentBySystemOptionDeptId(String option, EntityManager em) {
 
-        Long id = (Long)SystemOption.getOptionValueObject(em, option);
+        Long id = (Long) SystemOption.getOptionValueObject(em, option);
 
         Department department = Department.findDepartmentById(em, id);
         em.refresh(department);

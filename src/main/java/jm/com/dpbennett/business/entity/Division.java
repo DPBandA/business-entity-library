@@ -320,7 +320,7 @@ public class Division implements BusinessEntity, Comparable, Serializable {
     public static List<Division> findAllActive(EntityManager em) {
 
         try {
-            return em.createQuery("SELECT d FROM Subgroup d WHERE d.active = 1 ORDER BY d.name", Division.class).getResultList();
+            return em.createQuery("SELECT d FROM Division d WHERE d.active = 1 ORDER BY d.name", Division.class).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();

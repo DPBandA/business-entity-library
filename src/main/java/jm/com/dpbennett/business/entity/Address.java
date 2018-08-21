@@ -368,14 +368,14 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         return address;
     }
 
-    public static Address findAddressByName(EntityManager em, String name) {
+    public static Address findAddressByName(EntityManager em, String value) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Address> addresses = em.createQuery("SELECT a FROM  Address a "
                     + "WHERE UPPER(a.name) "
-                    + "= '" + newName.toUpperCase() + "'", Address.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Address.class).getResultList();
             if (addresses.size() > 0) {
                 return addresses.get(0);
             }
@@ -390,14 +390,14 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
      * Find an address associated with a client.
      *
      * @param em
-     * @param query
+     * @param value
      * @return
      */
-    public static Address findClientAddress(EntityManager em, String query) {
+    public static Address findClientAddress(EntityManager em, String value) {
 
         try {
-            String newQuery = query.replaceAll("'", "''");
-            String address[] = newQuery.split("; ");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+            String address[] = value.split("; ");
             String addressLine1 = address[0];
             String addressLine2 = address[1];
             String city = address[2];
@@ -436,7 +436,7 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
     public static Address findClientAddressById(EntityManager em, String query, Long clientId) {
 
         try {
-            //String newQuery = query.replaceAll("'", "''"); // tk org query.replaceAll("'", "''"); does not work
+            
             String address[] = query.split("; ");
             String addressLine1 = address[0];
             String addressLine2 = address[1];
@@ -463,17 +463,17 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         }
     }
 
-    public static List<Address> findClientAddresses(EntityManager em, String query) {
+    public static List<Address> findClientAddresses(EntityManager em, String value) {
 
         try {
-            String newQuery = query.trim().replaceAll("'", "''");
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Address> addresses;
             Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
-                    + " WHERE a.addressLine1 LIKE '%" + newQuery + "%'"
-                    + " OR a.addressLine2 LIKE '%" + newQuery + "%'"
-                    + " OR a.city LIKE '%" + newQuery + "%'"
-                    + " OR a.stateOrProvince LIKE '%" + newQuery + "%'",
+                    + " WHERE a.addressLine1 LIKE '%" + value + "%'"
+                    + " OR a.addressLine2 LIKE '%" + value + "%'"
+                    + " OR a.city LIKE '%" + value + "%'"
+                    + " OR a.stateOrProvince LIKE '%" + value + "%'",
                     Address.class);
             addresses = SQLQuery.getResultList();
 

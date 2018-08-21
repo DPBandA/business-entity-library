@@ -209,14 +209,14 @@ public class BusinessOffice implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<BusinessOffice> findBusinessOfficesByName(EntityManager em, String name) {
+    public static List<BusinessOffice> findBusinessOfficesByName(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<BusinessOffice> businessOffices
                     = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '"
-                            + newName.toUpperCase().trim() + "%' ORDER BY b.name", BusinessOffice.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY b.name", BusinessOffice.class).getResultList();
             return businessOffices;
         } catch (Exception e) {
             System.out.println(e);
@@ -224,14 +224,14 @@ public class BusinessOffice implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<BusinessOffice> findActiveBusinessOfficesByName(EntityManager em, String name) {
+    public static List<BusinessOffice> findActiveBusinessOfficesByName(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<BusinessOffice> businessOffices
                     = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '"
-                            + newName.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", BusinessOffice.class).getResultList();
+                            + value.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", BusinessOffice.class).getResultList();
             return businessOffices;
         } catch (Exception e) {
             System.out.println(e);
@@ -270,14 +270,14 @@ public class BusinessOffice implements Serializable, BusinessEntity {
 
     }
 
-    public static BusinessOffice findBusinessOfficeByName(EntityManager em, String name) {
+    public static BusinessOffice findBusinessOfficeByName(EntityManager em, String value) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<BusinessOffice> offices = em.createQuery("SELECT b FROM BusinessOffice b "
                     + "WHERE UPPER(b.name) "
-                    + "= '" + newName.toUpperCase() + "'", BusinessOffice.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", BusinessOffice.class).getResultList();
 
             if (offices.size() > 0) {
                 return offices.get(0);

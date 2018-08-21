@@ -250,14 +250,14 @@ public class AccPacCustomer implements Serializable {
         return getCustomerName();
     }
 
-    public static List<AccPacCustomer> findAccPacCustomersByName(EntityManager em, String name) {
+    public static List<AccPacCustomer> findAccPacCustomersByName(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<AccPacCustomer> clients;
             clients = em.createQuery("SELECT a FROM AccPacCustomer a where UPPER(a.customerName) like '"
-                    + newName.toUpperCase().trim() + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
+                    + value.toUpperCase().trim() + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -265,14 +265,14 @@ public class AccPacCustomer implements Serializable {
         }
     }
 
-    public static AccPacCustomer findByName(EntityManager em, String customerName) {
+    public static AccPacCustomer findByName(EntityManager em, String value) {
 
         try {
-            String newCustomerName = customerName.trim().replaceAll("'", "''");
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<AccPacCustomer> customers = em.createQuery("SELECT c FROM AccPacCustomer c "
                     + "WHERE UPPER(c.customerName) "
-                    + "LIKE '" + newCustomerName.toUpperCase() + "%'", AccPacCustomer.class).getResultList();
+                    + "LIKE '" + value.toUpperCase() + "%'", AccPacCustomer.class).getResultList();
 
             if (customers.size() > 0) {
                 return customers.get(0);

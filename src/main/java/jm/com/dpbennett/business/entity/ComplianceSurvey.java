@@ -1010,7 +1010,7 @@ public class ComplianceSurvey
         String searchText;
 
         if (originalSearchText != null) {
-            searchText = originalSearchText.replaceAll("'", "''");
+            searchText = originalSearchText.replaceAll("'", "''").replaceAll("&amp;", "&");
         } else {
             searchText = "";
         }

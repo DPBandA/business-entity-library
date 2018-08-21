@@ -300,6 +300,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.internet = internet;
     }
 
+    
     @Override
     public String getName() {
         if (name == null) {
@@ -562,14 +563,14 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.type = type;
     }
 
-    public static List<Client> findClientsByTRN(EntityManager em, String trn) {
+    public static List<Client> findClientsByTRN(EntityManager em, String value) {
 
         try {
-            String newTrn = trn.replaceAll("'", "''");
-
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+            
             List<Client> clients;
             clients = em.createQuery("SELECT c FROM Client c where UPPER(c.taxRegistrationNumber) like '"
-                    + newTrn.toUpperCase() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
+                    + value.toUpperCase() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -577,14 +578,14 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static List<String> findActiveClientNames(EntityManager em, String name) {
+    public static List<String> findActiveClientNames(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<String> names
                     = em.createQuery("SELECT c FROM Client c WHERE UPPER(c.name) like '"
-                            + newName.toUpperCase() + "%'"
+                            + value.toUpperCase() + "%'"
                             + " AND c.active = 1"
                             + " ORDER BY c.name", String.class).getResultList();
             return names;
@@ -594,14 +595,14 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static List<Client> findActiveClientsByFirstPartOfName(EntityManager em, String name) {
+    public static List<Client> findActiveClientsByFirstPartOfName(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '"
-                            + newName + "%'"
+                            + value + "%'"
                             + " AND c.active = 1"
                             + " ORDER BY c.id", Client.class).getResultList();
             return clients;
@@ -611,14 +612,14 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static List<Client> findActiveClientsByAnyPartOfName(EntityManager em, String name) {
+    public static List<Client> findActiveClientsByAnyPartOfName(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
-                            + newName + "%'"
+                            + value + "%'"
                             + " AND c.active = 1"
                             + " ORDER BY c.id", Client.class).getResultList();
             return clients;
@@ -628,14 +629,14 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static List<Client> findClientsByAnyPartOfName(EntityManager em, String name) {
+    public static List<Client> findClientsByAnyPartOfName(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
-                            + newName + "%'"
+                            + value + "%'"
                             + " ORDER BY c.id", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
@@ -645,14 +646,14 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     }
 
     // tk in client manager
-    public static List<String> findClientNames(EntityManager em, String name) {
+    public static List<String> findClientNames(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<String> names
                     = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
-                            + newName.toUpperCase()
+                            + value.toUpperCase()
                             + "%' ORDER BY c.name", String.class).getResultList();
             return names;
         } catch (Exception e) {
@@ -661,14 +662,14 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static List<Client> findClientsByFirstPartOfName(EntityManager em, String name) {
+    public static List<Client> findClientsByFirstPartOfName(EntityManager em, String value) {
 
         try {
-            String newName = name.replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
-                            + newName.toUpperCase()
+                            + value.toUpperCase()
                             + "%' ORDER BY c.name", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
@@ -689,21 +690,21 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static Client findClientByName(EntityManager em, String clientName, Boolean ignoreCase) {
+    public static Client findClientByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Client> clients;
 
         try {
-            String newClientName = clientName.replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             if (ignoreCase) {
                 clients = em.createQuery("SELECT c FROM Client c "
                         + "WHERE UPPER(c.name) "
-                        + "= '" + newClientName.toUpperCase() + "'", Client.class).getResultList();
+                        + "= '" + value.toUpperCase() + "'", Client.class).getResultList();
             } else {
                 clients = em.createQuery("SELECT c FROM Client c "
                         + "WHERE c.name "
-                        + "= '" + newClientName + "'", Client.class).getResultList();
+                        + "= '" + value + "'", Client.class).getResultList();
             }
 
             if (!clients.isEmpty()) {
@@ -729,22 +730,22 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static Client findActiveClientByName(EntityManager em, String clientName, Boolean ignoreCase) {
+    public static Client findActiveClientByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Client> clients;
 
         try {
-            String newClientName = clientName.replaceAll("'", "''");
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             if (ignoreCase) {
                 clients = em.createQuery("SELECT c FROM Client c "
                         + "WHERE UPPER(c.name) "
-                        + "= '" + newClientName.toUpperCase() + "'"
+                        + "= '" + value.toUpperCase() + "'"
                         + " AND c.active = 1", Client.class).getResultList();
             } else {
                 clients = em.createQuery("SELECT c FROM Client c "
                         + "WHERE c.name "
-                        + "= '" + newClientName + "'"
+                        + "= '" + value + "'"
                         + " AND c.active = 1", Client.class).getResultList();
             }
 

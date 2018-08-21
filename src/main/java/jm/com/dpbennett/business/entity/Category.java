@@ -101,14 +101,14 @@ public class Category implements BusinessEntity, Serializable {
         return true;
     }
 
-    public static List<Category> findCategoriesByType(EntityManager em, String type) {
+    public static List<Category> findCategoriesByType(EntityManager em, String value) {
 
         try {
-            String newType = type.trim().replaceAll("'", "''");
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             return em.createQuery("SELECT c FROM Category c "
                     + "WHERE UPPER(c.type) "
-                    + "= '" + newType.toUpperCase() + "' ORDER BY c.name", Category.class).getResultList();
+                    + "= '" + value.toUpperCase() + "' ORDER BY c.name", Category.class).getResultList();
 
         } catch (Exception e) {
             System.out.println(e);
