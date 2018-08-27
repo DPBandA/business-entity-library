@@ -77,5 +77,13 @@ public class ReturnMessage {
     public void setSeverity(FacesMessage.Severity severity) {
         this.severity = severity;
     }
+    
+    public String getDetail() {
+        String detail;
+        
+        detail = getHeader() + "\n" + getMessage();
+                
+        return detail;
+    }
 
 }

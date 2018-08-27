@@ -130,10 +130,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private List<Employee> representatives;
     @Transient
     private Boolean visited;
-    @Transient
-    private JobManagerUser openedBy;
-    @Transient
-    private Date dateOpened;
 
     public Job() {
         this.name = "";
@@ -144,16 +140,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.jobSamples = new ArrayList<>();
     }
 
-    public Date getDateOpened() {
-        return dateOpened;
-    }
-
-    public void setDateOpened(Date dateOpened) {
-        this.dateOpened = dateOpened;
-    }
-    
-    
-
     public Job(String name) {
         this.name = name;
         this.jobNumber = name;
@@ -161,14 +147,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.isToBeCopied = false;
         this.isClientDirty = false;
         this.jobSamples = new ArrayList<>();
-    }
-
-    public JobManagerUser getOpenedBy() {
-        return openedBy;
-    }
-
-    public void setOpenedBy(JobManagerUser openedBy) {
-        this.openedBy = openedBy;
     }
 
     public List<CashPayment> getCashPayments() {
@@ -274,22 +252,23 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             // Use the client's default billing address and main contact if the
             // Job's billing address and contact are not valid.
             // Validate and save address if required
-            if (!BusinessEntityUtils.validateName(this.getBillingAddress().getAddressLine1())) {
-                this.setBillingAddress(this.getClient().getDefaultAddress());
-            }
-            if (this.getBillingAddress().getId() == null) {
-                this.getBillingAddress().save(em);
-            }
-
-            // Validate and save contact if required
-            if (!BusinessEntityUtils.validateName(this.getContact().getName())) {
-                this.setContact(this.getClient().getDefaultContact());
-            }
-            if (this.getContact().getId() == null) {
-                this.getContact().save(em);
-            }
-
+//            if (!BusinessEntityUtils.validateName(this.getBillingAddress().getAddressLine1())) {
+//                this.setBillingAddress(this.getClient().getDefaultAddress());
+//            }
+//            if (this.getBillingAddress().getId() == null) {
+//                this.getBillingAddress().save(em);
+//            }
+//
+//            // Validate and save contact if required
+//            if (!BusinessEntityUtils.validateName(this.getContact().getName())) {
+//                this.setContact(this.getClient().getDefaultContact());
+//            }
+//            if (this.getContact().getId() == null) {
+//                this.getContact().save(em);
+//            }
             // Do not save changed job if it's already marked as completed in the database
+            // However, saving is allowed if the user belongs to the "Invoicing department"
+            // or is a system administrator
             if (this.getId() != null) {
                 Job job = Job.findJobById(em, this.getId());
                 if (job.getJobStatusAndTracking().getWorkProgress().equals("Completed")
@@ -311,12 +290,11 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 this.getJobStatusAndTracking().setDateAndTimeEntered(now);
             }
 
-            if (employee != null) {
-                if (this.getJobStatusAndTracking().getEnteredBy().getId() == null) {
-                    // This means this this is a new job so set user and person who entered the job
-                    this.getJobStatusAndTracking().setEnteredBy(employee);
-                    this.getJobStatusAndTracking().setEditedBy(employee);
-                }
+            // Set "entered by" and "edited by" if this is a new job           
+            if (this.getJobStatusAndTracking().getEnteredBy().getId() == null) {
+                // This means this this is a new job so set user and person who entered the job
+                this.getJobStatusAndTracking().setEnteredBy(employee);
+                this.getJobStatusAndTracking().setEditedBy(employee);
             }
 
             // Update re the person who last edited/entered the job etc.
@@ -337,7 +315,9 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             }
 
             // Finally..save the job
-            if (this.save(em).isSuccess()) {
+            ReturnMessage returnMessage = this.save(em);
+
+            if (returnMessage.isSuccess()) {
                 // Save job sequence number since it was used by this job
                 if (nextJobSequenceNumber != null) {
                     nextJobSequenceNumber.save(em);
@@ -345,23 +325,34 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
                 this.clean();
             } else {
+
+                // Reset job number if job number is set to auto-generate
+                if (this.getAutoGenerateJobNumber()) {
+                    this.setJobSequenceNumber(null);
+                    this.setJobNumber(Job.getJobNumber(this, em));
+                }
+
                 return new ReturnMessage(false,
                         "Undefined Error!",
-                        "An undefined error occurred while saving this job. "
-                        + "Please contact the System Administrator",
+                        "An undefined error occurred while saving job "
+                        + this.getJobNumber() + ":\n"
+                        + returnMessage.getDetail(),
                         FacesMessage.SEVERITY_ERROR);
             }
 
         } catch (Exception e) {
+
+            // Reset job number if job number is set to auto-generate
             if (this.getAutoGenerateJobNumber()) {
-                // Reset job number
+                this.setJobSequenceNumber(null);
                 this.setJobNumber(Job.getJobNumber(this, em));
             }
 
             return new ReturnMessage(false,
                     "Undefined Error!",
-                    "An undefined error occurred while saving this job. "
-                    + "Please contact the System Administrator",
+                    "An undefined error occurred while saving job "
+                    + this.getJobNumber() + ":\n"
+                    + e,
                     FacesMessage.SEVERITY_ERROR);
         }
 
@@ -1147,10 +1138,10 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         } else {
             searchText = "";
         }
-        
+
         // include the search for samples?
         if (includeSampleSearch) {
-            
+
             sampleSearchWhereClause
                     = " OR UPPER(jobSamples.reference) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.description) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -1162,7 +1153,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
             sampleSearchJoinClause = " JOIN job.jobSamples jobSamples";
         }
-        
+
         switch (searchType) {
             case "Unapproved job costings":
                 searchTextAndClause
@@ -1951,7 +1942,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 //        }
 //
 //    }
-    
     // tk  job records based on jobstatusandtracking date
     public static List<Object[]> getJobRecordsByTrackingDate(
             EntityManager em,
@@ -2017,18 +2007,25 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     @Override
     public ReturnMessage save(EntityManager em) {
+        ReturnMessage returnMessage;
 
         try {
             // Save samples
             if (!this.getJobSamples().isEmpty()) {
                 for (JobSample jobSample : this.getJobSamples()) {
-                    /// Save newly entered samples 
+                    // Save newly entered samples 
+                    returnMessage = jobSample.save(em);
+
                     if ((jobSample.getIsDirty() || jobSample.getId() == null)
-                            && !jobSample.save(em).isSuccess()) {
+                            && !returnMessage.isSuccess()) {
+
                         return new ReturnMessage(false,
                                 "Job sample save error occurred",
-                                "An error occurred while saving job sample" + jobSample.getReference(),
+                                "An error occurred while saving job sample"
+                                + jobSample.getReference()
+                                + "\nDetails: " + returnMessage.getDetail(),
                                 FacesMessage.SEVERITY_ERROR);
+
                     }
                     // "Clean" sample
                     jobSample.setIsDirty(false);
@@ -2036,9 +2033,9 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             }
 
             // Save job costing and payment
-            ReturnMessage message = jobCostingAndPayment.save(em);
-            if (!message.isSuccess()) {
-                return message;
+            returnMessage = jobCostingAndPayment.save(em);
+            if (!returnMessage.isSuccess()) {
+                return returnMessage;
             }
 
             // Save job    
@@ -2049,13 +2046,13 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             return new ReturnMessage();
 
         } catch (Exception e) {
-            System.out.println(e);
+            return new ReturnMessage(false,
+                    "Job save error occurred!",
+                    "An error occurred while saving job " + this.getJobNumber()
+                    + "\n" + e,
+                    FacesMessage.SEVERITY_ERROR);
         }
 
-        return new ReturnMessage(false,
-                "Job save error occurred!",
-                "An error occurred while saving job" + this.getJobNumber(),
-                FacesMessage.SEVERITY_ERROR);
 
     }
 

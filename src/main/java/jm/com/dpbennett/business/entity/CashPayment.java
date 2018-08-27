@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import javax.faces.application.FacesMessage;
 import javax.faces.model.SelectItem;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -339,10 +340,12 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            return new ReturnMessage(false,
+                    "Cash payment not saved",
+                    "An error occurred while saving a cash payment: " + e,
+                    FacesMessage.SEVERITY_ERROR);
         }
 
-        return new ReturnMessage(false, "Cash payment not saved");
     }
 
     @Override

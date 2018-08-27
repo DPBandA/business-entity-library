@@ -122,6 +122,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         this.actualTurnaroundTime = actualTurnaroundTime;
     }
 
+    @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
@@ -129,6 +130,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         return isDirty;
     }
 
+    @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
@@ -245,7 +247,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         this.numberOfDocuments = numberOfDocuments;
     }
     
-     public Integer getCurrentDocumentTurnaroundTime() {
+     private Integer getCurrentDocumentTurnaroundTime() {
         if (dateReceived != null && expectedDateOfCompletion != null) {
             return BusinessEntityUtils.calculatePeriodInWorkingDays(dateReceived, expectedDateOfCompletion);
         } else {

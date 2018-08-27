@@ -102,7 +102,11 @@ public class JobStatusAndTracking implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
     @Transient
-    private String editStatus;
+    private String editStatus;    
+    @Transient
+    private JobManagerUser openedBy;
+    @Transient
+    private Date dateOpened;
 
     public Long getId() {
         return id;
@@ -110,6 +114,22 @@ public class JobStatusAndTracking implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+     public Date getDateOpened() {
+        return dateOpened;
+    }
+
+    public void setDateOpened(Date dateOpened) {
+        this.dateOpened = dateOpened;
+    }
+    
+     public JobManagerUser getOpenedBy() {
+        return openedBy;
+    }
+
+    public void setOpenedBy(JobManagerUser openedBy) {
+        this.openedBy = openedBy;
     }
 
     public Employee getCompletedBy() {

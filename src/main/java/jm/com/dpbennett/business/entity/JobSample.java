@@ -612,7 +612,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
         } catch (Exception e) {
             return new ReturnMessage(false,
                 "Job sample save error occurred",
-                "An error occurred while saving job sample (Null/OL ID): " + e + ": " +this.getReference(),
+                "An error occurred while saving job sample (Null/OL ID): " + e + ": " + this.getReference(),
                 FacesMessage.SEVERITY_ERROR);
         }
 

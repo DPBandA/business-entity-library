@@ -825,10 +825,12 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
                 for (CostComponent costComponent : getCostComponents()) {
                     if ((costComponent.getIsDirty() || costComponent.getId() == null)
                             && !costComponent.save(em).isSuccess()) {
+                        
                         return new ReturnMessage(false,
                                 "Cost component save error occurred",
                                 "An error occurred while saving a cost component",
                                 FacesMessage.SEVERITY_ERROR);
+                        
                     }
                 }
             }

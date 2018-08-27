@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.application.FacesMessage;
 import javax.faces.model.SelectItem;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -351,10 +352,12 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            return new ReturnMessage(false,
+                    "Cost component not saved",
+                    "An error occurred while saving a cost component: " + e,
+                    FacesMessage.SEVERITY_ERROR);
         }
 
-        return new ReturnMessage(false, "Cost component not saved");
     }
 
     @Override
