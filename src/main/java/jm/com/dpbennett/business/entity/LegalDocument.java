@@ -100,6 +100,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     @Column(length = 1024)
     private String goal;
     @Column(length = 1024)
+    private String strategicPriority;
+    @Column(length = 1024)
     private String status;
     private String priorityLevel;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -110,6 +112,14 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     private Boolean visited;
 
     public LegalDocument() {
+    }
+
+    public String getStrategicPriority() {
+        return strategicPriority;
+    }
+
+    public void setStrategicPriority(String strategicPriority) {
+        this.strategicPriority = strategicPriority;
     }
 
     public Integer getActualTurnaroundTime() {

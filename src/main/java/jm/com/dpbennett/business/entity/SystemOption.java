@@ -55,6 +55,7 @@ public class SystemOption implements BusinessEntity, Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    @Column(length = 1024)
     private String optionValue;
     private String optionValueType;
     private String category;

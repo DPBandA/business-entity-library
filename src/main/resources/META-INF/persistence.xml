@@ -91,6 +91,7 @@
     <class>jm.com.dpbennett.business.entity.Modules</class>
     <class>jm.com.dpbennett.business.entity.AccountingCode</class>
     <class>jm.com.dpbennett.business.entity.Subgroup</class>
+    <class>jm.com.dpbennett.business.entity.StrategicPriority</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jmts"/>
       <property name="javax.persistence.jdbc.password" value=""/>
