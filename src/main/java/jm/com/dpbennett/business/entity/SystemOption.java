@@ -122,8 +122,7 @@ public class SystemOption implements BusinessEntity, Serializable {
     }
 
     public static Object getOptionValueObject(EntityManager em, String name) {
-        SystemOption option = SystemOption.findSystemOptionByName(em,
-                name);
+        SystemOption option = SystemOption.findSystemOptionByName(em, name);
 
         if (option != null) {
             switch (option.getOptionValueType()) {
