@@ -42,7 +42,7 @@ public class StrategicPriority implements Serializable, BusinessEntity, Comparab
     private String name;
     @Column(length = 1024)
     private String description;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -51,6 +51,18 @@ public class StrategicPriority implements Serializable, BusinessEntity, Comparab
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        if (description == null) {
+            description = "";
+        }
+
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -62,7 +74,7 @@ public class StrategicPriority implements Serializable, BusinessEntity, Comparab
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+
         if (!(object instanceof StrategicPriority)) {
             return false;
         }
@@ -75,42 +87,45 @@ public class StrategicPriority implements Serializable, BusinessEntity, Comparab
 
     @Override
     public String toString() {
-        return "jm.com.dpbennett.business.entity.StrategicPriority[ id=" + id + " ]";
+        return getName();
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (name == null) {
+            name = "";
+        }
+        return name;
     }
 
     @Override
     public void setName(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.name = name;
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Boolean getIsDirty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void setIsDirty(Boolean isDirty) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public int compareTo(Object t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
 }

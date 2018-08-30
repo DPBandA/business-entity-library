@@ -19,6 +19,7 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.utils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -215,7 +216,7 @@ public class BusinessEntityUtils {
         return titles;
     }
 
-    // Not used. Thes are obtained from database. May be removed in future.
+    // Not used. These are obtained from database. May be removed in future.
     public static List getCountries() {
         countries = new ArrayList();
 
@@ -905,8 +906,8 @@ public class BusinessEntityUtils {
      */
     public static Class getClass(String methodPath) {
         int i = 0;
-        Method method = null;
-        Class c = null;
+        Method method;
+        Class c;
 
         try {
 
@@ -931,7 +932,7 @@ public class BusinessEntityUtils {
             } while (i < methodName.length);
 
             return c;
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException ex) {
             System.out.println(ex);
             return null;
         }
@@ -940,8 +941,8 @@ public class BusinessEntityUtils {
     public static Object getBusinessEntityValue(Object entity, String methodPath) {
 
         Object value = null;
-        Class c = null;
-        Method m = null;
+        Class c;
+        Method m;
 
         // split the path into class and methods string
         String[] path = methodPath.split("/");
@@ -957,7 +958,7 @@ public class BusinessEntityUtils {
                 entity = m.invoke(c.cast(entity), (Object[]) null);
                 value = entity;
             } while (!isBasicDataType(m.getReturnType().getName()));
-        } catch (Exception ex) {
+        } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
             System.out.println(ex);
         }
 
@@ -1390,14 +1391,8 @@ public class BusinessEntityUtils {
 
     }
 
-    // del
-//    public static Date getEndOfLastMonth() {
-//        Date date = getEndOfCurrentMonth();
-//
-//        return BusinessEntityUtils.adjustDate(date, Calendar.MONTH, -1);
-//    }
     public static Date getEndOfLastMonth() {
-        // getDaysInMonth(int month)
+        
         Calendar c = Calendar.getInstance();
 
         Date date = getStartOfLastMonth();
@@ -1580,16 +1575,11 @@ public class BusinessEntityUtils {
         return cal.getTime();
     }
 
-//    @SuppressWarnings("unchecked")
-//    public static <T> T findBean(String beanName) {
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        return (T) context.getApplication().evaluateExpressionGet(context, "#{" + beanName + "}", Object.class);
-//    }
     /**
      *
-     * @param driverClassName // e.g. com.mysql.jdbc.Driver
-     * @param url // jdbc:mysql://boshrmapp:3306/jmtstest
-     * @param user // e.g. root
+     * @param driverClassName
+     * @param url 
+     * @param user
      * @param password
      * @return
      */
@@ -1738,61 +1728,6 @@ public class BusinessEntityUtils {
         return EMF;
     }
 
-//    private static String getDateString(Calendar c, String delim, String format, String sep) {
-//        // date delimiter
-//        if (delim == null) {
-//            delim = "'";
-//        }
-//        // date format, YMD, MDY etc
-//        if (format == null) {
-//            format = "YMD";
-//        }
-//        // separator of date fields
-//        if (sep == null) {
-//            sep = "-";
-//        }
-//
-//        if (c != null) {
-//            String str;
-//            String year = getFourDigitString(c.get(Calendar.YEAR));
-//            int month = c.get(Calendar.MONTH) + 1;
-//            int day = c.get(Calendar.DAY_OF_MONTH);
-//            if (format.equals("YMD")) {
-//                str = delim + year + sep + month + sep + day + delim;
-//            } else if (format.equals("MDY")) {
-//                str = delim + month + sep + day + sep + year + delim;
-//            } else if (format.equals("DMY")) {
-//                str = delim + day + sep + month + sep + year + delim;
-//            } else {
-//                str = delim + year + sep + month + sep + day + delim;
-//            }
-//            return str;
-//        }
-//
-//        return null;
-//    }
-//    public static String getDateStringFromCalendar(
-//            Calendar c,
-//            String delim,
-//            String format,
-//            String sep) {
-//
-//        return getDateString(c, delim, format, sep);
-//    }
-//
-//    public static String getDateStringFromDate(
-//            Date d,
-//            String delim,
-//            String format,
-//            String sep) {
-//        if (d != null) {
-//            Calendar c = Calendar.getInstance();
-//            c.setTime(d);
-//            return getDateString(c, delim, format, sep);
-//        } else {
-//            return "";
-//        }
-//    }
     public static Boolean validateDate(
             Calendar c,
             int minYear,
@@ -2103,6 +2038,7 @@ public class BusinessEntityUtils {
     /**
      * Delete a generic entity
      *
+     * @param em
      * @param entity
      * @return
      */
