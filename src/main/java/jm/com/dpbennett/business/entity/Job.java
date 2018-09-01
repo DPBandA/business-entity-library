@@ -148,6 +148,16 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.isClientDirty = false;
         this.jobSamples = new ArrayList<>();
     }
+    
+    public Job(Long id) {
+        this.id = id;
+        this.name = "";
+        this.jobNumber = name;
+        this.isToBeSubcontracted = false;
+        this.isToBeCopied = false;
+        this.isClientDirty = false;
+        this.jobSamples = new ArrayList<>();
+    }
 
     public List<CashPayment> getCashPayments() {
 
