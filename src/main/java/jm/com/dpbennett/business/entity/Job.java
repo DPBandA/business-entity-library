@@ -259,23 +259,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             // Get employee for later use
             Employee employee = user.getEmployee();
 
-            // Use the client's default billing address and main contact if the
-            // Job's billing address and contact are not valid.
-            // Validate and save address if required
-//            if (!BusinessEntityUtils.validateName(this.getBillingAddress().getAddressLine1())) {
-//                this.setBillingAddress(this.getClient().getDefaultAddress());
-//            }
-//            if (this.getBillingAddress().getId() == null) {
-//                this.getBillingAddress().save(em);
-//            }
-//
-//            // Validate and save contact if required
-//            if (!BusinessEntityUtils.validateName(this.getContact().getName())) {
-//                this.setContact(this.getClient().getDefaultContact());
-//            }
-//            if (this.getContact().getId() == null) {
-//                this.getContact().save(em);
-//            }
             // Do not save changed job if it's already marked as completed in the database
             // However, saving is allowed if the user belongs to the "Invoicing department"
             // or is a system administrator
@@ -315,7 +298,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
             // Modify job number with sequence number if required
             if (this.getAutoGenerateJobNumber()) {
-                if ((this.getId() == null) && (this.getJobSequenceNumber() == null)) {
+                if ((this.getJobSequenceNumber() == null)) {
                     nextJobSequenceNumber = JobSequenceNumber.findNextJobSequenceNumber(em, this.getYearReceived());
                     this.setJobSequenceNumber(nextJobSequenceNumber.getSequentialNumber());
                     this.setJobNumber(Job.getJobNumber(this, em));

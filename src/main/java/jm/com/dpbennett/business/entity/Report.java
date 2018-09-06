@@ -85,6 +85,7 @@ public class Report implements Serializable, BusinessEntity {
     private Boolean employeeRequired;
     private Boolean clientRequired;
     private Boolean datePeriodRequired;
+    
 
     public Report() {
         reportColumns = new ArrayList<>(); // tk retire use of this
