@@ -72,7 +72,7 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     private Boolean isDirty;
     @Transient
     private Boolean show;
-
+    
     public DatePeriod() {
     }
 

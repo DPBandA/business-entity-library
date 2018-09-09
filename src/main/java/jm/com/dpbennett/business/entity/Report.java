@@ -67,7 +67,7 @@ public class Report implements Serializable, BusinessEntity {
     private String reportFileMimeType = "";
     private String reportOutputFileMimeType = "";
     @OneToMany(cascade = CascadeType.ALL)
-    private List<ReportTableColumn> reportColumns; // tk retire this 
+    private List<ReportTableColumn> reportColumns;
     private Boolean active;
     private Boolean usePackagedReportFileTemplate;
     @Transient
@@ -85,15 +85,26 @@ public class Report implements Serializable, BusinessEntity {
     private Boolean employeeRequired;
     private Boolean clientRequired;
     private Boolean datePeriodRequired;
-    
+    private Boolean showDateField;
 
     public Report() {
-        reportColumns = new ArrayList<>(); // tk retire use of this
+        reportColumns = new ArrayList<>();
     }
 
     public Report(String name) {
         this.name = name;
-        reportColumns = new ArrayList<>(); // tk retire use of this
+        reportColumns = new ArrayList<>();
+    }
+
+    public Boolean getShowDateField() {
+        if (showDateField == null) {
+            showDateField = false;
+        }
+        return showDateField;
+    }
+
+    public void setShowDateField(Boolean showDateField) {
+        this.showDateField = showDateField;
     }
 
     public Boolean getDepartmentRequired() {
@@ -155,8 +166,8 @@ public class Report implements Serializable, BusinessEntity {
     }
 
     public List<Employee> getEmployees() {
-        if (employees != null) {           
-                Collections.sort(employees);
+        if (employees != null) {
+            Collections.sort(employees);
         } else {
             employees = new ArrayList<>();
         }

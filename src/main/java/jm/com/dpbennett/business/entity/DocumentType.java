@@ -244,7 +244,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
 
     }
     
-     public static DocumentType findDefaultDepartment(EntityManager em,
+     public static DocumentType findDefaultDocumentType(EntityManager em,
             String name) {
         DocumentType documentType = DocumentType.findDocumentTypeByName(em, name);
 

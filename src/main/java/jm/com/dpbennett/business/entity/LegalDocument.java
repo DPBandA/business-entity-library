@@ -110,7 +110,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     private Boolean isDirty;
     @Transient
     private Boolean visited;
-
+    
     public LegalDocument() {
     }
 
