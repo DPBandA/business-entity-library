@@ -256,6 +256,9 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     }
 
     public Boolean getActive() {
+        if (active == null) {
+            active = true;
+        }
         return active;
     }
 
@@ -300,7 +303,6 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.internet = internet;
     }
 
-    
     @Override
     public String getName() {
         if (name == null) {
@@ -567,7 +569,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
 
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-            
+
             List<Client> clients;
             clients = em.createQuery("SELECT c FROM Client c where UPPER(c.taxRegistrationNumber) like '"
                     + value.toUpperCase() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
