@@ -117,6 +117,7 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
         ArrayList dateSearchFields = new ArrayList();
 
         dateSearchFields.add(new SelectItem("dateAndTimeEntered", "Date entered"));
+        dateSearchFields.add(new SelectItem("dateReceived", "Date received"));
         dateSearchFields.add(new SelectItem("dateSubmitted", "Date submitted"));
         dateSearchFields.add(new SelectItem("dateCostingApproved", "Date costing approved"));
         dateSearchFields.add(new SelectItem("dateOfCompletion", "Date completed"));
@@ -132,12 +133,20 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
 
         switch (category) {
             case "Job":
-                return getDateSearchFields();
+                dateSearchFields.add(new SelectItem("dateAndTimeEntered", "Date entered"));
+                dateSearchFields.add(new SelectItem("dateSubmitted", "Date submitted"));
+                dateSearchFields.add(new SelectItem("dateCostingApproved", "Date costing approved"));
+                dateSearchFields.add(new SelectItem("dateOfCompletion", "Date completed"));
+                dateSearchFields.add(new SelectItem("expectedDateOfCompletion", "Exp'ted date of completion"));
+                dateSearchFields.add(new SelectItem("dateSamplesCollected", "Date sample(s) collected"));
+                dateSearchFields.add(new SelectItem("dateDocumentCollected", "Date document(s) collected"));
             case "Legal":
                 dateSearchFields.add(new SelectItem("dateReceived", "Date received"));
                 dateSearchFields.add(new SelectItem("dateOfCompletion", "Date delivered"));
                 dateSearchFields.add(new SelectItem("expectedDateOfCompletion", "Agreed delivery date"));
                 break;
+            case "All":
+                return getDateSearchFields();
             default:
                 return getDateSearchFields();
         }
