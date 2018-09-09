@@ -441,10 +441,9 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         Department department = Department.findDepartmentByName(em, name);
 
         if (department == null) {
-            department = new Department();
+            department = new Department(name);
 
             em.getTransaction().begin();
-            department.setName(name);
             BusinessEntityUtils.saveBusinessEntity(em, department);
             em.getTransaction().commit();
         }
