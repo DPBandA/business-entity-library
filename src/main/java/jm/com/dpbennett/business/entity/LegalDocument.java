@@ -63,9 +63,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     @OneToOne(cascade = CascadeType.REFRESH)
     private DocumentType type;
     private String number;
-    private Boolean autoGenerateNumber;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateReceived;
+    private Boolean autoGenerateNumber;   
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department requestingDepartment;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -78,6 +76,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     private String description;
     @Column(length = 1024)
     private String notes;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date expectedDateOfCompletion;
     @Temporal(javax.persistence.TemporalType.DATE)

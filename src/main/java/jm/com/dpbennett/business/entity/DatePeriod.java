@@ -72,7 +72,7 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     private Boolean isDirty;
     @Transient
     private Boolean show;
-    
+
     public DatePeriod() {
     }
 
@@ -123,6 +123,24 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
         dateSearchFields.add(new SelectItem("expectedDateOfCompletion", "Exp'ted date of completion"));
         dateSearchFields.add(new SelectItem("dateSamplesCollected", "Date sample(s) collected"));
         dateSearchFields.add(new SelectItem("dateDocumentCollected", "Date document(s) collected"));
+
+        return dateSearchFields;
+    }
+
+    public static ArrayList getDateSearchFields(String category) {
+        ArrayList dateSearchFields = new ArrayList();
+
+        switch (category) {
+            case "Job":
+                return getDateSearchFields();
+            case "Legal":
+                dateSearchFields.add(new SelectItem("dateReceived", "Date received"));
+                dateSearchFields.add(new SelectItem("dateOfCompletion", "Date delivered"));
+                dateSearchFields.add(new SelectItem("expectedDateOfCompletion", "Agreed delivery date"));
+                break;
+            default:
+                return getDateSearchFields();
+        }
 
         return dateSearchFields;
     }
