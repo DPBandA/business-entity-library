@@ -33,6 +33,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -355,7 +356,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
             return new ReturnMessage(false,
                     "Cost component not saved",
                     "An error occurred while saving a cost component: " + e,
-                    FacesMessage.SEVERITY_ERROR);
+                    Message.SEVERITY_ERROR_NAME);
         }
 
     }

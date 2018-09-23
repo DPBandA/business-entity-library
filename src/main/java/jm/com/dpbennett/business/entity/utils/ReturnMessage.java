@@ -19,63 +19,37 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.utils;
 
-import javax.faces.application.FacesMessage;
-
 /**
  *
  * @author desbenn
  */
-public class ReturnMessage {
+public class ReturnMessage extends Message {
 
-    private boolean success;
-    private String header;
-    private String message;
-    private FacesMessage.Severity severity;
+    private boolean success;   
 
     public ReturnMessage(boolean success, String header,
-            String message, FacesMessage.Severity severity) {
+            String message, String severity) {
+        
+        super(header, message, severity);
         this.success = success;
-        this.message = message;
-        this.header = header;
-        this.severity = severity;
+        
     }
-
+    
     public ReturnMessage(boolean success, String message) {
+        
+        super("", message, Message.SEVERITY_ERROR_NAME);
         this.success = success;
-        this.message = message;
-        this.header = "";
-        this.severity = FacesMessage.SEVERITY_INFO;
+        
     }
 
     public ReturnMessage() {
-        this.success = true;
-        this.message = "";
-        this.header = "";
-        this.severity = FacesMessage.SEVERITY_INFO;
-    }
-
-    public String getHeader() {
-        return header;
-    }
-
-    public void setHeader(String header) {
-        this.header = header;
-    }
-
-    public String getMessage() {
-        return message;
+        
+        super("", "", Message.SEVERITY_ERROR_NAME);
+        this.success = true;        
     }
 
     public boolean isSuccess() {
         return success;
-    }
-
-    public FacesMessage.Severity getSeverity() {
-        return severity;
-    }
-
-    public void setSeverity(FacesMessage.Severity severity) {
-        this.severity = severity;
     }
     
     public String getDetail() {

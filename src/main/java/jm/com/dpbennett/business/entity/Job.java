@@ -43,6 +43,7 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -274,7 +275,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                     return new ReturnMessage(false,
                             "Job Cannot Be Saved",
                             "This job is marked as completed so changes cannot be saved. You may contact your department's supervisor or a system administrator",
-                            FacesMessage.SEVERITY_ERROR);
+                            Message.SEVERITY_ERROR_NAME);
                 }
             }
 
@@ -330,7 +331,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         "An undefined error occurred while saving job "
                         + this.getJobNumber() + ":\n"
                         + returnMessage.getDetail(),
-                        FacesMessage.SEVERITY_ERROR);
+                        Message.SEVERITY_ERROR_NAME);
             }
 
         } catch (Exception e) {
@@ -346,7 +347,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                     "An undefined error occurred while saving job "
                     + this.getJobNumber() + ":\n"
                     + e,
-                    FacesMessage.SEVERITY_ERROR);
+                   Message.SEVERITY_ERROR_NAME);
         }
 
         return new ReturnMessage();
@@ -2017,7 +2018,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                                 "An error occurred while saving job sample"
                                 + jobSample.getReference()
                                 + "\nDetails: " + returnMessage.getDetail(),
-                                FacesMessage.SEVERITY_ERROR);
+                                Message.SEVERITY_ERROR_NAME);
 
                     }
                     // "Clean" sample
@@ -2043,7 +2044,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                     "Job save error occurred!",
                     "An error occurred while saving job " + this.getJobNumber()
                     + "\n" + e,
-                    FacesMessage.SEVERITY_ERROR);
+                    Message.SEVERITY_ERROR_NAME);
         }
 
 

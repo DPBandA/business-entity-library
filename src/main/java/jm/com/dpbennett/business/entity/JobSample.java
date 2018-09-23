@@ -42,6 +42,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -613,7 +614,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
             return new ReturnMessage(false,
                 "Job sample save error occurred",
                 "An error occurred while saving job sample (Null/OL ID): " + e + ": " + this.getReference(),
-                FacesMessage.SEVERITY_ERROR);
+                Message.SEVERITY_ERROR_NAME);
         }
 
     }

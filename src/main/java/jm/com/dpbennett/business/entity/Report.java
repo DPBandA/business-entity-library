@@ -39,6 +39,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -520,7 +521,7 @@ public class Report implements Serializable, BusinessEntity {
                         return new ReturnMessage(false,
                                 "Date period save error occurred",
                                 "An error occurred while saving a date period",
-                                FacesMessage.SEVERITY_ERROR);
+                                Message.SEVERITY_ERROR_NAME);
 
                     }
                 }

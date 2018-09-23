@@ -39,6 +39,7 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -306,7 +307,7 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
                         return new ReturnMessage(false,
                                 "Shipping container save error occurred",
                                 "An error occurred while saving a Shipping container",
-                                FacesMessage.SEVERITY_ERROR);
+                                Message.SEVERITY_ERROR_NAME);
                     }
                 }
             }
@@ -323,14 +324,14 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
                 return new ReturnMessage(true,
                         "Entry document NOT saved",
                         "Not saved because it was not edited or an error occurred",
-                        FacesMessage.SEVERITY_INFO);
+                        Message.SEVERITY_INFO_NAME);
             }
 
         } catch (Exception e) {
             return new ReturnMessage(false,
                     "Entry document save error occurred!",
                     "An error occurred while saving the Entry document: " + e,
-                    FacesMessage.SEVERITY_ERROR);
+                    Message.SEVERITY_ERROR_NAME);
         }
     }
 

@@ -43,6 +43,7 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -815,7 +816,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
                         return new ReturnMessage(false,
                                 "Payment save error occurred",
                                 "An error occurred while saving a payment",
-                                FacesMessage.SEVERITY_ERROR);
+                                Message.SEVERITY_ERROR_NAME);
                     }
                 }
             }
@@ -829,7 +830,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
                         return new ReturnMessage(false,
                                 "Cost component save error occurred",
                                 "An error occurred while saving a cost component",
-                                FacesMessage.SEVERITY_ERROR);
+                                Message.SEVERITY_ERROR_NAME);
                         
                     }
                 }
@@ -847,14 +848,14 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
                 return new ReturnMessage(true,
                         "Costing and payment NOT saved",
                         "Not saved because it was not edited",
-                        FacesMessage.SEVERITY_INFO);
+                        Message.SEVERITY_INFO_NAME);
             }
 
         } catch (Exception e) {
             return new ReturnMessage(false,
                     "Costing and payment save error occurred!",
                     "An error occurred while saving the job costing and payment: " + e,
-                    FacesMessage.SEVERITY_ERROR);
+                    Message.SEVERITY_ERROR_NAME);
         }
 
     }

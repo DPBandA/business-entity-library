@@ -37,6 +37,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -343,7 +344,7 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
             return new ReturnMessage(false,
                     "Cash payment not saved",
                     "An error occurred while saving a cash payment: " + e,
-                    FacesMessage.SEVERITY_ERROR);
+                    Message.SEVERITY_ERROR_NAME);
         }
 
     }

@@ -440,20 +440,6 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         return new ReturnMessage(false, "Energy Label not saved");
     }
 
-    public static void main(String[] args) {
-        HashMap prop = new HashMap();
-        EntityManagerFactory emf;
-        EntityManager em;
-
-        prop.put("javax.persistence.jdbc.user", "root");
-        prop.put("javax.persistence.jdbc.password", "");
-        prop.put("javax.persistence.jdbc.url", "jdbc:mysql://localhost:3306/test");
-        prop.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver");
-
-        emf = Persistence.createEntityManagerFactory("LabelPrintPU", prop);
-        em = emf.createEntityManager();
-    }
-
     @Override
     public Long getId() {
         return id;
