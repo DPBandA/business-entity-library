@@ -20,16 +20,13 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.Persistence;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -84,6 +81,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         standard = "";
         type = "";
         validity = "";
+        isDirty = false;
     }
 
     public EnergyLabel(Long id) {
@@ -103,6 +101,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         standard = "";
         type = "";
         validity = "";
+        isDirty = false;
     }
 
     /**
@@ -478,6 +477,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     @Override
     public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
         return isDirty;
     }
 
