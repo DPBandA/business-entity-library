@@ -66,15 +66,7 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.45</version>            
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
-            <version>2.5.2</version>            
-            <scope>provided</scope>
-        </dependency>  
-        -->      
+        </dependency>                   
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -100,14 +92,7 @@
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
             <version>1.13</version>
-        </dependency>    
-        <!--
-        <dependency>
-            <groupId>org.primefaces</groupId>
-            <artifactId>primefaces</artifactId>
-            <version>4.0</version>
-        </dependency>
-        -->
+        </dependency>           
        
     </dependencies>
     

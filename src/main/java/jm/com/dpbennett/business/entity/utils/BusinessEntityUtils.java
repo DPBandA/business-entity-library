@@ -49,7 +49,6 @@ import jm.com.dpbennett.business.entity.Contact;
 import jm.com.dpbennett.business.entity.DatePeriod;
 import jm.com.dpbennett.business.entity.JobManagerUser;
 import jm.com.dpbennett.business.entity.Person;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
