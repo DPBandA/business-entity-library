@@ -47,12 +47,15 @@ public class Security {
                 | BadPaddingException | IllegalBlockSizeException
                 | NoSuchPaddingException e) {
             System.out.println(e);
+            
+            return "";
         }
 
-        return "";
     }
 
     public static String decrypt(String encryptedText) {
+        String decryptedText = "";
+        
         try {
             Key aesKey = new SecretKeySpec(KEY.getBytes(), "AES");
             Cipher cipher = Cipher.getInstance("AES");
@@ -61,16 +64,19 @@ public class Security {
             
             byte[] enc = Base64.getDecoder().decode(encryptedText);
 
-            return new String(cipher.doFinal(enc));
+            decryptedText = new String(cipher.doFinal(enc));
 
         } catch (NoSuchAlgorithmException
                 | BadPaddingException | IllegalBlockSizeException
                 | NoSuchPaddingException | InvalidKeyException e) {
-
-            System.out.println(e);
+            
+             System.out.println(e);
         } 
+        finally {
+            return decryptedText;
+        }
 
-        return "";
+       
     }
 
     public static void main(String[] args) {
