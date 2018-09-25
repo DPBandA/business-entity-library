@@ -475,6 +475,10 @@ public class BusinessEntityUtils {
         return searchTypes;
     }
 
+    /**
+     * Gets 10 years starting with the current year. To be verified!
+     * @return 
+     */
     public List getYears() {
         List years = new ArrayList();
 
@@ -485,7 +489,7 @@ public class BusinessEntityUtils {
 
         return years;
     }
-
+    
     public static int characterCount(String str, char chr) {
         int count = 0;
 
@@ -1348,10 +1352,8 @@ public class BusinessEntityUtils {
     }
 
     public static int getCurrentYear() {
-        Calendar c;
-
-        // current time and date
-        c = Calendar.getInstance();
+        
+        Calendar c = Calendar.getInstance();
 
         return c.get(Calendar.YEAR);
     }
