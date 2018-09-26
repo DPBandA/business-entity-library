@@ -49,19 +49,33 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private Long id;
     private String annualConsumption;
     private String brand;
-    private String capacity = "";
-    private String costPerKwh = "";
-    private String country = "";
-    private String defrost = "";
-    private String distributor = "";
-    private String jobNumber = "";
-    private String labelName = "";
-    private String manufacturer = "";
-    private String model = "";
-    private String operatingCost = "";
-    private String standard = "";
-    private String type = "";
-    private String validity = "";
+    /**
+     * Label for the product's capacity.
+     */
+    private String capacityLabel;
+    /**
+     * Product's capacity.
+     */
+    private String capacity;
+    /**
+     * Unit of the product's capacity eg m^3.
+     */
+    private String capacityUnit;
+    /**
+     * Energy consumption rate.
+     */
+    private String costPerKwh;
+    private String country;
+    private String defrost;
+    private String distributor;
+    private String jobNumber;
+    private String labelName;
+    private String manufacturer;
+    private String model;
+    private String operatingCost;
+    private String standard;
+    private String type;
+    private String validity;
     @Transient
     private Boolean isDirty;
 
@@ -104,6 +118,22 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         isDirty = false;
     }
 
+    public String getCapacityLabel() {
+        return capacityLabel;
+    }
+
+    public void setCapacityLabel(String capacityLabel) {
+        this.capacityLabel = capacityLabel;
+    }
+
+    public String getCapacityUnit() {
+        return capacityUnit;
+    }
+
+    public void setCapacityUnit(String capacityUnit) {
+        this.capacityUnit = capacityUnit;
+    }
+    
     /**
      * Gets the annualConsumption of this EnergyLabel.
      *
