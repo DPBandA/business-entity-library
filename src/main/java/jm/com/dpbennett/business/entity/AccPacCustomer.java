@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2018  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -31,7 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
- * This class encapsulates the fields of the ARCUS database table as an
+ * This class encapsulates the fields of the Accpac ARCUS database table as an
  * AccPacCustomer.
  *
  * @author Desmond Bennett
@@ -46,6 +46,9 @@ public class AccPacCustomer implements Serializable {
     @Column(length = 12, name = "IDCUST")
     private String id;
     @Column(length = 60, name = "NAMECUST")
+    /**
+     * Customer name
+     */
     private String customerName;
     @Column(name = "AMTCRLIMT", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal creditLimit;
@@ -79,11 +82,6 @@ public class AccPacCustomer implements Serializable {
         creditLimit = new BigDecimal(0.0);
     }
 
-    /**
-     * Constructs an AccPacCustomer and initializes important fields.
-     *
-     * @param customerName The name of the customer
-     */
     public AccPacCustomer(String customerName) {
         this.customerName = customerName;
         balanceDueInCust = new BigDecimal(0.0);
@@ -91,28 +89,14 @@ public class AccPacCustomer implements Serializable {
         creditLimit = new BigDecimal(0.0);
     }
 
-    /**
-     * Gets the AccPacCustomer id string.
-     *
-     * @return The id of the customer.
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the AccPacCustomer id string.
-     *
-     * @param id
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     *
-     * @return
-     */
     public String getIDACCTSET() {
         if (IDACCTSET == null) {
             IDACCTSET = "";
