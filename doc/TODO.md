@@ -7,3 +7,4 @@
 - Move dependencies and code that do not belong to other apps such as jmts.
   jaxen and POI could be moved.
 - Add Notification class. 
+- Use "Infrastructure Software Modules for Enterprises (ch1)" to document.
