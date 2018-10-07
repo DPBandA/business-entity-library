@@ -49,21 +49,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private Long id;
     private String annualConsumption;
     private String brand;
-    /**
-     * Label for the product's capacity.
-     */
-    private String capacityLabel;
-    /**
-     * Product's capacity.
-     */
-    private String capacity;
-    /**
-     * Unit of the product's capacity eg m^3.
-     */
+    private String capacityLabel;    
+    private String capacity;    
     private String capacityUnit;
-    /**
-     * Energy consumption rate.
-     */
     private String costPerKwh;
     private String country;
     private String defrost;
