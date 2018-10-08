@@ -49,9 +49,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private Long id;
     private String annualConsumption;
     private String brand;
-    private String capacityLabel;    
     private String capacity;    
-    private String capacityUnit;
+    private String heatingCapicity;
+    private String coolingCapacity;
     private String costPerKwh;
     private String country;
     private String defrost;
@@ -71,6 +71,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         annualConsumption = "";
         brand = "";
         capacity = "";
+        heatingCapicity = "";
+        coolingCapacity = "";
         costPerKwh = "";
         country = "";
         defrost = "";
@@ -91,6 +93,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         annualConsumption = "";
         brand = "";
         capacity = "";
+        heatingCapicity = "";
+        coolingCapacity = "";
         costPerKwh = "";
         country = "";
         defrost = "";
@@ -106,22 +110,38 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         isDirty = false;
     }
 
-    public String getCapacityLabel() {
-        return capacityLabel;
+    /**
+     * Gets the heating capacity of an AC unit.
+     * @return 
+     */
+    public String getHeatingCapicity() {
+        return heatingCapicity;
     }
 
-    public void setCapacityLabel(String capacityLabel) {
-        this.capacityLabel = capacityLabel;
+    /**
+     * Sets the heating capacity of an AC unit.
+     * @param heatingCapicity 
+     */
+    public void setHeatingCapicity(String heatingCapicity) {
+        this.heatingCapicity = heatingCapicity;
     }
 
-    public String getCapacityUnit() {
-        return capacityUnit;
+    /**
+     * Gets the cooling capacity of an AC unit.
+     * @return 
+     */
+    public String getCoolingCapacity() {
+        return coolingCapacity;
     }
 
-    public void setCapacityUnit(String capacityUnit) {
-        this.capacityUnit = capacityUnit;
+    /**
+     * Sets the cooling capacity of an AC unit.
+     * @param coolingCapacity 
+     */
+    public void setCoolingCapacity(String coolingCapacity) {
+        this.coolingCapacity = coolingCapacity;
     }
-    
+  
     /**
      * Gets the annualConsumption of this EnergyLabel.
      *
