@@ -50,7 +50,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String annualConsumption;
     private String brand;
     private String capacity;    
-    private String heatingCapicity;
+    private String heatingCapacity;
     private String coolingCapacity;
     private String costPerKwh;
     private String country;
@@ -71,7 +71,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         annualConsumption = "";
         brand = "";
         capacity = "";
-        heatingCapicity = "";
+        heatingCapacity = "";
         coolingCapacity = "";
         costPerKwh = "";
         country = "";
@@ -93,7 +93,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         annualConsumption = "";
         brand = "";
         capacity = "";
-        heatingCapicity = "";
+        heatingCapacity = "";
         coolingCapacity = "";
         costPerKwh = "";
         country = "";
@@ -114,16 +114,16 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * Gets the heating capacity of an AC unit.
      * @return 
      */
-    public String getHeatingCapicity() {
-        return heatingCapicity;
+    public String getHeatingCapacity() {
+        return heatingCapacity;
     }
 
     /**
      * Sets the heating capacity of an AC unit.
-     * @param heatingCapicity 
+     * @param heatingCapacity 
      */
-    public void setHeatingCapicity(String heatingCapicity) {
-        this.heatingCapicity = heatingCapicity;
+    public void setHeatingCapacity(String heatingCapacity) {
+        this.heatingCapacity = heatingCapacity;
     }
 
     /**
