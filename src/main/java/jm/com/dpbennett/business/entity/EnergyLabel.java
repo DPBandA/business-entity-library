@@ -47,6 +47,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String ratedFrequency;
     private String annualConsumption;
     private String brand;
     private String capacity;    
@@ -108,6 +109,14 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         type = "";
         validity = "";
         isDirty = false;
+    }
+
+    public String getRatedFrequency() {
+        return ratedFrequency;
+    }
+
+    public void setRatedFrequency(String ratedFrequency) {
+        this.ratedFrequency = ratedFrequency;
     }
 
     /**
