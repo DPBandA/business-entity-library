@@ -5,10 +5,14 @@
  */
 package jm.com.dpbennett.business.entity.swingutils;
 
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JList;
 import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.plaf.ColorUIResource;
 
 /**
  *

@@ -20,6 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.swingutils;
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import jm.com.dpbennett.business.entity.BusinessEntity;
@@ -30,10 +31,10 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
  */
 public class BusinessEntityComboBoxModel extends AbstractListModel implements ComboBoxModel {
 
-    private ArrayList<BusinessEntity> data;
+    private List<BusinessEntity> data;
     private BusinessEntity selection;
 
-    public BusinessEntityComboBoxModel(ArrayList<BusinessEntity> data) {
+    public BusinessEntityComboBoxModel(List<BusinessEntity> data) {
         this.data = data;
     }
 
