@@ -47,10 +47,11 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String ratedVoltage;
     private String ratedFrequency;
     private String annualConsumption;
     private String brand;
-    private String capacity;    
+    private String capacity;
     private String heatingCapacity;
     private String coolingCapacity;
     private String costPerKwh;
@@ -69,6 +70,79 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private Boolean isDirty;
 
     public EnergyLabel() {
+        ratedVoltage = "";
+        ratedFrequency = "";
+        annualConsumption = "";
+        brand = "";
+        capacity = "";
+        heatingCapacity = "";
+        coolingCapacity = "";
+        costPerKwh = "";
+        country = "";
+        defrost = "";
+        distributor = "";
+        jobNumber = "";
+        labelName = "";
+        manufacturer = "";
+        model = "";
+        operatingCost = "";
+        standard = "";
+        type = "";
+        validity = "";
+        isDirty = false;
+    }
+    
+    public EnergyLabel(String labelName) {
+        ratedVoltage = "";
+        ratedFrequency = "";
+        annualConsumption = "";
+        brand = "";
+        capacity = "";
+        heatingCapacity = "";
+        coolingCapacity = "";
+        costPerKwh = "";
+        country = "";
+        defrost = "";
+        distributor = "";
+        jobNumber = "";
+        this.labelName = labelName;
+        manufacturer = "";
+        model = "";
+        operatingCost = "";
+        standard = "";
+        type = "";
+        validity = "";
+        isDirty = false;
+    }
+    
+    public EnergyLabel(Long id, String labelName) {
+        this.id = id;
+        ratedVoltage = "";
+        ratedFrequency = "";
+        annualConsumption = "";
+        brand = "";
+        capacity = "";
+        heatingCapacity = "";
+        coolingCapacity = "";
+        costPerKwh = "";
+        country = "";
+        defrost = "";
+        distributor = "";
+        jobNumber = "";
+        this.labelName = labelName;
+        manufacturer = "";
+        model = "";
+        operatingCost = "";
+        standard = "";
+        type = "";
+        validity = "";
+        isDirty = false;
+    }
+
+    public EnergyLabel(Long id) {
+        this.id = id;
+        ratedVoltage = "";
+        ratedFrequency = "";
         annualConsumption = "";
         brand = "";
         capacity = "";
@@ -89,26 +163,12 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         isDirty = false;
     }
 
-    public EnergyLabel(Long id) {
-        this.id = id;
-        annualConsumption = "";
-        brand = "";
-        capacity = "";
-        heatingCapacity = "";
-        coolingCapacity = "";
-        costPerKwh = "";
-        country = "";
-        defrost = "";
-        distributor = "";
-        jobNumber = "";
-        labelName = "";
-        manufacturer = "";
-        model = "";
-        operatingCost = "";
-        standard = "";
-        type = "";
-        validity = "";
-        isDirty = false;
+    public String getRatedVoltage() {
+        return ratedVoltage;
+    }
+
+    public void setRatedVoltage(String ratedVoltage) {
+        this.ratedVoltage = ratedVoltage;
     }
 
     public String getRatedFrequency() {
@@ -121,7 +181,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the heating capacity of an AC unit.
-     * @return 
+     *
+     * @return
      */
     public String getHeatingCapacity() {
         return heatingCapacity;
@@ -129,7 +190,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the heating capacity of an AC unit.
-     * @param heatingCapacity 
+     *
+     * @param heatingCapacity
      */
     public void setHeatingCapacity(String heatingCapacity) {
         this.heatingCapacity = heatingCapacity;
@@ -137,7 +199,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the cooling capacity of an AC unit.
-     * @return 
+     *
+     * @return
      */
     public String getCoolingCapacity() {
         return coolingCapacity;
@@ -145,12 +208,13 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the cooling capacity of an AC unit.
-     * @param coolingCapacity 
+     *
+     * @param coolingCapacity
      */
     public void setCoolingCapacity(String coolingCapacity) {
         this.coolingCapacity = coolingCapacity;
     }
-  
+
     /**
      * Gets the annualConsumption of this EnergyLabel.
      *
