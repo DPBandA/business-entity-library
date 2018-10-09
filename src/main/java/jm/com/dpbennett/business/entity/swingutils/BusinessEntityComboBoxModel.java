@@ -19,17 +19,15 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.swingutils;
 
-import java.util.ArrayList;
 import java.util.List;
-import javax.swing.AbstractListModel;
-import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 
 /**
  *
  * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
  */
-public class BusinessEntityComboBoxModel extends AbstractListModel implements ComboBoxModel {
+public class BusinessEntityComboBoxModel extends DefaultComboBoxModel {
 
     private List<BusinessEntity> data;
     private BusinessEntity selection;

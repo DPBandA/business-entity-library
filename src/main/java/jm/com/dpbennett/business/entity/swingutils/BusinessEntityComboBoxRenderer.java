@@ -7,12 +7,13 @@ package jm.com.dpbennett.business.entity.swingutils;
 
 import java.awt.Color;
 import java.awt.Component;
+import javax.swing.BorderFactory;
 import javax.swing.JList;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.plaf.ColorUIResource;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
 
 /**
  *
@@ -41,6 +42,8 @@ public class BusinessEntityComboBoxRenderer extends JTextArea
         }
         
         setLineWrap(true);
+        setBorder(BorderFactory.createEtchedBorder());
+        
         if (value != null) {
             setText(value.toString());
         }
