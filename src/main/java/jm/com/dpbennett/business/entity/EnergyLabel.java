@@ -20,6 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -27,6 +28,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -55,8 +57,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String heatingCapacity;
     private String coolingCapacity;
     private String costPerKwh;
-    private String aeer;
-    private String acop;
+    private String AEER;
+    private String ACOP;
     private String country;
     private String defrost;
     private String distributor;
@@ -68,6 +70,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String standard;
     private String type;
     private String validity;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private EnergyConsumptionAndEfficiency energyConsumptionAndEfficiency;
     @Transient
     private Boolean isDirty;
 
@@ -80,8 +84,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         heatingCapacity = "";
         coolingCapacity = "";
         costPerKwh = "";
-        aeer = "";
-        acop = "";
+        AEER = "";
+        ACOP = "";
         country = "";
         defrost = "";
         distributor = "";
@@ -95,60 +99,10 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         validity = "";
         isDirty = false;
     }
-    
-    public EnergyLabel(String labelName) {
-        ratedVoltage = "";
-        ratedFrequency = "";
-        annualConsumption = "";
-        brand = "";
-        capacity = "";
-        heatingCapacity = "";
-        coolingCapacity = "";
-        costPerKwh = "";
-        aeer = "";
-        acop = "";
-        country = "";
-        defrost = "";
-        distributor = "";
-        jobNumber = "";
-        this.labelName = labelName;
-        manufacturer = "";
-        model = "";
-        operatingCost = "";
-        standard = "";
-        type = "";
-        validity = "";
-        isDirty = false;
-    }
-    
+
     public EnergyLabel(Long id, String labelName) {
         this.id = id;
-        ratedVoltage = "";
-        ratedFrequency = "";
-        annualConsumption = "";
-        brand = "";
-        capacity = "";
-        heatingCapacity = "";
-        coolingCapacity = "";
-        costPerKwh = "";
-        aeer = "";
-        acop = "";
-        country = "";
-        defrost = "";
-        distributor = "";
-        jobNumber = "";
         this.labelName = labelName;
-        manufacturer = "";
-        model = "";
-        operatingCost = "";
-        standard = "";
-        type = "";
-        validity = "";
-        isDirty = false;
-    }
-
-    public EnergyLabel(Long id) {
-        this.id = id;
         ratedVoltage = "";
         ratedFrequency = "";
         annualConsumption = "";
@@ -157,11 +111,12 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         heatingCapacity = "";
         coolingCapacity = "";
         costPerKwh = "";
+        AEER = "";
+        ACOP = "";
         country = "";
         defrost = "";
         distributor = "";
-        jobNumber = "";
-        labelName = "";
+        jobNumber = "";        
         manufacturer = "";
         model = "";
         operatingCost = "";
@@ -171,20 +126,29 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         isDirty = false;
     }
 
-    public String getAeer() {
-        return aeer;
+    public EnergyConsumptionAndEfficiency getEnergyConsumptionAndEfficiency() {
+        return energyConsumptionAndEfficiency;
     }
 
-    public void setAeer(String aeer) {
-        this.aeer = aeer;
+    public void setEnergyConsumptionAndEfficiency(
+            EnergyConsumptionAndEfficiency energyConsumptionAndEfficiency) {
+        this.energyConsumptionAndEfficiency = energyConsumptionAndEfficiency;
     }
 
-    public String getAcop() {
-        return acop;
+    public String getAEER() {
+        return AEER;
     }
 
-    public void setAcop(String acop) {
-        this.acop = acop;
+    public void setAEER(String AEER) {
+        this.AEER = AEER;
+    }
+
+    public String getACOP() {
+        return ACOP;
+    }
+
+    public void setACOP(String ACOP) {
+        this.ACOP = ACOP;
     }
 
     public String getRatedVoltage() {
@@ -562,6 +526,12 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            if (energyConsumptionAndEfficiency != null) {
+                if (energyConsumptionAndEfficiency.getId() == null ) {
+                    energyConsumptionAndEfficiency.save(em);
+                }
+            }
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -596,7 +566,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        try {                   
+        try {
             // Validate double values
             // Validate capacity
             if (!validateDoubleValue(getCapacity()).isSuccess()) {
@@ -628,47 +598,48 @@ public class EnergyLabel implements Serializable, BusinessEntity {
                 return new ReturnMessage(false, "Invalid Electricity Rate",
                         "The electricity rate is invalid", null);
             }
-            
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }
-        
+
         return new ReturnMessage();
     }
-    
+
     /**
-     * This is a utility method used to validate all double values used in 
+     * This is a utility method used to validate all double values used in
      * calculations.
+     *
      * @param value
-     * @return 
+     * @return
      */
-    public static ReturnMessage validateDoubleValue (String value) {
+    public static ReturnMessage validateDoubleValue(String value) {
         try {
             Double.parseDouble(value);
-            
+
             return new ReturnMessage();
         } catch (NumberFormatException e) {
-            System.out.println(e);            
+            System.out.println(e);
         }
-        
+
         return new ReturnMessage(false, "Double value is invalid");
     }
-    
+
     /**
      * Returns the double value of a string if the string represents a valid
      * double value. If the string is invalid 0.0 is returned.
+     *
      * @param value
-     * @return 
+     * @return
      */
     public static double getDoubleValue(String value) {
         try {
             return Double.parseDouble(value);
-            
+
         } catch (NumberFormatException e) {
-            System.out.println(e);              
+            System.out.println(e);
         }
-        
+
         return 0.0;
     }
 

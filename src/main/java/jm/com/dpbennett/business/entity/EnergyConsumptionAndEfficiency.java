@@ -33,16 +33,15 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-import java.lang.Math;
 
 /**
  *
  * @author Desmond
  */
 @Entity
-@Table(name = "maxenergyconsumption")
+@Table(name = "energyconsumptionandefficiency")
 @NamedQueries({
-    @NamedQuery(name = "findAllMaxEnergyConsumptions", query = "SELECT m FROM MaxEnergyConsumption m")
+    @NamedQuery(name = "findAllMaxEnergyConsumptions", query = "SELECT e FROM EnergyConsumptionAndEfficiency e")
 })
 @XmlRootElement
 public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEntity {
@@ -54,16 +53,44 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
     private String itemNo;
     private String productType;
     private String productTypeDetail;
-    private String productClassInBTUPerHour;
+    private String productClass;
     private String productRatedFrequency;
     private Double minCEER;
     private Double minMEER;
     private Double AVLCoefficient;
     private Double AVCuFtCoefficient;
     private Double ConsumptionConstant;
-
     @Transient
     private Boolean isDirty;
+
+    public EnergyConsumptionAndEfficiency() {
+        name = "";
+        itemNo = "";
+        productType = "";
+        productTypeDetail = "";
+        productClass = "";
+        productRatedFrequency = "";
+        minCEER = 0.0;
+        minMEER = 0.0;
+        AVLCoefficient = 0.0;
+        AVCuFtCoefficient = 0.0;
+        ConsumptionConstant = 0.0;
+    }
+
+    public EnergyConsumptionAndEfficiency(Long id, String name) {
+        this.id = id;
+        this.name = name;
+        itemNo = "";
+        productType = "";
+        productTypeDetail = "";
+        productClass = "";
+        productRatedFrequency = "";
+        minCEER = 0.0;
+        minMEER = 0.0;
+        AVLCoefficient = 0.0;
+        AVCuFtCoefficient = 0.0;
+        ConsumptionConstant = 0.0;
+    }
 
     @Override
     public Long getId() {
@@ -75,24 +102,36 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
         this.id = id;
     }
 
-    public EnergyConsumptionAndEfficiency() {
-        name = "";
-        itemNo = "";
-        productType = "";
-        productTypeDetail = "";
-        AVLCoefficient = 0.0;
-        AVCuFtCoefficient = 0.0;
-        ConsumptionConstant = 0.0;
+    public String getProductClass() {
+        return productClass;
     }
 
-    public EnergyConsumptionAndEfficiency(String name) {
-        this.name = name;
-        itemNo = "";
-        productType = "";
-        productTypeDetail = "";
-        AVLCoefficient = 0.0;
-        AVCuFtCoefficient = 0.0;
-        ConsumptionConstant = 0.0;
+    public void setProductClass(String productClass) {
+        this.productClass = productClass;
+    }
+
+    public String getProductRatedFrequency() {
+        return productRatedFrequency;
+    }
+
+    public void setProductRatedFrequency(String productRatedFrequency) {
+        this.productRatedFrequency = productRatedFrequency;
+    }
+
+    public Double getMinCEER() {
+        return minCEER;
+    }
+
+    public void setMinCEER(Double minCEER) {
+        this.minCEER = minCEER;
+    }
+
+    public Double getMinMEER() {
+        return minMEER;
+    }
+
+    public void setMinMEER(Double minMEER) {
+        this.minMEER = minMEER;
     }
 
     /**
@@ -197,15 +236,13 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
             return false;
         }
         EnergyConsumptionAndEfficiency other = (EnergyConsumptionAndEfficiency) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return productTypeDetail;
+        return name;
     }
 
     public static List<EnergyConsumptionAndEfficiency> findfindAllMaxEnergyConsumptions(EntityManager em) {
@@ -246,7 +283,7 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "MaxEnergyConsumption not saved");
+        return new ReturnMessage(false, "EnergyConsumptionAndEfficiency not saved");
     }
 
     @Override
