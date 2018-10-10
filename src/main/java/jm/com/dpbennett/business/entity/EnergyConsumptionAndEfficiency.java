@@ -33,6 +33,7 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
+import java.lang.Math;
 
 /**
  *
@@ -54,6 +55,7 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
     private String productType;
     private String productTypeDetail;
     private String productClassInBTUPerHour;
+    private String productRatedFrequency;
     private Double minCEER;
     private Double minMEER;
     private Double AVLCoefficient;
@@ -91,6 +93,22 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
         AVLCoefficient = 0.0;
         AVCuFtCoefficient = 0.0;
         ConsumptionConstant = 0.0;
+    }
+
+    /**
+     * Gets the Star rating index of a refrigerator.
+     *
+     * @param CEC
+     * @param BEC
+     * @param ERF
+     * @return
+     */
+    public static double getRefrigeratorSRI(double CEC, double BEC, double ERF) {
+        return 1.0 + (Math.log(CEC / BEC) / Math.log(1.0 - ERF));
+    }
+
+    public static double getBEC(double Cf, double Cv, double Vadjtot) {
+        return Cf + Cv * Math.pow(Vadjtot, 0.67);
     }
 
     public String getProductType() {
@@ -191,7 +209,7 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
     }
 
     public static List<EnergyConsumptionAndEfficiency> findfindAllMaxEnergyConsumptions(EntityManager em) {
-        
+
         try {
             List<EnergyConsumptionAndEfficiency> consumptions
                     = em.createNamedQuery("findAllMaxEnergyConsumptions", EnergyConsumptionAndEfficiency.class).getResultList();

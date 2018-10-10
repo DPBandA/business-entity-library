@@ -5,21 +5,18 @@
  */
 package jm.com.dpbennett.business.entity.swingutils;
 
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.LineBorder;
 
 /**
  *
  * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
  */
-public class BusinessEntityComboBoxRenderer extends JTextArea
+public class BusinessEntityComboBoxRenderer extends /*JTextArea*/ JLabel
         implements ListCellRenderer {
     
     private int rows;
@@ -40,10 +37,7 @@ public class BusinessEntityComboBoxRenderer extends JTextArea
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }
-        
-        setLineWrap(true);
-        setBorder(BorderFactory.createEtchedBorder());
-        
+              
         if (value != null) {
             setText(value.toString());
         }

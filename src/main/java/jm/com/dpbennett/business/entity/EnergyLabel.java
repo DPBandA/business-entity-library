@@ -55,6 +55,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String heatingCapacity;
     private String coolingCapacity;
     private String costPerKwh;
+    private String aeer;
+    private String acop;
     private String country;
     private String defrost;
     private String distributor;
@@ -78,6 +80,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         heatingCapacity = "";
         coolingCapacity = "";
         costPerKwh = "";
+        aeer = "";
+        acop = "";
         country = "";
         defrost = "";
         distributor = "";
@@ -101,6 +105,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         heatingCapacity = "";
         coolingCapacity = "";
         costPerKwh = "";
+        aeer = "";
+        acop = "";
         country = "";
         defrost = "";
         distributor = "";
@@ -125,6 +131,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         heatingCapacity = "";
         coolingCapacity = "";
         costPerKwh = "";
+        aeer = "";
+        acop = "";
         country = "";
         defrost = "";
         distributor = "";
@@ -161,6 +169,22 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         type = "";
         validity = "";
         isDirty = false;
+    }
+
+    public String getAeer() {
+        return aeer;
+    }
+
+    public void setAeer(String aeer) {
+        this.aeer = aeer;
+    }
+
+    public String getAcop() {
+        return acop;
+    }
+
+    public void setAcop(String acop) {
+        this.acop = acop;
     }
 
     public String getRatedVoltage() {
@@ -572,18 +596,80 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        try {
-            if (labelName.isEmpty()) {
-                return new ReturnMessage(false, "Invalid Energy Label",
-                        "This label is invalid", null);
-            } else {
-                return new ReturnMessage();
+        try {                   
+            // Validate double values
+            // Validate capacity
+            if (!validateDoubleValue(getCapacity()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Capacity",
+                        "The volumetric capacity is invalid", null);
             }
+            // Validate cooling capacity
+            if (!validateDoubleValue(getCoolingCapacity()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Cooling Capacity",
+                        "The cooling capacity is invalid", null);
+            }
+            // Validate heating capacity
+            if (!validateDoubleValue(getHeatingCapacity()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Heating Capacity",
+                        "The heating capacity is invalid", null);
+            }
+            // Validate operating cost
+            if (!validateDoubleValue(getOperatingCost()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Operating Cost",
+                        "The operating cost is invalid", null);
+            }
+            // Validate annual consumption
+            if (!validateDoubleValue(getAnnualConsumption()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Annual Consumption",
+                        "The annual consumption is invalid", null);
+            }
+            // Validate cost per kwh
+            if (!validateDoubleValue(getCostPerKwh()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Electricity Rate",
+                        "The electricity rate is invalid", null);
+            }
+            
+            
         } catch (Exception e) {
             System.out.println(e);
-            return new ReturnMessage(false, "Invalid Energy Label",
-                    "This label is invalid", null);
         }
+        
+        return new ReturnMessage();
+    }
+    
+    /**
+     * This is a utility method used to validate all double values used in 
+     * calculations.
+     * @param value
+     * @return 
+     */
+    public static ReturnMessage validateDoubleValue (String value) {
+        try {
+            Double.parseDouble(value);
+            
+            return new ReturnMessage();
+        } catch (NumberFormatException e) {
+            System.out.println(e);            
+        }
+        
+        return new ReturnMessage(false, "Double value is invalid");
+    }
+    
+    /**
+     * Returns the double value of a string if the string represents a valid
+     * double value. If the string is invalid 0.0 is returned.
+     * @param value
+     * @return 
+     */
+    public static double getDoubleValue(String value) {
+        try {
+            return Double.parseDouble(value);
+            
+        } catch (NumberFormatException e) {
+            System.out.println(e);              
+        }
+        
+        return 0.0;
     }
 
     @Override
