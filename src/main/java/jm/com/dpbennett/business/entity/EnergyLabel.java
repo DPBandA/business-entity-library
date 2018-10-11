@@ -116,7 +116,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         country = "";
         defrost = "";
         distributor = "";
-        jobNumber = "";        
+        jobNumber = "";
         manufacturer = "";
         model = "";
         operatingCost = "";
@@ -136,6 +136,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     public String getAEER() {
+        if (AEER == null || AEER.isEmpty()) {
+            AEER = "0.0";
+        }
         return AEER;
     }
 
@@ -144,6 +147,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     public String getACOP() {
+        if (ACOP == null || ACOP.isEmpty()) {
+            ACOP = "0.0";
+        }
         return ACOP;
     }
 
@@ -173,6 +179,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return
      */
     public String getHeatingCapacity() {
+        if (heatingCapacity == null || heatingCapacity.isEmpty()) {
+            heatingCapacity = "0.0";
+        }
         return heatingCapacity;
     }
 
@@ -191,6 +200,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return
      */
     public String getCoolingCapacity() {
+        if (coolingCapacity == null || coolingCapacity.isEmpty()) {
+            coolingCapacity = "0.0";
+        }
         return coolingCapacity;
     }
 
@@ -209,6 +221,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return the annualConsumption
      */
     public String getAnnualConsumption() {
+        if (annualConsumption == null || annualConsumption.isEmpty()) {
+            annualConsumption = "0.0";
+        }
         return this.annualConsumption;
     }
 
@@ -240,16 +255,19 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     /**
-     * Gets the capacity of this EnergyLabel.
+     * Gets the volumetric capacity.
      *
      * @return the capacity
      */
     public String getCapacity() {
+        if (capacity == null || capacity.isEmpty()) {
+            capacity = "0.0";
+        }
         return this.capacity;
     }
 
     /**
-     * Sets the capacity of this EnergyLabel to the specified value.
+     * Sets the volumetric capacity to the specified value.
      *
      * @param capacity the new capacity
      */
@@ -258,16 +276,19 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     /**
-     * Gets the costPerKwh of this EnergyLabel.
+     * Gets the costPerKwh.
      *
      * @return the costPerKwh
      */
     public String getCostPerKwh() {
+        if (costPerKwh == null || costPerKwh.isEmpty()) {
+            costPerKwh = "0.0";
+        }
         return this.costPerKwh;
     }
 
     /**
-     * Sets the costPerKwh of this EnergyLabel to the specified value.
+     * Sets the costPerKwh to the specified value.
      *
      * @param costPerKwh the new costPerKwh
      */
@@ -407,6 +428,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return the operatingCost
      */
     public String getOperatingCost() {
+        if (operatingCost == null || operatingCost.isEmpty()) {
+            operatingCost = "0.0";
+        }
         return this.operatingCost;
     }
 
@@ -527,11 +551,11 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
             if (energyConsumptionAndEfficiency != null) {
-                if (energyConsumptionAndEfficiency.getId() == null ) {
+                if (energyConsumptionAndEfficiency.getId() == null) {
                     energyConsumptionAndEfficiency.save(em);
                 }
             }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -597,6 +621,16 @@ public class EnergyLabel implements Serializable, BusinessEntity {
             if (!validateDoubleValue(getCostPerKwh()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Electricity Rate",
                         "The electricity rate is invalid", null);
+            }
+            // Validate AEER
+            if (!validateDoubleValue(getAEER()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid AEER",
+                        "The AEER is invalid", null);
+            }
+            // Validate ACOP
+            if (!validateDoubleValue(getACOP()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid ACOP",
+                        "The ACOP is invalid", null);
             }
 
         } catch (Exception e) {
