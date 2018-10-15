@@ -245,7 +245,7 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
         return name;
     }
 
-    public static List<EnergyConsumptionAndEfficiency> findfindAllMaxEnergyConsumptions(EntityManager em) {
+    public static List<EnergyConsumptionAndEfficiency> findfindAll(EntityManager em) {
 
         try {
             List<EnergyConsumptionAndEfficiency> consumptions
@@ -259,7 +259,7 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
         }
     }
 
-    public static EnergyConsumptionAndEfficiency findMaxEnergyConsumptionById(EntityManager em, Long Id) {
+    public static EnergyConsumptionAndEfficiency findById(EntityManager em, Long Id) {
 
         try {
             EnergyConsumptionAndEfficiency maxEnergyConsumption = em.find(EnergyConsumptionAndEfficiency.class, Id);

@@ -3,9 +3,10 @@
   <persistence-unit name="PU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>jm.com.dpbennett.business.entity.EnergyLabel</class>
+    <class>jm.com.dpbennett.business.entity.EnergyConsumptionAndEfficiency</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/enerbase"/>
-      <property name="javax.persistence.jdbc.password" value=""/>
+      <property name="javax.persistence.jdbc.password" value="?Des12300!"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.user" value="root"/>
       <property name="eclipselink.ddl-generation" value="create-tables"/>
