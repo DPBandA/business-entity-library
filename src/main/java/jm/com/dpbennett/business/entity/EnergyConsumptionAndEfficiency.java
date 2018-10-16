@@ -20,6 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -245,7 +246,7 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
         return name;
     }
 
-    public static List<EnergyConsumptionAndEfficiency> findfindAll(EntityManager em) {
+    public static List<EnergyConsumptionAndEfficiency> findAll(EntityManager em) {
 
         try {
             List<EnergyConsumptionAndEfficiency> consumptions
@@ -256,6 +257,38 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
         } catch (Exception e) {
             System.out.println(e);
             return null;
+        }
+    }
+    
+//    public static List<EnergyConsumptionAndEfficiency> findAllByProductType(EntityManager em, String value) {
+//
+//        try {
+//            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+//
+//            List<EnergyConsumptionAndEfficiency> list
+//                    = em.createQuery("SELECT e FROM EnergyConsumptionAndEfficiency e where UPPER(e.productType) like '%"
+//                            + value.toUpperCase().trim() + "%' ORDER BY e.productType", EnergyConsumptionAndEfficiency.class).getResultList();
+//            
+//            return list;
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            return new ArrayList<>();
+//        }
+//    }
+    
+    public static List<BusinessEntity> findAllByProductType(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<BusinessEntity> list
+                    = em.createQuery("SELECT e FROM EnergyConsumptionAndEfficiency e where UPPER(e.productType) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY e.productType", BusinessEntity.class).getResultList();
+            
+            return list;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
         }
     }
 

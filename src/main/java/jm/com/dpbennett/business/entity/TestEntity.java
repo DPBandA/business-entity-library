@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -116,25 +117,24 @@ public class TestEntity {
 //        String ver = ProcessEngine.VERSION;
 //        System.out.println("ProcessEngine [" + pName + "] Version: [" + ver + "]");
         PropertiesFile propertiesFile = new PropertiesFile("LabelPrint.properties");
+        propertiesFile.read();
         HashMap prop = new HashMap();
 
         prop.put("javax.persistence.jdbc.user",
                 propertiesFile.getProperty("ConnectionUserName"));
         prop.put("javax.persistence.jdbc.password",
-               Security.decrypt(propertiesFile.getProperty("ConnectionPassword")));
+                Security.decrypt(propertiesFile.getProperty("ConnectionPassword")));
         prop.put("javax.persistence.jdbc.url",
                 propertiesFile.getProperty("ConnectionURL"));
         prop.put("javax.persistence.jdbc.driver",
                 propertiesFile.getProperty("ConnectionDriverName"));
-        
+
         if (setupDatabaseConnection("PU", prop)) {
 
             EntityManager em = EMF.createEntityManager();
-            em.getTransaction().begin();
-//            Business business = new Business("NCRA2");
-//            business.getDepartments().add(new Department("Test Dept2."));
-//            BusinessEntityUtils.saveBusinessEntity(em, business);
-            em.getTransaction().commit();
+            List<BusinessEntity> list
+                    = EnergyConsumptionAndEfficiency.findAllByProductType(em, "Refrigerator");
+            System.out.println("List: " + list);
         }
     }
 }

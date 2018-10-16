@@ -21,6 +21,7 @@ package jm.com.dpbennett.business.entity.swingutils;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.UIDefaults;
@@ -36,7 +37,7 @@ import jm.com.dpbennett.business.entity.EnergyLabel;
 public class SwingUtils {
 
     public static BusinessEntityComboBoxModel getBusinessEntityComboBoxModel(
-            JComboBox comboBox, ArrayList<BusinessEntity> data, int rows,
+            JComboBox comboBox, List<BusinessEntity> data, int rows,
             int columns, int maxRowCount) {
 
         BusinessEntityComboBoxModel model = new BusinessEntityComboBoxModel(data);

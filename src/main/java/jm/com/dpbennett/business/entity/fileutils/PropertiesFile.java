@@ -24,7 +24,7 @@ import java.util.Properties;
 import java.io.FileInputStream;
 
 /**
- * This class manages the system properties file.
+ * This class manages a properties file.
  *
  * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
  */
@@ -51,10 +51,19 @@ public class PropertiesFile {
         props.setProperty(name, value);
     }
 
+    /**
+     * Gets the value of a property.
+     * @param name
+     * @return 
+     */
     public String getProperty(String name) {
         return props.getProperty(name);
     }
 
+    /**
+     * Reads the properties from the properties file.
+     * @return 
+     */
     public final boolean read() {
 
         try {
@@ -73,6 +82,10 @@ public class PropertiesFile {
         return false;
     }
 
+    /**
+     * Writes the properties to the properties file.
+     * @return 
+     */
     public boolean write() {
 
         try {
@@ -90,7 +103,12 @@ public class PropertiesFile {
 
     }
     
-    public boolean writeSystemData(String header) {
+    /**
+     * Writes the properties to the properties file with the given header.
+     * @param header
+     * @return 
+     */
+    public boolean write(String header) {
 
         try {
 
