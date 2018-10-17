@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity.fileutils;
 import java.io.*;
 import java.util.Properties;
 import java.io.FileInputStream;
+import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  * This class manages a properties file.
@@ -58,6 +59,40 @@ public class PropertiesFile {
      */
     public String getProperty(String name) {
         return props.getProperty(name);
+    }
+    
+    /**
+     * Gets the property as a double value.
+     * @param name
+     * @return 
+     */
+    public Double getDoubleProperty(String name) {
+        try {
+            
+            return Double.parseDouble(props.getProperty(name));            
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid double value");
+        }
+        
+        return 0.0;
+    }
+    
+    /**
+     * Gets the property as a long value.
+     * @param name
+     * @return 
+     */
+    public Long getLongProperty(String name) {
+        try {
+            
+            return Long.parseLong(props.getProperty(name));            
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid long value");
+        }
+        
+        return 0L;
     }
 
     /**

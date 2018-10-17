@@ -132,9 +132,12 @@ public class TestEntity {
         if (setupDatabaseConnection("PU", prop)) {
 
             EntityManager em = EMF.createEntityManager();
-            List<BusinessEntity> list
-                    = EnergyConsumptionAndEfficiency.findAllByProductType(em, "Refrigerator");
-            System.out.println("List: " + list);
+//            List<BusinessEntity> list
+//                    = EnergyConsumptionAndEfficiency.findAllByProductType(em, "Refrigerator");        
+//            System.out.println("List: " + list);
+            EnergyConsumptionAndEfficiency ecaf = 
+                    EnergyConsumptionAndEfficiency.findById(em, Long.parseLong("1"));
+            System.out.println("ecaf: " + ecaf);
         }
     }
 }
