@@ -23,8 +23,12 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -104,7 +108,13 @@ public class TestEntity {
     }
 
     public static void main(String[] args) {
-
+        
+        DecimalFormat formatter = new DecimalFormat("#,##0.00");
+        try {
+            System.out.println("Formatted: " + formatter.parse("100,001.90"));
+            
+            
+            
 //        ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration()
 //                .setJdbcUrl("jdbc:mysql://DESKTOP50.BOS.local:3306/activiti")
 //                .setJdbcUsername("root")
@@ -116,28 +126,31 @@ public class TestEntity {
 //        String pName = processEngine.getName();
 //        String ver = ProcessEngine.VERSION;
 //        System.out.println("ProcessEngine [" + pName + "] Version: [" + ver + "]");
-        PropertiesFile propertiesFile = new PropertiesFile("LabelPrint.properties");
-        propertiesFile.read();
-        HashMap prop = new HashMap();
-
-        prop.put("javax.persistence.jdbc.user",
-                propertiesFile.getProperty("ConnectionUserName"));
-        prop.put("javax.persistence.jdbc.password",
-                Security.decrypt(propertiesFile.getProperty("ConnectionPassword")));
-        prop.put("javax.persistence.jdbc.url",
-                propertiesFile.getProperty("ConnectionURL"));
-        prop.put("javax.persistence.jdbc.driver",
-                propertiesFile.getProperty("ConnectionDriverName"));
-
-        if (setupDatabaseConnection("PU", prop)) {
-
-            EntityManager em = EMF.createEntityManager();
+//        PropertiesFile propertiesFile = new PropertiesFile("LabelPrint.properties");
+//        propertiesFile.read();
+//        HashMap prop = new HashMap();
+//
+//        prop.put("javax.persistence.jdbc.user",
+//                propertiesFile.getProperty("ConnectionUserName"));
+//        prop.put("javax.persistence.jdbc.password",
+//                Security.decrypt(propertiesFile.getProperty("ConnectionPassword")));
+//        prop.put("javax.persistence.jdbc.url",
+//                propertiesFile.getProperty("ConnectionURL"));
+//        prop.put("javax.persistence.jdbc.driver",
+//                propertiesFile.getProperty("ConnectionDriverName"));
+//
+//        if (setupDatabaseConnection("PU", prop)) {
+//
+//            EntityManager em = EMF.createEntityManager();
 //            List<BusinessEntity> list
 //                    = EnergyConsumptionAndEfficiency.findAllByProductType(em, "Refrigerator");        
 //            System.out.println("List: " + list);
-            EnergyConsumptionAndEfficiency ecaf = 
-                    EnergyConsumptionAndEfficiency.findById(em, Long.parseLong("1"));
-            System.out.println("ecaf: " + ecaf);
+//            EnergyConsumptionAndEfficiency ecaf = 
+//                    EnergyConsumptionAndEfficiency.findById(em, Long.parseLong("1"));
+//            System.out.println("ecaf: " + ecaf);
+//        }
+        } catch (ParseException ex) {
+            System.out.println(ex);
         }
     }
 }
