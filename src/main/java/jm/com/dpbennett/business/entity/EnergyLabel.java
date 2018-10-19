@@ -20,6 +20,8 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -33,6 +35,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.NumberUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -319,7 +322,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     /**
-     * Gets the volumetric capacity of the product.
+     * Gets the volumetric capacity of the product. For refrigerators and wine
+     * chillers the is taken to be the Total Refrigerated Volume.
      * 
      * @return
      */
@@ -687,42 +691,42 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         try {
             // Validate double values
             // Validate capacity
-            if (!validateDoubleValue(getCapacity()).isSuccess()) {
+            if (!NumberUtils.validateDoubleValue(getCapacity()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Capacity",
                         "The volumetric capacity is invalid", null);
             }
             // Validate cooling capacity
-            if (!validateDoubleValue(getCoolingCapacity()).isSuccess()) {
+            if (!NumberUtils.validateDoubleValue(getCoolingCapacity()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Cooling Capacity",
                         "The cooling capacity is invalid", null);
             }
             // Validate heating capacity
-            if (!validateDoubleValue(getHeatingCapacity()).isSuccess()) {
+            if (!NumberUtils.validateDoubleValue(getHeatingCapacity()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Heating Capacity",
                         "The heating capacity is invalid", null);
             }
             // Validate operating cost
-            if (!validateDoubleValue(getOperatingCost()).isSuccess()) {
+            if (!NumberUtils.validateDoubleValue(getOperatingCost()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Operating Cost",
                         "The operating cost is invalid", null);
             }
             // Validate annual consumption
-            if (!validateDoubleValue(getAnnualConsumption()).isSuccess()) {
+            if (!NumberUtils.validateDoubleValue(getAnnualConsumption()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Annual Consumption",
                         "The annual consumption is invalid", null);
             }
             // Validate cost per kwh
-            if (!validateDoubleValue(getCostPerKwh()).isSuccess()) {
+            if (!NumberUtils.validateDoubleValue(getCostPerKwh()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Electricity Rate",
                         "The electricity rate is invalid", null);
             }
             // Validate AEER
-            if (!validateDoubleValue(getAEER()).isSuccess()) {
+            if (!NumberUtils.validateDoubleValue(getAEER()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid AEER",
                         "The AEER is invalid", null);
             }
             // Validate ACOP
-            if (!validateDoubleValue(getACOP()).isSuccess()) {
+            if (!NumberUtils.validateDoubleValue(getACOP()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid ACOP",
                         "The ACOP is invalid", null);
             }
@@ -732,24 +736,6 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         }
 
         return new ReturnMessage();
-    }
-
-    /**
-     * This is a utility method used to validate all double values.
-     *
-     * @param value
-     * @return
-     */
-    public static ReturnMessage validateDoubleValue(String value) {
-        try {
-            Double.parseDouble(value);
-
-            return new ReturnMessage();
-        } catch (NumberFormatException e) {
-            System.out.println(e);
-        }
-
-        return new ReturnMessage(false, "Double value is invalid");
     }
 
     /**
