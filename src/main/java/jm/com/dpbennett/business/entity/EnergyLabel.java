@@ -20,8 +20,6 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -59,6 +57,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String annualConsumption;
     private String brand;
     private String capacity;
+    private String freshFoodCompartmentVol;
+    private String freezerCompartmentVol;
     private String heatingCapacity;
     private String coolingCapacity;
     private String costPerKwh;
@@ -89,6 +89,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         annualConsumption = "";
         brand = "";
         capacity = "";
+        freshFoodCompartmentVol = "";
+        freezerCompartmentVol = "";
         heatingCapacity = "";
         coolingCapacity = "";
         costPerKwh = "";
@@ -122,6 +124,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         annualConsumption = "";
         brand = "";
         capacity = "";
+        freshFoodCompartmentVol = "";
+        freezerCompartmentVol = "";
         heatingCapacity = "";
         coolingCapacity = "";
         costPerKwh = "";
@@ -142,7 +146,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the energyConsumptionAndEfficiency property of this EnergyLabel.
-     * 
+     *
      * @see EnergyConsumptionAndEfficiency
      * @return
      */
@@ -152,7 +156,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the energyConsumptionAndEfficiency property of this EnergyLabel.
-     * 
+     *
      * @see EnergyConsumptionAndEfficiency
      * @param energyConsumptionAndEfficiency
      */
@@ -162,21 +166,59 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     /**
-     * Gets the Annual Energy Efficiency Ratio (AEER) property.
+     * Gets the fresh food compartment volume of a refrigerator.
      * 
+     * @return 
+     */
+    public String getFreshFoodCompartmentVol() {
+
+        return (freshFoodCompartmentVol == null
+                || freshFoodCompartmentVol.isEmpty() ? "0.0" : freshFoodCompartmentVol);
+    }
+
+    /**
+     * Sets the fresh food compartment volume of a refrigerator.
+     * 
+     * @param freshFoodCompartmentVol 
+     */
+    public void setFreshFoodCompartmentVol(String freshFoodCompartmentVol) {
+        this.freshFoodCompartmentVol = freshFoodCompartmentVol;
+    }
+
+    /**
+     * Gets the freezer compartment volume of a refrigerator or freezer.
+     * 
+     * @return 
+     */
+    public String getFreezerCompartmentVol() {
+
+        return (freezerCompartmentVol == null
+                || freezerCompartmentVol.isEmpty() ? "0.0" : freezerCompartmentVol);
+    }
+
+    /**
+     * Sets the freezer compartment volume of a refrigerator or freezer.
+     * 
+     * @param freezerCompartmentVol 
+     */
+    public void setFreezerCompartmentVol(String freezerCompartmentVol) {
+        this.freezerCompartmentVol = freezerCompartmentVol;
+    }
+
+    /**
+     * Gets the Annual Energy Efficiency Ratio (AEER) property.
+     *
      * @return
      */
     public String getAEER() {
-        if (AEER == null || AEER.isEmpty()) {
-            AEER = "0.0";
-        }
-        return AEER;
+
+        return (AEER == null || AEER.isEmpty() ? "0.0" : AEER);
     }
 
     /**
      * Sets the Annual Energy Efficiency Ratio (AEER) property.
-     * 
-     * @param AEER 
+     *
+     * @param AEER
      */
     public void setAEER(String AEER) {
         this.AEER = AEER;
@@ -184,20 +226,18 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the Annual Coefficient of Performance (ACOP) property.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getACOP() {
-        if (ACOP == null || ACOP.isEmpty()) {
-            ACOP = "0.0";
-        }
-        return ACOP;
+
+        return (ACOP == null || ACOP.isEmpty() ? "0.0" : ACOP);
     }
 
     /**
      * Sets the Annual Coefficient of Performance (ACOP) property.
-     * 
-     * @param ACOP 
+     *
+     * @param ACOP
      */
     public void setACOP(String ACOP) {
         this.ACOP = ACOP;
@@ -205,8 +245,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the rated voltage or voltage range of the product.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getRatedVoltage() {
         return ratedVoltage;
@@ -214,8 +254,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the rated voltage or voltage range of the product.
-     * 
-     * @param ratedVoltage 
+     *
+     * @param ratedVoltage
      */
     public void setRatedVoltage(String ratedVoltage) {
         this.ratedVoltage = ratedVoltage;
@@ -223,8 +263,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the rated frequency or frequency range of the product.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getRatedFrequency() {
         return ratedFrequency;
@@ -232,8 +272,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the rated frequency or frequency range of the product.
-     * 
-     * @param ratedFrequency 
+     *
+     * @param ratedFrequency
      */
     public void setRatedFrequency(String ratedFrequency) {
         this.ratedFrequency = ratedFrequency;
@@ -241,19 +281,17 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the heating capacity of an air-conditioning unit.
-     * 
+     *
      * @return
      */
     public String getHeatingCapacity() {
-        if (heatingCapacity == null || heatingCapacity.isEmpty()) {
-            heatingCapacity = "0.0";
-        }
-        return heatingCapacity;
+
+        return (heatingCapacity == null || heatingCapacity.isEmpty() ? "0.0" : heatingCapacity);
     }
 
     /**
      * Sets the heating capacity of an air-conditioning unit.
-     * 
+     *
      * @param heatingCapacity
      */
     public void setHeatingCapacity(String heatingCapacity) {
@@ -266,15 +304,13 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return
      */
     public String getCoolingCapacity() {
-        if (coolingCapacity == null || coolingCapacity.isEmpty()) {
-            coolingCapacity = "0.0";
-        }
-        return coolingCapacity;
+
+        return (coolingCapacity == null || coolingCapacity.isEmpty() ? "0.0" : coolingCapacity);
     }
 
     /**
      * Sets the cooling capacity of an air-conditioning unit.
-     * 
+     *
      * @param coolingCapacity
      */
     public void setCoolingCapacity(String coolingCapacity) {
@@ -284,29 +320,27 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     /**
      * Gets the annual energy consumption of the product. If the string is null
      * or empty "0.0" is returned.
-     * 
+     *
      * @return annualConsumption
      */
     public String getAnnualConsumption() {
-        if (annualConsumption == null || annualConsumption.isEmpty()) {
-            annualConsumption = "0.0";
-        }
-        return this.annualConsumption;
+
+        return (annualConsumption == null || annualConsumption.isEmpty() ? "0.0" : annualConsumption);
     }
 
-   /**
-    * Sets the annual energy consumption of the product.
-    * 
-    * @param annualConsumption 
-    */
+    /**
+     * Sets the annual energy consumption of the product.
+     *
+     * @param annualConsumption
+     */
     public void setAnnualConsumption(String annualConsumption) {
         this.annualConsumption = annualConsumption;
     }
 
     /**
      * Gets the brand of the product.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getBrand() {
         return this.brand;
@@ -314,7 +348,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the brand of the product.
-     * 
+     *
      * @param brand
      */
     public void setBrand(String brand) {
@@ -324,19 +358,17 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     /**
      * Gets the volumetric capacity of the product. For refrigerators and wine
      * chillers the is taken to be the Total Refrigerated Volume.
-     * 
+     *
      * @return
      */
     public String getCapacity() {
-        if (capacity == null || capacity.isEmpty()) {
-            capacity = "0.0";
-        }
-        return this.capacity;
+
+        return (capacity == null || capacity.isEmpty() ? "0.0" : capacity);
     }
 
     /**
      * Sets the volumetric capacity of the product.
-     * 
+     *
      * @param capacity
      */
     public void setCapacity(String capacity) {
@@ -345,19 +377,17 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the cost per Kwh.
-     * 
+     *
      * @return
      */
     public String getCostPerKwh() {
-        if (costPerKwh == null || costPerKwh.isEmpty()) {
-            costPerKwh = "0.0";
-        }
-        return this.costPerKwh;
+
+        return (costPerKwh == null || costPerKwh.isEmpty() ? "0.0" : costPerKwh);
     }
 
     /**
      * Sets the cost per Kwh.
-     * 
+     *
      * @param costPerKwh
      */
     public void setCostPerKwh(String costPerKwh) {
@@ -366,7 +396,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the country of origin of the product.
-     * 
+     *
      * @return
      */
     public String getCountry() {
@@ -375,7 +405,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the country of origin of the product.
-     * 
+     *
      * @param country
      */
     public void setCountry(String country) {
@@ -384,7 +414,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the defrost type of the product (e.g manual, automatic).
-     * 
+     *
      * @return
      */
     public String getDefrost() {
@@ -393,7 +423,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the defrost type of this product.
-     * 
+     *
      * @param defrost
      */
     public void setDefrost(String defrost) {
@@ -402,7 +432,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the distributor of the product.
-     * 
+     *
      * @return
      */
     public String getDistributor() {
@@ -411,7 +441,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the distributor of the product.
-     * 
+     *
      * @param distributor
      */
     public void setDistributor(String distributor) {
@@ -420,7 +450,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the job number of the product.
-     * 
+     *
      * @return
      */
     public String getJobNumber() {
@@ -429,7 +459,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the job number of the product.
-     * 
+     *
      * @param jobNumber
      */
     public void setJobNumber(String jobNumber) {
@@ -496,10 +526,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return the operatingCost
      */
     public String getOperatingCost() {
-        if (operatingCost == null || operatingCost.isEmpty()) {
-            operatingCost = "0.0";
-        }
-        return this.operatingCost;
+
+        return (operatingCost == null || operatingCost.isEmpty() ? "0.0" : operatingCost);
     }
 
     /**
@@ -542,7 +570,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     /**
-     * Sets the type of the product (e.g Refrigerator, Room Air-conditioner etc.)
+     * Sets the type of the product (e.g Refrigerator, Room Air-conditioner
+     * etc.)
      *
      * @param type the new type
      */
@@ -603,11 +632,11 @@ public class EnergyLabel implements Serializable, BusinessEntity {
                 || !this.id.equals(other.id)));
     }
 
-   /**
-    * Returns the label's name as a string representation of the label.
-    * 
-    * @return 
-    */
+    /**
+     * Returns the label's name as a string representation of the label.
+     *
+     * @return
+     */
     @Override
     public String toString() {
         return labelName;
@@ -615,9 +644,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Saves the label data to a database.
-     * 
+     *
      * @param em
-     * @return 
+     * @return
      */
     @Override
     public ReturnMessage save(EntityManager em) {
