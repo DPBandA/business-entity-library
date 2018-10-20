@@ -36,15 +36,15 @@ import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
- * This class encapsulates energy consumption and efficiency properties and methods of an energy
- * product.
+ * This class encapsulates energy consumption and efficiency properties and
+ * methods of an energy product.
  *
  * @author Desmond Bennett
  */
 @Entity
 @Table(name = "energyconsumptionandefficiency")
 @NamedQueries({
-    @NamedQuery(name = "findAllEnergyConsumptionAndEfficiency", 
+    @NamedQuery(name = "findAllEnergyConsumptionAndEfficiency",
             query = "SELECT e FROM EnergyConsumptionAndEfficiency e")
 })
 @XmlRootElement
@@ -63,7 +63,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
     private Double minMEER;
     private Double AVLCoefficient;
     private Double AVCuFtCoefficient;
-    private Double ConsumptionConstant;
+    private Double consumptionConstant;
+    private Double adjustmentFactor;
     @Transient
     private Boolean isDirty;
 
@@ -81,14 +82,15 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
         minMEER = 0.0;
         AVLCoefficient = 0.0;
         AVCuFtCoefficient = 0.0;
-        ConsumptionConstant = 0.0;
+        consumptionConstant = 0.0;
+        adjustmentFactor = 0.0;
     }
 
     /**
      * A constructor that takes an id and name as parameters.
-     * 
+     *
      * @param id
-     * @param name 
+     * @param name
      */
     public EnergyConsumptionAndEfficiency(Long id, String name) {
         this.id = id;
@@ -102,13 +104,14 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
         minMEER = 0.0;
         AVLCoefficient = 0.0;
         AVCuFtCoefficient = 0.0;
-        ConsumptionConstant = 0.0;
+        consumptionConstant = 0.0;
+        adjustmentFactor = 0.0;
     }
 
     /**
      * Gets the id.
-     * 
-     * @return 
+     *
+     * @return
      */
     @Override
     public Long getId() {
@@ -117,8 +120,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Sets the id.
-     * 
-     * @param id 
+     *
+     * @param id
      */
     @Override
     public void setId(Long id) {
@@ -126,10 +129,28 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
     }
 
     /**
-     * Gets the class of the product. This usually applies to air-conditioning
-     * products.
+     * Gets an Adjustment Factor (AF) used in the calculation of Adjusted Volume (AV).
      * 
      * @return 
+     */
+    public Double getAdjustmentFactor() {
+        return adjustmentFactor;
+    }
+
+    /**
+     * Sets an Adjustment Factor (AF) used in the calculation of Adjusted Volume (AV).
+     * 
+     * @param adjustmentFactor 
+     */
+    public void setAdjustmentFactor(Double adjustmentFactor) {
+        this.adjustmentFactor = adjustmentFactor;
+    }    
+
+    /**
+     * Gets the class of the product. This usually applies to air-conditioning
+     * products.
+     *
+     * @return
      */
     public String getProductClass() {
         if (productClass == null) {
@@ -141,8 +162,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
     /**
      * Sets the product class. This usually applies to air-conditioning
      * products.
-     * 
-     * @param productClass 
+     *
+     * @param productClass
      */
     public void setProductClass(String productClass) {
         this.productClass = productClass;
@@ -150,8 +171,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Gets the rated frequency or frequency range of the product.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getProductRatedFrequency() {
         return productRatedFrequency;
@@ -159,47 +180,48 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Sets the rated frequency or frequency range of the product.
-     * 
-     * @param productRatedFrequency 
+     *
+     * @param productRatedFrequency
      */
     public void setProductRatedFrequency(String productRatedFrequency) {
         this.productRatedFrequency = productRatedFrequency;
     }
 
     /**
-     * Gets the minimum Combined Energy Efficiency Ratio (CEER) of the product class.
-     * 
-     * @return 
+     * Gets the minimum Combined Energy Efficiency Ratio (CEER) of the product
+     * class.
+     *
+     * @return
      */
     public Double getMinCEER() {
         return minCEER;
     }
 
     /**
-     * Sets the minimum Combined Energy Efficiency Ratio (CEER) of the product class.
-     * 
-     * @param minCEER 
+     * Sets the minimum Combined Energy Efficiency Ratio (CEER) of the product
+     * class.
+     *
+     * @param minCEER
      */
     public void setMinCEER(Double minCEER) {
         this.minCEER = minCEER;
     }
 
     /**
-     * Gets the Minimum Energy Efficiency Requirements (MEER) of the product class.
-     * This is the same as minimum CEER (??)
-     * 
-     * @return 
+     * Gets the Minimum Energy Efficiency Requirements (MEER) of the product
+     * class. This is the same as minimum CEER (??)
+     *
+     * @return
      */
     public Double getMinMEER() {
         return minMEER;
     }
 
-    
     /**
-     * Sets the Minimum Energy Efficiency Requirements (MEER) of the product class.
-     * This is the same as minimum CEER (??)
-     * 
-     * @param minMEER 
+     * Sets the Minimum Energy Efficiency Requirements (MEER) of the product
+     * class. This is the same as minimum CEER (??)
+     *
+     * @param minMEER
      */
     public void setMinMEER(Double minMEER) {
         this.minMEER = minMEER;
@@ -207,7 +229,7 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Gets the Star Rating Index (SRI) of a refrigerator.
-     * 
+     *
      * @param CEC Comparative Energy Consumption
      * @param BEC Base Energy Consumption
      * @param ERF Energy Consumption Reduction Factor
@@ -218,12 +240,13 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
     }
 
     /**
-     * Calculates and returns the Base Energy Consumption (BEC) of a refrigerator.
-     * 
+     * Calculates and returns the Base Energy Consumption (BEC) of a
+     * refrigerator.
+     *
      * @param Cf Fixed allowance factor for the product's group in kWh/y
      * @param Cv Variable allowance factor for its group in kWh/y
      * @param Vadjtot Total adjusted volume for the model in litres
-     * @return 
+     * @return
      */
     public static double getBEC(double Cf, double Cv, double Vadjtot) {
         return Cf + Cv * Math.pow(Vadjtot, 0.67);
@@ -231,8 +254,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Gets the product's type (e.g. Refrigerator, Room Air-conditioner).
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getProductType() {
         if (productType == null) {
@@ -243,85 +266,83 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Sets the product's type (e.g. Refrigerator, Room Air-conditioner).
-     * 
-     * @param productType 
+     *
+     * @param productType
      */
     public void setProductType(String productType) {
         this.productType = productType;
     }
 
     /**
-     * Gets the coefficient of the product's Adjusted Volume (AV) in litres. 
+     * Gets the coefficient of the product's Adjusted Volume (AV) in litres.
      * This is part of the formula used to calculate the maximum allowed energy
      * consumption of a product.
-     * 
-     * @return 
+     *
+     * @return
      */
     public Double getAVLCoefficient() {
         return AVLCoefficient;
     }
 
     /**
-     * Sets the coefficient of the product's Adjusted Volume (AV) in litres. 
+     * Sets the coefficient of the product's Adjusted Volume (AV) in litres.
      * This is part of the formula used to calculate the maximum allowed energy
      * consumption of a product.
-     * 
-     * @param AVLCoefficient 
+     *
+     * @param AVLCoefficient
      */
     public void setAVLCoefficient(Double AVLCoefficient) {
         this.AVLCoefficient = AVLCoefficient;
     }
 
-    
     /**
-     * Gets the coefficient of the product's Adjusted Volume (AV) in cubic feet. 
+     * Gets the coefficient of the product's Adjusted Volume (AV) in cubic feet.
      * This is part of the formula used to calculate the maximum allowed energy
      * consumption of a product.
-     * 
-     * @return 
+     *
+     * @return
      */
     public Double getAVCuFtCoefficient() {
         return AVCuFtCoefficient;
     }
 
     /**
-     * Sets the coefficient of the product's Adjusted Volume (AV) in cubic feet. 
+     * Sets the coefficient of the product's Adjusted Volume (AV) in cubic feet.
      * This is part of the formula used to calculate the maximum allowed energy
      * consumption of a product.
-     * 
-     * @param AVCuFtCoefficient 
+     *
+     * @param AVCuFtCoefficient
      */
     public void setAVCuFtCoefficient(Double AVCuFtCoefficient) {
         this.AVCuFtCoefficient = AVCuFtCoefficient;
     }
 
-    
     /**
-     * Gets the constant for calculating maximum energy consumption. 
-     * This is part of the formula used to calculate the maximum allowed energy
+     * Gets the constant for calculating maximum energy consumption. This is
+     * part of the formula used to calculate the maximum allowed energy
      * consumption of a product.
-     * 
-     * @return 
+     *
+     * @return
      */
     public Double getConsumptionConstant() {
-        return ConsumptionConstant;
+        return consumptionConstant;
     }
 
     /**
-     * Sets the constant for calculating maximum energy consumption. 
-     * This is part of the formula used to calculate the maximum allowed energy
+     * Sets the constant for calculating maximum energy consumption. This is
+     * part of the formula used to calculate the maximum allowed energy
      * consumption of a product.
-     * 
-     * @param ConsumptionConstant 
+     *
+     * @param consumptionConstant
      */
-    public void setConsumptionConstant(Double ConsumptionConstant) {
-        this.ConsumptionConstant = ConsumptionConstant;
+    public void setConsumptionConstant(Double consumptionConstant) {
+        this.consumptionConstant = consumptionConstant;
     }
 
     /**
      * Gets the item number for the product's type.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getItemNo() {
         return itemNo;
@@ -329,8 +350,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Sets the item number for the product's type.
-     * 
-     * @param itemNo 
+     *
+     * @param itemNo
      */
     public void setItemNo(String itemNo) {
         this.itemNo = itemNo;
@@ -338,8 +359,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Gets the detail of the product's type.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getProductTypeDetail() {
         if (productTypeDetail == null) {
@@ -350,8 +371,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Sets the detail of the product's type.
-     * 
-     * @param productTypeDetail 
+     *
+     * @param productTypeDetail
      */
     public void setProductTypeDetail(String productTypeDetail) {
         this.productTypeDetail = productTypeDetail;
@@ -359,8 +380,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Gets the isDirty flag that determines if this object is dirty (edited).
-     * 
-     * @return 
+     *
+     * @return
      */
     @Override
     public Boolean getIsDirty() {
@@ -373,8 +394,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Sets the isDirty flag that determines if this object is dirty (edited).
-     * 
-     * @param isDirty 
+     *
+     * @param isDirty
      */
     @Override
     public void setIsDirty(Boolean isDirty) {
@@ -383,8 +404,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Gets the name of this object.
-     * 
-     * @return 
+     *
+     * @return
      */
     @Override
     public String getName() {
@@ -393,8 +414,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Sets the name of this object.
-     * 
-     * @param name 
+     *
+     * @param name
      */
     @Override
     public void setName(String name) {
@@ -403,8 +424,8 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Gets a hash code for this object.
-     * 
-     * @return 
+     *
+     * @return
      */
     @Override
     public int hashCode() {
@@ -414,11 +435,11 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
     }
 
     /**
-     * Tests if this object is equal to another object of the same type.
-     * This method won't work in the case the Id fields are not set.
-     * 
+     * Tests if this object is equal to another object of the same type. This
+     * method won't work in the case the Id fields are not set.
+     *
      * @param object
-     * @return 
+     * @return
      */
     @Override
     public boolean equals(Object object) {
@@ -432,10 +453,10 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
 
     /**
      * Gets the string representation of this object.
-     * 
-     * @return 
+     *
+     * @return
      */
-    @Override    
+    @Override
     public String toString() {
         if (getProductType().equals("Room Air-conditioner")) {
             return getProductClass();
@@ -444,6 +465,12 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
         }
     }
 
+    /**
+     * Find and return all EnergyConsumptionAndEfficiency objects.
+     *
+     * @param em
+     * @return
+     */
     public static List<EnergyConsumptionAndEfficiency> findAll(EntityManager em) {
 
         try {
@@ -458,6 +485,15 @@ public class EnergyConsumptionAndEfficiency implements Serializable, BusinessEnt
         }
     }
 
+    /**
+     * Find and return all EnergyConsumptionAndEfficiency objects based on
+     * product type. The objects are returned as BusinessEntity interface
+     * objects.
+     *
+     * @param em
+     * @param value
+     * @return
+     */
     public static List<BusinessEntity> findAllByProductType(EntityManager em, String value) {
 
         try {

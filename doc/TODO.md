@@ -8,3 +8,4 @@
   jaxen and POI could be moved.
 - Add Notification class. 
 - Use "Infrastructure Software Modules for Enterprises (ch1)" to document.
+- Rename BusinessEntity to Entity through refactoring??

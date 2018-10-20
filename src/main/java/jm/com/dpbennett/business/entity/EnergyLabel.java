@@ -719,6 +719,16 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     public ReturnMessage validate(EntityManager em) {
         try {
             // Validate double values
+            // Validate fresh food compartment volume
+            if (!NumberUtils.validateDoubleValue(getFreshFoodCompartmentVol()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Fresh Food Compartment Volume",
+                        "The fresh food compartment volume is invalid", null);
+            }
+            // Validate freezer compartment volume
+            if (!NumberUtils.validateDoubleValue(getFreezerCompartmentVol()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Freezer Compartment Volume",
+                        "The freezer compartment volume is invalid", null);
+            }
             // Validate capacity
             if (!NumberUtils.validateDoubleValue(getCapacity()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Capacity",
