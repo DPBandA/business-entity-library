@@ -167,8 +167,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the fresh food compartment volume of a refrigerator.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getFreshFoodCompartmentVol() {
 
@@ -178,8 +178,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the fresh food compartment volume of a refrigerator.
-     * 
-     * @param freshFoodCompartmentVol 
+     *
+     * @param freshFoodCompartmentVol
      */
     public void setFreshFoodCompartmentVol(String freshFoodCompartmentVol) {
         this.freshFoodCompartmentVol = freshFoodCompartmentVol;
@@ -187,8 +187,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the freezer compartment volume of a refrigerator or freezer.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getFreezerCompartmentVol() {
 
@@ -198,8 +198,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Sets the freezer compartment volume of a refrigerator or freezer.
-     * 
-     * @param freezerCompartmentVol 
+     *
+     * @param freezerCompartmentVol
      */
     public void setFreezerCompartmentVol(String freezerCompartmentVol) {
         this.freezerCompartmentVol = freezerCompartmentVol;
@@ -778,24 +778,6 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     /**
-     * Returns the double value of a string if the string represents a valid
-     * double value. If the string is invalid, 0.0 is returned.
-     *
-     * @param value
-     * @return
-     */
-    public static double getDoubleValue(String value) {
-        try {
-            return Double.parseDouble(value);
-
-        } catch (NumberFormatException e) {
-            System.out.println(e);
-        }
-
-        return 0.0;
-    }
-
-    /**
      * Gets the isDirty flag that determines if this EnergyLabel was edited.
      *
      * @return
@@ -817,5 +799,28 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
+
+    /**
+     * Calculates and returns the Star Rating Index (SRI) for cooling.
+     * 
+     * @return 
+     */
+    public Double getCoolingSRI() {
+        Double aeer = NumberUtils.getDoubleValue(AEER);
+
+        return (aeer * 8.0 - 18.0) / 4.0;
+    }
+    
+    /**
+     * Calculates and returns the Star Rating Index (SRI) for heating.
+     * 
+     * @return 
+     */
+    public Double getHeatingSRI() {
+        Double acop = NumberUtils.getDoubleValue(ACOP);
+
+        return (acop * 8.0 - 18.0) / 4.0;
+    }
+  
 
 }

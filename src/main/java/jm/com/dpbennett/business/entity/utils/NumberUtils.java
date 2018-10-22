@@ -50,4 +50,22 @@ public class NumberUtils {
         return new ReturnMessage(false, "Double value is invalid");
     }
     
+    /**
+     * Returns the double value of a string if the string represents a valid
+     * double value. If the string is invalid, 0.0 is returned.
+     *
+     * @param value
+     * @return
+     */
+    public static double getDoubleValue(String value) {
+        try {
+            return Double.parseDouble(value);
+
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+        }
+
+        return 0.0;
+    }
+    
 }
