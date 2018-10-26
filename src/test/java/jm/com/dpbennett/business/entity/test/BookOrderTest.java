@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
-public class TaskServiceTest {
+public class BookOrderTest {
 
 //    @Test
 //    public void startBookOrder() {
