@@ -96,10 +96,10 @@ public class PropertiesFile {
     }
 
     /**
-     * Reads the properties from the properties file.
+     * Loads the properties from the properties file.
      * @return 
      */
-    public final boolean read() {
+    public final boolean load() {
 
         try {
 
@@ -118,10 +118,10 @@ public class PropertiesFile {
     }
 
     /**
-     * Writes the properties to the properties file.
+     * Saves the properties file.
      * @return 
      */
-    public boolean write() {
+    public boolean save() {
 
         try {
 
@@ -139,11 +139,11 @@ public class PropertiesFile {
     }
     
     /**
-     * Writes the properties to the properties file with the given header.
+     * Saves the properties file with the given header.
      * @param header
      * @return 
      */
-    public boolean write(String header) {
+    public boolean save(String header) {
 
         try {
 

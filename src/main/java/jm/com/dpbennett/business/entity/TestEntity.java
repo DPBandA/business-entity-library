@@ -110,7 +110,7 @@ public class TestEntity {
         try {
 
             PropertiesFile propertiesFile = new PropertiesFile("LabelPrint.properties");
-            propertiesFile.read();
+            propertiesFile.load();
             HashMap prop = new HashMap();
 
             ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration()
