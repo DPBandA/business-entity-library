@@ -22,7 +22,6 @@ package jm.com.dpbennett.business.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.faces.model.SelectItem;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -330,16 +329,6 @@ public class Classification implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
-    }
-
-    public static List getCategories() {
-        ArrayList categories = new ArrayList();
-
-        categories.add(new SelectItem("", ""));
-        categories.add(new SelectItem("Job", "Job"));
-        categories.add(new SelectItem("Legal", "Legal"));
-
-        return categories;
     }
     
     @Override

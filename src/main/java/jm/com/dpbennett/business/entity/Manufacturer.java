@@ -22,9 +22,6 @@ package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -49,7 +46,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
     @NamedQuery(name = "findAllManufacturers", query = "SELECT e FROM Manufacturer e ORDER BY e.name")
 })
 @XmlRootElement
-public class Manufacturer implements Serializable, BusinessEntity, Converter {
+public class Manufacturer implements Serializable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;
     @Id
@@ -239,32 +236,6 @@ public class Manufacturer implements Serializable, BusinessEntity, Converter {
         } catch (Exception e) {
             System.out.println(e);
             return null;
-        }
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        if (value.trim().equals("")) {
-            return null;
-        } else {
-            Manufacturer manufacturer = new Manufacturer();
-            manufacturer.setName(value.trim());
-
-            return manufacturer;
-        }
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-
-        if (value == null || value.equals("")) {
-            return "";
-        } else {
-            if (((Manufacturer) value).getName() != null) {
-                return ((Manufacturer) value).getName().replaceAll("&#38;", "&");
-            } else {
-                return "";
-            }
         }
     }
 

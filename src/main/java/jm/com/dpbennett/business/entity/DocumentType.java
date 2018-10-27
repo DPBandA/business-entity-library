@@ -23,9 +23,6 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -44,7 +41,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "documenttype")
 @XmlRootElement
-public class DocumentType implements Comparable, BusinessEntity, Serializable, Converter {
+public class DocumentType implements Comparable, BusinessEntity, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -268,33 +265,6 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable, C
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
-        }
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
-
-        if (submittedValue.trim().equals("")) {
-            return null;
-        } else {
-            DocumentType documentType = new DocumentType();
-            documentType.setName(submittedValue.trim());
-
-            return documentType;
-        }
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-
-        if (value == null || value.equals("")) {
-            return "";
-        } else {
-            if (((DocumentType) value).getName() != null) {
-                return ((DocumentType) value).getName().replaceAll("&#38;", "&");
-            } else {
-                return "";
-            }
         }
     }
 

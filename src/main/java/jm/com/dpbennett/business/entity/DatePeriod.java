@@ -27,10 +27,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.model.SelectItem;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -50,7 +46,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "dateperiod")
 @XmlRootElement
-public class DatePeriod implements BusinessEntity, Serializable, Converter, Comparable {
+public class DatePeriod implements BusinessEntity, Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -111,47 +107,6 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
 
     public void setShow(Boolean show) {
         this.show = show;
-    }
-
-    public static ArrayList getDateSearchFields() {
-        ArrayList dateSearchFields = new ArrayList();
-
-        dateSearchFields.add(new SelectItem("dateAndTimeEntered", "Date entered"));
-        dateSearchFields.add(new SelectItem("dateReceived", "Date received"));
-        dateSearchFields.add(new SelectItem("dateSubmitted", "Date submitted"));
-        dateSearchFields.add(new SelectItem("dateCostingApproved", "Date costing approved"));
-        dateSearchFields.add(new SelectItem("dateOfCompletion", "Date completed"));
-        dateSearchFields.add(new SelectItem("expectedDateOfCompletion", "Exp'ted date of completion"));
-        dateSearchFields.add(new SelectItem("dateSamplesCollected", "Date sample(s) collected"));
-        dateSearchFields.add(new SelectItem("dateDocumentCollected", "Date document(s) collected"));
-
-        return dateSearchFields;
-    }
-
-    public static ArrayList getDateSearchFields(String category) {
-        ArrayList dateSearchFields = new ArrayList();
-
-        switch (category) {
-            case "Job":
-                dateSearchFields.add(new SelectItem("dateAndTimeEntered", "Date entered"));
-                dateSearchFields.add(new SelectItem("dateSubmitted", "Date submitted"));
-                dateSearchFields.add(new SelectItem("dateCostingApproved", "Date costing approved"));
-                dateSearchFields.add(new SelectItem("dateOfCompletion", "Date completed"));
-                dateSearchFields.add(new SelectItem("expectedDateOfCompletion", "Exp'ted date of completion"));
-                dateSearchFields.add(new SelectItem("dateSamplesCollected", "Date sample(s) collected"));
-                dateSearchFields.add(new SelectItem("dateDocumentCollected", "Date document(s) collected"));
-            case "Legal":
-                dateSearchFields.add(new SelectItem("dateReceived", "Date received"));
-                dateSearchFields.add(new SelectItem("dateOfCompletion", "Date delivered"));
-                dateSearchFields.add(new SelectItem("expectedDateOfCompletion", "Agreed delivery date"));
-                break;
-            case "All":
-                return getDateSearchFields();
-            default:
-                return getDateSearchFields();
-        }
-
-        return dateSearchFields;
     }
 
     public static DatePeriod findById(EntityManager em, Long id) {
@@ -469,22 +424,6 @@ public class DatePeriod implements BusinessEntity, Serializable, Converter, Comp
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        DatePeriod period = new DatePeriod();
-
-        if (value != null) {
-            period.setName(value);
-        }
-
-        return period;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((DatePeriod) value).getName();
     }
 
     @Override

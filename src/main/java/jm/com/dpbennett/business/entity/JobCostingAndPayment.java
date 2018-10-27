@@ -25,11 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.model.SelectItem;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -54,7 +49,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "jobcostingandpayment")
 @XmlRootElement
-public class JobCostingAndPayment implements Serializable, BusinessEntity, Converter {
+public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -263,21 +258,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
             discount = 0.0;
         }
         return discount;
-    }
-
-    /**
-     * Returns the discount type that can be applied to a payment/amount NB: To
-     * be deprecated
-     *
-     * @return
-     */
-    public static List getDiscountTypes() {
-        ArrayList discountTypes = new ArrayList();
-
-        discountTypes.add(new SelectItem("Currency", "Currency: "));
-        discountTypes.add(new SelectItem("Percentage", "Percentage: "));
-
-        return discountTypes;
     }
 
     public void setDiscount(Double discount) {
@@ -738,19 +718,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         return em.find(JobCostingAndPayment.class, Id);
     }
 
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        JobCostingAndPayment jobCostingAndPayment = new JobCostingAndPayment();
-        jobCostingAndPayment.setName(value);
-
-        return jobCostingAndPayment;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((JobCostingAndPayment) value).getName();
-    }
-
     public Double getTotalTax() {
         Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); //BusinessEntityUtils.roundTo2DecimalPlaces(getDiscountValue());
 
@@ -761,9 +728,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
         return totalTax;
     }
 
-//    public void setTotalTax(Double totalTax) {
-//        this.totalTax = totalTax;
-//    }
     /**
      * Get total cost. Total cost includes total tax
      *

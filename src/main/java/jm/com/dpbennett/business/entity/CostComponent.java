@@ -23,8 +23,6 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
-import javax.faces.application.FacesMessage;
-import javax.faces.model.SelectItem;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -162,18 +160,6 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     public Boolean getIsVariable() {
         return getCode().equals("VARIABLE");
-    }
-
-    public static List getCostCodeList() {
-        ArrayList costCodes = new ArrayList();
-
-        costCodes.add(new SelectItem("--", "--"));
-        costCodes.add(new SelectItem("FIXED", "Fixed"));
-        costCodes.add(new SelectItem("HEADING", "Heading"));
-        costCodes.add(new SelectItem("VARIABLE", "Variable"));
-        costCodes.add(new SelectItem("SUBCONTRACT", "Subcontract"));
-
-        return costCodes;
     }
 
     public Boolean getIsFixedCost() {

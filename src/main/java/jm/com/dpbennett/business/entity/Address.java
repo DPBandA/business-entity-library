@@ -23,9 +23,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -42,7 +39,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
- * @author Desmond
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "address")
@@ -50,7 +47,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
     @NamedQuery(name = "findAllAddresses", query = "SELECT e FROM Address e ORDER BY e.type")
 })
 @XmlRootElement
-public class Address implements Serializable, BusinessEntity, Comparable, Converter {
+public class Address implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;
     @Id
@@ -328,22 +325,6 @@ public class Address implements Serializable, BusinessEntity, Comparable, Conver
         } else {
             return 0;
         }
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        Address address = new Address();
-
-        if (value != null) {
-            address.setName(value);
-        }
-
-        return address;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((Address) value).getName();
     }
 
     public static Address findDefaultAddress(

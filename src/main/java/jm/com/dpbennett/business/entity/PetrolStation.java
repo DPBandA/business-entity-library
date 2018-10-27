@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -48,7 +45,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
  */
 @Entity
 @Table(name = "petrolstation")
-public class PetrolStation implements Customer, BusinessEntity, Comparable, Serializable, Converter {
+public class PetrolStation implements Customer, BusinessEntity, Comparable, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -428,24 +425,6 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable, Seri
             System.out.println(e);
             return null;
         }
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        PetrolStation station = new PetrolStation();
-
-        if (value != null) {
-            station.setName(value);
-        } else {
-            station.setName("");
-        }
-
-        return station;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((PetrolStation) value).getName();
     }
 
     @Override

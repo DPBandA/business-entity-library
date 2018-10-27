@@ -23,9 +23,6 @@ package jm.com.dpbennett.business.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -48,7 +45,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
     @NamedQuery(name = "findAllPreferencesByName", query = "SELECT p FROM Preference p WHERE p.name = :name ORDER BY p.name"),
     @NamedQuery(name = "findAllPreferences", query = "SELECT p FROM Preference p ORDER BY p.name")
 })
-public class Preference implements Serializable, BusinessEntity, Converter {
+public class Preference implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -213,22 +210,6 @@ public class Preference implements Serializable, BusinessEntity, Converter {
         }
 
         return values;
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        Preference preference = new Preference();
-
-        if (value != null) {
-            preference.setPreferenceValue(value);
-        }
-
-        return preference;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((Preference) value).getPreferenceValue();
     }
 
     public static List<Preference> findAllPreferencesByName(EntityManager em, String name) {

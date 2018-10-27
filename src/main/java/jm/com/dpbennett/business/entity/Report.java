@@ -23,8 +23,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.faces.application.FacesMessage;
-import javax.faces.model.SelectItem;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -248,27 +246,6 @@ public class Report implements Serializable, BusinessEntity {
         this.description = description;
     }
 
-    public static List getCategories() {
-        ArrayList categories = new ArrayList();
-
-        categories.add(new SelectItem("Job", "Job"));
-        categories.add(new SelectItem("Legal", "Legal"));
-
-        return categories;
-    }
-
-    public static List getMimeTypes() {
-        ArrayList categories = new ArrayList();
-
-        categories.add(new SelectItem("--", "--"));
-        categories.add(new SelectItem("application/jasper", "application/jasper"));
-        categories.add(new SelectItem("application/jrxml", "application/jrxml"));
-        categories.add(new SelectItem("application/xls", "application/xls"));
-        categories.add(new SelectItem("application/xlsx", "application/xlsx"));
-        categories.add(new SelectItem("application/pdf", "application/pdf"));
-
-        return categories;
-    }
 
     public Boolean getActive() {
         if (active == null) {

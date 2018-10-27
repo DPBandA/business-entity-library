@@ -24,9 +24,6 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -50,7 +47,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
     @NamedQuery(name = "findAllDepartmentUnits", query = "SELECT e FROM DepartmentUnit e ORDER BY e.name"),
     @NamedQuery(name = "findAllActiveDepartmentUnits", query = "SELECT e FROM DepartmentUnit e WHERE e.active = :active ORDER BY e.name")
 })
-public class DepartmentUnit implements Serializable, BusinessEntity, Comparable, Converter {
+public class DepartmentUnit implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -152,22 +149,6 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable,
     @Override
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.name, ((DepartmentUnit) o).name);
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-         DepartmentUnit departmentUnit = new DepartmentUnit();
-
-        if (value != null) {
-            departmentUnit.setName(value);
-        }
-
-        return departmentUnit;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-       return ((DepartmentUnit) value).getName();
     }
     
     public static List<DepartmentUnit> findDepartmentUnitsByName(EntityManager em, String name) {

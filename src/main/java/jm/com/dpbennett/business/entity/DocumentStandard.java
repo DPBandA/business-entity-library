@@ -25,9 +25,6 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,7 +50,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllDocumentStandards", query = "SELECT d FROM DocumentStandard d ORDER BY d.number")
 })
-public class DocumentStandard implements Document, Serializable, Comparable, BusinessEntity, Converter {
+public class DocumentStandard implements Document, Serializable, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -470,22 +467,6 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
         }
     }
 
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        DocumentStandard documentStandard = new DocumentStandard();
-
-        if (value != null) {
-            documentStandard.setName(value);
-        }
-
-        return documentStandard;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((DocumentStandard) value).getName();
-    }
-    
     public String getUsable() {
         if (getActive()) {
             return "Yes";

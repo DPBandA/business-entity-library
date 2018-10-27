@@ -23,9 +23,6 @@ package jm.com.dpbennett.business.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -43,7 +40,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "laboratory")
@@ -51,7 +48,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
     @NamedQuery(name = "findAllLaboratories", query = "SELECT l FROM Laboratory l ORDER BY l.name")
 })
 @XmlRootElement
-public class Laboratory implements BusinessEntity, Company, Serializable, Converter {
+public class Laboratory implements BusinessEntity, Company, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -230,22 +227,6 @@ public class Laboratory implements BusinessEntity, Company, Serializable, Conver
             System.out.println(e);
             return null;
         }
-    }
-
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        Laboratory laboratory = new Laboratory();
-
-        if (value != null) {
-            laboratory.setName(value);
-        }
-
-        return laboratory;
-    }
-
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((Laboratory) value).getName();
     }
 
     public static Laboratory getDefaultLaboratory(EntityManager em,
