@@ -41,21 +41,20 @@ import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ComplianceSurveySearchResult;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+//import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "complianceSurvey")
-@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonIgnoreProperties(ignoreUnknown = true)
 @XmlRootElement
 public class ComplianceSurvey
         implements
         Serializable,
-        BusinessEntity /*,
-        GeneralComplianceSurvey */ {
+        BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id

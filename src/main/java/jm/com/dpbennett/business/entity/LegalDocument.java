@@ -111,6 +111,9 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     @Transient
     private Boolean visited;
     
+    /**
+     * Default constructor.
+     */
     public LegalDocument() {
     }
 

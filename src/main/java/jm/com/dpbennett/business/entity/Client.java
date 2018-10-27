@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+//import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * @author Desmond Bennett
@@ -52,7 +52,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @NamedQueries({
     @NamedQuery(name = "findAllClients", query = "SELECT c FROM Client c ORDER BY c.name")
 })
-@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonIgnoreProperties(ignoreUnknown = true)
 @XmlRootElement
 public class Client implements Customer, Serializable, BusinessEntity, Comparable {
 

@@ -27,11 +27,6 @@ import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.fileutils.PropertiesFile;
-import jm.com.dpbennett.business.entity.utils.Security;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.ProcessEngineConfiguration;
-import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 
 /**
  *
@@ -106,46 +101,6 @@ public class TestEntity {
     }
 
     public static void main(String[] args) {
-
-        try {
-
-            PropertiesFile propertiesFile = new PropertiesFile("LabelPrint.properties");
-            propertiesFile.load();
-            HashMap prop = new HashMap();
-
-            ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration()
-                    .setJdbcUrl(propertiesFile.getProperty("ConnectionURL"))
-                    .setJdbcUsername(propertiesFile.getProperty("ConnectionUserName"))
-                    .setJdbcPassword(Security.decrypt(propertiesFile.
-                            getProperty("ConnectionPassword")))
-                    .setJdbcDriver(propertiesFile.getProperty("ConnectionDriverName"))
-                    .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_FALSE);
-
-            ProcessEngine processEngine = cfg.buildProcessEngine();
-            String pName = processEngine.getName();
-            String ver = ProcessEngine.VERSION;
-            System.out.println("ProcessEngine [" + pName + "] Version: [" + ver + "]");
-//
-//            prop.put("javax.persistence.jdbc.user",
-//                    propertiesFile.getProperty("ConnectionUserName"));
-//            prop.put("javax.persistence.jdbc.password",
-//                    Security.decrypt(propertiesFile.getProperty("ConnectionPassword")));
-//            prop.put("javax.persistence.jdbc.url",
-//                    propertiesFile.getProperty("ConnectionURL"));
-//            prop.put("javax.persistence.jdbc.driver",
-//                    propertiesFile.getProperty("ConnectionDriverName"));
-
-//            if (setupDatabaseConnection("PU", prop)) {
-//                EntityManager em = EMF.createEntityManager();
-//                List<BusinessEntity> list
-//                        = EnergyConsumptionAndEfficiency.findAllByProductType(em, "Refrigerator");
-//                System.out.println("List: " + list);
-//                EnergyConsumptionAndEfficiency ecaf
-//                        = EnergyConsumptionAndEfficiency.findById(em, Long.parseLong("1"));
-//                System.out.println("ecaf: " + ecaf);
-//            }
-        } catch (Exception ex) {
-            System.out.println(ex);
-        }
+        
     }
 }

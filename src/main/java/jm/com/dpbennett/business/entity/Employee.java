@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-import org.codehaus.jackson.annotate.JsonBackReference;
-import org.codehaus.jackson.annotate.JsonIgnore;
+//import org.codehaus.jackson.annotate.JsonBackReference;
+//import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -194,7 +194,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 //    public void setBusinessOffice(BusinessOffice businessOffice) {
 //        this.businessOffice = businessOffice;
 //    }
-    @JsonBackReference
+    //@JsonBackReference
     @XmlTransient
     public Department getDepartment() {
         if (department == null) {
@@ -209,7 +209,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
     //@XmlTransient
     @XmlTransient
-    @JsonIgnore
+    //@JsonIgnore
     public List<Address> getAddresses() {
         return addresses;
     }
@@ -220,7 +220,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
     //@XmlTransient
     @XmlTransient
-    @JsonIgnore
+    //@JsonIgnore
     public List<PhoneNumber> getPhoneNumbers() {
         return phoneNumbers;
     }

@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-import org.codehaus.jackson.annotate.JsonIgnore;
+//import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -810,7 +810,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     }
 
     @XmlTransient
-    @JsonIgnore
+    //@JsonIgnore
     public List<JobSample> getJobSamples() {
         if (jobSamples != null) {
             Collections.sort(jobSamples);

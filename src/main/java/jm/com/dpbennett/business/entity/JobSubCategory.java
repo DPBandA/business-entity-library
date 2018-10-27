@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-import org.codehaus.jackson.annotate.JsonIgnore;
+//import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -137,7 +137,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     }
 
     @XmlTransient
-    @JsonIgnore
+    //@JsonIgnore
     public List<Department> getDepartments() {
         if (departments == null) {
             departments = new ArrayList<>();

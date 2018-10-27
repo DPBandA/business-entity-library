@@ -1,4 +1,5 @@
 # General
+- Move activiti, poi and their dependencies to WAL or WACAR.
 - Move the authentication code from JobManager in JMTS to Authentication class
   and use it. Continue implementation.
 - Rename JobManagerUser to User and change table name if possible.

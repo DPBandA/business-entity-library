@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-import org.codehaus.jackson.annotate.JsonIgnore;
+//import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -429,7 +429,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
      * @return
      */
     @XmlTransient
-    @JsonIgnore
+    //@JsonIgnore
     public List<CashPayment> getCashPayments() {
         if (cashPayments != null) {
             Collections.sort(cashPayments);
@@ -654,7 +654,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity, Conve
     }
 
     @XmlTransient
-    @JsonIgnore
+    //@JsonIgnore
     public List<CostComponent> getCostComponents() {
         if (costComponents == null) {
             costComponents = new ArrayList<>();
