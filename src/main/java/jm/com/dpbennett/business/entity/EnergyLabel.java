@@ -62,6 +62,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String heatingCapacity;
     private String coolingCapacity;
     private String costPerKwh;
+    private String CEC;
     private String AEER;
     private String ACOP;
     private String country;
@@ -203,6 +204,24 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      */
     public void setFreezerCompartmentVol(String freezerCompartmentVol) {
         this.freezerCompartmentVol = freezerCompartmentVol;
+    }
+
+    /**
+     * Gets the Comparative Energy Consumption (CEC) for the product.
+     * 
+     * @return 
+     */
+    public String getCEC() {
+        return CEC;
+    }
+
+    /**
+     * Sets the Comparative Energy Consumption (CEC) for the product.
+     * 
+     * @param CEC 
+     */
+    public void setCEC(String CEC) {
+        this.CEC = CEC;
     }
 
     /**
@@ -820,6 +839,31 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         Double acop = NumberUtils.getDoubleValue(ACOP);
 
         return (acop * 8.0 - 18.0) / 4.0;
+    }
+    
+    /**
+     * Gets the Star Rating Index (SRI) of a refrigerator.
+     *
+     * @param CEC Comparative Energy Consumption
+     * @param BEC Base Energy Consumption
+     * @param ERF Energy Consumption Reduction Factor
+     * @return
+     */
+    public static double getRefrigeratorSRI(double CEC, double BEC, double ERF) {
+        return 1.0 + (Math.log(CEC / BEC) / Math.log(1.0 - ERF));
+    }
+
+    /**
+     * Calculates and returns the Base Energy Consumption (BEC) of a
+     * refrigerator.
+     *
+     * @param Cf Fixed allowance factor for the product's group in kWh/y
+     * @param Cv Variable allowance factor for its group in kWh/y
+     * @param Vadjtot Total adjusted volume for the model in litres
+     * @return
+     */
+    public static double getBEC(double Cf, double Cv, double Vadjtot) {
+        return Cf + Cv * Math.pow(Vadjtot, 0.67);
     }
   
 
