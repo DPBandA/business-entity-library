@@ -52,6 +52,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String starRating;
+    private Boolean calculateStarRating;
     private String ratedVoltage;
     private String ratedFrequency;
     private String annualConsumption;
@@ -1002,30 +1004,30 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     /**
-     * Get the star rating for a product based on the product type.
+     * Calculates the star rating for a product based on the product type.
      *
      * @return
      */
-    public Double getStarRating() {
+    public Double doStarRatingCalculation() {
         if (getType().equals("Room Air-conditioner")) {
-            return getStarRatingForRoomAC();
+            return doStarRatingCalculationForRoomAC();
         } else {
-            return getStarRatingForRefrigerator();
+            return doStarRatingCalculationForRefrigerator();
         }
 
     }
 
-    private Double getStarRatingForRefrigerator() {
+    private Double doStarRatingCalculationForRefrigerator() {
         Double sri = getRefrigeratorSRI();
 
         return 0.0; // tk place holder
     }
 
-    private Double getStarRatingForRoomAC() {
+    private Double doStarRatingCalculationForRoomAC() {
         return 0.0; // tk place holder
     }
 
-    private Double getAdjustedVolume() {
+    private Double doTotalAdjustedVolCalculation() {
         return 0.0; // tk place holder
     }
 
