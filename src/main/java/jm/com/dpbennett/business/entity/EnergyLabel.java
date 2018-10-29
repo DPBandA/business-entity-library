@@ -63,6 +63,11 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String coolingCapacity;
     private String costPerKwh;
     private String CEC;
+    private String BEC;
+    private String ERF;
+    private String totalAdjustedVol;
+    private String Cf;
+    private String Cv;
     private String AEER;
     private String ACOP;
     private String country;
@@ -95,6 +100,12 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         heatingCapacity = "";
         coolingCapacity = "";
         costPerKwh = "";
+        BEC = "";
+        CEC = "";
+        ERF = "0.23";
+        totalAdjustedVol = "";
+        Cf = "";
+        Cv = "";
         AEER = "";
         ACOP = "";
         country = "";
@@ -130,6 +141,12 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         heatingCapacity = "";
         coolingCapacity = "";
         costPerKwh = "";
+        BEC = "";
+        CEC = "";
+        ERF = "0.23";
+        totalAdjustedVol = "";
+        Cf = "";
+        Cv = "";
         AEER = "";
         ACOP = "";
         country = "";
@@ -143,6 +160,42 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         type = "";
         validity = "";
         isDirty = false;
+    }
+
+    /**
+     * Gets the Energy Consumption Reduction Factor (ERF) for a product.
+     *
+     * @return
+     */
+    public String getERF() {
+        return (ERF == null || ERF.isEmpty() ? "0.0" : ERF);
+    }
+
+    /**
+     * Sets the Energy Consumption Reduction Factor (ERF) for a product.
+     *
+     * @param ERF
+     */
+    public void setERF(String ERF) {
+        this.ERF = ERF;
+    }
+
+    /**
+     * Gets the Base Energy Consumption (BEC) for the product.
+     *
+     * @return
+     */
+    public String getBEC() {
+        return (BEC == null || BEC.isEmpty() ? "0.0" : BEC);
+    }
+
+    /**
+     * Sets the Base Energy Consumption (BEC) for the product.
+     *
+     * @param BEC
+     */
+    public void setBEC(String BEC) {
+        this.BEC = BEC;
     }
 
     /**
@@ -208,20 +261,74 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the Comparative Energy Consumption (CEC) for the product.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getCEC() {
-        return CEC;
+        return (CEC == null || CEC.isEmpty() ? "0.0" : CEC);
     }
 
     /**
      * Sets the Comparative Energy Consumption (CEC) for the product.
-     * 
-     * @param CEC 
+     *
+     * @param CEC
      */
     public void setCEC(String CEC) {
         this.CEC = CEC;
+    }
+
+    /**
+     * Gets the Total Adjusted Volume of the product.
+     *
+     * @return
+     */
+    public String getTotalAdjustedVol() {
+        return (totalAdjustedVol == null || totalAdjustedVol.isEmpty() ? "0.0" : totalAdjustedVol);
+    }
+
+    /**
+     * Sets the Total Adjusted Volume of the product.
+     *
+     * @param totalAdjustedVol
+     */
+    public void setTotalAdjustedVol(String totalAdjustedVol) {
+        this.totalAdjustedVol = totalAdjustedVol;
+    }
+
+    /**
+     * Gets the Fixed Allowance Factor (Cf) for the product.
+     *
+     * @return
+     */
+    public String getCf() {
+        return (Cf == null || Cf.isEmpty() ? "0.0" : Cf);
+    }
+
+    /**
+     * Sets the Fixed Allowance Factor (Cf) for the product.
+     *
+     * @param Cf
+     */
+    public void setCf(String Cf) {
+        this.Cf = Cf;
+    }
+
+    /**
+     * Gets the Variable Allowance Factor (Cv) for the product.
+     *
+     * @return
+     */
+    public String getCv() {
+        return (Cv == null || Cv.isEmpty() ? "0.0" : Cv);
+    }
+
+    /**
+     * Sets the Variable Allowance Factor (Cv) for the product.
+     *
+     * @param Cv
+     */
+    public void setCv(String Cv) {
+        this.Cv = Cv;
     }
 
     /**
@@ -763,6 +870,11 @@ public class EnergyLabel implements Serializable, BusinessEntity {
                 return new ReturnMessage(false, "Invalid Heating Capacity",
                         "The heating capacity is invalid", null);
             }
+            // Total Adjusted Volume
+            if (!NumberUtils.validateDoubleValue(getTotalAdjustedVol()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Total Adjusted Volume",
+                        "The total adjusted volume is invalid", null);
+            }
             // Validate operating cost
             if (!NumberUtils.validateDoubleValue(getOperatingCost()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Operating Cost",
@@ -777,6 +889,31 @@ public class EnergyLabel implements Serializable, BusinessEntity {
             if (!NumberUtils.validateDoubleValue(getCostPerKwh()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Electricity Rate",
                         "The electricity rate is invalid", null);
+            }
+            // Validate CEC
+            if (!NumberUtils.validateDoubleValue(getCEC()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid CEC",
+                        "The CEC is invalid", null);
+            }
+            // Validate BEC
+            if (!NumberUtils.validateDoubleValue(getBEC()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid BEC",
+                        "The BEC is invalid", null);
+            }
+            // Validate ERF
+            if (!NumberUtils.validateDoubleValue(getERF()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid ERF",
+                        "The ERF is invalid", null);
+            }
+            // Validate Cf
+            if (!NumberUtils.validateDoubleValue(getCf()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Cf",
+                        "The Cf is invalid", null);
+            }
+            // Validate Cv
+            if (!NumberUtils.validateDoubleValue(getCv()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Cv",
+                        "The Cv is invalid", null);
             }
             // Validate AEER
             if (!NumberUtils.validateDoubleValue(getAEER()).isSuccess()) {
@@ -821,50 +958,75 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Calculates and returns the Star Rating Index (SRI) for cooling.
-     * 
-     * @return 
+     *
+     * @return
      */
     public Double getCoolingSRI() {
         Double aeer = NumberUtils.getDoubleValue(AEER);
 
         return (aeer * 8.0 - 18.0) / 4.0;
     }
-    
+
     /**
      * Calculates and returns the Star Rating Index (SRI) for heating.
-     * 
-     * @return 
+     *
+     * @return
      */
     public Double getHeatingSRI() {
         Double acop = NumberUtils.getDoubleValue(ACOP);
 
         return (acop * 8.0 - 18.0) / 4.0;
     }
-    
+
     /**
      * Gets the Star Rating Index (SRI) of a refrigerator.
      *
-     * @param CEC Comparative Energy Consumption
-     * @param BEC Base Energy Consumption
-     * @param ERF Energy Consumption Reduction Factor
      * @return
      */
-    public static double getRefrigeratorSRI(double CEC, double BEC, double ERF) {
-        return 1.0 + (Math.log(CEC / BEC) / Math.log(1.0 - ERF));
+    public double getRefrigeratorSRI() {
+        return 1.0 + (Math.log(NumberUtils.getDoubleValue(CEC)
+                / NumberUtils.getDoubleValue(BEC))
+                / Math.log(1.0 - NumberUtils.getDoubleValue(ERF)));
     }
 
     /**
-     * Calculates and returns the Base Energy Consumption (BEC) of a
+     * Calculates and returns the calculated Base Energy Consumption (BEC) of a
      * refrigerator.
      *
-     * @param Cf Fixed allowance factor for the product's group in kWh/y
-     * @param Cv Variable allowance factor for its group in kWh/y
-     * @param Vadjtot Total adjusted volume for the model in litres
      * @return
      */
-    public static double getBEC(double Cf, double Cv, double Vadjtot) {
-        return Cf + Cv * Math.pow(Vadjtot, 0.67);
+    public double getCalculatedBEC() {
+        return (NumberUtils.getDoubleValue(Cf)
+                + NumberUtils.getDoubleValue(Cv)
+                * Math.pow(NumberUtils.getDoubleValue(totalAdjustedVol), 0.67));
     }
-  
+
+    /**
+     * Get the star rating for a product based on the product type.
+     *
+     * @return
+     */
+    public Double getStarRating() {
+        if (getType().equals("Room Air-conditioner")) {
+            return getStarRatingForRoomAC();
+        } else {
+            return getStarRatingForRefrigerator();
+        }
+
+    }
+
+    private Double getStarRatingForRefrigerator() {
+        Double sri = getRefrigeratorSRI();
+
+        return 0.0; // tk place holder
+    }
+
+    private Double getStarRatingForRoomAC() {
+        return 0.0; // tk place holder
+    }
+
+    private Double getAdjustedVolume() {
+        return 0.0; // tk place holder
+    }
 
 }

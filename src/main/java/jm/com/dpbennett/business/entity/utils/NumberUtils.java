@@ -24,7 +24,7 @@ import java.text.ParseException;
 
 /**
  * This encapsulates various utilities for dealing with numbers.
- * 
+ *
  * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
  */
 public class NumberUtils {
@@ -37,9 +37,9 @@ public class NumberUtils {
      */
     public static ReturnMessage validateDoubleValue(String value) {
         DecimalFormat formatter = new DecimalFormat("#,##0.00");
-        
+
         try {
-            
+
             formatter.parse(value);
 
             return new ReturnMessage();
@@ -49,7 +49,7 @@ public class NumberUtils {
 
         return new ReturnMessage(false, "Double value is invalid");
     }
-    
+
     /**
      * Returns the double value of a string if the string represents a valid
      * double value. If the string is invalid, 0.0 is returned.
@@ -67,5 +67,5 @@ public class NumberUtils {
 
         return 0.0;
     }
-    
+
 }
