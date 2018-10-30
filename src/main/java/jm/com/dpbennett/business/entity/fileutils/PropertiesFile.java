@@ -22,7 +22,6 @@ package jm.com.dpbennett.business.entity.fileutils;
 import java.io.*;
 import java.util.Properties;
 import java.io.FileInputStream;
-import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  * This class manages a properties file.
@@ -62,7 +61,7 @@ public class PropertiesFile {
     }
     
     /**
-     * Gets the property as a double value.
+     * Gets a property as a double value.
      * @param name
      * @return 
      */
@@ -79,7 +78,8 @@ public class PropertiesFile {
     }
     
     /**
-     * Gets the property as a long value.
+     * Gets a property as a long value.
+     * 
      * @param name
      * @return 
      */
@@ -94,9 +94,28 @@ public class PropertiesFile {
         
         return 0L;
     }
+    
+    /**
+     * Get a property as boolean value.
+     * 
+     * @param name
+     * @return 
+     */
+    public Boolean getBooleanProperty(String name) {
+        try {
+            
+            return Boolean.parseBoolean(props.getProperty(name));            
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid boolean value");
+        }
+        
+        return false;
+    }
 
     /**
      * Loads the properties from the properties file.
+     * 
      * @return 
      */
     public final boolean load() {

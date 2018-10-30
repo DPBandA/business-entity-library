@@ -53,7 +53,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String starRating;
-    private Boolean calculateStarRating;
+    private Boolean calcStarRating;
     private String ratedVoltage;
     private String ratedFrequency;
     private String annualConsumption;
@@ -66,8 +66,10 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String costPerKwh;
     private String CEC;
     private String BEC;
+    private Boolean calcBEC;
     private String ERF;
     private String totalAdjustedVol;
+    private Boolean calcTotalAdjustedVol;
     private String Cf;
     private String Cv;
     private String AEER;
@@ -92,6 +94,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * The default constructor of an EnergyLabel.
      */
     public EnergyLabel() {
+        starRating = "";
+        calcStarRating = false;
         ratedVoltage = "";
         ratedFrequency = "";
         annualConsumption = "";
@@ -103,9 +107,11 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         coolingCapacity = "";
         costPerKwh = "";
         BEC = "";
+        calcBEC = false;
         CEC = "";
         ERF = "0.23";
         totalAdjustedVol = "";
+        calcTotalAdjustedVol = false;
         Cf = "";
         Cv = "";
         AEER = "";
@@ -125,43 +131,75 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     /**
-     * A constructor that takes the id and name of an EnergyLabel.
-     *
-     * @param id
-     * @param labelName
+     * Gets the inputted or calculated star rating of the product.
+     * 
+     * @return 
      */
-    public EnergyLabel(Long id, String labelName) {
-        this.id = id;
-        this.labelName = labelName;
-        ratedVoltage = "";
-        ratedFrequency = "";
-        annualConsumption = "";
-        brand = "";
-        capacity = "";
-        freshFoodCompartmentVol = "";
-        freezerCompartmentVol = "";
-        heatingCapacity = "";
-        coolingCapacity = "";
-        costPerKwh = "";
-        BEC = "";
-        CEC = "";
-        ERF = "0.23";
-        totalAdjustedVol = "";
-        Cf = "";
-        Cv = "";
-        AEER = "";
-        ACOP = "";
-        country = "";
-        defrost = "";
-        distributor = "";
-        jobNumber = "";
-        manufacturer = "";
-        model = "";
-        operatingCost = "";
-        standard = "";
-        type = "";
-        validity = "";
-        isDirty = false;
+    public String getStarRating() {
+        return starRating;
+    }
+
+    /**
+     * Sets the inputted or calculated star rating of the product.
+     * 
+     * @param starRating 
+     */
+    public void setStarRating(String starRating) {
+        this.starRating = starRating;
+    }
+
+    /**
+     * Gets if star rating is to be calculated.
+     * 
+     * @return 
+     */
+    public Boolean getCalcStarRating() {
+        return calcStarRating;
+    }
+
+    /**
+     * Sets if star rating is to be calculated.
+     * 
+     * @param calcStarRating 
+     */
+    public void setCalcStarRating(Boolean calcStarRating) {
+        this.calcStarRating = calcStarRating;
+    }
+
+    /**
+     * Gets if BEC is to be calculated.
+     * 
+     * @return 
+     */
+    public Boolean getCalcBEC() {
+        return calcBEC;
+    }
+
+    /**
+     * Gets if BEC is to be calculated.
+     * 
+     * @param calcBEC 
+     */
+    public void setCalcBEC(Boolean calcBEC) {
+        this.calcBEC = calcBEC;
+    }
+
+    /**
+     * Gets if Total Adjusted Volume is to be calculated.
+     * 
+     * @return 
+     */
+    public Boolean getCalcTotalAdjustedVol() {
+        return calcTotalAdjustedVol;
+    }
+
+    /**
+     * Sets if Total Adjusted Volume is to be calculated.
+     * 
+     * @param calcTotalAdjustedVol 
+     */
+    public void setCalcTotalAdjustedVol(Boolean calcTotalAdjustedVol) {
+        this.calcTotalAdjustedVol = calcTotalAdjustedVol;
     }
 
     /**
@@ -1010,24 +1048,39 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      */
     public Double doStarRatingCalculation() {
         if (getType().equals("Room Air-conditioner")) {
-            return doStarRatingCalculationForRoomAC();
+            return doStarRatingCalcForRoomAC();
         } else {
-            return doStarRatingCalculationForRefrigerator();
+            return doStarRatingCalcForRefrigerator();
         }
 
     }
 
-    private Double doStarRatingCalculationForRefrigerator() {
+    /**
+     * Calculates the star rating for a refrigerator.
+     * 
+     * @return 
+     */
+    private Double doStarRatingCalcForRefrigerator() {
         Double sri = getRefrigeratorSRI();
 
         return 0.0; // tk place holder
     }
 
-    private Double doStarRatingCalculationForRoomAC() {
+    /**
+     * Calculates the star rating for Room Air-conditioner.
+     * 
+     * @return 
+     */
+    private Double doStarRatingCalcForRoomAC() {
         return 0.0; // tk place holder
     }
 
-    private Double doTotalAdjustedVolCalculation() {
+    /**
+     * Calculates the total adjusted volume for a refrigerator.
+     * 
+     * @return 
+     */
+    private Double doTotalAdjustedVolCalc() {
         return 0.0; // tk place holder
     }
 
