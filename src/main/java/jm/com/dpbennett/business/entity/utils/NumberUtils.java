@@ -67,5 +67,25 @@ public class NumberUtils {
 
         return 0.0;
     }
+    
+    /**
+     * This is a utility method used to validate an integer value string.
+     *
+     * @param value
+     * @return
+     */
+    public static ReturnMessage validateIntegerValue(String value) {
+       
+        try {
+
+            Integer.parseInt(value);
+
+            return new ReturnMessage();
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Integer value is invalid");
+    }
 
 }

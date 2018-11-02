@@ -5,14 +5,10 @@
  */
 package jm.com.dpbennett.business.entity.swingutils;
 
-import java.awt.AWTException;
 import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.HeadlessException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 /**
@@ -33,15 +29,13 @@ public class BusinessEntityCellRenderer extends DefaultListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value,
             int index, boolean isSelected, boolean cellHasFocus) {
 
-            JTextArea jTextArea = new JTextArea(rows, columns);
-            jTextArea.setLineWrap(true);
-                       
-            
-            if (value != null) {
-                jTextArea.setText(value.toString());
-            }
-            
-            return jTextArea;
-      
+        JTextArea jTextArea = new JTextArea(rows, columns);
+        jTextArea.setLineWrap(true);
+
+        if (value != null) {
+            jTextArea.setText(value.toString());
+        }
+
+        return jTextArea;
     }
 }

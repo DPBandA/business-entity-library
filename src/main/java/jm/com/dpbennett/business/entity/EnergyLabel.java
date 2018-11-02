@@ -95,7 +95,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      */
     public EnergyLabel() {
         starRating = "";
-        calcStarRating = false;
+        calcStarRating = true;
         ratedVoltage = "";
         ratedFrequency = "";
         annualConsumption = "";
@@ -107,7 +107,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         coolingCapacity = "";
         costPerKwh = "";
         BEC = "";
-        calcBEC = false;
+        calcBEC = true;
         CEC = "";
         ERF = "0.23";
         totalAdjustedVol = "";
@@ -132,17 +132,23 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the inputted or calculated star rating of the product.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getStarRating() {
-        return starRating;
+        if (isCalcStarRating()) {
+            starRating = getCalcStarRating().toString();
+
+            return starRating;
+        }
+
+        return (starRating == null || starRating.isEmpty() ? "0.0" : starRating);
     }
 
     /**
      * Sets the inputted or calculated star rating of the product.
-     * 
-     * @param starRating 
+     *
+     * @param starRating
      */
     public void setStarRating(String starRating) {
         this.starRating = starRating;
@@ -150,17 +156,20 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets if star rating is to be calculated.
-     * 
-     * @return 
+     *
+     * @return
      */
-    public Boolean getCalcStarRating() {
+    public Boolean isCalcStarRating() {
+        if (calcStarRating == null) {
+            calcStarRating = false;
+        }
         return calcStarRating;
     }
 
     /**
      * Sets if star rating is to be calculated.
-     * 
-     * @param calcStarRating 
+     *
+     * @param calcStarRating
      */
     public void setCalcStarRating(Boolean calcStarRating) {
         this.calcStarRating = calcStarRating;
@@ -168,17 +177,20 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets if BEC is to be calculated.
-     * 
-     * @return 
+     *
+     * @return
      */
-    public Boolean getCalcBEC() {
+    public Boolean isCalcBEC() {
+        if (calcBEC == null) {
+            calcBEC = false;
+        }
         return calcBEC;
     }
 
     /**
      * Gets if BEC is to be calculated.
-     * 
-     * @param calcBEC 
+     *
+     * @param calcBEC
      */
     public void setCalcBEC(Boolean calcBEC) {
         this.calcBEC = calcBEC;
@@ -186,17 +198,20 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets if Total Adjusted Volume is to be calculated.
-     * 
-     * @return 
+     *
+     * @return
      */
-    public Boolean getCalcTotalAdjustedVol() {
+    public Boolean isCalcTotalAdjustedVol() {
+        if (calcTotalAdjustedVol == null) {
+            calcTotalAdjustedVol = false;
+        }
         return calcTotalAdjustedVol;
     }
 
     /**
      * Sets if Total Adjusted Volume is to be calculated.
-     * 
-     * @param calcTotalAdjustedVol 
+     *
+     * @param calcTotalAdjustedVol
      */
     public void setCalcTotalAdjustedVol(Boolean calcTotalAdjustedVol) {
         this.calcTotalAdjustedVol = calcTotalAdjustedVol;
@@ -226,7 +241,14 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return
      */
     public String getBEC() {
-        return (BEC == null || BEC.isEmpty() ? "0.0" : BEC);
+        if (isCalcBEC()) {
+            BEC = getCalcBEC().toString();
+
+            return BEC;
+        } else {
+
+            return (BEC == null || BEC.isEmpty() ? "0.0" : BEC);
+        }
     }
 
     /**
@@ -323,7 +345,14 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return
      */
     public String getTotalAdjustedVol() {
-        return (totalAdjustedVol == null || totalAdjustedVol.isEmpty() ? "0.0" : totalAdjustedVol);
+        if (isCalcTotalAdjustedVol()) {
+            totalAdjustedVol = getCalcTotalAdjustedVol().toString();
+
+            return totalAdjustedVol;
+        } else {
+
+            return (totalAdjustedVol == null || totalAdjustedVol.isEmpty() ? "0.0" : totalAdjustedVol);
+        }
     }
 
     /**
@@ -620,6 +649,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return
      */
     public String getJobNumber() {
+        if (jobNumber == null) {
+            jobNumber = "";
+        }
         return this.jobNumber;
     }
 
@@ -884,86 +916,126 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage validate(EntityManager em) {
         try {
-            // Validate double values
-            // Validate fresh food compartment volume
+
+            // Star rating
+            if (!NumberUtils.validateDoubleValue(getStarRating()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Star Rating",
+                        "The star rating is invalid", null);
+            }
+            // Job number
+            if (getJobNumber().isEmpty()) {
+                return new ReturnMessage(false, "No Job Number",
+                        "You have not entered a job number", null);
+            }
+            // Fresh food compartment volume
             if (!NumberUtils.validateDoubleValue(getFreshFoodCompartmentVol()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Fresh Food Compartment Volume",
                         "The fresh food compartment volume is invalid", null);
             }
-            // Validate freezer compartment volume
+            // Freezer compartment volume
             if (!NumberUtils.validateDoubleValue(getFreezerCompartmentVol()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Freezer Compartment Volume",
                         "The freezer compartment volume is invalid", null);
             }
-            // Validate capacity
+            // Volumetric capacity
             if (!NumberUtils.validateDoubleValue(getCapacity()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Capacity",
                         "The volumetric capacity is invalid", null);
-            }
-            // Validate cooling capacity
-            if (!NumberUtils.validateDoubleValue(getCoolingCapacity()).isSuccess()) {
-                return new ReturnMessage(false, "Invalid Cooling Capacity",
-                        "The cooling capacity is invalid", null);
-            }
-            // Validate heating capacity
-            if (!NumberUtils.validateDoubleValue(getHeatingCapacity()).isSuccess()) {
-                return new ReturnMessage(false, "Invalid Heating Capacity",
-                        "The heating capacity is invalid", null);
             }
             // Total Adjusted Volume
             if (!NumberUtils.validateDoubleValue(getTotalAdjustedVol()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Total Adjusted Volume",
                         "The total adjusted volume is invalid", null);
             }
-            // Validate operating cost
-            if (!NumberUtils.validateDoubleValue(getOperatingCost()).isSuccess()) {
-                return new ReturnMessage(false, "Invalid Operating Cost",
-                        "The operating cost is invalid", null);
+            // Cooling capacity
+            if (!NumberUtils.validateDoubleValue(getCoolingCapacity()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Cooling Capacity",
+                        "The cooling capacity is invalid", null);
             }
-            // Validate annual consumption
-            if (!NumberUtils.validateDoubleValue(getAnnualConsumption()).isSuccess()) {
-                return new ReturnMessage(false, "Invalid Annual Consumption",
-                        "The annual consumption is invalid", null);
+            // Heating capacity
+            if (!NumberUtils.validateDoubleValue(getHeatingCapacity()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Heating Capacity",
+                        "The heating capacity is invalid", null);
             }
-            // Validate cost per kwh
-            if (!NumberUtils.validateDoubleValue(getCostPerKwh()).isSuccess()) {
-                return new ReturnMessage(false, "Invalid Electricity Rate",
-                        "The electricity rate is invalid", null);
-            }
-            // Validate CEC
-            if (!NumberUtils.validateDoubleValue(getCEC()).isSuccess()) {
-                return new ReturnMessage(false, "Invalid CEC",
-                        "The CEC is invalid", null);
-            }
-            // Validate BEC
+            // BEC
             if (!NumberUtils.validateDoubleValue(getBEC()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid BEC",
                         "The BEC is invalid", null);
             }
-            // Validate ERF
-            if (!NumberUtils.validateDoubleValue(getERF()).isSuccess()) {
-                return new ReturnMessage(false, "Invalid ERF",
-                        "The ERF is invalid", null);
+            // CEC
+            if (!NumberUtils.validateDoubleValue(getCEC()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid CEC",
+                        "The CEC is invalid", null);
             }
-            // Validate Cf
+            // Cf
             if (!NumberUtils.validateDoubleValue(getCf()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Cf",
                         "The Cf is invalid", null);
             }
-            // Validate Cv
+            // Cv
             if (!NumberUtils.validateDoubleValue(getCv()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Cv",
                         "The Cv is invalid", null);
             }
-            // Validate AEER
+            // ERF
+            if (!NumberUtils.validateDoubleValue(getERF()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid ERF",
+                        "The ERF is invalid", null);
+            }
+            // AEER
             if (!NumberUtils.validateDoubleValue(getAEER()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid AEER",
                         "The AEER is invalid", null);
             }
-            // Validate ACOP
+            // ACOP
             if (!NumberUtils.validateDoubleValue(getACOP()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid ACOP",
                         "The ACOP is invalid", null);
+            }                
+            // Distributor
+            if (getDistributor().isEmpty()) {
+                return new ReturnMessage(false, "No Distributor",
+                        "You have not entered a distributor's name", null);
+            }
+            // Manufacturer
+            if (getManufacturer().isEmpty()) {
+                return new ReturnMessage(false, "No Manufacturer",
+                        "You have not entered a manufacturer's name", null);
+            }
+            // Brand
+            if (getBrand().isEmpty()) {
+                return new ReturnMessage(false, "No Brand",
+                        "You have not entered a brand name", null);
+            }
+            // Model
+            if (getModel().isEmpty()) {
+                return new ReturnMessage(false, "No Model",
+                        "You have not entered a model", null);
+            }
+            // Country of origin
+            if (getCountry().isEmpty()) {
+                return new ReturnMessage(false, "No Country of Origin",
+                        "You have not entered a country of origin", null);
+            }
+            // Operating cost
+            if (!NumberUtils.validateDoubleValue(getOperatingCost()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Operating Cost",
+                        "The operating cost is invalid", null);
+            }
+            // Annual consumption
+            if (!NumberUtils.validateDoubleValue(getAnnualConsumption()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Annual Consumption",
+                        "The annual consumption is invalid", null);
+            }
+            // Cost per kwh (Electricity Rate 1)
+            if (!NumberUtils.validateDoubleValue(getCostPerKwh()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Electricity Rate",
+                        "The electricity rate is invalid", null);
+            }
+            // Validity (year)
+            if (!NumberUtils.validateIntegerValue(getValidity()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Year",
+                        "The year of validity is invalid", null);
             }
 
         } catch (Exception e) {
@@ -1002,7 +1074,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return
      */
     public Double getCoolingSRI() {
-        Double aeer = NumberUtils.getDoubleValue(AEER);
+        Double aeer = NumberUtils.getDoubleValue(getAEER());
 
         return (aeer * 8.0 - 18.0) / 4.0;
     }
@@ -1013,7 +1085,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return
      */
     public Double getHeatingSRI() {
-        Double acop = NumberUtils.getDoubleValue(ACOP);
+        Double acop = NumberUtils.getDoubleValue(getACOP());
 
         return (acop * 8.0 - 18.0) / 4.0;
     }
@@ -1023,10 +1095,10 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      *
      * @return
      */
-    public double getRefrigeratorSRI() {
-        return 1.0 + (Math.log(NumberUtils.getDoubleValue(CEC)
-                / NumberUtils.getDoubleValue(BEC))
-                / Math.log(1.0 - NumberUtils.getDoubleValue(ERF)));
+    public Double getRefrigeratorSRI() {
+        return 1.0 + (Math.log(NumberUtils.getDoubleValue(getCEC())
+                / NumberUtils.getDoubleValue(getBEC()))
+                / Math.log(1.0 - NumberUtils.getDoubleValue(getERF())));
     }
 
     /**
@@ -1035,10 +1107,10 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      *
      * @return
      */
-    public double getCalculatedBEC() {
-        return (NumberUtils.getDoubleValue(Cf)
-                + NumberUtils.getDoubleValue(Cv)
-                * Math.pow(NumberUtils.getDoubleValue(totalAdjustedVol), 0.67));
+    public Double getCalcBEC() {
+        return (NumberUtils.getDoubleValue(getCf())
+                + NumberUtils.getDoubleValue(getCv())
+                * Math.pow(NumberUtils.getDoubleValue(getTotalAdjustedVol()), 0.67));
     }
 
     /**
@@ -1046,42 +1118,87 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      *
      * @return
      */
-    public Double doStarRatingCalculation() {
+    public Double getCalcStarRating() {
         if (getType().equals("Room Air-conditioner")) {
-            return doStarRatingCalcForRoomAC();
+            return getCalcStarRatingForRoomAC();
         } else {
-            return doStarRatingCalcForRefrigerator();
+            return getCalcStarRatingForRefrigerator();
         }
 
     }
 
     /**
      * Calculates the star rating for a refrigerator.
-     * 
-     * @return 
+     *
+     * @return
      */
-    private Double doStarRatingCalcForRefrigerator() {
+    private Double getCalcStarRatingForRefrigerator() {
         Double sri = getRefrigeratorSRI();
 
-        return 0.0; // tk place holder
+        if (sri < 1.5) {
+            return 1.0;
+        }
+        if (sri >= 1.5 && sri < 2.0) {
+            return 1.5;
+        }
+        if (sri >= 2.5 && sri < 3.0) {
+            return 2.5;
+        }
+        if (sri >= 3.0 && sri < 3.5) {
+            return 3.0;
+        }
+        if (sri >= 3.5 && sri < 4.0) {
+            return 3.5;
+        }
+        if (sri >= 4.0 && sri < 4.5) {
+            return 4.0;
+        }
+        if (sri >= 4.5 && sri < 5.0) {
+            return 4.5;
+        }
+        if (sri >= 5.0 && sri < 5.5) {
+            return 5.0;
+        }
+        if (sri >= 5.5 && sri < 6.0) {
+            return 5.5;
+        }
+        if (sri >= 6.0 && sri < 7.0) {
+            return 6.0;
+        }
+        if (sri >= 7.0 && sri < 8.0) {
+            return 7.0;
+        }
+        if (sri >= 8.0 && sri < 9.0) {
+            return 8.0;
+        }
+        if (sri >= 9.0 && sri < 10.0) {
+            return 9.0;
+        }
+        if (sri >= 10.0) {
+            return 10.0;
+        }
+
+        return 0.0;
     }
 
     /**
      * Calculates the star rating for Room Air-conditioner.
-     * 
-     * @return 
+     *
+     * @return
      */
-    private Double doStarRatingCalcForRoomAC() {
-        return 0.0; // tk place holder
+    private Double getCalcStarRatingForRoomAC() {
+        return 0.0;
     }
 
     /**
-     * Calculates the total adjusted volume for a refrigerator.
-     * 
-     * @return 
+     * Calculates the total adjusted volume for a refrigerator. It is assumed
+     * that the stored value is in cubic meters so it is multiplied by 1000.0 to
+     * get litres.
+     *
+     * @return
      */
-    private Double doTotalAdjustedVolCalc() {
-        return 0.0; // tk place holder
+    private Double getCalcTotalAdjustedVol() {
+        return NumberUtils.getDoubleValue(totalAdjustedVol) * 1000.0;
     }
 
 }

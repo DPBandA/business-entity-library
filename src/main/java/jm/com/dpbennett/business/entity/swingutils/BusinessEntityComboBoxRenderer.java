@@ -6,17 +6,16 @@
 package jm.com.dpbennett.business.entity.swingutils;
 
 import java.awt.Component;
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
  * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
  */
-public class BusinessEntityComboBoxRenderer extends /*JTextArea*/ JLabel
+public class BusinessEntityComboBoxRenderer extends JLabel
         implements ListCellRenderer {
     
     private int rows;
@@ -30,6 +29,8 @@ public class BusinessEntityComboBoxRenderer extends /*JTextArea*/ JLabel
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
     
+        setBorder(new EmptyBorder(0, 5, 0, 0));
+        
         if (isSelected) {
             setBackground(list.getSelectionBackground());
             setForeground(list.getSelectionForeground());
