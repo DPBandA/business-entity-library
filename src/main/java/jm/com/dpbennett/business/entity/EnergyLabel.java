@@ -61,9 +61,12 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String capacity;
     private String freshFoodCompartmentVol;
     private String freezerCompartmentVol;
-    private String heatingCapacity;
     private String coolingCapacity;
+    private Boolean showCoolingCapacity;
+    private String heatingCapacity;
+    private Boolean showHeatingCapacity;
     private String costPerKwh;
+    private String costPerKwh2;
     private String CEC;
     private String BEC;
     private Boolean calcBEC;
@@ -103,9 +106,12 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         capacity = "";
         freshFoodCompartmentVol = "";
         freezerCompartmentVol = "";
-        heatingCapacity = "";
         coolingCapacity = "";
+        showCoolingCapacity = true;
+        heatingCapacity = "";
+        showHeatingCapacity = false;
         costPerKwh = "";
+        costPerKwh2 = "";
         BEC = "";
         calcBEC = true;
         CEC = "";
@@ -128,6 +134,48 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         type = "";
         validity = "";
         isDirty = false;
+    }
+
+    /**
+     * Indicates if the cooling capacity is to be shown on the label.
+     *
+     * @return
+     */
+    public Boolean getShowCoolingCapacity() {
+        if (showCoolingCapacity == null) {
+            showCoolingCapacity = true;
+        }
+        return showCoolingCapacity;
+    }
+
+    /**
+     * Indicates if the cooling capacity is to be shown on the label.
+     *
+     * @param showCoolingCapacity
+     */
+    public void setShowCoolingCapacity(Boolean showCoolingCapacity) {
+        this.showCoolingCapacity = showCoolingCapacity;
+    }
+
+    /**
+     * Indicates if the heating capacity is to be shown on the label.
+     *
+     * @return
+     */
+    public Boolean getShowHeatingCapacity() {
+        if (showHeatingCapacity == null) {
+            showHeatingCapacity = false;
+        }
+        return showHeatingCapacity;
+    }
+
+    /**
+     * Indicates if the heating capacity is to be shown on the label.
+     *
+     * @param showHeatingCapacity
+     */
+    public void setShowHeatingCapacity(Boolean showHeatingCapacity) {
+        this.showHeatingCapacity = showHeatingCapacity;
     }
 
     /**
@@ -571,7 +619,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     /**
-     * Gets the cost per Kwh.
+     * Gets the first cost per Kwh.
      *
      * @return
      */
@@ -581,7 +629,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     /**
-     * Sets the cost per Kwh.
+     * Sets the first cost per kWh.
      *
      * @param costPerKwh
      */
@@ -589,6 +637,25 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         this.costPerKwh = costPerKwh;
     }
 
+    /**
+     * Gets the second cost per kWh.
+     * 
+     * @return 
+     */
+    public String getCostPerKwh2() {
+        
+        return (costPerKwh2 == null || costPerKwh2.isEmpty() ? "0.0" : costPerKwh2);
+    }
+
+   /**
+    * Sets the second cost per kWh.
+    * 
+    * @param costPerKwh2 
+    */
+    public void setCostPerKwh2(String costPerKwh2) {
+        this.costPerKwh2 = costPerKwh2;
+    }
+        
     /**
      * Gets the country of origin of the product.
      *
@@ -991,7 +1058,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
             if (!NumberUtils.validateDoubleValue(getACOP()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid ACOP",
                         "The ACOP is invalid", null);
-            }                
+            }
             // Distributor
             if (getDistributor().isEmpty()) {
                 return new ReturnMessage(false, "No Distributor",
@@ -1027,10 +1094,15 @@ public class EnergyLabel implements Serializable, BusinessEntity {
                 return new ReturnMessage(false, "Invalid Annual Consumption",
                         "The annual consumption is invalid", null);
             }
-            // Cost per kwh (Electricity Rate 1)
+            // First cost per kwh (Electricity Rate 1)
             if (!NumberUtils.validateDoubleValue(getCostPerKwh()).isSuccess()) {
                 return new ReturnMessage(false, "Invalid Electricity Rate",
                         "The electricity rate is invalid", null);
+            }
+            // Second cost per kwh (Electricity Rate 2)
+            if (!NumberUtils.validateDoubleValue(getCostPerKwh2()).isSuccess()) {
+                return new ReturnMessage(false, "Invalid Electricity Rate 2",
+                        "The electricity rate 2 is invalid", null);
             }
             // Validity (year)
             if (!NumberUtils.validateIntegerValue(getValidity()).isSuccess()) {
@@ -1187,6 +1259,60 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      * @return
      */
     private Double getCalcStarRatingForRoomAC() {
+        Double sri;
+
+        if (getShowCoolingCapacity()) {
+            sri = getCoolingSRI();
+        } else {
+            sri = getHeatingSRI();
+        }
+        
+        if (sri < 1.5) {
+            return 1.0;
+        }
+        if (sri >= 1.5 && sri < 2.0) {
+            return 1.5;
+        }
+        if (sri >= 2.0 && sri < 2.5) {
+            return 2.0;
+        }
+        if (sri >= 2.5 && sri < 3.0) {
+            return 2.5;
+        }
+        if (sri >= 3.0 && sri < 3.5) {
+            return 3.0;
+        }
+        if (sri >= 3.5 && sri < 4.0) {
+            return 3.5;
+        }
+        if (sri >= 4.0 && sri < 4.5) {
+            return 4.0;
+        }
+        if (sri >= 4.5 && sri < 5.0) {
+            return 4.5;
+        }
+        if (sri >= 5.0 && sri < 5.5) {
+            return 5.0;
+        }
+        if (sri >= 5.5 && sri < 6.0) {
+            return 5.5;
+        }
+        if (sri >= 6.0 && sri < 7.0) {
+            return 6.0;
+        }
+        if (sri >= 7.0 && sri < 8.0) {
+            return 7.0;
+        }
+        if (sri >= 8.0 && sri < 9.0) {
+            return 8.0;
+        }
+        if (sri >= 9.0 && sri < 10.0) {
+            return 9.0;
+        }
+        if (sri >= 10.0) {
+            return 10.0;
+        }
+
         return 0.0;
     }
 
