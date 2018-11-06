@@ -716,6 +716,13 @@ public class BusinessEntityUtils {
 
         return c.get(Calendar.YEAR);
     }
+    
+    public static int getNextYear() {
+        
+        Calendar c = Calendar.getInstance();
+
+        return c.get(Calendar.YEAR) + 1;
+    }
 
     public static Date getStartOfPreviousYear() {
         Calendar c, current;
