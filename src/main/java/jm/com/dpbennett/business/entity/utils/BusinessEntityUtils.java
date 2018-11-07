@@ -356,6 +356,19 @@ public class BusinessEntityUtils {
         }
 
     }
+    
+    public synchronized static void saveBusinessEntityInTransaction(EntityManager em, 
+            BusinessEntity entity) {
+        try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, entity);
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
     public static Date createDate(int year, int monthIndex, int day) {
         Calendar c;
