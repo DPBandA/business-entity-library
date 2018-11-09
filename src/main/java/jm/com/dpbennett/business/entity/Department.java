@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -238,7 +237,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         return staff;
     }
 
-    public void setStaff(Vector<Employee> staff) {
+    public void setStaff(ArrayList<Employee> staff) {
         this.staff = staff;
     }
 

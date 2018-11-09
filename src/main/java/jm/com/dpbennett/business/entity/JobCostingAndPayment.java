@@ -40,11 +40,10 @@ import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-//import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author Desmond
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "jobcostingandpayment")

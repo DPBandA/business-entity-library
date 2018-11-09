@@ -317,11 +317,6 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
         return description;
     }
 
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Date getExpectedDateOfCompletion() {
         return expectedDateOfCompletion;
     }
@@ -627,5 +622,10 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

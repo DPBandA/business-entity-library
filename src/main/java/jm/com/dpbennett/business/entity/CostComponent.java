@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -36,7 +37,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
- * @author Desmond
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "costcomponent")
@@ -57,6 +58,9 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private Boolean isHeading;
     private Boolean isFixedCost;
     private Boolean isEditable;
+    @Column(length = 1024)
+    private String description;
+    private String unit;
     @Transient
     private Boolean isDirty;
 
@@ -69,6 +73,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         isHeading = false;
         isFixedCost = true;
         isEditable = true;
+        description = "";
+        unit = "";
     }
 
     public CostComponent(CostComponent src) {
@@ -84,6 +90,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         isHeading = false;
         isFixedCost = true;
         isEditable = true;
+        description = "";
+        unit = "";
     }
 
     public CostComponent(Long id, String name) {
@@ -95,6 +103,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         isHeading = false;
         isFixedCost = true;
         isEditable = true;
+        description = "";
+        unit = "";
     }
 
     public CostComponent(String name, Boolean isHeading) {
@@ -103,6 +113,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.cost = 0.0;
         isFixedCost = false;
         isEditable = true;
+        description = "";
+        unit = "";
     }
 
     public CostComponent(String name, Double cost, Boolean isFixedCost, Boolean isEditable) {
@@ -113,8 +125,27 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.hours = 0.0;
         this.hoursOrQuantity = 0.0;
         this.rate = 0.0;
+        description = "";
+        unit = "";
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
@@ -122,6 +153,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         return isDirty;
     }
 
+    @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
@@ -152,6 +184,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.isHeading = src.isHeading;
         this.isFixedCost = src.isFixedCost;
         this.isEditable = src.isEditable;
+        this.description = src.description;
+        this.unit = src.unit;
     }
 
     public Boolean getIsSubcontract() {

@@ -299,11 +299,6 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
     }
 
     @Override
-    public void setDescription(String description) {
-        synopsis = description;
-    }
-
-    @Override
     public DocumentType getType() {
         if (documentType == null) {
             return new DocumentType();
@@ -490,6 +485,11 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
 
     @Override
     public ReturnMessage validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setDescription(String description) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
