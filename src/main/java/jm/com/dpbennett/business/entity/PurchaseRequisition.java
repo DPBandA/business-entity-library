@@ -117,17 +117,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     @Transient
     private Boolean visited;
     @Transient
-    private List<UpdateAction> updatesPerformed;
-
-    /**
-     * The updates actions performed on this PR object.
-     */
-    public enum UpdateAction {
-        CREATE, // PR created
-        COMPLETE, // PR process completed
-        EDIT, // PR edited
-        APPROVE // PR approved
-    }
+    private List<BusinessEntity.Action> actions;
 
     /**
      * Default constructor.
@@ -135,9 +125,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public PurchaseRequisition() {
         approvers = new ArrayList<>();
         costComponents = new ArrayList<>();
-        updatesPerformed = new ArrayList<>();
+        actions = new ArrayList<>();
 
-        updatesPerformed.add(UpdateAction.CREATE);
+        actions.add(BusinessEntity.Action.CREATE);
     }
 
     public String getQuotationNumber() {
@@ -148,12 +138,12 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         this.quotationNumber = quotationNumber;
     }
 
-    public List<UpdateAction> getUpdatesPerformed() {
-        return updatesPerformed;
+    public List<BusinessEntity.Action> getActions() {
+        return actions;
     }
 
-    public void setUpdatesPerformed(List<UpdateAction> updatesPerformed) {
-        this.updatesPerformed = updatesPerformed;
+    public void setActions(List<BusinessEntity.Action> actions) {
+        this.actions = actions;
     }
 
     public String getPurchaseOrderNumber() {

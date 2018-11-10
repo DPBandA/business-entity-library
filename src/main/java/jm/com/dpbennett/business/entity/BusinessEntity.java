@@ -45,4 +45,12 @@ public interface BusinessEntity {
     
     public void setIsDirty(Boolean isDirty);
     
+    /**
+     * The actions that can be performed with respect to an entity.
+     */
+    public enum Action {
+        CREATE, COMPLETE, EDIT, APPROVE, DELETE, CANCEL, PREPARE, INVOICE,
+        COSTING, REQUEST
+    }
+    
 }

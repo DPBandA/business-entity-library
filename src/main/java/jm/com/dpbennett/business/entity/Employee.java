@@ -46,8 +46,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-//import org.codehaus.jackson.annotate.JsonBackReference;
-//import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -74,6 +72,8 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private String username;
     private String title;
     private String name;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<EmployeePosition> positions;
     @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
     @OneToMany(cascade = CascadeType.ALL)
@@ -82,8 +82,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private List<PhoneNumber> phoneNumbers;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department department;
-//    @OneToOne(cascade = CascadeType.REFRESH)
-//    private BusinessOffice businessOffice;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date birthDate;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -92,8 +90,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private String notes;
     private Boolean active;
     private String employmentType;
-//    @OneToOne(cascade = CascadeType.REFRESH)
-//    private Business business;
     @OneToOne(cascade = CascadeType.ALL)
     private Signature signature;
     private String post;
@@ -103,7 +99,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public Employee() {
         firstName = "";
         lastName = "";
-        //businessOffice = new BusinessOffice();
         internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
@@ -113,11 +108,21 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public Employee(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        //businessOffice = new BusinessOffice();
         internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
         active = true;
+    }
+
+    public List<EmployeePosition> getPositions() {
+        if (positions == null) {
+            positions = new ArrayList<>();
+        }
+        return positions;
+    }
+
+    public void setPositions(List<EmployeePosition> positions) {
+        this.positions = positions;
     }
 
     @Override
