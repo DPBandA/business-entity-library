@@ -111,6 +111,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private String purchaseOrderNumber;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date purchaseOrderDate;
+    private String quotationNumber;
     @Transient
     private Boolean isDirty;
     @Transient
@@ -137,6 +138,14 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         updatesPerformed = new ArrayList<>();
 
         updatesPerformed.add(UpdateAction.CREATE);
+    }
+
+    public String getQuotationNumber() {
+        return quotationNumber;
+    }
+
+    public void setQuotationNumber(String quotationNumber) {
+        this.quotationNumber = quotationNumber;
     }
 
     public List<UpdateAction> getUpdatesPerformed() {
