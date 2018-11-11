@@ -38,15 +38,14 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
- * @author Desmond
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "employeeposition")
 @NamedQueries({
-    @NamedQuery(name = "findAllEmployeePositions", 
-            query = "SELECT e FROM EmployeePosition e ORDER BY e.title"),
-    @NamedQuery(name = "findAllActiveEmployeePositions", 
-            query = "SELECT e FROM EmployeePosition e WHERE e.active = 1 ORDER BY e.title")
+    @NamedQuery(name = "findAllEmployeePositions", query = "SELECT e FROM EmployeePosition e ORDER BY e.title")
+    ,
+    @NamedQuery(name = "findAllActiveEmployeePositions", query = "SELECT e FROM EmployeePosition e WHERE e.active = :active ORDER BY e.title")
 })
 @XmlRootElement
 public class EmployeePosition implements Serializable, BusinessEntity {
@@ -118,7 +117,7 @@ public class EmployeePosition implements Serializable, BusinessEntity {
     public void setUpperApprovalLevel(Double upperApprovalLevel) {
         this.upperApprovalLevel = upperApprovalLevel;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -193,10 +192,8 @@ public class EmployeePosition implements Serializable, BusinessEntity {
             return false;
         }
         EmployeePosition other = (EmployeePosition) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -243,8 +240,8 @@ public class EmployeePosition implements Serializable, BusinessEntity {
         ArrayList<String> titles = new ArrayList<>();
 
         try {
-            List<EmployeePosition> employeePositions = 
-                    em.createNamedQuery("findAllEmployeePositions", 
+            List<EmployeePosition> employeePositions
+                    = em.createNamedQuery("findAllEmployeePositions",
                             EmployeePosition.class).getResultList();
             for (EmployeePosition employeePosition : employeePositions) {
                 titles.add(employeePosition.getTitle());
@@ -285,7 +282,7 @@ public class EmployeePosition implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static List<EmployeePosition> findEmployeePositionsByTitle(EntityManager em, String title) {
 
         try {
@@ -300,7 +297,7 @@ public class EmployeePosition implements Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<EmployeePosition> findActiveEmployeePositionsByTitle(EntityManager em, String title) {
 
         try {
@@ -314,6 +311,28 @@ public class EmployeePosition implements Serializable, BusinessEntity {
             System.out.println(e);
             return new ArrayList<>();
         }
+    }
+
+    public static EmployeePosition findActiveEmployeePositionByTitle(EntityManager em, 
+            String title) {
+        
+        String newTitle = title.replaceAll("'", "''").trim().toUpperCase();
+        
+        try {
+            List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
+                    + "WHERE e.active = 1 AND UPPER(e.title) "
+                    + "= '" + newTitle + "'",
+                    EmployeePosition.class).getResultList();
+            if (employeePositions.size() > 0) {
+                EmployeePosition employeePosition = employeePositions.get(0);
+                
+                return employeePosition;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        
+        return null;
     }
 
     @Override
