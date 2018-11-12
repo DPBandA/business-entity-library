@@ -51,7 +51,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllJobSubCategories", query = "SELECT e FROM JobSubCategory e ORDER BY e.subCategory")
     ,
-    @NamedQuery(name = "findAllActiveJobSubCategories", query = "SELECT e FROM JobSubCategory e WHERE e.active = :active ORDER BY e.subCategory")
+    @NamedQuery(name = "findAllActiveJobSubCategories", query = "SELECT e FROM JobSubCategory e WHERE e.active = 1 ORDER BY e.subCategory")
     ,
     @NamedQuery(name = "findByCategoryId", query = "SELECT e FROM JobSubCategory e WHERE e.categoryId = :categoryId")
 })

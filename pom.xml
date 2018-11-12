@@ -28,25 +28,29 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-        <activiti-version>5.22.0</activiti-version>
+        <!-- <activiti-version>5.22.0</activiti-version> -->
     </properties>
     
-    <dependencies>        
+    <dependencies>  
+        <!--      
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.45</version>            
-        </dependency>        
+        </dependency>   
+        -->     
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
             <version>2.5.2</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.1</version>
-        </dependency>         
+        </dependency>   
+        -->      
     </dependencies>
     
 </project>

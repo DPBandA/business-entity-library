@@ -50,7 +50,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllDepartments", query = "SELECT e FROM Department e ORDER BY e.name")
     ,
-    @NamedQuery(name = "findAllActiveDepartments", query = "SELECT e FROM Department e WHERE e.active = :active ORDER BY e.name")
+    @NamedQuery(name = "findAllActiveDepartments", query = "SELECT e FROM Department e WHERE e.active = 1 ORDER BY e.name")
     ,
     @NamedQuery(name = "findBySubGroupCode", query = "SELECT e FROM Department e WHERE e.subGroupCode = :subGroupCode")
 })
