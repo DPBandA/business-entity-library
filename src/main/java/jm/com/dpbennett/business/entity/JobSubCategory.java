@@ -326,7 +326,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
             List<JobSubCategory> jobSubCategories
                     = em.createQuery(
                             "SELECT j FROM JobSubCategory j JOIN j.departments department"
-                            + " WHERE department.name = '" + department.getName().trim() + "'",
+                            + " WHERE department.name = '" + department.getName().trim() + "' ORDER BY j.subCategory",
                             JobSubCategory.class).getResultList();
 
             if (!jobSubCategories.isEmpty()) {

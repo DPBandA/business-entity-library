@@ -45,7 +45,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllEmployeePositions", query = "SELECT e FROM EmployeePosition e ORDER BY e.title")
     ,
-    @NamedQuery(name = "findAllActiveEmployeePositions", query = "SELECT e FROM EmployeePosition e WHERE e.active = :active ORDER BY e.title")
+    @NamedQuery(name = "findAllActiveEmployeePositions", query = "SELECT e FROM EmployeePosition e WHERE e.active = 1 ORDER BY e.title")
 })
 @XmlRootElement
 public class EmployeePosition implements Serializable, BusinessEntity {
@@ -67,21 +67,25 @@ public class EmployeePosition implements Serializable, BusinessEntity {
     private Boolean isDirty;
 
     public EmployeePosition() {
-        this.title = "";
-        this.classification = "";
-        this.category = "";
-        this.salary = 0.0;
-        this.active = true;
-        this.description = "";
+        title = "";
+        classification = "";
+        category = "";
+        salary = 0.0;
+        lowerApprovalLevel = 0.0;
+        upperApprovalLevel = 0.0;
+        active = true;
+        description = "";
     }
 
     public EmployeePosition(String title) {
         this.title = title;
-        this.classification = "";
-        this.category = "";
-        this.salary = 0.0;
-        this.active = true;
-        this.description = "";
+        classification = "";
+        category = "";
+        salary = 0.0;
+        lowerApprovalLevel = 0.0;
+        upperApprovalLevel = 0.0;
+        active = true;
+        description = "";
     }
 
     @Override
@@ -313,11 +317,11 @@ public class EmployeePosition implements Serializable, BusinessEntity {
         }
     }
 
-    public static EmployeePosition findActiveEmployeePositionByTitle(EntityManager em, 
+    public static EmployeePosition findActiveEmployeePositionByTitle(EntityManager em,
             String title) {
-        
+
         String newTitle = title.replaceAll("'", "''").trim().toUpperCase();
-        
+
         try {
             List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
                     + "WHERE e.active = 1 AND UPPER(e.title) "
@@ -325,13 +329,13 @@ public class EmployeePosition implements Serializable, BusinessEntity {
                     EmployeePosition.class).getResultList();
             if (employeePositions.size() > 0) {
                 EmployeePosition employeePosition = employeePositions.get(0);
-                
+
                 return employeePosition;
             }
         } catch (Exception e) {
             return null;
         }
-        
+
         return null;
     }
 

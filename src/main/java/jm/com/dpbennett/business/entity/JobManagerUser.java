@@ -450,7 +450,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
                     + " WHERE UPPER(e.firstName) like '%"
                     + newName + "%'" + " OR UPPER(e.lastName) like '%"
                     + newName + "%'" + " OR UPPER(j.username) like '%"
-                    + newName + "%'", JobManagerUser.class).getResultList();
+                    + newName + "%' ORDER BY j.username", JobManagerUser.class).getResultList();
 
             return users;
 
@@ -470,7 +470,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
                     + " WHERE (j.active = 1 OR j.active IS NULL) AND (UPPER(e.firstName) like '%"
                     + newName + "%'" + " OR UPPER(e.lastName) like '%"
                     + newName + "%'" + " OR UPPER(j.username) like '%"
-                    + newName + "%')", JobManagerUser.class).getResultList();
+                    + newName + "%') ORDER BY j.username", JobManagerUser.class).getResultList();
 
             return users;
 
@@ -485,7 +485,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         try {
 
             List<JobManagerUser> users = em.createQuery(
-                    "SELECT j FROM JobManagerUser j WHERE j.active = 1 OR j.active IS NULL", JobManagerUser.class).getResultList();
+                    "SELECT j FROM JobManagerUser j WHERE j.active = 1 OR j.active IS NULL ORDER BY j.username", JobManagerUser.class).getResultList();
 
             return users;
 
@@ -499,7 +499,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         try {
 
             List<JobManagerUser> users = em.createQuery(
-                    "SELECT j FROM JobManagerUser j WHERE j.active = 1", JobManagerUser.class).getResultList();
+                    "SELECT j FROM JobManagerUser j WHERE j.active = 1 ORDER BY j.username", JobManagerUser.class).getResultList();
 
             return users;
 

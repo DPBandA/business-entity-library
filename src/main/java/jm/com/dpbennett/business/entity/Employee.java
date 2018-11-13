@@ -458,9 +458,8 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
             List<Employee> employees
                     = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '"
                             + newQuery + "%'" + " OR UPPER(e.lastName) like '"
-                            + newQuery + "%'" + " OR UPPER(e.department.name) like '"
-                            + newQuery + "%'"
-                            + ") AND e.active = 1"
+                            + newQuery + "%')"
+                            + " AND e.active = 1 OR e.active IS NULL"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
         } catch (Exception e) {
@@ -576,7 +575,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public static List<Employee> findAllActiveEmployees(EntityManager em) {
 
         try {
-            return em.createQuery("SELECT e FROM Employee e WHERE e.active = 1 ORDER BY e.lastName", Employee.class).getResultList();
+            return em.createQuery("SELECT e FROM Employee e WHERE (e.active = 1 OR e.active IS NULL) ORDER BY e.lastName", Employee.class).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return null;

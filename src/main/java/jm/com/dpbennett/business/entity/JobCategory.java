@@ -49,7 +49,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
     ,
     @NamedQuery(name = "findAllActiveJobCategories", query = "SELECT e FROM JobCategory e WHERE e.active = 1 ORDER BY e.category")
     ,
-    @NamedQuery(name = "findByCategory", query = "SELECT e FROM JobCategory e WHERE e.category = :category")
+    @NamedQuery(name = "findByCategory", query = "SELECT e FROM JobCategory e WHERE e.category = :category ORDER BY e.category")
 })
 @XmlRootElement
 public class JobCategory implements Serializable, BusinessEntity {
@@ -261,7 +261,7 @@ public class JobCategory implements Serializable, BusinessEntity {
 
     public static List<String> findAllJobCategoryNames(EntityManager em) {
 
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
 
         try {
             List<JobCategory> jobCategories = em.createNamedQuery("findAllJobCategories", JobCategory.class).getResultList();
