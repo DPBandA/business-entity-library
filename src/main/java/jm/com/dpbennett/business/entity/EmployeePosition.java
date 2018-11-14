@@ -56,11 +56,12 @@ public class EmployeePosition implements Serializable, BusinessEntity {
     private Long id;
     private String title;
     private String classification;
-    private String category;
-    private Double salary;
+    private String category;    
     private Boolean active;
     @Column(length = 1024)
     private String description;
+    private Double salary;
+    private Double manHourRate;
     private Double lowerApprovalLevel;
     private Double upperApprovalLevel;
     @Transient
@@ -71,6 +72,7 @@ public class EmployeePosition implements Serializable, BusinessEntity {
         classification = "";
         category = "";
         salary = 0.0;
+        manHourRate = 0.0;
         lowerApprovalLevel = 0.0;
         upperApprovalLevel = 0.0;
         active = true;
@@ -82,6 +84,7 @@ public class EmployeePosition implements Serializable, BusinessEntity {
         classification = "";
         category = "";
         salary = 0.0;
+        manHourRate = 0.0;
         lowerApprovalLevel = 0.0;
         upperApprovalLevel = 0.0;
         active = true;
@@ -169,6 +172,17 @@ public class EmployeePosition implements Serializable, BusinessEntity {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Double getManHourRate() {
+        if (manHourRate == null) {
+            manHourRate = 0.0;
+        }
+        return manHourRate;
+    }
+
+    public void setManHourRate(Double manHourRate) {
+        this.manHourRate = manHourRate;
     }
 
     public Double getSalary() {

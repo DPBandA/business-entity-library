@@ -66,6 +66,7 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canEditOwnJob;
     private Boolean canEditDepartmentJob;
     private Boolean canAddClient;
+    private Boolean canAddSupplier;
     private Boolean canDeleteClient;
     private Boolean canAddEmployee;
     private Boolean canDeleteEmployee;
@@ -103,6 +104,7 @@ public class Privilege implements Serializable, BusinessEntity {
         init(name);
     }
 
+    @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
@@ -110,9 +112,22 @@ public class Privilege implements Serializable, BusinessEntity {
         return isDirty;
     }
 
+    @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
+
+    public Boolean getCanAddSupplier() {
+        if (canAddSupplier == null) {
+            canAddSupplier = false;
+        }
+        return canAddSupplier;
+    }
+
+    public void setCanAddSupplier(Boolean canAddSupplier) {
+        this.canAddSupplier = canAddSupplier;
+    }
+    
 
     public Boolean getCanAccessCRMUnit() {
         if (canAccessCRMUnit == null) {
