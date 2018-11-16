@@ -118,6 +118,8 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private Boolean visited;
     @Transient
     private List<BusinessEntity.Action> actions;
+    @Transient
+    private String editStatus;
 
     /**
      * Default constructor.
@@ -130,6 +132,14 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         actions.add(BusinessEntity.Action.CREATE);
     }
 
+    public String getEditStatus() {
+        return editStatus;
+    }
+
+    public void setEditStatus(String editStatus) {
+        this.editStatus = editStatus;
+    }
+    
     public String getQuotationNumber() {
         return quotationNumber;
     }

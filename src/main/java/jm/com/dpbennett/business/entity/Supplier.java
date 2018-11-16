@@ -117,6 +117,22 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         international = false;
     }
 
+    public String getIdentification() {
+        return identification;
+    }
+
+    public void setIdentification(String identification) {
+        this.identification = identification;
+    }
+
+    public String getIdentificationType() {
+        return identificationType;
+    }
+
+    public void setIdentificationType(String identificationType) {
+        this.identificationType = identificationType;
+    }
+
     public String getAccountingId() {
         if (accountingId == null) {
             accountingId = "";
