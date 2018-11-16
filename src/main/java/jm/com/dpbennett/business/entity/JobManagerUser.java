@@ -74,8 +74,8 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Department department; // tk remove eventually when not used.
-    @OneToOne(cascade = CascadeType.REFRESH)
+    //private Department department; // tk remove eventually when not used.
+    //@OneToOne(cascade = CascadeType.REFRESH)
     private Privilege privilege;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Modules modules;
@@ -305,17 +305,17 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         this.employee = employee;
     }
 
-    @XmlTransient
-    public Department getDepartment() {
-        if (department == null) {
-            department = getEmployee().getDepartment();
-        }
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
+//    @XmlTransient
+//    public Department getDepartment() {
+//        if (department == null) {
+//            department = getEmployee().getDepartment();
+//        }
+//        return department;
+//    }
+//
+//    public void setDepartment(Department department) {
+//        this.department = department;
+//    }
 
     public String getUsername() {
         if (username == null) {

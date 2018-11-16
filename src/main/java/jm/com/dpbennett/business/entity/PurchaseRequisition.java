@@ -128,9 +128,10 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         approvers = new ArrayList<>();
         costComponents = new ArrayList<>();
         actions = new ArrayList<>();
-
         actions.add(BusinessEntity.Action.CREATE);
     }
+    
+    
 
     public String getEditStatus() {
         return editStatus;
@@ -312,7 +313,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
     public Boolean getAutoGenerateNumber() {
         if (autoGenerateNumber == null) {
-            autoGenerateNumber = false;
+            autoGenerateNumber = true;
         }
         return autoGenerateNumber;
     }
@@ -489,7 +490,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.Document[id=" + id + "]";
+        return "Purchase Requisition (" + getNumber() + ")";
     }
 
     @Override
@@ -520,54 +521,13 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return toString();
     }
 
     @Override
-    public void setName(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public void setName(String name) {   }
 
-    public static List<PurchaseRequisition> findGroupedLegalDocumentsByDateSearchField(
-            EntityManager em,
-            String dateSearchField,
-            String searchType,
-            Date startDate,
-            Date endDate) {
-
-        List<PurchaseRequisition> foundDocuments;
-        String searchQuery = null;
-
-        switch (searchType) {
-            case "General":
-                searchQuery
-                        = "SELECT new jm.com.dpbennett.entity.LegalDocument(doc.type, COUNT(doc.type)) FROM LegalDocument doc"
-                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                        + " GROUP BY doc.type";
-                break;
-            case "My documents":
-                break;
-            case "My department's documents":
-                break;
-            default:
-                break;
-        }
-
-        try {
-            foundDocuments = em.createQuery(searchQuery, PurchaseRequisition.class).getResultList();
-            if (foundDocuments == null) {
-                foundDocuments = new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundDocuments;
-    }
-
-    public static List<PurchaseRequisition> findLegalDocumentsByDateSearchField(
+    public static List<PurchaseRequisition> findByDateSearchField(
             EntityManager em,
             String dateSearchField,
             String searchType,
@@ -586,46 +546,31 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                     searchTextAndClause
                             = " AND ("
                             + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(responsibleDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(responsibleOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(responsibleOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(submittedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(submittedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(originatingDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(procurementOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(procurementOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(originator.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(originator.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(doc.description) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.status) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.priorityLevel) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.terms) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.priorityCode) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(doc.url) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " )";
                 }
                 searchQuery
-                        = "SELECT doc FROM LegalDocument doc"
-                        + " JOIN doc.responsibleDepartment responsibleDepartment"
-                        + " JOIN doc.responsibleOfficer responsibleOfficer"
-                        + " JOIN doc.submittedBy submittedBy"
+                        = "SELECT doc FROM PurchaseRequisition doc"
+                        + " JOIN doc.originatingDepartment originatingDepartment"
+                        + " JOIN doc.procurementOfficer procurementOfficer"
+                        + " JOIN doc.originator originator"
                         + " JOIN doc.classification classification"
                         + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                         + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                         + searchTextAndClause
-                        + " ORDER BY doc.dateReceived DESC";
-                break;
-            case "By type":
-                searchTextAndClause
-                        = " AND ("
-                        + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
-                        + " )";
-                searchQuery
-                        = "SELECT doc FROM LegalDocument doc"
-                        + " JOIN doc.type t"
-                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                        + searchTextAndClause
-                        + " ORDER BY doc.dateReceived DESC";
-                break;
+                        + " ORDER BY doc." + dateSearchField + " DESC";
+                break;           
             case "My department's documents":
                 break;
             default:
@@ -645,50 +590,43 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         return foundDocuments;
     }
 
-    public static PurchaseRequisition findLegalDocumentById(EntityManager em, Long Id) {
+    public static PurchaseRequisition findById(EntityManager em, Long Id) {
 
         return em.find(PurchaseRequisition.class, Id);
     }
 
-    public static List<PurchaseRequisition> findAllLegalDocuments(EntityManager em) {
+    public static List<PurchaseRequisition> findAll(EntityManager em) {
 
         try {
-            return em.createNamedQuery("findAllLegalDocuments", PurchaseRequisition.class).getResultList();
+            return em.createNamedQuery("findAllPurchaseRequisitions", PurchaseRequisition.class).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
 
-    public static String getLegalDocumentNumber(PurchaseRequisition legalDocument, String prefix) {
+    // tk to be modified to generate PR #
+    public static String getNumber(PurchaseRequisition pr, String prefix) {
         String number = prefix;
 
-        // append department code
-        if (legalDocument.getPurchasingDepartment().getSubGroupCode() != null) {
-            number = number + legalDocument.getPurchasingDepartment().getSubGroupCode();
+        // Append department code
+        if (pr.getPurchasingDepartment().getSubGroupCode() != null) {
+            number = number + pr.getPurchasingDepartment().getSubGroupCode();
         } else {
             number = number + "?";
-        }
-        // append doc type
-        if (legalDocument.getType() != null) {
-            number = number + "_" + legalDocument.getType().getCode();
-        }
-        // append doc form
-//        if (legalDocument.getDocumentForm() != null) {
-//            number = number + "/" + legalDocument.getDocumentForm();
-//        }
-        // append doc seq
-        if (legalDocument.getSequenceNumber() != null) {
+        }            
+        // Append doc seq
+        if (pr.getSequenceNumber() != null) {
             NumberFormat formatter = DecimalFormat.getIntegerInstance();
             formatter.setMinimumIntegerDigits(2);
-            number = number + "_" + formatter.format(legalDocument.getSequenceNumber());
+            number = number + "_" + formatter.format(pr.getSequenceNumber());
         } else {
             number = number + "_?";
         }
-        // append month in the form (MMM) and year in the form (YY).
-        if (legalDocument.getRequisitionDate() != null) {
-            number = number + "/" + BusinessEntityUtils.getMonthShortFormat(legalDocument.getRequisitionDate())
-                    + BusinessEntityUtils.getYearShortFormat(legalDocument.getRequisitionDate(), 2);
+        // Append month in the form (MMM) and year in the form (YY).
+        if (pr.getRequisitionDate() != null) {
+            number = number + "/" + BusinessEntityUtils.getMonthShortFormat(pr.getRequisitionDate())
+                    + BusinessEntityUtils.getYearShortFormat(pr.getRequisitionDate(), 2);
         }
 
         return number;
@@ -706,7 +644,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Document not saved");
+        return new ReturnMessage(false, "Purchase requisition not saved");
     }
 
     @Override
