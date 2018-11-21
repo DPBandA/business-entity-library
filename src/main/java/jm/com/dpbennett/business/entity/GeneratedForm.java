@@ -34,7 +34,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  * tk get rid of this class if it's no longer being used
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "generatedform")

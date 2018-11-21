@@ -33,7 +33,7 @@ import javax.persistence.Table;
 
 /**
  *
- * @author Desmond
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "departmentreport")

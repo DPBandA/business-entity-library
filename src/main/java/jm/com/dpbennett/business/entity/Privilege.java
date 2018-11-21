@@ -36,7 +36,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "privilege")
@@ -57,7 +57,10 @@ public class Privilege implements Serializable, BusinessEntity {
     private String category;
     private String roles;
     private String description;
-    // Privileges
+    // System admininistration privileges    
+    private Boolean canBeSuperUser;    
+    private Boolean canBeJMTSAdministrator;
+    // Job privileges
     private Boolean canEnterJob;
     private Boolean canEnterOwnJob;
     private Boolean canEnterDepartmentJob;
@@ -65,24 +68,25 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canEditJob;
     private Boolean canEditOwnJob;
     private Boolean canEditDepartmentJob;
+    private Boolean canApproveJobCosting;
+    private Boolean canEnterParentJob;
+    // Client privileges 
     private Boolean canAddClient;
-    private Boolean canAddSupplier;
     private Boolean canDeleteClient;
+    // HR privileges
     private Boolean canAddEmployee;
     private Boolean canDeleteEmployee;
     private Boolean canAddDepartment;
     private Boolean canDeleteDepartment;
-    private Boolean canBeSuperUser;
-    private Boolean canApproveJobCosting;
-    private Boolean canEnterParentJob;
-    private Boolean canEditInvoicingAndPayment;
+    // Compliance privileges
     private Boolean canAuthDetentionRequest; //CANAUTHDETENTIONREQUEST, Authorize detention request
     private Boolean canAuthDetentionNotice; //CANAUTHDETENTIONNOTICE, Authorize detention notice/release
-    private Boolean canApprvReleaseRequest; //CANAPPRVRELEASEREQUEST, Approve release request
-    private Boolean canApplyTaxesToJobCosting;
-    // Unit/Module access     
-    private Boolean canBeJMTSAdministrator;
+    private Boolean canApprvReleaseRequest; //CANAPPRVRELEASEREQUEST, Approve release request    
+    // Financial privileges
     private Boolean canBeFinancialAdministrator;
+    private Boolean canEditInvoicingAndPayment;
+    private Boolean canApplyTaxesToJobCosting;
+    // Module/unit access         
     private Boolean canAccessLegalMetrologyUnit;
     private Boolean canAccessJobManagementUnit;
     private Boolean canAccessComplianceUnit;
@@ -92,7 +96,8 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canAccessServiceRequestUnit;
     private Boolean canAccessLegalOfficeUnit;
     private Boolean canAccessCRMUnit;
-    // End privilges
+    private Boolean canAddSupplier;
+
     @Transient
     private Boolean isDirty;
 
@@ -127,7 +132,6 @@ public class Privilege implements Serializable, BusinessEntity {
     public void setCanAddSupplier(Boolean canAddSupplier) {
         this.canAddSupplier = canAddSupplier;
     }
-    
 
     public Boolean getCanAccessCRMUnit() {
         if (canAccessCRMUnit == null) {

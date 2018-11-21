@@ -34,7 +34,7 @@ import javax.persistence.Table;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "jobcostingbatch")

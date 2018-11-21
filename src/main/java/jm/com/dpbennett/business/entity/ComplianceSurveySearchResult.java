@@ -21,7 +21,6 @@ package jm.com.dpbennett.business.entity;
 
 import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
-import jm.com.dpbennett.business.entity.Employee;
 
 
 /**

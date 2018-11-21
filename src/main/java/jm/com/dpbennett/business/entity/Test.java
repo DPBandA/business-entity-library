@@ -24,7 +24,7 @@ import java.util.Date;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 public interface Test {
 

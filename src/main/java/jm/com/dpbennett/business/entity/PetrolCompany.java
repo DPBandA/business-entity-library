@@ -42,7 +42,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
- * @author DBennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "petrolcompany")

@@ -23,22 +23,19 @@ package jm.com.dpbennett.business.entity;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "service")
@@ -49,18 +46,19 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Department> departmentsOfferingService;
+    // tk REMOVE FROM TABLE!
+//    @OneToMany(cascade = CascadeType.REFRESH)
+//    private List<Department> departmentsOfferingService;
     @Transient
     private Boolean isDirty;
 
     public Service() {
-        departmentsOfferingService = new ArrayList<>();
+        //departmentsOfferingService = new ArrayList<>();
     }
-    
+//    
     public Service(String name) {
         this.name = name;
-        departmentsOfferingService = new ArrayList<>();
+        //departmentsOfferingService = new ArrayList<>();
     }
 
     @Override
@@ -86,19 +84,19 @@ public class Service implements Serializable, BusinessEntity, Comparable {
         this.isDirty = isDirty;
     }
 
-    public List<Department> getDepartmentsOfferingService() {
-        if (departmentsOfferingService != null) {
-            Collections.sort(departmentsOfferingService);
-        } else {
-            departmentsOfferingService = new ArrayList<Department>();
-        }
-        
-        return departmentsOfferingService;
-    }
-
-    public void setDepartmentsOfferingService(List<Department> departmentsOfferingService) {
-        this.departmentsOfferingService = departmentsOfferingService;
-    }
+//    public List<Department> getDepartmentsOfferingService() {
+//        if (departmentsOfferingService != null) {
+//            Collections.sort(departmentsOfferingService);
+//        } else {
+//            departmentsOfferingService = new ArrayList<Department>();
+//        }
+//        
+//        return departmentsOfferingService;
+//    }
+//
+//    public void setDepartmentsOfferingService(List<Department> departmentsOfferingService) {
+//        this.departmentsOfferingService = departmentsOfferingService;
+//    }
 
     @Override
     public int hashCode() {

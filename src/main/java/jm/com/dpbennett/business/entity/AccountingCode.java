@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
@@ -25,6 +26,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
  * @author dbennett
  */
 @Entity
+@Table(name = "accountingcode")
 @NamedQueries({
     @NamedQuery(name = "findAllAccountingCodes",
             query = "SELECT a FROM AccountingCode a ORDER BY a.name")

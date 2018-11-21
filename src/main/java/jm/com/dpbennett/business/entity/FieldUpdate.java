@@ -28,13 +28,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 
 /**
  *
- * @author desbenn
+ * @author Desmond Bennett
  */
 @Entity
+@Table(name = "fieldupdate")
 public class FieldUpdate implements Serializable {
 
     private static final long serialVersionUID = 1L;

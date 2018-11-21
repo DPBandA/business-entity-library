@@ -41,7 +41,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
- * @author Desmond
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "servicerequest")
@@ -83,8 +83,9 @@ public class ServiceRequest implements Serializable, BusinessEntity {
     private BusinessOffice businessOffice;
     @Column(length = 1024)
     private String jobDescription;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Service service;
+    // tk Add list of services instead. Delete field from database table.
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Service service;
     @OneToOne(cascade = CascadeType.ALL)
     private Contact contact;
     // tracking
@@ -491,17 +492,17 @@ public class ServiceRequest implements Serializable, BusinessEntity {
         this.name = name;
     }
 
-    public Service getService() {
-        if (service == null) {
-            return new Service("");
-        }
-
-        return service;
-    }
-
-    public void setService(Service service) {
-        this.service = service;
-    }
+//    public Service getService() {
+//        if (service == null) {
+//            return new Service("");
+//        }
+//
+//        return service;
+//    }
+//
+//    public void setService(Service service) {
+//        this.service = service;
+//    }
 
     public static List<ServiceRequest> findServiceRequestsByDateSearchField(
             EntityManager em,

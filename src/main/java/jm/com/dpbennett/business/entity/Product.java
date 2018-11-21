@@ -22,7 +22,7 @@ package jm.com.dpbennett.business.entity;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 public interface Product {
     public String getName();

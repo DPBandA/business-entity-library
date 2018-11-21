@@ -31,6 +31,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -41,6 +42,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
  * @author dbennett
  */
 @Entity
+@Table(name = "alert")
 @XmlRootElement
 public class Alert implements Serializable, BusinessEntity {
 

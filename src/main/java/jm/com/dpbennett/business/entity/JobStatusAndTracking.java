@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desmond
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "jobstatusandtracking")

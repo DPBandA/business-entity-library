@@ -37,7 +37,7 @@ import javax.persistence.Temporal;
 
 /**
  *
- * @author DBennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "petrolpumpcalibration")

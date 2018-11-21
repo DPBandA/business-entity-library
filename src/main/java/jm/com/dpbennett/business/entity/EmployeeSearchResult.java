@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @XmlRootElement
 public class EmployeeSearchResult {

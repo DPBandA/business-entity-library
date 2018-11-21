@@ -30,7 +30,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 public class StrategicPriority implements Serializable, BusinessEntity, Comparable {
