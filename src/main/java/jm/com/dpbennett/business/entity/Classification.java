@@ -184,10 +184,8 @@ public class Classification implements BusinessEntity, Serializable {
             return false;
         }
         Classification other = (Classification) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override

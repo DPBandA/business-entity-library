@@ -17,13 +17,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -31,6 +31,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -46,19 +47,30 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    // tk REMOVE FROM TABLE!
-//    @OneToMany(cascade = CascadeType.REFRESH)
-//    private List<Department> departmentsOfferingService;
+    private Boolean active;
+    private Boolean internal;
+    private String category;
+    @Column(length = 1024)
+    private String description;
     @Transient
     private Boolean isDirty;
 
     public Service() {
-        //departmentsOfferingService = new ArrayList<>();
+        name = "";
+        active = true;
+        internal = false;
+        category = "";
+        description = "";
+        isDirty = false;
     }
-//    
+
     public Service(String name) {
         this.name = name;
-        //departmentsOfferingService = new ArrayList<>();
+        active = true;
+        internal = false;
+        category = "";
+        description = "";
+        isDirty = false;
     }
 
     @Override
@@ -70,7 +82,39 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Boolean getInternal() {
+        return internal;
+    }
+
+    public void setInternal(Boolean internal) {
+        this.internal = internal;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -83,20 +127,6 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
-
-//    public List<Department> getDepartmentsOfferingService() {
-//        if (departmentsOfferingService != null) {
-//            Collections.sort(departmentsOfferingService);
-//        } else {
-//            departmentsOfferingService = new ArrayList<Department>();
-//        }
-//        
-//        return departmentsOfferingService;
-//    }
-//
-//    public void setDepartmentsOfferingService(List<Department> departmentsOfferingService) {
-//        this.departmentsOfferingService = departmentsOfferingService;
-//    }
 
     @Override
     public int hashCode() {
@@ -140,7 +170,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.name, ((Service) o).name);
     }
-    
+
     public static Service findServiceByName(EntityManager em, String serviceName) {
 
         try {
@@ -158,29 +188,39 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
-    
-     public static List<Service> findServicesByName(EntityManager em, String name) {
+
+    public static List<Service> findServicesByName(EntityManager em, String name) {
 
         try {
             String newName = name.replaceAll("'", "''");
 
-            List<Service> services =
-                    em.createQuery("SELECT s FROM Service s where UPPER(s.name) like '"
-                    + newName.toUpperCase().trim() + "%' ORDER BY s.name", Service.class).getResultList();
+            List<Service> services
+                    = em.createQuery("SELECT s FROM Service s where UPPER(s.name) like '"
+                            + newName.toUpperCase().trim() + "%' ORDER BY s.name", Service.class).getResultList();
             return services;
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<Service>();
+            return new ArrayList<>();
         }
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Service not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 }
