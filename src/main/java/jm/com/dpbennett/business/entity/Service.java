@@ -91,6 +91,14 @@ public class Service implements Serializable, BusinessEntity, Comparable {
         this.active = active;
     }
 
+    public String getUsable() {
+        if (getActive()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+
     public Boolean getInternal() {
         return internal;
     }
