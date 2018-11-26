@@ -106,6 +106,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         internet = new Internet();
         active = true;
         international = false;
+        accountingId = "";
     }
 
     public String getAccountingId() {

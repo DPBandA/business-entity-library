@@ -248,8 +248,23 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             String newName = name.replaceAll("'", "''");
 
             List<Service> services
-                    = em.createQuery("SELECT s FROM Service s where UPPER(s.name) like '"
+                    = em.createQuery("SELECT s FROM Service s where UPPER(s.name) like '%"
                             + newName.toUpperCase().trim() + "%' ORDER BY s.name", Service.class).getResultList();
+            return services;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<Service> findAllActiveByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Service> services
+                    = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
+                            + newName.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Service.class).getResultList();
             return services;
         } catch (Exception e) {
             System.out.println(e);

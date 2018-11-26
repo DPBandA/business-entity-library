@@ -136,7 +136,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     public Boolean getIsJobCostingsPreferredJobTableView() {
         return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Job Costings");
     }
-
+   
     public static Boolean isUserDepartmentSupervisor(Job job, JobManagerUser user, EntityManager em) {
 
         Job foundJob = Job.findJobById(em, job.getId());
