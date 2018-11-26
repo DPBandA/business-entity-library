@@ -29,6 +29,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -40,6 +42,11 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
  */
 @Entity
 @Table(name = "service")
+@NamedQueries({
+    @NamedQuery(name = "findAll", query = "SELECT s FROM Service s ORDER BY s.name")
+    ,
+    @NamedQuery(name = "findAllActive", query = "SELECT s FROM Service s WHERE s.active = 1 ORDER BY s.name")
+})
 public class Service implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUID = 1L;
@@ -178,8 +185,46 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.name, ((Service) o).name);
     }
+    
+    public static List<Service> findAll(EntityManager em) {
 
-    public static Service findServiceByName(EntityManager em, String serviceName) {
+        try {
+            List<Service> services = em.createNamedQuery("findAll", Service.class).getResultList();
+
+            return services;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static List<Service> findAllActive(EntityManager em) {
+
+        try {
+            List<Service> services = em.createNamedQuery("findAllActive", Service.class).getResultList();
+
+            return services;
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return null;
+        }
+    }
+    
+    public static Service findById(EntityManager em, Long id) {
+
+        try {
+            Service service = em.find(Service.class, id);
+
+            return service;
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return null;
+        }
+    }
+
+    public static Service findByName(EntityManager em, String serviceName) {
 
         try {
             String newServiceName = serviceName.trim().replaceAll("'", "''");
@@ -197,7 +242,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static List<Service> findServicesByName(EntityManager em, String name) {
+    public static List<Service> findAllByName(EntityManager em, String name) {
 
         try {
             String newName = name.replaceAll("'", "''");
