@@ -25,6 +25,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -131,7 +132,23 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         actions.add(BusinessEntity.Action.CREATE);
     }
     
+    // tk placeholder for now
+    public Double getTotalCost() {
+      return 0.0;    
+    }
     
+    /**
+     * Builds and return a list of cost components with the costing to which the
+     * cost component used as a header cost component belong
+     *
+     * @return
+     */
+    public List<CostComponent> getAllSortedCostComponents() {
+
+        Collections.sort(getCostComponents());
+
+        return costComponents;
+    }
 
     public String getEditStatus() {
         return editStatus;
