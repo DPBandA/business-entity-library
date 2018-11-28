@@ -24,6 +24,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -52,7 +53,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
     ,
     @NamedQuery(name = "findAllActiveDepartments", query = "SELECT e FROM Department e WHERE e.active = 1 ORDER BY e.name")
     ,
-    @NamedQuery(name = "findBySubGroupCode", query = "SELECT e FROM Department e WHERE e.subGroupCode = :subGroupCode")
+    @NamedQuery(name = "findBySubGroupCode", query = "SELECT e FROM Department e WHERE e.code = :code")
 })
 @XmlRootElement
 public class Department implements Serializable, BusinessEntity, Comparable {
@@ -62,7 +63,8 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     // tk to be rename to code in here and in the database
-    private String subGroupCode;
+    @Column(name = "subGroupCode")
+    private String code;
     private String jobCostingType;
     private String name;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -88,7 +90,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     public Department() {
         name = "";
-        subGroupCode = "";
+        code = "";
         jobCostingType = "";
         staff = new ArrayList<>();
         laboratories = new ArrayList<>();
@@ -98,7 +100,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     public Department(String name) {
         this.name = name;
-        subGroupCode = "";
+        code = "";
         jobCostingType = "";
         staff = new ArrayList<>();
         laboratories = new ArrayList<>();
@@ -255,15 +257,15 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.name = name;
     }
 
-    public String getSubGroupCode() {
-        if (subGroupCode == null) {
-            subGroupCode = "";
+    public String getCode() {
+        if (code == null) {
+            code = "";
         }
-        return subGroupCode;
+        return code;
     }
 
-    public void setSubGroupCode(String subGroupCode) {
-        this.subGroupCode = subGroupCode;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     @Override
@@ -298,8 +300,8 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     @Override
     public String toString() {
-        if (subGroupCode != null) {
-            return name + " (" + subGroupCode + ")";
+        if (code != null) {
+            return name + " (" + code + ")";
         } else {
             if (name != null) {
                 return name;

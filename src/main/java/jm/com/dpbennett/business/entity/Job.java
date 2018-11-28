@@ -44,7 +44,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
-//import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -471,8 +470,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         String sequenceNumber;
         String subContractedDepartmenyOrCompanyCode;
 
-        departmentOrCompanyCode = job.getDepartment().getSubGroupCode().equals("") ? "?" : job.getDepartment().getSubGroupCode();
-        subContractedDepartmenyOrCompanyCode = job.getSubContractedDepartment().getSubGroupCode().equals("") ? "?" : job.getSubContractedDepartment().getSubGroupCode();
+        departmentOrCompanyCode = job.getDepartment().getCode().equals("") ? "?" : job.getDepartment().getCode();
+        subContractedDepartmenyOrCompanyCode = job.getSubContractedDepartment().getCode().equals("") ? "?" : job.getSubContractedDepartment().getCode();
 
         // Use the date entered to get the year if it is valid
         // and only if this is not a subcontracted job

@@ -219,17 +219,17 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
     public static Subgroup findActiveSubgroupByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
                     + "WHERE s.active = 1 AND UPPER(s.name) "
                     + "= '" + value.toUpperCase() + "'", Subgroup.class).getResultList();
-            
+
             if (subgroups.size() > 0) {
                 return subgroups.get(0);
             }
-            
+
             return null;
         } catch (Exception e) {
             System.out.println(e);
@@ -315,6 +315,37 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Finds the first subgroup that contains the specified department.
+     * 
+     * @param em
+     * @param department
+     * @return 
+     */
+    public static Subgroup findByDepartment(EntityManager em, Department department) {
+
+        try {
+
+            List<Subgroup> subgroups
+                    = em.createQuery(
+                            "SELECT s FROM Subgroup s"
+                            + " JOIN s.departments departments"
+                            + " WHERE departments.id = " + department.getId(), 
+                            Subgroup.class).getResultList();
+
+            if (!subgroups.isEmpty()) {
+                return subgroups.get(0);
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+
+            return null;
         }
     }
 

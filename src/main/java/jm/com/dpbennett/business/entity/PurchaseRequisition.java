@@ -627,8 +627,8 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         String number = prefix;
 
         // Append department code
-        if (pr.getPurchasingDepartment().getSubGroupCode() != null) {
-            number = number + pr.getPurchasingDepartment().getSubGroupCode();
+        if (pr.getPurchasingDepartment().getCode() != null) {
+            number = number + pr.getPurchasingDepartment().getCode();
         } else {
             number = number + "?";
         }            

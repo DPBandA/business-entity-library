@@ -162,8 +162,8 @@ public class ServiceRequest implements Serializable, BusinessEntity {
             // include the department code based on parent or subcontract
             if (department != null) { // not a subcontract
                 // get the department code based on its id
-                if (department.getSubGroupCode() != null) {
-                    departmentOrCompanyCode = department.getSubGroupCode();
+                if (department.getCode() != null) {
+                    departmentOrCompanyCode = department.getCode();
                 } else {
                     departmentOrCompanyCode = "?";
                 }

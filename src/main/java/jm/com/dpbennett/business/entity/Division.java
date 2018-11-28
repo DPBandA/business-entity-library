@@ -330,6 +330,38 @@ public class Division implements BusinessEntity, Comparable, Serializable {
             return new ArrayList<>();
         }
     }
+    
+     /**
+     * Finds the first division that contains the specified subgroup.
+     * 
+     * @param em
+     * @param subgroup
+     * @return 
+     */
+    public static Division findBySubgroup(EntityManager em, Subgroup subgroup) {
+
+        try {
+
+            List<Division> divisions
+                    = em.createQuery(
+                            "SELECT d FROM Division d"
+                            + " JOIN d.subgroups subgroups"
+                            + " WHERE subgroups.id = " + subgroup.getId(), 
+                            Division.class).getResultList();
+
+            if (!divisions.isEmpty()) {
+                
+                return divisions.get(0);
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+
+            return null;
+        }
+    }
 
     @Override
     public ReturnMessage save(EntityManager em) {

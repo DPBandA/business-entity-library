@@ -662,8 +662,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         String number = prefix;
 
         // append department code
-        if (legalDocument.getResponsibleDepartment().getSubGroupCode() != null) {
-            number = number + legalDocument.getResponsibleDepartment().getSubGroupCode();
+        if (legalDocument.getResponsibleDepartment().getCode() != null) {
+            number = number + legalDocument.getResponsibleDepartment().getCode();
         } else {
             number = number + "?";
         }

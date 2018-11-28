@@ -584,8 +584,8 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
         String number = prefix;
 
         // append department code
-        if (documentTracking.getResponsibleDepartment().getSubGroupCode() != null) {
-            number = number + documentTracking.getResponsibleDepartment().getSubGroupCode();
+        if (documentTracking.getResponsibleDepartment().getCode() != null) {
+            number = number + documentTracking.getResponsibleDepartment().getCode();
         } else {
             number = number + "?";
         }

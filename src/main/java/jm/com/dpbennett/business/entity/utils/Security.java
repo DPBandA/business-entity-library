@@ -40,14 +40,14 @@ public class Security {
 
             cipher.init(Cipher.ENCRYPT_MODE, aesKey);
             byte[] encrypted = cipher.doFinal(plainText.getBytes());
-            
+
             return Base64.getEncoder().encodeToString(encrypted);
 
         } catch (InvalidKeyException | NoSuchAlgorithmException
                 | BadPaddingException | IllegalBlockSizeException
                 | NoSuchPaddingException e) {
             System.out.println(e);
-            
+
             return "";
         }
 
@@ -55,13 +55,13 @@ public class Security {
 
     public static String decrypt(String encryptedText) {
         String decryptedText = "";
-        
+
         try {
             Key aesKey = new SecretKeySpec(KEY.getBytes(), "AES");
             Cipher cipher = Cipher.getInstance("AES");
 
             cipher.init(Cipher.DECRYPT_MODE, aesKey);
-            
+
             byte[] enc = Base64.getDecoder().decode(encryptedText);
 
             decryptedText = new String(cipher.doFinal(enc));
@@ -69,24 +69,12 @@ public class Security {
         } catch (NoSuchAlgorithmException
                 | BadPaddingException | IllegalBlockSizeException
                 | NoSuchPaddingException | InvalidKeyException e) {
-            
-             System.out.println(e);
-        } 
-        finally {
+
+            System.out.println(e);
+        } finally {
             return decryptedText;
         }
 
-       
     }
 
-    public static void main(String[] args) {
-        String plainText = "Hello World";
-        System.out.println("Plain: " + plainText);
-
-        String encryptedText = Security.encrypt(plainText);
-        System.out.println("Encrypted: " + encryptedText);
-
-        System.out.println("Decrypted: " + Security.decrypt(encryptedText));
-
-    }
 }

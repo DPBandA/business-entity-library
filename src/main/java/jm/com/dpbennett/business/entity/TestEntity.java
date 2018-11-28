@@ -99,26 +99,4 @@ public class TestEntity {
 
         return true;
     }
-
-    public static void main(String[] args) {
-        HashMap prop = new HashMap();
-
-        prop.put("javax.persistence.jdbc.user",
-                "root");
-        prop.put("javax.persistence.jdbc.password",
-                "");
-        prop.put("javax.persistence.jdbc.url",
-                "jdbc:mysql://localhost:3306/jmts");
-        prop.put("javax.persistence.jdbc.driver",
-                "com.mysql.jdbc.Driver");
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU", prop);
-
-        EntityManager em = emf.createEntityManager();
-
-        System.out.println("maxDaysPassInvoiceDate: "
-                + SystemOption.getOptionValueObject(em, "maxDaysPassInvoiceDate"));
-
-        int days = (Integer) SystemOption.getOptionValueObject(em, "maxDaysPassInvoiceDate");
-    }
 }

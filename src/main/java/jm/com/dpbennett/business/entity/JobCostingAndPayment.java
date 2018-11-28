@@ -119,6 +119,11 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
+    
+    // tk codes to be generated for gct and each cost component
+    public List<AccountingCode> getAccountingCodes() {
+        return new ArrayList<>();
+    }
 
     public AccountingCode getAccountingCode() {
         if (accountingCode == null) {

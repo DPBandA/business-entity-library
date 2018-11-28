@@ -38,22 +38,44 @@ public class AccountingCode implements Serializable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String code;
     private String type;
     @Column(length = 1024)
     private String description;
+    private String abbreviation;
     @Transient
     private Boolean isDirty;
 
     public AccountingCode() {
         name = "";
+        code = "";
         type = "";
         description = "";
+        abbreviation = "";
     }
 
     public AccountingCode(String name) {
         this.name = name;
+        code = "";
         type = "";
         description = "";
+        abbreviation = "";
+    }
+
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public static List<AccountingCode> findAllAccountingCodes(EntityManager em) {
