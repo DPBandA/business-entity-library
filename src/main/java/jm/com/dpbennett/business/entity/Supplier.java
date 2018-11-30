@@ -89,6 +89,8 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
     @Transient
     private Boolean isDirty;
     private String accountingId;
+    @Transient
+    private Boolean isNameAndIdEditable;
 
     public Supplier() {                
         name = "";
@@ -97,6 +99,7 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         internet = new Internet();
         active = true;
         international = false;
+        isNameAndIdEditable = true;
     }
     
     public Supplier(String name) {        
@@ -106,6 +109,7 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         internet = new Internet();
         active = true;
         international = false;
+        isNameAndIdEditable = true;
     }
 
     public Supplier(String name, Boolean active) {        
@@ -115,6 +119,14 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         internet = new Internet();
         this.active = active;
         international = false;
+    }
+
+    public Boolean getIsNameAndIdEditable() {
+        return isNameAndIdEditable;
+    }
+
+    public void setIsNameAndIdEditable(Boolean isNameAndIdEditable) {
+        this.isNameAndIdEditable = isNameAndIdEditable;
     }
 
     public String getIdentification() {
