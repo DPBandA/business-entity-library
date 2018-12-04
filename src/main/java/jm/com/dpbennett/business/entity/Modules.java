@@ -52,6 +52,7 @@ public class Modules implements Serializable, BusinessEntity {
         this.id = id;
     }
 
+    @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
@@ -59,6 +60,7 @@ public class Modules implements Serializable, BusinessEntity {
         return isDirty;
     }
 
+    @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
@@ -198,10 +200,8 @@ public class Modules implements Serializable, BusinessEntity {
             return false;
         }
         Modules other = (Modules) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override

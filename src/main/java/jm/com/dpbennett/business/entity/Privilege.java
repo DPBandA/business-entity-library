@@ -86,6 +86,8 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canBeFinancialAdministrator;
     private Boolean canEditInvoicingAndPayment;
     private Boolean canApplyTaxesToJobCosting;
+    private Boolean canAddAccountingCode;
+    private Boolean canAddSupplier;
     // Module/unit access         
     private Boolean canAccessLegalMetrologyUnit;
     private Boolean canAccessJobManagementUnit;
@@ -96,8 +98,7 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canAccessServiceRequestUnit;
     private Boolean canAccessLegalOfficeUnit;
     private Boolean canAccessCRMUnit;
-    private Boolean canAddSupplier;
-
+    
     @Transient
     private Boolean isDirty;
 
@@ -120,6 +121,17 @@ public class Privilege implements Serializable, BusinessEntity {
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+    }
+
+    public Boolean getCanAddAccountingCode() {
+        if (canAddAccountingCode == null) {
+            canAddAccountingCode = false;
+        }
+        return canAddAccountingCode;
+    }
+
+    public void setCanAddAccountingCode(Boolean canAddAccountingCode) {
+        this.canAddAccountingCode = canAddAccountingCode;
     }
 
     public Boolean getCanAddSupplier() {
