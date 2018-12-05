@@ -42,10 +42,10 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "jobsequencenumber")
 @NamedQueries({   
-    @NamedQuery(name = "findAllJobSequenceNumbers", query = "SELECT e FROM JobSequenceNumber e ORDER BY e.yearReceived"),
-    @NamedQuery(name = "getLastJobSequenceNumber", query = "SELECT MAX(e.sequentialNumber) FROM JobSequenceNumber e WHERE e.yearReceived = :yearReceived")
+    @NamedQuery(name = "findAllPurchaseReqNumbers", query = "SELECT e FROM PurchaseReqNumber e ORDER BY e.yearReceived"),
+    @NamedQuery(name = "getLastPurchaseReqNumber", query = "SELECT MAX(e.sequentialNumber) FROM PurchaseReqNumber e WHERE e.yearReceived = :yearReceived")
 })
-public class JobSequenceNumber implements Serializable, BusinessEntity {
+public class PurchaseReqNumber implements Serializable, BusinessEntity {
     private static final long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -105,10 +105,10 @@ public class JobSequenceNumber implements Serializable, BusinessEntity {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof JobSequenceNumber)) {
+        if (!(object instanceof PurchaseReqNumber)) {
             return false;
         }
-        JobSequenceNumber other = (JobSequenceNumber) object;
+        PurchaseReqNumber other = (PurchaseReqNumber) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -122,34 +122,34 @@ public class JobSequenceNumber implements Serializable, BusinessEntity {
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "PurchaseReqNumber";
     }
 
     @Override
     public void setName(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public static List<JobSequenceNumber> findAllJobSequencenceNumbers(EntityManager em) {
+    public static List<PurchaseReqNumber> findAllPurchaseReqNumbers(EntityManager em) {
 
         try {
-            List<JobSequenceNumber> jobSequenceNumber = em.createNamedQuery("findAllJobSequenceNumbers", JobSequenceNumber.class).getResultList();
+            List<PurchaseReqNumber> purchaseReqNumber = em.createNamedQuery("findAllPurchaseReqNumbers", PurchaseReqNumber.class).getResultList();
 
-            return jobSequenceNumber;
+            return purchaseReqNumber;
+            
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
     
-    public static Long findNextJobSequentialNumber(EntityManager em, Integer year) {
+    public static Long findNextPurchaseReqSequentialNumber(EntityManager em, Integer year) {
         Long last;
 
-        JobSequenceNumber jobSequenceNumber = new JobSequenceNumber();
+        PurchaseReqNumber purchaseReqNumber = new PurchaseReqNumber();
 
         try {
-            last = em.createNamedQuery("getLastJobSequenceNumber",
+            last = em.createNamedQuery("getLastPurchaseReqNumber",
                     Long.class).setParameter("yearReceived", year).getSingleResult();
         } catch (Exception e) {
             System.out.println(e);
@@ -157,29 +157,29 @@ public class JobSequenceNumber implements Serializable, BusinessEntity {
         }
 
         if (last == null) {
-            jobSequenceNumber.setYear(year);
-            jobSequenceNumber.setSequentialNumber(1L);
+            purchaseReqNumber.setYear(year);
+            purchaseReqNumber.setSequentialNumber(1L);
             em.getTransaction().begin();
-            em.persist(jobSequenceNumber);
+            em.persist(purchaseReqNumber);
             em.getTransaction().commit();
         } else {
-            jobSequenceNumber.setYear(year);
-            jobSequenceNumber.setSequentialNumber(last + 1);
+            purchaseReqNumber.setYear(year);
+            purchaseReqNumber.setSequentialNumber(last + 1);
             em.getTransaction().begin();
-            em.persist(jobSequenceNumber);
+            em.persist(purchaseReqNumber);
             em.getTransaction().commit();
         }
 
-        return jobSequenceNumber.getSequentialNumber();
+        return purchaseReqNumber.getSequentialNumber();
     }
 
-    public static JobSequenceNumber findNextJobSequenceNumber(EntityManager em, Integer year) {
+    public static PurchaseReqNumber findNextPurchaseReqNumber(EntityManager em, Integer year) {
         Long last;
 
-        JobSequenceNumber jobSequenceNumber = new JobSequenceNumber();
+        PurchaseReqNumber purchaseReqNumber = new PurchaseReqNumber();
 
         try {
-            last = em.createNamedQuery("getLastJobSequenceNumber",
+            last = em.createNamedQuery("getLastPurchaseReqNumber",
                     Long.class).setParameter("yearReceived", year).getSingleResult();
         } catch (Exception e) {
             System.out.println(e);
@@ -187,14 +187,14 @@ public class JobSequenceNumber implements Serializable, BusinessEntity {
         }
 
         if (last == null) {
-            jobSequenceNumber.setYear(year);
-            jobSequenceNumber.setSequentialNumber(1L);
+            purchaseReqNumber.setYear(year);
+            purchaseReqNumber.setSequentialNumber(1L);
         } else {
-            jobSequenceNumber.setYear(year);
-            jobSequenceNumber.setSequentialNumber(last + 1L);
+            purchaseReqNumber.setYear(year);
+            purchaseReqNumber.setSequentialNumber(last + 1L);
         }
 
-        return jobSequenceNumber;
+        return purchaseReqNumber;
     }
 
     @Override
@@ -209,7 +209,7 @@ public class JobSequenceNumber implements Serializable, BusinessEntity {
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Job sequence number not saved");
+        return new ReturnMessage(false, "Purchase requisition number not saved");
     }
 
     @Override
