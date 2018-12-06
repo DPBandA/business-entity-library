@@ -132,6 +132,34 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         actions.add(BusinessEntity.Action.CREATE);
     }
     
+    public String generateNumber() {
+        
+        Calendar c = Calendar.getInstance();
+        String year; 
+        String sequenceNumberStr;
+
+        // Use the date entered to get the year if it is valid
+        // and only if this is not a subcontracted job
+        if (getRequisitionDate() != null) {
+            c.setTime(getRequisitionDate());
+            year = "" + c.get(Calendar.YEAR);
+        } else {
+            year = "" + BusinessEntityUtils.getCurrentYear();
+        }
+        // include the sequence number if it is valid
+        if (getSequenceNumber() != null) {
+            sequenceNumberStr = BusinessEntityUtils.getFourDigitString(getSequenceNumber());
+        } else {
+            sequenceNumberStr = "?";
+        }
+        // Build the PR number
+        number =  "PR/" + year + "/" + sequenceNumberStr;
+      
+        return number;
+
+
+    }
+    
     // tk placeholder for now
     public Double getTotalCost() {
       return 0.0;    
@@ -610,6 +638,26 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public static PurchaseRequisition findById(EntityManager em, Long Id) {
 
         return em.find(PurchaseRequisition.class, Id);
+    }
+    
+    public static PurchaseRequisition findByPRNumber(EntityManager em, String prNumber) {
+
+        try {
+            String newPRNumber = prNumber.trim().replaceAll("'", "''");
+
+            List<PurchaseRequisition> purchaseRequisitions = em.createQuery("SELECT p FROM PurchaseRequisition p "
+                    + "WHERE UPPER(p.number) "
+                    + "= '" + newPRNumber.toUpperCase() + "'", PurchaseRequisition.class).getResultList();
+
+            if (!purchaseRequisitions.isEmpty()) {
+                return purchaseRequisitions.get(0);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
 
     public static List<PurchaseRequisition> findAll(EntityManager em) {
