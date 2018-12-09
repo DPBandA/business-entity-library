@@ -53,7 +53,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "purchaserequisition")
 @NamedQueries({
-    @NamedQuery(name = "findAllPurchaseRequisitions", 
+    @NamedQuery(name = "findAllPurchaseRequisitions",
             query = "SELECT p FROM PurchaseRequisition p ORDER BY p.number")
 })
 @XmlRootElement
@@ -131,11 +131,11 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         actions = new ArrayList<>();
         actions.add(BusinessEntity.Action.CREATE);
     }
-    
+
     public String generateNumber() {
-        
+
         Calendar c = Calendar.getInstance();
-        String year; 
+        String year;
         String sequenceNumberStr;
 
         // Use the date entered to get the year if it is valid
@@ -153,18 +153,23 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
             sequenceNumberStr = "?";
         }
         // Build the PR number
-        number =  "PR/" + year + "/" + sequenceNumberStr;
-      
+        number = "PR/" + year + "/" + sequenceNumberStr;
+
         return number;
 
-
     }
-    
+
     // tk placeholder for now
     public Double getTotalCost() {
-      return 0.0;    
+        Double total = 0.0;
+
+        for (CostComponent component : costComponents) {
+            total = total + component.getCost();
+        }
+
+        return total;
     }
-    
+
     /**
      * Builds and return a list of cost components with the costing to which the
      * cost component used as a header cost component belong
@@ -185,7 +190,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public void setEditStatus(String editStatus) {
         this.editStatus = editStatus;
     }
-    
+
     public String getQuotationNumber() {
         return quotationNumber;
     }
@@ -570,7 +575,8 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     @Override
-    public void setName(String name) {   }
+    public void setName(String name) {
+    }
 
     public static List<PurchaseRequisition> findByDateSearchField(
             EntityManager em,
@@ -615,7 +621,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                         + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                         + searchTextAndClause
                         + " ORDER BY doc." + dateSearchField + " DESC";
-                break;           
+                break;
             case "My department's documents":
                 break;
             default:
@@ -639,7 +645,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
         return em.find(PurchaseRequisition.class, Id);
     }
-    
+
     public static PurchaseRequisition findByPRNumber(EntityManager em, String prNumber) {
 
         try {
@@ -679,7 +685,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
             number = number + pr.getPurchasingDepartment().getCode();
         } else {
             number = number + "?";
-        }            
+        }
         // Append doc seq
         if (pr.getSequenceNumber() != null) {
             NumberFormat formatter = DecimalFormat.getIntegerInstance();
