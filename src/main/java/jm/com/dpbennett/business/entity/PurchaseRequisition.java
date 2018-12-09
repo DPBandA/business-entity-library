@@ -44,6 +44,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -101,6 +102,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private Supplier supplier;
     @Column(length = 1024)
     private String status;
+    private String workProgress;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -130,6 +132,25 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         costComponents = new ArrayList<>();
         actions = new ArrayList<>();
         actions.add(BusinessEntity.Action.CREATE);
+    }
+
+    public Boolean isApproved() {
+        return getApprovers().size() > 2;
+    }
+
+    public void clean() {
+        setIsDirty(false);
+    }
+
+    public String getWorkProgress() {
+        if (workProgress == null) {
+            workProgress = "Ongoing";
+        }
+        return workProgress;
+    }
+
+    public void setWorkProgress(String workProgress) {
+        this.workProgress = workProgress;
     }
 
     public String generateNumber() {
@@ -283,6 +304,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public List<Employee> getApprovers() {
+        if (approvers == null) {
+            approvers = new ArrayList<>();
+        }
         return approvers;
     }
 
@@ -705,17 +729,129 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
     @Override
     public ReturnMessage save(EntityManager em) {
+
         try {
+
+            // Save new/edited cost components
+            if (!getCostComponents().isEmpty()) {
+                for (CostComponent costComponent : getCostComponents()) {
+                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
+                            && !costComponent.save(em).isSuccess()) {
+
+                        return new ReturnMessage(false,
+                                "Cost component save error occurred",
+                                "An error occurred while saving a cost component",
+                                Message.SEVERITY_ERROR_NAME);
+
+                    }
+                }
+            }
+
+            // Save    
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
+
         } catch (Exception e) {
-            System.out.println(e);
+            return new ReturnMessage(false,
+                    "Purchase Requisition Save Error Occurred!",
+                    "An error occurred while saving purchase requisition " + getNumber()
+                    + "\n" + e,
+                    Message.SEVERITY_ERROR_NAME);
         }
 
-        return new ReturnMessage(false, "Purchase requisition not saved");
+    }
+
+    public ReturnMessage prepareAndSave(EntityManager em, JobManagerUser user) {
+        Date now = new Date();
+        PurchaseReqNumber nextPurchaseReqNumber = null;
+
+        try {
+            // Get employee for later use
+            Employee employee = user.getEmployee();
+
+            // Do not save changed job if it's already marked as completed in the database
+            // However, saving is allowed if the user belongs to the "Invoicing department"
+            // or is a system administrator
+            if (getId() != null) {
+                PurchaseRequisition pr = PurchaseRequisition.findById(em, getId());
+                if (pr.getWorkProgress().equals("Completed")
+                        && !user.getPrivilege().getCanBeFinancialAdministrator()) {
+
+                    setIsDirty(false);
+
+                    return new ReturnMessage(false,
+                            "Purchase Requisition Cannot Be Saved",
+                            "This job is marked as completed so changes cannot be saved. You may contact a financial administrator",
+                            Message.SEVERITY_ERROR_NAME);
+                }
+            }
+
+            // Update re the person who last edited/entered the job etc.
+            if (getIsDirty()) {
+                setDateEdited(now);
+                setEditedBy(employee);
+            }
+
+            // Modify job number with sequence number if required
+            if (getAutoGenerateNumber()) {
+                if ((getSequenceNumber() == null)) {
+                    nextPurchaseReqNumber = PurchaseReqNumber.
+                            findNextPurchaseReqNumber(em,
+                                    BusinessEntityUtils.getYearFromDate(getRequisitionDate()));
+
+                    setSequenceNumber(nextPurchaseReqNumber.getSequentialNumber());
+                    generateNumber();
+                } else {
+                    generateNumber();
+                }
+            }
+
+            // Finally..save the job
+            ReturnMessage returnMessage = save(em);
+
+            if (returnMessage.isSuccess()) {
+                // Save job sequence number since it was used by this job
+                if (nextPurchaseReqNumber != null) {
+                    nextPurchaseReqNumber.save(em);
+                }
+
+                clean();
+            } else {
+
+                // Reset number if number is set to auto-generate
+                if (getAutoGenerateNumber()) {
+                    setSequenceNumber(null);
+                    generateNumber();
+                }
+
+                return new ReturnMessage(false,
+                        "Undefined Error!",
+                        "An undefined error occurred while saving purchase requisition "
+                        + getNumber() + ":\n"
+                        + returnMessage.getDetail(),
+                        Message.SEVERITY_ERROR_NAME);
+            }
+
+        } catch (Exception e) {
+
+            // Reset number if number is set to auto-generate
+            if (getAutoGenerateNumber()) {
+                setSequenceNumber(null);
+                generateNumber();
+            }
+
+            return new ReturnMessage(false,
+                    "Undefined Error!",
+                    "An undefined error occurred while purchase requisition "
+                    + getNumber() + ":\n"
+                    + e,
+                    Message.SEVERITY_ERROR_NAME);
+        }
+
+        return new ReturnMessage();
     }
 
     @Override

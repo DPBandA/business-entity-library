@@ -114,6 +114,16 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         active = true;
     }
 
+    public Boolean isProcurementOfficer() {
+        for (EmployeePosition position : positions) {
+            if (position.getName().equalsIgnoreCase("Procurement Officer")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public List<EmployeePosition> getPositions() {
         if (positions == null) {
             positions = new ArrayList<>();
@@ -388,7 +398,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     @Override
     public String getName() {
         name = toString();
-        
+
         return name;
     }
 
@@ -532,7 +542,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
         return null;
     }
-    
+
     /**
      * Gets first active employee with the given firstname and lasname
      *
@@ -643,7 +653,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
             return null;
         }
     }
-    
+
     public static Employee findActiveEmployeeByName(EntityManager em, String name) {
         String names[] = name.split(",");
         if (names.length == 2) {

@@ -40,7 +40,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
-@Table(name = "jobsequencenumber")
+@Table(name = "purchasereqnumber")
 @NamedQueries({   
     @NamedQuery(name = "findAllPurchaseReqNumbers", query = "SELECT e FROM PurchaseReqNumber e ORDER BY e.yearReceived"),
     @NamedQuery(name = "getLastPurchaseReqNumber", query = "SELECT MAX(e.sequentialNumber) FROM PurchaseReqNumber e WHERE e.yearReceived = :yearReceived")

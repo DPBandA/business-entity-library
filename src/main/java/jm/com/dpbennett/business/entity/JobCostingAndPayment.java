@@ -789,7 +789,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
                 }
             }
 
-            // Save new cost components
+            // Save new/edited cost components
             if (!getCostComponents().isEmpty()) {
                 for (CostComponent costComponent : getCostComponents()) {
                     if ((costComponent.getIsDirty() || costComponent.getId() == null)
