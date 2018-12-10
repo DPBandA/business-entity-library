@@ -123,6 +123,17 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private List<BusinessEntity.Action> actions;
     @Transient
     private String editStatus;
+    // Approval dates
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date teamLeaderApprovalDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date divisionalManagerApprovalDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date divisionalDirectorApprovalDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date financeManagerApprovalDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date executiveDirectorApprovalDate;
 
     /**
      * Default constructor.
@@ -132,6 +143,46 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         costComponents = new ArrayList<>();
         actions = new ArrayList<>();
         actions.add(BusinessEntity.Action.CREATE);
+    }
+   
+    public Date getTeamLeaderApprovalDate() {
+        return teamLeaderApprovalDate;
+    }
+
+    public void setTeamLeaderApprovalDate(Date teamLeaderApprovalDate) {
+        this.teamLeaderApprovalDate = teamLeaderApprovalDate;
+    }
+
+    public Date getDivisionalManagerApprovalDate() {
+        return divisionalManagerApprovalDate;
+    }
+
+    public void setDivisionalManagerApprovalDate(Date divisionalManagerApprovalDate) {
+        this.divisionalManagerApprovalDate = divisionalManagerApprovalDate;
+    }
+
+    public Date getDivisionalDirectorApprovalDate() {
+        return divisionalDirectorApprovalDate;
+    }
+
+    public void setDivisionalDirectorApprovalDate(Date divisionalDirectorApprovalDate) {
+        this.divisionalDirectorApprovalDate = divisionalDirectorApprovalDate;
+    }
+
+    public Date getFinanceManagerApprovalDate() {
+        return financeManagerApprovalDate;
+    }
+
+    public void setFinanceManagerApprovalDate(Date financeManagerApprovalDate) {
+        this.financeManagerApprovalDate = financeManagerApprovalDate;
+    }
+
+    public Date getExecutiveDirectorApprovalDate() {
+        return executiveDirectorApprovalDate;
+    }
+
+    public void setExecutiveDirectorApprovalDate(Date executiveDirectorApprovalDate) {
+        this.executiveDirectorApprovalDate = executiveDirectorApprovalDate;
     }
 
     public Boolean isApproved() {

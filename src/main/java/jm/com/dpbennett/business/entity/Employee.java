@@ -32,6 +32,7 @@ import javax.naming.directory.SearchResult;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -72,7 +73,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private String username;
     private String title;
     private String name;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     private List<EmployeePosition> positions;
     @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
