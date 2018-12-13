@@ -661,14 +661,20 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
             Date startDate,
             Date endDate) {
 
-        List<PurchaseRequisition> foundDocuments;
+        List<PurchaseRequisition> foundPRs;
         String searchQuery = null;
         String searchTextAndClause = "";
         String searchText = originalSearchText.replaceAll("'", "''");
+        
+        // tk
+        System.out.println("date field: " + dateSearchField);
+        System.out.println("seaarch type: " + searchType);
+        System.out.println("originalSearchText: " + originalSearchText);
+        System.out.println("start date: " + startDate);
+        System.out.println("end date: " + endDate);
 
         switch (searchType) {
             case "Purchase requisitions":
-                if (!searchText.equals("")) {
                     searchTextAndClause
                             = " AND ("
                             + " UPPER(pr.number) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -684,16 +690,14 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                             + " OR UPPER(pr.terms) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(pr.priorityCode) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(pr.url) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " )";
-                }
+                    
                 searchQuery
                         = "SELECT pr FROM PurchaseRequisition pr"
                         + " JOIN pr.originatingDepartment originatingDepartment"
                         + " JOIN pr.procurementOfficer procurementOfficer"
                         + " JOIN pr.originator originator"
                         + " JOIN pr.supplier supplier"
-                        + " JOIN pr.classification classification"
                         + " WHERE (pr." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                         + " AND pr." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                         + searchTextAndClause
@@ -704,16 +708,16 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         }
 
         try {
-            foundDocuments = em.createQuery(searchQuery, PurchaseRequisition.class).getResultList();
-            if (foundDocuments == null) {
-                foundDocuments = new ArrayList<>();
+            foundPRs = em.createQuery(searchQuery, PurchaseRequisition.class).getResultList();
+            if (foundPRs == null) {
+                foundPRs = new ArrayList<>();
             }
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
 
-        return foundDocuments;
+        return foundPRs;
     }
 
     public static PurchaseRequisition findById(EntityManager em, Long Id) {
@@ -761,7 +765,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         } else {
             number = number + "?";
         }
-        // Append doc seq
+        // Append seq #
         if (pr.getSequenceNumber() != null) {
             NumberFormat formatter = DecimalFormat.getIntegerInstance();
             formatter.setMinimumIntegerDigits(2);
