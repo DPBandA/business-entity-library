@@ -652,7 +652,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     @Override
     public void setName(String name) {
     }
-
+    
     public static List<PurchaseRequisition> findByDateSearchField(
             EntityManager em,
             String dateSearchField,
@@ -667,37 +667,37 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         String searchText = originalSearchText.replaceAll("'", "''");
 
         switch (searchType) {
-            case "General":
+            case "Purchase requisitions":
                 if (!searchText.equals("")) {
                     searchTextAndClause
                             = " AND ("
-                            + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " UPPER(pr.number) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(originatingDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(procurementOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(procurementOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"                            
                             + " OR UPPER(procurementOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(originator.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(originator.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.terms) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.priorityCode) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.url) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(pr.description) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(pr.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(pr.notes) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(pr.terms) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(pr.priorityCode) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(pr.url) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " )";
                 }
                 searchQuery
-                        = "SELECT doc FROM PurchaseRequisition doc"
-                        + " JOIN doc.originatingDepartment originatingDepartment"
-                        + " JOIN doc.procurementOfficer procurementOfficer"
-                        + " JOIN doc.originator originator"
-                        + " JOIN doc.classification classification"
-                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        = "SELECT pr FROM PurchaseRequisition pr"
+                        + " JOIN pr.originatingDepartment originatingDepartment"
+                        + " JOIN pr.procurementOfficer procurementOfficer"
+                        + " JOIN pr.originator originator"
+                        + " JOIN pr.supplier supplier"
+                        + " JOIN pr.classification classification"
+                        + " WHERE (pr." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND pr." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                         + searchTextAndClause
-                        + " ORDER BY doc." + dateSearchField + " DESC";
-                break;
-            case "My department's documents":
+                        + " ORDER BY pr." + dateSearchField + " DESC";
                 break;
             default:
                 break;
