@@ -144,7 +144,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         actions = new ArrayList<>();
         actions.add(BusinessEntity.Action.CREATE);
     }
-   
+
     public Date getTeamLeaderApprovalDate() {
         return teamLeaderApprovalDate;
     }
@@ -652,46 +652,47 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     @Override
     public void setName(String name) {
     }
-    
+
     public static List<PurchaseRequisition> findByDateSearchField(
             EntityManager em,
             String dateSearchField,
             String searchType,
             String originalSearchText,
             Date startDate,
-            Date endDate) {
+            Date endDate,
+            Long departmentId) {
 
         List<PurchaseRequisition> foundPRs;
-        String searchQuery = null;
-        String searchTextAndClause = "";
+        String searchQuery = "";
+        String searchTextAndClause;
         String searchText = originalSearchText.replaceAll("'", "''");
+        String departmentQuery = "";
         
-        // tk
-        System.out.println("date field: " + dateSearchField);
-        System.out.println("seaarch type: " + searchType);
-        System.out.println("originalSearchText: " + originalSearchText);
-        System.out.println("start date: " + startDate);
-        System.out.println("end date: " + endDate);
-
         switch (searchType) {
             case "Purchase requisitions":
-                    searchTextAndClause
-                            = " AND ("
-                            + " UPPER(pr.number) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(originatingDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(procurementOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"                            
-                            + " OR UPPER(procurementOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(originator.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(originator.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(pr.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(pr.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(pr.notes) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(pr.terms) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(pr.priorityCode) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(pr.url) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " )";
-                    
+                
+                if (departmentId != null) {
+                    departmentQuery = " AND (originatingDepartment.id = " + departmentId + ")";
+                }
+                
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(pr.number) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(originatingDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(procurementOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(procurementOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(originator.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(originator.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.description) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.notes) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.terms) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.priorityCode) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.url) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )"
+                        + departmentQuery;
+
                 searchQuery
                         = "SELECT pr FROM PurchaseRequisition pr"
                         + " JOIN pr.originatingDepartment originatingDepartment"
