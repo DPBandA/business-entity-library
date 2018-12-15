@@ -132,6 +132,20 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         return positions;
     }
 
+    public String getAllPositions() {
+        String allPositions = "";
+
+        for (int i = 0; i < getPositions().size(); i++) {
+            if (i == 0) {
+                allPositions = getPositions().get(i).getTitle();
+            } else {
+                allPositions = allPositions + ", " + getPositions().get(i).getTitle();    
+            }
+        }
+
+        return allPositions;
+    }
+
     public void setPositions(List<EmployeePosition> positions) {
         this.positions = positions;
     }
