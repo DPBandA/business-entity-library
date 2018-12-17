@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -70,6 +71,16 @@ public class BusinessEntityUtils {
         }
 
         return -1;
+    }
+    
+    public static Boolean isBusinessEntityList(List<? extends BusinessEntity> list, Long id) { 
+        for (BusinessEntity businessEntity : list) {
+            if (Objects.equals(businessEntity.getId(), id)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public static Boolean isDateWithinPeriod(Date dateToCheck, Date startDate, Date endDate) {
