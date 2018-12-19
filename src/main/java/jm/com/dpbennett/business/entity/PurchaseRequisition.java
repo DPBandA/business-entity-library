@@ -211,7 +211,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         String sequenceNumberStr;
 
         // Use the date entered to get the year if it is valid
-        // and only if this is not a subcontracted job
         if (getRequisitionDate() != null) {
             c.setTime(getRequisitionDate());
             year = "" + c.get(Calendar.YEAR);
@@ -828,7 +827,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
             // Get employee for later use
             Employee employee = user.getEmployee();
 
-            // Do not save changed job if it's already marked as completed in the database
+            // Do not save changed PR if it's already marked as completed in the database
             // However, saving is allowed if the user belongs to the "Invoicing department"
             // or is a system administrator
             if (getId() != null) {
@@ -840,18 +839,18 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
                     return new ReturnMessage(false,
                             "Purchase Requisition Cannot Be Saved",
-                            "This job is marked as completed so changes cannot be saved. You may contact a financial administrator",
+                            "This purchase requisition is marked as completed so changes cannot be saved. You may contact a financial administrator",
                             Message.SEVERITY_ERROR_NAME);
                 }
             }
 
-            // Update re the person who last edited/entered the job etc.
+            // Update re the person who last edited/entered the PR etc.
             if (getIsDirty()) {
                 setDateEdited(now);
                 setEditedBy(employee);
             }
 
-            // Modify job number with sequence number if required
+            // Modify number with sequence number if required
             if (getAutoGenerateNumber()) {
                 if ((getSequenceNumber() == null)) {
                     nextPurchaseReqNumber = PurchaseReqNumber.
@@ -865,11 +864,11 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                 }
             }
 
-            // Finally..save the job
+            // Finally..save the PR
             ReturnMessage returnMessage = save(em);
 
             if (returnMessage.isSuccess()) {
-                // Save job sequence number since it was used by this job
+                // Save PR sequence number since it was used by this PR
                 if (nextPurchaseReqNumber != null) {
                     nextPurchaseReqNumber.save(em);
                 }
