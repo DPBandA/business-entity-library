@@ -286,11 +286,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public void setPurchaseOrderNumber(String purchaseOrderNumber) {
         this.purchaseOrderNumber = purchaseOrderNumber;
     }
-    
-    public String getPurchaseOrderDateStr() {
-        return BusinessEntityUtils.getDateInMediumDateFormat(purchaseOrderDate);
-    }
-
+   
     public Date getPurchaseOrderDate() {
         return purchaseOrderDate;
     }
@@ -316,10 +312,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
     public void setTerms(String terms) {
         this.terms = terms;
-    }
-
-    public String getDateRequiredStr() {
-        return BusinessEntityUtils.getDateInMediumDateFormat(dateRequired);
     }
 
     public Date getDateRequired() {
@@ -352,10 +344,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
-    }
-
-    public String getDateEditedStr() {
-        return BusinessEntityUtils.getDateInMediumDateFormat(dateEdited);
     }
 
     public Date getDateEdited() {
@@ -508,10 +496,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         this.id = id;
     }
 
-    public String getDateOfCompletionStr() {
-        return BusinessEntityUtils.getDateInMediumDateFormat(dateOfCompletion);
-    }
-
     public Date getDateOfCompletion() {
         return dateOfCompletion;
     }
@@ -520,15 +504,8 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         this.dateOfCompletion = dateOfCompletion;
     }
 
-    public String getRequisitionDateStr() {
-        return BusinessEntityUtils.getDateInMediumDateFormat(requisitionDate);
-    }
-
     public Date getRequisitionDate() {
         return requisitionDate;
-    }
-
-    public void setRequisitionDateStr(String str) {
     }
 
     public void setRequisitionDate(Date requisitionDate) {
