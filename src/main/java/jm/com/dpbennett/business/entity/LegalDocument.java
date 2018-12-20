@@ -567,16 +567,14 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
 
     public static List<LegalDocument> findLegalDocumentsByDateSearchField(
             EntityManager em,
-            String dateSearchField,
+            DatePeriod dateSearchPeriod,
             String searchType,
-            String originalSearchText,
-            Date startDate,
-            Date endDate) {
+            String searchText) {
 
         List<LegalDocument> foundDocuments;
         String searchQuery = null;
         String searchTextAndClause = "";
-        String searchText = originalSearchText.replaceAll("'", "''");
+        searchText = searchText.replaceAll("'", "''");
        
         switch (searchType) {
             case "Legal documents":
@@ -606,8 +604,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
                         + " JOIN doc.responsibleOfficer responsibleOfficer"
                         + " JOIN doc.submittedBy submittedBy"
                         + " JOIN doc.classification classification"
-                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " WHERE (doc." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND doc." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
                         + searchTextAndClause
                         + " ORDER BY doc.dateReceived DESC";
                 break;
@@ -619,8 +617,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
                 searchQuery
                         = "SELECT doc FROM LegalDocument doc"
                         + " JOIN doc.type t"
-                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " WHERE (doc." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND doc." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
                         + searchTextAndClause
                         + " ORDER BY doc.dateReceived DESC";
                 break;         
