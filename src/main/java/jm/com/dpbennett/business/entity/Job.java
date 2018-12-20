@@ -599,12 +599,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     }
 
     public Boolean getIsSubContract() {
-        if (getSubContractedDepartment().getName().equals("")
-                || getSubContractedDepartment().getName().equals("--")) {
-            return false;
-        }
-
-        return true;
+        return !(getSubContractedDepartment().getName().equals("")
+                || getSubContractedDepartment().getName().equals("--"));
     }
 
     public List<Job> getSubcontracts(EntityManager em) {
@@ -787,11 +783,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     }
 
     public Boolean hasOnlyDefaultJobSample() {
-        if ((getJobSamples().size() == 1) && (getJobSamples().get(0).getDescription().trim().equals("--"))) {
-            return true;
-        } else {
-            return false;
-        }
+        return (getJobSamples().size() == 1) && (getJobSamples().get(0).getDescription().trim().equals("--"));
     }
 
     /**
@@ -1043,10 +1035,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
             return false;
         }
         Job other = (Job) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -1107,26 +1097,20 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     public static List<Job> findJobsByDateSearchField(
             EntityManager em,
             JobManagerUser user,
-            String dateSearchField,
-            String jobType,
+            DatePeriod dateSearchPeriod,
             String searchType,
-            String originalSearchText,
-            Date startDate,
-            Date endDate,
+            String searchText,
             Boolean includeSampleSearch) {
 
         List<Job> foundJobs;
         String searchQuery = null;
-        String searchText;
         String searchTextAndClause;
         String sampleSearchWhereClause = "";
         String sampleSearchJoinClause = "";
         String selectClause = "SELECT DISTINCT job FROM Job job";
 
-        // get rid of any single quotes from text and ensure
-        // that it is not null
-        if (originalSearchText != null) {
-            searchText = originalSearchText.trim().replaceAll("'", "''");
+        if (searchText != null) {
+            searchText = searchText.trim().replaceAll("'", "''");
         } else {
             searchText = "";
         }
@@ -1184,8 +1168,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " JOIN job.jobSubCategory jobSubCategory"
                         + " JOIN job.assignedTo assignedTo"
                         + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-")
+                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-")
                         + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
                         + " AND (jobCostingAndPayment.costingApproved IS NULL OR jobCostingAndPayment.costingApproved = 0)" + ")"
                         + searchTextAndClause
@@ -1228,8 +1212,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " JOIN job.jobSubCategory jobSubCategory"
                         + " JOIN job.assignedTo assignedTo"
                         + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-")
+                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-")
                         + " AND jobStatusAndTracking.workProgress NOT LIKE 'Completed' AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'" + ")"
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";
@@ -1271,8 +1255,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " JOIN job.jobSubCategory jobSubCategory"
                         + " JOIN job.assignedTo assignedTo"
                         + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";
                 break;
@@ -1313,8 +1297,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " JOIN job.jobSubCategory jobSubCategory"
                         + " JOIN job.assignedTo assignedTo"
                         + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";
                 break;
@@ -1322,8 +1306,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                 searchQuery
                         = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
-                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
                         + " ORDER BY job.id DESC";
                 break;
             case "Monthly report":
@@ -1332,8 +1316,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + " JOIN job.department department"
                         + " JOIN job.subContractedDepartment subContractedDepartment"
-                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
                         + " AND ( UPPER(department.name) = '" + searchText.toUpperCase() + "'"
                         + " OR UPPER(subContractedDepartment.name) = '" + searchText.toUpperCase() + "'"
                         + " )"
@@ -1371,8 +1355,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " JOIN job.jobSubCategory jobSubCategory"
                         + " JOIN job.assignedTo assignedTo"
                         + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
                         + searchTextAndClause
                         + " AND ( UPPER(department.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
                         + " OR UPPER(subContractedDepartment.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
@@ -1411,8 +1395,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " JOIN job.jobSubCategory jobSubCategory"
                         + " JOIN job.assignedTo assignedTo"
                         + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
                         + searchTextAndClause
                         + " AND ( UPPER(assignedTo.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
                         + " AND UPPER(assignedTo.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%'"
@@ -1426,8 +1410,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + " JOIN job.department department"
                         + " JOIN job.subContractedDepartment subContractedDepartment"
-                        + " WHERE (jobStatusAndTracking." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
                         + " AND ( UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )"
@@ -1478,6 +1462,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
      * email date set is considered updated.
      *
      * @param em
+     * @param datePeriod
      * @return
      */
     public static List<Job> findAllUpdatedJobs(EntityManager em, DatePeriod datePeriod) {
@@ -2215,7 +2200,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     public Boolean validateJobNumber(String jobNumber, Boolean auto) {
         Integer departmentCode = 0;
-        Integer year = 0;
+        Integer year;
         Long sequenceNumber = 0L;
 
         String parts[] = jobNumber.split("/");

@@ -577,9 +577,9 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         String searchQuery = null;
         String searchTextAndClause = "";
         String searchText = originalSearchText.replaceAll("'", "''");
-
+       
         switch (searchType) {
-            case "General":
+            case "Legal documents":
                 if (!searchText.equals("")) {
                     searchTextAndClause
                             = " AND ("
@@ -611,7 +611,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
                         + searchTextAndClause
                         + " ORDER BY doc.dateReceived DESC";
                 break;
-            case "By type":
+            case "Legal document types":
                 searchTextAndClause
                         = " AND ("
                         + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
@@ -623,10 +623,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
                         + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                         + searchTextAndClause
                         + " ORDER BY doc.dateReceived DESC";
-                break;
-            case "My department's documents":
-                break;
-            default:
+                break;         
+            default: 
                 break;
         }
 
