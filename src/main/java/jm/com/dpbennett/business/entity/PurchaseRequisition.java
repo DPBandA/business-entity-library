@@ -142,7 +142,10 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         approvers = new ArrayList<>();
         costComponents = new ArrayList<>();
         actions = new ArrayList<>();
-        actions.add(BusinessEntity.Action.CREATE);
+    }
+    
+    public void addAction(BusinessEntity.Action action) {
+        // Check that this action does not already exist.
     }
 
     public Date getTeamLeaderApprovalDate() {
