@@ -145,7 +145,23 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
     
     public void addAction(BusinessEntity.Action action) {
-        // Check that this action does not already exist.
+       
+        for (Action existingAction : getActions()) {
+            if (existingAction == action) {
+                return;
+            }
+        }
+        getActions().add(action);
+    }
+    
+    public Action findAction(BusinessEntity.Action action) {
+        for (Action existingAction : getActions()) {
+            if (existingAction == action) {
+                return action;
+            }
+        }
+        
+        return null;
     }
 
     public Date getTeamLeaderApprovalDate() {
