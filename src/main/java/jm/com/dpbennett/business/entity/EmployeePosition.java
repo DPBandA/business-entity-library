@@ -67,6 +67,10 @@ public class EmployeePosition implements Serializable, BusinessEntity {
     @Transient
     private Boolean isDirty;
 
+    /**
+     * Constructs and EmployeePosition object.
+     * 
+     */
     public EmployeePosition() {
         title = "";
         classification = "";

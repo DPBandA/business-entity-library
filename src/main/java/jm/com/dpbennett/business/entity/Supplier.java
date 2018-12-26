@@ -92,6 +92,10 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
     @Transient
     private Boolean isNameAndIdEditable;
 
+    /**
+     * Constructs a Supplier object.
+     * 
+     */
     public Supplier() {                
         name = "";
         contacts = new ArrayList<>();
