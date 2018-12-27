@@ -49,6 +49,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private Long id;
     private String name;
     private String code;
+    private String type;
     private String category;
     private Double hours;
     private Double hoursOrQuantity;
@@ -66,7 +67,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     public CostComponent() {
         name = "";
-        code = "FIXED";
+        code = "";
+        type = "FIXED";
         category = "";
         cost = 0.0;
         comments = "";
@@ -83,7 +85,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     public CostComponent(String name) {
         this.name = name;
-        code = "FIXED";
+        code = "";
+        type = "FIXED";
         category = "";
         cost = 0.0;
         comments = "";
@@ -97,7 +100,9 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     public CostComponent(Long id, String name) {
         this.id = id;
         this.name = name;
-        code = "FIXED";
+        code = "";
+        type = "FIXED";
+        type = "FIXED";
         cost = 0.0;
         comments = "";
         isHeading = false;
@@ -110,7 +115,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     public CostComponent(String name, Boolean isHeading) {
         this.isHeading = isHeading;
         this.name = name;
-        this.cost = 0.0;
+        cost = 0.0;
+        type = "FIXED";
         isFixedCost = false;
         isEditable = true;
         description = "";
@@ -122,11 +128,23 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.cost = cost;
         this.isFixedCost = isFixedCost;
         this.isEditable = isEditable;
-        this.hours = 0.0;
-        this.hoursOrQuantity = 0.0;
-        this.rate = 0.0;
+        type = "FIXED";
+        hours = 0.0;
+        hoursOrQuantity = 0.0;
+        rate = 0.0;
         description = "";
         unit = "";
+    }
+
+    public String getType() {
+        if (type == null) {
+            type = "--";
+        }
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getDescription() {
@@ -175,6 +193,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     public final void doCopy(CostComponent src) {
         this.name = src.name;
         this.code = src.code;
+        this.type = src.type;
         this.category = src.category;
         this.hours = src.hours;
         this.hoursOrQuantity = src.hoursOrQuantity;
@@ -189,11 +208,11 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Boolean getIsSubcontract() {
-        return getCode().equals("SUBCONTRACT");
+        return getType().equals("SUBCONTRACT");
     }
 
     public Boolean getIsVariable() {
-        return getCode().equals("VARIABLE");
+        return getType().equals("VARIABLE");
     }
 
     public Boolean getIsFixedCost() {
