@@ -19,6 +19,7 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +71,7 @@ public class Email implements Serializable, BusinessEntity {
     public Email() {
         name = "";
         type = "Template";
+        templateFile = "";
         classification = "";
         category = "";
         subject = "";
@@ -83,6 +85,7 @@ public class Email implements Serializable, BusinessEntity {
     public Email(String name) {
         this.name = name;
         type = "Template";
+        templateFile = "";
         classification = "";
         category = "";
         subject = "";
@@ -91,6 +94,24 @@ public class Email implements Serializable, BusinessEntity {
         active = true;
         usePackagedTemplate = true;
         isDirty = false;
+    }
+
+    public String getContent(String templatePath) {
+        try {
+            if (usePackagedTemplate) {
+                File file = new File(getClass().getClassLoader().
+                        getResource(templatePath + templateFile).getFile());
+
+                System.out.println("File: " + file.getAbsolutePath()); // tk
+
+            } else {
+                System.out.println("File not found"); // tk
+            }
+        } catch (Exception e) {
+            System.out.println("File not found: " + e); // tk
+        }
+
+        return "";
     }
 
     public String getType() {
@@ -241,7 +262,7 @@ public class Email implements Serializable, BusinessEntity {
 
         try {
             List<Email> emails = em.createNamedQuery("findAllEmails", Email.class).getResultList();
-            
+
             return emails;
         } catch (Exception e) {
             return null;
@@ -254,7 +275,7 @@ public class Email implements Serializable, BusinessEntity {
             return em.createQuery("SELECT e FROM Email e WHERE e.active = 1 ORDER BY e.subject", Email.class).getResultList();
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return new ArrayList<>();
         }
     }
@@ -266,7 +287,7 @@ public class Email implements Serializable, BusinessEntity {
             return email;
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return null;
         }
     }
@@ -279,11 +300,11 @@ public class Email implements Serializable, BusinessEntity {
             List<Email> emails = em.createQuery("SELECT e FROM Email e "
                     + "WHERE UPPER(e.subject) "
                     + "= '" + subject.toUpperCase() + "'", Email.class).getResultList();
-            
+
             if (emails.size() > 0) {
                 return emails.get(0);
             }
-            
+
             return null;
         } catch (Exception e) {
             System.out.println(e);
@@ -299,11 +320,11 @@ public class Email implements Serializable, BusinessEntity {
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where UPPER(e.subject) like '%"
                             + subject.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
-            
+
             return emails;
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return new ArrayList<>();
         }
     }
@@ -317,11 +338,11 @@ public class Email implements Serializable, BusinessEntity {
                     = em.createQuery("SELECT e FROM Email e where UPPER(e.subject) like '%"
                             + query.toUpperCase().trim() + "%' OR UPPER(e.description) like '%"
                             + query.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
-            
+
             return emails;
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return new ArrayList<>();
         }
     }
@@ -334,16 +355,16 @@ public class Email implements Serializable, BusinessEntity {
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where e.active = 1 AND UPPER(e.subject) like '%"
                             + query.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
-            
+
             return emails;
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return new ArrayList<>();
         }
     }
 
-    public static List<Email> findActiveEmailsByCategoryAndSubject(EntityManager em, 
+    public static List<Email> findActiveEmailsByCategoryAndSubject(EntityManager em,
             String category, String subject) {
 
         try {
@@ -355,11 +376,11 @@ public class Email implements Serializable, BusinessEntity {
                             + subject.toUpperCase().trim() + "%'"
                             + " AND UPPER(e.category) like '%"
                             + category.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
-            
+
             return emails;
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return new ArrayList<>();
         }
     }
@@ -373,11 +394,11 @@ public class Email implements Serializable, BusinessEntity {
                     = em.createQuery("SELECT e FROM Email e where e.active = 1 AND (UPPER(e.subject) like '%"
                             + query.toUpperCase().trim() + "%' OR UPPER(e.description) like '%"
                             + query.toUpperCase().trim() + "%') ORDER BY e.subject", Email.class).getResultList();
-            
+
             return emails;
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return new ArrayList<>();
         }
     }
