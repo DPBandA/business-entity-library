@@ -19,7 +19,12 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,16 +104,26 @@ public class Email implements Serializable, BusinessEntity {
     public String getContent(String templatePath) {
         try {
             if (usePackagedTemplate) {
-                File file = new File(getClass().getClassLoader().
+            
+                InputStream is = new FileInputStream(getClass().getClassLoader().
                         getResource(templatePath + templateFile).getFile());
+                BufferedReader buf = new BufferedReader(new InputStreamReader(is));
 
-                System.out.println("File: " + file.getAbsolutePath()); // tk
+                String line = buf.readLine();
+                StringBuilder sb = new StringBuilder();
+
+                while (line != null) {
+                    sb.append(line).append("\n");
+                    line = buf.readLine();
+                }
+                
+                return sb.toString();
 
             } else {
-                System.out.println("File not found"); // tk
+                return content;
             }
-        } catch (Exception e) {
-            System.out.println("File not found: " + e); // tk
+        } catch (IOException e) {
+            System.out.println(e);
         }
 
         return "";
