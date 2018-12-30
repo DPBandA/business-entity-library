@@ -20,7 +20,6 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -104,7 +103,7 @@ public class Email implements Serializable, BusinessEntity {
     public String getContent(String templatePath) {
         try {
             if (usePackagedTemplate) {
-            
+
                 InputStream is = new FileInputStream(getClass().getClassLoader().
                         getResource(templatePath + templateFile).getFile());
                 BufferedReader buf = new BufferedReader(new InputStreamReader(is));
@@ -116,7 +115,7 @@ public class Email implements Serializable, BusinessEntity {
                     sb.append(line).append("\n");
                     line = buf.readLine();
                 }
-                
+
                 return sb.toString();
 
             } else {
@@ -306,6 +305,26 @@ public class Email implements Serializable, BusinessEntity {
             return null;
         }
     }
+    
+    public static Email findEmailByName(EntityManager em, String name) {
+
+        try {
+            name = name.trim().replaceAll("'", "''");
+
+            List<Email> emails = em.createQuery("SELECT e FROM Email e "
+                    + "WHERE UPPER(e.name) "
+                    + "= '" + name.toUpperCase() + "'", Email.class).getResultList();
+
+            if (emails.size() > 0) {
+                return emails.get(0);
+            }
+
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     public static Email findEmailBySubject(EntityManager em, String subject) {
 
@@ -350,9 +369,10 @@ public class Email implements Serializable, BusinessEntity {
             query = query.replaceAll("'", "''");
 
             List<Email> emails
-                    = em.createQuery("SELECT e FROM Email e where UPPER(e.subject) like '%"
-                            + query.toUpperCase().trim() + "%' OR UPPER(e.description) like '%"
-                            + query.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
+                    = em.createQuery("SELECT e FROM Email e where UPPER(e.name) like '%" + query.toUpperCase().trim()
+                            + "%' OR UPPER(e.subject) like '%" + query.toUpperCase().trim()
+                            + "%' OR UPPER(e.description) like '%" + query.toUpperCase().trim()
+                            + "%' ORDER BY e.subject", Email.class).getResultList();
 
             return emails;
         } catch (Exception e) {
@@ -406,9 +426,10 @@ public class Email implements Serializable, BusinessEntity {
             query = query.replaceAll("'", "''");
 
             List<Email> emails
-                    = em.createQuery("SELECT e FROM Email e where e.active = 1 AND (UPPER(e.subject) like '%"
-                            + query.toUpperCase().trim() + "%' OR UPPER(e.description) like '%"
-                            + query.toUpperCase().trim() + "%') ORDER BY e.subject", Email.class).getResultList();
+                    = em.createQuery("SELECT e FROM Email e where e.active = 1 AND (UPPER(e.name) like '%" + query.toUpperCase().trim()
+                            + "%' OR UPPER(e.subject) like '%" + query.toUpperCase().trim()
+                            + "%' OR UPPER(e.description) like '%" + query.toUpperCase().trim()
+                            + "%') ORDER BY e.subject", Email.class).getResultList();
 
             return emails;
         } catch (Exception e) {
