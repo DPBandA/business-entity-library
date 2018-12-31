@@ -139,7 +139,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
             if (i == 0) {
                 allPositions = getPositions().get(i).getTitle();
             } else {
-                allPositions = allPositions + ", " + getPositions().get(i).getTitle();    
+                allPositions = allPositions + ", " + getPositions().get(i).getTitle();
             }
         }
 
@@ -468,6 +468,26 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
                             + newName + "%'"
                             + ") AND e.active = 1"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
+            return employees;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Employee> findActiveEmployeesByPosition(EntityManager em,
+            String positionTitle) {
+
+        try {
+            positionTitle = positionTitle.toUpperCase().trim().replaceAll("'", "''");
+
+            List<Employee> employees
+                    = em.createQuery("SELECT e FROM Employee e"
+                            + " JOIN e.positions positions"
+                            + " WHERE positions.title = '" + positionTitle + "'"
+                            + " AND e.active = 1",
+                            Employee.class).getResultList();
+            
             return employees;
         } catch (Exception e) {
             System.out.println(e);

@@ -720,7 +720,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                         + " WHERE (pr." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                         + " AND pr." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                         + searchTextAndClause
-                        + " ORDER BY pr." + dateSearchField + " DESC";
+                        + " ORDER BY pr.id DESC";
                 break;
             default:
                 break;
