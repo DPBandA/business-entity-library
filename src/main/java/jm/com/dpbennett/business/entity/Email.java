@@ -325,6 +325,26 @@ public class Email implements Serializable, BusinessEntity {
             return null;
         }
     }
+    
+    public static Email findActiveEmailByName(EntityManager em, String name) {
+
+        try {
+            name = name.trim().replaceAll("'", "''");
+
+            List<Email> emails = em.createQuery("SELECT e FROM Email e "
+                    + "WHERE e.active = 1 AND UPPER(e.name) "
+                    + "= '" + name.toUpperCase() + "'", Email.class).getResultList();
+
+            if (emails.size() > 0) {
+                return emails.get(0);
+            }
+
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     public static Email findEmailBySubject(EntityManager em, String subject) {
 
