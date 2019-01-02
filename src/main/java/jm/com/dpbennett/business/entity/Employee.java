@@ -740,7 +740,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
             String listAsString = (String) SystemOption.getOptionValueObject(em, "domainNames");
             String domainNames[] = listAsString.split(";");
 
-            JobManagerUser user = JobManagerUser.findJobManagerUserByEmployeeId(em, employee.getId());
+            JobManagerUser user = JobManagerUser.findActiveJobManagerUserByEmployeeId(em, employee.getId());
 
             // Build email address
             if (user != null) {

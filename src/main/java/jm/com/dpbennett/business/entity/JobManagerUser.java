@@ -421,12 +421,12 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     }
 
-    public static JobManagerUser findJobManagerUserByEmployeeId(EntityManager em, Long employeeId) {
+    public static JobManagerUser findActiveJobManagerUserByEmployeeId(EntityManager em, Long employeeId) {
         try {
             List<JobManagerUser> users = em.createQuery(
                     "SELECT j FROM JobManagerUser j"
-                    + " JOIN j.employee e"
-                    + " WHERE e.id = " + employeeId, JobManagerUser.class).getResultList();
+                    + " JOIN j.employee employee"
+                    + " WHERE j.active = 1 AND employee.id = " + employeeId, JobManagerUser.class).getResultList();
 
             if (!users.isEmpty()) {
                 return users.get(0);

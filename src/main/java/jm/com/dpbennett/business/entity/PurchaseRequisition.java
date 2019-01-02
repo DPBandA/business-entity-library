@@ -143,25 +143,71 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         costComponents = new ArrayList<>();
         actions = new ArrayList<>();
     }
-    
+
     public void addAction(BusinessEntity.Action action) {
-       
+
+        // Just return if the action already exists.
         for (Action existingAction : getActions()) {
             if (existingAction == action) {
                 return;
             }
         }
-        getActions().add(action);
+        // Add a new action if possible
+        switch (action) {
+            case CREATE:
+                getActions().add(BusinessEntity.Action.CREATE);
+                break;
+            case EDIT:
+                if ((findAction(BusinessEntity.Action.CREATE) == null)
+                        && (findAction(BusinessEntity.Action.APPROVE) == null)
+                        && (findAction(BusinessEntity.Action.COMPLETE) == null)) {
+
+                    getActions().add(action);
+                }
+                break;
+            case APPROVE:
+                if ((findAction(BusinessEntity.Action.CREATE) == null)
+                        && (findAction(BusinessEntity.Action.COMPLETE) == null)) {
+
+                    getActions().clear();
+                    getActions().add(BusinessEntity.Action.APPROVE);
+                }
+                break;
+            case COMPLETE:
+                if ((findAction(BusinessEntity.Action.CREATE) == null)) {
+                    getActions().clear();
+                    getActions().add(BusinessEntity.Action.COMPLETE);
+                }
+                break;
+            default:
+                break;
+        }
+
     }
-    
+
     public Action findAction(BusinessEntity.Action action) {
         for (Action existingAction : getActions()) {
             if (existingAction == action) {
                 return action;
             }
         }
-        
+
         return null;
+    }
+
+    public PurchaseRequisition removeAction(BusinessEntity.Action action) {
+        int index = 0;
+
+        for (Action existingAction : getActions()) {
+            if (existingAction == action) {
+                actions.remove(index);
+
+                return this;
+            }
+            ++index;
+        }
+
+        return this;
     }
 
     public Date getTeamLeaderApprovalDate() {
@@ -304,7 +350,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public void setPurchaseOrderNumber(String purchaseOrderNumber) {
         this.purchaseOrderNumber = purchaseOrderNumber;
     }
-   
+
     public Date getPurchaseOrderDate() {
         return purchaseOrderDate;
     }
