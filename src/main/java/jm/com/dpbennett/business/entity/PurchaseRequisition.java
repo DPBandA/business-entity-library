@@ -125,6 +125,8 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private String editStatus;
     // Approval dates
     @Temporal(javax.persistence.TemporalType.DATE)
+    private Date approvalDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date teamLeaderApprovalDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date divisionalManagerApprovalDate;
@@ -208,6 +210,14 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         }
 
         return this;
+    }
+
+    public Date getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(Date approvalDate) {
+        this.approvalDate = approvalDate;
     }
 
     public Date getTeamLeaderApprovalDate() {
