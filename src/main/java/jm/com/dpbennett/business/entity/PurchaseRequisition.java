@@ -144,6 +144,16 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         approvers = new ArrayList<>();
         costComponents = new ArrayList<>();
         actions = new ArrayList<>();
+        description = "";
+    }
+
+    public String[] splitDescription(int length1, int length2, int lenght3) {
+        int length = getDescription().length();
+        String [] strings = {"", "", ""};
+        
+        
+        
+        return strings;
     }
 
     public Employee getFirstApproverByPositionTitle(String positionTitle) {

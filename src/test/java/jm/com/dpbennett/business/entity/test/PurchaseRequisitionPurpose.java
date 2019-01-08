@@ -17,24 +17,24 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity.utils;
+package jm.com.dpbennett.business.entity.test;
 
+import jm.com.dpbennett.business.entity.PurchaseRequisition;
+import jm.com.dpbennett.business.entity.utils.*;
 import org.junit.Test;
 
 /**
  *
  * @author Desmond Bennett
  */
-public class SecurityTest {
+public class PurchaseRequisitionPurpose {
 
     @Test
-    public void encryptAndDecrypt() {
-//        String plainText = "Hello World";
-//        System.out.println("Plain: " + plainText);
-//
-//        String encryptedText = Security.encrypt(plainText);
-//        System.out.println("Encrypted: " + encryptedText);
-//
-//        System.out.println("Decrypted: " + Security.decrypt(encryptedText));
+    public void splitDescription() {
+        PurchaseRequisition pr = new PurchaseRequisition();
+        
+        
+        System.out.println("Spitting the PR description in to 3...\n");
+
     }
 }
