@@ -146,6 +146,18 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         actions = new ArrayList<>();
     }
 
+    public Employee getFirstApproverByPositionTitle(String positionTitle) {
+        for (Employee approver : approvers) {
+            for (EmployeePosition position : approver.getPositions()) {
+                if (position.getTitle().equals(positionTitle)) {
+                    return approver;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public void addAction(BusinessEntity.Action action) {
 
         // Just return if the action already exists.
