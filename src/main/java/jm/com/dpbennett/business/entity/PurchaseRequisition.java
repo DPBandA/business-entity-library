@@ -147,13 +147,34 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         description = "";
     }
 
-    public String[] splitDescription(int length1, int length2, int lenght3) {
-        int length = getDescription().length();
-        String [] strings = {"", "", ""};
-        
-        
-        
-        return strings;
+    /**
+     * Splits the description into three(3) parts.
+     *
+     * @param part1Length
+     * @param part2Length
+     * @param part3Length
+     * @return
+     */
+    public String[] splitDescription(int part1Length, int part2Length, int part3Length) {
+        int descriptionLength = getDescription().length();
+        String[] descriptionParts = {"", "", ""};
+
+        // Get part 1
+        if (part1Length <= descriptionLength) {
+            descriptionParts[0] = getDescription().substring(0, part1Length);
+        }
+        // Get part 2
+        if ((part1Length + part2Length) <= descriptionLength) {
+            descriptionParts[1] = getDescription().substring(part1Length,
+                    (part1Length + part2Length));
+        }
+        // Get part 3
+        if ((part1Length + part2Length + part3Length) <= descriptionLength) {
+            descriptionParts[2] = getDescription().substring((part1Length + part2Length),
+                    (part1Length + part2Length + part3Length));
+        }
+
+        return descriptionParts;
     }
 
     public Employee getFirstApproverByPositionTitle(String positionTitle) {

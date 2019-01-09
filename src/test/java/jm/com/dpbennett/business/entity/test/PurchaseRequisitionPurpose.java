@@ -19,8 +19,8 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.test;
 
+import java.util.Arrays;
 import jm.com.dpbennett.business.entity.PurchaseRequisition;
-import jm.com.dpbennett.business.entity.utils.*;
 import org.junit.Test;
 
 /**
@@ -33,8 +33,10 @@ public class PurchaseRequisitionPurpose {
     public void splitDescription() {
         PurchaseRequisition pr = new PurchaseRequisition();
         
-        
-        System.out.println("Spitting the PR description in to 3...\n");
+        pr.setDescription("This is a very long description to be split into three....");
+        System.out.println("PR description: " + pr.getDescription() + "\n");
+        System.out.println("PR description in 3 parts: " + 
+                Arrays.toString(pr.splitDescription(10, 20, 28)));
 
     }
 }
