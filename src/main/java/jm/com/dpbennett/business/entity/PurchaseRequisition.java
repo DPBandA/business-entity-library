@@ -347,6 +347,32 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         return number;
 
     }
+    
+     public String generatePurchaseOrderNumber() {
+
+        Calendar c = Calendar.getInstance();
+        String year;
+        String sequenceNumberStr;
+
+        // Use the date entered to get the year if it is valid
+        if (getRequisitionDate() != null) {
+            c.setTime(getRequisitionDate());
+            year = "" + c.get(Calendar.YEAR);
+        } else {
+            year = "" + BusinessEntityUtils.getCurrentYear();
+        }
+        // include the sequence number if it is valid
+        if (getSequenceNumber() != null) {
+            sequenceNumberStr = BusinessEntityUtils.getFourDigitString(getSequenceNumber());
+        } else {
+            sequenceNumberStr = "?";
+        }
+        // Build the PR number
+        purchaseOrderNumber = "PO/" + year + "/" + sequenceNumberStr;
+
+        return purchaseOrderNumber;
+
+    }
 
     // tk placeholder for now
     public Double getTotalCost() {
@@ -873,7 +899,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         }
     }
 
-    // tk to be modified to generate PR #
     public static String getNumber(PurchaseRequisition pr, String prefix) {
         String number = prefix;
 
@@ -977,8 +1002,11 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
                     setSequenceNumber(nextPurchaseReqNumber.getSequentialNumber());
                     generateNumber();
+                    generatePurchaseOrderNumber();
+                    setPurchaseOrderNumber(purchaseOrderNumber);
                 } else {
                     generateNumber();
+                    generatePurchaseOrderNumber();
                 }
             }
 
