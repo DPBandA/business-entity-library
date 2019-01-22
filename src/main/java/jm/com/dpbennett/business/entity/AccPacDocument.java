@@ -34,6 +34,9 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  *
@@ -41,12 +44,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "AROBL")
-public class AccPacDocument implements Serializable {
+public class AccPacDocument implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Column(length = 22, name = "IDINVC")
-    private String id;
+    private String idInvc;
     @Column(length = 12, name = "IDCUST")
     private String idCust;
     @Column(name = "AMTDUETC", columnDefinition = "DECIMAL(10,3)")
@@ -71,17 +74,19 @@ public class AccPacDocument implements Serializable {
     private Integer documentType;
     @Column(name = "SWPAID", columnDefinition = "SMALLINT(5,0)")
     private Integer fullyPaid; 
+    @Transient
+    private Boolean isDirty;
     
     public AccPacDocument() {
         
     }
 
-    public String getId() {
-        return id;
+    public String getIdInvc() {
+        return idInvc;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setIdInvc(String idInvc) {
+        this.idInvc = idInvc;
     }
 
     public BigDecimal getCustCurrencyAmountDue() {
@@ -298,26 +303,24 @@ public class AccPacDocument implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (idInvc != null ? idInvc.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the idInvc fields are not set
         if (!(object instanceof AccPacDocument)) {
             return false;
         }
         AccPacDocument other = (AccPacDocument) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.idInvc == null && other.idInvc != null) || (this.idInvc != null && !this.idInvc.equals(other.idInvc)));
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.AccPacDocument[id=" + id + "]";
+        return "jm.org.bsj.entity.AccPacDocument[id=" + idInvc + "]";
     }
 
     public static List<AccPacDocument> findAccPacDocumentsByCustomerId(EntityManager em, String customerId) {
@@ -359,6 +362,7 @@ public class AccPacDocument implements Serializable {
      *
      * @param em
      * @param customerId
+     * @param includePrepayments
      * @return
      */
     public static List<AccPacDocument> findAccPacInvoicesDueByCustomerId(EntityManager em,
@@ -387,5 +391,57 @@ public class AccPacDocument implements Serializable {
             System.out.println(e);
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    public Long getId() {
+        if (getIdInvc() != null) {
+            return 1L;
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setId(Long id) {
+    }
+
+    @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
+    public void setName(String name) {
+    }
+
+    @Override
+    public ReturnMessage save(EntityManager em) {
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Accpac document not saved");
+    }
+
+    @Override
+    public ReturnMessage validate(EntityManager em) {
+        return new ReturnMessage();
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 }

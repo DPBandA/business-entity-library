@@ -29,6 +29,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
  * This class encapsulates the fields of the Accpac ARCUS database table as an
@@ -39,16 +41,13 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "ARCUS")
-public class AccPacCustomer implements Serializable {
+public class AccPacCustomer implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Column(length = 12, name = "IDCUST")
-    private String id;
+    private String idCust;
     @Column(length = 60, name = "NAMECUST")
-    /**
-     * Customer name
-     */
     private String customerName;
     @Column(name = "AMTCRLIMT", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal creditLimit;
@@ -89,12 +88,20 @@ public class AccPacCustomer implements Serializable {
         creditLimit = new BigDecimal(0.0);
     }
 
-    public String getId() {
-        return id;
+    public AccPacCustomer(String idCust, String customerName) {
+        this.idCust = idCust;
+        this.customerName = customerName;
+        balanceDueInCust = new BigDecimal(0.0);
+        balanceDueInFunc = new BigDecimal(0.0);
+        creditLimit = new BigDecimal(0.0);
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getIdCust() {
+        return idCust;
+    }
+
+    public void setIdCust(String idCust) {
+        this.idCust = idCust;
     }
 
     public String getIDACCTSET() {
@@ -212,21 +219,19 @@ public class AccPacCustomer implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (idCust != null ? idCust.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the idCust fields are not set
         if (!(object instanceof AccPacCustomer)) {
             return false;
         }
         AccPacCustomer other = (AccPacCustomer) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.idCust == null && other.idCust != null) || (this.idCust != null && !this.idCust.equals(other.idCust)));
     }
 
     @Override
@@ -268,6 +273,7 @@ public class AccPacCustomer implements Serializable {
         }
     }
 
+    @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
@@ -275,8 +281,51 @@ public class AccPacCustomer implements Serializable {
         return isDirty;
     }
 
+    @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
 
+    @Override
+    public Long getId() {
+        if (getIdCust() != null) {
+            return 1L;
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setId(Long id) {
+    }
+
+    @Override
+    public String getName() {
+        return getCustomerName();
+    }
+
+    @Override
+    public void setName(String name) {
+        customerName = name;
+    }
+
+    @Override
+    public ReturnMessage save(EntityManager em) {
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Accpac customer not saved");
+    }
+
+    @Override
+    public ReturnMessage validate(EntityManager em) {
+        return new ReturnMessage();
+    }
 }
