@@ -52,7 +52,6 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllClients", query = "SELECT c FROM Client c ORDER BY c.name")
 })
-//@JsonIgnoreProperties(ignoreUnknown = true)
 @XmlRootElement
 public class Client implements Customer, Serializable, BusinessEntity, Comparable {
 
@@ -71,7 +70,6 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     private Internet internet;
     private String notes;
     private Boolean internal;
-    // tk to be put in tracking class
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateFirstReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -84,7 +82,6 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
-    // end tracking info
     private Boolean tag;
     private String taxRegistrationNumber;
     private Boolean active;
@@ -92,6 +89,10 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     @Transient
     private Boolean isDirty;
     private String accountingId;
+    // Billing 
+    private Double creditLimit;
+    private Double discount;
+    private Boolean taxExempt;
 
     public Client() {
         this.taxRegistrationNumber = "";
@@ -107,6 +108,39 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         active = true;
         international = false;
         accountingId = "";
+    }
+
+    public Boolean getTaxExempt() {
+        if (taxExempt == null) {
+            taxExempt = true;
+        }
+        return taxExempt;
+    }
+
+    public void setTaxExempt(Boolean taxExempt) {
+        this.taxExempt = taxExempt;
+    }
+
+    public Double getDiscount() {
+        if (discount == null) {
+            discount = 0.0;
+        }
+        return discount;
+    }
+
+    public void setDiscount(Double discount) {
+        this.discount = discount;
+    }
+
+    public Double getCreditLimit() {
+        if (creditLimit == null) {
+            creditLimit = 0.0;
+        }
+        return creditLimit;
+    }
+
+    public void setCreditLimit(Double creditLimit) {
+        this.creditLimit = creditLimit;
     }
 
     public String getAccountingId() {
