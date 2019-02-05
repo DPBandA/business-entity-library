@@ -161,23 +161,23 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     public List<CashPayment> getCashPayments() {
 
         // Add deposits if any
-        if (getJobCostingAndPayment().getDeposit() != 0.0) {
-            getJobCostingAndPayment().getCashPayments().add(
-                    new CashPayment(getJobCostingAndPayment().getDeposit(),
-                            getJobCostingAndPayment().getReceiptNumber(),
-                            getJobStatusAndTracking().getDepositDate(),
-                            getJobCostingAndPayment().getPaymentTerms()));
-
-            // Reset deposit related fields because the payment was added to the 
-            // cash payments. Set the costing and payment dirty so it will be 
-            // saved when the job is next saved.
-            getJobCostingAndPayment().setDeposit(0.0);
-            getJobCostingAndPayment().setReceiptNumber("");
-            getJobStatusAndTracking().setDepositDate(null);
-            getJobCostingAndPayment().setPaymentTerms("");
-            // This method is called to update the amount due
-            getJobCostingAndPayment().getAmountDue();
-        }
+//        if (getJobCostingAndPayment().getDeposit() != 0.0) {
+//            getJobCostingAndPayment().getCashPayments().add(
+//                    new CashPayment(getJobCostingAndPayment().getDeposit(),
+//                            getJobCostingAndPayment().getReceiptNumber(),
+//                            getJobStatusAndTracking().getDepositDate(),
+//                            getJobCostingAndPayment().getPaymentTerms()));
+//
+//            // Reset deposit related fields because the payment was added to the 
+//            // cash payments. Set the costing and payment dirty so it will be 
+//            // saved when the job is next saved.
+//            getJobCostingAndPayment().setDeposit(0.0);
+//            getJobCostingAndPayment().setReceiptNumber("");
+//            getJobStatusAndTracking().setDepositDate(null);
+//            getJobCostingAndPayment().setPaymentTerms("");
+//            // This method is called to update the amount due
+//            getJobCostingAndPayment().getAmountDue();
+//        }
 
         return getJobCostingAndPayment().getCashPayments();
     }

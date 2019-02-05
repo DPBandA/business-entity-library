@@ -92,6 +92,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     // Billing 
     private Double creditLimit;
     private Double discount;
+    private String discountType;
     private Boolean taxExempt;
 
     public Client() {
@@ -108,6 +109,14 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         active = true;
         international = false;
         accountingId = "";
+    }
+
+    public String getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
     }
 
     public Boolean getTaxExempt() {

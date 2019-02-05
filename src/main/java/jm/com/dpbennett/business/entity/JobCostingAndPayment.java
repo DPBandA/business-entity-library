@@ -119,7 +119,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     // tk codes to be generated for gct and each cost component
     public List<AccountingCode> getAccountingCodes() {
         return new ArrayList<>();
@@ -434,8 +434,12 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
      * @return
      */
     public Double getDeposit() {
-        if (deposit == null) {
-            deposit = 0.0;
+        deposit = 0.0;
+
+        for (CashPayment cashPayment : getCashPayments()) {
+            if (cashPayment.getPaymentPurpose().equals("Deposit")) {
+                deposit = deposit + cashPayment.getPayment();
+            }
         }
 
         return deposit;
@@ -451,10 +455,12 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
      * @return
      */
     public Double getTotalPayment() {
-        Double payment = 0.0; //getDeposit();
+        Double payment = getDeposit();
 
         for (CashPayment cashPayment : getCashPayments()) {
-            payment = payment + cashPayment.getPayment();
+            if (!cashPayment.getPaymentPurpose().equals("Deposit")) {
+                payment = payment + cashPayment.getPayment();
+            }
         }
 
         return payment;
@@ -794,12 +800,12 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
                 for (CostComponent costComponent : getCostComponents()) {
                     if ((costComponent.getIsDirty() || costComponent.getId() == null)
                             && !costComponent.save(em).isSuccess()) {
-                        
+
                         return new ReturnMessage(false,
                                 "Cost component save error occurred",
                                 "An error occurred while saving a cost component",
                                 Message.SEVERITY_ERROR_NAME);
-                        
+
                     }
                 }
             }
