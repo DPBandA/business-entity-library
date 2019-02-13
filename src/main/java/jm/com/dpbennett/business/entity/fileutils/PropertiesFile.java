@@ -123,7 +123,8 @@ public class PropertiesFile {
         try {
 
             try (FileInputStream fis
-                    = new FileInputStream(FileUtils.getAbsoluteFilePath(filePath, getClass()))) {
+//                    = new FileInputStream(FileUtils.getAbsoluteFilePath(filePath, getClass()))) {
+                    = new FileInputStream(filePath)) {
                 props.load(fis);
             }
 
