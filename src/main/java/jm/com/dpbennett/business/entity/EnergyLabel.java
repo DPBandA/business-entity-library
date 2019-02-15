@@ -98,7 +98,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
      */
     public EnergyLabel() {
         starRating = "";
-        calcStarRating = true;
+        calcStarRating = false;
         ratedVoltage = "";
         ratedFrequency = "";
         annualConsumption = "";
