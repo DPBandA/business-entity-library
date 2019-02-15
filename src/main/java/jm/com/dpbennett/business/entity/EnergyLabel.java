@@ -92,6 +92,8 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private EnergyConsumptionAndEfficiency energyConsumptionAndEfficiency;
     @Transient
     private Boolean isDirty;
+    @Transient
+    private Boolean showSampleWatermark;
 
     /**
      * The default constructor of an EnergyLabel.
@@ -134,6 +136,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         type = "";
         validity = "";
         isDirty = false;
+        showSampleWatermark = false;
     }
 
     /**
@@ -639,23 +642,23 @@ public class EnergyLabel implements Serializable, BusinessEntity {
 
     /**
      * Gets the second cost per kWh.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getCostPerKwh2() {
-        
+
         return (costPerKwh2 == null || costPerKwh2.isEmpty() ? "0.0" : costPerKwh2);
     }
 
-   /**
-    * Sets the second cost per kWh.
-    * 
-    * @param costPerKwh2 
-    */
+    /**
+     * Sets the second cost per kWh.
+     *
+     * @param costPerKwh2
+     */
     public void setCostPerKwh2(String costPerKwh2) {
         this.costPerKwh2 = costPerKwh2;
     }
-        
+
     /**
      * Gets the country of origin of the product.
      *
@@ -1117,6 +1120,17 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         return new ReturnMessage();
     }
 
+    public Boolean getShowSampleWatermark() {
+        if (showSampleWatermark == null) {
+            showSampleWatermark = false;
+        }
+        return showSampleWatermark;
+    }
+
+    public void setShowSampleWatermark(Boolean showSampleWatermark) {
+        this.showSampleWatermark = showSampleWatermark;
+    }
+
     /**
      * Gets the isDirty flag that determines if this EnergyLabel was edited.
      *
@@ -1266,7 +1280,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         } else {
             sri = getHeatingSRI();
         }
-        
+
         if (sri < 1.5) {
             return 1.0;
         }
