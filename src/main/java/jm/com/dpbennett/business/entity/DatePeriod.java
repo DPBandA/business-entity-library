@@ -356,17 +356,17 @@ public class DatePeriod implements BusinessEntity, Serializable, Comparable {
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
-            case "Last year":
-                setStartDate(BusinessEntityUtils.getStartOfPreviousYear());
-                setEndDate(BusinessEntityUtils.getEndOfPreviousYear());
-                setStartDateDisabled(true);
-                setEndDateDisabled(true);
-                break;
             case "Last financial year to date":
                 // get this financial year to date and adjust years by 1
                 initFinancialYearPeriod(BusinessEntityUtils.createDate(new Date()));
                 startDate = BusinessEntityUtils.adjustDate(startDate, Calendar.YEAR, -1);
                 endDate = BusinessEntityUtils.adjustDate(endDate, Calendar.YEAR, -1);
+                setStartDateDisabled(true);
+                setEndDateDisabled(true);
+                break;
+            case "Last year":
+                setStartDate(BusinessEntityUtils.getStartOfPreviousYear());
+                setEndDate(BusinessEntityUtils.getEndOfPreviousYear());
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
