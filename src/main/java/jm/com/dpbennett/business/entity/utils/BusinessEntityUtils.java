@@ -384,9 +384,8 @@ public class BusinessEntityUtils {
     public static Date createDate(int year, int monthIndex, int day) {
         Calendar c;
 
-        // current time and date
-        c = Calendar.getInstance();
-        // set date
+        c = Calendar.getInstance();        
+        c.clear();
         c.set(year, monthIndex, day, 0, 0, 0);
 
         return c.getTime();
@@ -395,10 +394,9 @@ public class BusinessEntityUtils {
     public static Date createDate(Date date) {
         Calendar c;
 
-        // current time and date
         c = Calendar.getInstance();
+        c.clear();
         c.setTime(date);
-        // set date
         c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
