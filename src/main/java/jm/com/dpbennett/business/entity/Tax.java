@@ -39,6 +39,7 @@ public class Tax implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Boolean active;
     private String name;
     private Double taxValue;
     private String taxValueType;
@@ -52,6 +53,7 @@ public class Tax implements Serializable, BusinessEntity {
     private Boolean isDirty;
 
     public Tax() {
+        active = true;
         name = "";
         taxValue = 0.0;
         taxValueType = "Percentage";
@@ -61,12 +63,21 @@ public class Tax implements Serializable, BusinessEntity {
     }
 
     public Tax(String name) {
+        active = true;
         this.name = name;
         taxValue = 0.0;
         taxValueType = "Percentage";
         type = "";
         description = "";
         category = "";
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public Double getTaxValue() {
@@ -123,6 +134,23 @@ public class Tax implements Serializable, BusinessEntity {
                     = em.createQuery("SELECT t FROM Tax t WHERE UPPER(t.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' OR UPPER(t.description) LIKE '%"
                             + value.toUpperCase().trim() + "%' ORDER BY t.name",
+                            Tax.class).getResultList();
+            return taxes;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<Tax> findActiveTaxesByNameAndDescription(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Tax> taxes
+                    = em.createQuery("SELECT t FROM Tax t WHERE (UPPER(t.name) LIKE '%"
+                            + value.toUpperCase().trim() + "%' OR UPPER(t.description) LIKE '%"
+                            + value.toUpperCase().trim() + "%') AND t.active = 1 ORDER BY t.name",
                             Tax.class).getResultList();
             return taxes;
         } catch (Exception e) {
