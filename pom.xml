@@ -7,6 +7,17 @@
     <artifactId>business-entity</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    
+    <name>Business Entity Library</name>
+    <description>A library of business entities and utilities.</description>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <skipTests>true</skipTests>
+    </properties>
+    
     <build>
         <plugins>
             <plugin>
@@ -28,17 +39,6 @@
             </plugin>
         </plugins>
     </build>
-    
-    <name>Business Entity Library</name>
-    <description>A library of business entities and utilities.</description>
-    
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-        <skipTests>true</skipTests>
-        <!-- <activiti-version>5.22.0</activiti-version> -->
-    </properties>
     
     <dependencies>  
         <dependency>

@@ -28,11 +28,11 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
-@Table(name = "tax")
+@Table(name = "discount")
 @NamedQueries({
-    @NamedQuery(name = "findAllTaxes", query = "SELECT t FROM Tax t ORDER BY t.name")
+    @NamedQuery(name = "findAllDiscounts", query = "SELECT d FROM Discount d ORDER BY d.name")
 })
-public class Tax implements Serializable, BusinessEntity {
+public class Discount implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -40,8 +40,8 @@ public class Tax implements Serializable, BusinessEntity {
     private Long id;
     private Boolean active;
     private String name;
-    private Double taxValue;
-    private String taxValueType;
+    private Double discountValue;
+    private String discountValueType;
     @OneToOne(cascade = CascadeType.REFRESH)
     private AccountingCode accountingCode;
     private String type;
@@ -51,21 +51,21 @@ public class Tax implements Serializable, BusinessEntity {
     @Transient
     private Boolean isDirty;
 
-    public Tax() {
+    public Discount() {
         active = true;
         name = "";
-        taxValue = 0.0;
-        taxValueType = "Percentage";
+        discountValue = 0.0;
+        discountValueType = "Percentage";
         type = "";
         description = "";
         category = "";
     }
 
-    public Tax(String name) {
+    public Discount(String name) {
         active = true;
         this.name = name;
-        taxValue = 0.0;
-        taxValueType = "Percentage";
+        discountValue = 0.0;
+        discountValueType = "Percentage";
         type = "";
         description = "";
         category = "";
@@ -79,20 +79,20 @@ public class Tax implements Serializable, BusinessEntity {
         this.active = active;
     }
 
-    public Double getTaxValue() {
-        return taxValue;
+    public Double getDiscountValue() {
+        return discountValue;
     }
 
-    public void setTaxValue(Double taxValue) {
-        this.taxValue = taxValue;
+    public void setDiscountValue(Double discountValue) {
+        this.discountValue = discountValue;
     }
 
-    public String getTaxValueType() {
-        return taxValueType;
+    public String getDiscountValueType() {
+        return discountValueType;
     }
 
-    public void setTaxValueType(String taxValueType) {
-        this.taxValueType = taxValueType;
+    public void setDiscountValueType(String discountValueType) {
+        this.discountValueType = discountValueType;
     }
 
     public String getCategory() {
@@ -111,12 +111,12 @@ public class Tax implements Serializable, BusinessEntity {
         this.accountingCode = accountingCode;
     }
 
-    public static List<Tax> findAllTaxes(EntityManager em) {
+    public static List<Discount> findAllDiscounts(EntityManager em) {
 
         try {
-            List<Tax> taxes = em.createNamedQuery("findAllTaxes", Tax.class).getResultList();
+            List<Discount> discounts = em.createNamedQuery("findAllDiscounts", Discount.class).getResultList();
 
-            return taxes;
+            return discounts;
 
         } catch (Exception e) {
             System.out.println(e);
@@ -124,34 +124,34 @@ public class Tax implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<Tax> findTaxesByNameAndDescription(EntityManager em, String value) {
+    public static List<Discount> findDiscountsByNameAndDescription(EntityManager em, String value) {
 
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<Tax> taxes
-                    = em.createQuery("SELECT t FROM Tax t WHERE UPPER(t.name) LIKE '%"
-                            + value.toUpperCase().trim() + "%' OR UPPER(t.description) LIKE '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY t.name",
-                            Tax.class).getResultList();
-            return taxes;
+            List<Discount> discounts
+                    = em.createQuery("SELECT d FROM Discount d WHERE UPPER(d.name) LIKE '%"
+                            + value.toUpperCase().trim() + "%' OR UPPER(d.description) LIKE '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY d.name",
+                            Discount.class).getResultList();
+            return discounts;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
     
-    public static List<Tax> findActiveTaxesByNameAndDescription(EntityManager em, String value) {
+    public static List<Discount> findActiveDiscountsByNameAndDescription(EntityManager em, String value) {
 
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<Tax> taxes
-                    = em.createQuery("SELECT t FROM Tax t WHERE (UPPER(t.name) LIKE '%"
-                            + value.toUpperCase().trim() + "%' OR UPPER(t.description) LIKE '%"
-                            + value.toUpperCase().trim() + "%') AND t.active = 1 ORDER BY t.name",
-                            Tax.class).getResultList();
-            return taxes;
+            List<Discount> discounts
+                    = em.createQuery("SELECT d FROM Discount d WHERE (UPPER(d.name) LIKE '%"
+                            + value.toUpperCase().trim() + "%' OR UPPER(d.description) LIKE '%"
+                            + value.toUpperCase().trim() + "%') AND d.active = 1 ORDER BY d.name",
+                            Discount.class).getResultList();
+            return discounts;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -194,14 +194,12 @@ public class Tax implements Serializable, BusinessEntity {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Tax)) {
+        if (!(object instanceof Discount)) {
             return false;
         }
-        Tax other = (Tax) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        Discount other = (Discount) object;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -231,7 +229,7 @@ public class Tax implements Serializable, BusinessEntity {
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Tax not saved");
+        return new ReturnMessage(false, "Discount not saved");
     }
 
     @Override
@@ -252,16 +250,16 @@ public class Tax implements Serializable, BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public static Tax findByName(EntityManager em, String value) {
+    public static Discount findByName(EntityManager em, String value) {
 
         try {
             value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<Tax> taxes = em.createQuery("SELECT t FROM Tax t "
-                    + "WHERE UPPER(t.name) "
-                    + "= '" + value.toUpperCase() + "'", Tax.class).getResultList();
-            if (taxes.size() > 0) {
-                return taxes.get(0);
+            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
+                    + "WHERE UPPER(d.name) "
+                    + "= '" + value.toUpperCase() + "'", Discount.class).getResultList();
+            if (discounts.size() > 0) {
+                return discounts.get(0);
             }
             return null;
         } catch (Exception e) {
