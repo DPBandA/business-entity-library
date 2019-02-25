@@ -77,25 +77,25 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     private Boolean invoiced;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee costingApprovedBy;
-    private Double discount;
     private Double minDeposit;
     private Double totalTax;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Tax tax;
     private Double totalCost;
-    private Double percentageGCT;
     @Transient
     private Double estimatedCostIncludingTaxes;
     @Transient
     private Double minDepositIncludingTaxes;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee lastPaymentEnteredBy;
+    private Employee lastPaymentEnteredBy;    
+    private Double discount;
     private String discountType;
     @Transient
     private Boolean isDirty;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private AccountingCode accountingCode;
+    private AccountingCode accountingCode; // tk delete if not necessary
 
     public JobCostingAndPayment() {
-        this.percentageGCT = 0.0;
         this.totalCost = 0.0;
         this.totalTax = 0.0;
         this.minDeposit = 0.0;
@@ -120,7 +120,14 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         this.id = id;
     }
 
-    // tk codes to be generated for gct and each cost component
+    public Tax getTax() {
+        return (tax == null ? new Tax(): tax);
+    }
+
+    public void setTax(Tax tax) {
+        this.tax = tax;
+    }
+
     public List<AccountingCode> getAccountingCodes() {
         return new ArrayList<>();
     }
@@ -155,6 +162,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
     }
 
+    @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
@@ -166,6 +174,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         return isDirty;
     }
 
+    @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
@@ -191,9 +200,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
     public Double getMinDepositIncludingTaxes() {
         minDepositIncludingTaxes
-                = getMinDeposit() + getMinDeposit() * getPercentageGCT() / 100.0;
-        //= BusinessEntityUtils.roundTo2DecimalPlaces(getMinDeposit() + getMinDeposit() * getPercentageGCT() / 100.0);
-
+                = getMinDeposit() + getMinDeposit() * getTax().getValue();
+        
         return minDepositIncludingTaxes;
     }
 
@@ -210,17 +218,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
     public void setLastPaymentEnteredBy(Employee lastPaymentEnteredBy) {
         this.lastPaymentEnteredBy = lastPaymentEnteredBy;
-    }
-
-    public Double getPercentageGCT() {
-        if (percentageGCT == null) {
-            percentageGCT = 0.0;
-        }
-        return percentageGCT;
-    }
-
-    public void setPercentageGCT(Double percentageGCT) {
-        this.percentageGCT = percentageGCT;
     }
 
     public Double getAmountDue() {
@@ -277,19 +274,19 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public String getTotalTaxLabel() {
-        return "Tax (GCT: " + getPercentageGCT() + "%)($):";
+        return "Tax:";
     }
 
     public String getTotalCostWithTaxLabel() {
         if (getDiscountValue() == 0.0) {
-            if (getPercentageGCT() != 0.0) {
-                return "Total cost (incl. GCT)($): ";
+            if (getTax().getTaxValue() != 0.0) {
+                return "Total cost (incl. tax)($): ";
             } else {
                 return "Total cost ($): ";
             }
         } else {
-            if (getPercentageGCT() != 0.0) {
-                return "Total cost (incl. GCT & discount)($): ";
+            if (getTax().getTaxValue() != 0.0) {
+                return "Total cost (incl. tax & discount)($): ";
             } else {
                 return "Total cost (incl. discount)($): ";
             }
@@ -297,16 +294,16 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public String getCostEstimateWithTaxLabel() {
-        if (getPercentageGCT() != 0.0) {
-            return "Calculated cost estimate (incl. GCT)($): ";
+        if (getTax().getTaxValue() != 0.0) {
+            return "Calculated cost estimate (incl. tax)($): ";
         } else {
             return "Calculated cost estimate ($): ";
         }
     }
 
     public String getMinDepositWithTaxLabel() {
-        if (getPercentageGCT() != 0.0) {
-            return "Minimum deposit (incl. GCT)($): ";
+        if (getTax().getTaxValue() != 0.0) {
+            return "Minimum deposit (incl. tax)($): ";
         } else {
             return "Minimum deposit ($): ";
         }
@@ -352,23 +349,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         this.finalCost = finalCost;
     }
 
-//    public Double calculateAmountDue() {
-//
-//        // NB: Remove discount before taxes are applied
-//        // Take into account discount when it is a percentage       
-////        Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); //BusinessEntityUtils.roundTo2DecimalPlaces(getDiscountValue());
-////
-////        // Add taxes to total (eg GCT)
-////        //setTotalTax(BusinessEntityUtils.roundTo2DecimalPlaces(finalCostWithDiscount * getPercentageGCT() / 100.0));
-////        setTotalTax(finalCostWithDiscount * getPercentageGCT() / 100.0);
-////        setTotalCost(finalCostWithDiscount + getTotalTax());
-//
-//        // Remove deposit(s)/total payments if any       
-//        //setAmountDue(getTotalCost() - BusinessEntityUtils.roundTo2DecimalPlaces(getTotalPayment()));
-//        setAmountDue(getTotalCost() - getTotalPayment());
-//
-//        return getAmountDue();
-//    }
     public Double getTotalJobCostingsAmount() {
         Double total = 0.0;
 
@@ -476,9 +456,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
     public Double getEstimatedCostIncludingTaxes() {
         estimatedCostIncludingTaxes
-                = getEstimatedCost() + getEstimatedCost() * getPercentageGCT() / 100.0;
-        //= BusinessEntityUtils.roundTo2DecimalPlaces(getEstimatedCost() + getEstimatedCost() * getPercentageGCT() / 100.0);
-
+                = getEstimatedCost() + getEstimatedCost() * getTax().getValue();
+        
         return estimatedCostIncludingTaxes;
     }
 
@@ -729,11 +708,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Double getTotalTax() {
-        Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); //BusinessEntityUtils.roundTo2DecimalPlaces(getDiscountValue());
+        Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); 
 
-        // Add taxes to total (eg GCT)
-        //setTotalTax(BusinessEntityUtils.roundTo2DecimalPlaces(finalCostWithDiscount * getPercentageGCT() / 100.0));
-        totalTax = finalCostWithDiscount * getPercentageGCT() / 100.0;
+        totalTax = finalCostWithDiscount * getTax().getValue();
 
         return totalTax;
     }
@@ -745,10 +722,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
      */
     public Double getTotalCost() {
         Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); //BusinessEntityUtils.roundTo2DecimalPlaces(getDiscountValue());
-//
-//        // Add taxes to total (eg GCT)
-//        //setTotalTax(BusinessEntityUtils.roundTo2DecimalPlaces(finalCostWithDiscount * getPercentageGCT() / 100.0));
-//        setTotalTax(finalCostWithDiscount * getPercentageGCT() / 100.0);
+
         totalCost = finalCostWithDiscount + getTotalTax();
 
         return totalCost;
@@ -758,7 +732,12 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         this.totalCost = totalCost;
     }
 
-    public static Boolean getCanApplyGCT(Job job) {
+    /**
+     * 
+     * @param job
+     * @return 
+     */
+    public static Boolean getCanApplyTax(Job job) {
         return !job.getIsSubContract()
                 && job.getClassification().getIsEarning()
                 && job.getDepartment().getPrivilege().getCanApplyTaxesToJobCosting()
@@ -768,15 +747,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
                         BusinessEntityUtils.getDateInMediumDateFormat(job.getJobStatusAndTracking().getDateSubmitted())));
     }
 
-    public static void setJobCostingTaxes(EntityManager em, Job job) {
-
-        if (JobCostingAndPayment.getCanApplyGCT(job)) {
-            Double percentGCT = SystemOption.getGCTPercentage(em);
-            job.getJobCostingAndPayment().setPercentageGCT(percentGCT);
-        } else {
-            job.getJobCostingAndPayment().setPercentageGCT(0.0);
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {

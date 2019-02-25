@@ -296,19 +296,6 @@ public class SystemOption implements BusinessEntity, Serializable {
         }
     }
 
-    public static Double getGCTPercentage(EntityManager em) {
-        Double percentGCT;
-
-        // Get percentage GCT for use by job costing and payment
-        try {
-            percentGCT = Double.parseDouble(SystemOption.findSystemOptionByName(em, "GCT").getOptionValue());
-        } catch (NumberFormatException e) {
-            percentGCT = 0.0;
-            System.out.println("Exception occurred while getting GCT percentage: " + e);
-        }
-
-        return percentGCT;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {

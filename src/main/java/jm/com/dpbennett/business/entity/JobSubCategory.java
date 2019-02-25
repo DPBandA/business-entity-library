@@ -62,11 +62,12 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(name = "SubCategory")
+    //@Column(name = "SubCategory")
     private String subCategory;
-    @Column(name = "IsEarning")
+    //@Column(name = "IsEarning")
     private Boolean isEarning;
-    @Column(name = "CategoryId")
+    private Boolean isTaxable;
+    //@Column(name = "CategoryId")
     private Long categoryId;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Department> departments;
@@ -86,7 +87,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     }
 
     public JobSubCategory(String subCategory) {
-         this.subCategory = subCategory;
+        this.subCategory = subCategory;
         this.isEarning = true;
         this.categoryId = null;
         this.departments = new ArrayList<>();
@@ -103,7 +104,18 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     public void setId(Long id) {
         this.id = id;
     }
-    
+
+    public Boolean getIsTaxable() {
+        if (isTaxable == null) {
+            isTaxable = getIsEarning();
+        }
+        return isTaxable;
+    }
+
+    public void setIsTaxable(Boolean isTaxable) {
+        this.isTaxable = isTaxable;
+    }
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -274,7 +286,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
             return null;
         }
     }
-    
+
     public static List<JobSubCategory> findJobSubcategoriesByName(EntityManager em, String name) {
 
         try {
@@ -289,7 +301,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
             return new ArrayList<>();
         }
     }
-    
+
     public static List<JobSubCategory> findActiveJobSubcategoriesByName(EntityManager em, String name) {
 
         try {

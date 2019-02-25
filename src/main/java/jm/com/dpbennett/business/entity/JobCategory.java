@@ -61,6 +61,7 @@ public class JobCategory implements Serializable, BusinessEntity {
     private String classification;
     private String category;
     private Boolean isEarning;
+    private Boolean isTaxable;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Department> departments;
     private Boolean active;
@@ -95,6 +96,17 @@ public class JobCategory implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public Boolean getIsTaxable() {
+        if (isTaxable == null) {
+            isTaxable = getIsEarning();
+        }
+        return isTaxable;
+    }
+
+    public void setIsTaxable(Boolean isTaxable) {
+        this.isTaxable = isTaxable;
     }
     
     @Override

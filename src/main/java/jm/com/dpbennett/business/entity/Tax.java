@@ -71,6 +71,28 @@ public class Tax implements Serializable, BusinessEntity {
         category = "";
     }
 
+    public Double getValue() {
+        if (taxValueType.equals("Percentage")) {
+            return taxValue / 100.0;
+        }
+
+        return taxValue;
+    }
+
+    public static Tax findDefault(EntityManager em, String name) {
+        Tax tax = Tax.findByName(em, name);
+
+        if (tax == null) {
+            tax = new Tax(name);
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, tax);
+            em.getTransaction().commit();
+        }
+
+        return tax;
+    }
+
     public Boolean getActive() {
         return active;
     }
@@ -140,7 +162,7 @@ public class Tax implements Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Tax> findActiveTaxesByNameAndDescription(EntityManager em, String value) {
 
         try {

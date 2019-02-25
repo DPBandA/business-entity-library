@@ -59,6 +59,7 @@ public class Classification implements BusinessEntity, Serializable {
     @Column(length = 1024)
     private String description;
     private Boolean isEarning;
+    private Boolean isTaxable;
     private String category;
     @Transient
     private Boolean isDirty;
@@ -79,6 +80,17 @@ public class Classification implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public Boolean getIsTaxable() {
+        if (isTaxable == null) {
+            isTaxable = getIsEarning();
+        }
+        return isTaxable;
+    }
+
+    public void setIsTaxable(Boolean isTaxable) {
+        this.isTaxable = isTaxable;
     }
 
     public String getCategory() {
