@@ -91,9 +91,13 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     private String accountingId;
     // Billing 
     private Double creditLimit;
-    private Double discount;
-    private String discountType;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Discount discount;
     private Boolean taxExempt;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Address billingAddress;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Contact billingContact;
 
     public Client() {
         this.taxRegistrationNumber = "";
@@ -111,12 +115,38 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         accountingId = "";
     }
 
-    public String getDiscountType() {
-        return discountType;
+    public Address getBillingAddress() {
+        if (billingAddress == null) {
+            if (!getBillingAddresses().isEmpty()) {
+                billingAddress = getBillingAddresses().get(0);
+            }
+        }
+        return billingAddress;
     }
 
-    public void setDiscountType(String discountType) {
-        this.discountType = discountType;
+    public void setBillingAddress(Address billingAddress) {
+        this.billingAddress = billingAddress;
+    }
+
+    public Contact getBillingContact() {
+        if (billingContact == null) {
+            if (!getContacts().isEmpty()) {
+                billingContact = getContacts().get(0);
+            }
+        }
+        return billingContact;
+    }
+
+    public void setBillingContact(Contact billingContact) {
+        this.billingContact = billingContact;
+    }
+
+    public Discount getDiscount() {
+        return (discount == null ? new Discount() : discount);
+    }
+
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
     }
 
     public Boolean getTaxExempt() {
@@ -128,17 +158,6 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
 
     public void setTaxExempt(Boolean taxExempt) {
         this.taxExempt = taxExempt;
-    }
-
-    public Double getDiscount() {
-        if (discount == null) {
-            discount = 0.0;
-        }
-        return discount;
-    }
-
-    public void setDiscount(Double discount) {
-        this.discount = discount;
     }
 
     public Double getCreditLimit() {

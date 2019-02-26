@@ -391,7 +391,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         job.getJobStatusAndTracking().setAlertDate(null);
         job.getJobStatusAndTracking().setDateJobEmailWasSent(null);
         // job costing and payment 
-        job.setJobCostingAndPayment(JobCostingAndPayment.create());
+        job.setJobCostingAndPayment(JobCostingAndPayment.create(em));
         // this is done here because job number is dependent on business office, department/subcontracted department
 
         // copy samples
@@ -453,7 +453,7 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         job.getJobStatusAndTracking().setDateSubmitted(new Date());
         job.getJobStatusAndTracking().setWorkProgress("Not started");
         // job costing and payment
-        job.setJobCostingAndPayment(JobCostingAndPayment.create());
+        job.setJobCostingAndPayment(JobCostingAndPayment.create(em));
         // this is done here because job number is dependent on business office, department/subcontracted department
         job.setNumberOfSamples(0L);
         if (job.getAutoGenerateJobNumber()) {

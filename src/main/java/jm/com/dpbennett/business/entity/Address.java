@@ -72,7 +72,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         this.city = "";
         this.addressLine2 = "";
         this.addressLine1 = "";
-        this.type = "";
+        this.type = "Billing";
     }
 
     public Address(Address src) {
@@ -83,7 +83,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         this.city = "";
         this.addressLine2 = "";
         this.addressLine1 = "";
-        this.type = "";
+        this.type = "Billing";
         this.id = null;
         doCopy(src);
     }
@@ -96,7 +96,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         this.city = "";
         this.addressLine2 = "";
         this.addressLine1 = "";
-        this.type = "";
+        this.type = "Billing";
         this.id = null;
     }
 

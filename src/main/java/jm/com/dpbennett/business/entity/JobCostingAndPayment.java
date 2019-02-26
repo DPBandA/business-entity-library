@@ -87,9 +87,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @Transient
     private Double minDepositIncludingTaxes;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee lastPaymentEnteredBy;    
-    private Double discount;
-    private String discountType;
+    private Employee lastPaymentEnteredBy;  
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Discount discount;
     @Transient
     private Boolean isDirty;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -99,7 +99,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         this.totalCost = 0.0;
         this.totalTax = 0.0;
         this.minDeposit = 0.0;
-        this.discount = 0.0;
         this.amountDue = 0.0;
         this.deposit = 0.0;
         this.paymentReceivedToDate = 0.0;
@@ -126,6 +125,14 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
     public void setTax(Tax tax) {
         this.tax = tax;
+    }
+
+    public Discount getDiscount() {
+        return (discount == null ? new Discount(): discount);
+    }
+
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
     }
 
     public List<AccountingCode> getAccountingCodes() {
@@ -179,23 +186,14 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public static JobCostingAndPayment create() {
+    public static JobCostingAndPayment create(EntityManager em) {
         JobCostingAndPayment jobCostingAndPayment = new JobCostingAndPayment();
 
         jobCostingAndPayment.setPurchaseOrderNumber("");
+        jobCostingAndPayment.setTax(Tax.findDefault(em, "0.0"));
+        jobCostingAndPayment.setDiscount(Discount.findDefault(em, "0.0"));
 
         return jobCostingAndPayment;
-    }
-
-    public String getDiscountType() {
-        if (discountType == null) {
-            discountType = "Percentage";
-        }
-        return discountType;
-    }
-
-    public void setDiscountType(String discountType) {
-        this.discountType = discountType;
     }
 
     public Double getMinDepositIncludingTaxes() {
@@ -254,31 +252,12 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         this.minDeposit = minDeposit;
     }
 
-    public Double getDiscount() {
-        if (discount == null) {
-            discount = 0.0;
-        }
-        return discount;
-    }
-
-    public void setDiscount(Double discount) {
-        this.discount = discount;
-    }
-
-    public Double getDiscountValue() {
-        if (getDiscountType().equals("Percentage")) {
-            return getFinalCost() * getDiscount() / 100.0;
-        } else {
-            return getDiscount();
-        }
-    }
-
     public String getTotalTaxLabel() {
         return "Tax:";
     }
 
     public String getTotalCostWithTaxLabel() {
-        if (getDiscountValue() == 0.0) {
+        if (getDiscount().getDiscountValue() == 0.0) {
             if (getTax().getTaxValue() != 0.0) {
                 return "Total cost (incl. tax)($): ";
             } else {
@@ -708,7 +687,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Double getTotalTax() {
-        Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); 
+        Double finalCostWithDiscount = getFinalCost() - getFinalCost() * getDiscount().getValue(); 
 
         totalTax = finalCostWithDiscount * getTax().getValue();
 
@@ -721,7 +700,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
      * @return
      */
     public Double getTotalCost() {
-        Double finalCostWithDiscount = getFinalCost() - getDiscountValue(); //BusinessEntityUtils.roundTo2DecimalPlaces(getDiscountValue());
+        Double finalCostWithDiscount = getFinalCost() - getFinalCost() * getDiscount().getValue();
 
         totalCost = finalCostWithDiscount + getTotalTax();
 

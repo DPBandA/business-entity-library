@@ -78,6 +78,28 @@ public class Discount implements Serializable, BusinessEntity {
     public void setActive(Boolean active) {
         this.active = active;
     }
+    
+    public static Discount findDefault(EntityManager em, String name) {
+        Discount discount = Discount.findByName(em, name);
+
+        if (discount == null) {
+            discount = new Discount(name);
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, discount);
+            em.getTransaction().commit();
+        }
+
+        return discount;
+    }
+
+    public Double getValue() {
+        if (discountValueType.equals("Percentage")) {
+            return discountValue / 100.0;
+        }
+
+        return discountValue;
+    }
 
     public Double getDiscountValue() {
         return discountValue;
@@ -140,7 +162,7 @@ public class Discount implements Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Discount> findActiveDiscountsByNameAndDescription(EntityManager em, String value) {
 
         try {
@@ -198,7 +220,7 @@ public class Discount implements Serializable, BusinessEntity {
             return false;
         }
         Discount other = (Discount) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
