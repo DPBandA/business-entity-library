@@ -88,17 +88,17 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     private Boolean international;
     @Transient
     private Boolean isDirty;
+    // Billing     
     private String accountingId;
-    // Billing 
-    private Double creditLimit;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Discount discount;
-    private Boolean taxExempt;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Address billingAddress;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact billingContact;
-
+    private Double creditLimit;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Discount discount;
+    private Boolean taxExempt;
+    
     public Client() {
         this.taxRegistrationNumber = "";
         this.tag = false;
