@@ -311,6 +311,7 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
+                
         try {
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

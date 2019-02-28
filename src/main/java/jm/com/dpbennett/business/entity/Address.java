@@ -354,7 +354,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         try {
             value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<Address> addresses = em.createQuery("SELECT a FROM  Address a "
+            List<Address> addresses = em.createQuery("SELECT a FROM Address a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", Address.class).getResultList();
             if (addresses.size() > 0) {
@@ -425,6 +425,34 @@ public class Address implements Serializable, BusinessEntity, Comparable {
             String stateOrProvince = address[3];
 
             Client client = Client.findClientById(em, clientId);
+
+            if (client != null) {
+                for (Address addr : client.getAddresses()) {
+                    if (addr.getAddressLine1().equals(addressLine1)
+                            && addr.getAddressLine2().equals(addressLine2)
+                            && addr.getCity().equals(city)
+                            && addr.getStateOrProvince().equals(stateOrProvince)) {
+                        return addr;
+                    }
+                }
+            }
+
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static Address findClientAddressByClient(EntityManager em, String query, Client client) {
+
+        try {
+            
+            String address[] = query.split("; ");
+            String addressLine1 = address[0];
+            String addressLine2 = address[1];
+            String city = address[2];
+            String stateOrProvince = address[3];
 
             if (client != null) {
                 for (Address addr : client.getAddresses()) {

@@ -90,7 +90,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     private Boolean isDirty;
     // Billing  
     @Transient
-    private AccPacCustomer accPacCustomer;
+    private AccPacCustomer financialAccount;
     private String accountingId;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Address billingAddress;
@@ -100,7 +100,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
     private Boolean taxExempt;
-    
+
     public Client() {
         this.taxRegistrationNumber = "";
         this.tag = false;
@@ -117,12 +117,26 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         accountingId = "";
     }
 
-    public AccPacCustomer getAccPacCustomer() {
-        return accPacCustomer;
+    public String getAccountingId() {
+        if (accountingId == null) {
+            accountingId = "";
+        }
+        return accountingId;
     }
 
-    public void setAccPacCustomer(AccPacCustomer accPacCustomer) {
-        this.accPacCustomer = accPacCustomer;
+    public void setAccountingId(String accountingId) {
+        this.accountingId = accountingId;
+    }
+
+    public AccPacCustomer getFinancialAccount() {
+        if (financialAccount == null) {
+            financialAccount = new AccPacCustomer(getAccountingId(), getName());
+        }
+        return financialAccount;
+    }
+
+    public void setFinancialAccount(AccPacCustomer financialAccount) {
+        this.financialAccount = financialAccount;
     }
 
     public Address getBillingAddress() {
@@ -181,18 +195,17 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.creditLimit = creditLimit;
     }
 
-    public String getAccountingId() {
-        if (accountingId == null) {
-            accountingId = "";
-        }
-
-        return accountingId;
-    }
-
-    public void setAccountingId(String accountingId) {
-        this.accountingId = accountingId;
-    }
-
+//    public String getAccountingId() {
+//        if (accountingId == null) {
+//            accountingId = "";
+//        }
+//
+//        return accountingId;
+//    }
+//
+//    public void setAccountingId(String accountingId) {
+//        this.accountingId = accountingId;
+//    }
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
