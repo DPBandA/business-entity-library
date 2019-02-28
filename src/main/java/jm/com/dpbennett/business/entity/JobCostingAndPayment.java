@@ -66,7 +66,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<CostComponent> costComponents;
     private Double estimatedCost;
-    private String estimatedCostDoneBy;
+    private String estimatedCostDoneBy; // tk to replaced by Employee class
     private Double finalCost;
     private String finalCostDoneBy;
     private Double paymentReceivedToDate;
@@ -74,9 +74,13 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     private Double amountDue;
     private Boolean costingCompleted;
     private Boolean costingApproved;
-    private Boolean invoiced;
+    private Boolean invoiced;    
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee costingPreparedBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee costingApprovedBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee costingInvoicedBy;
     private Double minDeposit;
     private Double totalTax;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -117,6 +121,22 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Employee getCostingInvoicedBy() {
+        return costingInvoicedBy;
+    }
+
+    public void setCostingInvoicedBy(Employee costingInvoicedBy) {
+        this.costingInvoicedBy = costingInvoicedBy;
+    }
+
+    public Employee getCostingPreparedBy() {
+        return costingPreparedBy;
+    }
+
+    public void setCostingPreparedBy(Employee costingPreparedBy) {
+        this.costingPreparedBy = costingPreparedBy;
     }
 
     public Tax getTax() {

@@ -88,7 +88,9 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     private Boolean international;
     @Transient
     private Boolean isDirty;
-    // Billing     
+    // Billing  
+    @Transient
+    private AccPacCustomer accPacCustomer;
     private String accountingId;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Address billingAddress;
@@ -113,6 +115,14 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         active = true;
         international = false;
         accountingId = "";
+    }
+
+    public AccPacCustomer getAccPacCustomer() {
+        return accPacCustomer;
+    }
+
+    public void setAccPacCustomer(AccPacCustomer accPacCustomer) {
+        this.accPacCustomer = accPacCustomer;
     }
 
     public Address getBillingAddress() {

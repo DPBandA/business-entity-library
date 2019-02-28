@@ -98,6 +98,8 @@ public class JobStatusAndTracking implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateCostingApproved;
     @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateCostingInvoiced;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date expectedStartDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
@@ -170,6 +172,14 @@ public class JobStatusAndTracking implements Serializable {
 
     public void setDateCostingApproved(Date dateCostingApproved) {
         this.dateCostingApproved = dateCostingApproved;
+    }
+
+    public Date getDateCostingInvoiced() {
+        return dateCostingInvoiced;
+    }
+
+    public void setDateCostingInvoiced(Date dateCostingInvoiced) {
+        this.dateCostingInvoiced = dateCostingInvoiced;
     }
 
     public Date getDateCostingCompleted() {
