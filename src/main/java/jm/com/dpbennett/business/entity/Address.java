@@ -444,7 +444,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         }
     }
     
-    public static Address findClientAddressByClient(EntityManager em, String query, Client client) {
+    public static Address findClientAddressByClient(String query, Client client) {
 
         try {
             
@@ -471,7 +471,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
-
+    
     public static List<Address> findClientAddresses(EntityManager em, String value) {
 
         try {
