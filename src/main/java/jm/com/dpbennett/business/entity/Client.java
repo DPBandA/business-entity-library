@@ -175,7 +175,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
 
     public Boolean getTaxExempt() {
         if (taxExempt == null) {
-            taxExempt = true;
+            taxExempt = false;
         }
         return taxExempt;
     }

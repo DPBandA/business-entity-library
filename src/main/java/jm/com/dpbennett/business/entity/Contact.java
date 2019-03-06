@@ -434,23 +434,48 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
      *
      * @param em
      * @param query
+     * @param clientId
      * @return
      */
     public static Contact findClientContactById(EntityManager em, String query, Long clientId) {
 
         try {
             String newQuery = query.replaceAll("'", "''");
-            String contact[] = newQuery.split(", ");
-            String lastname = contact[0];
-            String firstname = contact[1];
+            String contacts[] = newQuery.split(", ");
+            String lastname = contacts[0];
+            String firstname = contacts[1];
 
             Client client = Client.findClientById(em, clientId);
 
             if (client != null) {
-                for (Contact cont : client.getContacts()) {
-                    if (cont.getFirstName().equals(firstname)
-                            && cont.getLastName().equals(lastname)) {
-                        return cont;
+                for (Contact contact : client.getContacts()) {
+                    if (contact.getFirstName().equals(firstname)
+                            && contact.getLastName().equals(lastname)) {
+                        return contact;
+                    }
+                }
+            }
+
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static Contact findClientContact(EntityManager em, String query, Client client) {
+
+        try {
+            String newQuery = query.replaceAll("'", "''");
+            String contacts[] = newQuery.split(", ");
+            String lastname = contacts[0];
+            String firstname = contacts[1];
+
+            if (client != null) {
+                for (Contact contact : client.getContacts()) {
+                    if (contact.getFirstName().equals(firstname)
+                            && contact.getLastName().equals(lastname)) {
+                        return contact;
                     }
                 }
             }

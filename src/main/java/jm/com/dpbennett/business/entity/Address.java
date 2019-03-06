@@ -444,7 +444,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         }
     }
     
-    public static Address findClientAddressByClient(String query, Client client) {
+    public static Address findClientAddress(String query, Client client) {
 
         try {
             
