@@ -137,6 +137,9 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
 
     public void setFinancialAccount(AccPacCustomer financialAccount) {
         this.financialAccount = financialAccount;
+        if (financialAccount != null) {
+            accountingId = financialAccount.getIdCust();
+        }
     }
 
     public Address getBillingAddress() {
@@ -195,17 +198,6 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.creditLimit = creditLimit;
     }
 
-//    public String getAccountingId() {
-//        if (accountingId == null) {
-//            accountingId = "";
-//        }
-//
-//        return accountingId;
-//    }
-//
-//    public void setAccountingId(String accountingId) {
-//        this.accountingId = accountingId;
-//    }
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {

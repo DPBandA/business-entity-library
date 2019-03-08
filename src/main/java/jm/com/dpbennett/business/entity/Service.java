@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -31,6 +32,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -61,6 +63,8 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     private String description;
     @Transient
     private Boolean isDirty;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private AccountingCode accountingCode;
 
     public Service() {
         name = "";
@@ -88,6 +92,14 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
     }
 
     public Boolean getActive() {
@@ -185,7 +197,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.name, ((Service) o).name);
     }
-    
+
     public static List<Service> findAll(EntityManager em) {
 
         try {
@@ -197,7 +209,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
-    
+
     public static List<Service> findAllActive(EntityManager em) {
 
         try {
@@ -206,11 +218,11 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return services;
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return null;
         }
     }
-    
+
     public static Service findById(EntityManager em, Long id) {
 
         try {
@@ -219,7 +231,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return service;
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return null;
         }
     }
@@ -256,7 +268,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Service> findAllActiveByName(EntityManager em, String name) {
 
         try {
