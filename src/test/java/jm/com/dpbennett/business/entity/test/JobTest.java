@@ -9,15 +9,14 @@ import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.Discount;
-import jm.com.dpbennett.business.entity.Tax;
+import jm.com.dpbennett.business.entity.Job;
 import org.junit.Test;
 
 /**
  *
  * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
  */
-public class DiscountAndTaxTest {
+public class JobTest {
     @Test
     public void test() {
         HashMap prop = new HashMap();
@@ -27,7 +26,7 @@ public class DiscountAndTaxTest {
         prop.put("javax.persistence.jdbc.password",
                 ""); // NB: REMOVE PWD WHEN DONE
         prop.put("javax.persistence.jdbc.url",
-                "jdbc:mysql://172.16.0.10:3306/jmtstest");
+                "jdbc:mysql://localhost:3306/jmts");
         prop.put("javax.persistence.jdbc.driver",
                 "com.mysql.jdbc.Driver");
 
@@ -36,8 +35,7 @@ public class DiscountAndTaxTest {
 
        // These instantiations cause the respective database tables to be created
        // if they don't already exist.
-       Tax tax = new Tax();
-       Discount discount = new Discount();
+       Job job = new Job();
 
     }
 }

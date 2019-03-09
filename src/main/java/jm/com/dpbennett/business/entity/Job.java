@@ -57,7 +57,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
     @NamedQuery(name = "findByJobNumber", query = "SELECT j FROM Job j WHERE j.jobNumber = :jobNumber")
 })
 @XmlRootElement
-public class Job implements Serializable, BusinessEntity, ClientOwner {
+public class Job implements Serializable, BusinessEntity {
 
     private static final Long serialVersionUId = 1L;
     @Id
@@ -110,8 +110,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private Integer noOfCalibrations;
     private Integer noOfTestsOrCalibrations;
     @Transient
-    private Boolean isClientDirty; // tk check if needed and del if not
-    @Transient
     private Boolean isToBeSubcontracted;
     @Transient
     private Boolean isToBeCopied;
@@ -129,13 +127,14 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     private List<Employee> representatives;
     @Transient
     private Boolean visited;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Service> services;
 
     public Job() {
         this.name = "";
         this.jobNumber = "";
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
-        this.isClientDirty = false;
         this.jobSamples = new ArrayList<>();
     }
 
@@ -144,7 +143,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.jobNumber = name;
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
-        this.isClientDirty = false;
         this.jobSamples = new ArrayList<>();
     }
     
@@ -154,7 +152,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.jobNumber = name;
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
-        this.isClientDirty = false;
         this.jobSamples = new ArrayList<>();
     }
 
@@ -212,6 +209,17 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
 
     public void setRepresentatives(List<Employee> representatives) {
         this.representatives = representatives;
+    }
+
+    public List<Service> getServices() {
+        if (services == null) {
+            services = new ArrayList<>();
+        }
+        return services;
+    }
+
+    public void setServices(List<Service> services) {
+        this.services = services;
     }
 
     public String getJobNumberWithCostLabel() {
@@ -515,7 +523,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.isDirty = isDirty;
     }
 
-    @Override
     public Contact getContact() {
         if (contact == null) {
             if (client != null) {
@@ -527,12 +534,10 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         return contact;
     }
 
-    @Override
     public void setContact(Contact contact) {
         this.contact = contact;
     }
 
-    @Override
     public Address getBillingAddress() {
         if (billingAddress == null) {
             if (client != null) {
@@ -544,7 +549,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         return billingAddress;
     }
 
-    @Override
     public void setBillingAddress(Address billingAddress) {
         this.billingAddress = billingAddress;
     }
@@ -681,20 +685,8 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
     }
 
     public String getDefaultJobDescription() {
-        //if (getJobDescription().trim().equals("")) {
+        
         return this.instructions;
-        /* NB: Getting this form description can be made an option
-         for (JobSample jobSample : getJobSamples()) {
-         if (jobDescription.equals("")) {
-         jobDescription = jobSample.toString();
-         } else {
-         jobDescription = jobDescription + ", " + jobSample.toString();
-         }
-         }
-         */
-        //}
-
-        //return jobDescription;
     }
 
     public Boolean getNewClient() {
@@ -823,17 +815,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         this.autoGenerateJobNumber = autoGenerateJobNumber;
     }
 
-    @Override
-    public void setIsClientDirty(Boolean dirty) {
-        isClientDirty = dirty;
-    }
-
-    @Override
-    public Boolean getIsClientDirty() {
-        return isClientDirty;
-    }
-
-    @Override
     public Client getClient() {
         if (client == null) {
             return new Client("");
@@ -841,7 +822,6 @@ public class Job implements Serializable, BusinessEntity, ClientOwner {
         return client;
     }
 
-    @Override
     public void setClient(Client client) {
         this.client = client;
     }

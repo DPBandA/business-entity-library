@@ -21,7 +21,6 @@ package jm.com.dpbennett.business.entity.test;
 
 import java.util.Date;
 import jm.com.dpbennett.business.entity.DatePeriod;
-import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import org.junit.Test;
 
 /**
