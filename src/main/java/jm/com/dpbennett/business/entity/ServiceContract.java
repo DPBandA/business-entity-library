@@ -71,7 +71,7 @@ public class ServiceContract implements Serializable, BusinessEntity {
     private Boolean intendedMarketUSA = false;
     private Boolean intendedMarketCanada = false;
     private Boolean intendedMarketOther = false;
-    // requested services
+    // Requested services
     private String intendedMarketOtherText;
     private Boolean serviceRequestedTesting = false;
     private Boolean serviceRequestedCalibration = false;
