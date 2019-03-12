@@ -54,11 +54,12 @@ public class ServiceContract implements Serializable, BusinessEntity {
     private Long id;
     private Long jobId;
     private Long billingAddressId;
-    private Boolean additionalServiceUrgent = false;
-    private Boolean additionalServiceFaxResults = false;
-    private Boolean additionalServiceTelephonePresumptiveResults = false;
-    private Boolean additionalServiceSendMoreContractForms = false;
-    private Boolean additionalServiceOther = false;
+    // Additional services    
+    private Boolean additionalServiceUrgent;
+    private Boolean additionalServiceFaxResults;
+    private Boolean additionalServiceTelephonePresumptiveResults;
+    private Boolean additionalServiceSendMoreContractForms;
+    private Boolean additionalServiceOther;
     private String additionalServiceOtherText;
     private Integer estimatedTurnAroundTime;
     @Column(length = 1024)
@@ -71,22 +72,30 @@ public class ServiceContract implements Serializable, BusinessEntity {
     private Boolean intendedMarketUSA = false;
     private Boolean intendedMarketCanada = false;
     private Boolean intendedMarketOther = false;
-    // Requested services
     private String intendedMarketOtherText;
+    // Requested services    
     private Boolean serviceRequestedTesting = false;
     private Boolean serviceRequestedCalibration = false;
     private Boolean serviceRequestedLabelEvaluation = false;
     private Boolean serviceRequestedInspection = false;
     private Boolean serviceRequestedConsultancy = false;
     private Boolean serviceRequestedTraining = false;
+    private Boolean serviceRequestedFoodInspectorate = false;
     private Boolean serviceRequestedOther = false;
     private String serviceRequestedOtherText;
     private String serviceRequestedDetails;
+    ////////////////////////////////////////////////////////
     private Boolean autoAddSampleInformation;
     @Transient
     private Boolean isDirty;
 
     public ServiceContract() {
+        // Additional services
+        additionalServiceUrgent = false;
+        additionalServiceFaxResults = false;
+        additionalServiceTelephonePresumptiveResults = false;
+        additionalServiceSendMoreContractForms = false;
+        additionalServiceOther = false;
     }
 
     @Override
