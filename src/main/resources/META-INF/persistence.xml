@@ -63,7 +63,6 @@
     <class>jm.com.dpbennett.business.entity.ScaleCompany</class>
     <class>jm.com.dpbennett.business.entity.Seal</class>
     <class>jm.com.dpbennett.business.entity.Sector</class>
-    <class>jm.com.dpbennett.business.entity.ServiceContract</class>
     <class>jm.com.dpbennett.business.entity.Sticker</class>
     <class>jm.com.dpbennett.business.entity.SystemOption</class>
     <class>jm.com.dpbennett.business.entity.TestMeasure</class>

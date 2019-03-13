@@ -32,6 +32,7 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -52,8 +53,27 @@ public class ServiceContract implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long jobId;
-    private Long billingAddressId;
+    private Long jobId; // tk needed?
+    // Requested services    
+    private Boolean serviceRequestedTesting;
+    private Boolean serviceRequestedCalibration;
+    private Boolean serviceRequestedLabelEvaluation;
+    private Boolean serviceRequestedInspection;
+    private Boolean serviceRequestedConsultancy;
+    private Boolean serviceRequestedTraining;
+    private Boolean serviceRequestedFoodInspectorate;
+    private Boolean serviceRequestedLegalMetrology;
+    private Boolean serviceRequestedSaleOfPublication;
+    private Boolean serviceRequestedStationeryOrPhotocopy;
+    private Boolean serviceRequestedCertification;
+    private Boolean serviceRequestedCertificationStandards;
+    private Boolean serviceRequestedDetentionRehabInspection;
+    private Boolean serviceRequestedFacilitiesManagement;
+    private Boolean serviceRequestedCementTesting;
+    private Boolean serviceRequestedPetrolSampling;
+    private Boolean serviceRequestedOther;
+    private String serviceRequestedOtherText;
+    private String serviceRequestedDetails;
     // Additional services    
     private Boolean additionalServiceUrgent;
     private Boolean additionalServiceFaxResults;
@@ -61,41 +81,140 @@ public class ServiceContract implements Serializable, BusinessEntity {
     private Boolean additionalServiceSendMoreContractForms;
     private Boolean additionalServiceOther;
     private String additionalServiceOtherText;
-    private Integer estimatedTurnAroundTime;
+    // Intended market
+    private Boolean intendedMarketLocal;
+    private Boolean intendedMarketCaricom;
+    private Boolean intendedMarketUK;
+    private Boolean intendedMarketUSA;
+    private Boolean intendedMarketCanada;
+    private Boolean intendedMarketOther;
+    private String intendedMarketOtherText;
+    @Transient
+    private Boolean isDirty;
+    private Long billingAddressId; // tk needed?
     @Column(length = 1024)
     private String specialInstructions;
     private String submittedBy;
     private String receivedBy;
-    private Boolean intendedMarketLocal = false;
-    private Boolean intendedMarketCaricom = false;
-    private Boolean intendedMarketUK = false;
-    private Boolean intendedMarketUSA = false;
-    private Boolean intendedMarketCanada = false;
-    private Boolean intendedMarketOther = false;
-    private String intendedMarketOtherText;
-    // Requested services    
-    private Boolean serviceRequestedTesting = false;
-    private Boolean serviceRequestedCalibration = false;
-    private Boolean serviceRequestedLabelEvaluation = false;
-    private Boolean serviceRequestedInspection = false;
-    private Boolean serviceRequestedConsultancy = false;
-    private Boolean serviceRequestedTraining = false;
-    private Boolean serviceRequestedFoodInspectorate = false;
-    private Boolean serviceRequestedOther = false;
-    private String serviceRequestedOtherText;
-    private String serviceRequestedDetails;
-    ////////////////////////////////////////////////////////
-    private Boolean autoAddSampleInformation;
-    @Transient
-    private Boolean isDirty;
+    private Integer estimatedTurnAroundTime;
+    private Boolean autoAddSampleInformation; // tk needed? How is it used?
 
     public ServiceContract() {
+        // Requested services
+        serviceRequestedTesting = false;
+        serviceRequestedCalibration = false;
+        serviceRequestedLabelEvaluation = false;
+        serviceRequestedInspection = false;
+        serviceRequestedConsultancy = false;
+        serviceRequestedTraining = false;
+        serviceRequestedFoodInspectorate = false;
+        serviceRequestedLegalMetrology = false;
+        serviceRequestedSaleOfPublication = false;
+        serviceRequestedStationeryOrPhotocopy = false;
+        serviceRequestedCertification = false;
+        serviceRequestedCertificationStandards = false;
+        serviceRequestedDetentionRehabInspection = false;
+        serviceRequestedFacilitiesManagement = false;
+        serviceRequestedCementTesting = false;
+        serviceRequestedPetrolSampling = false;
+        serviceRequestedOther = false;
+        serviceRequestedOtherText = "";
+        serviceRequestedDetails = "";
         // Additional services
         additionalServiceUrgent = false;
         additionalServiceFaxResults = false;
         additionalServiceTelephonePresumptiveResults = false;
         additionalServiceSendMoreContractForms = false;
         additionalServiceOther = false;
+        additionalServiceOtherText = "";
+        // Intended market
+        intendedMarketLocal = true;
+        intendedMarketCaricom = false;
+        intendedMarketUK = false;
+        intendedMarketUSA = false;
+        intendedMarketCanada = false;
+        intendedMarketOther = false;
+        intendedMarketOtherText = "";
+    }
+
+    public Boolean getServiceRequestedPetrolSampling() {
+        return serviceRequestedPetrolSampling;
+    }
+
+    public void setServiceRequestedPetrolSampling(Boolean serviceRequestedPetrolSampling) {
+        this.serviceRequestedPetrolSampling = serviceRequestedPetrolSampling;
+    }
+
+    public Boolean getServiceRequestedCementTesting() {
+        return serviceRequestedCementTesting;
+    }
+
+    public void setServiceRequestedCementTesting(Boolean serviceRequestedCementTesting) {
+        this.serviceRequestedCementTesting = serviceRequestedCementTesting;
+    }
+
+    public Boolean getServiceRequestedFacilitiesManagement() {
+        return serviceRequestedFacilitiesManagement;
+    }
+
+    public void setServiceRequestedFacilitiesManagement(Boolean serviceRequestedFacilitiesManagement) {
+        this.serviceRequestedFacilitiesManagement = serviceRequestedFacilitiesManagement;
+    }
+
+    public Boolean getServiceRequestedDetentionRehabInspection() {
+        return serviceRequestedDetentionRehabInspection;
+    }
+
+    public void setServiceRequestedDetentionRehabInspection(Boolean serviceRequestedDetentionRehabInspection) {
+        this.serviceRequestedDetentionRehabInspection = serviceRequestedDetentionRehabInspection;
+    }
+
+    public Boolean getServiceRequestedCertification() {
+        return serviceRequestedCertification;
+    }
+
+    public void setServiceRequestedCertification(Boolean serviceRequestedCertification) {
+        this.serviceRequestedCertification = serviceRequestedCertification;
+    }
+
+    public Boolean getServiceRequestedCertificationStandards() {
+        return serviceRequestedCertificationStandards;
+    }
+
+    public void setServiceRequestedCertificationStandards(Boolean serviceRequestedCertificationStandards) {
+        this.serviceRequestedCertificationStandards = serviceRequestedCertificationStandards;
+    }
+
+    public Boolean getServiceRequestedStationeryOrPhotocopy() {
+        return serviceRequestedStationeryOrPhotocopy;
+    }
+
+    public void setServiceRequestedStationeryOrPhotocopy(Boolean serviceRequestedStationeryOrPhotocopy) {
+        this.serviceRequestedStationeryOrPhotocopy = serviceRequestedStationeryOrPhotocopy;
+    }
+
+    public Boolean getServiceRequestedSaleOfPublication() {
+        return serviceRequestedSaleOfPublication;
+    }
+
+    public void setServiceRequestedSaleOfPublication(Boolean serviceRequestedSaleOfPublication) {
+        this.serviceRequestedSaleOfPublication = serviceRequestedSaleOfPublication;
+    }
+
+    public Boolean getServiceRequestedLegalMetrology() {
+        return serviceRequestedLegalMetrology;
+    }
+
+    public void setServiceRequestedLegalMetrology(Boolean serviceRequestedLegalMetrology) {
+        this.serviceRequestedLegalMetrology = serviceRequestedLegalMetrology;
+    }
+
+    public Boolean getServiceRequestedFoodInspectorate() {
+        return serviceRequestedFoodInspectorate;
+    }
+
+    public void setServiceRequestedFoodInspectorate(Boolean serviceRequestedFoodInspectorate) {
+        this.serviceRequestedFoodInspectorate = serviceRequestedFoodInspectorate;
     }
 
     @Override
@@ -113,61 +232,8 @@ public class ServiceContract implements Serializable, BusinessEntity {
 
     public static ServiceContract create() {
         ServiceContract serviceContract = new ServiceContract();
-        // init service contract
-        serviceContract.setIntendedMarketLocal(true);
-        serviceContract.setAutoAddSampleInformation(true);
-        serviceContract.setAdditionalServiceUrgent(false);
-        serviceContract.setAdditionalServiceFaxResults(false);
-        serviceContract.setAdditionalServiceTelephonePresumptiveResults(false);
-        serviceContract.setAdditionalServiceSendMoreContractForms(false);
-        serviceContract.setAdditionalServiceOther(false);
-        serviceContract.setAdditionalServiceOtherText("");
-        serviceContract.setIntendedMarketLocal(false);
-        serviceContract.setIntendedMarketCaricom(false);
-        serviceContract.setIntendedMarketUK(false);
-        serviceContract.setIntendedMarketUSA(false);
-        serviceContract.setIntendedMarketCanada(false);
-        serviceContract.setIntendedMarketOther(false);
-        serviceContract.setIntendedMarketOtherText("");
-        serviceContract.setServiceRequestedTesting(false);
-        serviceContract.setServiceRequestedCalibration(false);
-        serviceContract.setServiceRequestedLabelEvaluation(false);
-        serviceContract.setServiceRequestedInspection(false);
-        serviceContract.setServiceRequestedConsultancy(false);
-        serviceContract.setServiceRequestedTraining(false);
-        serviceContract.setServiceRequestedOther(false);
-        serviceContract.setServiceRequestedOtherText("");
-        serviceContract.setSpecialInstructions("");
 
         return serviceContract;
-    }
-
-    public String getServicesRequested() {
-        String services = "";
-
-        if (serviceRequestedCalibration) {
-            services = services + "Calibration";
-        }
-        if (serviceRequestedTesting) {
-            services = services + ", Testing";
-        }
-        if (serviceRequestedLabelEvaluation) {
-            services = services + ", Label Evaluation";
-        }
-        if (serviceRequestedInspection) {
-            services = services + ", Inspection";
-        }
-        if (serviceRequestedConsultancy) {
-            services = services + ", Consultancy";
-        }
-        if (serviceRequestedTraining) {
-            services = services + ", Training";
-        }
-        if (serviceRequestedOther) {
-            services = services + ", " + serviceRequestedOtherText;
-        }
-
-        return services;
     }
 
     @Override
@@ -469,11 +535,21 @@ public class ServiceContract implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Service Contract not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 }
