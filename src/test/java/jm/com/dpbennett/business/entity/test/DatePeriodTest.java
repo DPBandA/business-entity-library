@@ -28,16 +28,15 @@ import org.junit.Test;
  * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
  */
 public class DatePeriodTest {
-    
+
     @Test
     public void generateDatePeriods() {
         DatePeriod dp = new DatePeriod();
-        
+
         dp.setName("This financial year");
         dp.initDatePeriod(/*BusinessEntityUtils.createDate(2019, 0, 31)*/new Date());
-        
+
         System.out.println("Start date: " + dp.getStartDate());
         System.out.println("End date: " + dp.getEndDate());
-
     }
 }
