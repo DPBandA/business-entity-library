@@ -99,6 +99,8 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     private Double creditLimit;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Tax defaultTax;
     private Boolean taxExempt;
 
     public Client() {
@@ -115,6 +117,14 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         active = true;
         international = false;
         accountingId = "";
+    }
+
+    public Tax getDefaultTax() {
+        return (defaultTax == null ? new Tax() : defaultTax);
+    }
+
+    public void setDefaultTax(Tax defaultTax) {
+        this.defaultTax = defaultTax;
     }
 
     public String getAccountingId() {
