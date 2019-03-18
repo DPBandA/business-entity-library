@@ -82,9 +82,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee costingInvoicedBy;
     private Double minDeposit;
-    private Double totalTax;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Tax tax;
+    private Double totalTax;    
     private Double totalCost;
     @Transient
     private Double estimatedCostIncludingTaxes;
@@ -92,6 +90,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     private Double minDepositIncludingTaxes;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee lastPaymentEnteredBy;  
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Tax tax;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
     @Transient
