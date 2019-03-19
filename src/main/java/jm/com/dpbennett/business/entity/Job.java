@@ -1092,6 +1092,51 @@ public class Job implements Serializable, BusinessEntity {
         }
 
         switch (searchType) {
+            case "Appr'd & uninv'd jobs":
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + sampleSearchWhereClause
+                        + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.comment) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobStatusAndTracking.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(job.instructions) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+                searchQuery
+                        = selectClause
+                        + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
+                        + sampleSearchJoinClause
+                        + " JOIN job.businessOffice businessOffice"
+                        + " JOIN job.department department"
+                        + " JOIN job.subContractedDepartment subContractedDepartment"
+                        + " JOIN job.classification classification"
+                        + " JOIN job.sector sector"
+                        + " JOIN job.client client"
+                        + " JOIN job.jobCategory jobCategory"
+                        + " JOIN job.jobSubCategory jobSubCategory"
+                        + " JOIN job.assignedTo assignedTo"
+                        + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
+                        + " AND (jobCostingAndPayment.costingApproved = 1)"
+                        + " AND (jobCostingAndPayment.invoiced IS NULL OR jobCostingAndPayment.invoiced = 0)" + ")"
+                        + searchTextAndClause
+                        + " ORDER BY job.id DESC";
+                break;
             case "Unapproved job costings":
                 searchTextAndClause
                         = " AND ("

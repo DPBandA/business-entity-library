@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -30,6 +31,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -63,6 +65,8 @@ public class Classification implements BusinessEntity, Serializable {
     private String category;
     @Transient
     private Boolean isDirty;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Tax defaultTax;
 
     public Classification() {
         this.name = "";
@@ -70,6 +74,14 @@ public class Classification implements BusinessEntity, Serializable {
         this.description = "";
         this.isEarning = true;
         this.category = "";
+    }
+
+    public Tax getDefaultTax() {
+        return (defaultTax == null ? new Tax() : defaultTax);
+    }
+
+    public void setDefaultTax(Tax defaultTax) {
+        this.defaultTax = defaultTax;
     }
 
     @Override
@@ -81,7 +93,7 @@ public class Classification implements BusinessEntity, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Boolean getIsTaxable() {
         if (isTaxable == null) {
             isTaxable = getIsEarning();
@@ -196,7 +208,7 @@ public class Classification implements BusinessEntity, Serializable {
             return false;
         }
         Classification other = (Classification) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -275,7 +287,7 @@ public class Classification implements BusinessEntity, Serializable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Classification> findClassificationsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
@@ -305,7 +317,7 @@ public class Classification implements BusinessEntity, Serializable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Classification> findActiveClassificationsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
@@ -340,7 +352,7 @@ public class Classification implements BusinessEntity, Serializable {
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
