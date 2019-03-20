@@ -307,12 +307,6 @@ public class Job implements Serializable, BusinessEntity {
                 this.clean();
             } else {
 
-                // Reset job number if job number is set to auto-generate
-                if (this.getAutoGenerateJobNumber()) {
-                    this.setJobSequenceNumber(null);
-                    this.setJobNumber(Job.getJobNumber(this, em));
-                }
-
                 return new ReturnMessage(false,
                         "Undefined Error!",
                         "An undefined error occurred while saving job "
@@ -322,12 +316,6 @@ public class Job implements Serializable, BusinessEntity {
             }
 
         } catch (Exception e) {
-
-            // Reset job number if job number is set to auto-generate
-            if (this.getAutoGenerateJobNumber()) {
-                this.setJobSequenceNumber(null);
-                this.setJobNumber(Job.getJobNumber(this, em));
-            }
 
             return new ReturnMessage(false,
                     "Undefined Error!",
