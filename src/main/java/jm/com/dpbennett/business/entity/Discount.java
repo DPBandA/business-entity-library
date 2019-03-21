@@ -70,6 +70,16 @@ public class Discount implements Serializable, BusinessEntity {
         description = "";
         category = "";
     }
+    
+    public Discount(String name, String discountValueType, Double discountValue) {
+        active = true;
+        this.name = name;
+        this.discountValue = discountValue;
+        this.discountValueType = discountValueType;
+        type = "";
+        description = "";
+        category = "";
+    }
 
     public Boolean getActive() {
         return active;
@@ -296,6 +306,25 @@ public class Discount implements Serializable, BusinessEntity {
            
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
                     + "WHERE d.discountValue = " + value, Discount.class).getResultList();
+            if (discounts.size() > 0) {
+                return discounts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static Discount findByValue(EntityManager em, 
+            String valueType, 
+            Double value) {
+
+        try {
+           
+            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
+                    + "WHERE d.discountValue = " + value + 
+                    " AND d.discountValueType LIKE '" + valueType + "'", Discount.class).getResultList();
             if (discounts.size() > 0) {
                 return discounts.get(0);
             }
