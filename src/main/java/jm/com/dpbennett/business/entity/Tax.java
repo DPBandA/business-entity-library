@@ -39,9 +39,10 @@ public class Tax implements Serializable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Boolean active;
+    private Boolean exempt;
     private String name;
     private Double taxValue;
-    private String taxValueType;
+    private String taxValueType;    
     @OneToOne(cascade = CascadeType.REFRESH)
     private AccountingCode accountingCode;
     private String type;
@@ -53,6 +54,7 @@ public class Tax implements Serializable, BusinessEntity {
 
     public Tax() {
         active = true;
+        exempt = false;
         name = "";
         taxValue = 0.0;
         taxValueType = "Percentage";
@@ -63,12 +65,21 @@ public class Tax implements Serializable, BusinessEntity {
 
     public Tax(String name) {
         active = true;
+        exempt = false;
         this.name = name;
         taxValue = 0.0;
         taxValueType = "Percentage";
         type = "";
         description = "";
         category = "";
+    }
+
+    public Boolean getExempt() {
+        return exempt;
+    }
+
+    public void setExempt(Boolean exempt) {
+        this.exempt = exempt;
     }
 
     public Double getValue() {
@@ -282,6 +293,22 @@ public class Tax implements Serializable, BusinessEntity {
             List<Tax> taxes = em.createQuery("SELECT t FROM Tax t "
                     + "WHERE UPPER(t.name) "
                     + "= '" + value.toUpperCase() + "'", Tax.class).getResultList();
+            if (taxes.size() > 0) {
+                return taxes.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+     public static Tax findByValue(EntityManager em, Double value) {
+
+        try {
+            
+            List<Tax> taxes = em.createQuery("SELECT t FROM Tax t "
+                    + "WHERE t.taxValue = " + value + " AND t.exempt = 0", Tax.class).getResultList();
             if (taxes.size() > 0) {
                 return taxes.get(0);
             }

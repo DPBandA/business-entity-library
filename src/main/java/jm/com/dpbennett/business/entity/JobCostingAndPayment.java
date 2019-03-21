@@ -90,6 +90,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     private Double minDepositIncludingTaxes;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee lastPaymentEnteredBy;  
+    private String percentageGCT;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Tax tax;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -121,6 +122,14 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getPercentageGCT() {
+        return percentageGCT;
+    }
+
+    public void setPercentageGCT(String percentageGCT) {
+        this.percentageGCT = percentageGCT;
     }
 
     public Employee getCostingInvoicedBy() {

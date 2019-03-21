@@ -289,4 +289,20 @@ public class Discount implements Serializable, BusinessEntity {
             return null;
         }
     }
+    
+    public static Discount findByValue(EntityManager em, Double value) {
+
+        try {
+           
+            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
+                    + "WHERE d.discountValue = " + value, Discount.class).getResultList();
+            if (discounts.size() > 0) {
+                return discounts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 }
