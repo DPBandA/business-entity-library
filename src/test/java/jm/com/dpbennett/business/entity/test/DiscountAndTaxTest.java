@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import jm.com.dpbennett.business.entity.Discount;
+import jm.com.dpbennett.business.entity.Job;
 import jm.com.dpbennett.business.entity.Tax;
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class DiscountAndTaxTest {
         prop.put("javax.persistence.jdbc.user",
                 "root");
         prop.put("javax.persistence.jdbc.password",
-                ""); // NB: REMOVE PWD WHEN DONE
+                "bsj0001"); // NB: REMOVE PWD WHEN DONE
         prop.put("javax.persistence.jdbc.url",
                 "jdbc:mysql://172.16.0.10:3306/jmtstest");
         prop.put("javax.persistence.jdbc.driver",
@@ -36,8 +37,9 @@ public class DiscountAndTaxTest {
 
        // These instantiations cause the respective database tables to be created
        // if they don't already exist.
-       Tax tax = new Tax();
-       Discount discount = new Discount();
+       //Tax tax = new Tax();
+       //Discount discount = new Discount();
+       Job job = new Job();
 
     }
 }
