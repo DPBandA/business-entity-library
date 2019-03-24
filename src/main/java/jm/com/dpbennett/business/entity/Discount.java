@@ -71,7 +71,7 @@ public class Discount implements Serializable, BusinessEntity {
         category = "";
     }
     
-    public Discount(String name, String discountValueType, Double discountValue) {
+    public Discount(String name, Double discountValue, String discountValueType) {
         active = true;
         this.name = name;
         this.discountValue = discountValue;
@@ -94,6 +94,21 @@ public class Discount implements Serializable, BusinessEntity {
 
         if (discount == null) {
             discount = new Discount(name);
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, discount);
+            em.getTransaction().commit();
+        }
+
+        return discount;
+    }
+    
+    public static Discount findDefault(EntityManager em, 
+            String name, Double value, String type) {
+        Discount discount = Discount.findByName(em, name);
+
+        if (discount == null) {
+            discount = new Discount(name, value, type);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, discount);
@@ -304,8 +319,8 @@ public class Discount implements Serializable, BusinessEntity {
 
         try {
            
-            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
-                    + "WHERE d.discountValue = " + value, Discount.class).getResultList();
+            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d"
+                    + " WHERE d.discountValue = " + value, Discount.class).getResultList();
             if (discounts.size() > 0) {
                 return discounts.get(0);
             }
@@ -316,14 +331,14 @@ public class Discount implements Serializable, BusinessEntity {
         }
     }
     
-    public static Discount findByValue(EntityManager em, 
-            String valueType, 
-            Double value) {
+    public static Discount findByValueAndType(EntityManager em, 
+            Double value, 
+            String valueType) {
 
         try {
            
-            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
-                    + "WHERE d.discountValue = " + value + 
+            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d"
+                    + " WHERE d.discountValue = " + value + 
                     " AND d.discountValueType LIKE '" + valueType + "'", Discount.class).getResultList();
             if (discounts.size() > 0) {
                 return discounts.get(0);

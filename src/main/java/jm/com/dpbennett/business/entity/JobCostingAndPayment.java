@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -66,7 +67,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<CostComponent> costComponents;
     private Double estimatedCost;
-    private String estimatedCostDoneBy; // tk to replaced by Employee class
+    private String estimatedCostDoneBy; // tk to be replaced by Employee class
     private Double finalCost;
     private String finalCostDoneBy;
     private Double paymentReceivedToDate;
@@ -74,7 +75,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     private Double amountDue;
     private Boolean costingCompleted;
     private Boolean costingApproved;
-    private Boolean invoiced;    
+    private Boolean invoiced;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee costingPreparedBy;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -82,19 +83,22 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee costingInvoicedBy;
     private Double minDeposit;
-    private Double totalTax;    
+    private Double totalTax;
     private Double totalCost;
     @Transient
     private Double estimatedCostIncludingTaxes;
     @Transient
     private Double minDepositIncludingTaxes;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee lastPaymentEnteredBy;  
+    private Employee lastPaymentEnteredBy;
     private String percentageGCT;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Tax tax;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
+    private String discountType;
+    @Column(name = "DISCOUNT")
+    private Double discountValue;
     @Transient
     private Boolean isDirty;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -124,6 +128,28 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         this.id = id;
     }
 
+    public String getDiscountType() {
+        if (discountType == null) {
+            discountType = "Percentage";
+        }
+        return discountType;
+    }
+
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
+    }
+
+    public Double getDiscountValue() {
+        if (discountValue == null) {
+            discountValue = 0.0;
+        }
+        return discountValue;
+    }
+
+    public void setDiscountValue(Double discountValue) {
+        this.discountValue = discountValue;
+    }
+
     public String getPercentageGCT() {
         return percentageGCT;
     }
@@ -149,7 +175,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Tax getTax() {
-        return (tax == null ? new Tax(): tax);
+        return (tax == null ? new Tax() : tax);
     }
 
     public void setTax(Tax tax) {
@@ -157,7 +183,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Discount getDiscount() {
-        return (discount == null ? new Discount(): discount);
+        return (discount == null ? new Discount() : discount);
     }
 
     public void setDiscount(Discount discount) {
@@ -228,7 +254,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public Double getMinDepositIncludingTaxes() {
         minDepositIncludingTaxes
                 = getMinDeposit() + getMinDeposit() * getTax().getValue();
-        
+
         return minDepositIncludingTaxes;
     }
 
@@ -465,7 +491,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public Double getEstimatedCostIncludingTaxes() {
         estimatedCostIncludingTaxes
                 = getEstimatedCost() + getEstimatedCost() * getTax().getValue();
-        
+
         return estimatedCostIncludingTaxes;
     }
 
@@ -716,7 +742,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Double getTotalTax() {
-        Double finalCostWithDiscount = getFinalCost() - getFinalCost() * getDiscount().getValue(); 
+        Double finalCostWithDiscount = getFinalCost() - getFinalCost() * getDiscount().getValue();
 
         totalTax = finalCostWithDiscount * getTax().getValue();
 
@@ -729,6 +755,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
      * @return
      */
     public Double getTotalCost() {
+        
         Double finalCostWithDiscount = getFinalCost() - getFinalCost() * getDiscount().getValue();
 
         totalCost = finalCostWithDiscount + getTotalTax();
@@ -741,9 +768,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     /**
-     * 
+     *
      * @param job
-     * @return 
+     * @return
      */
     public static Boolean getCanApplyTax(Job job) {
         return !job.getIsSubContract()
@@ -754,7 +781,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
                 <= BusinessEntityUtils.getMediumDateStringAsLong( // tk why on earth is this here??
                         BusinessEntityUtils.getDateInMediumDateFormat(job.getJobStatusAndTracking().getDateSubmitted())));
     }
-
 
     @Override
     public ReturnMessage save(EntityManager em) {
