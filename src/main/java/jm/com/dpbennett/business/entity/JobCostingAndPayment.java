@@ -742,7 +742,13 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Double getTotalTax() {
-        Double finalCostWithDiscount = getFinalCost() - getFinalCost() * getDiscount().getValue();
+        Double finalCostWithDiscount;
+
+        if (getDiscount().getDiscountValueType().equals("Percentage")) {
+            finalCostWithDiscount = getFinalCost() - getFinalCost() * getDiscount().getValue();
+        } else {
+            finalCostWithDiscount = getFinalCost() - getDiscount().getValue();
+        }
 
         totalTax = finalCostWithDiscount * getTax().getValue();
 
@@ -755,8 +761,13 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
      * @return
      */
     public Double getTotalCost() {
-        
-        Double finalCostWithDiscount = getFinalCost() - getFinalCost() * getDiscount().getValue();
+        Double finalCostWithDiscount;
+
+        if (getDiscount().getDiscountValueType().equals("Percentage")) {
+            finalCostWithDiscount = getFinalCost() - getFinalCost() * getDiscount().getValue();
+        } else {
+            finalCostWithDiscount = getFinalCost() - getDiscount().getValue();
+        }
 
         totalCost = finalCostWithDiscount + getTotalTax();
 
