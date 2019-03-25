@@ -101,8 +101,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     private Double discountValue;
     @Transient
     private Boolean isDirty;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private AccountingCode accountingCode; // tk delete if not necessary
+    //@OneToOne(cascade = CascadeType.REFRESH)
+    //private AccountingCode accountingCode;
 
     public JobCostingAndPayment() {
         this.totalCost = 0.0;
@@ -128,6 +128,13 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         this.id = id;
     }
 
+    /**
+     * Returns the type of discount as Percentage, Currency or Fixed Cost.
+     *
+     * @deprecated This feature is already encapsulated in the Discount class.
+     *
+     * @return
+     */
     public String getDiscountType() {
         if (discountType == null) {
             discountType = "Percentage";
@@ -135,10 +142,24 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         return discountType;
     }
 
+    /**
+     * Sets the type of discount as Percentage, Currency or Fixed Cost.
+     *
+     * @deprecated This feature is already encapsulated in the Discount class.
+     *
+     * @param discountType
+     */
     public void setDiscountType(String discountType) {
         this.discountType = discountType;
     }
 
+    /**
+     * Gets the value of the discount.
+     *
+     * @deprecated This feature is already encapsulated in the Discount class.
+     *
+     * @return
+     */
     public Double getDiscountValue() {
         if (discountValue == null) {
             discountValue = 0.0;
@@ -146,14 +167,35 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         return discountValue;
     }
 
+    /**
+     * Sets the value of the discount.
+     *
+     * @deprecated This feature is already encapsulated in the Discount class.
+     *
+     * @param discountValue
+     */
     public void setDiscountValue(Double discountValue) {
         this.discountValue = discountValue;
     }
 
+    /**
+     * Gets the General Consumption Tax (GCT).
+     *
+     * @deprecated This feature is already encapsulated in the Tax class.
+     *
+     * @return
+     */
     public String getPercentageGCT() {
         return percentageGCT;
     }
 
+    /**
+     * Sets the General Consumption Tax (GCT).
+     *
+     * @deprecated This feature is already encapsulated in the Discount class.
+     *
+     * @param percentageGCT
+     */
     public void setPercentageGCT(String percentageGCT) {
         this.percentageGCT = percentageGCT;
     }
@@ -194,17 +236,16 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         return new ArrayList<>();
     }
 
-    public AccountingCode getAccountingCode() {
-        if (accountingCode == null) {
-            accountingCode = new AccountingCode();
-        }
-        return accountingCode;
-    }
-
-    public void setAccountingCode(AccountingCode accountingCode) {
-        this.accountingCode = accountingCode;
-    }
-
+//    public AccountingCode getAccountingCode() {
+//        if (accountingCode == null) {
+//            accountingCode = new AccountingCode();
+//        }
+//        return accountingCode;
+//    }
+//
+//    public void setAccountingCode(AccountingCode accountingCode) {
+//        this.accountingCode = accountingCode;
+//    }
     public static void createSampleBasedJobCostings(Job currentJob) {
         if (currentJob.getJobCostingAndPayment().getAllSortedCostComponents().isEmpty()) {
             // Add all existing samples as cost oomponents            
@@ -252,8 +293,13 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Double getMinDepositIncludingTaxes() {
-        minDepositIncludingTaxes
-                = getMinDeposit() + getMinDeposit() * getTax().getValue();
+        if (getTax().getTaxValueType().equals("Percentage")) {
+            minDepositIncludingTaxes
+                    = getMinDeposit() + getMinDeposit() * getTax().getValue();
+        } else {
+            minDepositIncludingTaxes
+                    = getMinDeposit() + getTax().getValue();
+        }
 
         return minDepositIncludingTaxes;
     }
@@ -489,8 +535,13 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Double getEstimatedCostIncludingTaxes() {
-        estimatedCostIncludingTaxes
-                = getEstimatedCost() + getEstimatedCost() * getTax().getValue();
+        if (getTax().getTaxValueType().equals("Percentage")) {
+            estimatedCostIncludingTaxes
+                    = getEstimatedCost() + getEstimatedCost() * getTax().getValue();
+        } else {
+            estimatedCostIncludingTaxes
+                    = getEstimatedCost() + getTax().getValue();
+        }
 
         return estimatedCostIncludingTaxes;
     }
@@ -741,7 +792,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         return em.find(JobCostingAndPayment.class, Id);
     }
 
-    public Double getTotalTax() {
+    private Double getFinalCostWithDiscount() {
         Double finalCostWithDiscount;
 
         if (getDiscount().getDiscountValueType().equals("Percentage")) {
@@ -750,7 +801,16 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
             finalCostWithDiscount = getFinalCost() - getDiscount().getValue();
         }
 
-        totalTax = finalCostWithDiscount * getTax().getValue();
+        return finalCostWithDiscount;
+    }
+
+    public Double getTotalTax() {
+
+        if (getTax().getTaxValueType().equals("Percentage")) {
+            totalTax = getFinalCostWithDiscount() * getTax().getValue();
+        } else {
+            totalTax = getTax().getValue();
+        }
 
         return totalTax;
     }
@@ -761,15 +821,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
      * @return
      */
     public Double getTotalCost() {
-        Double finalCostWithDiscount;
 
-        if (getDiscount().getDiscountValueType().equals("Percentage")) {
-            finalCostWithDiscount = getFinalCost() - getFinalCost() * getDiscount().getValue();
-        } else {
-            finalCostWithDiscount = getFinalCost() - getDiscount().getValue();
-        }
-
-        totalCost = finalCostWithDiscount + getTotalTax();
+        totalCost = getFinalCostWithDiscount() + getTotalTax();
 
         return totalCost;
     }
