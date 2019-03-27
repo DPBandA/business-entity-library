@@ -803,6 +803,18 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
         return finalCostWithDiscount;
     }
+    
+    public Double getTotalDiscount() {
+        Double totalDiscount;
+
+        if (getDiscount().getDiscountValueType().equals("Percentage")) {
+            totalDiscount = getFinalCost() * getDiscount().getValue();
+        } else {
+            totalDiscount = getDiscount().getValue();
+        }
+
+        return totalDiscount;
+    }
 
     public Double getTotalTax() {
 
