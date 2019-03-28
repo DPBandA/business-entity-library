@@ -39,6 +39,7 @@ public class AccountingCode implements Serializable, BusinessEntity {
     private Long id;
     private String name;
     private String code;
+    private String account;
     private String type;
     @Column(length = 1024)
     private String description;
@@ -49,6 +50,7 @@ public class AccountingCode implements Serializable, BusinessEntity {
     public AccountingCode() {
         name = "";
         code = "";
+        account = "";
         type = "";
         description = "";
         abbreviation = "";
@@ -57,9 +59,18 @@ public class AccountingCode implements Serializable, BusinessEntity {
     public AccountingCode(String name) {
         this.name = name;
         code = "";
+        account = "";
         type = "";
         description = "";
         abbreviation = "";
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
     }
 
     public String getAbbreviation() {

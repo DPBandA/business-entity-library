@@ -241,9 +241,36 @@ public class Service implements Serializable, BusinessEntity, Comparable {
         try {
             String newServiceName = serviceName.trim().replaceAll("'", "''");
 
-            List<Service> services = em.createQuery("SELECT s FROM Service s "
+            List<Service> services = em.createQuery(
+                    "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
                     + "= '" + newServiceName.toUpperCase() + "'", Service.class).getResultList();
+            if (services.size() > 0) {
+                return services.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Service findByNameAndAccountingCode(
+            EntityManager em,
+            String serviceName,
+            String code) {
+
+        try {
+            String newServiceName = serviceName.trim().replaceAll("'", "''");
+
+            List<Service> services = em.createQuery(
+                    "SELECT s FROM Service s"
+                    + " JOIN s.accountingCode accountingCode"
+                    + " WHERE UPPER(s.name)"
+                    + " = '" + newServiceName.toUpperCase() + "'"
+                    + " AND accountingCode.code LIKE '%" + code + "%'",
+                    Service.class).getResultList();
+
             if (services.size() > 0) {
                 return services.get(0);
             }
@@ -260,7 +287,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             String newName = name.replaceAll("'", "''");
 
             List<Service> services
-                    = em.createQuery("SELECT s FROM Service s where UPPER(s.name) like '%"
+                    = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
                             + newName.toUpperCase().trim() + "%' ORDER BY s.name", Service.class).getResultList();
             return services;
         } catch (Exception e) {
@@ -277,6 +304,28 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             List<Service> services
                     = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
                             + newName.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Service.class).getResultList();
+            return services;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Service> findAllActiveByNameAndAccountingCode(
+            EntityManager em, 
+            String name, 
+            String code) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Service> services
+                    = em.createQuery("SELECT s FROM Service s"
+                            + " JOIN s.accountingCode accountingCode"
+                            + " WHERE UPPER(s.name) LIKE '%"
+                            + newName.toUpperCase().trim() + "%' AND s.active = 1"
+                            + " AND accountingCode.code LIKE '%" + code + "%'" 
+                            + " ORDER BY s.name", Service.class).getResultList();
             return services;
         } catch (Exception e) {
             System.out.println(e);
