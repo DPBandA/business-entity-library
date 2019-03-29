@@ -230,7 +230,7 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
             return false;
         }
         AccPacCustomer other = (AccPacCustomer) object;
-        
+
         return !((this.idCust == null && other.idCust != null) || (this.idCust != null && !this.idCust.equals(other.idCust)));
     }
 
@@ -239,14 +239,17 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
         return getCustomerName();
     }
 
-    public static List<AccPacCustomer> findAccPacCustomersByName(EntityManager em, String value) {
+    public static List<AccPacCustomer> findAllByName(EntityManager em, String value) {
 
         try {
             value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<AccPacCustomer> clients;
-            clients = em.createQuery("SELECT a FROM AccPacCustomer a where UPPER(a.customerName) like '"
-                    + value.toUpperCase().trim() + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
+            clients = em.createQuery(
+                    "SELECT a FROM AccPacCustomer a"
+                    + " WHERE UPPER(a.customerName)"
+                    + " LIKE '" + value.toUpperCase().trim()
+                    + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -259,9 +262,11 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
         try {
             value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<AccPacCustomer> customers = em.createQuery("SELECT c FROM AccPacCustomer c "
-                    + "WHERE UPPER(c.customerName) "
-                    + "LIKE '" + value.toUpperCase() + "%'", AccPacCustomer.class).getResultList();
+            List<AccPacCustomer> customers = em.createQuery(
+                    "SELECT a FROM AccPacCustomer a"
+                    + " WHERE UPPER(a.customerName)"
+                    + " LIKE '" + value.toUpperCase().trim()
+                    + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
 
             if (customers.size() > 0) {
                 return customers.get(0);
@@ -311,7 +316,7 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-                
+
         try {
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
