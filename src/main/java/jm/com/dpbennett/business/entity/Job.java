@@ -1082,7 +1082,7 @@ public class Job implements Serializable, BusinessEntity {
         switch (searchType) {
             case "Appr'd & uninv'd jobs":
                 searchTextAndClause
-                        = " AND ("
+                        = " AND subContractedDepartment.name = '--' AND ("                       
                         + " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
