@@ -243,12 +243,12 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     public Double getHoursOrQuantity() {
         if (hoursOrQuantity == null) {
-            hoursOrQuantity = 0.0;
+            hoursOrQuantity = 1.0; // tk org 0.0
         }
         return hoursOrQuantity;
     }
 
-    public void setHoursOrQuantity(Double hoursOrQuantity) {
+    public void setHoursOrQuantity(Double hoursOrQuantity) {        
         this.hoursOrQuantity = hoursOrQuantity;
     }
 
@@ -332,7 +332,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     public Double getRate() {
         if (rate == null) {
-            rate = 0.0;
+            rate = getCost(); // tk org 0.0
         }
         return rate;
     }
