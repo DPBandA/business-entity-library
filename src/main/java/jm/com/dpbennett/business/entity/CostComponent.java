@@ -136,6 +136,41 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         unit = "";
     }
 
+    public void update() {
+        switch (getType()) {
+            case "FIXED":
+                setIsFixedCost(true);
+                setIsHeading(false);
+                setHours(0.0);
+                setHoursOrQuantity(1.0);
+                setRate(getCost());
+                break;
+            case "HEADING":
+                setIsFixedCost(false);
+                setIsHeading(true);
+                setHours(0.0);
+                setHoursOrQuantity(0.0);
+                setRate(0.0);
+                setCost(0.0);
+                break;
+            case "VARIABLE":
+                setIsFixedCost(false);
+                setIsHeading(false);
+                break;
+            case "SUBCONTRACT":
+                setIsFixedCost(true);
+                setIsHeading(false);
+                setHours(0.0);
+                setHoursOrQuantity(0.0);
+                setRate(0.0);
+                break;
+            default:
+                setIsFixedCost(false);
+                setIsHeading(false);
+                break;
+        }
+    }
+
     public String getType() {
         if (type == null) {
             type = "--";
@@ -242,13 +277,13 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Double getHoursOrQuantity() {
-        if (hoursOrQuantity == null) {
-            hoursOrQuantity = 1.0; // tk org 0.0
+        if (hoursOrQuantity == 0.0 || hoursOrQuantity == null) {
+            update();
         }
         return hoursOrQuantity;
     }
 
-    public void setHoursOrQuantity(Double hoursOrQuantity) {        
+    public void setHoursOrQuantity(Double hoursOrQuantity) {
         this.hoursOrQuantity = hoursOrQuantity;
     }
 
@@ -331,8 +366,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Double getRate() {
-        if (rate == null) {
-            rate = getCost(); // tk org 0.0
+        if (rate == 0.0 || rate == null) {
+            update();
         }
         return rate;
     }
