@@ -230,4 +230,22 @@ public class AccountingCode implements Serializable, BusinessEntity {
             return null;
         }
     }
+    
+    public static AccountingCode findByCode(EntityManager em, String value) {
+
+        try {
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
+                    + "WHERE UPPER(a.code) "
+                    + "= '" + value.toUpperCase() + "'", AccountingCode.class).getResultList();
+            if (accountingCodes.size() > 0) {
+                return accountingCodes.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 }
