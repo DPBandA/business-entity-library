@@ -165,8 +165,11 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
                 setRate(0.0);
                 break;
             default:
-                setIsFixedCost(false);
+                setIsFixedCost(true);
                 setIsHeading(false);
+                setHours(0.0);
+                setHoursOrQuantity(1.0);
+                setRate(getCost());
                 break;
         }
     }

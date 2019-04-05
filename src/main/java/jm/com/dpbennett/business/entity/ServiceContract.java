@@ -138,6 +138,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedPetrolSampling() {
+        if (serviceRequestedPetrolSampling == null) {
+            serviceRequestedPetrolSampling = false;
+        }
         return serviceRequestedPetrolSampling;
     }
 
@@ -146,6 +149,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedCementTesting() {
+        if (serviceRequestedCementTesting == null) {
+            serviceRequestedCementTesting = false;
+        }
         return serviceRequestedCementTesting;
     }
 
@@ -154,6 +160,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedFacilitiesManagement() {
+        if (serviceRequestedFacilitiesManagement == null) {
+            serviceRequestedFacilitiesManagement = false;
+        }
         return serviceRequestedFacilitiesManagement;
     }
 
@@ -162,6 +171,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedDetentionRehabInspection() {
+        if (serviceRequestedDetentionRehabInspection == null) {
+            serviceRequestedDetentionRehabInspection = false;
+        }
         return serviceRequestedDetentionRehabInspection;
     }
 
@@ -170,6 +182,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedCertification() {
+        if (serviceRequestedCertification == null) {
+            serviceRequestedCertification = false;
+        }
         return serviceRequestedCertification;
     }
 
@@ -178,6 +193,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedCertificationStandards() {
+        if (serviceRequestedCertificationStandards == null) {
+            serviceRequestedCertificationStandards = false;
+        }
         return serviceRequestedCertificationStandards;
     }
 
@@ -186,6 +204,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedStationeryOrPhotocopy() {
+        if (serviceRequestedStationeryOrPhotocopy == null) {
+            serviceRequestedStationeryOrPhotocopy = false;
+        }
         return serviceRequestedStationeryOrPhotocopy;
     }
 
@@ -194,6 +215,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedSaleOfPublication() {
+        if (serviceRequestedSaleOfPublication == null) {
+            serviceRequestedSaleOfPublication = false;
+        }
         return serviceRequestedSaleOfPublication;
     }
 
@@ -202,6 +226,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedLegalMetrology() {
+        if (serviceRequestedLegalMetrology == null) {
+            serviceRequestedLegalMetrology = false;
+        }
         return serviceRequestedLegalMetrology;
     }
 
@@ -210,6 +237,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedFoodInspectorate() {
+        if (serviceRequestedFoodInspectorate == null) {
+            serviceRequestedFoodInspectorate = false;
+        }
         return serviceRequestedFoodInspectorate;
     }
 
@@ -247,6 +277,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getAutoAddSampleInformation() {
+        if (autoAddSampleInformation == null) {
+            autoAddSampleInformation = false;
+        }
         return autoAddSampleInformation;
     }
 
@@ -279,6 +312,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedCalibration() {
+        if (serviceRequestedCalibration == null) {
+            serviceRequestedCalibration = false;
+        }
         return serviceRequestedCalibration;
     }
 
@@ -287,6 +323,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedConsultancy() {
+        if (serviceRequestedConsultancy == null) {
+            serviceRequestedConsultancy = false;
+        }
         return serviceRequestedConsultancy;
     }
 
@@ -303,6 +342,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedInspection() {
+        if (serviceRequestedInspection == null) {
+            serviceRequestedInspection = false;
+        }
         return serviceRequestedInspection;
     }
 
@@ -311,6 +353,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedLabelEvaluation() {
+        if (serviceRequestedLabelEvaluation == null) {
+            serviceRequestedLabelEvaluation = false;
+        }
         return serviceRequestedLabelEvaluation;
     }
 
@@ -319,6 +364,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedOther() {
+        if (serviceRequestedOther == null) {
+            serviceRequestedOther = false;
+        }
         return serviceRequestedOther;
     }
 
@@ -327,6 +375,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedTesting() {
+        if (serviceRequestedTesting == null) {
+            serviceRequestedTesting = false;
+        }
         return serviceRequestedTesting;
     }
 
@@ -335,6 +386,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getServiceRequestedTraining() {
+        if (serviceRequestedTraining == null) {
+            serviceRequestedTraining = false;
+        }
         return serviceRequestedTraining;
     }
 
@@ -343,6 +397,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getAdditionalServiceFaxResults() {
+        if (additionalServiceFaxResults == null) {
+            additionalServiceFaxResults = false;
+        }
         return additionalServiceFaxResults;
     }
 
@@ -351,6 +408,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getAdditionalServiceOther() {
+        if (additionalServiceOther == null) {
+            additionalServiceOther = false;
+        }
         return additionalServiceOther;
     }
 
@@ -359,6 +419,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getAdditionalServiceSendMoreContractForms() {
+        if (additionalServiceSendMoreContractForms == null) {
+            additionalServiceSendMoreContractForms = false;
+        }
         return additionalServiceSendMoreContractForms;
     }
 
@@ -367,6 +430,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getAdditionalServiceTelephonePresumptiveResults() {
+        if (additionalServiceTelephonePresumptiveResults == null) {
+            additionalServiceTelephonePresumptiveResults = false;
+        }
         return additionalServiceTelephonePresumptiveResults;
     }
 
@@ -375,6 +441,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getAdditionalServiceUrgent() {
+        if (additionalServiceUrgent == null) {
+            additionalServiceUrgent = false;
+        }
         return additionalServiceUrgent;
     }
 
@@ -391,6 +460,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getIntendedMarketCanada() {
+        if (intendedMarketCanada == null) {
+            intendedMarketCanada = false;
+        }
         return intendedMarketCanada;
     }
 
@@ -399,6 +471,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getIntendedMarketCaricom() {
+        if (intendedMarketCaricom == null) {
+            intendedMarketCaricom = false;
+        }
         return intendedMarketCaricom;
     }
 
@@ -407,6 +482,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getIntendedMarketLocal() {
+        if (intendedMarketLocal == null) {
+            intendedMarketLocal = false;
+        }
         return intendedMarketLocal;
     }
 
@@ -415,6 +493,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getIntendedMarketOther() {
+        if (intendedMarketOther == null) {
+            intendedMarketOther = false;
+        }
         return intendedMarketOther;
     }
 
@@ -423,6 +504,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getIntendedMarketUK() {
+        if (intendedMarketUK == null) {
+            intendedMarketUK = false;
+        }
         return intendedMarketUK;
     }
 
@@ -431,6 +515,9 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public Boolean getIntendedMarketUSA() {
+        if (intendedMarketUSA == null) {
+            intendedMarketUSA = false;
+        }
         return intendedMarketUSA;
     }
 
@@ -535,7 +622,7 @@ public class ServiceContract implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-         try {
+        try {
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
