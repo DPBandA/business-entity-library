@@ -18,7 +18,7 @@ import org.junit.Test;
  *
  * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
  */
-public class DiscountAndTaxTest {
+public class CreateEntitiesTest {
     @Test
     public void test() {
         HashMap prop = new HashMap();
@@ -26,9 +26,9 @@ public class DiscountAndTaxTest {
         prop.put("javax.persistence.jdbc.user",
                 "root");
         prop.put("javax.persistence.jdbc.password",
-                "bsj0001"); // NB: REMOVE PWD WHEN DONE
+                ""); // NB: REMOVE PWD WHEN DONE
         prop.put("javax.persistence.jdbc.url",
-                "jdbc:mysql://172.16.0.10:3306/jmtstest");
+                "jdbc:mysql://172.16.0.10:3306/jmts");
         prop.put("javax.persistence.jdbc.driver",
                 "com.mysql.jdbc.Driver");
 
@@ -37,8 +37,8 @@ public class DiscountAndTaxTest {
 
        // These instantiations cause the respective database tables to be created
        // if they don't already exist.
-       //Tax tax = new Tax();
-       //Discount discount = new Discount();
+       Tax tax = new Tax();
+       Discount discount = new Discount();
        Job job = new Job();
 
     }
