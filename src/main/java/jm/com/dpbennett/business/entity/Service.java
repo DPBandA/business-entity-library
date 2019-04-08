@@ -244,7 +244,8 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "= '" + newServiceName.toUpperCase() + "'", Service.class).getResultList();
+                    + "LIKE '%" + newServiceName.toUpperCase() + "%'", 
+                    Service.class).getResultList();
             if (services.size() > 0) {
                 return services.get(0);
             }
@@ -267,7 +268,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
                     "SELECT s FROM Service s"
                     + " JOIN s.accountingCode accountingCode"
                     + " WHERE UPPER(s.name)"
-                    + " = '" + newServiceName.toUpperCase() + "'"
+                    + " LIKE '%" + newServiceName.toUpperCase() + "%'"
                     + " AND accountingCode.code LIKE '%" + code + "%'",
                     Service.class).getResultList();
 
