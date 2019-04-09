@@ -1121,6 +1121,7 @@ public class Job implements Serializable, BusinessEntity {
                         + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-")
                         + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
                         + " AND (jobCostingAndPayment.costingApproved = 1)"
+                        + " AND (classification.isEarning = 1)"
                         + " AND (jobCostingAndPayment.invoiced IS NULL OR jobCostingAndPayment.invoiced = 0)" + ")"
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";

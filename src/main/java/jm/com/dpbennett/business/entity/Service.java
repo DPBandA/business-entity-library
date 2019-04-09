@@ -255,6 +255,26 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
+    
+    public static Service findActiveByName(EntityManager em, String serviceName) {
+
+        try {
+            String newServiceName = serviceName.trim().replaceAll("'", "''");
+
+            List<Service> services = em.createQuery(
+                    "SELECT s FROM Service s "
+                    + "WHERE UPPER(s.name) "
+                    + "LIKE '%" + newServiceName.toUpperCase() + "%' AND s.active = 1", 
+                    Service.class).getResultList();
+            if (services.size() > 0) {
+                return services.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     public static Service findByNameAndAccountingCode(
             EntityManager em,
@@ -270,6 +290,32 @@ public class Service implements Serializable, BusinessEntity, Comparable {
                     + " WHERE UPPER(s.name)"
                     + " LIKE '%" + newServiceName.toUpperCase() + "%'"
                     + " AND accountingCode.code LIKE '%" + code + "%'",
+                    Service.class).getResultList();
+
+            if (services.size() > 0) {
+                return services.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static Service findActiveByNameAndAccountingCode(
+            EntityManager em,
+            String serviceName,
+            String code) {
+
+        try {
+            String newServiceName = serviceName.trim().replaceAll("'", "''");
+
+            List<Service> services = em.createQuery(
+                    "SELECT s FROM Service s"
+                    + " JOIN s.accountingCode accountingCode"
+                    + " WHERE UPPER(s.name)"
+                    + " LIKE '%" + newServiceName.toUpperCase() + "%'"
+                    + " AND accountingCode.code LIKE '%" + code + "%' AND s.active = 1",
                     Service.class).getResultList();
 
             if (services.size() > 0) {
