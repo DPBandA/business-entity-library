@@ -81,9 +81,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     @Column(length = 1024)
     private String description;
     @Column(length = 1024)
-    private String notes;
-    @Column(length = 1024)
-    private String terms;
+    private String notes;    
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date requisitionDate;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -110,11 +108,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private String priorityCode;
     private Boolean onHandNow;
     @OneToMany(cascade = CascadeType.REFRESH)
-    private List<CostComponent> costComponents;
-    private String purchaseOrderNumber;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date purchaseOrderDate;
-    private String quotationNumber;
+    private List<CostComponent> costComponents;    
     @Transient
     private Boolean isDirty;
     @Transient
@@ -136,6 +130,18 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private Date financeManagerApprovalDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date executiveDirectorApprovalDate;
+    // Purchase order    
+    private String quotationNumber;
+    private String purchaseOrderNumber;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date purchaseOrderDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date importLicenceDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date deliveryDateRequired;
+    private String importLicenceNum;
+    @Column(length = 1024)
+    private String terms;
 
     /**
      * Default constructor.
@@ -145,6 +151,30 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         costComponents = new ArrayList<>();
         actions = new ArrayList<>();
         description = "";
+    }
+
+    public Date getDeliveryDateRequired() {
+        return deliveryDateRequired;
+    }
+
+    public void setDeliveryDateRequired(Date deliveryDateRequired) {
+        this.deliveryDateRequired = deliveryDateRequired;
+    }
+
+    public String getImportLicenceNum() {
+        return importLicenceNum;
+    }
+
+    public Date getImportLicenceDate() {
+        return importLicenceDate;
+    }
+
+    public void setImportLicenceDate(Date importLicenceDate) {
+        this.importLicenceDate = importLicenceDate;
+    }
+
+    public void setImportLicenceNum(String importLicenceNum) {
+        this.importLicenceNum = importLicenceNum;
     }
 
     /**
