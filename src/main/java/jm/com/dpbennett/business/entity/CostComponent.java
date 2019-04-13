@@ -161,8 +161,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
                 setIsFixedCost(true);
                 setIsHeading(false);
                 setHours(0.0);
-                setHoursOrQuantity(0.0);
-                setRate(0.0);
+                setHoursOrQuantity(1.0);
+                setRate(getCost());
                 break;
             default:
                 setIsFixedCost(true);
@@ -280,8 +280,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Double getHoursOrQuantity() {
-        if (hoursOrQuantity == 0.0 || hoursOrQuantity == null) {
-            update();
+        if (hoursOrQuantity == null) {
+            hoursOrQuantity = 1.0;
         }
         return hoursOrQuantity;
     }
@@ -329,12 +329,12 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Double getCost() {
+         if (cost == null) {
+            cost = 0.0;
+        }
+        
         if (!getIsFixedCost()) {
             cost = getRate() * getHoursOrQuantity();
-        }
-
-        if (cost == null) {
-            cost = 0.0;
         }
 
         return cost;
@@ -369,8 +369,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Double getRate() {
-        if (rate == 0.0 || rate == null) {
-            update();
+        if (rate == null) {
+            rate = 0.0;
         }
         return rate;
     }
