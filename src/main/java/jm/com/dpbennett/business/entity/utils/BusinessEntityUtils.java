@@ -608,9 +608,19 @@ public class BusinessEntityUtils {
             return "";
         }
     }
-
+    
     public static String getDateInMediumDateFormat(Date date) {
         DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy");
+
+        if (date != null) {
+            return formatter.format(date);
+        } else {
+            return "";
+        }
+    }
+
+    public static String getUserDefinedDateFormat(Date date, String format) {
+        DateFormat formatter = new SimpleDateFormat(format);
 
         if (date != null) {
             return formatter.format(date);
