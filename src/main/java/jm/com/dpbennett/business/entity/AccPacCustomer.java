@@ -257,6 +257,24 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
         }
     }
 
+    public static List<AccPacCustomer> findAllByNameAndId(EntityManager em, String value) {
+
+        try {
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<AccPacCustomer> clients;
+            clients = em.createQuery(
+                    "SELECT a FROM AccPacCustomer a"
+                    + " WHERE UPPER(a.customerName) LIKE '" + value.toUpperCase().trim() + "%'"
+                    + " OR UPPER(a.idCust) LIKE '" + value.toUpperCase().trim() + "%'"
+                    + " ORDER BY a.customerName", AccPacCustomer.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     public static AccPacCustomer findByName(EntityManager em, String value) {
 
         try {
