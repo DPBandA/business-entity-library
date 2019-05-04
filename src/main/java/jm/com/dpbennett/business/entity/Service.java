@@ -275,6 +275,26 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
+    
+    public static Service findActiveByExactName(EntityManager em, String serviceName) {
+
+        try {
+            String newServiceName = serviceName.trim().replaceAll("'", "''");
+
+            List<Service> services = em.createQuery(
+                    "SELECT s FROM Service s "
+                    + "WHERE UPPER(s.name) "
+                    + "= '" + newServiceName.toUpperCase() + "' AND s.active = 1", 
+                    Service.class).getResultList();
+            if (services.size() > 0) {
+                return services.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     public static Service findByNameAndAccountingCode(
             EntityManager em,
