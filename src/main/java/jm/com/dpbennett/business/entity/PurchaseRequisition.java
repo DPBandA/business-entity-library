@@ -135,11 +135,11 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private String purchaseOrderNumber;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date purchaseOrderDate;
-    //@Temporal(javax.persistence.TemporalType.DATE)
-    //private Date importLicenceDate;
-    //@Temporal(javax.persistence.TemporalType.DATE)
-    //private Date deliveryDateRequired;
-    //private String importLicenceNum;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date importLicenceDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date deliveryDateRequired;
+    private String importLicenceNum;
     @Column(length = 1024)
     private String terms;
 
@@ -153,30 +153,33 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         description = "";
     }
 
-//    public Date getDeliveryDateRequired() {
-//        return deliveryDateRequired;
-//    }
-//
-//    public void setDeliveryDateRequired(Date deliveryDateRequired) {
-//        this.deliveryDateRequired = deliveryDateRequired;
-//    }
-//
-//    public String getImportLicenceNum() {
-//        return importLicenceNum;
-//    }
-//
-//    public Date getImportLicenceDate() {
-//        return importLicenceDate;
-//    }
-//
-//    public void setImportLicenceDate(Date importLicenceDate) {
-//        this.importLicenceDate = importLicenceDate;
-//    }
-//
-//    public void setImportLicenceNum(String importLicenceNum) {
-//        this.importLicenceNum = importLicenceNum;
-//    }
+    public String getImportLicenceNum() {
+        return importLicenceNum;
+    }
 
+    public void setImportLicenceNum(String importLicenceNum) {
+        this.importLicenceNum = importLicenceNum;
+    }
+
+    public Date getDeliveryDateRequired() {
+        return deliveryDateRequired;
+    }
+
+    public void setDeliveryDateRequired(Date deliveryDateRequired) {
+        this.deliveryDateRequired = deliveryDateRequired;
+    }
+
+    
+
+    public Date getImportLicenceDate() {
+        return importLicenceDate;
+    }
+
+    public void setImportLicenceDate(Date importLicenceDate) {
+        this.importLicenceDate = importLicenceDate;
+    }
+
+   
     /**
      * Splits the description into three(3) parts.
      *
