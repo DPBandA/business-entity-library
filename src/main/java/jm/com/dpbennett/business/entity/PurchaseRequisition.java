@@ -130,7 +130,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private Date financeManagerApprovalDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date executiveDirectorApprovalDate;
-    // Purchase order    
+    // Purchase order detail    
     private String quotationNumber;
     private String purchaseOrderNumber;
     @Temporal(javax.persistence.TemporalType.DATE)
