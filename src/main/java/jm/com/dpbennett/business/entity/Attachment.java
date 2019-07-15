@@ -1,0 +1,279 @@
+/*
+Business Entity Library (BEL) - A foundational library for JSF web applications 
+Copyright (C) 2019  D P Bennett & Associates Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Email: info@dpbennett.com.jm
+ */
+package jm.com.dpbennett.business.entity;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.utils.ReturnMessage;
+
+/**
+ *
+ * @author Desmond Bennett
+ */
+@Entity
+@Table(name = "attachment")
+@NamedQueries({
+    @NamedQuery(name = "findAllAttachments", query = "SELECT a FROM attachment a ORDER BY a.name")  
+})
+public class Attachment implements BusinessEntity, Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String name;
+    private String url;
+    private Boolean active;
+    @Column(length = 1024)
+    private String description;
+    private String category;
+    @Transient
+    private Boolean isDirty;
+
+    public Attachment() {
+        this.name = "";
+        this.active = true;
+        this.description = "";
+        this.category = "";
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCategory() {
+        if (category == null) {
+            category = "";
+        }
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getDescription() {
+        if (description == null) {
+            description = "";
+        }
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getUsable() {
+        if (getActive()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+
+    public void setUsable(String usable) {
+        if (usable.equals("Yes")) {
+            setActive(true);
+        } else {
+            setActive(false);
+        }
+    }
+
+    public Boolean getActive() {
+        if (active == null) {
+            active = false;
+        }
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public String getName() {
+        if (name == null) {
+            name = "";
+        }
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Attachment)) {
+            return false;
+        }
+        Attachment other = (Attachment) object;
+
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public static List<Attachment> findAllAttachments(EntityManager em) {
+
+        try {
+            List<Attachment> classfications = em.createNamedQuery("findAllAttachments", Attachment.class).getResultList();
+
+            return classfications;
+        } catch (Exception e) {
+
+            return null;
+        }
+
+    }
+
+    public static Attachment findAttachmentById(EntityManager em, Long id) {
+
+        try {
+            Attachment attachment = em.find(Attachment.class, id);
+
+            return attachment;
+        } catch (Exception e) {
+
+            return null;
+        }
+    }
+
+    public static Attachment findAttachmentByName(EntityManager em, String value) {
+
+        try {
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Attachment> attachments = em.createQuery("SELECT a FROM Attachment a "
+                    + "WHERE UPPER(a.name) "
+                    + "= '" + value.toUpperCase() + "'", Attachment.class).getResultList();
+            if (attachments.size() > 0) {
+                return attachments.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
+    }
+
+    public static List<Attachment> findAttachmentsByName(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Attachment> attachments
+                    = em.createQuery("SELECT a FROM Attachment a where UPPER(a.name) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY a.name", Attachment.class).getResultList();
+            return attachments;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Attachment> findAttachmentsByNameAndCategory(EntityManager em, String value, String category) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Attachment> attachments
+                    = em.createQuery("SELECT a FROM Attachment a where UPPER(a.name) like '%"
+                            + value.toUpperCase().trim() + "%' AND a.category = " + category + " ORDER BY a.name", Attachment.class).getResultList();
+            return attachments;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public ReturnMessage save(EntityManager em) {
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Attachment not saved");
+    }
+
+    @Override
+    public ReturnMessage validate(EntityManager em) {
+        return new ReturnMessage();
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+}
