@@ -98,6 +98,7 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canAccessServiceRequestUnit;
     private Boolean canAccessLegalOfficeUnit;
     private Boolean canAccessCRMUnit;
+    private Boolean canAccessProcurementUnit;
     
     @Transient
     private Boolean isDirty;
@@ -136,13 +137,24 @@ public class Privilege implements Serializable, BusinessEntity {
 
     public Boolean getCanAddSupplier() {
         if (canAddSupplier == null) {
-            canAddSupplier = false;
+            canAddSupplier = true;
         }
         return canAddSupplier;
     }
 
     public void setCanAddSupplier(Boolean canAddSupplier) {
         this.canAddSupplier = canAddSupplier;
+    }
+
+    public Boolean getCanAccessProcurementUnit() {
+        if (canAccessProcurementUnit == null) {
+            canAccessProcurementUnit = false;
+        }
+        return canAccessProcurementUnit;
+    }
+
+    public void setCanAccessProcurementUnit(Boolean canAccessProcurementUnit) {
+        this.canAccessProcurementUnit = canAccessProcurementUnit;
     }
 
     public Boolean getCanAccessCRMUnit() {
