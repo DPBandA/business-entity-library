@@ -142,6 +142,8 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private String importLicenceNum;
     @Column(length = 1024)
     private String terms;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Attachment> attachments; 
 
     /**
      * Default constructor.
@@ -481,6 +483,17 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public void setCostComponents(List<CostComponent> costComponents) {
         this.costComponents = costComponents;
     }
+
+    public List<Attachment> getAttachments() {
+        if (attachments == null) {
+            attachments = new ArrayList<>();
+        }
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }    
 
     public String getTerms() {
         return terms;

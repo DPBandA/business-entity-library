@@ -9,9 +9,8 @@ import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.Discount;
-import jm.com.dpbennett.business.entity.Job;
-import jm.com.dpbennett.business.entity.Tax;
+import jm.com.dpbennett.business.entity.Attachment;
+import jm.com.dpbennett.business.entity.PurchaseRequisition;
 import org.junit.Test;
 
 /**
@@ -28,7 +27,7 @@ public class CreateEntitiesTest {
         prop.put("javax.persistence.jdbc.password",
                 ""); // NB: REMOVE PWD WHEN DONE
         prop.put("javax.persistence.jdbc.url",
-                "jdbc:mysql://172.16.0.10:3306/jmts");
+                "jdbc:mysql://localhost:3306/jmts");
         prop.put("javax.persistence.jdbc.driver",
                 "com.mysql.jdbc.Driver");
 
@@ -37,9 +36,8 @@ public class CreateEntitiesTest {
 
        // These instantiations cause the respective database tables to be created
        // if they don't already exist.
-       Tax tax = new Tax();
-       Discount discount = new Discount();
-       Job job = new Job();
+       // NB: Set <skipTests>true</skipTests> when done.
+       PurchaseRequisition pr = new PurchaseRequisition();
 
     }
 }

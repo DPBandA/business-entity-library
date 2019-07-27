@@ -42,7 +42,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "attachment")
 @NamedQueries({
-    @NamedQuery(name = "findAllAttachments", query = "SELECT a FROM attachment a ORDER BY a.name")  
+    @NamedQuery(name = "findAllAttachments", query = "SELECT a FROM Attachment a ORDER BY a.name")  
 })
 public class Attachment implements BusinessEntity, Serializable {
 
@@ -51,7 +51,8 @@ public class Attachment implements BusinessEntity, Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private String url;
+    private String sourceURL;
+    private String destinationURL;
     private Boolean active;
     @Column(length = 1024)
     private String description;
@@ -64,14 +65,25 @@ public class Attachment implements BusinessEntity, Serializable {
         this.active = true;
         this.description = "";
         this.category = "";
+        this.sourceURL = "";
+        this.destinationURL = "";
+        isDirty = false;
     }
 
-    public String getUrl() {
-        return url;
+    public String getDestinationURL() {
+        return destinationURL;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setDestinationURL(String destinationURL) {
+        this.destinationURL = destinationURL;
+    }
+
+    public String getSourceURL() {
+        return sourceURL;
+    }
+
+    public void setSourceURL(String sourceURL) {
+        this.sourceURL = sourceURL;
     }
 
     @Override
