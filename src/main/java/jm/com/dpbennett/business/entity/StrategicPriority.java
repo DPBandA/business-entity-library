@@ -26,6 +26,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 
 /**
@@ -33,6 +34,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
+@Table(name = "strategicpriority")
 public class StrategicPriority implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUID = 1L;

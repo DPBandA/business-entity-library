@@ -69,6 +69,16 @@ public class Attachment implements BusinessEntity, Serializable {
         this.destinationURL = "";
         isDirty = false;
     }
+    
+    public Attachment(String name, String destinationURL) {
+        this.name = name;
+        this.active = true;
+        this.description = "";
+        this.category = "";
+        this.sourceURL = "";
+        this.destinationURL = destinationURL;
+        isDirty = false;
+    }
 
     public String getDestinationURL() {
         return destinationURL;

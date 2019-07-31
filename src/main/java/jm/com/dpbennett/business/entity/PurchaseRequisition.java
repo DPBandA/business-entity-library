@@ -81,7 +81,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     @Column(length = 1024)
     private String description;
     @Column(length = 1024)
-    private String notes;    
+    private String notes;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date requisitionDate;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -108,7 +108,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private String priorityCode;
     private Boolean onHandNow;
     @OneToMany(cascade = CascadeType.REFRESH)
-    private List<CostComponent> costComponents;    
+    private List<CostComponent> costComponents;
     @Transient
     private Boolean isDirty;
     @Transient
@@ -143,7 +143,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     @Column(length = 1024)
     private String terms;
     @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Attachment> attachments; 
+    private List<Attachment> attachments;
 
     /**
      * Default constructor.
@@ -171,8 +171,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         this.deliveryDateRequired = deliveryDateRequired;
     }
 
-    
-
     public Date getImportLicenceDate() {
         return importLicenceDate;
     }
@@ -181,7 +179,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         this.importLicenceDate = importLicenceDate;
     }
 
-   
     /**
      * Splits the description into three(3) parts.
      *
@@ -382,8 +379,8 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         return number;
 
     }
-    
-     public String generatePurchaseOrderNumber() {
+
+    public String generatePurchaseOrderNumber() {
 
         Calendar c = Calendar.getInstance();
         String year;
@@ -493,7 +490,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
     public void setAttachments(List<Attachment> attachments) {
         this.attachments = attachments;
-    }    
+    }
 
     public String getTerms() {
         return terms;
@@ -987,6 +984,19 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                                 "An error occurred while saving a cost component",
                                 Message.SEVERITY_ERROR_NAME);
 
+                    }
+                }
+            }
+
+            // Save new attachements
+            if (!getAttachments().isEmpty()) {
+                for (Attachment attachment : attachments) {
+                    if ((attachment.getId() == null)
+                            && !attachment.save(em).isSuccess()) {
+                        return new ReturnMessage(false,
+                                "Attachment save error occurred",
+                                "An error occurred while saving an attachment",
+                                Message.SEVERITY_ERROR_NAME);
                     }
                 }
             }
