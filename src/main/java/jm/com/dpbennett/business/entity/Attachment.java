@@ -19,9 +19,15 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -42,7 +48,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "attachment")
 @NamedQueries({
-    @NamedQuery(name = "findAllAttachments", query = "SELECT a FROM Attachment a ORDER BY a.name")  
+    @NamedQuery(name = "findAllAttachments", query = "SELECT a FROM Attachment a ORDER BY a.name")
 })
 public class Attachment implements BusinessEntity, Serializable {
 
@@ -53,6 +59,7 @@ public class Attachment implements BusinessEntity, Serializable {
     private String name;
     private String sourceURL;
     private String destinationURL;
+    private String contentType;
     private Boolean active;
     @Column(length = 1024)
     private String description;
@@ -67,17 +74,30 @@ public class Attachment implements BusinessEntity, Serializable {
         this.category = "";
         this.sourceURL = "";
         this.destinationURL = "";
+        this.contentType = "";
         isDirty = false;
     }
-    
-    public Attachment(String name, String destinationURL) {
+
+    public Attachment(String name,
+            String sourceURL,
+            String destinationURL,
+            String contentType) {
         this.name = name;
         this.active = true;
         this.description = "";
         this.category = "";
-        this.sourceURL = "";
+        this.sourceURL = sourceURL;
         this.destinationURL = destinationURL;
+        this.contentType = contentType;
         isDirty = false;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public String getDestinationURL() {
@@ -278,6 +298,25 @@ public class Attachment implements BusinessEntity, Serializable {
         }
 
         return new ReturnMessage(false, "Attachment not saved");
+    }
+
+    public boolean deleteFile() {
+
+        return new File(destinationURL).delete();
+
+    }
+    
+    public InputStream getFileInputStream() {
+        File file = new File(destinationURL);
+        try {
+            InputStream inputStream = new FileInputStream(file);
+            
+            return inputStream;
+        } catch (FileNotFoundException ex) {
+            System.out.println("File attachment not found!");
+        }      
+        
+        return null;        
     }
 
     @Override

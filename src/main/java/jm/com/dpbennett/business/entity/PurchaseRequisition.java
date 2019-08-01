@@ -990,13 +990,15 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
             // Save new attachements
             if (!getAttachments().isEmpty()) {
-                for (Attachment attachment : attachments) {
-                    if ((attachment.getId() == null)
+                for (Attachment attachment : getAttachments()) {
+                    if ((attachment.getId() == null || attachment.getIsDirty())
                             && !attachment.save(em).isSuccess()) {
+                        
                         return new ReturnMessage(false,
                                 "Attachment save error occurred",
                                 "An error occurred while saving an attachment",
                                 Message.SEVERITY_ERROR_NAME);
+                        
                     }
                 }
             }
