@@ -480,6 +480,13 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public void setCostComponents(List<CostComponent> costComponents) {
         this.costComponents = costComponents;
     }
+    
+    public List<Attachment> getAllSortedAttachments() {
+
+        Collections.sort(getAttachments());
+
+        return attachments;
+    }
 
     public List<Attachment> getAttachments() {
         if (attachments == null) {

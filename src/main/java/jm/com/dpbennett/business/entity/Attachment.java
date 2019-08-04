@@ -24,10 +24,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -50,7 +49,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllAttachments", query = "SELECT a FROM Attachment a ORDER BY a.name")
 })
-public class Attachment implements BusinessEntity, Serializable {
+public class Attachment implements BusinessEntity, Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -336,5 +335,10 @@ public class Attachment implements BusinessEntity, Serializable {
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.toString(), ((Attachment) o).toString());
     }
 }

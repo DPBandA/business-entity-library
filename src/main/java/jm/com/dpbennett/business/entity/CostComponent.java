@@ -404,7 +404,6 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     @Override
     public int compareTo(Object o) {
-        //return Collator.getInstance().compare(this.name, ((CostComponent) o).name);
         return Collator.getInstance().compare(this.toString(), ((CostComponent) o).toString());
     }
 
