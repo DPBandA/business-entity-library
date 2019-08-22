@@ -45,7 +45,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllSystemOptions", query = "SELECT s FROM SystemOption s ORDER BY s.name")
     ,
-    @NamedQuery(name = "findAllFinancialSystemOptions", 
+    @NamedQuery(name = "findAllFinancialSystemOptions",
             query = "SELECT s FROM SystemOption s WHERE s.category LIKE '%FINANCE%' OR s.category LIKE '%Finance%' ORDER BY s.name")
 })
 public class SystemOption implements BusinessEntity, Serializable {
@@ -130,9 +130,11 @@ public class SystemOption implements BusinessEntity, Serializable {
                 case "String":
                     return option.getOptionValue();
                 case "Long":
-                    return Long.parseLong(option.getOptionValue());    
+                    return Long.parseLong(option.getOptionValue());
                 case "Integer":
                     return Integer.parseInt(option.getOptionValue());
+                case "Double":
+                    return Double.parseDouble(option.getOptionValue());
                 case "Boolean":
                     return Boolean.parseBoolean(option.getOptionValue());
                 case "List<String>":
@@ -295,7 +297,6 @@ public class SystemOption implements BusinessEntity, Serializable {
             return new ArrayList<>();
         }
     }
-
 
     @Override
     public ReturnMessage save(EntityManager em) {
