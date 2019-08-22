@@ -19,8 +19,10 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.test;
 
+import java.util.Calendar;
 import java.util.Date;
 import jm.com.dpbennett.business.entity.DatePeriod;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import org.junit.Test;
 
 /**
@@ -31,12 +33,14 @@ public class DatePeriodTest {
 
     @Test
     public void generateDatePeriods() {
-        DatePeriod dp = new DatePeriod();
-
-        dp.setName("This financial year");
-        dp.initDatePeriod(/*BusinessEntityUtils.createDate(2019, 0, 31)*/new Date());
-
-        System.out.println("Start date: " + dp.getStartDate());
-        System.out.println("End date: " + dp.getEndDate());
+//        DatePeriod dp = new DatePeriod();
+//
+//        dp.setName("This financial year");
+//        dp.initDatePeriod(/*BusinessEntityUtils.createDate(2019, 0, 31)*/new Date());
+//
+//        System.out.println("Start date: " + dp.getStartDate());
+//        System.out.println("End date: " + dp.getEndDate());
+          System.out.println("Adjusted date: " + 
+                  BusinessEntityUtils.adjustDate(new Date(), Calendar.DAY_OF_MONTH, 10));  
     }
 }
