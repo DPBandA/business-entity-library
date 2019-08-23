@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import jm.com.dpbennett.business.entity.Attachment;
+import jm.com.dpbennett.business.entity.Currency;
 import jm.com.dpbennett.business.entity.PurchaseRequisition;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ public class CreateEntitiesTest {
         prop.put("javax.persistence.jdbc.password",
                 ""); // NB: REMOVE PWD WHEN DONE
         prop.put("javax.persistence.jdbc.url",
-                "jdbc:mysql://localhost:3306/jmts");
+                "jdbc:mysql://172.16.0.10:3306/jmtstest");
         prop.put("javax.persistence.jdbc.driver",
                 "com.mysql.jdbc.Driver");
 
@@ -37,7 +38,7 @@ public class CreateEntitiesTest {
        // These instantiations cause the respective database tables to be created
        // if they don't already exist.
        // NB: Set <skipTests>true</skipTests> when done.
-       PurchaseRequisition pr = new PurchaseRequisition();
+       Currency c = new Currency();
 
     }
 }

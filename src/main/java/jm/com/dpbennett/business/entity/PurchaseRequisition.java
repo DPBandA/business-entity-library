@@ -148,6 +148,8 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private String shippingInstructions;
     @Column(length = 1024)
     private String pleaseSupplyNote;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Currency currency;
 
     /**
      * Default constructor.
@@ -157,6 +159,14 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         costComponents = new ArrayList<>();
         actions = new ArrayList<>();
         description = "";
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
     }
 
     public String getPleaseSupplyNote() {

@@ -39,20 +39,33 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
  */
 @Entity
 @Table(name = "currency")
-public class Currency implements BusinessEntity, Serializable {
+public class Currency implements Asset, BusinessEntity, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(length = 50)
     private String name;
-    private String code;
-    private Double cost;
-    private Double rate;
+    private String code;  
+    private String type;
+    private String symbol;
     private String description;
     @Transient
     private Boolean isDirty;
+
+    public Currency() {
+        this.name = "";
+        this.code = "";
+        this.symbol = "";
+        this.description = "";
+        this.isDirty = false;
+    }       
+
+    public Currency(String name, String code, String symbol) {
+        this.name = name;
+        this.code = code;
+        this.symbol = symbol;
+    }
 
     @Override
     public Long getId() {
@@ -64,12 +77,12 @@ public class Currency implements BusinessEntity, Serializable {
         this.id = id;
     }
 
-    public Double getRate() {
-        return rate;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public void setRate(Double rate) {
-        this.rate = rate;
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
     public String getCode() {
@@ -78,14 +91,6 @@ public class Currency implements BusinessEntity, Serializable {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public Double getCost() {
-        return cost;
-    }
-
-    public void setCost(Double cost) {
-        this.cost = cost;
     }
 
     public String getDescription() {
@@ -196,6 +201,16 @@ public class Currency implements BusinessEntity, Serializable {
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
     }
 
 }
