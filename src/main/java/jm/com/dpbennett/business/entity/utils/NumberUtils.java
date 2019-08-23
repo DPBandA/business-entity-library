@@ -29,6 +29,19 @@ import java.text.ParseException;
  */
 public class NumberUtils {
     
+    public static String formatAsCurrency(Double number, String symbol) {
+        DecimalFormat formatter = new DecimalFormat("#,##0.00");
+
+        try {
+
+            return symbol + formatter.format(number);            
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+            
+            return "";
+        }
+    }
+    
     /**
      * This is a utility method used to validate a double value string.
      *

@@ -1057,17 +1057,17 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
             // Do not save changed PR if it's already marked as completed in the database
             // However, saving is allowed if the user belongs to the "Invoicing department"
-            // or is a system administrator
+            // or is a procurement officer.
             if (getId() != null) {
                 PurchaseRequisition pr = PurchaseRequisition.findById(em, getId());
                 if (pr.getWorkProgress().equals("Completed")
-                        && !user.getPrivilege().getCanBeFinancialAdministrator()) {
+                        && !user.getEmployee().isProcurementOfficer()) {
 
                     setIsDirty(false);
 
                     return new ReturnMessage(false,
                             "Purchase Requisition Cannot Be Saved",
-                            "This purchase requisition is marked as completed so changes cannot be saved. You may contact a financial administrator",
+                            "This purchase requisition is marked as completed so changes cannot be saved. You may contact a procurement officer",
                             Message.SEVERITY_ERROR_NAME);
                 }
             }
