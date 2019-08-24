@@ -23,7 +23,6 @@ package jm.com.dpbennett.business.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -31,7 +30,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
+import java.text.Collator;
 
 /**
  *
@@ -39,7 +40,7 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
  */
 @Entity
 @Table(name = "currency")
-public class Currency implements Asset, BusinessEntity, Serializable {
+public class Currency implements Asset, BusinessEntity, Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -59,12 +60,14 @@ public class Currency implements Asset, BusinessEntity, Serializable {
         this.symbol = "";
         this.description = "";
         this.isDirty = false;
-    }       
+    }      
+    
+    
 
-    public Currency(String name, String code, String symbol) {
+    public Currency(String name) {
         this.name = name;
-        this.code = code;
-        this.symbol = symbol;
+        this.code = "";
+        this.symbol = "";
     }
 
     @Override
@@ -115,15 +118,13 @@ public class Currency implements Asset, BusinessEntity, Serializable {
             return false;
         }
         Currency other = (Currency) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.CostCode[id=" + id + "]";
+        return "Currency[id=" + id + "]";
     }
 
     @Override
@@ -136,16 +137,16 @@ public class Currency implements Asset, BusinessEntity, Serializable {
         this.name = name;
     }
     
-    public static Currency findCostCodeByCode(EntityManager em, String code) {
-
-        String newCode = code.replaceAll("'", "''");
+    public static Currency findByName(EntityManager em, String value) {
 
         try {
-            List<Currency> codes = em.createQuery("SELECT c FROM CostCode c "
-                    + "WHERE c.code "
-                    + "= '" + newCode + "'", Currency.class).getResultList();
-            if (codes.size() > 0) {
-                return codes.get(0);
+            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
+                    + "WHERE UPPER(c.name) "
+                    + "= '" + value.toUpperCase() + "'", Currency.class).getResultList();
+            if (currencies.size() > 0) {
+                return currencies.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -155,19 +156,38 @@ public class Currency implements Asset, BusinessEntity, Serializable {
 
     }
     
-    public static List<Currency> findAllCostCodes(EntityManager em) {
+    public static Currency findByCode(EntityManager em, String code) {
+
+        String newCode = code.replaceAll("'", "''");
 
         try {
-            List<Currency> codes = em.createQuery("SELECT c FROM CostCode c ORDER BY c.code", Currency.class).getResultList();
+            List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
+                    + "WHERE c.code "
+                    + "= '" + newCode + "'", Currency.class).getResultList();
+            if (currencies.size() > 0) {
+                return currencies.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
+    }
+    
+    public static List<Currency> findAll(EntityManager em) {
+
+        try {
+            List<Currency> codes = em.createQuery("SELECT c FROM Currency c ORDER BY c.code", Currency.class).getResultList();
 
             return codes;
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<Currency>();
+            return new ArrayList<>();
         }
     }
 
-    public static Currency findCostCodeById(EntityManager em, Long id) {
+    public static Currency findById(EntityManager em, Long id) {
 
         try {
             Currency code = em.find(Currency.class, id);
@@ -181,12 +201,22 @@ public class Currency implements Asset, BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Currency not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 
     @Override
@@ -211,6 +241,11 @@ public class Currency implements Asset, BusinessEntity, Serializable {
     @Override
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.getName(), ((Client) o).getName());
     }
 
 }

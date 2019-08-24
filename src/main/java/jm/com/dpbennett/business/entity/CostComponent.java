@@ -23,12 +23,14 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
@@ -64,6 +66,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private String unit;
     @Transient
     private Boolean isDirty;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Currency currency;
 
     public CostComponent() {
         name = "";
@@ -134,6 +138,14 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         rate = 0.0;
         description = "";
         unit = "";
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
     }
 
     public void update() {
