@@ -193,8 +193,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Currency> currencies
-                    = em.createQuery("SELECT c FROM Currency c WHERE UPPER(c.name) LIKE '%"
-                            + value.toUpperCase().trim() + "%'"
+                    = em.createQuery("SELECT c FROM Currency c WHERE UPPER(c.name) LIKE '%"                            
                             + value.toUpperCase().trim() + "%' ORDER BY c.name",
                             Currency.class).getResultList();
             return currencies;
