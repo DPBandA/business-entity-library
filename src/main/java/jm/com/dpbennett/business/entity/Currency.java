@@ -186,6 +186,23 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
             return new ArrayList<>();
         }
     }
+    
+    public static List<Currency> findAllByName(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Currency> currencies
+                    = em.createQuery("SELECT c FROM Currency c WHERE UPPER(c.name) LIKE '%"
+                            + value.toUpperCase().trim() + "%'"
+                            + value.toUpperCase().trim() + "%' ORDER BY c.name",
+                            Currency.class).getResultList();
+            return currencies;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     public static Currency findById(EntityManager em, Long id) {
 
