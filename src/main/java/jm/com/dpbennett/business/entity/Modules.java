@@ -37,6 +37,7 @@ public class Modules implements Serializable, BusinessEntity {
     private Boolean serviceRequestModule;
     private Boolean adminModule;
     private Boolean financialAdminModule;
+    private Boolean purchaseManagementModule;
     private Boolean legalOfficeModule;
     private Boolean crmModule;
     @Transient
@@ -162,6 +163,17 @@ public class Modules implements Serializable, BusinessEntity {
 
     public void setFinancialAdminModule(Boolean financialAdminModule) {
         this.financialAdminModule = financialAdminModule;
+    }
+
+    public Boolean getPurchaseManagementModule() {
+        if (purchaseManagementModule == null) {
+            purchaseManagementModule = false;
+        }
+        return purchaseManagementModule;
+    }
+
+    public void setPurchaseManagementModule(Boolean purchaseManagementModule) {
+        this.purchaseManagementModule = purchaseManagementModule;
     }
 
     public Boolean getLegalOfficeModule() {

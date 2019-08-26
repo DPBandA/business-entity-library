@@ -88,6 +88,7 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canApplyTaxesToJobCosting;
     private Boolean canAddAccountingCode;
     private Boolean canAddSupplier;
+    private Boolean canAccessProcurementUnit;
     // Module/unit access         
     private Boolean canAccessLegalMetrologyUnit;
     private Boolean canAccessJobManagementUnit;
@@ -98,8 +99,7 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canAccessServiceRequestUnit;
     private Boolean canAccessLegalOfficeUnit;
     private Boolean canAccessCRMUnit;
-    private Boolean canAccessProcurementUnit;
-    
+        
     @Transient
     private Boolean isDirty;
 
