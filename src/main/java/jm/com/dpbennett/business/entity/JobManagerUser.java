@@ -72,9 +72,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    //private Department department; // tk remove eventually when not used.
-    //@OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)    
     private Privilege privilege;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Modules modules;
