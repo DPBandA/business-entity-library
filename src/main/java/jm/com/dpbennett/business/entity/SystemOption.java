@@ -43,10 +43,10 @@ import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 @Entity
 @Table(name = "systemoptions")
 @NamedQueries({
-    @NamedQuery(name = "findAllSystemOptions", query = "SELECT s FROM SystemOption s ORDER BY s.name")
+    @NamedQuery(name = "findAllSystemOptions", query = "SELECT s FROM SystemOption s ORDER BY s.comments")
     ,
     @NamedQuery(name = "findAllFinancialSystemOptions",
-            query = "SELECT s FROM SystemOption s WHERE s.category LIKE '%FINANCE%' OR s.category LIKE '%Finance%' ORDER BY s.name")
+            query = "SELECT s FROM SystemOption s WHERE s.category LIKE '%FINANCE%' OR s.category LIKE '%Finance%' ORDER BY s.comments")
 })
 public class SystemOption implements BusinessEntity, Serializable {
 
@@ -286,7 +286,7 @@ public class SystemOption implements BusinessEntity, Serializable {
             String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
 
             List<SystemOption> systemOptions
-                    = em.createQuery("SELECT o FROM SystemOption o WHERE o.category = 'FINANCE' AND ("
+                    = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = 'FINANCE' AND ("
                             + " UPPER(o.name) LIKE '%" + newQueryString + "%'"
                             + " OR UPPER(o.optionValue) like '%" + newQueryString + "%'"
                             + " OR UPPER(o.comments) like '%" + newQueryString + "%'"
