@@ -41,6 +41,7 @@ public class Modules implements Serializable, BusinessEntity {
     private Boolean legalOfficeModule;
     private Boolean crmModule;
     private Boolean hrmModule;
+    private Boolean reportModule;
     @Transient
     private Boolean isDirty;
 
@@ -153,6 +154,17 @@ public class Modules implements Serializable, BusinessEntity {
 
     public void setHrmModule(Boolean hrmModule) {
         this.hrmModule = hrmModule;
+    }
+
+    public Boolean getReportModule() {
+        if (reportModule == null) {
+            reportModule = false;
+        }
+        return reportModule;
+    }
+
+    public void setReportModule(Boolean reportModule) {
+        this.reportModule = reportModule;
     }
 
     public Boolean getAdminModule() {
