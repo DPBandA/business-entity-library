@@ -26,9 +26,9 @@ public class CreateEntitiesTest {
         prop.put("javax.persistence.jdbc.user",
                 "root");
         prop.put("javax.persistence.jdbc.password",
-                ""); // NB: REMOVE PWD WHEN DONE
+                "bsj0001"); // NB: REMOVE PWD WHEN DONE
         prop.put("javax.persistence.jdbc.url",
-                "jdbc:mysql://172.16.0.10:3306/jmtstest");
+                "jdbc:mysql://172.16.0.10:3306/jmts");
         prop.put("javax.persistence.jdbc.driver",
                 "com.mysql.jdbc.Driver");
 
@@ -38,7 +38,7 @@ public class CreateEntitiesTest {
        // These instantiations cause the respective database tables to be created
        // if they don't already exist.
        // NB: Set <skipTests>true</skipTests> when done.
-       Currency c = new Currency();
+       PurchaseRequisition pr = new PurchaseRequisition();
 
     }
 }
