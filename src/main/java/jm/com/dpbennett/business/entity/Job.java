@@ -129,6 +129,7 @@ public class Job implements Serializable, BusinessEntity {
     private Boolean visited;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Service> services;
+    private String serviceLocation;
 
     public Job() {
         this.name = "";
@@ -153,6 +154,14 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
+    }
+
+    public String getServiceLocation() {
+        return serviceLocation;
+    }
+
+    public void setServiceLocation(String serviceLocation) {
+        this.serviceLocation = serviceLocation;
     }
 
     public List<CashPayment> getCashPayments() {
