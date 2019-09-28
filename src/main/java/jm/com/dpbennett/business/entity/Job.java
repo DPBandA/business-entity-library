@@ -106,9 +106,16 @@ public class Job implements Serializable, BusinessEntity {
     private String jobDescription;
     @Column(length = 1024)
     private String instructions;
+    // Service quantities
     private Integer noOfTests;
     private Integer noOfCalibrations;
     private Integer noOfTestsOrCalibrations;
+    private Integer noOfInspections;
+    private Integer noOfTrainings;
+    private Integer noOfLabelAssessments;
+    private Integer noOfCertifications;
+    private Integer noOfConsultations;
+    private Integer noOfOtherAssessments;
     @Transient
     private Boolean isToBeSubcontracted;
     @Transient
@@ -146,7 +153,7 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
     }
-    
+
     public Job(Long id) {
         this.id = id;
         this.name = "";
@@ -154,6 +161,72 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
+    }
+
+    public Integer getNoOfInspections() {
+        if (noOfInspections == null) {
+            noOfInspections = 0;
+        }
+        return noOfInspections;
+    }
+
+    public void setNoOfInspections(Integer noOfInspections) {
+        this.noOfInspections = noOfInspections;
+    }
+
+    public Integer getNoOfTrainings() {
+        if (noOfTrainings == null) {
+            noOfTrainings = 0;
+        }
+        return noOfTrainings;
+    }
+
+    public void setNoOfTrainings(Integer noOfTrainings) {
+        this.noOfTrainings = noOfTrainings;
+    }
+
+    public Integer getNoOfLabelAssessments() {
+        if (noOfLabelAssessments == null) {
+            noOfLabelAssessments = 0;
+        }
+        return noOfLabelAssessments;
+    }
+
+    public void setNoOfLabelAssessments(Integer noOfLabelAssessments) {
+        this.noOfLabelAssessments = noOfLabelAssessments;
+    }
+
+    public Integer getNoOfCertifications() {
+        if (noOfCertifications == null) {
+            noOfCertifications = 0;
+        }
+        return noOfCertifications;
+    }
+
+    public void setNoOfCertifications(Integer noOfCertifications) {
+        this.noOfCertifications = noOfCertifications;
+    }
+
+    public Integer getNoOfConsultations() {
+        if (noOfConsultations == null) {
+            noOfConsultations = 0;
+        }
+        return noOfConsultations;
+    }
+
+    public void setNoOfConsultations(Integer noOfConsultations) {
+        this.noOfConsultations = noOfConsultations;
+    }
+
+    public Integer getNoOfOtherAssessments() {
+        if (noOfOtherAssessments == null) {
+            noOfOtherAssessments = 0;
+        }
+        return noOfOtherAssessments;
+    }
+
+    public void setNoOfOtherAssessments(Integer noOfOtherAssessments) {
+        this.noOfOtherAssessments = noOfOtherAssessments;
     }
 
     public String getServiceLocation() {
@@ -331,7 +404,7 @@ public class Job implements Serializable, BusinessEntity {
                     "An undefined error occurred while saving job "
                     + this.getJobNumber() + ":\n"
                     + e,
-                   Message.SEVERITY_ERROR_NAME);
+                    Message.SEVERITY_ERROR_NAME);
         }
 
         return new ReturnMessage();
@@ -682,7 +755,7 @@ public class Job implements Serializable, BusinessEntity {
     }
 
     public String getDefaultJobDescription() {
-        
+
         return this.instructions;
     }
 
@@ -993,7 +1066,7 @@ public class Job implements Serializable, BusinessEntity {
             return false;
         }
         Job other = (Job) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -1091,7 +1164,7 @@ public class Job implements Serializable, BusinessEntity {
         switch (searchType) {
             case "Appr'd & uninv'd jobs":
                 searchTextAndClause
-                        = " AND subContractedDepartment.name = '--' AND ("                       
+                        = " AND subContractedDepartment.name = '--' AND ("
                         + " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -2033,7 +2106,6 @@ public class Job implements Serializable, BusinessEntity {
                     + "\n" + e,
                     Message.SEVERITY_ERROR_NAME);
         }
-
 
     }
 
