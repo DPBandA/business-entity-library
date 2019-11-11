@@ -1856,6 +1856,16 @@ public class Job implements Serializable, BusinessEntity {
 
         return foundJobs;
     }
+    
+    /*
+    (SELECT SUM(cashpayment.PAYMENT) FROM cashpayment
+      INNER JOIN `jobcostingandpayment_cashpayment` jobcostingandpayment_cashpayment ON 
+            cashpayment.ID = jobcostingandpayment_cashpayment.cashPayments_ID 
+      INNER JOIN `jobcostingandpayment` jobcostingandpayment ON 
+            jobcostingandpayment.ID = jobcostingandpayment_cashpayment.JobCostingAndPayment_ID 
+      WHERE jobcostingandpayment.ID = job.JOBCOSTINGANDPAYMENT_ID  
+     ) 
+    */
 
     public static List<Object[]> getJobReportRecords(
             EntityManager em,
