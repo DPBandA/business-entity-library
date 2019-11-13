@@ -32,7 +32,6 @@
     <class>jm.com.dpbennett.business.entity.FoodSample</class>
     <class>jm.com.dpbennett.business.entity.FoodTest</class>
     <class>jm.com.dpbennett.business.entity.Internet</class>
-    <class>jm.com.dpbennett.business.entity.Job</class>
     <class>jm.com.dpbennett.business.entity.JobCategory</class>
     <class>jm.com.dpbennett.business.entity.JobCosting</class>
     <class>jm.com.dpbennett.business.entity.JobCostingAndPayment</class>
@@ -111,6 +110,7 @@
     <class>jm.com.dpbennett.business.entity.Discount</class>
     <class>jm.com.dpbennett.business.entity.Attachment</class>
     <class>jm.com.dpbennett.business.entity.Currency</class>
+    <class>jm.com.dpbennett.business.entity.jmt.Job</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -187,7 +187,6 @@
     <class>jm.com.dpbennett.business.entity.FoodTest</class>
     <class>jm.com.dpbennett.business.entity.GeneratedForm</class>
     <class>jm.com.dpbennett.business.entity.Internet</class>
-    <class>jm.com.dpbennett.business.entity.Job</class>
     <class>jm.com.dpbennett.business.entity.JobCategory</class>
     <class>jm.com.dpbennett.business.entity.JobCosting</class>
     <class>jm.com.dpbennett.business.entity.JobCostingAndPayment</class>
@@ -241,6 +240,7 @@
     <class>jm.com.dpbennett.business.entity.Tax</class>
     <class>jm.com.dpbennett.business.entity.TestMeasure</class>
     <class>jm.com.dpbennett.business.entity.UnitCost</class>
+    <class>jm.com.dpbennett.business.entity.jmt.Job</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/enerbase"/>
       <property name="javax.persistence.jdbc.password" value=""/>

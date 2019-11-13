@@ -20,7 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.utils;
 
 import java.text.Collator;
-import jm.com.dpbennett.business.entity.Job;
+import jm.com.dpbennett.business.entity.jmt.Job;
 import jm.com.dpbennett.business.entity.JobCostingAndPayment;
 import jm.com.dpbennett.business.entity.JobSubCategory;
 import jm.com.dpbennett.business.entity.Sector;

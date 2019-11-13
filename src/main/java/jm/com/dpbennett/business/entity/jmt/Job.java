@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity;
+package jm.com.dpbennett.business.entity.jmt;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -41,6 +41,27 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import jm.com.dpbennett.business.entity.Address;
+import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.BusinessOffice;
+import jm.com.dpbennett.business.entity.CashPayment;
+import jm.com.dpbennett.business.entity.Classification;
+import jm.com.dpbennett.business.entity.Client;
+import jm.com.dpbennett.business.entity.Contact;
+import jm.com.dpbennett.business.entity.DatePeriod;
+import jm.com.dpbennett.business.entity.Department;
+import jm.com.dpbennett.business.entity.Employee;
+import jm.com.dpbennett.business.entity.JobCategory;
+import jm.com.dpbennett.business.entity.JobCostingAndPayment;
+import jm.com.dpbennett.business.entity.JobManagerUser;
+import jm.com.dpbennett.business.entity.JobSample;
+import jm.com.dpbennett.business.entity.JobSequenceNumber;
+import jm.com.dpbennett.business.entity.JobStatusAndTracking;
+import jm.com.dpbennett.business.entity.JobSubCategory;
+import jm.com.dpbennett.business.entity.Sector;
+import jm.com.dpbennett.business.entity.Service;
+import jm.com.dpbennett.business.entity.ServiceContract;
+import jm.com.dpbennett.business.entity.SystemOption;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.Message;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
