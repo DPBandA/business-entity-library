@@ -9,7 +9,7 @@ import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.Attachment;
+import jm.com.dpbennett.business.entity.dm.Attachment;
 import jm.com.dpbennett.business.entity.Currency;
 import jm.com.dpbennett.business.entity.PurchaseRequisition;
 import org.junit.Test;

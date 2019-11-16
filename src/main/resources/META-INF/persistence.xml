@@ -3,10 +3,7 @@
   <persistence-unit name="JMTSPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <non-jta-data-source>jdbc/__JMTSPool</non-jta-data-source>
-    <class>jm.com.dpbennett.business.entity.Address</class>
     <class>jm.com.dpbennett.business.entity.Asset</class>
-    <class>jm.com.dpbennett.business.entity.Business</class>
-    <class>jm.com.dpbennett.business.entity.BusinessOffice</class>
     <class>jm.com.dpbennett.business.entity.CashPayment</class>
     <class>jm.com.dpbennett.business.entity.Category</class>
     <class>jm.com.dpbennett.business.entity.Certification</class>
@@ -81,7 +78,6 @@
     <class>jm.com.dpbennett.business.entity.Signature</class>
     <class>jm.com.dpbennett.business.entity.ShippingContainer</class>
     <class>jm.com.dpbennett.business.entity.ProductInspection</class>
-    <class>jm.com.dpbennett.business.entity.Alert</class>
     <class>jm.com.dpbennett.business.entity.DocumentInspection</class>
     <class>jm.com.dpbennett.business.entity.LdapContext</class>
     <class>jm.com.dpbennett.business.entity.EntryDocumentInspection</class>
@@ -90,7 +86,6 @@
     <class>jm.com.dpbennett.business.entity.Preference</class>
     <class>jm.com.dpbennett.business.entity.DocumentTracking</class>
     <class>jm.com.dpbennett.business.entity.Modules</class>
-    <class>jm.com.dpbennett.business.entity.AccountingCode</class>
     <class>jm.com.dpbennett.business.entity.Subgroup</class>
     <class>jm.com.dpbennett.business.entity.Division</class>
     <class>jm.com.dpbennett.business.entity.ReportTableColumn</class>
@@ -102,15 +97,20 @@
     <class>jm.com.dpbennett.business.entity.Tax</class>
     <class>jm.com.dpbennett.business.entity.EnergyConsumptionAndEfficiency</class>
     <class>jm.com.dpbennett.business.entity.EnergyLabel</class>
-    <class>jm.com.dpbennett.business.entity.AccPacCustomer</class>
-    <class>jm.com.dpbennett.business.entity.AccPacDocument</class>
     <class>jm.com.dpbennett.business.entity.FieldUpdate</class>
     <class>jm.com.dpbennett.business.entity.StandardsOrganization</class>
     <class>jm.com.dpbennett.business.entity.StrategicPriority</class>
     <class>jm.com.dpbennett.business.entity.Discount</class>
-    <class>jm.com.dpbennett.business.entity.Attachment</class>
     <class>jm.com.dpbennett.business.entity.Currency</class>
     <class>jm.com.dpbennett.business.entity.jmt.Job</class>
+    <class>jm.com.dpbennett.business.entity.fm.AccPacDocument</class>
+    <class>jm.com.dpbennett.business.entity.fm.AccountingCode</class>
+    <class>jm.com.dpbennett.business.entity.fm.AccPacCustomer</class>
+    <class>jm.com.dpbennett.business.entity.hrm.Address</class>
+    <class>jm.com.dpbennett.business.entity.sm.Alert</class>
+    <class>jm.com.dpbennett.business.entity.dm.Attachment</class>
+    <class>jm.com.dpbennett.business.entity.hrm.Business</class>
+    <class>jm.com.dpbennett.business.entity.hrm.BusinessOffice</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -119,8 +119,8 @@
   <persistence-unit name="AccPacPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <non-jta-data-source>jdbc/__ACCPACDBPool</non-jta-data-source>
-    <class>jm.com.dpbennett.business.entity.AccPacCustomer</class>
-    <class>jm.com.dpbennett.business.entity.AccPacDocument</class>
+    <class>jm.com.dpbennett.business.entity.fm.AccPacDocument</class>
+    <class>jm.com.dpbennett.business.entity.fm.AccPacCustomer</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -128,8 +128,8 @@
   </persistence-unit>
   <persistence-unit name="AccPacLocalPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <class>jm.com.dpbennett.business.entity.AccPacCustomer</class>
-    <class>jm.com.dpbennett.business.entity.AccPacDocument</class>
+    <class>jm.com.dpbennett.business.entity.fm.AccPacDocument</class>
+    <class>jm.com.dpbennett.business.entity.fm.AccPacCustomer</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/accpac"/>
       <property name="javax.persistence.jdbc.password" value=""/>
@@ -141,12 +141,6 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>jm.com.dpbennett.business.entity.EnergyLabel</class>
     <class>jm.com.dpbennett.business.entity.EnergyConsumptionAndEfficiency</class>
-    <class>jm.com.dpbennett.business.entity.AccountingCode</class>
-    <class>jm.com.dpbennett.business.entity.Address</class>
-    <class>jm.com.dpbennett.business.entity.Alert</class>
-    <class>jm.com.dpbennett.business.entity.Attachment</class>
-    <class>jm.com.dpbennett.business.entity.Business</class>
-    <class>jm.com.dpbennett.business.entity.BusinessOffice</class>
     <class>jm.com.dpbennett.business.entity.CashPayment</class>
     <class>jm.com.dpbennett.business.entity.Category</class>
     <class>jm.com.dpbennett.business.entity.Certification</class>
@@ -241,6 +235,12 @@
     <class>jm.com.dpbennett.business.entity.TestMeasure</class>
     <class>jm.com.dpbennett.business.entity.UnitCost</class>
     <class>jm.com.dpbennett.business.entity.jmt.Job</class>
+    <class>jm.com.dpbennett.business.entity.fm.AccountingCode</class>
+    <class>jm.com.dpbennett.business.entity.hrm.Address</class>
+    <class>jm.com.dpbennett.business.entity.sm.Alert</class>
+    <class>jm.com.dpbennett.business.entity.dm.Attachment</class>
+    <class>jm.com.dpbennett.business.entity.hrm.Business</class>
+    <class>jm.com.dpbennett.business.entity.hrm.BusinessOffice</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/enerbase"/>
       <property name="javax.persistence.jdbc.password" value=""/>

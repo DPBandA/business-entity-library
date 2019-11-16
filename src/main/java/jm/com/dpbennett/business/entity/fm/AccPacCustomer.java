@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity;
+package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.utils.ReturnMessage;
 

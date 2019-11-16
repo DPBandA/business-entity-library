@@ -20,6 +20,8 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity;
 
+import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
+import jm.com.dpbennett.business.entity.hrm.Address;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
