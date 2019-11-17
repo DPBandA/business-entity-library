@@ -21,7 +21,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity;
 
 import javax.persistence.EntityManager;
-import jm.com.dpbennett.business.entity.utils.ReturnMessage;
+import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *

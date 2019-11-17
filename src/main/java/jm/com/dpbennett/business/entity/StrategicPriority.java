@@ -27,7 +27,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import jm.com.dpbennett.business.entity.utils.ReturnMessage;
+import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *

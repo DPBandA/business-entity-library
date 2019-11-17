@@ -30,8 +30,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
-import jm.com.dpbennett.business.entity.utils.ReturnMessage;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  * This class encapsulates the fields of the Accpac ARCUS database table as an

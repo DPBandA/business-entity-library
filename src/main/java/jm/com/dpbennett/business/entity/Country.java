@@ -33,7 +33,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
-import jm.com.dpbennett.business.entity.utils.ReturnMessage;
+import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *

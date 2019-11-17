@@ -36,8 +36,8 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.Employee;
-import jm.com.dpbennett.business.entity.utils.ReturnMessage;
+import jm.com.dpbennett.business.entity.hrm.Employee;
+import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *

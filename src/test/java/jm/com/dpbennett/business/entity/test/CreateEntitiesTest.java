@@ -10,8 +10,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import jm.com.dpbennett.business.entity.dm.Attachment;
-import jm.com.dpbennett.business.entity.Currency;
-import jm.com.dpbennett.business.entity.PurchaseRequisition;
+import jm.com.dpbennett.business.entity.fm.Currency;
+import jm.com.dpbennett.business.entity.pm.PurchaseRequisition;
 import org.junit.Test;
 
 /**

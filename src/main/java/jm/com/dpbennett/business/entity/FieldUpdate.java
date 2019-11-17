@@ -20,6 +20,7 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity;
 
+import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.CascadeType;

@@ -30,7 +30,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.utils.ReturnMessage;
+import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  * tk get rid of this class if it's no longer being used
