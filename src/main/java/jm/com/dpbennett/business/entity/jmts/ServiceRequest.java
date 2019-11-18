@@ -19,6 +19,7 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.jmts;
 
+import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.fm.Sector;
 import jm.com.dpbennett.business.entity.fm.JobSubCategory;
 import jm.com.dpbennett.business.entity.fm.JobCategory;
@@ -516,7 +517,7 @@ public class ServiceRequest implements Serializable, BusinessEntity {
 
     public static List<ServiceRequest> findServiceRequestsByDateSearchField(
             EntityManager em,
-            JobManagerUser user,
+            User user,
             String dateSearchField,
             String searchType,
             String originalSearchText,

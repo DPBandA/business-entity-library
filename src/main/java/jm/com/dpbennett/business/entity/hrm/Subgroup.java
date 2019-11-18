@@ -19,8 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
-import jm.com.dpbennett.business.entity.hrm.Employee;
-import jm.com.dpbennett.business.entity.hrm.Department;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;

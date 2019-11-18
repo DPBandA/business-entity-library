@@ -29,7 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.Form;
+import jm.com.dpbennett.business.entity.rm.Form;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**

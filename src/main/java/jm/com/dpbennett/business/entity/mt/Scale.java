@@ -41,9 +41,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.jmts.JobManagerUser;
-import jm.com.dpbennett.business.entity.Manufacturer;
-import jm.com.dpbennett.business.entity.Product;
+import jm.com.dpbennett.business.entity.hrm.User;
+import jm.com.dpbennett.business.entity.sm.Manufacturer;
+import jm.com.dpbennett.business.entity.sm.Product;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -260,7 +260,7 @@ public class Scale implements Product, BusinessEntity, Comparable, Serializable 
     
     public static List<Scale> findScalesByDateSearchField(
             EntityManager em,
-            JobManagerUser user,
+            User user,
             String dateSearchField,
             String searchType,
             String originalSearchText,

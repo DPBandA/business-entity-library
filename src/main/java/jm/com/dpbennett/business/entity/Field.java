@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity.fm;
+package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,21 +32,20 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
-@Table(name = "accountingcode")
+@Table(name = "field")
 @NamedQueries({
-    @NamedQuery(name = "findAllAccountingCodes",
-            query = "SELECT a FROM AccountingCode a ORDER BY a.name")
+    @NamedQuery(name = "findAllFields",
+            query = "SELECT f FROM Field f ORDER BY f.name")
 })
-public class AccountingCode implements Serializable, BusinessEntity {
+public class Field implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -55,32 +54,32 @@ public class AccountingCode implements Serializable, BusinessEntity {
     private Boolean active;
     private String name;
     private String code;
-    private String account;
+    private String text;
     private String type;
     @Column(length = 1024)
     private String description;
-    private String abbreviation;
+    private String category;
     @Transient
     private Boolean isDirty;
 
-    public AccountingCode() {
+    public Field() {
         active = true;
         name = "";
         code = "";
-        account = "";
+        text = "";
         type = "";
         description = "";
-        abbreviation = "";
+        category = "";
     }
 
-    public AccountingCode(String name) {
+    public Field(String name) {
         active = true;
         this.name = name;
         code = "";
-        account = "";
+        text = "";
         type = "";
         description = "";
-        abbreviation = "";
+        category = "";
     }
 
     public Boolean getActive() {
@@ -94,20 +93,20 @@ public class AccountingCode implements Serializable, BusinessEntity {
         this.active = active;
     }
 
-    public String getAccount() {
-        return account;
+    public String getText() {
+        return text;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public String getAbbreviation() {
-        return abbreviation;
+    public String getCategory() {
+        return category;
     }
 
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getCode() {
@@ -118,10 +117,10 @@ public class AccountingCode implements Serializable, BusinessEntity {
         this.code = code;
     }
 
-    public static List<AccountingCode> findAllAccountingCodes(EntityManager em) {
+    public static List<Field> findAllFields(EntityManager em) {
 
         try {
-            List<AccountingCode> codes = em.createNamedQuery("findAllAccountingCodes", AccountingCode.class).getResultList();
+            List<Field> codes = em.createNamedQuery("findAllFields", Field.class).getResultList();
 
             return codes;
 
@@ -131,43 +130,42 @@ public class AccountingCode implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<AccountingCode> findAccountingCodes(EntityManager em, String value) {
+    public static List<Field> findFields(EntityManager em, String value) {
 
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<AccountingCode> accountingCodes
-                    = em.createQuery(
-                            "SELECT a FROM AccountingCode a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
+            List<Field> fields
+                    = em.createQuery("SELECT a FROM Field a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
                             + "%' ORDER BY a.name",
-                            AccountingCode.class).getResultList();
-            return accountingCodes;
+                            Field.class).getResultList();
+            return fields;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
 
-    public static List<AccountingCode> findActiveAccountingCodes(EntityManager em, String value) {
+    public static List<Field> findActiveFields(EntityManager em, String value) {
 
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<AccountingCode> accountingCodes
-                    = em.createQuery("SELECT a FROM AccountingCode a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim() 
+            List<Field> fields
+                    = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim() 
                             + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim() 
                             + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
                             + "%') AND (a.active = 1 OR a.active IS NULL) ORDER BY a.name",
-                            AccountingCode.class).getResultList();
-            return accountingCodes;
+                            Field.class).getResultList();
+            return fields;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -210,14 +208,12 @@ public class AccountingCode implements Serializable, BusinessEntity {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof AccountingCode)) {
+        if (!(object instanceof Field)) {
             return false;
         }
-        AccountingCode other = (AccountingCode) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        Field other = (Field) object;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -247,7 +243,7 @@ public class AccountingCode implements Serializable, BusinessEntity {
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "AccountingCode not saved");
+        return new ReturnMessage(false, "Field not saved");
     }
 
     @Override
@@ -268,16 +264,16 @@ public class AccountingCode implements Serializable, BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public static AccountingCode findByName(EntityManager em, String value) {
+    public static Field findByName(EntityManager em, String value) {
 
         try {
             value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
+            List<Field> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.name) "
-                    + "= '" + value.toUpperCase() + "'", AccountingCode.class).getResultList();
-            if (accountingCodes.size() > 0) {
-                return accountingCodes.get(0);
+                    + "= '" + value.toUpperCase() + "'", Field.class).getResultList();
+            if (fields.size() > 0) {
+                return fields.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -286,16 +282,16 @@ public class AccountingCode implements Serializable, BusinessEntity {
         }
     }
 
-    public static AccountingCode findByCode(EntityManager em, String value) {
+    public static Field findByCode(EntityManager em, String value) {
 
         try {
             value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
+            List<Field> fields = em.createQuery("SELECT a FROM FieldField a "
                     + "WHERE UPPER(a.code) "
-                    + "= '" + value.toUpperCase() + "'", AccountingCode.class).getResultList();
-            if (accountingCodes.size() > 0) {
-                return accountingCodes.get(0);
+                    + "= '" + value.toUpperCase() + "'", Field.class).getResultList();
+            if (fields.size() > 0) {
+                return fields.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -304,16 +300,16 @@ public class AccountingCode implements Serializable, BusinessEntity {
         }
     }
 
-    public static AccountingCode findActiveByCode(EntityManager em, String value) {
+    public static Field findActiveByCode(EntityManager em, String value) {
 
         try {
             value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
+            List<Field> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.code) "
-                    + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", AccountingCode.class).getResultList();
-            if (accountingCodes.size() > 0) {
-                return accountingCodes.get(0);
+                    + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", Field.class).getResultList();
+            if (fields.size() > 0) {
+                return fields.get(0);
             }
             return null;
         } catch (Exception e) {

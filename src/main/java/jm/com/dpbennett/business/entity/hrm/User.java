@@ -17,11 +17,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity.jmts;
+package jm.com.dpbennett.business.entity.hrm;
 
-import jm.com.dpbennett.business.entity.hrm.Employee;
-import jm.com.dpbennett.business.entity.hrm.Department;
-import jm.com.dpbennett.business.entity.jmts.Job;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,6 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.sm.Modules;
 import jm.com.dpbennett.business.entity.auth.Privilege;
+import jm.com.dpbennett.business.entity.jmts.Job;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -54,12 +52,12 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "jobmanageruser")
 @NamedQueries({
-    @NamedQuery(name = "findAllJobManagerUsers", query = "SELECT e FROM JobManagerUser e ORDER BY e.username")
-    ,@NamedQuery(name = "findByJobManagerUsername", query = "SELECT e FROM JobManagerUser e WHERE UPPER(e.username) = :username")
+    @NamedQuery(name = "findAllJobManagerUsers", query = "SELECT e FROM User e ORDER BY e.username")
+    ,@NamedQuery(name = "findByJobManagerUsername", query = "SELECT e FROM User e WHERE UPPER(e.username) = :username")
 
 })
 @XmlRootElement
-public class JobManagerUser implements Serializable, BusinessEntity {
+public class User implements Serializable, BusinessEntity {
 
     public static final int CANENTERJOB = 0;
     public static final int CANEDITJOB = 1;
@@ -86,7 +84,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     private Boolean isDirty;
     private Boolean active;
 
-    public JobManagerUser() {
+    public User() {
         privilege = new Privilege();
         modules = new Modules();
         username = "";
@@ -140,7 +138,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Job Costings");
     }
    
-    public static Boolean isUserDepartmentSupervisor(Job job, JobManagerUser user, EntityManager em) {
+    public static Boolean isUserDepartmentSupervisor(Job job, User user, EntityManager em) {
 
         Job foundJob = Job.findJobById(em, job.getId());
 
@@ -341,10 +339,10 @@ public class JobManagerUser implements Serializable, BusinessEntity {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof JobManagerUser)) {
+        if (!(object instanceof User)) {
             return false;
         }
-        JobManagerUser other = (JobManagerUser) object;
+        User other = (User) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -366,14 +364,14 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         username = name;
     }
 
-    public static List<JobManagerUser> findJobManagerUsersByUsername(EntityManager em, String username) {
+    public static List<User> findJobManagerUsersByUsername(EntityManager em, String username) {
 
         String newUsername = username.replaceAll("'", "''");
 
         try {
-            List<JobManagerUser> users
-                    = em.createQuery("SELECT j FROM JobManagerUser j where UPPER(j.username) like '%"
-                            + newUsername.toUpperCase().trim() + "%' ORDER BY j.username", JobManagerUser.class).getResultList();
+            List<User> users
+                    = em.createQuery("SELECT j FROM User j where UPPER(j.username) like '%"
+                            + newUsername.toUpperCase().trim() + "%' ORDER BY j.username", User.class).getResultList();
             return users;
         } catch (Exception e) {
             System.out.println(e);
@@ -381,17 +379,17 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         }
     }
 
-    public static JobManagerUser findJobManagerUserById(EntityManager em, Long Id) {
-        return em.find(JobManagerUser.class, Id);
+    public static User findJobManagerUserById(EntityManager em, Long Id) {
+        return em.find(User.class, Id);
     }
 
-    public static JobManagerUser findJobManagerUserByUsername(EntityManager em, String username) {
+    public static User findJobManagerUserByUsername(EntityManager em, String username) {
 
         String newUsername = username.replaceAll("'", "''");
         try {
-            List<JobManagerUser> users
+            List<User> users
                     = em.createNamedQuery("findByJobManagerUsername",
-                            JobManagerUser.class).
+                            User.class).
                             setParameter("username", newUsername.toUpperCase()).getResultList();
 
             if (users.size() > 0) {
@@ -405,14 +403,13 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     }
 
-    public static JobManagerUser findActiveJobManagerUserByUsername(EntityManager em, String username) {
+    public static User findActiveJobManagerUserByUsername(EntityManager em, String username) {
 
         String newUsername = username.replaceAll("'", "''");
         try {
 
-            List<JobManagerUser> users = em.createQuery(
-                    "SELECT j FROM JobManagerUser j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '" + 
-                            newUsername + "'", JobManagerUser.class).getResultList();
+            List<User> users = em.createQuery("SELECT j FROM User j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '" + 
+                            newUsername + "'", User.class).getResultList();
 
             if (users.size() > 0) {
                 return users.get(0);
@@ -425,12 +422,11 @@ public class JobManagerUser implements Serializable, BusinessEntity {
 
     }
 
-    public static JobManagerUser findActiveJobManagerUserByEmployeeId(EntityManager em, Long employeeId) {
+    public static User findActiveJobManagerUserByEmployeeId(EntityManager em, Long employeeId) {
         try {
-            List<JobManagerUser> users = em.createQuery(
-                    "SELECT j FROM JobManagerUser j"
+            List<User> users = em.createQuery("SELECT j FROM User j"
                     + " JOIN j.employee employee"
-                    + " WHERE j.active = 1 AND employee.id = " + employeeId, JobManagerUser.class).getResultList();
+                    + " WHERE j.active = 1 AND employee.id = " + employeeId, User.class).getResultList();
 
             if (!users.isEmpty()) {
                 return users.get(0);
@@ -443,17 +439,16 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<JobManagerUser> findJobManagerUsersByName(EntityManager em, String name) {
+    public static List<User> findJobManagerUsersByName(EntityManager em, String name) {
         try {
             String newName = name.toUpperCase().trim().replaceAll("'", "''");
 
-            List<JobManagerUser> users = em.createQuery(
-                    "SELECT j FROM JobManagerUser j"
+            List<User> users = em.createQuery("SELECT j FROM User j"
                     + " JOIN j.employee e"
                     + " WHERE UPPER(e.firstName) like '%"
                     + newName + "%'" + " OR UPPER(e.lastName) like '%"
                     + newName + "%'" + " OR UPPER(j.username) like '%"
-                    + newName + "%' ORDER BY j.username", JobManagerUser.class).getResultList();
+                    + newName + "%' ORDER BY j.username", User.class).getResultList();
 
             return users;
 
@@ -463,17 +458,16 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<JobManagerUser> findActiveJobManagerUsersByName(EntityManager em, String name) {
+    public static List<User> findActiveJobManagerUsersByName(EntityManager em, String name) {
         try {
             String newName = name.toUpperCase().trim().replaceAll("'", "''");
 
-            List<JobManagerUser> users = em.createQuery(
-                    "SELECT j FROM JobManagerUser j"
+            List<User> users = em.createQuery("SELECT j FROM User j"
                     + " JOIN j.employee e"
                     + " WHERE (j.active = 1 OR j.active IS NULL) AND (UPPER(e.firstName) like '%"
                     + newName + "%'" + " OR UPPER(e.lastName) like '%"
                     + newName + "%'" + " OR UPPER(j.username) like '%"
-                    + newName + "%') ORDER BY j.username", JobManagerUser.class).getResultList();
+                    + newName + "%') ORDER BY j.username", User.class).getResultList();
 
             return users;
 
@@ -483,12 +477,11 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<JobManagerUser> findAllActiveJobManagerUsers(EntityManager em) {
+    public static List<User> findAllActiveJobManagerUsers(EntityManager em) {
 
         try {
 
-            List<JobManagerUser> users = em.createQuery(
-                    "SELECT j FROM JobManagerUser j WHERE j.active = 1 OR j.active IS NULL ORDER BY j.username", JobManagerUser.class).getResultList();
+            List<User> users = em.createQuery("SELECT j FROM User j WHERE j.active = 1 OR j.active IS NULL ORDER BY j.username", User.class).getResultList();
 
             return users;
 
@@ -497,12 +490,11 @@ public class JobManagerUser implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<JobManagerUser> findAllJobManagerUsers(EntityManager em) {
+    public static List<User> findAllJobManagerUsers(EntityManager em) {
 
         try {
 
-            List<JobManagerUser> users = em.createQuery(
-                    "SELECT j FROM JobManagerUser j WHERE j.active = 1 ORDER BY j.username", JobManagerUser.class).getResultList();
+            List<User> users = em.createQuery("SELECT j FROM User j WHERE j.active = 1 ORDER BY j.username", User.class).getResultList();
 
             return users;
 
@@ -552,7 +544,7 @@ public class JobManagerUser implements Serializable, BusinessEntity {
      * @param em
      * @return
      */
-    // tk del. Move to JobManagerUser and make static method
+    // tk del. Move to User and make static method
     public Boolean isUserDepartmentSupervisor(Job job, EntityManager em) {
 
         Job foundJob = Job.findJobById(em, job.getId());

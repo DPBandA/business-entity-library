@@ -21,7 +21,7 @@ package jm.com.dpbennett.business.entity.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import jm.com.dpbennett.business.entity.DatePeriod;
+import jm.com.dpbennett.business.entity.rm.DatePeriod;
 
 /**
  *

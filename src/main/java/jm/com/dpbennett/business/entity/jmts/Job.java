@@ -19,6 +19,7 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.jmts;
 
+import jm.com.dpbennett.business.entity.hrm.User;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ import jm.com.dpbennett.business.entity.fm.CashPayment;
 import jm.com.dpbennett.business.entity.fm.Classification;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.hrm.Contact;
-import jm.com.dpbennett.business.entity.DatePeriod;
+import jm.com.dpbennett.business.entity.rm.DatePeriod;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.fm.JobCategory;
@@ -336,7 +337,7 @@ public class Job implements Serializable, BusinessEntity {
         this.parent = parent;
     }
 
-    public ReturnMessage prepareAndSave(EntityManager em, JobManagerUser user) {
+    public ReturnMessage prepareAndSave(EntityManager em, User user) {
 
         Date now = new Date();
         JobSequenceNumber nextJobSequenceNumber = null;
@@ -353,7 +354,7 @@ public class Job implements Serializable, BusinessEntity {
                 if (job.getJobStatusAndTracking().getWorkProgress().equals("Completed")
                         && !user.getEmployee().isMemberOf(Department.findDepartmentBySystemOptionDeptId("invoicingDepartmentId", em))
                         && !user.getPrivilege().getCanBeJMTSAdministrator()
-                        && !JobManagerUser.isUserDepartmentSupervisor(this, user, em)) {
+                        && !User.isUserDepartmentSupervisor(this, user, em)) {
 
                     this.setIsDirty(false);
 
@@ -435,7 +436,7 @@ public class Job implements Serializable, BusinessEntity {
 
     public static Job copy(EntityManager em,
             Job currentJob,
-            JobManagerUser user,
+            User user,
             Boolean autoGenerateJobNumber,
             Boolean copySamples) {
         Job job = new Job();
@@ -491,7 +492,7 @@ public class Job implements Serializable, BusinessEntity {
 
     public static Job create(EntityManager em,
             String name,
-            JobManagerUser user,
+            User user,
             Boolean autoGenerateJobNumber) {
 
         Job job = Job.create(em, user, autoGenerateJobNumber);
@@ -501,7 +502,7 @@ public class Job implements Serializable, BusinessEntity {
     }
 
     public static Job create(EntityManager em,
-            JobManagerUser user,
+            User user,
             Boolean autoGenerateJobNumber) {
 
         Job job = new Job();
@@ -1143,7 +1144,7 @@ public class Job implements Serializable, BusinessEntity {
 
     public static List<Job> findJobsByDateSearchField(
             EntityManager em,
-            JobManagerUser user,
+            User user,
             DatePeriod dateSearchPeriod,
             String searchType,
             String searchText,

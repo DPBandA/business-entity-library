@@ -46,7 +46,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.hrm.Internet;
-import jm.com.dpbennett.business.entity.jmts.JobManagerUser;
+import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.sc.Registration;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -431,7 +431,7 @@ public class FoodFactory implements Customer, BusinessEntity, Comparable, Serial
 
     public static List<FoodFactory> findFoodFactoriesByDateSearchField(
             EntityManager em,
-            JobManagerUser user,
+            User user,
             String dateSearchField,
             String searchType,
             String originalSearchText,

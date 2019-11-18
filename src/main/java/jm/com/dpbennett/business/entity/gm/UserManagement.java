@@ -20,7 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.gm;
 
 import javax.persistence.EntityManager;
-import jm.com.dpbennett.business.entity.jmts.JobManagerUser;
+import jm.com.dpbennett.business.entity.hrm.User;
 
 /**
  * 
@@ -28,9 +28,9 @@ import jm.com.dpbennett.business.entity.jmts.JobManagerUser;
  */
 public interface UserManagement {
 
-    public JobManagerUser getUser();
+    public User getUser();
 
-    public void setUser(JobManagerUser user);
+    public void setUser(User user);
 
     public Boolean getUserLoggedIn();
 

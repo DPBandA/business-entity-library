@@ -40,8 +40,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.Form;
-import jm.com.dpbennett.business.entity.jmts.JobManagerUser;
+import jm.com.dpbennett.business.entity.rm.Form;
+import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -203,7 +203,7 @@ public class SampleRequest implements Serializable, BusinessEntity, Form {
     
     public static List<SampleRequest> findSampleRequestsByDateSearchField(
             EntityManager em,
-            JobManagerUser user,
+            User user,
             String dateSearchField,
             String searchType,
             String originalSearchText,

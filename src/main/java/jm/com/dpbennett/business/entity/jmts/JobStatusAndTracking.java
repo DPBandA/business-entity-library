@@ -19,6 +19,7 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.jmts;
 
+import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.util.Date;
@@ -107,7 +108,7 @@ public class JobStatusAndTracking implements Serializable {
     @Transient
     private String editStatus;    
     @Transient
-    private JobManagerUser openedBy;
+    private User openedBy;
     @Transient
     private Date dateOpened;
 
@@ -127,11 +128,11 @@ public class JobStatusAndTracking implements Serializable {
         this.dateOpened = dateOpened;
     }
     
-     public JobManagerUser getOpenedBy() {
+     public User getOpenedBy() {
         return openedBy;
     }
 
-    public void setOpenedBy(JobManagerUser openedBy) {
+    public void setOpenedBy(User openedBy) {
         this.openedBy = openedBy;
     }
 

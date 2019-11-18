@@ -39,8 +39,8 @@ import jm.com.dpbennett.business.entity.hrm.Address;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.hrm.Contact;
-import jm.com.dpbennett.business.entity.DatePeriod;
-import jm.com.dpbennett.business.entity.hrm.Person;
+import jm.com.dpbennett.business.entity.rm.DatePeriod;
+import jm.com.dpbennett.business.entity.Person;
 
 /**
  *

@@ -19,6 +19,7 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import java.io.Serializable;
 import java.text.Collator;
@@ -47,7 +48,6 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.jmts.JobManagerUser;
 import jm.com.dpbennett.business.entity.auth.Signature;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -745,7 +745,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
             String listAsString = (String) SystemOption.getOptionValueObject(em, "domainNames");
             String domainNames[] = listAsString.split(";");
 
-            JobManagerUser user = JobManagerUser.findActiveJobManagerUserByEmployeeId(em, employee.getId());
+            User user = User.findActiveJobManagerUserByEmployeeId(em, employee.getId());
 
             // Build email address
             if (user != null) {

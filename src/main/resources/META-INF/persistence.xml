@@ -4,17 +4,9 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <non-jta-data-source>jdbc/__JMTSPool</non-jta-data-source>
     <class>jm.com.dpbennett.business.entity.Asset</class>
-    <class>jm.com.dpbennett.business.entity.DatePeriod</class>
-    <class>jm.com.dpbennett.business.entity.Manufacturer</class>
     <class>jm.com.dpbennett.business.entity.MarketProductSurvey</class>
     <class>jm.com.dpbennett.business.entity.PortOfEntryDetention</class>
     <class>jm.com.dpbennett.business.entity.ScaleCompany</class>
-    <class>jm.com.dpbennett.business.entity.GeneratedForm</class>
-    <class>jm.com.dpbennett.business.entity.Country</class>
-    <class>jm.com.dpbennett.business.entity.LdapContext</class>
-    <class>jm.com.dpbennett.business.entity.Supplier</class>
-    <class>jm.com.dpbennett.business.entity.FieldUpdate</class>
-    <class>jm.com.dpbennett.business.entity.StrategicPriority</class>
     <class>jm.com.dpbennett.business.entity.fm.AccPacDocument</class>
     <class>jm.com.dpbennett.business.entity.fm.AccountingCode</class>
     <class>jm.com.dpbennett.business.entity.fm.AccPacCustomer</class>
@@ -104,13 +96,21 @@
     <class>jm.com.dpbennett.business.entity.mt.Scale</class>
     <class>jm.com.dpbennett.business.entity.jmts.ServiceRequest</class>
     <class>jm.com.dpbennett.business.entity.jmts.ServiceContract</class>
-    <class>jm.com.dpbennett.business.entity.jmts.JobManagerUser</class>
     <class>jm.com.dpbennett.business.entity.auth.Privilege</class>
     <class>jm.com.dpbennett.business.entity.auth.Signature</class>
     <class>jm.com.dpbennett.business.entity.sm.Preference</class>
     <class>jm.com.dpbennett.business.entity.sm.Modules</class>
     <class>jm.com.dpbennett.business.entity.sm.SystemOption</class>
     <class>jm.com.dpbennett.business.entity.sm.SequenceNumber</class>
+    <class>jm.com.dpbennett.business.entity.sm.Country</class>
+    <class>jm.com.dpbennett.business.entity.sm.StrategicPriority</class>
+    <class>jm.com.dpbennett.business.entity.sm.LdapContext</class>
+    <class>jm.com.dpbennett.business.entity.sm.Manufacturer</class>
+    <class>jm.com.dpbennett.business.entity.pm.Supplier</class>
+    <class>jm.com.dpbennett.business.entity.rm.FieldUpdate</class>
+    <class>jm.com.dpbennett.business.entity.rm.GeneratedForm</class>
+    <class>jm.com.dpbennett.business.entity.rm.DatePeriod</class>
+    <class>jm.com.dpbennett.business.entity.hrm.User</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -139,14 +139,6 @@
   </persistence-unit>
   <persistence-unit name="PU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <class>jm.com.dpbennett.business.entity.Country</class>
-    <class>jm.com.dpbennett.business.entity.DatePeriod</class>
-    <class>jm.com.dpbennett.business.entity.FieldUpdate</class>
-    <class>jm.com.dpbennett.business.entity.GeneratedForm</class>
-    <class>jm.com.dpbennett.business.entity.LdapContext</class>
-    <class>jm.com.dpbennett.business.entity.Manufacturer</class>
-    <class>jm.com.dpbennett.business.entity.StrategicPriority</class>
-    <class>jm.com.dpbennett.business.entity.Supplier</class>
     <class>jm.com.dpbennett.business.entity.fm.AccountingCode</class>
     <class>jm.com.dpbennett.business.entity.hrm.Address</class>
     <class>jm.com.dpbennett.business.entity.sm.Alert</class>
@@ -234,13 +226,21 @@
     <class>jm.com.dpbennett.business.entity.mt.Scale</class>
     <class>jm.com.dpbennett.business.entity.jmts.ServiceRequest</class>
     <class>jm.com.dpbennett.business.entity.jmts.ServiceContract</class>
-    <class>jm.com.dpbennett.business.entity.jmts.JobManagerUser</class>
     <class>jm.com.dpbennett.business.entity.auth.Privilege</class>
     <class>jm.com.dpbennett.business.entity.auth.Signature</class>
     <class>jm.com.dpbennett.business.entity.sm.Preference</class>
     <class>jm.com.dpbennett.business.entity.sm.Modules</class>
     <class>jm.com.dpbennett.business.entity.sm.SystemOption</class>
     <class>jm.com.dpbennett.business.entity.sm.SequenceNumber</class>
+    <class>jm.com.dpbennett.business.entity.sm.Country</class>
+    <class>jm.com.dpbennett.business.entity.sm.StrategicPriority</class>
+    <class>jm.com.dpbennett.business.entity.sm.LdapContext</class>
+    <class>jm.com.dpbennett.business.entity.sm.Manufacturer</class>
+    <class>jm.com.dpbennett.business.entity.pm.Supplier</class>
+    <class>jm.com.dpbennett.business.entity.rm.FieldUpdate</class>
+    <class>jm.com.dpbennett.business.entity.rm.GeneratedForm</class>
+    <class>jm.com.dpbennett.business.entity.rm.DatePeriod</class>
+    <class>jm.com.dpbennett.business.entity.hrm.User</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/enerbase"/>
       <property name="javax.persistence.jdbc.password" value=""/>

@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.dm.DocumentStandard;
-import jm.com.dpbennett.business.entity.jmts.JobManagerUser;
+import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.auth.Signature;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -999,7 +999,7 @@ public class ComplianceSurvey
 //    public static List<ComplianceSurvey> findComplianceSurveysByDateSearchField(
     public static List<ComplianceSurveySearchResult> findComplianceSurveyResultsByDateSearchField(
             EntityManager em,
-            JobManagerUser user,
+            User user,
             String dateSearchField,
             String searchType,
             String originalSearchText,
@@ -1097,7 +1097,7 @@ public class ComplianceSurvey
 
     public static List<ComplianceSurvey> findComplianceSurveysByDateSearchField(
             EntityManager em,
-            JobManagerUser user,
+            User user,
             String dateSearchField,
             String searchType,
             String originalSearchText,

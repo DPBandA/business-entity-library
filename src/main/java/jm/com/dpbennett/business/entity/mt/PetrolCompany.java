@@ -21,7 +21,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.mt;
 
 import jm.com.dpbennett.business.entity.hrm.Internet;
-import jm.com.dpbennett.business.entity.hrm.Company;
+import jm.com.dpbennett.business.entity.Company;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.cm.Customer;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
