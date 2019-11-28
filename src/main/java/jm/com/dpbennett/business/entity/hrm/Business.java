@@ -63,6 +63,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private String taxRegistrationNumber;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
+    private String departmentLabel;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Address> addresses;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -86,6 +87,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         this.taxRegistrationNumber = "";
         this.addresses = new ArrayList<>();
         this.contacts = new ArrayList<>();
+        this.departmentLabel = "Department";
         this.departments = new ArrayList<>();
         this.domainName = "";
     }
@@ -95,9 +97,23 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         this.number = "";
         this.type = "";
         this.notes = "";
+        this.taxRegistrationNumber = "";
         this.addresses = new ArrayList<>();
         this.contacts = new ArrayList<>();
+        this.departmentLabel = "Department";
         this.departments = new ArrayList<>();
+        this.domainName = "";
+    }
+
+    public String getDepartmentLabel() {
+        if (departmentLabel == null) {
+            departmentLabel = "Department";
+        }
+        return departmentLabel;
+    }
+
+    public void setDepartmentLabel(String departmentLabel) {
+        this.departmentLabel = departmentLabel;
     }
 
     public String getDomainName() {
