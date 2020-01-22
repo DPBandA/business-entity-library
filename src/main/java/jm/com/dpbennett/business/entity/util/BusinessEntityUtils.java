@@ -433,8 +433,8 @@ public class BusinessEntityUtils {
         current = Calendar.getInstance();
         c = Calendar.getInstance();
         // set end date
-        c.set(current.get(Calendar.YEAR), Calendar.DECEMBER, 31, 23, 59, 59);
-        c.set(Calendar.MILLISECOND, 999);
+        c.set(current.get(Calendar.YEAR), Calendar.DECEMBER, 31, 0, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
 
         return c.getTime();
     }
@@ -485,8 +485,8 @@ public class BusinessEntityUtils {
         current = Calendar.getInstance();
         c = Calendar.getInstance();
         // set end date
-        c.set(current.get(Calendar.YEAR), current.get(Calendar.MONTH), getDaysInMonth(current.get(Calendar.MONTH)), 23, 59, 59);
-        c.set(Calendar.MILLISECOND, 999);
+        c.set(current.get(Calendar.YEAR), current.get(Calendar.MONTH), getDaysInMonth(current.get(Calendar.MONTH)), 0, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
 
         return c.getTime();
     }
@@ -498,8 +498,8 @@ public class BusinessEntityUtils {
         current = Calendar.getInstance();
         c = Calendar.getInstance();
         // set end date
-        c.set(current.get(Calendar.YEAR) - 1, current.get(Calendar.MONTH), getDaysInMonth(current.get(Calendar.MONTH)), 23, 59, 59);
-        c.set(Calendar.MILLISECOND, 999);
+        c.set(current.get(Calendar.YEAR) - 1, current.get(Calendar.MONTH), getDaysInMonth(current.get(Calendar.MONTH)), 0, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
 
         return c.getTime();
     }
@@ -524,8 +524,8 @@ public class BusinessEntityUtils {
         current = Calendar.getInstance();
         c = Calendar.getInstance();
         // set end date
-        c.set(current.get(Calendar.YEAR), monthIndex, getDaysInMonth(monthIndex), 23, 59, 59);
-        c.set(Calendar.MILLISECOND, 999);
+        c.set(current.get(Calendar.YEAR), monthIndex, getDaysInMonth(monthIndex), 0, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
 
         return c.getTime();
     }
@@ -776,8 +776,8 @@ public class BusinessEntityUtils {
         current = Calendar.getInstance();
         c = Calendar.getInstance();
         // set end date
-        c.set(current.get(Calendar.YEAR) - 1, Calendar.DECEMBER, 31, 23, 59, 59);
-        c.set(Calendar.MILLISECOND, 999);
+        c.set(current.get(Calendar.YEAR) - 1, Calendar.DECEMBER, 31, 0, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
 
         return c.getTime();
     }
