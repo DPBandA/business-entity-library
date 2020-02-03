@@ -69,8 +69,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "job")
 @NamedQueries({
-    @NamedQuery(name = "findAllJobs", query = "SELECT j FROM Job j ORDER BY j.jobNumber")
-    ,
+    @NamedQuery(name = "findAllJobs", query = "SELECT j FROM Job j ORDER BY j.jobNumber"),
     @NamedQuery(name = "findByJobNumber", query = "SELECT j FROM Job j WHERE j.jobNumber = :jobNumber")
 })
 @XmlRootElement
@@ -1873,7 +1872,7 @@ public class Job implements Serializable, BusinessEntity {
 
         return foundJobs;
     }
-    
+
     /*
     (SELECT SUM(cashpayment.PAYMENT) FROM cashpayment
       INNER JOIN `jobcostingandpayment_cashpayment` jobcostingandpayment_cashpayment ON 
@@ -1882,8 +1881,7 @@ public class Job implements Serializable, BusinessEntity {
             jobcostingandpayment.ID = jobcostingandpayment_cashpayment.JobCostingAndPayment_ID 
       WHERE jobcostingandpayment.ID = job.JOBCOSTINGANDPAYMENT_ID  
      ) 
-    */
-
+     */
     public static List<Object[]> getJobReportRecords(
             EntityManager em,
             String startDate,
@@ -1921,11 +1919,11 @@ public class Job implements Serializable, BusinessEntity {
                 + "     jobcostingandpayment.`FINALCOST` AS jobcostingandpayment_FINALCOST," // 27
                 + "     jobcostingandpayment.`ESTIMATEDCOST` AS jobcostingandpayment_ESTIMATEDCOST," // 28
                 + "     jobstatusandtracking.`DATESUBMITTED` AS jobstatusandtracking_DATESUBMITTED," // 29
-                + "     job.`COMMENT` AS job_COMMENT" // 30
+                + "     job.`INSTRUCTIONS` AS job_INSTRUCTIONS," // 30
+                + "     GROUP_CONCAT(service.`NAME` SEPARATOR ', ') AS services" // 31
                 + " FROM"
                 + "     `jobstatusandtracking` jobstatusandtracking INNER JOIN `job` job ON jobstatusandtracking.`ID` = job.`JOBSTATUSANDTRACKING_ID`"
                 + "     INNER JOIN `client` client ON job.`CLIENT_ID` = client.`ID`"
-                + "     INNER JOIN `job_jobsample` job_jobsample ON job.`ID` = job_jobsample.`Job_ID`"
                 + "     INNER JOIN `department` department ON job.`DEPARTMENT_ID` = department.`ID`"
                 + "     INNER JOIN `department` department_A ON job.`SUBCONTRACTEDDEPARTMENT_ID` = department_A.`ID`"
                 + "     INNER JOIN `businessoffice` businessoffice ON job.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
@@ -1935,7 +1933,10 @@ public class Job implements Serializable, BusinessEntity {
                 + "     INNER JOIN `sector` sector ON job.`SECTOR_ID` = sector.`ID`"
                 + "     INNER JOIN `employee` employee ON job.`ASSIGNEDTO_ID` = employee.`ID`"
                 + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON job.`JOBCOSTINGANDPAYMENT_ID` = jobcostingandpayment.`ID`"
-                + "     INNER JOIN `jobsample` jobsample ON job_jobsample.`jobSamples_ID` = jobsample.`ID`"
+                + "     LEFT JOIN `job_jobsample` job_jobsample ON job.`ID` = job_jobsample.`Job_ID`"
+                + "     LEFT JOIN `jobsample` jobsample ON job_jobsample.`jobSamples_ID` = jobsample.`ID`"
+                + "     LEFT JOIN `job_service` job_service ON job.`ID` = job_service.`Job_ID`"
+                + "     LEFT JOIN `service` service ON job_service.`services_ID` = service.`ID`"
                 + "     INNER JOIN `employee` employee_A ON jobstatusandtracking.`ENTEREDBY_ID` = employee_A.`ID`"
                 + " WHERE"
                 + "     ((jobstatusandtracking.`DATESUBMITTED` >= " + startDate
