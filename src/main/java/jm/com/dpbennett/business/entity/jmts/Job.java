@@ -1905,7 +1905,7 @@ public class Job implements Serializable, BusinessEntity {
             Long departmentId) {
 
         String reportSQL = "SELECT"
-                + "     GROUP_CONCAT(jobsample.`DESCRIPTION` SEPARATOR ', ') AS samples," // 0
+                + "     GROUP_CONCAT(jobsample.`NAME` SEPARATOR ', ') AS samples," // 0
                 + "     GROUP_CONCAT(jobsample.`PRODUCTBRAND` SEPARATOR ', ') AS sampleBrands," // 1
                 + "     GROUP_CONCAT(jobsample.`PRODUCTMODEL` SEPARATOR ', ') AS sampleModels," // 2    
                 + "     job.`JOBDESCRIPTION` AS job_JOBDESCRIPTION," // 3   
@@ -1960,7 +1960,12 @@ public class Job implements Serializable, BusinessEntity {
                 + "     (SELECT SUM(cashpayment.PAYMENT) FROM cashpayment"
                 + "     INNER JOIN `jobcostingandpayment_cashpayment` jobcostingandpayment_cashpayment ON cashpayment.ID = jobcostingandpayment_cashpayment.cashPayments_ID"
                 + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON jobcostingandpayment.ID = jobcostingandpayment_cashpayment.JobCostingAndPayment_ID"
-                + "     WHERE jobcostingandpayment.ID = job.JOBCOSTINGANDPAYMENT_ID) AS jobcostingandpayment_TOTALPAYMENT" // 44
+                + "     WHERE cashpayment.PAYMENTPURPOSE = 'Deposit' AND jobcostingandpayment.ID = job.JOBCOSTINGANDPAYMENT_ID) AS jobcostingandpayment_TOTALDEPOSIT," // 44
+                + "     (SELECT SUM(cashpayment.PAYMENT) FROM cashpayment"
+                + "     INNER JOIN `jobcostingandpayment_cashpayment` jobcostingandpayment_cashpayment ON cashpayment.ID = jobcostingandpayment_cashpayment.cashPayments_ID"
+                + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON jobcostingandpayment.ID = jobcostingandpayment_cashpayment.JobCostingAndPayment_ID"
+                + "     WHERE jobcostingandpayment.ID = job.JOBCOSTINGANDPAYMENT_ID) AS jobcostingandpayment_TOTALPAYMENT," // 45
+                + "     job.`ESTIMATEDTURNAROUNDTIMEINDAYS` AS job_ESTIMATEDTURNAROUNDTIMEINDAYS" // 46
                 + " FROM"
                 + "     `jobstatusandtracking` jobstatusandtracking INNER JOIN `job` job ON jobstatusandtracking.`ID` = job.`JOBSTATUSANDTRACKING_ID`"
                 + "     INNER JOIN `client` client ON job.`CLIENT_ID` = client.`ID`"
