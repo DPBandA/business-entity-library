@@ -246,11 +246,27 @@ public class Job implements Serializable, BusinessEntity {
     }
 
     public String getServiceLocation() {
+        if (serviceLocation == null) {
+            serviceLocation = "?";
+        }
         return serviceLocation;
     }
 
     public void setServiceLocation(String serviceLocation) {
         this.serviceLocation = serviceLocation;
+    }
+
+    public String isServiceLocationInHouse() {
+        switch (getServiceLocation()) {
+            case "In-house":
+                return "Yes";
+            case "In-house & On-site":
+                return "Yes";
+            case "On-site":
+                return "No";
+            default:
+                return "?";
+        }
     }
 
     public List<CashPayment> getCashPayments() {
@@ -1893,7 +1909,7 @@ public class Job implements Serializable, BusinessEntity {
                 + "     GROUP_CONCAT(jobsample.`PRODUCTBRAND` SEPARATOR ', ') AS sampleBrands," // 1
                 + "     GROUP_CONCAT(jobsample.`PRODUCTMODEL` SEPARATOR ', ') AS sampleModels," // 2    
                 + "     job.`JOBDESCRIPTION` AS job_JOBDESCRIPTION," // 3   
-                + "     job.`NOOFTESTSORCALIBRATIONS` AS job_NOOFTESTSORCALIBRATIONS," // 4
+                + "     job.`NOOFTESTS` AS job_NOOFTESTS," // 4
                 + "     job.`NUMBEROFSAMPLES` AS job_NUMBEROFSAMPLES," // 5    
                 + "     job.`JOBNUMBER` AS job_JOBNUMBER," // 6             
                 + "     job.`COMMENT` AS job_COMMENT," // 7               
@@ -1920,10 +1936,35 @@ public class Job implements Serializable, BusinessEntity {
                 + "     jobcostingandpayment.`ESTIMATEDCOST` AS jobcostingandpayment_ESTIMATEDCOST," // 28
                 + "     jobstatusandtracking.`DATESUBMITTED` AS jobstatusandtracking_DATESUBMITTED," // 29
                 + "     job.`INSTRUCTIONS` AS job_INSTRUCTIONS," // 30
-                + "     GROUP_CONCAT(service.`NAME` SEPARATOR ', ') AS services" // 31
+                + "     GROUP_CONCAT(service.`NAME` SEPARATOR ', ') AS services," // 31
+                + "     CASE"
+                + "     WHEN job.`SERVICELOCATION` = 'In-house' THEN 'Yes'"
+                + "     WHEN job.`SERVICELOCATION` = 'In-house & On-site' THEN 'Yes'"
+                + "     WHEN job.`SERVICELOCATION` = 'On-site' THEN 'No'"
+                + "     ELSE '?'"
+                + "     END AS service_location_in_house," // 32
+                + "     department_ENTRY.`NAME` AS department_ENTRY_NAME," // 33
+                + "     SUM(jobsample.`QUANTITY`) AS sample_product_quantity," // 34
+                + "     job.`NOOFCALIBRATIONS` AS job_NOOFCALIBRATIONS," // 35
+                + "     job.`NOOFINSPECTIONS` AS job_NOOFINSPECTIONS," // 36
+                + "     job.`NOOFTRAININGS` AS job_NOOFTRAININGS," // 37
+                + "     job.`NOOFLABELASSESSMENTS` AS job_NOOFLABELASSESSMENTS," // 38
+                + "     job.`NOOFCERTIFICATIONS` AS job_NOOFCERTIFICATIONS," // 39
+                + "     job.`NOOFCONSULTATIONS` AS job_NOOFCONSULTATIONS," // 40
+                + "     job.`NOOFOTHERASSESSMENTS` AS job_NOOFOTHERASSESSMENTS," // 41
+                + "     serviceContract.`SERVICEREQUESTEDOTHERTEXT` AS serviceContract_SERVICEREQUESTEDOTHERTEXT," // 42
+                + "     CASE"
+                + "     WHEN serviceContract.`ADDITIONALSERVICEURGENT` = 1 THEN 'Yes'"
+                + "     ELSE 'No'"
+                + "     END AS additionalservice_urgent," // 43
+                + "     (SELECT SUM(cashpayment.PAYMENT) FROM cashpayment"
+                + "     INNER JOIN `jobcostingandpayment_cashpayment` jobcostingandpayment_cashpayment ON cashpayment.ID = jobcostingandpayment_cashpayment.cashPayments_ID"
+                + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON jobcostingandpayment.ID = jobcostingandpayment_cashpayment.JobCostingAndPayment_ID"
+                + "     WHERE jobcostingandpayment.ID = job.JOBCOSTINGANDPAYMENT_ID) AS jobcostingandpayment_TOTALPAYMENT" // 44
                 + " FROM"
                 + "     `jobstatusandtracking` jobstatusandtracking INNER JOIN `job` job ON jobstatusandtracking.`ID` = job.`JOBSTATUSANDTRACKING_ID`"
                 + "     INNER JOIN `client` client ON job.`CLIENT_ID` = client.`ID`"
+                + "     INNER JOIN `serviceContract` serviceContract ON job.`SERVICECONTRACT_ID` = serviceContract.`ID`"
                 + "     INNER JOIN `department` department ON job.`DEPARTMENT_ID` = department.`ID`"
                 + "     INNER JOIN `department` department_A ON job.`SUBCONTRACTEDDEPARTMENT_ID` = department_A.`ID`"
                 + "     INNER JOIN `businessoffice` businessoffice ON job.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
@@ -1938,6 +1979,7 @@ public class Job implements Serializable, BusinessEntity {
                 + "     LEFT JOIN `job_service` job_service ON job.`ID` = job_service.`Job_ID`"
                 + "     LEFT JOIN `service` service ON job_service.`services_ID` = service.`ID`"
                 + "     INNER JOIN `employee` employee_A ON jobstatusandtracking.`ENTEREDBY_ID` = employee_A.`ID`"
+                + "     INNER JOIN `department` department_ENTRY ON department_ENTRY.`ID` = employee_A.`DEPARTMENT_ID`"
                 + " WHERE"
                 + "     ((jobstatusandtracking.`DATESUBMITTED` >= " + startDate
                 + " AND jobstatusandtracking.`DATESUBMITTED` <= " + endDate + ")"
@@ -1964,66 +2006,6 @@ public class Job implements Serializable, BusinessEntity {
 
     }
 
-//    public static List<Object[]> getCompletedJobRecords(
-//            EntityManager em,
-//            String startDate,
-//            String endDate,
-//            Long departmentId) {
-//
-//        String reportSQL = "SELECT\n"
-//                + "     GROUP_CONCAT(jobsample.`DESCRIPTION` SEPARATOR ', ') AS samples,\n" //0
-//                + "     job.`ID` AS job_ID,\n" //1
-//                + "     jobstatusandtracking.`ID` AS jobstatusandtracking_ID,\n" //2
-//                + "     jobsample.`NAME` AS jobsample_NAME,\n" //3
-//                + "     department.`NAME` AS department_NAME,\n" //4
-//                + "     department_A.`NAME` AS department_A_NAME,\n" //5
-//                + "     jobstatusandtracking.`DATEOFCOMPLETION` AS jobstatusandtracking_DATEOFCOMPLETION,\n" //6
-//                + "     employee.`NAME` AS employee_NAME,\n" //7
-//                + "     jobcostingandpayment.`FINALCOST` AS jobcostingandpayment_FINALCOST,\n" //8
-//                + "     job.`NUMBEROFSAMPLES` AS job_NUMBEROFSAMPLES,\n" //9
-//                + "     job.`NOOFTESTSORCALIBRATIONS` AS job_NOOFTESTSORCALIBRATIONS,\n" //10
-//                + "     job.`NOOFTESTS` AS job_NOOFTESTS,\n" //11
-//                + "     job.`NOOFCALIBRATIONS` AS job_NOOFCALIBRATIONS,\n" //12
-//                + "     jobstatusandtracking.`EXPECTEDDATEOFCOMPLETION` AS jobstatusandtracking_EXPECTEDDATEOFCOMPLETION,\n" //13
-//                + "     job.`JOBNUMBER` AS job_JOBNUMBER,\n" //14
-//                + "     client.`NAME` AS client_NAME,\n" //15
-//                + "     jobstatusandtracking.`DATESUBMITTED` AS jobstatusandtracking_DATESUBMITTED,\n" //16
-//                + "     sector.`NAME` AS sector_NAME,\n" //17
-//                + "     classification.`NAME` AS classification_NAME,\n" //18
-//                + "     jobcategory.`CATEGORY` AS jobcategory_CATEGORY,\n" //19
-//                + "     jobsubcategory.`SubCategory` AS jobsubcategory_SubCategory\n" // 20
-//                + "FROM\n"
-//                + "     `jobstatusandtracking` jobstatusandtracking INNER JOIN `job` job ON jobstatusandtracking.`ID` = job.`JOBSTATUSANDTRACKING_ID`\n"
-//                + "     INNER JOIN `job_jobsample` job_jobsample ON job.`ID` = job_jobsample.`Job_ID`\n"
-//                + "     INNER JOIN `department` department ON job.`DEPARTMENT_ID` = department.`ID`\n"
-//                + "     INNER JOIN `department` department_A ON job.`SUBCONTRACTEDDEPARTMENT_ID` = department_A.`ID`\n"
-//                + "     INNER JOIN `employee` employee ON job.`ASSIGNEDTO_ID` = employee.`ID`\n"
-//                + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON job.`JOBCOSTINGANDPAYMENT_ID` = jobcostingandpayment.`ID`\n"
-//                + "     INNER JOIN `client` client ON job.`CLIENT_ID` = client.`ID`\n"
-//                + "     INNER JOIN `sector` sector ON job.`SECTOR_ID` = sector.`ID`\n"
-//                + "     INNER JOIN `classification` classification ON job.`CLASSIFICATION_ID` = classification.`ID`\n"
-//                + "     INNER JOIN `jobcategory` jobcategory ON job.`JOBCATEGORY_ID` = jobcategory.`ID`\n"
-//                + "     INNER JOIN `jobsubcategory` jobsubcategory ON job.`JOBSUBCATEGORY_ID` = jobsubcategory.`ID`\n"
-//                + "     RIGHT OUTER JOIN `jobsample` jobsample ON job_jobsample.`jobSamples_ID` = jobsample.`ID`\n"
-//                + "WHERE\n"
-//                + "     ((jobstatusandtracking.`dateOfCompletion` >= " + startDate
-//                + " AND jobstatusandtracking.`dateOfCompletion` <= " + endDate + "))"
-//                + " AND ((department.`ID` = " + departmentId
-//                + " AND department_A.`NAME` = \"--\")"
-//                + "  OR department_A.`ID` = " + departmentId + ")"
-//                + " GROUP BY"
-//                + "     job.`ID`"
-//                + " ORDER BY"
-//                + "     employee.`NAME` ASC";
-//
-//        try {
-//            return em.createNativeQuery(reportSQL).getResultList();
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return new ArrayList<>();
-//        }
-//
-//    }
     // tk  job records based on jobstatusandtracking date
     public static List<Object[]> getJobRecordsByTrackingDate(
             EntityManager em,
