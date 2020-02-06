@@ -1965,7 +1965,9 @@ public class Job implements Serializable, BusinessEntity {
                 + "     INNER JOIN `jobcostingandpayment_cashpayment` jobcostingandpayment_cashpayment ON cashpayment.ID = jobcostingandpayment_cashpayment.cashPayments_ID"
                 + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON jobcostingandpayment.ID = jobcostingandpayment_cashpayment.JobCostingAndPayment_ID"
                 + "     WHERE jobcostingandpayment.ID = job.JOBCOSTINGANDPAYMENT_ID) AS jobcostingandpayment_TOTALPAYMENT," // 45
-                + "     job.`ESTIMATEDTURNAROUNDTIMEINDAYS` AS job_ESTIMATEDTURNAROUNDTIMEINDAYS" // 46
+                + "     job.`ESTIMATEDTURNAROUNDTIMEINDAYS` AS job_ESTIMATEDTURNAROUNDTIMEINDAYS," // 46
+                + "     jobstatusandtracking.`EXPECTEDSTARTDATE` AS jobstatusandtracking_EXPECTEDSTARTDATE," // 47
+                + "     jobstatusandtracking.`STARTDATE` AS jobstatusandtracking_STARTDATE" // 48
                 + " FROM"
                 + "     `jobstatusandtracking` jobstatusandtracking INNER JOIN `job` job ON jobstatusandtracking.`ID` = job.`JOBSTATUSANDTRACKING_ID`"
                 + "     INNER JOIN `client` client ON job.`CLIENT_ID` = client.`ID`"
