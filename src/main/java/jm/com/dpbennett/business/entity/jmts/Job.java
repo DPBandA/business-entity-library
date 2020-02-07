@@ -1936,7 +1936,7 @@ public class Job implements Serializable, BusinessEntity {
                 + "     jobcostingandpayment.`ESTIMATEDCOST` AS jobcostingandpayment_ESTIMATEDCOST," // 28
                 + "     jobstatusandtracking.`DATESUBMITTED` AS jobstatusandtracking_DATESUBMITTED," // 29
                 + "     job.`INSTRUCTIONS` AS job_INSTRUCTIONS," // 30
-                + "     GROUP_CONCAT(service.`NAME` SEPARATOR ', ') AS services," // 31
+                + "     GROUP_CONCAT(DISTINCT(service.`NAME`) SEPARATOR ', ') AS services," // 31
                 + "     CASE"
                 + "     WHEN job.`SERVICELOCATION` = 'In-house' THEN 'Yes'"
                 + "     WHEN job.`SERVICELOCATION` = 'In-house & On-site' THEN 'Yes'"
@@ -1998,6 +1998,7 @@ public class Job implements Serializable, BusinessEntity {
                 + " AND jobstatusandtracking.`DATEANDTIMEENTERED` <= " + endDate + "))"
                 + " AND (department.`ID` = " + departmentId
                 + "  OR department_A.`ID` = " + departmentId + ")"
+                + " AND jobstatusandtracking.`WORKPROGRESS` <> 'Cancelled'"
                 + " GROUP BY"
                 + "     job.`ID`"
                 + " ORDER BY"
