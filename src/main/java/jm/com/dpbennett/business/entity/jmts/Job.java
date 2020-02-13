@@ -1714,7 +1714,7 @@ public class Job implements Serializable, BusinessEntity {
     }
 
     /**
-     *
+     * This method find all subcontracts for a job.
      * @param em
      * @return
      */
