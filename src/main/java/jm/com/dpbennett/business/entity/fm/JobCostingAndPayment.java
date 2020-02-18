@@ -20,10 +20,6 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.fm;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
-import jm.com.dpbennett.business.entity.fm.CostComponent;
-import jm.com.dpbennett.business.entity.fm.CashPayment;
-import jm.com.dpbennett.business.entity.fm.Discount;
-import jm.com.dpbennett.business.entity.fm.AccountingCode;
 import jm.com.dpbennett.business.entity.jmts.Job;
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -109,8 +105,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     private Double discountValue;
     @Transient
     private Boolean isDirty;
-    //@OneToOne(cascade = CascadeType.REFRESH)
-    //private AccountingCode accountingCode;
+    private Boolean active;
 
     public JobCostingAndPayment() {
         this.totalCost = 0.0;
@@ -124,6 +119,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         this.cashPayments = new ArrayList<>();
         this.costComponents = new ArrayList<>();
         this.isDirty = false;
+        this.active = true;
     }
 
     @Override
@@ -134,6 +130,17 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getActive() {
+        if (active == null) {
+            active = true;
+        }
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     /**
@@ -764,6 +771,44 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
         return jobCostingAndPayments;
     }
+    
+    public static List<JobCostingAndPayment> findAllActiveJobCostingAndPaymentsByDepartmentAndName(
+            EntityManager em,
+            String departmentName,
+            String jobCostingAndPaymentName) {
+
+        List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
+
+        try {
+            String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
+            String newDepartmentName = departmentName.replaceAll("'", "''");
+
+            List<Job> jobs
+                    = em.createQuery("SELECT job FROM Job job"
+                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                            + " JOIN job.department department"
+                            + " JOIN job.subContractedDepartment subContractedDepartment"
+                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '"
+                            + newJobCostingAndPaymentName.toUpperCase().trim() + "%'"
+                            + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
+                            + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
+                            + " )"
+                            + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"        
+                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
+            if (!jobs.isEmpty()) {
+                for (int i = 0; i < jobs.size(); i++) {
+                    if (!jobs.get(i).getJobCostingAndPayment().getName().trim().equals("")) {
+                        jobCostingAndPayments.add(jobs.get(i).getJobCostingAndPayment());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+
+        return jobCostingAndPayments;
+    }
 
     public static JobCostingAndPayment findJobCostingAndPaymentByDepartmentAndName(
             EntityManager em,
@@ -811,7 +856,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
         return finalCostWithDiscount;
     }
-    
+
     public Double getTotalDiscount() {
         Double totalDiscount;
 
