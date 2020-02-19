@@ -756,7 +756,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
                             + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
                             + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
                             + " )"
-                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
+                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name", 
+                            Job.class).setMaxResults(50).getResultList();
             if (!jobs.isEmpty()) {
                 for (int i = 0; i < jobs.size(); i++) {
                     if (!jobs.get(i).getJobCostingAndPayment().getName().trim().equals("")) {
@@ -794,7 +795,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
                             + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
                             + " )"
                             + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"        
-                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
+                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name", 
+                            Job.class).setMaxResults(50).getResultList();
             if (!jobs.isEmpty()) {
                 for (int i = 0; i < jobs.size(); i++) {
                     if (!jobs.get(i).getJobCostingAndPayment().getName().trim().equals("")) {
