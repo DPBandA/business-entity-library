@@ -71,7 +71,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<CostComponent> costComponents;
     private Double estimatedCost;
-    private String estimatedCostDoneBy; // tk to be replaced by Employee class
+    private String estimatedCostDoneBy;
     private Double finalCost;
     private String finalCostDoneBy;
     private Double paymentReceivedToDate;
