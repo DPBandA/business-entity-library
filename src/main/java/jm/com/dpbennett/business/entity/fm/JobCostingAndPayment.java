@@ -142,6 +142,22 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public void setActive(Boolean active) {
         this.active = active;
     }
+    
+    public String getUsable() {
+        if (getActive()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+
+    public void setUsable(String usable) {
+        if (usable.equals("Yes")) {
+            setActive(true);
+        } else {
+            setActive(false);
+        }
+    }
 
     /**
      * Returns the type of discount as Percentage, Currency or Fixed Cost.
@@ -751,12 +767,12 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
                             + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
                             + " JOIN job.department department"
                             + " JOIN job.subContractedDepartment subContractedDepartment"
-                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '"
+                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
                             + newJobCostingAndPaymentName.toUpperCase().trim() + "%'"
                             + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
                             + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
                             + " )"
-                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name", 
+                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
                             Job.class).setMaxResults(50).getResultList();
             if (!jobs.isEmpty()) {
                 for (int i = 0; i < jobs.size(); i++) {
@@ -772,7 +788,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
         return jobCostingAndPayments;
     }
-    
+
     public static List<JobCostingAndPayment> findAllActiveJobCostingAndPaymentsByDepartmentAndName(
             EntityManager em,
             String departmentName,
@@ -789,13 +805,13 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
                             + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
                             + " JOIN job.department department"
                             + " JOIN job.subContractedDepartment subContractedDepartment"
-                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '"
+                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
                             + newJobCostingAndPaymentName.toUpperCase().trim() + "%'"
                             + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
                             + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
                             + " )"
-                            + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"        
-                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name", 
+                            + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"
+                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
                             Job.class).setMaxResults(50).getResultList();
             if (!jobs.isEmpty()) {
                 for (int i = 0; i < jobs.size(); i++) {
@@ -947,11 +963,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
             // Save   
             if (isDirty || id == null) {
-                em.getTransaction().begin();
-                isDirty = false;
-                BusinessEntityUtils.saveBusinessEntity(em, this);
-                em.getTransaction().commit();
-
+                doSave(em);
+                
                 return new ReturnMessage();
             } else {
                 return new ReturnMessage(true,
@@ -967,6 +980,13 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
                     Message.SEVERITY_ERROR_NAME);
         }
 
+    }
+
+    public void doSave(EntityManager em) {
+        em.getTransaction().begin();
+        isDirty = false;
+        BusinessEntityUtils.saveBusinessEntity(em, this);
+        em.getTransaction().commit();
     }
 
     public Boolean isCostComponentDirty() {

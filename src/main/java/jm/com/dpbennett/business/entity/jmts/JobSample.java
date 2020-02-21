@@ -474,8 +474,12 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
 
     @Override
     public int compareTo(Object o) {
-        return Collator.getInstance().compare(this.reference, ((JobSample) o).reference);
-        //return Collator.getInstance().compare(this.getReferenceIndex().toString(), ((JobSample) o).getReferenceIndex().toString()); // tk
+        if (((JobSample) o).getId() != null && this.getId() != null) {
+            return Collator.getInstance().compare(this.getId().toString(), ((JobSample) o).getId().toString());
+        } else {
+            return 1;
+        }
+        //return Collator.getInstance().compare(this.reference, ((JobSample) o).reference);        
     }
 
     @Override
@@ -613,15 +617,15 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     public ReturnMessage save(EntityManager em) {
         try {
             em.getTransaction().begin();
-            BusinessEntityUtils.saveBusinessEntity(em, this);            
+            BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
         } catch (Exception e) {
             return new ReturnMessage(false,
-                "Job sample save error occurred",
-                "An error occurred while saving job sample (Null/OL ID): " + e + ": " + this.getReference(),
-                Message.SEVERITY_ERROR_NAME);
+                    "Job sample save error occurred",
+                    "An error occurred while saving job sample (Null/OL ID): " + e + ": " + this.getReference(),
+                    Message.SEVERITY_ERROR_NAME);
         }
 
     }
