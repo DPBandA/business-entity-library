@@ -615,8 +615,6 @@ public class Job implements Serializable, BusinessEntity {
             isDirty = false;
         }
 
-        isDirty = isDirty || getJobCostingAndPayment().getIsDirty();
-
         return isDirty;
     }
 
