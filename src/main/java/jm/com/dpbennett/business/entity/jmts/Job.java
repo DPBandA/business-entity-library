@@ -2044,7 +2044,7 @@ public class Job implements Serializable, BusinessEntity {
                 + "     jobsubcategory.`SubCategory` AS jobsubcategory_SubCategory\n" // 20
                 + "FROM\n"
                 + "     `jobstatusandtracking` jobstatusandtracking INNER JOIN `job` job ON jobstatusandtracking.`ID` = job.`JOBSTATUSANDTRACKING_ID`\n"
-                + "     INNER JOIN `job_jobsample` job_jobsample ON job.`ID` = job_jobsample.`Job_ID`\n"
+                + "     LEFT JOIN `job_jobsample` job_jobsample ON job.`ID` = job_jobsample.`Job_ID`\n"
                 + "     INNER JOIN `department` department ON job.`DEPARTMENT_ID` = department.`ID`\n"
                 + "     INNER JOIN `department` department_A ON job.`SUBCONTRACTEDDEPARTMENT_ID` = department_A.`ID`\n"
                 + "     INNER JOIN `employee` employee ON job.`ASSIGNEDTO_ID` = employee.`ID`\n"
@@ -2054,7 +2054,7 @@ public class Job implements Serializable, BusinessEntity {
                 + "     INNER JOIN `classification` classification ON job.`CLASSIFICATION_ID` = classification.`ID`\n"
                 + "     INNER JOIN `jobcategory` jobcategory ON job.`JOBCATEGORY_ID` = jobcategory.`ID`\n"
                 + "     INNER JOIN `jobsubcategory` jobsubcategory ON job.`JOBSUBCATEGORY_ID` = jobsubcategory.`ID`\n"
-                + "     RIGHT OUTER JOIN `jobsample` jobsample ON job_jobsample.`jobSamples_ID` = jobsample.`ID`\n"
+                + "     LEFT JOIN `jobsample` jobsample ON job_jobsample.`jobSamples_ID` = jobsample.`ID`\n"
                 + "WHERE\n"
                 + "     ((jobstatusandtracking.`DATEOFCOMPLETION` >= " + startDate
                 + " AND jobstatusandtracking.`DATEOFCOMPLETION` <= " + endDate + "))"
