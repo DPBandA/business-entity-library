@@ -204,17 +204,17 @@ public class ShippingContainer implements Serializable, BusinessEntity {
 
             ComplianceSurvey complianceSurvey = ComplianceSurvey.findComplianceSurveyById(em, complianceSurveyID);
             if (complianceSurvey != null) {
-                List<ShippingContainer> shippingContainers = complianceSurvey.getEntryDocumentInspection().getShippingContainers();
-                if (shippingContainers.isEmpty()) {
-                    return null;
-                } else {
-                    //List<String> containerNums = complianceSurvey.getContainerNumberList();
-                    for (ShippingContainer shippingContainer : shippingContainers) {
-                        if (shippingContainer.getNumber().trim().equals(newContainerNumber)) {
-                            return shippingContainer;
-                        }
-                    }
-                }
+//                List<ShippingContainer> shippingContainers = complianceSurvey.getEntryDocumentInspection().getShippingContainers();
+//                if (shippingContainers.isEmpty()) {
+//                    return null;
+//                } else {
+//                    //List<String> containerNums = complianceSurvey.getContainerNumberList();
+//                    for (ShippingContainer shippingContainer : shippingContainers) {
+//                        if (shippingContainer.getNumber().trim().equals(newContainerNumber)) {
+//                            return shippingContainer;
+//                        }
+//                    }
+//                }
 
             } else {
                 return null;

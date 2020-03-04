@@ -71,10 +71,10 @@ public class ComplianceSurvey
     private String surveyType;
     private String surveyLocationType;
     private String typeOfEstablishment;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Client retailOutlet;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Contact retailRepresentative;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Client retailOutlet;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Contact retailRepresentative;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfSurvey;
     @Temporal(javax.persistence.TemporalType.TIME)
@@ -91,8 +91,8 @@ public class ComplianceSurvey
     private Date releaseFromDetentionReportDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfDetention;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<ProductInspection> productInspections;
+//    @OneToMany(cascade = CascadeType.REFRESH)
+//    private List<ProductInspection> productInspections;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspector;
     @Column(length = 1024)
@@ -100,26 +100,26 @@ public class ComplianceSurvey
     private String typeOfPortOfEntry;
     private String portOfEntry;
     private String inspectionPoint;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Address inspectionAddress;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Client broker;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Contact brokerRepresentative;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Address inspectionAddress;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Client broker;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Contact brokerRepresentative;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client consignee;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Contact consigneeRepresentative;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Contact consigneeRepresentative;
     private String referenceNumber;
     @Column(length = 1024)
     private String reasonForDetention;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Address specifiedReleaseLocation;
     // Notice of refease from detention
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Address specifiedReleaseLocationDomesticMarket;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Address locationOfDetainedProductDomesticMarket;
+//    @OneToOne(cascade = CascadeType.ALL) // org REFRESH
+//    private Address specifiedReleaseLocationDomesticMarket;
+//    @OneToOne(cascade = CascadeType.ALL) // org REFRESH
+//    private Address locationOfDetainedProductDomesticMarket;
     private Boolean retailer;
     private Boolean distributor;
     private Boolean otherCompanyTypes;
@@ -136,54 +136,54 @@ public class ComplianceSurvey
     private String domesticMarketDetentionNumber;
     // Signatures, dates and names
     // Detention Request - Port of Entry
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature authSigForDetentionRequestPOE;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date authSigDateForDetentionRequestPOE;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee authEmployeeForDetentionRequestPOE;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Signature authSigForDetentionRequestPOE;
+//    @Temporal(javax.persistence.TemporalType.DATE)
+//    private Date authSigDateForDetentionRequestPOE;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Employee authEmployeeForDetentionRequestPOE;
     // Sample Request - Port of Entry
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature inspectorSigForSampleRequestPOE;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date inspectorSigDateForSampleRequestPOE;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Signature inspectorSigForSampleRequestPOE;
+//    @Temporal(javax.persistence.TemporalType.DATE)
+//    private Date inspectorSigDateForSampleRequestPOE;
     // Release Request - Port of Entry
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature preparedBySigForReleaseRequestPOE;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee preparedByEmployeeForReleaseRequestPOE;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date preparedBySigDateForReleaseRequestPOE;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature approvedBySigForReleaseRequestPOE;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee approvedByEmployeeForReleaseRequestPOE;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date approvedBySigDateForReleaseRequestPOE;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Signature preparedBySigForReleaseRequestPOE;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Employee preparedByEmployeeForReleaseRequestPOE;
+//    @Temporal(javax.persistence.TemporalType.DATE)
+//    private Date preparedBySigDateForReleaseRequestPOE;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Signature approvedBySigForReleaseRequestPOE;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Employee approvedByEmployeeForReleaseRequestPOE;
+//    @Temporal(javax.persistence.TemporalType.DATE)
+//    private Date approvedBySigDateForReleaseRequestPOE;
     // Notice of Detention - Domestic Market
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature authSigForNoticeOfDentionDM;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date authSigDateForNoticeOfDentionDM;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee authEmployeeForNoticeOfDentionDM;
-    // Notice of Release from Detention - Domestic Market
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature authSigForNoticeOfReleaseFromDentionDM;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date authSigDateForNoticeOfReleaseFromDentionDM;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee authEmpForNoticeOfReleaseFromDentionDM;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Signature authSigForNoticeOfDentionDM;
+//    @Temporal(javax.persistence.TemporalType.DATE)
+//    private Date authSigDateForNoticeOfDentionDM;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Employee authEmployeeForNoticeOfDentionDM;
+//    // Notice of Release from Detention - Domestic Market
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Signature authSigForNoticeOfReleaseFromDentionDM;
+//    @Temporal(javax.persistence.TemporalType.DATE)
+//    private Date authSigDateForNoticeOfReleaseFromDentionDM;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Employee authEmpForNoticeOfReleaseFromDentionDM;
     // End signatures    
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee editedBy;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEdited;
+//    @OneToOne(cascade = CascadeType.REFRESH)
+//    private Employee editedBy;
+//    @Temporal(javax.persistence.TemporalType.DATE)
+//    private Date dateEdited;
     @OneToOne(cascade = CascadeType.REFRESH)
     private EntryDocumentInspection entryDocumentInspection;
     private String jobNumber; // tk replace with Job field
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<DocumentStandard> standardsBreached;
+//    @OneToMany(cascade = CascadeType.REFRESH)
+//    private List<DocumentStandard> standardsBreached;
     private String otherInspectionLocation;
     @Transient
     private Boolean isDirty;
@@ -278,194 +278,189 @@ public class ComplianceSurvey
         this.surveyType = surveyType;
     }
 
-    public Date getDateEdited() {
-        return dateEdited;
-    }
+//    public Date getDateEdited() {
+//        return dateEdited;
+//    }
+//
+//    public void setDateEdited(Date dateEdited) {
+//        this.dateEdited = dateEdited;
+//    }
+//
+//    public Employee getEditedBy() {
+//        if (editedBy == null) {
+//            return new Employee();
+//        }
+//        return editedBy;
+//    }
+//
+//    public void setEditedBy(Employee editedBy) {
+//        this.editedBy = editedBy;
+//    }
+//
+//    public Signature getApprovedBySigForReleaseRequestPOE() {
+//        if (approvedBySigForReleaseRequestPOE == null) {
+//            return new Signature();
+//        }
+//        return approvedBySigForReleaseRequestPOE;
+//    }
+//    public void setApprovedBySigForReleaseRequestPOE(Signature approvedBySigForReleaseRequestPOE) {
+//        this.approvedBySigForReleaseRequestPOE = approvedBySigForReleaseRequestPOE;
+//    }
 
-    public void setDateEdited(Date dateEdited) {
-        this.dateEdited = dateEdited;
-    }
+//    public Employee getApprovedByEmployeeForReleaseRequestPOE() {
+//        if (approvedByEmployeeForReleaseRequestPOE == null) {
+//            return new Employee();
+//        }
+//        return approvedByEmployeeForReleaseRequestPOE;
+//    }
+//
+//    public void setApprovedByEmployeeForReleaseRequestPOE(Employee approvedByEmployeeForReleaseRequestPOE) {
+//        this.approvedByEmployeeForReleaseRequestPOE = approvedByEmployeeForReleaseRequestPOE;
+//    }
+//
+//    public Date getApprovedBySigDateForReleaseRequestPOE() {
+//        return approvedBySigDateForReleaseRequestPOE;
+//    }
+//
+//    public void setApprovedBySigDateForReleaseRequestPOE(Date approvedBySigDateForReleaseRequestPOE) {
+//        this.approvedBySigDateForReleaseRequestPOE = approvedBySigDateForReleaseRequestPOE;
+//    }
+//
+//    public Signature getAuthSigForDetentionRequestPOE() {
+//        if (authSigForDetentionRequestPOE == null) {
+//            return new Signature();
+//        }
+//        return authSigForDetentionRequestPOE;
+//    }
+//
+//    public void setAuthSigForDetentionRequestPOE(Signature authSigForDetentionRequestPOE) {
+//        this.authSigForDetentionRequestPOE = authSigForDetentionRequestPOE;
+//    }
+//    
+//    public Date getAuthSigDateForDetentionRequestPOE() {
+//        return authSigDateForDetentionRequestPOE;
+//    }
+//
+//    public void setAuthSigDateForDetentionRequestPOE(Date authSigDateForDetentionRequestPOE) {
+//        this.authSigDateForDetentionRequestPOE = authSigDateForDetentionRequestPOE;
+//    }
 
-    public Employee getEditedBy() {
-        if (editedBy == null) {
-            return new Employee();
-        }
-        return editedBy;
-    }
+//    public Employee getAuthEmployeeForDetentionRequestPOE() {
+//        if (authEmployeeForDetentionRequestPOE == null) {
+//            return new Employee();
+//        }
+//        return authEmployeeForDetentionRequestPOE;
+//    }
+//
+//    public void setAuthEmployeeForDetentionRequestPOE(Employee authEmployeeForDetentionRequestPOE) {
+//        this.authEmployeeForDetentionRequestPOE = authEmployeeForDetentionRequestPOE;
+//    }
+//
+//    public Signature getInspectorSigForSampleRequestPOE() {
+//        if (inspectorSigForSampleRequestPOE == null) {
+//            return new Signature();
+//        }
+//        return inspectorSigForSampleRequestPOE;
+//    }
+//
+//    public void setInspectorSigForSampleRequestPOE(Signature inspectorSigForSampleRequestPOE) {
+//        this.inspectorSigForSampleRequestPOE = inspectorSigForSampleRequestPOE;
+//    }
+//    public Date getInspectorSigDateForSampleRequestPOE() {
+//        return inspectorSigDateForSampleRequestPOE;
+//    }
+//
+//    public void setInspectorSigDateForSampleRequestPOE(Date inspectorSigDateForSampleRequestPOE) {
+//        this.inspectorSigDateForSampleRequestPOE = inspectorSigDateForSampleRequestPOE;
+//    }
+//    public Signature getPreparedBySigForReleaseRequestPOE() {
+//        if (preparedBySigForReleaseRequestPOE == null) {
+//            return new Signature();
+//        }
+//        return preparedBySigForReleaseRequestPOE;
+//    }
 
-    public void setEditedBy(Employee editedBy) {
-        this.editedBy = editedBy;
-    }
-
-    public Signature getApprovedBySigForReleaseRequestPOE() {
-        if (approvedBySigForReleaseRequestPOE == null) {
-            return new Signature();
-        }
-        return approvedBySigForReleaseRequestPOE;
-    }
-
-    public void setApprovedBySigForReleaseRequestPOE(Signature approvedBySigForReleaseRequestPOE) {
-        this.approvedBySigForReleaseRequestPOE = approvedBySigForReleaseRequestPOE;
-    }
-
-    public Employee getApprovedByEmployeeForReleaseRequestPOE() {
-        if (approvedByEmployeeForReleaseRequestPOE == null) {
-            return new Employee();
-        }
-        return approvedByEmployeeForReleaseRequestPOE;
-    }
-
-    public void setApprovedByEmployeeForReleaseRequestPOE(Employee approvedByEmployeeForReleaseRequestPOE) {
-        this.approvedByEmployeeForReleaseRequestPOE = approvedByEmployeeForReleaseRequestPOE;
-    }
-
-    public Date getApprovedBySigDateForReleaseRequestPOE() {
-        return approvedBySigDateForReleaseRequestPOE;
-    }
-
-    public void setApprovedBySigDateForReleaseRequestPOE(Date approvedBySigDateForReleaseRequestPOE) {
-        this.approvedBySigDateForReleaseRequestPOE = approvedBySigDateForReleaseRequestPOE;
-    }
-
-    public Signature getAuthSigForDetentionRequestPOE() {
-        if (authSigForDetentionRequestPOE == null) {
-            return new Signature();
-        }
-        return authSigForDetentionRequestPOE;
-    }
-
-    public void setAuthSigForDetentionRequestPOE(Signature authSigForDetentionRequestPOE) {
-        this.authSigForDetentionRequestPOE = authSigForDetentionRequestPOE;
-    }
-
-    public Date getAuthSigDateForDetentionRequestPOE() {
-        return authSigDateForDetentionRequestPOE;
-    }
-
-    public void setAuthSigDateForDetentionRequestPOE(Date authSigDateForDetentionRequestPOE) {
-        this.authSigDateForDetentionRequestPOE = authSigDateForDetentionRequestPOE;
-    }
-
-    public Employee getAuthEmployeeForDetentionRequestPOE() {
-        if (authEmployeeForDetentionRequestPOE == null) {
-            return new Employee();
-        }
-        return authEmployeeForDetentionRequestPOE;
-    }
-
-    public void setAuthEmployeeForDetentionRequestPOE(Employee authEmployeeForDetentionRequestPOE) {
-        this.authEmployeeForDetentionRequestPOE = authEmployeeForDetentionRequestPOE;
-    }
-
-    public Signature getInspectorSigForSampleRequestPOE() {
-        if (inspectorSigForSampleRequestPOE == null) {
-            return new Signature();
-        }
-        return inspectorSigForSampleRequestPOE;
-    }
-
-    public void setInspectorSigForSampleRequestPOE(Signature inspectorSigForSampleRequestPOE) {
-        this.inspectorSigForSampleRequestPOE = inspectorSigForSampleRequestPOE;
-    }
-
-    public Date getInspectorSigDateForSampleRequestPOE() {
-        return inspectorSigDateForSampleRequestPOE;
-    }
-
-    public void setInspectorSigDateForSampleRequestPOE(Date inspectorSigDateForSampleRequestPOE) {
-        this.inspectorSigDateForSampleRequestPOE = inspectorSigDateForSampleRequestPOE;
-    }
-
-    public Signature getPreparedBySigForReleaseRequestPOE() {
-        if (preparedBySigForReleaseRequestPOE == null) {
-            return new Signature();
-        }
-        return preparedBySigForReleaseRequestPOE;
-    }
-
-    public void setPreparedBySigForReleaseRequestPOE(Signature preparedBySigForReleaseRequestPOE) {
-        this.preparedBySigForReleaseRequestPOE = preparedBySigForReleaseRequestPOE;
-    }
-
-    public Employee getPreparedByEmployeeForReleaseRequestPOE() {
-        if (preparedByEmployeeForReleaseRequestPOE == null) {
-            return new Employee();
-        }
-        return preparedByEmployeeForReleaseRequestPOE;
-    }
-
-    public void setPreparedByEmployeeForReleaseRequestPOE(Employee preparedByEmployeeForReleaseRequestPOE) {
-        this.preparedByEmployeeForReleaseRequestPOE = preparedByEmployeeForReleaseRequestPOE;
-    }
-
-    public Date getPreparedBySigDateForReleaseRequestPOE() {
-        return preparedBySigDateForReleaseRequestPOE;
-    }
-
-    public void setPreparedBySigDateForReleaseRequestPOE(Date preparedBySigDateForReleaseRequestPOE) {
-        this.preparedBySigDateForReleaseRequestPOE = preparedBySigDateForReleaseRequestPOE;
-    }
-
-    public Signature getAuthSigForNoticeOfReleaseFromDentionDM() {
-        if (authSigForNoticeOfReleaseFromDentionDM == null) {
-            return new Signature();
-        }
-        return authSigForNoticeOfReleaseFromDentionDM;
-    }
-
-    public void setAuthSigForNoticeOfReleaseFromDentionDM(Signature authSigForNoticeOfReleaseFromDentionDM) {
-        this.authSigForNoticeOfReleaseFromDentionDM = authSigForNoticeOfReleaseFromDentionDM;
-    }
-
-    public Date getAuthSigDateForNoticeOfReleaseFromDentionDM() {
-        return authSigDateForNoticeOfReleaseFromDentionDM;
-    }
-
-    public void setAuthSigDateForNoticeOfReleaseFromDentionDM(Date authSigDateForNoticeOfReleaseFromDentionDM) {
-        this.authSigDateForNoticeOfReleaseFromDentionDM = authSigDateForNoticeOfReleaseFromDentionDM;
-    }
-
-    public Employee getAuthEmpForNoticeOfReleaseFromDentionDM() {
-        if (authEmpForNoticeOfReleaseFromDentionDM == null) {
-            return new Employee();
-        }
-        return authEmpForNoticeOfReleaseFromDentionDM;
-    }
-
-    public void setAuthEmpForNoticeOfReleaseFromDentionDM(Employee authEmpForNoticeOfReleaseFromDentionDM) {
-        this.authEmpForNoticeOfReleaseFromDentionDM = authEmpForNoticeOfReleaseFromDentionDM;
-    }
-
-    public Signature getAuthSigForNoticeOfDentionDM() {
-        if (authSigForNoticeOfDentionDM == null) {
-            return new Signature();
-        }
-        return authSigForNoticeOfDentionDM;
-    }
-
-    public void setAuthSigForNoticeOfDentionDM(Signature authSigForNoticeOfDentionDM) {
-        this.authSigForNoticeOfDentionDM = authSigForNoticeOfDentionDM;
-    }
-
-    public Date getAuthSigDateForNoticeOfDentionDM() {
-        return authSigDateForNoticeOfDentionDM;
-    }
-
-    public void setAuthSigDateForNoticeOfDentionDM(Date authSigDateForNoticeOfDentionDM) {
-        this.authSigDateForNoticeOfDentionDM = authSigDateForNoticeOfDentionDM;
-    }
-
-    public Employee getAuthEmployeeForNoticeOfDentionDM() {
-        if (authEmployeeForNoticeOfDentionDM == null) {
-            return new Employee();
-        }
-        return authEmployeeForNoticeOfDentionDM;
-    }
-
-    public void setAuthEmployeeForNoticeOfDentionDM(Employee authEmployeeForNoticeOfDentionDM) {
-        this.authEmployeeForNoticeOfDentionDM = authEmployeeForNoticeOfDentionDM;
-    }
-
+//    public void setPreparedBySigForReleaseRequestPOE(Signature preparedBySigForReleaseRequestPOE) {
+//        this.preparedBySigForReleaseRequestPOE = preparedBySigForReleaseRequestPOE;
+//    }
+//
+//    public Employee getPreparedByEmployeeForReleaseRequestPOE() {
+//        if (preparedByEmployeeForReleaseRequestPOE == null) {
+//            return new Employee();
+//        }
+//        return preparedByEmployeeForReleaseRequestPOE;
+//    }
+//
+//    public void setPreparedByEmployeeForReleaseRequestPOE(Employee preparedByEmployeeForReleaseRequestPOE) {
+//        this.preparedByEmployeeForReleaseRequestPOE = preparedByEmployeeForReleaseRequestPOE;
+//    }
+//    public Date getPreparedBySigDateForReleaseRequestPOE() {
+//        return preparedBySigDateForReleaseRequestPOE;
+//    }
+//
+//    public void setPreparedBySigDateForReleaseRequestPOE(Date preparedBySigDateForReleaseRequestPOE) {
+//        this.preparedBySigDateForReleaseRequestPOE = preparedBySigDateForReleaseRequestPOE;
+//    }
+//
+//    public Signature getAuthSigForNoticeOfReleaseFromDentionDM() {
+//        if (authSigForNoticeOfReleaseFromDentionDM == null) {
+//            return new Signature();
+//        }
+//        return authSigForNoticeOfReleaseFromDentionDM;
+//    }
+//
+//    public void setAuthSigForNoticeOfReleaseFromDentionDM(Signature authSigForNoticeOfReleaseFromDentionDM) {
+//        this.authSigForNoticeOfReleaseFromDentionDM = authSigForNoticeOfReleaseFromDentionDM;
+//    }
+//    
+//    public Date getAuthSigDateForNoticeOfReleaseFromDentionDM() {
+//        return authSigDateForNoticeOfReleaseFromDentionDM;
+//    }
+//
+//    public void setAuthSigDateForNoticeOfReleaseFromDentionDM(Date authSigDateForNoticeOfReleaseFromDentionDM) {
+//        this.authSigDateForNoticeOfReleaseFromDentionDM = authSigDateForNoticeOfReleaseFromDentionDM;
+//    }
+//
+//    public Employee getAuthEmpForNoticeOfReleaseFromDentionDM() {
+//        if (authEmpForNoticeOfReleaseFromDentionDM == null) {
+//            return new Employee();
+//        }
+//        return authEmpForNoticeOfReleaseFromDentionDM;
+//    }
+//
+//    public void setAuthEmpForNoticeOfReleaseFromDentionDM(Employee authEmpForNoticeOfReleaseFromDentionDM) {
+//        this.authEmpForNoticeOfReleaseFromDentionDM = authEmpForNoticeOfReleaseFromDentionDM;
+//    }
+//
+//    public Signature getAuthSigForNoticeOfDentionDM() {
+//        if (authSigForNoticeOfDentionDM == null) {
+//            return new Signature();
+//        }
+//        return authSigForNoticeOfDentionDM;
+//    }
+//
+//    public void setAuthSigForNoticeOfDentionDM(Signature authSigForNoticeOfDentionDM) {
+//        this.authSigForNoticeOfDentionDM = authSigForNoticeOfDentionDM;
+//    }
+//    public Date getAuthSigDateForNoticeOfDentionDM() {
+//        return authSigDateForNoticeOfDentionDM;
+//    }
+//
+//    public void setAuthSigDateForNoticeOfDentionDM(Date authSigDateForNoticeOfDentionDM) {
+//        this.authSigDateForNoticeOfDentionDM = authSigDateForNoticeOfDentionDM;
+//    }
+//
+//    public Employee getAuthEmployeeForNoticeOfDentionDM() {
+//        if (authEmployeeForNoticeOfDentionDM == null) {
+//            return new Employee();
+//        }
+//        return authEmployeeForNoticeOfDentionDM;
+//    }
+//
+//    public void setAuthEmployeeForNoticeOfDentionDM(Employee authEmployeeForNoticeOfDentionDM) {
+//        this.authEmployeeForNoticeOfDentionDM = authEmployeeForNoticeOfDentionDM;
+//    }
+    
     public String getPortOfEntryDetentionNumber() {
         return portOfEntryDetentionNumber;
     }
@@ -522,17 +517,17 @@ public class ComplianceSurvey
         this.noticeOfDetentionIssuedForDomesticMarket = noticeOfDetentionIssuedForDomesticMarket;
     }
 
-    public Address getInspectionAddress() {
-        if (inspectionAddress == null) {
-            inspectionAddress = new Address("");
-        }
-        return inspectionAddress;
-    }
-
-    public void setInspectionAddress(Address inspectionAddress) {
-        this.inspectionAddress = inspectionAddress;
-    }
-
+//    public Address getInspectionAddress() {
+//        if (inspectionAddress == null) {
+//            inspectionAddress = new Address("");
+//        }
+//        return inspectionAddress;
+//    }
+//
+//    public void setInspectionAddress(Address inspectionAddress) {
+//        this.inspectionAddress = inspectionAddress;
+//    }
+    
     public Boolean getSamplesToBeDisposed() {
         return samplesToBeDisposed;
     }
@@ -568,13 +563,13 @@ public class ComplianceSurvey
         this.dateOfDetention = dateOfDetention;
     }
 
-    public Date getReleaseFromDetentionReportDate() {
-        return releaseFromDetentionReportDate;
-    }
-
-    public void setReleaseFromDetentionReportDate(Date releaseFromDetentionReportDate) {
-        this.releaseFromDetentionReportDate = releaseFromDetentionReportDate;
-    }
+//    public Date getReleaseFromDetentionReportDate() {
+//        return releaseFromDetentionReportDate;
+//    }
+//
+//    public void setReleaseFromDetentionReportDate(Date releaseFromDetentionReportDate) {
+//        this.releaseFromDetentionReportDate = releaseFromDetentionReportDate;
+//    }
 
     public Boolean getOtherCompanyTypes() {
         if (otherCompanyTypes == null) {
@@ -617,43 +612,43 @@ public class ComplianceSurvey
         this.distributor = distributor;
     }
 
-    public Address getLocationOfDetainedProductDomesticMarket() {
-        if (locationOfDetainedProductDomesticMarket == null) {
-            locationOfDetainedProductDomesticMarket = new Address("");
-        }
-        return locationOfDetainedProductDomesticMarket;
-    }
-
-    public void setLocationOfDetainedProductDomesticMarket(Address locationOfDetainedProductDomesticMarket) {
-        this.locationOfDetainedProductDomesticMarket = locationOfDetainedProductDomesticMarket;
-    }
-
-    public Address getSpecifiedReleaseLocationDomesticMarket() {
-        if (specifiedReleaseLocationDomesticMarket == null) {
-            specifiedReleaseLocationDomesticMarket = new Address("");
-        }
-        return specifiedReleaseLocationDomesticMarket;
-    }
-
-    public void setSpecifiedReleaseLocationDomesticMarket(Address specifiedReleaseLocationDomesticMarket) {
-        this.specifiedReleaseLocationDomesticMarket = specifiedReleaseLocationDomesticMarket;
-    }
-
-    public Date getReleaseDateDomesticMarket() {
-        return releaseDateDomesticMarket;
-    }
-
-    public void setReleaseDateDomesticMarket(Date releaseDateDomesticMarket) {
-        this.releaseDateDomesticMarket = releaseDateDomesticMarket;
-    }
-
-    public Date getReleaseRequestReportDate() {
-        return releaseRequestReportDate;
-    }
-
-    public void setReleaseRequestReportDate(Date releaseRequestReportDate) {
-        this.releaseRequestReportDate = releaseRequestReportDate;
-    }
+//    public Address getLocationOfDetainedProductDomesticMarket() {
+//        if (locationOfDetainedProductDomesticMarket == null) {
+//            locationOfDetainedProductDomesticMarket = new Address("");
+//        }
+//        return locationOfDetainedProductDomesticMarket;
+//    }
+//
+//    public void setLocationOfDetainedProductDomesticMarket(Address locationOfDetainedProductDomesticMarket) {
+//        this.locationOfDetainedProductDomesticMarket = locationOfDetainedProductDomesticMarket;
+//    }
+//
+//    public Address getSpecifiedReleaseLocationDomesticMarket() {
+//        if (specifiedReleaseLocationDomesticMarket == null) {
+//            specifiedReleaseLocationDomesticMarket = new Address("");
+//        }
+//        return specifiedReleaseLocationDomesticMarket;
+//    }
+//
+//    public void setSpecifiedReleaseLocationDomesticMarket(Address specifiedReleaseLocationDomesticMarket) {
+//        this.specifiedReleaseLocationDomesticMarket = specifiedReleaseLocationDomesticMarket;
+//    }
+    
+//    public Date getReleaseDateDomesticMarket() {
+//        return releaseDateDomesticMarket;
+//    }
+//
+//    public void setReleaseDateDomesticMarket(Date releaseDateDomesticMarket) {
+//        this.releaseDateDomesticMarket = releaseDateDomesticMarket;
+//    }
+//
+//    public Date getReleaseRequestReportDate() {
+//        return releaseRequestReportDate;
+//    }
+//
+//    public void setReleaseRequestReportDate(Date releaseRequestReportDate) {
+//        this.releaseRequestReportDate = releaseRequestReportDate;
+//    }
 
     public String getInspectionPoint() {
         if (inspectionPoint == null) {
@@ -666,27 +661,27 @@ public class ComplianceSurvey
         this.inspectionPoint = inspectionPoint;
     }
 
-    public Client getBroker() {
-        if (broker == null) {
-            broker = new Client("", false);
-        }
-        return broker;
-    }
-
-    public void setBroker(Client broker) {
-        this.broker = broker;
-    }
-
-    public Contact getBrokerRepresentative() {
-        if (brokerRepresentative == null) {
-            brokerRepresentative = new Contact();
-        }
-        return brokerRepresentative;
-    }
-
-    public void setBrokerRepresentative(Contact brokerRepresentative) {
-        this.brokerRepresentative = brokerRepresentative;
-    }
+//    public Client getBroker() {
+//        if (broker == null) {
+//            broker = new Client("", false);
+//        }
+//        return broker;
+//    }
+//
+//    public void setBroker(Client broker) {
+//        this.broker = broker;
+//    }
+//
+//    public Contact getBrokerRepresentative() {
+//        if (brokerRepresentative == null) {
+//            brokerRepresentative = new Contact();
+//        }
+//        return brokerRepresentative;
+//    }
+//
+//    public void setBrokerRepresentative(Contact brokerRepresentative) {
+//        this.brokerRepresentative = brokerRepresentative;
+//    }
 
     public Client getConsignee() {
         if (consignee == null) {
@@ -710,23 +705,23 @@ public class ComplianceSurvey
         this.specifiedReleaseLocation = specifiedReleaseLocation;
     }
 
-    public Contact getConsigneeRepresentative() {
-        if (consigneeRepresentative == null) {
-            // try to first contact from the consignee
-            // or use default
+//    public Contact getConsigneeRepresentative() {
+//        if (consigneeRepresentative == null) {
+//            // try to first contact from the consignee
+//            // or use default
 //            if (!getConsignee().getContacts().isEmpty()) {
 //                consigneeRepresentative = getConsignee().getContacts().get(0);
 //            } else {
-            consigneeRepresentative = new Contact();
+//                consigneeRepresentative = new Contact();
 //            }
-
-        }
-        return consigneeRepresentative;
-    }
-
-    public void setConsigneeRepresentative(Contact consigneeRepresentative) {
-        this.consigneeRepresentative = consigneeRepresentative;
-    }
+//
+//        }
+//        return consigneeRepresentative;
+//    }
+//
+//    public void setConsigneeRepresentative(Contact consigneeRepresentative) {
+//        this.consigneeRepresentative = consigneeRepresentative;
+//    }
 
     public String getReferenceNumber() {
         return referenceNumber;
@@ -804,64 +799,64 @@ public class ComplianceSurvey
         this.inspector = inspector;
     }
 
-    @XmlTransient
-    public List<ProductInspection> getProductInspections() {
-        if (productInspections != null) {
-            Collections.sort(productInspections);
-        } else {
-            productInspections = new ArrayList<>();
-        }
+//    @XmlTransient
+//    public List<ProductInspection> getProductInspections() {
+//        if (productInspections != null) {
+//            Collections.sort(productInspections);
+//        } else {
+//            productInspections = new ArrayList<>();
+//        }
+//
+//        return productInspections;
+//    }
+//
+//    public void setProductInspections(List<ProductInspection> productInspections) {
+//        this.productInspections = productInspections;
+//    }
 
-        return productInspections;
-    }
+//    @XmlTransient
+//    public List<DocumentStandard> getStandardsBreached() {
+//        if (standardsBreached != null) {
+//            Collections.sort(standardsBreached);
+//        } else {
+//            standardsBreached = new ArrayList<>();
+//        }
+//
+//        return standardsBreached;
+//    }
+//
+//    public void setStandardsBreached(List<DocumentStandard> standardsBreached) {
+//        this.standardsBreached = standardsBreached;
+//    }
 
-    public void setProductInspections(List<ProductInspection> productInspections) {
-        this.productInspections = productInspections;
-    }
-
-    @XmlTransient
-    public List<DocumentStandard> getStandardsBreached() {
-        if (standardsBreached != null) {
-            Collections.sort(standardsBreached);
-        } else {
-            standardsBreached = new ArrayList<>();
-        }
-
-        return standardsBreached;
-    }
-
-    public void setStandardsBreached(List<DocumentStandard> standardsBreached) {
-        this.standardsBreached = standardsBreached;
-    }
-
-    public Client getRetailOutlet() {
-        if (retailOutlet == null) {
-            retailOutlet = new Client("", false);
-        }
-        return retailOutlet;
-    }
-
-    public void setRetailOutlet(Client retailOutlet) {
-        this.retailOutlet = retailOutlet;
-    }
-
-    public Contact getRetailRepresentative() {
-        if (retailRepresentative == null) {
-            // try to first contact from the retail outlet
-            // or use default
-            if (!getRetailOutlet().getContacts().isEmpty()) {
-                retailRepresentative = getRetailOutlet().getContacts().get(0);
-            } else {
-                retailRepresentative = new Contact();
-            }
-
-        }
-        return retailRepresentative;
-    }
-
-    public void setRetailRepresentative(Contact retailRepresentative) {
-        this.retailRepresentative = retailRepresentative;
-    }
+//    public Client getRetailOutlet() {
+//        if (retailOutlet == null) {
+//            retailOutlet = new Client("", false);
+//        }
+//        return retailOutlet;
+//    }
+//
+//    public void setRetailOutlet(Client retailOutlet) {
+//        this.retailOutlet = retailOutlet;
+//    }
+//
+//    public Contact getRetailRepresentative() {
+//        if (retailRepresentative == null) {
+//            // try to first contact from the retail outlet
+//            // or use default
+//            if (!getRetailOutlet().getContacts().isEmpty()) {
+//                retailRepresentative = getRetailOutlet().getContacts().get(0);
+//            } else {
+//                retailRepresentative = new Contact();
+//            }
+//
+//        }
+//        return retailRepresentative;
+//    }
+//
+//    public void setRetailRepresentative(Contact retailRepresentative) {
+//        this.retailRepresentative = retailRepresentative;
+//    }
 
     public Date getSurveyEndTime() {
         return surveyEndTime;
@@ -1209,9 +1204,9 @@ public class ComplianceSurvey
     public static Boolean save(EntityManager em, ComplianceSurvey survey) {
 
         try {
-            Employee employee = Employee.findEmployeeByName(em, survey.getEditedBy().getName());
-            survey.setDateEdited(new Date());
-            survey.setEditedBy(employee);
+            //Employee employee = Employee.findEmployeeByName(em, survey.getEditedBy().getName());
+            //survey.setDateEdited(new Date());
+            //survey.setEditedBy(employee);
 
             em.getTransaction().begin();
 
@@ -1278,7 +1273,7 @@ public class ComplianceSurvey
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             // Save contained entities where necessary
             if (getEntryDocumentInspection().getIsDirty()) {
                 getEntryDocumentInspection().save(em);
