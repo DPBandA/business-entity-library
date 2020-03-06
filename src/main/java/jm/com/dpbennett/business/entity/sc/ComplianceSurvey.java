@@ -116,10 +116,10 @@ public class ComplianceSurvey
     @OneToOne(cascade = CascadeType.ALL)
     private Address specifiedReleaseLocation;
     // Notice of refease from detention
-//    @OneToOne(cascade = CascadeType.ALL) // org REFRESH
-//    private Address specifiedReleaseLocationDomesticMarket;
-//    @OneToOne(cascade = CascadeType.ALL) // org REFRESH
-//    private Address locationOfDetainedProductDomesticMarket;
+    @OneToOne(cascade = CascadeType.ALL) // tk org REFRESH
+    private Address specifiedReleaseLocationDomesticMarket;
+    @OneToOne(cascade = CascadeType.ALL) // tk org REFRESH
+    private Address locationOfDetainedProductDomesticMarket;
     private Boolean retailer;
     private Boolean distributor;
     private Boolean otherCompanyTypes;
@@ -612,36 +612,36 @@ public class ComplianceSurvey
         this.distributor = distributor;
     }
 
-//    public Address getLocationOfDetainedProductDomesticMarket() {
-//        if (locationOfDetainedProductDomesticMarket == null) {
-//            locationOfDetainedProductDomesticMarket = new Address("");
-//        }
-//        return locationOfDetainedProductDomesticMarket;
-//    }
-//
-//    public void setLocationOfDetainedProductDomesticMarket(Address locationOfDetainedProductDomesticMarket) {
-//        this.locationOfDetainedProductDomesticMarket = locationOfDetainedProductDomesticMarket;
-//    }
-//
-//    public Address getSpecifiedReleaseLocationDomesticMarket() {
-//        if (specifiedReleaseLocationDomesticMarket == null) {
-//            specifiedReleaseLocationDomesticMarket = new Address("");
-//        }
-//        return specifiedReleaseLocationDomesticMarket;
-//    }
-//
-//    public void setSpecifiedReleaseLocationDomesticMarket(Address specifiedReleaseLocationDomesticMarket) {
-//        this.specifiedReleaseLocationDomesticMarket = specifiedReleaseLocationDomesticMarket;
-//    }
+    public Address getLocationOfDetainedProductDomesticMarket() {
+        if (locationOfDetainedProductDomesticMarket == null) {
+            locationOfDetainedProductDomesticMarket = new Address("");
+        }
+        return locationOfDetainedProductDomesticMarket;
+    }
+
+    public void setLocationOfDetainedProductDomesticMarket(Address locationOfDetainedProductDomesticMarket) {
+        this.locationOfDetainedProductDomesticMarket = locationOfDetainedProductDomesticMarket;
+    }
+
+    public Address getSpecifiedReleaseLocationDomesticMarket() {
+        if (specifiedReleaseLocationDomesticMarket == null) {
+            specifiedReleaseLocationDomesticMarket = new Address("");
+        }
+        return specifiedReleaseLocationDomesticMarket;
+    }
+
+    public void setSpecifiedReleaseLocationDomesticMarket(Address specifiedReleaseLocationDomesticMarket) {
+        this.specifiedReleaseLocationDomesticMarket = specifiedReleaseLocationDomesticMarket;
+    }
     
-//    public Date getReleaseDateDomesticMarket() {
-//        return releaseDateDomesticMarket;
-//    }
-//
-//    public void setReleaseDateDomesticMarket(Date releaseDateDomesticMarket) {
-//        this.releaseDateDomesticMarket = releaseDateDomesticMarket;
-//    }
-//
+    public Date getReleaseDateDomesticMarket() {
+        return releaseDateDomesticMarket;
+    }
+
+    public void setReleaseDateDomesticMarket(Date releaseDateDomesticMarket) {
+        this.releaseDateDomesticMarket = releaseDateDomesticMarket;
+    }
+
 //    public Date getReleaseRequestReportDate() {
 //        return releaseRequestReportDate;
 //    }
