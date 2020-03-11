@@ -360,7 +360,7 @@ public class Report implements Serializable, BusinessEntity {
     public static List<Report> findAllActiveReports(EntityManager em) {
 
         try {
-            return em.createQuery("SELECT r FROM Report r WHERE r.active = 1 ORDER BY r.name", Report.class).getResultList();
+            return em.createQuery("SELECT r FROM Report r WHERE (r.active = 1 OR r.active IS NULL) ORDER BY r.name", Report.class).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -386,6 +386,25 @@ public class Report implements Serializable, BusinessEntity {
             List<Report> reports = em.createQuery("SELECT r FROM Report r "
                     + "WHERE UPPER(r.name) "
                     + "= '" + newReportName.toUpperCase() + "'", Report.class).getResultList();
+            if (reports.size() > 0) {
+                return reports.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+     public static Report findActiveReportByName(EntityManager em, String reportName) {
+
+        try {
+            String newReportName = reportName.trim().replaceAll("'", "''");
+
+            List<Report> reports = em.createQuery("SELECT r FROM Report r "
+                    + "WHERE UPPER(r.name)"
+                    + " = '" + newReportName.toUpperCase() + "'"
+                    + " AND r.active = 1", Report.class).getResultList();
             if (reports.size() > 0) {
                 return reports.get(0);
             }
@@ -433,7 +452,7 @@ public class Report implements Serializable, BusinessEntity {
             String newQuery = query.replaceAll("'", "''");
 
             List<Report> reports
-                    = em.createQuery("SELECT r FROM Report r where r.active = 1 AND UPPER(r.name) like '%"
+                    = em.createQuery("SELECT r FROM Report r where (r.active = 1 OR r.active IS NULL) AND UPPER(r.name) like '%"
                             + newQuery.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
             return reports;
         } catch (Exception e) {
@@ -449,8 +468,9 @@ public class Report implements Serializable, BusinessEntity {
             String newCategory = category.replaceAll("'", "''");
 
             List<Report> reports
-                    = em.createQuery("SELECT r FROM Report r where r.active = 1 AND UPPER(r.name) like '%"
+                    = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
                             + newName.toUpperCase().trim() + "%'"
+                            + " AND (r.active = 1 OR r.active IS NULL)"        
                             + " AND UPPER(r.category) like '%"
                             + newCategory.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
             return reports;
@@ -466,7 +486,7 @@ public class Report implements Serializable, BusinessEntity {
             String newQuery = query.replaceAll("'", "''");
 
             List<Report> reports
-                    = em.createQuery("SELECT r FROM Report r where r.active = 1 AND (UPPER(r.name) like '%"
+                    = em.createQuery("SELECT r FROM Report r where (r.active = 1 OR r.active IS NULL) AND (UPPER(r.name) like '%"
                             + newQuery.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
                             + newQuery.toUpperCase().trim() + "%') ORDER BY r.name", Report.class).getResultList();
             return reports;
@@ -477,7 +497,7 @@ public class Report implements Serializable, BusinessEntity {
     }
 
     public static Report findDefaultReport(EntityManager em, String name) {
-        Report report = Report.findReportByName(em, name);
+        Report report = Report.findActiveReportByName(em, name);
 
         if (report == null) {
             report = new Report(name);
