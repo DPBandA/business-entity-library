@@ -404,7 +404,7 @@ public class Report implements Serializable, BusinessEntity {
             List<Report> reports = em.createQuery("SELECT r FROM Report r "
                     + "WHERE UPPER(r.name)"
                     + " = '" + newReportName.toUpperCase() + "'"
-                    + " AND r.active = 1", Report.class).getResultList();
+                    + " AND (r.active = 1 OR r.active IS NULL)", Report.class).getResultList();
             if (reports.size() > 0) {
                 return reports.get(0);
             }
