@@ -142,7 +142,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public void setActive(Boolean active) {
         this.active = active;
     }
-    
+
     public String getUsable() {
         if (getActive()) {
             return "Yes";
@@ -859,7 +859,38 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         return null;
     }
     
-     public static JobCostingAndPayment findActiveJobCostingAndPaymentByDepartmentAndName(
+//    public static JobCostingAndPayment findActiveJobCostingAndPaymentByName(
+//            EntityManager em,
+//            String jobCostingAndPaymentName) {
+//
+//        try {
+//            String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
+//            String newDepartmentName = departmentName.replaceAll("'", "''");
+//
+//            List<Job> jobs
+//                    = em.createQuery("SELECT job FROM Job job"
+//                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+//                            + " JOIN job.department department"
+//                            + " JOIN job.subContractedDepartment subContractedDepartment"
+//                            + " WHERE UPPER(jobCostingAndPayment.name) = '"
+//                            + newJobCostingAndPaymentName.toUpperCase().trim() + "'"
+//                            + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
+//                            + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
+//                            + " )"
+//                            + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"
+//                            + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
+//            if (!jobs.isEmpty()) {
+//                return jobs.get(0).getJobCostingAndPayment();
+//            }
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            return null;
+//        }
+//
+//        return null;
+//    }
+
+    public static JobCostingAndPayment findActiveJobCostingAndPaymentByDepartmentAndName(
             EntityManager em,
             String departmentName,
             String jobCostingAndPaymentName) {
@@ -996,7 +1027,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
             // Save   
             if (isDirty || id == null) {
                 doSave(em);
-                
+
                 return new ReturnMessage();
             } else {
                 return new ReturnMessage(true,
