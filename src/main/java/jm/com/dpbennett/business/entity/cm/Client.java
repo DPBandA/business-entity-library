@@ -119,7 +119,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.tag = false;
         this.internal = false;
         this.notes = "";
-        this.type = "";
+        this.type = "Client";
         this.number = "";
         this.name = "";
         contacts = new ArrayList<>();
@@ -285,7 +285,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.tag = false;
         this.internal = false;
         this.notes = "";
-        this.type = "";
+        this.type = "Client";
         this.number = "";
         this.name = name;
         contacts = new ArrayList<>();
@@ -299,7 +299,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.tag = false;
         this.internal = false;
         this.notes = "";
-        this.type = "";
+        this.type = "Client";
         this.number = "";
         this.name = name;
         contacts = new ArrayList<>();
