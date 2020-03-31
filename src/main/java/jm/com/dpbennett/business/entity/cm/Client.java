@@ -110,6 +110,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     @OneToOne(cascade = CascadeType.REFRESH)
     private Tax defaultTax;
     private Boolean taxExempt;
+    private String typeOfBusiness;
 
     public Client() {
         this.taxRegistrationNumber = "";
@@ -125,6 +126,15 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         active = true;
         international = false;
         accountingId = "";
+        typeOfBusiness = "";
+    }
+
+    public String getTypeOfBusiness() {
+        return typeOfBusiness;
+    }
+
+    public void setTypeOfBusiness(String typeOfBusiness) {
+        this.typeOfBusiness = typeOfBusiness;
     }
 
     public Tax getDefaultTax() {
