@@ -111,6 +111,8 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     private Tax defaultTax;
     private Boolean taxExempt;
     private String typeOfBusiness;
+    private String identification;
+    private String identificationType;
 
     public Client() {
         this.taxRegistrationNumber = "";
@@ -127,6 +129,24 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         international = false;
         accountingId = "";
         typeOfBusiness = "";
+        identification = "";
+        identificationType = ""; 
+    }
+
+    public String getIdentification() {
+        return identification;
+    }
+
+    public void setIdentification(String identification) {
+        this.identification = identification;
+    }
+
+    public String getIdentificationType() {
+        return identificationType;
+    }
+
+    public void setIdentificationType(String identificationType) {
+        this.identificationType = identificationType;
     }
 
     public String getTypeOfBusiness() {
