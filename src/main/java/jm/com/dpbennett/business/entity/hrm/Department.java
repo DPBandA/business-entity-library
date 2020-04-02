@@ -101,6 +101,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         laboratories = new ArrayList<>();
         departmentUnits = new ArrayList<>();
         active = true;
+        actingHeadActive = false;
     }
 
     public Department(String name) {
@@ -111,6 +112,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         laboratories = new ArrayList<>();
         departmentUnits = new ArrayList<>();
         active = true;
+        actingHeadActive = false;
     }
 
     @Override
