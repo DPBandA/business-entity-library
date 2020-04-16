@@ -119,6 +119,14 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return "No";
         }
     }
+    
+    public void setUsable(String usable) {
+        if (usable.equals("Yes")) {
+            setActive(true);
+        } else {
+            setActive(false);
+        }
+    }
 
     public Boolean getInternal() {
         return internal;
