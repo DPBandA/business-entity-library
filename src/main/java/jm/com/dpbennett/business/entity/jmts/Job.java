@@ -74,7 +74,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 })
 @XmlRootElement
 public class Job implements Serializable, BusinessEntity {
-
+    
     private static final Long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -153,7 +153,7 @@ public class Job implements Serializable, BusinessEntity {
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Service> services;
     private String serviceLocation;
-
+    
     public Job() {
         this.name = "";
         this.jobNumber = "";
@@ -161,7 +161,7 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
     }
-
+    
     public Job(String name) {
         this.name = name;
         this.jobNumber = name;
@@ -169,7 +169,7 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
     }
-
+    
     public Job(Long id) {
         this.id = id;
         this.name = "";
@@ -178,84 +178,84 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
     }
-
+    
     public Integer getNoOfInspections() {
         if (noOfInspections == null) {
             noOfInspections = 0;
         }
         return noOfInspections;
     }
-
+    
     public void setNoOfInspections(Integer noOfInspections) {
         this.noOfInspections = noOfInspections;
     }
-
+    
     public Integer getNoOfTrainings() {
         if (noOfTrainings == null) {
             noOfTrainings = 0;
         }
         return noOfTrainings;
     }
-
+    
     public void setNoOfTrainings(Integer noOfTrainings) {
         this.noOfTrainings = noOfTrainings;
     }
-
+    
     public Integer getNoOfLabelAssessments() {
         if (noOfLabelAssessments == null) {
             noOfLabelAssessments = 0;
         }
         return noOfLabelAssessments;
     }
-
+    
     public void setNoOfLabelAssessments(Integer noOfLabelAssessments) {
         this.noOfLabelAssessments = noOfLabelAssessments;
     }
-
+    
     public Integer getNoOfCertifications() {
         if (noOfCertifications == null) {
             noOfCertifications = 0;
         }
         return noOfCertifications;
     }
-
+    
     public void setNoOfCertifications(Integer noOfCertifications) {
         this.noOfCertifications = noOfCertifications;
     }
-
+    
     public Integer getNoOfConsultations() {
         if (noOfConsultations == null) {
             noOfConsultations = 0;
         }
         return noOfConsultations;
     }
-
+    
     public void setNoOfConsultations(Integer noOfConsultations) {
         this.noOfConsultations = noOfConsultations;
     }
-
+    
     public Integer getNoOfOtherAssessments() {
         if (noOfOtherAssessments == null) {
             noOfOtherAssessments = 0;
         }
         return noOfOtherAssessments;
     }
-
+    
     public void setNoOfOtherAssessments(Integer noOfOtherAssessments) {
         this.noOfOtherAssessments = noOfOtherAssessments;
     }
-
+    
     public String getServiceLocation() {
         if (serviceLocation == null) {
             serviceLocation = "?";
         }
         return serviceLocation;
     }
-
+    
     public void setServiceLocation(String serviceLocation) {
         this.serviceLocation = serviceLocation;
     }
-
+    
     public String isServiceLocationInHouse() {
         switch (getServiceLocation()) {
             case "In-house":
@@ -268,18 +268,18 @@ public class Job implements Serializable, BusinessEntity {
                 return "?";
         }
     }
-
+    
     public List<CashPayment> getCashPayments() {
-
+        
         return getJobCostingAndPayment().getCashPayments();
     }
-
+    
     public void setCashPayments(List<CashPayment> cashPayments) {
         getJobCostingAndPayment().setCashPayments(cashPayments);
     }
-
+    
     public String getRowStyle() {
-
+        
         if (getVisited()) {
             visited = false;
             return "lightgreybg";
@@ -297,45 +297,45 @@ public class Job implements Serializable, BusinessEntity {
                 // It's all good!
                 return "";
             }
-
+            
         } else { // EDOC possibly not set so warn
             return "lightyellowbg";
         }
     }
-
+    
     public Boolean getVisited() {
         if (visited == null) {
             visited = false;
         }
         return visited;
     }
-
+    
     public void setVisited(Boolean visited) {
         this.visited = visited;
     }
-
+    
     public List<Employee> getRepresentatives() {
         if (representatives == null) {
             representatives = new ArrayList<>();
         }
         return representatives;
     }
-
+    
     public void setRepresentatives(List<Employee> representatives) {
         this.representatives = representatives;
     }
-
+    
     public List<Service> getServices() {
         if (services == null) {
             services = new ArrayList<>();
         }
         return services;
     }
-
+    
     public void setServices(List<Service> services) {
         this.services = services;
     }
-
+    
     public String getJobNumberWithCostLabel() {
         if (getId() != null) {
             return getJobNumber() + " (" + getJobCostingAndPayment().getFormattedFinalCost() + ")";
@@ -343,20 +343,20 @@ public class Job implements Serializable, BusinessEntity {
             return name;
         }
     }
-
+    
     public Job getParent() {
         return parent;
     }
-
+    
     public void setParent(Job parent) {
         this.parent = parent;
     }
-
+    
     public ReturnMessage prepareAndSave(EntityManager em, User user) {
-
+        
         Date now = new Date();
         JobSequenceNumber nextJobSequenceNumber = null;
-
+        
         try {
             // Get employee for later use
             Employee employee = user.getEmployee();
@@ -370,9 +370,9 @@ public class Job implements Serializable, BusinessEntity {
                         && !user.getEmployee().isMemberOf(Department.findDepartmentBySystemOptionDeptId("invoicingDepartmentId", em))
                         && !user.getPrivilege().getCanBeJMTSAdministrator()
                         && !User.isUserDepartmentSupervisor(this, user, em)) {
-
+                    
                     this.setIsDirty(false);
-
+                    
                     return new ReturnMessage(false,
                             "Job Cannot Be Saved",
                             "This job is marked as completed so changes cannot be saved. You may contact your department's supervisor or a system administrator",
@@ -411,16 +411,16 @@ public class Job implements Serializable, BusinessEntity {
 
             // Finally..save the job
             ReturnMessage returnMessage = this.save(em);
-
+            
             if (returnMessage.isSuccess()) {
                 // Save job sequence number since it was used by this job
                 if (nextJobSequenceNumber != null) {
                     nextJobSequenceNumber.save(em);
                 }
-
+                
                 this.clean();
             } else {
-
+                
                 return new ReturnMessage(false,
                         "Undefined Error!",
                         "An undefined error occurred while saving job "
@@ -428,9 +428,9 @@ public class Job implements Serializable, BusinessEntity {
                         + returnMessage.getDetail(),
                         Message.SEVERITY_ERROR_NAME);
             }
-
+            
         } catch (Exception e) {
-
+            
             return new ReturnMessage(false,
                     "Undefined Error!",
                     "An undefined error occurred while saving job "
@@ -438,30 +438,30 @@ public class Job implements Serializable, BusinessEntity {
                     + e,
                     Message.SEVERITY_ERROR_NAME);
         }
-
+        
         return new ReturnMessage();
-
+        
     }
-
+    
     public void clean() {
         this.setIsToBeCopied(false);
         this.setIsToBeSubcontracted(false);
         this.setIsDirty(false);
     }
-
+    
     public static Job copy(EntityManager em,
             Job currentJob,
             User user,
             Boolean autoGenerateJobNumber,
             Boolean copySamples) {
         Job job = new Job();
-
+        
         job.setClient(new Client("", false));
         job.setIsToBeCopied(true);
-
+        
         job.setReportNumber("");
         job.setJobDescription("");
-
+        
         job.setBusinessOffice(currentJob.getBusinessOffice());
         job.setDepartment(currentJob.getDepartment());
         job.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
@@ -501,25 +501,25 @@ public class Job implements Serializable, BusinessEntity {
         if (job.getAutoGenerateJobNumber()) {
             job.setJobNumber(Job.getJobNumber(job, em));
         }
-
+        
         return job;
     }
-
+    
     public static Job create(EntityManager em,
             String name,
             User user,
             Boolean autoGenerateJobNumber) {
-
+        
         Job job = Job.create(em, user, autoGenerateJobNumber);
         job.name = name;
-
+        
         return job;
     }
-
+    
     public static Job create(EntityManager em,
             User user,
             Boolean autoGenerateJobNumber) {
-
+        
         Job job = new Job();
         job.setClient(new Client("", false));
         job.setBillingAddress(job.getClient().getDefaultAddress());
@@ -550,17 +550,17 @@ public class Job implements Serializable, BusinessEntity {
         if (job.getAutoGenerateJobNumber()) {
             job.setJobNumber(Job.getJobNumber(job, em));
         }
-
+        
         return job;
     }
-
+    
     public static String getJobNumber(Job job, EntityManager em) {
         Calendar c = Calendar.getInstance();
         String departmentOrCompanyCode;
         String year = "?";
         String sequenceNumber;
         String subContractedDepartmenyOrCompanyCode;
-
+        
         departmentOrCompanyCode = job.getDepartment().getCode().equals("") ? "?" : job.getDepartment().getCode();
         subContractedDepartmenyOrCompanyCode = job.getSubContractedDepartment().getCode().equals("") ? "?" : job.getSubContractedDepartment().getCode();
 
@@ -585,7 +585,7 @@ public class Job implements Serializable, BusinessEntity {
         if (!subContractedDepartmenyOrCompanyCode.equals("?")) {
             job.setJobNumber(job.getJobNumber() + "/" + subContractedDepartmenyOrCompanyCode);
         }
-
+        
         Boolean includeRef = (Boolean) SystemOption.getOptionValueObject(em,
                 "includeSampleReference");
 
@@ -597,32 +597,32 @@ public class Job implements Serializable, BusinessEntity {
                         + BusinessEntityUtils.getAlphaCode(job.getNumberOfSamples() - 1));
             }
         }
-
+        
         return job.getJobNumber();
     }
-
+    
     public Boolean getIsToBeCopied() {
         return isToBeCopied;
     }
-
+    
     public void setIsToBeCopied(Boolean isToBeCopied) {
         this.isToBeCopied = isToBeCopied;
     }
-
+    
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
         }
-
+        
         return isDirty;
     }
-
+    
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
-
+    
     public Contact getContact() {
         if (contact == null) {
             if (client != null) {
@@ -633,11 +633,11 @@ public class Job implements Serializable, BusinessEntity {
         }
         return contact;
     }
-
+    
     public void setContact(Contact contact) {
         this.contact = contact;
     }
-
+    
     public Address getBillingAddress() {
         if (billingAddress == null) {
             if (client != null) {
@@ -648,53 +648,53 @@ public class Job implements Serializable, BusinessEntity {
         }
         return billingAddress;
     }
-
+    
     public void setBillingAddress(Address billingAddress) {
         this.billingAddress = billingAddress;
     }
-
+    
     public Boolean getIsToBeSubcontracted() {
         return isToBeSubcontracted;
     }
-
+    
     public void setIsToBeSubcontracted(Boolean isToBeSubcontracted) {
         this.isToBeSubcontracted = isToBeSubcontracted;
     }
-
+    
     public Boolean getEstimatedTurnAroundTimeRequired() {
         if (estimatedTurnAroundTimeRequired == null) {
             estimatedTurnAroundTimeRequired = true;
         }
         return estimatedTurnAroundTimeRequired;
     }
-
+    
     public void setEstimatedTurnAroundTimeRequired(Boolean estimatedTurnAroundTimeRequired) {
         this.estimatedTurnAroundTimeRequired = estimatedTurnAroundTimeRequired;
     }
-
+    
     public String getInstructions() {
         if (instructions == null) {
             instructions = "";
         }
         return instructions;
     }
-
+    
     public void setInstructions(String instructions) {
         this.instructions = instructions;
     }
-
+    
     public Boolean getIsSubContract() {
         return !(getSubContractedDepartment().getName().equals("")
                 || getSubContractedDepartment().getName().equals("--"));
     }
-
+    
     public List<Job> getSubcontracts(EntityManager em) {
-
+        
         return findSubcontracts(em);
     }
-
+    
     public List<Job> getPossibleSubcontracts(EntityManager em) {
-
+        
         return findPossibleSubcontracts(em);
     }
 
@@ -737,109 +737,109 @@ public class Job implements Serializable, BusinessEntity {
         }
         return noOfTests;
     }
-
+    
     public void setNoOfTests(Integer noOfTests) {
         this.noOfTests = noOfTests;
     }
-
+    
     public Integer getNoOfCalibrations() {
         if (noOfCalibrations == null) {
             noOfCalibrations = 0;
         }
         return noOfCalibrations;
     }
-
+    
     public void setNoOfCalibrations(Integer noOfCalibrations) {
         this.noOfCalibrations = noOfCalibrations;
     }
-
+    
     public Job(JobSubCategory jobSubCategory, Double finalCost) {
         this.isToBeSubcontracted = false;
         this.jobCostingAndPayment = new JobCostingAndPayment();
         this.jobCostingAndPayment.setFinalCost(finalCost);
         this.jobSubCategory = jobSubCategory;
     }
-
+    
     @Override
     public Long getId() {
         return id;
     }
-
+    
     @Override
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     public String getJobDescription() {
         if (jobDescription == null) {
             jobDescription = getDefaultJobDescription();
         } else if (jobDescription.trim().equals("")) {
             jobDescription = getDefaultJobDescription();
         }
-
+        
         return jobDescription;
     }
-
+    
     public void setJobDescription(String jobDescription) {
         this.jobDescription = jobDescription;
     }
-
+    
     public String getDefaultJobDescription() {
-
+        
         return this.instructions;
     }
-
+    
     public Boolean getNewClient() {
         return newClient;
     }
-
+    
     public void setNewClient(Boolean newClient) {
         this.newClient = newClient;
     }
-
+    
     public Classification getClassification() {
         return classification;
     }
-
+    
     public void setClassification(Classification classification) {
         this.classification = classification;
     }
-
+    
     public Sector getSector() {
         return sector;
     }
-
+    
     public void setSector(Sector sector) {
         this.sector = sector;
     }
-
+    
     public JobStatusAndTracking getJobStatusAndTracking() {
         return jobStatusAndTracking;
     }
-
+    
     public void setJobStatusAndTracking(JobStatusAndTracking jobStatusAndTracking) {
         this.jobStatusAndTracking = jobStatusAndTracking;
     }
-
+    
     public JobCostingAndPayment getJobCostingAndPayment() {
         return jobCostingAndPayment;
     }
-
+    
     public void setJobCostingAndPayment(JobCostingAndPayment jobCostingAndPayment) {
         this.jobCostingAndPayment = jobCostingAndPayment;
     }
-
+    
     public Integer getYearReceived() {
         return yearReceived;
     }
-
+    
     public void setYearReceived(Integer yearReceived) {
         this.yearReceived = yearReceived;
     }
-
+    
     public String getJobSampleDescriptions() {
         String description = "";
-
+        
         if (getJobSamples().isEmpty() || hasOnlyDefaultJobSample()) {
             return "None";
         } else {
@@ -851,10 +851,10 @@ public class Job implements Serializable, BusinessEntity {
                 }
             }
         }
-
+        
         return description;
     }
-
+    
     public Boolean hasOnlyDefaultJobSample() {
         return (getJobSamples().size() == 1) && (getJobSamples().get(0).getDescription().trim().equals("--"));
     }
@@ -871,7 +871,7 @@ public class Job implements Serializable, BusinessEntity {
             return getJobSamples();
         }
     }
-
+    
     @XmlTransient
     //@JsonIgnore
     public List<JobSample> getJobSamples() {
@@ -880,65 +880,65 @@ public class Job implements Serializable, BusinessEntity {
         } else {
             jobSamples = new ArrayList<>();
         }
-
+        
         return jobSamples;
     }
-
+    
     public void setJobSamples(List<JobSample> jobSamples) {
         this.jobSamples = jobSamples;
     }
-
+    
     public BusinessOffice getBusinessOffice() {
         return businessOffice;
     }
-
+    
     public void setBusinessOffice(BusinessOffice businessOffice) {
         this.businessOffice = businessOffice;
     }
-
+    
     public ServiceContract getServiceContract() {
         return serviceContract;
     }
-
+    
     public void setServiceContract(ServiceContract serviceContract) {
         this.serviceContract = serviceContract;
     }
-
+    
     public Boolean getAutoGenerateJobNumber() {
         if (autoGenerateJobNumber == null) {
             autoGenerateJobNumber = true;
         }
         return autoGenerateJobNumber;
     }
-
+    
     public void setAutoGenerateJobNumber(Boolean autoGenerateJobNumber) {
         this.autoGenerateJobNumber = autoGenerateJobNumber;
     }
-
+    
     public Client getClient() {
         if (client == null) {
             return new Client("");
         }
         return client;
     }
-
+    
     public void setClient(Client client) {
         this.client = client;
     }
-
+    
     public Department getDepartment() {
         if (department == null) {
             return new Department("");
         }
         return department;
     }
-
+    
     public void setDepartment(Department department) {
         this.department = department;
     }
-
+    
     public Department getDepartmentAssignedToJob() {
-
+        
         if (getSubContractedDepartment().getName().equals("--")) {
             // This is not a subcontracted job see return to parent department            
             return getDepartment();
@@ -946,149 +946,149 @@ public class Job implements Serializable, BusinessEntity {
             return getSubContractedDepartment();
         }
     }
-
+    
     public Employee getAssignedTo() {
         if (assignedTo == null) {
             return new Employee();
         }
         return assignedTo;
     }
-
+    
     public void setAssignedTo(Employee assignedTo) {
         this.assignedTo = assignedTo;
     }
-
+    
     public JobCategory getJobCategory() {
         return jobCategory;
     }
-
+    
     public void setJobCategory(JobCategory jobCategory) {
         this.jobCategory = jobCategory;
     }
-
+    
     public JobSubCategory getJobSubCategory() {
         return jobSubCategory;
     }
-
+    
     public void setJobSubCategory(JobSubCategory jobSubCategory) {
         this.jobSubCategory = jobSubCategory;
     }
-
+    
     public Department getSubContractedDepartment() {
         if (subContractedDepartment == null) {
             return new Department("");
         }
         return subContractedDepartment;
     }
-
+    
     public void setSubContractedDepartment(Department subContractedDepartment) {
         this.subContractedDepartment = subContractedDepartment;
     }
-
+    
     public String getComment() {
         if (comment == null) {
             comment = "";
         }
         return comment;
     }
-
+    
     public void setComment(String comment) {
         this.comment = comment;
     }
-
+    
     public Integer getEstimatedTurnAroundTimeInDays() {
         if (estimatedTurnAroundTimeInDays == null) {
             estimatedTurnAroundTimeInDays = 0;
         }
         return estimatedTurnAroundTimeInDays;
     }
-
+    
     public void setEstimatedTurnAroundTimeInDays(Integer estimatedTurnAroundTimeInDays) {
         this.estimatedTurnAroundTimeInDays = estimatedTurnAroundTimeInDays;
     }
-
+    
     public Boolean getIsEarningJob() {
         return isEarningJob;
     }
-
+    
     public void setIsEarningJob(Boolean isEarningJob) {
         this.isEarningJob = isEarningJob;
     }
-
+    
     public Long getJobSequenceNumber() {
         return jobSequenceNumber;
     }
-
+    
     public void setJobSequenceNumber(Long jobSequenceNumber) {
         this.jobSequenceNumber = jobSequenceNumber;
     }
-
+    
     public Boolean getLocked() {
         return locked;
     }
-
+    
     public void setLocked(Boolean locked) {
         this.locked = locked;
     }
-
+    
     public Integer getNoOfTestsOrCalibrations() {
         if (noOfTestsOrCalibrations == null) {
             noOfTestsOrCalibrations = 0;
         }
         return noOfTestsOrCalibrations;
     }
-
+    
     public void setNoOfTestsOrCalibrations(Integer noOfTestsOrCalibrations) {
         this.noOfTestsOrCalibrations = noOfTestsOrCalibrations;
     }
-
+    
     public Long getNumberOfSamples() {
         if (numberOfSamples == null) {
             numberOfSamples = 0L;
         }
         return numberOfSamples;
     }
-
+    
     public Long getNumberOfSampleProducts() {
         Long total = 0L;
-
+        
         for (JobSample jobSample : getJobSamples()) {
             total = total + jobSample.getQuantity();
         }
-
+        
         return total;
     }
-
+    
     public void setNumberOfSamples(Long numberOfSamples) {
         this.numberOfSamples = numberOfSamples;
     }
-
+    
     public String getReportNumber() {
         return reportNumber;
     }
-
+    
     public void setReportNumber(String reportNumber) {
         this.reportNumber = reportNumber;
     }
-
+    
     public String getJobNumber() {
         if (jobNumber == null) {
             jobNumber = "";
         }
         return jobNumber;
     }
-
+    
     public void setJobNumber(String jobNumber) {
         this.jobNumber = jobNumber;
     }
-
+    
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
-
+    
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -1096,34 +1096,34 @@ public class Job implements Serializable, BusinessEntity {
             return false;
         }
         Job other = (Job) object;
-
+        
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
-
+    
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
-
+    
     @Override
     public String toString() {
         if (id == null) {
             return "null";
         }
-
+        
         return id.toString();
     }
-
+    
     @Override
     public String getName() {
         return name;
     }
-
+    
     @Override
     public void setName(String name) {
         this.name = name;
     }
-
+    
     public static Job findLastClientJob(EntityManager em, Client client) {
         Job lastJob = null;
         String searchQuery;
@@ -1151,25 +1151,26 @@ public class Job implements Serializable, BusinessEntity {
                 lastJob = jobs.get(jobs.size() - 1);
             }
         }
-
+        
         return lastJob;
     }
-
+    
     public static List<Job> findJobsByDateSearchField(
             EntityManager em,
             User user,
             DatePeriod dateSearchPeriod,
             String searchType,
             String searchText,
-            Boolean includeSampleSearch) {
-
+            Boolean includeSampleSearch,
+            Integer maxResults) {
+        
         List<Job> foundJobs;
         String searchQuery = null;
         String searchTextAndClause;
         String sampleSearchWhereClause = "";
         String sampleSearchJoinClause = "";
         String selectClause = "SELECT DISTINCT job FROM Job job";
-
+        
         if (searchText != null) {
             searchText = searchText.trim().replaceAll("'", "''");
         } else {
@@ -1178,7 +1179,7 @@ public class Job implements Serializable, BusinessEntity {
 
         // include the search for samples?
         if (includeSampleSearch) {
-
+            
             sampleSearchWhereClause
                     = " OR UPPER(jobSamples.reference) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.description) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -1187,10 +1188,10 @@ public class Job implements Serializable, BusinessEntity {
                     + " OR UPPER(jobSamples.productModel) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.productSerialNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(jobSamples.productCode) LIKE '%" + searchText.toUpperCase() + "%'";
-
+            
             sampleSearchJoinClause = " JOIN job.jobSamples jobSamples";
         }
-
+        
         switch (searchType) {
             case "Appr'd & uninv'd jobs":
                 searchTextAndClause
@@ -1526,17 +1527,21 @@ public class Job implements Serializable, BusinessEntity {
                 break;
             default:
                 System.out.println("Default search to be implemented");
-
+                
                 break;
         }
-
+        
         try {
-            foundJobs = em.createQuery(searchQuery, Job.class).getResultList();
+            if (maxResults == 0) {
+                foundJobs = em.createQuery(searchQuery, Job.class).getResultList();
+            } else {
+                foundJobs = em.createQuery(searchQuery, Job.class).setMaxResults(maxResults).getResultList();
+            }
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
-
+        
         return foundJobs;
     }
 
@@ -1556,7 +1561,7 @@ public class Job implements Serializable, BusinessEntity {
                     + " WHERE (t.dateSubmitted >= " + BusinessEntityUtils.getDateString(datePeriod.getStartDate(), "'", "YMD", "-")
                     + " AND t.dateSubmitted <= " + BusinessEntityUtils.getDateString(datePeriod.getEndDate(), "'", "YMD", "-") + ")"
                     + " AND t.alertDate IS NULL", Job.class).getResultList();
-
+            
             return jobs;
         } catch (Exception e) {
             System.out.println(e);
@@ -1580,35 +1585,35 @@ public class Job implements Serializable, BusinessEntity {
                     + " WHERE (t.dateSubmitted >= " + BusinessEntityUtils.getDateString(datePeriod.getStartDate(), "'", "YMD", "-")
                     + " AND t.dateSubmitted <= " + BusinessEntityUtils.getDateString(datePeriod.getEndDate(), "'", "YMD", "-") + ")"
                     + " AND t.dateJobEmailWasSent IS NULL", Job.class).getResultList();
-
+            
             return jobs;
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
-
+    
     public static List<Job> findAllJobs(EntityManager em) {
-
+        
         try {
             List<Job> jobs = em.createNamedQuery("findAllJobs", Job.class).getResultList();
-
+            
             return jobs;
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
-
+    
     public static List<Job> findJobsByBusinessOfficeId(EntityManager em, Long businessOfficeId) {
-
+        
         try {
-
+            
             List<Job> jobs = em.createQuery(
                     "SELECT j FROM Job j"
                     + " JOIN j.businessOffice businessOffice"
                     + " WHERE businessOffice.id = " + businessOfficeId, Job.class).getResultList();
-
+            
             return jobs;
         } catch (Exception e) {
             System.out.println(e);
@@ -1624,14 +1629,14 @@ public class Job implements Serializable, BusinessEntity {
      * @return
      */
     public static Job findJobByJobNumber(EntityManager em, String jobNumber) {
-
+        
         try {
             String newJobNumber = jobNumber.trim().replaceAll("'", "''");
-
+            
             List<Job> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE UPPER(j.jobNumber) "
                     + "= '" + newJobNumber.toUpperCase() + "'", Job.class).getResultList();
-
+            
             if (!jobs.isEmpty()) {
                 return jobs.get(0);
             } else {
@@ -1642,20 +1647,20 @@ public class Job implements Serializable, BusinessEntity {
             return null;
         }
     }
-
+    
     public static Job findParentJob(EntityManager em, Integer yearReceived, Long jobSequenceNumber) {
         return null;
     }
-
+    
     public static Job findJobByYearReceivedAndJobSequence(EntityManager em, Integer yearReceived, Long jobSequenceNumber) {
-
+        
         try {
-
+            
             List<Job> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE j.yearReceived = "
                     + yearReceived.toString() + " AND j.jobSequenceNumber = "
                     + jobSequenceNumber.toString(), Job.class).getResultList();
-
+            
             if (!jobs.isEmpty()) {
                 return jobs.get(0);
             } else {
@@ -1666,44 +1671,44 @@ public class Job implements Serializable, BusinessEntity {
             return null;
         }
     }
-
+    
     public static Job findJobById(EntityManager em, Long id) {
-
+        
         try {
             Job job = em.find(Job.class, id);
-
+            
             return job;
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
-
+    
     public static List<Job> findIncompleteSubcontracts(EntityManager em, Job job) {
         List<Job> foundJobs;
         ArrayList<Job> incompleteSubcontracts = new ArrayList<>();
-
+        
         foundJobs = findJobsByYearReceivedAndJobSequenceNumber(em, job.yearReceived, job.jobSequenceNumber);
         for (Job foundJob : foundJobs) {
             if (foundJob.getIsSubContract() && !foundJob.getJobStatusAndTracking().getCompleted()) {
                 incompleteSubcontracts.add(foundJob);
             }
         }
-
+        
         return incompleteSubcontracts;
     }
-
+    
     public static List<Job> findJobsByYearReceivedAndJobSequenceNumber(
             EntityManager em,
             Integer yearReceived,
             Long jobSequenceNumber) {
         try {
-
+            
             List<Job> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE j.yearReceived = "
                     + yearReceived.toString() + " AND j.jobSequenceNumber = "
                     + jobSequenceNumber.toString(), Job.class).getResultList();
-
+            
             return jobs;
         } catch (Exception e) {
             System.out.println(e);
@@ -1713,17 +1718,18 @@ public class Job implements Serializable, BusinessEntity {
 
     /**
      * This method find all subcontracts for a job.
+     *
      * @param em
      * @return
      */
     public List<Job> findSubcontracts(EntityManager em) {
         try {
-
+            
             List<Job> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE (j.parent.id = " + this.id + " AND j.id <> " + this.id + ")", Job.class).getResultList();
-
+            
             return jobs;
-
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -1737,7 +1743,7 @@ public class Job implements Serializable, BusinessEntity {
      */
     public List<Job> findPossibleSubcontracts(EntityManager em) {
         List<Job> possibleSubcontracts = new ArrayList<>();
-
+        
         List<Job> jobs = Job.findJobsByYearReceivedAndJobSequenceNumber(em,
                 this.getYearReceived(),
                 this.getJobSequenceNumber());
@@ -1748,19 +1754,19 @@ public class Job implements Serializable, BusinessEntity {
                 }
             }
         }
-
+        
         return possibleSubcontracts;
     }
-
+    
     public static List<String> getJobNumbersWithCosts(List<Job> jobs) {
         List<String> jobNumbersWithCosts = new ArrayList<>();
         DecimalFormat formatter = new DecimalFormat("$#,##0.00");
-
+        
         for (Job job : jobs) {
             jobNumbersWithCosts.add(job.getJobNumber()
                     + " (" + formatter.format(job.getJobCostingAndPayment().getFinalCost()) + ")");
         }
-
+        
         return jobNumbersWithCosts;
     }
 
@@ -1798,10 +1804,10 @@ public class Job implements Serializable, BusinessEntity {
 //        this.getJobCostingAndPayment().calculateAmountDue();
 //    }
     public static List<String> findJobNumbers(EntityManager em, String query) {
-
+        
         try {
             String newName = query.replaceAll("'", "''");
-
+            
             List<String> numbers
                     = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) like '"
                             + newName.toUpperCase().trim() + "%'"
@@ -1812,12 +1818,12 @@ public class Job implements Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-
+    
     public static List<Job> findJobsWithJobCosting(
             EntityManager em,
             String originalDepartmentName,
             String originalSearchText) {
-
+        
         List<Job> foundJobs;
         String searchQuery;
         String searchTextAndClause = "";
@@ -1838,12 +1844,12 @@ public class Job implements Serializable, BusinessEntity {
         } else {
             departmentName = "";
         }
-
+        
         joinClause
                 = " JOIN job.department department"
                 + " JOIN job.subContractedDepartment subContractedDepartment"
                 + " JOIN job.jobCostingAndPayment jobCostingAndPayment";
-
+        
         if (!searchText.equals("") && !departmentName.equals("")) {
             searchTextAndClause
                     = " AND ("
@@ -1867,7 +1873,7 @@ public class Job implements Serializable, BusinessEntity {
                     + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " )";
         }
-
+        
         searchQuery
                 = "SELECT job FROM Job job"
                 + joinClause
@@ -1883,7 +1889,7 @@ public class Job implements Serializable, BusinessEntity {
             System.out.println(e);
             return new ArrayList<>();
         }
-
+        
         return foundJobs;
     }
 
@@ -1901,7 +1907,7 @@ public class Job implements Serializable, BusinessEntity {
             String startDate,
             String endDate,
             Long departmentId) {
-
+        
         String reportSQL = "SELECT"
                 + "     GROUP_CONCAT(jobsample.`NAME` SEPARATOR ', ') AS samples," // 0
                 + "     GROUP_CONCAT(jobsample.`PRODUCTBRAND` SEPARATOR ', ') AS sampleBrands," // 1
@@ -2002,14 +2008,14 @@ public class Job implements Serializable, BusinessEntity {
                 + " ORDER BY"
                 + "     job.`ID` DESC,"
                 + "     employee.`LASTNAME` ASC";
-
+        
         try {
             return em.createNativeQuery(reportSQL).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
-
+        
     }
 
     // tk  job records based on jobstatusandtracking date
@@ -2019,7 +2025,7 @@ public class Job implements Serializable, BusinessEntity {
             String startDate,
             String endDate,
             Long departmentId) {
-
+        
         String reportSQL = "SELECT\n"
                 + "     GROUP_CONCAT(jobsample.`DESCRIPTION` SEPARATOR ', ') AS samples,\n" //0
                 + "     job.`ID` AS job_ID,\n" //1
@@ -2065,37 +2071,37 @@ public class Job implements Serializable, BusinessEntity {
                 + "     job.`ID`"
                 + " ORDER BY"
                 + "     employee.`NAME` ASC";
-
+        
         try {
             return em.createNativeQuery(reportSQL).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
-
+        
     }
-
+    
     @Override
     public ReturnMessage save(EntityManager em) {
         ReturnMessage returnMessage;
-
+        
         try {
             // Save samples
             if (!this.getJobSamples().isEmpty()) {
                 for (JobSample jobSample : this.getJobSamples()) {
                     // Save newly entered samples 
                     returnMessage = jobSample.save(em);
-
+                    
                     if ((jobSample.getIsDirty() || jobSample.getId() == null)
                             && !returnMessage.isSuccess()) {
-
+                        
                         return new ReturnMessage(false,
                                 "Job sample save error occurred",
                                 "An error occurred while saving job sample"
                                 + jobSample.getReference()
                                 + "\nDetails: " + returnMessage.getDetail(),
                                 Message.SEVERITY_ERROR_NAME);
-
+                        
                     }
                     // "Clean" sample
                     jobSample.setIsDirty(false);
@@ -2112,9 +2118,9 @@ public class Job implements Serializable, BusinessEntity {
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
-
+            
             return new ReturnMessage();
-
+            
         } catch (Exception e) {
             return new ReturnMessage(false,
                     "Job save error occurred!",
@@ -2122,9 +2128,9 @@ public class Job implements Serializable, BusinessEntity {
                     + "\n" + e,
                     Message.SEVERITY_ERROR_NAME);
         }
-
+        
     }
-
+    
     @Override
     public ReturnMessage validate(EntityManager em) {
         Job currentlySavedJob = null;
@@ -2134,12 +2140,12 @@ public class Job implements Serializable, BusinessEntity {
         if (currentJob.getId() != null) {
             currentlySavedJob = Job.findJobById(em, currentJob.getId());
         }
-
+        
         if (!BusinessEntityUtils.validateName(currentJob.getBusinessOffice().getName())) {
-
+            
             return new ReturnMessage(false, "This job cannot be saved because a valid business office was not entered.");
         }
-
+        
         BusinessOffice Office = BusinessOffice.findBusinessOfficeByName(em, currentJob.getBusinessOffice().getName());
         if (Office != null) {
             em.refresh(Office);
@@ -2169,7 +2175,7 @@ public class Job implements Serializable, BusinessEntity {
             return new ReturnMessage(false,
                     "This job cannot be saved. Please select a valid client from the list."
                     + "You may create a new client if you have the privilege and the client's name does not appear in the list.");
-
+            
         } else if (currentJob.getClient().getId() != null) {
             currentJob.setClient(Client.getClientById(em, currentJob.getClient().getId()));
         }
@@ -2198,7 +2204,7 @@ public class Job implements Serializable, BusinessEntity {
 
             // Reset current subcontracted department
             currentJob.setSubContractedDepartment(currentlySavedJob.getSubContractedDepartment());
-
+            
             return new ReturnMessage(false, "Please enter a valid subcontracted department.");
         }
 
@@ -2224,7 +2230,7 @@ public class Job implements Serializable, BusinessEntity {
             currentJob.setAssignedTo(assignee);
         } else {
             currentJob.setAssignedTo(Employee.findDefaultEmployee(em, "--", "--", true));
-
+            
             return new ReturnMessage(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
         }
 
@@ -2242,21 +2248,21 @@ public class Job implements Serializable, BusinessEntity {
         } else {
             currentJob.setClassification(classn);
         }
-
+        
         Sector sect = Sector.findSectorById(em, currentJob.getSector().getId());
         if (sect == null) {
             return new ReturnMessage(false, "Please select/enter a sector.\"");
         } else {
             currentJob.setSector(sect);
         }
-
+        
         JobCategory category = JobCategory.findJobCategoryById(em, currentJob.getJobCategory().getId());
         if (category == null) {
             return new ReturnMessage(false, "Please select/enter a job category.");
         } else {
             currentJob.setJobCategory(category);
         }
-
+        
         JobSubCategory subCategory = JobSubCategory.findJobSubCategoryById(em, currentJob.getJobSubCategory().getId());
         if (subCategory == null) {
             return new ReturnMessage(false, "Please select/enter a job subcategory.");
@@ -2280,21 +2286,21 @@ public class Job implements Serializable, BusinessEntity {
                 }
             }
         }
-
+        
         if (currentJob.getJobStatusAndTracking().getCompleted()
                 && currentJob.getJobCostingAndPayment().getFinalCost() == 0.0) {
-
+            
             return new ReturnMessage(false, "A job cannot have a completed 'Work progress' without a final cost.");
         }
-
+        
         return new ReturnMessage();
     }
-
+    
     public Boolean validateJobNumber(String jobNumber, Boolean auto) {
         Integer departmentCode = 0;
         Integer year;
         Long sequenceNumber = 0L;
-
+        
         String parts[] = jobNumber.split("/");
         if (parts != null) {
             // check for correct number of parts
@@ -2358,5 +2364,5 @@ public class Job implements Serializable, BusinessEntity {
             return false;
         }
     }
-
+    
 }

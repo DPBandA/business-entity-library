@@ -749,7 +749,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
                             + value + "%'"
                             + " AND c.active = 1"
-                            + " ORDER BY c.id", Client.class).getResultList();
+                            + " ORDER BY c.id", Client.class).setMaxResults(10).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
