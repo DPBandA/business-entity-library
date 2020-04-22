@@ -421,6 +421,11 @@ public class Job implements Serializable, BusinessEntity {
                 this.clean();
             } else {
                 
+                // Reset the sequence number here if the job is new.
+                if (this.getId() == null) {
+                    this.setJobSequenceNumber(null);
+                }
+                
                 return new ReturnMessage(false,
                         "Undefined Error!",
                         "An undefined error occurred while saving job "
