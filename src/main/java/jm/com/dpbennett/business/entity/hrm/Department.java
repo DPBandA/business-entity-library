@@ -246,7 +246,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         return staff;
     }
 
-    public void setStaff(ArrayList<Employee> staff) {
+    public void setStaff(List<Employee> staff) {
         this.staff = staff;
     }
 
