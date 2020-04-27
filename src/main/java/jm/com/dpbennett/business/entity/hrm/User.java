@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,8 +53,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "jobmanageruser")
 @NamedQueries({
-    @NamedQuery(name = "findAllJobManagerUsers", query = "SELECT e FROM User e ORDER BY e.username")
-    ,@NamedQuery(name = "findByJobManagerUsername", query = "SELECT e FROM User e WHERE UPPER(e.username) = :username")
+    @NamedQuery(name = "findAllJobManagerUsers", query = "SELECT e FROM User e ORDER BY e.username"),
+    @NamedQuery(name = "findByJobManagerUsername", query = "SELECT e FROM User e WHERE UPPER(e.username) = :username")
 
 })
 @XmlRootElement
@@ -76,7 +77,7 @@ public class User implements Serializable, BusinessEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-    @OneToOne(cascade = CascadeType.REFRESH)    
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Privilege privilege;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Modules modules;
@@ -88,6 +89,32 @@ public class User implements Serializable, BusinessEntity {
         privilege = new Privilege();
         modules = new Modules();
         username = "";
+    }
+
+    /**
+     * Returns the business/organization to which the user's department belong.
+     * The user's department is obtained through it's employee reference.
+     * @param em
+     * @param user
+     * @return 
+     */
+    public static Business getUserOrganizationByDepartment(EntityManager em, User user) {
+
+        try {
+            Department department = user.getEmployee().getDepartment();
+            for (Business business : Business.findAllBusinesses(em)) {
+                for (Department dept : business.getDepartments()) {
+                    if (Objects.equals(department.getId(), dept.getId())) {
+                        return business;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error occurred while getting the organization of a user: " + e);
+        }
+
+        return null;
     }
 
     public Boolean getActive() {
@@ -137,7 +164,7 @@ public class User implements Serializable, BusinessEntity {
     public Boolean getIsJobCostingsPreferredJobTableView() {
         return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Job Costings");
     }
-   
+
     public static Boolean isUserDepartmentSupervisor(Job job, User user, EntityManager em) {
 
         Job foundJob = Job.findJobById(em, job.getId());
@@ -317,7 +344,6 @@ public class User implements Serializable, BusinessEntity {
 //    public void setDepartment(Department department) {
 //        this.department = department;
 //    }
-
     public String getUsername() {
         if (username == null) {
             username = "";
@@ -408,8 +434,8 @@ public class User implements Serializable, BusinessEntity {
         String newUsername = username.replaceAll("'", "''");
         try {
 
-            List<User> users = em.createQuery("SELECT j FROM User j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '" + 
-                            newUsername + "'", User.class).getResultList();
+            List<User> users = em.createQuery("SELECT j FROM User j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '"
+                    + newUsername + "'", User.class).getResultList();
 
             if (users.size() > 0) {
                 return users.get(0);

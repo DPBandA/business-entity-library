@@ -57,6 +57,7 @@ import jm.com.dpbennett.business.entity.fm.JobCostingAndPayment;
 import jm.com.dpbennett.business.entity.fm.JobSubCategory;
 import jm.com.dpbennett.business.entity.fm.Sector;
 import jm.com.dpbennett.business.entity.fm.Service;
+import jm.com.dpbennett.business.entity.hrm.Business;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
@@ -116,6 +117,8 @@ public class Job implements Serializable, BusinessEntity {
     private ServiceContract serviceContract;
     @OneToOne(cascade = CascadeType.ALL)
     private JobStatusAndTracking jobStatusAndTracking;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Business business;
     @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice businessOffice;
     @Column(length = 1024)
@@ -467,6 +470,7 @@ public class Job implements Serializable, BusinessEntity {
         job.setReportNumber("");
         job.setJobDescription("");
         
+        job.setBusiness(currentJob.getBusiness());
         job.setBusinessOffice(currentJob.getBusinessOffice());
         job.setDepartment(currentJob.getDepartment());
         job.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
@@ -532,6 +536,7 @@ public class Job implements Serializable, BusinessEntity {
         job.setReportNumber("");
         job.setJobDescription("");
         job.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
+        job.setBusiness(User.getUserOrganizationByDepartment(em, user));
         job.setBusinessOffice(BusinessOffice.findDefaultBusinessOffice(em, "Head Office"));
         job.setClassification(new Classification());
         job.setSector(Sector.findSectorByName(em, "--"));
@@ -891,6 +896,14 @@ public class Job implements Serializable, BusinessEntity {
     
     public void setJobSamples(List<JobSample> jobSamples) {
         this.jobSamples = jobSamples;
+    }
+
+    public Business getBusiness() {
+        return business;
+    }
+
+    public void setBusiness(Business business) {
+        this.business = business;
     }
     
     public BusinessOffice getBusinessOffice() {
