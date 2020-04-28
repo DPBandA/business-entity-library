@@ -42,8 +42,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "privilege")
 @NamedQueries({
-    @NamedQuery(name = "findAllPrivileges", query = "SELECT p FROM Privilege p ORDER BY p.name")
-    ,
+    @NamedQuery(name = "findAllPrivileges", query = "SELECT p FROM Privilege p ORDER BY p.name"),
     @NamedQuery(name = "findByPrivilegesName", query = "SELECT p FROM Privilege p WHERE p.name = :name")
 })
 @XmlRootElement
@@ -59,7 +58,7 @@ public class Privilege implements Serializable, BusinessEntity {
     private String roles;
     private String description;
     // System admininistration privileges    
-    private Boolean canBeSuperUser;    
+    private Boolean canBeSuperUser;
     private Boolean canBeJMTSAdministrator;
     // Job privileges
     private Boolean canEnterJob;
@@ -71,6 +70,7 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canEditDepartmentJob;
     private Boolean canApproveJobCosting;
     private Boolean canEnterParentJob;
+    private Boolean canEditDisabledJobField;
     // Client privileges 
     private Boolean canAddClient;
     private Boolean canDeleteClient;
@@ -80,9 +80,9 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canAddDepartment;
     private Boolean canDeleteDepartment;
     // Compliance privileges
-    private Boolean canAuthDetentionRequest; //CANAUTHDETENTIONREQUEST, Authorize detention request
-    private Boolean canAuthDetentionNotice; //CANAUTHDETENTIONNOTICE, Authorize detention notice/release
-    private Boolean canApprvReleaseRequest; //CANAPPRVRELEASEREQUEST, Approve release request    
+    private Boolean canAuthDetentionRequest;
+    private Boolean canAuthDetentionNotice;
+    private Boolean canApprvReleaseRequest;
     // Financial privileges
     private Boolean canBeFinancialAdministrator;
     private Boolean canEditInvoicingAndPayment;
@@ -102,7 +102,7 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canAccessCRMUnit;
     private Boolean canAccessHRMUnit;
     private Boolean canAccessReportUnit;
-        
+
     @Transient
     private Boolean isDirty;
 
@@ -181,7 +181,7 @@ public class Privilege implements Serializable, BusinessEntity {
     public void setCanAccessReportUnit(Boolean canAccessReportUnit) {
         this.canAccessReportUnit = canAccessReportUnit;
     }
-    
+
     public Boolean getCanAccessCRMUnit() {
         if (canAccessCRMUnit == null) {
             canAccessCRMUnit = false;
@@ -402,6 +402,17 @@ public class Privilege implements Serializable, BusinessEntity {
 
     public void setCanEnterParentJob(Boolean canEnterParentJob) {
         this.canEnterParentJob = canEnterParentJob;
+    }
+
+    public Boolean getCanEditDisabledJobField() {
+        if (canEditDisabledJobField == null) {
+            canEditDisabledJobField = false;
+        }
+        return canEditDisabledJobField;
+    }
+
+    public void setCanEditDisabledJobField(Boolean canEditDisabledJobField) {
+        this.canEditDisabledJobField = canEditDisabledJobField;
     }
 
     public Boolean getCanEnterOwnJob() {
