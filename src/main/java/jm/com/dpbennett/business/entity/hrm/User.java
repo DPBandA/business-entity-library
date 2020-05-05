@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -91,12 +92,33 @@ public class User implements Serializable, BusinessEntity {
         username = "";
     }
 
+    public Boolean isMemberOf(EntityManager em, Department department) {
+        if (department != null) {
+            if (getEmployee().isMemberOf(department)) {
+                return true;
+            }
+        }
+
+        Business organization = User.getUserOrganizationByDepartment(em, this);
+        if ((organization != null) && (department != null)) {
+            for (Department memberDepartment : organization.getDepartments()) {
+                if (getEmployee().isStaffMemberOf(memberDepartment)
+                        && (Objects.equals(department.getId(), memberDepartment.getId()))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Returns the business/organization to which the user's department belong.
      * The user's department is obtained through it's employee reference.
+     *
      * @param em
      * @param user
-     * @return 
+     * @return
      */
     public static Business getUserOrganizationByDepartment(EntityManager em, User user) {
 

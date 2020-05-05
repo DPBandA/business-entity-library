@@ -364,24 +364,24 @@ public class Job implements Serializable, BusinessEntity {
             // Get employee for later use
             Employee employee = user.getEmployee();
 
-            // Do not save changed job if it's already marked as completed in the database
-            // However, saving is allowed if the user belongs to the "Invoicing department"
-            // or is a system administrator
-            if (this.getId() != null) {
-                Job job = Job.findJobById(em, this.getId());
-                if (job.getJobStatusAndTracking().getWorkProgress().equals("Completed")
-                        && !user.getEmployee().isMemberOf(Department.findDepartmentBySystemOptionDeptId("invoicingDepartmentId", em))
-                        && !user.getPrivilege().getCanBeJMTSAdministrator()
-                        && !User.isUserDepartmentSupervisor(this, user, em)) {
-                    
-                    this.setIsDirty(false);
-                    
-                    return new ReturnMessage(false,
-                            "Job Cannot Be Saved",
-                            "This job is marked as completed so changes cannot be saved. You may contact your department's supervisor or a system administrator",
-                            Message.SEVERITY_ERROR_NAME);
-                }
-            }
+//            // Do not save changed job if it's already marked as completed in the database
+//            // However, saving is allowed if the user belongs to the "Invoicing department"
+//            // or is a system administrator
+//            if (this.getId() != null) {
+//                Job job = Job.findJobById(em, this.getId());
+//                if (job.getJobStatusAndTracking().getWorkProgress().equals("Completed")
+//                        && !user.isMemberOf(em, Department.findDepartmentBySystemOptionDeptId("invoicingDepartmentId", em))
+//                        //&& !user.getPrivilege().getCanBeJMTSAdministrator()
+//                        && !User.isUserDepartmentSupervisor(this, user, em)) {
+//                    
+//                    this.setIsDirty(false);
+//                    
+//                    return new ReturnMessage(false,
+//                            "Job Cannot Be Saved",
+//                            "This job is marked as completed so changes cannot be saved. You may contact your department's supervisor or a system administrator",
+//                            Message.SEVERITY_ERROR_NAME);
+//                }
+//            }
 
             // Set date entered
             if (this.getJobStatusAndTracking().getDateAndTimeEntered() == null) {

@@ -711,6 +711,16 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public Boolean isMemberOf(Department department) {
         return Objects.equals(getDepartment().getId(), department.getId());
     }
+    
+    public Boolean isStaffMemberOf(Department department) {
+        for (Employee employee : department.getStaff()) {
+            if (Objects.equals(getId(), employee.getId())) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
