@@ -1185,10 +1185,12 @@ public class Job implements Serializable, BusinessEntity {
         String searchTextAndClause;
         String selectClause = "SELECT DISTINCT job FROM Job job";
         String mainJoinClause = " JOIN job.jobStatusAndTracking jobStatusAndTracking"
-                + " LEFT JOIN job.business business"
+                + " LEFT JOIN job.business.departments departments"
                 + " JOIN job.businessOffice businessOffice"
                 + " JOIN job.department department"
                 + " JOIN job.subContractedDepartment subContractedDepartment"
+                + " LEFT JOIN job.department.staff staff"
+                + " LEFT JOIN job.subContractedDepartment.staff staff2"
                 + " JOIN job.classification classification"
                 + " JOIN job.sector sector"
                 + " JOIN job.client client"
@@ -1331,6 +1333,10 @@ public class Job implements Serializable, BusinessEntity {
                         + searchTextAndClause
                         + " AND ( UPPER(department.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
                         + " OR UPPER(subContractedDepartment.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
+                        + " OR (UPPER(staff.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
+                        + " AND UPPER(staff.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%')"
+                        + " OR (UPPER(staff2.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
+                        + " AND UPPER(staff2.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%')"
                         + " )"
                         + " ORDER BY job.id DESC";
                 break;
