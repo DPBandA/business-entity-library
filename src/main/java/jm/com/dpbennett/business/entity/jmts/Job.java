@@ -1185,6 +1185,7 @@ public class Job implements Serializable, BusinessEntity {
         String searchTextAndClause;
         String selectClause = "SELECT DISTINCT job FROM Job job";
         String mainJoinClause = " JOIN job.jobStatusAndTracking jobStatusAndTracking"
+                + " LEFT JOIN job.business business"
                 + " JOIN job.businessOffice businessOffice"
                 + " JOIN job.department department"
                 + " JOIN job.subContractedDepartment subContractedDepartment"
@@ -1195,9 +1196,9 @@ public class Job implements Serializable, BusinessEntity {
                 + " JOIN job.jobSubCategory jobSubCategory"
                 + " JOIN job.assignedTo assignedTo"
                 + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                + " LEFT JOIN job.jobSamples jobSamples";
-        String sampleSearchJoinClause = "";
-
+                + " LEFT JOIN job.jobSamples jobSamples"
+                + " LEFT JOIN job.representatives representatives";
+        
         if (searchText != null) {
             searchText = searchText.trim().replaceAll("'", "''");
         } else {
@@ -1227,7 +1228,10 @@ public class Job implements Serializable, BusinessEntity {
                 + " OR UPPER(jobSamples.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(jobSamples.productModel) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(jobSamples.productSerialNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobSamples.productCode) LIKE '%" + searchText.toUpperCase() + "%'";;
+                + " OR UPPER(jobSamples.productCode) LIKE '%" + searchText.toUpperCase() + "%'";
+        
+        String datePeriodSubClause = "jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-");
 
         // Build query based on search type
         switch (searchType) {
@@ -1238,10 +1242,8 @@ public class Job implements Serializable, BusinessEntity {
                         + " )";
                 searchQuery
                         = selectClause
-                        //+ sampleSearchJoinClause
                         + mainJoinClause
-                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-")
+                        + " WHERE (" + datePeriodSubClause
                         + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
                         + " AND (jobCostingAndPayment.costingApproved = 1)"
                         + " AND (classification.isEarning = 1)"
@@ -1252,31 +1254,12 @@ public class Job implements Serializable, BusinessEntity {
             case "Unapproved job costings":
                 searchTextAndClause
                         = " AND ("
-                        + " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.comment) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobStatusAndTracking.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.instructions) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + mainSearchWhereClause
                         + " )";
                 searchQuery
                         = selectClause
-                        + sampleSearchJoinClause
                         + mainJoinClause
-                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-")
+                        + " WHERE (" + datePeriodSubClause
                         + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
                         + " AND (jobCostingAndPayment.costingApproved IS NULL OR jobCostingAndPayment.costingApproved = 0)" + ")"
                         + searchTextAndClause
@@ -1285,31 +1268,12 @@ public class Job implements Serializable, BusinessEntity {
             case "Incomplete jobs":
                 searchTextAndClause
                         = " AND ("
-                        + " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.comment) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobStatusAndTracking.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.instructions) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + mainSearchWhereClause
                         + " )";
                 searchQuery
                         = selectClause
-                        + sampleSearchJoinClause
                         + mainJoinClause
-                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-")
+                        + " WHERE (" + datePeriodSubClause
                         + " AND jobStatusAndTracking.workProgress NOT LIKE 'Completed' AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'" + ")"
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";
@@ -1317,31 +1281,12 @@ public class Job implements Serializable, BusinessEntity {
             case "Parent jobs only":
                 searchTextAndClause
                         = " AND subContractedDepartment.name = '--' AND ("
-                        + " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        //+ " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.comment) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobStatusAndTracking.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.instructions) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + mainSearchWhereClause
                         + " )";
                 searchQuery
                         = selectClause
-                        + sampleSearchJoinClause
                         + mainJoinClause
-                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
+                        + " WHERE (" + datePeriodSubClause + " )"
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";
                 break;
@@ -1352,10 +1297,8 @@ public class Job implements Serializable, BusinessEntity {
                         + " )";
                 searchQuery
                         = selectClause
-                        + sampleSearchJoinClause
                         + mainJoinClause
-                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
+                        + " WHERE (" + datePeriodSubClause + " )"
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";
                 break;
@@ -1363,16 +1306,14 @@ public class Job implements Serializable, BusinessEntity {
                 searchQuery
                         = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
-                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
+                        + " WHERE (" + datePeriodSubClause
                         + " ORDER BY job.id DESC";
                 break;
             case "Monthly report":
                 searchQuery
                         = selectClause
                         + mainJoinClause
-                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
+                        + " WHERE (" + datePeriodSubClause
                         + " AND ( UPPER(department.name) = '" + searchText.toUpperCase() + "'"
                         + " OR UPPER(subContractedDepartment.name) = '" + searchText.toUpperCase() + "'"
                         + " )"
@@ -1381,27 +1322,12 @@ public class Job implements Serializable, BusinessEntity {
             case "My department's jobs":
                 searchTextAndClause
                         = " AND ("
-                        + " UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.comment) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobStatusAndTracking.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.instructions) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + mainSearchWhereClause
                         + " )";
                 searchQuery
                         = selectClause
-                        + sampleSearchJoinClause
                         + mainJoinClause
-                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
+                        + " WHERE (" + datePeriodSubClause + " )"
                         + searchTextAndClause
                         + " AND ( UPPER(department.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
                         + " OR UPPER(subContractedDepartment.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
@@ -1411,30 +1337,17 @@ public class Job implements Serializable, BusinessEntity {
             case "My jobs":
                 searchTextAndClause
                         = " AND ("
-                        + " UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.comment) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobStatusAndTracking.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(job.instructions) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + mainSearchWhereClause
                         + " )";
                 searchQuery
                         = selectClause
-                        + sampleSearchJoinClause
                         + mainJoinClause
-                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
+                        + " WHERE (" + datePeriodSubClause + " )"
                         + searchTextAndClause
-                        + " AND ( UPPER(assignedTo.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
-                        + " AND UPPER(assignedTo.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%'"
+                        + " AND ( (UPPER(assignedTo.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
+                        + " AND UPPER(assignedTo.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%')"
+                        + " OR (UPPER(representatives.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
+                        + " AND UPPER(representatives.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%')"
                         + " )"
                         + " ORDER BY job.id DESC";
                 break;
@@ -1443,8 +1356,7 @@ public class Job implements Serializable, BusinessEntity {
                 searchQuery
                         = selectClause
                         + mainJoinClause
-                        + " WHERE (jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
+                        + " WHERE (" + datePeriodSubClause
                         + " AND ( UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )"
