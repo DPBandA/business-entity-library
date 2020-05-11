@@ -1185,7 +1185,7 @@ public class Job implements Serializable, BusinessEntity {
         String searchTextAndClause;
         String selectClause = "SELECT DISTINCT job FROM Job job";
         String mainJoinClause = " JOIN job.jobStatusAndTracking jobStatusAndTracking"
-                + " LEFT JOIN job.business.departments departments"
+                + " LEFT JOIN job.business business"
                 + " JOIN job.businessOffice businessOffice"
                 + " JOIN job.department department"
                 + " JOIN job.subContractedDepartment subContractedDepartment"
@@ -1207,6 +1207,7 @@ public class Job implements Serializable, BusinessEntity {
             searchText = "";
         }
         String mainSearchWhereClause = " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(business.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
