@@ -211,7 +211,7 @@ public class StatusNote implements Serializable, BusinessEntity {
             List<StatusNote> statusNotes
                     = em.createQuery("SELECT s FROM StatusNote s WHERE" 
                             + " s.entityId = " + entityId
-                            + " AND (s.active = 1 OR s.active IS NULL) ORDER BY s.dateCreated DESC",
+                            + " AND (s.active = 1 OR s.active IS NULL) ORDER BY s.id DESC",
                             StatusNote.class).getResultList();
             return statusNotes;
         } catch (Exception e) {
