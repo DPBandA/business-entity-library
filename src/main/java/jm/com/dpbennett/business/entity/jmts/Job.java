@@ -44,6 +44,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.StatusNote;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import jm.com.dpbennett.business.entity.fm.CashPayment;
 import jm.com.dpbennett.business.entity.fm.Classification;
@@ -180,6 +181,11 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
+    }
+    
+    public List<StatusNote> getStatusNotes(EntityManager em) {
+        
+       return StatusNote.findActiveStatusNotesByEntityId(em, id);
     }
 
     public Integer getNoOfInspections() {

@@ -111,6 +111,7 @@
     <class>jm.com.dpbennett.business.entity.rm.GeneratedForm</class>
     <class>jm.com.dpbennett.business.entity.rm.DatePeriod</class>
     <class>jm.com.dpbennett.business.entity.hrm.User</class>
+    <class>jm.com.dpbennett.business.entity.StatusNote</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -241,6 +242,7 @@
     <class>jm.com.dpbennett.business.entity.rm.GeneratedForm</class>
     <class>jm.com.dpbennett.business.entity.rm.DatePeriod</class>
     <class>jm.com.dpbennett.business.entity.hrm.User</class>
+    <class>jm.com.dpbennett.business.entity.StatusNote</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/enerbase"/>
       <property name="javax.persistence.jdbc.password" value=""/>
