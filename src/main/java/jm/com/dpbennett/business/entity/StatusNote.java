@@ -72,6 +72,8 @@ public class StatusNote implements Serializable, BusinessEntity {
     private Date dateCreated;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee createdBy;
+    @Transient
+    private String header;
     
 
     public StatusNote() {
@@ -92,6 +94,14 @@ public class StatusNote implements Serializable, BusinessEntity {
         type = "";
         description = "";
         category = "";
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public void setHeader(String header) {
+        this.header = header;
     }
 
     public Long getEntityId() {

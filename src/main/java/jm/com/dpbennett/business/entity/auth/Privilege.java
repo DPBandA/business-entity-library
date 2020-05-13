@@ -87,6 +87,7 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canBeFinancialAdministrator;
     private Boolean canEditInvoicingAndPayment;
     private Boolean canApplyTaxesToJobCosting;
+    private Boolean canApplyDiscountsToJobCosting;
     private Boolean canAddAccountingCode;
     private Boolean canAddSupplier;
     private Boolean canAccessProcurementUnit;
@@ -336,6 +337,18 @@ public class Privilege implements Serializable, BusinessEntity {
 
     public void setCanApplyTaxesToJobCosting(Boolean canApplyTaxesToJobCosting) {
         this.canApplyTaxesToJobCosting = canApplyTaxesToJobCosting;
+    }
+
+    public Boolean getCanApplyDiscountsToJobCosting() {
+        if (canApplyDiscountsToJobCosting == null) {
+            canApplyDiscountsToJobCosting = false;
+        }
+
+        return canApplyDiscountsToJobCosting;
+    }
+
+    public void setCanApplyDiscountsToJobCosting(Boolean canApplyDiscountsToJobCosting) {
+        this.canApplyDiscountsToJobCosting = canApplyDiscountsToJobCosting;
     }
 
     public Boolean getCanApprvReleaseRequest() {

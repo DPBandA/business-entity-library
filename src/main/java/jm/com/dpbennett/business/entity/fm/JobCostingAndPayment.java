@@ -858,7 +858,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
         return null;
     }
-    
+
 //    public static JobCostingAndPayment findActiveJobCostingAndPaymentByName(
 //            EntityManager em,
 //            String jobCostingAndPaymentName) {
@@ -889,7 +889,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 //
 //        return null;
 //    }
-
     public static JobCostingAndPayment findActiveJobCostingAndPaymentByDepartmentAndName(
             EntityManager em,
             String departmentName,
@@ -986,9 +985,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         return !job.getIsSubContract()
                 && job.getClassification().getIsEarning()
                 && job.getDepartment().getPrivilege().getCanApplyTaxesToJobCosting()
-                && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option
-
-                <= BusinessEntityUtils.getMediumDateStringAsLong( // tk why on earth is this here??
+                && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option?
+                <= BusinessEntityUtils.getMediumDateStringAsLong(
                         BusinessEntityUtils.getDateInMediumDateFormat(job.getJobStatusAndTracking().getDateSubmitted())));
     }
 
