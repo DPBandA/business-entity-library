@@ -982,8 +982,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
      * @return
      */
     public static Boolean getCanApplyTax(Job job) {
-        return !job.getIsSubContract()
-                && job.getClassification().getIsEarning()
+        return  job.getClassification().getIsEarning()
                 && job.getDepartment().getPrivilege().getCanApplyTaxesToJobCosting()
                 && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option?
                 <= BusinessEntityUtils.getMediumDateStringAsLong(

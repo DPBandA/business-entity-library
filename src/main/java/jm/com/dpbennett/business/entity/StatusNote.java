@@ -95,6 +95,19 @@ public class StatusNote implements Serializable, BusinessEntity {
         description = "";
         category = "";
     }
+    
+    public StatusNote(String text, Employee createdBy, Date dateCreated) {
+        active = true;
+        name = "";
+        code = "";
+        type = "";
+        description = "";
+        category = "";
+        
+        this.text = text;
+        this.createdBy = createdBy;
+        this.dateCreated = dateCreated;
+    }
 
     public String getHeader() {
         return header;
