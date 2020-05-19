@@ -54,7 +54,6 @@ import jm.com.dpbennett.business.entity.rm.DatePeriod;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.fm.JobCategory;
-import jm.com.dpbennett.business.entity.fm.JobCostingAndPayment;
 import jm.com.dpbennett.business.entity.fm.JobSubCategory;
 import jm.com.dpbennett.business.entity.fm.Sector;
 import jm.com.dpbennett.business.entity.fm.Service;

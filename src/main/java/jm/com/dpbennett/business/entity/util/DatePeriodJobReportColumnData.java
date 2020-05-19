@@ -21,7 +21,7 @@ package jm.com.dpbennett.business.entity.util;
 
 import java.text.Collator;
 import jm.com.dpbennett.business.entity.jmts.Job;
-import jm.com.dpbennett.business.entity.fm.JobCostingAndPayment;
+import jm.com.dpbennett.business.entity.jmts.JobCostingAndPayment;
 import jm.com.dpbennett.business.entity.fm.JobSubCategory;
 import jm.com.dpbennett.business.entity.fm.Sector;
 

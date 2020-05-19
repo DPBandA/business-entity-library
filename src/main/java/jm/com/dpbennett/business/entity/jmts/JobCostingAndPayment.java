@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity.fm;
+package jm.com.dpbennett.business.entity.jmts;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.jmts.Job;
@@ -41,6 +41,11 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.fm.AccountingCode;
+import jm.com.dpbennett.business.entity.fm.CashPayment;
+import jm.com.dpbennett.business.entity.fm.CostComponent;
+import jm.com.dpbennett.business.entity.fm.Discount;
+import jm.com.dpbennett.business.entity.fm.Tax;
 import jm.com.dpbennett.business.entity.jmts.JobSample;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
@@ -89,8 +94,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     private Double minDeposit;
     private Double totalTax;
     private Double totalCost;
-    @Transient
-    private Double estimatedCostIncludingTaxes;
+//    @Transient
+//    private Double estimatedCostIncludingTaxes;
     @Transient
     private Double minDepositIncludingTaxes;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -404,7 +409,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         }
     }
 
-    public String getCostEstimateWithTaxLabel() {
+    public String getCalculatedCostEstimateLabel() {
         if (getTax().getTaxValue() != 0.0) {
             return "Calculated cost estimate (incl. tax)($): ";
         } else {
@@ -565,22 +570,21 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         return estimatedCost;
     }
 
-    public Double getEstimatedCostIncludingTaxes() {
+    public Double getCalculatedCostEstimate() {
         if (getTax().getTaxValueType().equals("Percentage")) {
-            estimatedCostIncludingTaxes
-                    = getEstimatedCost() + getEstimatedCost() * getTax().getValue();
+            //estimatedCostIncludingTaxes =
+            return getEstimatedCost() + getEstimatedCost() * getTax().getValue();
         } else {
-            estimatedCostIncludingTaxes
-                    = getEstimatedCost() + getTax().getValue();
+            //estimatedCostIncludingTaxes =
+            return getEstimatedCost() + getTax().getValue();
         }
 
-        return estimatedCostIncludingTaxes;
+        //return estimatedCostIncludingTaxes;
     }
 
-    public void setEstimatedCostIncludingTaxes(Double estimatedCostIncludingTaxes) {
-        this.estimatedCostIncludingTaxes = estimatedCostIncludingTaxes;
-    }
-
+//    public void setEstimatedCostIncludingTaxes(Double estimatedCostIncludingTaxes) {
+//        this.estimatedCostIncludingTaxes = estimatedCostIncludingTaxes;
+//    }
     public void setEstimatedCost(Double estimatedCost) {
         this.estimatedCost = estimatedCost;
     }
@@ -982,7 +986,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
      * @return
      */
     public static Boolean getCanApplyTax(Job job) {
-        return  job.getClassification().getIsEarning()
+        return job.getClassification().getIsEarning()
                 && job.getDepartment().getPrivilege().getCanApplyTaxesToJobCosting()
                 && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option?
                 <= BusinessEntityUtils.getMediumDateStringAsLong(

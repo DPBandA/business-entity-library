@@ -63,7 +63,6 @@
     <class>jm.com.dpbennett.business.entity.fm.JobSubCategory</class>
     <class>jm.com.dpbennett.business.entity.fm.JobCostingBatch</class>
     <class>jm.com.dpbennett.business.entity.fm.Tax</class>
-    <class>jm.com.dpbennett.business.entity.fm.JobCostingAndPayment</class>
     <class>jm.com.dpbennett.business.entity.rm.Report</class>
     <class>jm.com.dpbennett.business.entity.rm.ReportTableColumn</class>
     <class>jm.com.dpbennett.business.entity.rm.JobReportItem</class>
@@ -112,6 +111,7 @@
     <class>jm.com.dpbennett.business.entity.rm.DatePeriod</class>
     <class>jm.com.dpbennett.business.entity.hrm.User</class>
     <class>jm.com.dpbennett.business.entity.StatusNote</class>
+    <class>jm.com.dpbennett.business.entity.jmts.JobCostingAndPayment</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -194,7 +194,6 @@
     <class>jm.com.dpbennett.business.entity.fm.JobSubCategory</class>
     <class>jm.com.dpbennett.business.entity.fm.JobCostingBatch</class>
     <class>jm.com.dpbennett.business.entity.fm.Tax</class>
-    <class>jm.com.dpbennett.business.entity.fm.JobCostingAndPayment</class>
     <class>jm.com.dpbennett.business.entity.rm.Report</class>
     <class>jm.com.dpbennett.business.entity.rm.ReportTableColumn</class>
     <class>jm.com.dpbennett.business.entity.rm.JobReportItem</class>
@@ -243,6 +242,7 @@
     <class>jm.com.dpbennett.business.entity.rm.DatePeriod</class>
     <class>jm.com.dpbennett.business.entity.hrm.User</class>
     <class>jm.com.dpbennett.business.entity.StatusNote</class>
+    <class>jm.com.dpbennett.business.entity.jmts.JobCostingAndPayment</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/enerbase"/>
       <property name="javax.persistence.jdbc.password" value=""/>
