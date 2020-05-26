@@ -55,7 +55,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
-@Table(name = "complianceSurvey")
+@Table(name = "compliancesurvey")
 //@JsonIgnoreProperties(ignoreUnknown = true)
 @XmlRootElement
 public class ComplianceSurvey
