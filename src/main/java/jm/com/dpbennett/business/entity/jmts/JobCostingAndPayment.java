@@ -96,8 +96,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     private Double totalCost;
 //    @Transient
 //    private Double estimatedCostIncludingTaxes;
-    @Transient
-    private Double minDepositIncludingTaxes;
+//    @Transient
+//    private Double minDepositIncludingTaxes;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee lastPaymentEnteredBy;
     private String percentageGCT;
@@ -328,20 +328,9 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         return jobCostingAndPayment;
     }
 
-    public Double getMinDepositIncludingTaxes() {
-        if (getTax().getTaxValueType().equals("Percentage")) {
-            minDepositIncludingTaxes
-                    = getMinDeposit() + getMinDeposit() * getTax().getValue();
-        } else {
-            minDepositIncludingTaxes
-                    = getMinDeposit() + getTax().getValue();
-        }
-
-        return minDepositIncludingTaxes;
-    }
-
-    public void setMinDepositIncludingTaxes(Double minDepositIncludingTaxes) {
-        this.minDepositIncludingTaxes = minDepositIncludingTaxes;
+    public Double getCalculatedMinDeposit() {
+       
+        return getMinDepositWithDiscount() + getMinDepositTotalTax();
     }
 
     public Employee getLastPaymentEnteredBy() {
@@ -426,11 +415,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public String getCalculatedMinDepositLabel() {
-//        if (getTax().getTaxValue() != 0.0) {
-//            return "Minimum deposit (incl. tax)($): ";
-//        } else {
-//            return "Minimum deposit ($): ";
-//        }
+
         if (getDiscount().getDiscountValue() == 0.0) {
             if (getTax().getTaxValue() != 0.0) {
                 return "Calc'ed min. deposit (incl. tax)($): ";
@@ -592,21 +577,10 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Double getCalculatedCostEstimate() {
-//        if (getTax().getTaxValueType().equals("Percentage")) {
-//            //estimatedCostIncludingTaxes =
-//            return getEstimatedCost() + getEstimatedCost() * getTax().getValue();
-//        } else {
-//            //estimatedCostIncludingTaxes =
-//            return getEstimatedCost() + getTax().getValue();
-//        }
 
-        //return estimatedCostIncludingTaxes;
         return getEstimatedCostWithDiscount() + getEstimatedCostTotalTax();
     }
 
-//    public void setEstimatedCostIncludingTaxes(Double estimatedCostIncludingTaxes) {
-//        this.estimatedCostIncludingTaxes = estimatedCostIncludingTaxes;
-//    }
     public void setEstimatedCost(Double estimatedCost) {
         this.estimatedCost = estimatedCost;
     }
@@ -964,15 +938,27 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     private Double getEstimatedCostWithDiscount() {
-        Double sstimatedCostWithDiscount;
+        Double estimatedCostWithDiscount;
 
         if (getDiscount().getDiscountValueType().equals("Percentage")) {
-            sstimatedCostWithDiscount = getEstimatedCost() - getEstimatedCost() * getDiscount().getValue();
+            estimatedCostWithDiscount = getEstimatedCost() - getEstimatedCost() * getDiscount().getValue();
         } else {
-            sstimatedCostWithDiscount = getEstimatedCost() - getDiscount().getValue();
+            estimatedCostWithDiscount = getEstimatedCost() - getDiscount().getValue();
         }
 
-        return sstimatedCostWithDiscount;
+        return estimatedCostWithDiscount;
+    }
+
+    private Double getMinDepositWithDiscount() {
+        Double minDepositWithDiscount;
+
+        if (getDiscount().getDiscountValueType().equals("Percentage")) {
+            minDepositWithDiscount = getMinDeposit() - getMinDeposit() * getDiscount().getValue();
+        } else {
+            minDepositWithDiscount = getMinDeposit() - getDiscount().getValue();
+        }
+
+        return minDepositWithDiscount;
     }
 
     public Double getTotalDiscount() {
@@ -1009,6 +995,19 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         }
 
         return estimatedCostTotalTax;
+    }
+
+    public Double getMinDepositTotalTax() {
+
+        Double minDepositTotalTax;
+
+        if (getTax().getTaxValueType().equals("Percentage")) {
+            minDepositTotalTax = getMinDepositWithDiscount() * getTax().getValue();
+        } else {
+            minDepositTotalTax = getTax().getValue();
+        }
+
+        return minDepositTotalTax;
     }
 
     /**
