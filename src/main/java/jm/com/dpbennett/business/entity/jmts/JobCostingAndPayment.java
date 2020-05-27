@@ -410,18 +410,39 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public String getCalculatedCostEstimateLabel() {
-        if (getTax().getTaxValue() != 0.0) {
-            return "Calculated cost estimate (incl. tax)($): ";
+        if (getDiscount().getDiscountValue() == 0.0) {
+            if (getTax().getTaxValue() != 0.0) {
+                return "Calc'ed cost estimate (incl. tax)($): ";
+            } else {
+                return "Calc'ed cost estimate ($): ";
+            }
         } else {
-            return "Calculated cost estimate ($): ";
+            if (getTax().getTaxValue() != 0.0) {
+                return "Calc'ed cost estimate (incl. tax & discount)($): ";
+            } else {
+                return "Calc'ed cost estimate (incl. discount)($): ";
+            }
         }
     }
 
-    public String getMinDepositWithTaxLabel() {
-        if (getTax().getTaxValue() != 0.0) {
-            return "Minimum deposit (incl. tax)($): ";
+    public String getCalculatedMinDepositLabel() {
+//        if (getTax().getTaxValue() != 0.0) {
+//            return "Minimum deposit (incl. tax)($): ";
+//        } else {
+//            return "Minimum deposit ($): ";
+//        }
+        if (getDiscount().getDiscountValue() == 0.0) {
+            if (getTax().getTaxValue() != 0.0) {
+                return "Calc'ed min. deposit (incl. tax)($): ";
+            } else {
+                return "Calc'ed min. deposit ($): ";
+            }
         } else {
-            return "Minimum deposit ($): ";
+            if (getTax().getTaxValue() != 0.0) {
+                return "Calc'ed min. deposit (incl. tax & discount)($): ";
+            } else {
+                return "Calc'ed min. deposit (incl. discount)($): ";
+            }
         }
     }
 
@@ -571,15 +592,16 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Double getCalculatedCostEstimate() {
-        if (getTax().getTaxValueType().equals("Percentage")) {
-            //estimatedCostIncludingTaxes =
-            return getEstimatedCost() + getEstimatedCost() * getTax().getValue();
-        } else {
-            //estimatedCostIncludingTaxes =
-            return getEstimatedCost() + getTax().getValue();
-        }
+//        if (getTax().getTaxValueType().equals("Percentage")) {
+//            //estimatedCostIncludingTaxes =
+//            return getEstimatedCost() + getEstimatedCost() * getTax().getValue();
+//        } else {
+//            //estimatedCostIncludingTaxes =
+//            return getEstimatedCost() + getTax().getValue();
+//        }
 
         //return estimatedCostIncludingTaxes;
+        return getEstimatedCostWithDiscount() + getEstimatedCostTotalTax();
     }
 
 //    public void setEstimatedCostIncludingTaxes(Double estimatedCostIncludingTaxes) {
@@ -941,6 +963,18 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         return finalCostWithDiscount;
     }
 
+    private Double getEstimatedCostWithDiscount() {
+        Double sstimatedCostWithDiscount;
+
+        if (getDiscount().getDiscountValueType().equals("Percentage")) {
+            sstimatedCostWithDiscount = getEstimatedCost() - getEstimatedCost() * getDiscount().getValue();
+        } else {
+            sstimatedCostWithDiscount = getEstimatedCost() - getDiscount().getValue();
+        }
+
+        return sstimatedCostWithDiscount;
+    }
+
     public Double getTotalDiscount() {
         Double totalDiscount;
 
@@ -962,6 +996,19 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         }
 
         return totalTax;
+    }
+
+    public Double getEstimatedCostTotalTax() {
+
+        Double estimatedCostTotalTax;
+
+        if (getTax().getTaxValueType().equals("Percentage")) {
+            estimatedCostTotalTax = getEstimatedCostWithDiscount() * getTax().getValue();
+        } else {
+            estimatedCostTotalTax = getTax().getValue();
+        }
+
+        return estimatedCostTotalTax;
     }
 
     /**
