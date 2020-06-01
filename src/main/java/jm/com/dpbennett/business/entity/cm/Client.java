@@ -328,9 +328,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     }
 
     public Employee getEnteredBy() {
-        if (enteredBy == null) {
-            return new Employee();
-        }
+        
         return enteredBy;
     }
 

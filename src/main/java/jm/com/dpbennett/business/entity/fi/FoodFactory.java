@@ -237,9 +237,7 @@ public class FoodFactory implements Customer, BusinessEntity, Comparable, Serial
     }
 
     public Employee getAssignedInspector() {
-        if (assignedInspector == null) {
-            return new Employee();
-        }
+       
         return assignedInspector;
     }
 

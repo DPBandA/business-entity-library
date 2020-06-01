@@ -133,7 +133,7 @@ public class Seal implements Product, BusinessEntity, Serializable, Comparable {
 
     public Employee getAssignee() {
         if (assignee == null) {
-            assignee = new Employee();
+            return new Employee();
         }
         return assignee;
     }

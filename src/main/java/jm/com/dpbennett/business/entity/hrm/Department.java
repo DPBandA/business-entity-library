@@ -76,13 +76,13 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     private Employee head;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee actingHead;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<JobCategory> jobCategories;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> staff;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Laboratory> laboratories;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<DepartmentUnit> departmentUnits;
     private Boolean active;
     @OneToOne(cascade = CascadeType.ALL)
@@ -211,9 +211,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     }
 
     public Employee getHead() {
-        if (head == null) {
-            head = new Employee("--", "--");
-        }
+        
         return head;
     }
 
@@ -222,9 +220,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     }
 
     public Employee getActingHead() {
-        if (actingHead == null) {
-            actingHead = new Employee("--", "--");
-        }
+        
         return actingHead;
     }
 

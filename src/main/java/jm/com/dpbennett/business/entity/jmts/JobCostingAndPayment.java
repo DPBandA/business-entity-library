@@ -334,9 +334,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Employee getLastPaymentEnteredBy() {
-        if (lastPaymentEnteredBy == null) {
-            return new Employee();
-        }
+        
         return lastPaymentEnteredBy;
     }
 

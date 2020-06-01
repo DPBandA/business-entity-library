@@ -140,9 +140,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     public Employee getHead() {
-        if (head == null) {
-            head = new Employee("--", "--");
-        }
+        
         return head;
     }
 

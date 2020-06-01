@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -345,9 +344,7 @@ public class User implements Serializable, BusinessEntity {
     }
 
     public Employee getEmployee() {
-        if (employee == null) {
-            employee = new Employee();
-        }
+       
         return employee;
     }
 

@@ -282,9 +282,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
 
     @Override
     public Employee getReceivedBy() {
-        if (receivedBy == null) {
-            return new Employee();
-        }
+       
         return receivedBy;
     }
 

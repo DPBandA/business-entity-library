@@ -128,9 +128,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     }
 
     public Employee getEditedBy() {
-        if (editedBy == null) {
-            return new Employee();
-        }
+        
         return editedBy;
     }
     
@@ -351,9 +349,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     }
 
     public Employee getResponsibleOfficer() {
-        if (responsibleOfficer == null) {
-            return new Employee();
-        }
+        
         return responsibleOfficer;
     }
 
@@ -362,9 +358,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     }
 
     public Employee getSubmittedBy() {
-        if (submittedBy == null) {
-            return new Employee();
-        }
+        
         return submittedBy;
     }
 

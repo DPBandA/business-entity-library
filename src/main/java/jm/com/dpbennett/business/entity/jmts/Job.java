@@ -970,9 +970,7 @@ public class Job implements Serializable, BusinessEntity {
     }
 
     public Employee getAssignedTo() {
-        if (assignedTo == null) {
-            return new Employee();
-        }
+        
         return assignedTo;
     }
 

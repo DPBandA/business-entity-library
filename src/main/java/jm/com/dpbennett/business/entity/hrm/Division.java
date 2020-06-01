@@ -147,10 +147,7 @@ public class Division implements BusinessEntity, Comparable, Serializable {
     }
 
     public Employee getHead() {
-        if (head == null) {
-            head = new Employee("--", "--");
-        }
-
+       
         return head;
     }
 

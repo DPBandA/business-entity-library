@@ -132,9 +132,7 @@ public class Certification implements BusinessEntity, Serializable, Comparable {
     }
 
     public Employee getCertificateSignedBy() {
-        if (certificateSignedBy == null) {
-            return new Employee();
-        }
+        
         return certificateSignedBy;
     }
 
