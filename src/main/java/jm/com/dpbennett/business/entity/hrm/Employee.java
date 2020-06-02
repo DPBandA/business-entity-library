@@ -491,7 +491,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
                             + " WHERE positions.title = '" + positionTitle + "'"
                             + " AND e.active = 1",
                             Employee.class).getResultList();
-            
+
             return employees;
         } catch (Exception e) {
             System.out.println(e);
@@ -507,6 +507,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
             List<Employee> employees
                     = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '"
                             + newQuery + "%'" + " OR UPPER(e.lastName) like '"
+                            + newQuery + "%'" + " OR UPPER(e.department.name) like '%"
                             + newQuery + "%')"
                             + " AND e.active = 1 OR e.active IS NULL"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
@@ -711,14 +712,14 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public Boolean isMemberOf(Department department) {
         return Objects.equals(getDepartment().getId(), department.getId());
     }
-    
+
     public Boolean isStaffMemberOf(Department department) {
         for (Employee employee : department.getStaff()) {
             if (Objects.equals(getId(), employee.getId())) {
                 return true;
             }
         }
-        
+
         return false;
     }
 

@@ -116,9 +116,9 @@ public class ComplianceSurvey
     @OneToOne(cascade = CascadeType.ALL)
     private Address specifiedReleaseLocation;
     // Notice of refease from detention
-    @OneToOne(cascade = CascadeType.ALL) // tk org REFRESH
+    @OneToOne(cascade = CascadeType.ALL)
     private Address specifiedReleaseLocationDomesticMarket;
-    @OneToOne(cascade = CascadeType.ALL) // tk org REFRESH
+    @OneToOne(cascade = CascadeType.ALL)
     private Address locationOfDetainedProductDomesticMarket;
     private Boolean retailer;
     private Boolean distributor;
@@ -181,10 +181,9 @@ public class ComplianceSurvey
     private Date dateEdited;
     @OneToOne(cascade = CascadeType.REFRESH)
     private EntryDocumentInspection entryDocumentInspection;
-    private String jobNumber; // tk replace with Job field
+    private String jobNumber; // tk replace with Job field?
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<DocumentStandard> standardsBreached;
-    private String otherInspectionLocation;
     @Transient
     private Boolean isDirty;
 
@@ -213,17 +212,6 @@ public class ComplianceSurvey
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
-    }
-
-    public String getOtherInspectionLocation() {
-        if (otherInspectionLocation == null) {
-            otherInspectionLocation = "";
-        }
-        return otherInspectionLocation;
-    }
-
-    public void setOtherInspectionLocation(String otherInspectionLocation) {
-        this.otherInspectionLocation = otherInspectionLocation;
     }
 
     public String getJobNumber() {
@@ -303,6 +291,7 @@ public class ComplianceSurvey
         }
         return approvedBySigForReleaseRequestPOE;
     }
+
     public void setApprovedBySigForReleaseRequestPOE(Signature approvedBySigForReleaseRequestPOE) {
         this.approvedBySigForReleaseRequestPOE = approvedBySigForReleaseRequestPOE;
     }
@@ -336,7 +325,7 @@ public class ComplianceSurvey
     public void setAuthSigForDetentionRequestPOE(Signature authSigForDetentionRequestPOE) {
         this.authSigForDetentionRequestPOE = authSigForDetentionRequestPOE;
     }
-    
+
     public Date getAuthSigDateForDetentionRequestPOE() {
         return authSigDateForDetentionRequestPOE;
     }
@@ -366,6 +355,7 @@ public class ComplianceSurvey
     public void setInspectorSigForSampleRequestPOE(Signature inspectorSigForSampleRequestPOE) {
         this.inspectorSigForSampleRequestPOE = inspectorSigForSampleRequestPOE;
     }
+
     public Date getInspectorSigDateForSampleRequestPOE() {
         return inspectorSigDateForSampleRequestPOE;
     }
@@ -373,6 +363,7 @@ public class ComplianceSurvey
     public void setInspectorSigDateForSampleRequestPOE(Date inspectorSigDateForSampleRequestPOE) {
         this.inspectorSigDateForSampleRequestPOE = inspectorSigDateForSampleRequestPOE;
     }
+
     public Signature getPreparedBySigForReleaseRequestPOE() {
         if (preparedBySigForReleaseRequestPOE == null) {
             return new Signature();
@@ -394,6 +385,7 @@ public class ComplianceSurvey
     public void setPreparedByEmployeeForReleaseRequestPOE(Employee preparedByEmployeeForReleaseRequestPOE) {
         this.preparedByEmployeeForReleaseRequestPOE = preparedByEmployeeForReleaseRequestPOE;
     }
+
     public Date getPreparedBySigDateForReleaseRequestPOE() {
         return preparedBySigDateForReleaseRequestPOE;
     }
@@ -412,7 +404,7 @@ public class ComplianceSurvey
     public void setAuthSigForNoticeOfReleaseFromDentionDM(Signature authSigForNoticeOfReleaseFromDentionDM) {
         this.authSigForNoticeOfReleaseFromDentionDM = authSigForNoticeOfReleaseFromDentionDM;
     }
-    
+
     public Date getAuthSigDateForNoticeOfReleaseFromDentionDM() {
         return authSigDateForNoticeOfReleaseFromDentionDM;
     }
@@ -442,6 +434,7 @@ public class ComplianceSurvey
     public void setAuthSigForNoticeOfDentionDM(Signature authSigForNoticeOfDentionDM) {
         this.authSigForNoticeOfDentionDM = authSigForNoticeOfDentionDM;
     }
+
     public Date getAuthSigDateForNoticeOfDentionDM() {
         return authSigDateForNoticeOfDentionDM;
     }
@@ -460,7 +453,7 @@ public class ComplianceSurvey
     public void setAuthEmployeeForNoticeOfDentionDM(Employee authEmployeeForNoticeOfDentionDM) {
         this.authEmployeeForNoticeOfDentionDM = authEmployeeForNoticeOfDentionDM;
     }
-    
+
     public String getPortOfEntryDetentionNumber() {
         return portOfEntryDetentionNumber;
     }
@@ -527,7 +520,7 @@ public class ComplianceSurvey
     public void setInspectionAddress(Address inspectionAddress) {
         this.inspectionAddress = inspectionAddress;
     }
-    
+
     public Boolean getSamplesToBeDisposed() {
         return samplesToBeDisposed;
     }
@@ -633,7 +626,7 @@ public class ComplianceSurvey
     public void setSpecifiedReleaseLocationDomesticMarket(Address specifiedReleaseLocationDomesticMarket) {
         this.specifiedReleaseLocationDomesticMarket = specifiedReleaseLocationDomesticMarket;
     }
-    
+
     public Date getReleaseDateDomesticMarket() {
         return releaseDateDomesticMarket;
     }
@@ -685,7 +678,7 @@ public class ComplianceSurvey
 
     public Client getConsignee() {
         if (consignee == null) {
-            consignee = new Client("", false);
+            return new Client("", false);
         }
         return consignee;
     }
@@ -887,11 +880,9 @@ public class ComplianceSurvey
         if (!(object instanceof ComplianceSurvey)) {
             return false;
         }
+
         ComplianceSurvey other = (ComplianceSurvey) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -913,87 +904,42 @@ public class ComplianceSurvey
     }
 
     public Boolean getComplianceSurveyTypeIsValid() {
-        if (!getSurveyType().trim().equals("")) {
-            return true;
-        }
-
-        return false;
+        return !getSurveyType().trim().equals("");
     }
 
     public Boolean getComplianceSurveyTypeIsMarketSurvey() {
-        if (getSurveyType().trim().equals("Market Survey")) {
-            return true;
-        }
-
-        return false;
+        return getSurveyType().trim().equals("Market Survey");
     }
 
     public Boolean getComplianceSurveyTypeIsProductSurvey() {
-        if (getSurveyType().trim().equals("Product Survey")) {
-            return true;
-        }
-
-        return false;
+        return getSurveyType().trim().equals("Product Survey");
     }
 
     public Boolean getComplianceSurveyLocationTypeIsCommercialMarketplace() {
-        if (getSurveyLocationType().trim().equals("Commercial Marketplace")) {
-            return true;
-        }
-
-        return false;
+        return getSurveyLocationType().trim().equals("Commercial Marketplace");
     }
 
     public Boolean getComplianceSurveyLocationTypeIsPortOfEntry() {
-        if (getSurveyLocationType().trim().equals("Port of Entry")) {
-            return true;
-        }
-
-        return false;
+        return getSurveyLocationType().trim().equals("Port of Entry");
     }
 
     public Boolean getComplianceSurveyLocationTypeIsSite() {
-        if (getSurveyLocationType().trim().equals("Site")) {
-            return true;
-        }
-
-        return false;
+        return getSurveyLocationType().trim().equals("Site");
     }
 
     public Boolean getComplianceSurveyLocationTypeIsPortOfEntryOrSite() {
-        if (getSurveyLocationType().trim().equals("Port of Entry")
-                || getSurveyLocationType().trim().equals("Site")) {
-            return true;
-        }
-
-        return false;
+        return getSurveyLocationType().trim().equals("Port of Entry")
+                || getSurveyLocationType().trim().equals("Site");
     }
 
     public Boolean getComplianceSurveyTypeOfPortOfEntryIsAirport() {
-        if (getTypeOfPortOfEntry().trim().equals("Airport")) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public Boolean getDisableOtherInspectionLocation() {
-        if (getInspectionPoint().toUpperCase().equals("OTHER")) {
-            return false;
-        } else {
-            return true;
-        }
+        return getTypeOfPortOfEntry().trim().equals("Airport");
     }
 
     public Boolean getComplianceSurveyTypeOfPortOfEntryIsSeaport() {
-        if (getTypeOfPortOfEntry().trim().equals("Seaport")) {
-            return true;
-        }
-
-        return false;
+        return getTypeOfPortOfEntry().trim().equals("Seaport");
     }
 
-//    public static List<ComplianceSurvey> findComplianceSurveysByDateSearchField(
     public static List<ComplianceSurveySearchResult> findComplianceSurveyResultsByDateSearchField(
             EntityManager em,
             User user,
@@ -1005,7 +951,6 @@ public class ComplianceSurvey
             Boolean includeProductInspectionSearch,
             int maxResult) {
 
-//        List<ComplianceSurvey> foundComplianceSurveys;
         List<ComplianceSurveySearchResult> foundComplianceSurveys;
         String searchQuery = null;
         String searchTextAndClause = "";
@@ -1216,10 +1161,8 @@ public class ComplianceSurvey
 
             if (id == null) {
                 return false;
-            } else if (id == 0L) {
-                return false;
             } else {
-                return true;
+                return id != 0L;
             }
 
         } catch (Exception e) {
