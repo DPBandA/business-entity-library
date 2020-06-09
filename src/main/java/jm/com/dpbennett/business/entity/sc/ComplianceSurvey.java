@@ -700,14 +700,11 @@ public class ComplianceSurvey
 
     public Contact getConsigneeRepresentative() {
         if (consigneeRepresentative == null) {
-            // try to first contact from the consignee
-            // or use default
-            if (!getConsignee().getContacts().isEmpty()) {
-                consigneeRepresentative = getConsignee().getContacts().get(0);
+            if (consignee != null) {
+                setConsigneeRepresentative(consignee.getMainContact());
             } else {
-                consigneeRepresentative = new Contact();
+                return new Contact();
             }
-
         }
         return consigneeRepresentative;
     }
