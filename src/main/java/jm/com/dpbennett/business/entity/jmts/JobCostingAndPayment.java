@@ -329,12 +329,16 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public Double getCalculatedMinDeposit() {
-       
+
         return getMinDepositWithDiscount() + getMinDepositTotalTax();
     }
 
     public Employee getLastPaymentEnteredBy() {
-        
+
+        if (lastPaymentEnteredBy == null) {
+            return new Employee();
+        }
+
         return lastPaymentEnteredBy;
     }
 
