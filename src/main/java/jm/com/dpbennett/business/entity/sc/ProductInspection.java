@@ -40,7 +40,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.sm.Manufacturer;
+import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.sm.Product;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -498,7 +498,7 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            manufacturer = new Manufacturer();
+            return new Manufacturer();
         }
 
         return manufacturer;

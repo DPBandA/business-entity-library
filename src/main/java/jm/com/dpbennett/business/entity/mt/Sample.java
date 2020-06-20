@@ -23,7 +23,7 @@ package jm.com.dpbennett.business.entity.mt;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import java.util.Date;
-import jm.com.dpbennett.business.entity.sm.Manufacturer;
+import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 
 /**
  *

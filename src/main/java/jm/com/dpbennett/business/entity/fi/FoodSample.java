@@ -39,7 +39,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.hrm.Laboratory;
-import jm.com.dpbennett.business.entity.sm.Manufacturer;
+import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.sm.Product;
 import jm.com.dpbennett.business.entity.mt.Sample;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;

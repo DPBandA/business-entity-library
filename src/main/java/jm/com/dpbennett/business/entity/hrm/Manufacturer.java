@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2020  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,11 +17,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
-package jm.com.dpbennett.business.entity.sm;
+package jm.com.dpbennett.business.entity.hrm;
 
 import java.io.Serializable;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -30,6 +33,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -47,30 +52,26 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllManufacturers", query = "SELECT e FROM Manufacturer e ORDER BY e.name")
 })
 @XmlRootElement
-public class Manufacturer implements Serializable, BusinessEntity {
+public class Manufacturer implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id = null;
-    @Column(name = "Name")
-    private String name = "";
-    // tk replace all of these fields with Address, Contact, Internet classes
-    // see Client class for ideas.
-    @Column(name = "Street")
-    private String street = "";
-    @Column(name = "PO")
-    private String pO = "";
-    @Column(name = "City")
-    private String city = "";
-    @Column(name = "Country")
-    private String country = "";
-    @Column(name = "Phone")
-    private String phone = "";
-    @Column(name = "Fax")
-    private String fax = "";
-    @Column(name = "Email")
-    private String email = "";
+    private Long id;
+    private String name;
+    private String type;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Contact> contacts;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Address> addresses;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Internet internet;
+    @Column(length = 1024)
+    private String notes;
+    private Boolean tag;
+    private Boolean active;
+    private Boolean international;
+
     @Transient
     private Boolean isDirty;
 
@@ -90,7 +91,107 @@ public class Manufacturer implements Serializable, BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
+    public String getTruncatedName() {
+        if (getName().length() >= 50) {
+            return getName().substring(0, 50);
+        } else {
+            return getName();
+        }
+    }
+
+    public void setTruncatedName(String name) {
+        setName(name);
+    }
+
+    public Internet getInternet() {
+        if (internet == null) {
+            internet = new Internet();
+        }
+
+        return internet;
+    }
+
+    public void setInternet(Internet internet) {
+        this.internet = internet;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public Boolean getTag() {
+        return tag;
+    }
+
+    public void setTag(Boolean tag) {
+        this.tag = tag;
+    }
+
+    public Boolean getActive() {
+        
+        if (active == null) {
+            active = true;
+        }
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Boolean getInternational() {
+        
+        if (internet == null) {
+            internet = new Internet();
+        }
+        return international;
+    }
+
+    public void setInternational(Boolean international) {
+        this.international = international;
+    }
+
+    public List<Contact> getContacts() {
+        if (contacts != null) {
+            Collections.sort(contacts);
+        } else {
+            contacts = new ArrayList<>();
+        }
+
+        return contacts;
+    }
+
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
+    public List<Address> getAddresses() {
+        if (addresses != null) {
+            Collections.sort(addresses);
+        } else {
+            addresses = new ArrayList<>();
+        }
+
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -112,64 +213,9 @@ public class Manufacturer implements Serializable, BusinessEntity {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getFax() {
-        return fax;
-    }
-
-    public void setFax(String fax) {
-        this.fax = fax;
-    }
-
-    public String getpO() {
-        return pO;
-    }
-
-    public void setpO(String pO) {
-        this.pO = pO;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
     }
 
     @Override
@@ -268,6 +314,11 @@ public class Manufacturer implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.getName(), ((Manufacturer) o).getName());
     }
 }

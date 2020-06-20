@@ -104,7 +104,6 @@
     <class>jm.com.dpbennett.business.entity.sm.Country</class>
     <class>jm.com.dpbennett.business.entity.sm.StrategicPriority</class>
     <class>jm.com.dpbennett.business.entity.sm.LdapContext</class>
-    <class>jm.com.dpbennett.business.entity.sm.Manufacturer</class>
     <class>jm.com.dpbennett.business.entity.pm.Supplier</class>
     <class>jm.com.dpbennett.business.entity.rm.FieldUpdate</class>
     <class>jm.com.dpbennett.business.entity.rm.GeneratedForm</class>
@@ -112,6 +111,7 @@
     <class>jm.com.dpbennett.business.entity.hrm.User</class>
     <class>jm.com.dpbennett.business.entity.StatusNote</class>
     <class>jm.com.dpbennett.business.entity.jmts.JobCostingAndPayment</class>
+    <class>jm.com.dpbennett.business.entity.hrm.Manufacturer</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -235,7 +235,6 @@
     <class>jm.com.dpbennett.business.entity.sm.Country</class>
     <class>jm.com.dpbennett.business.entity.sm.StrategicPriority</class>
     <class>jm.com.dpbennett.business.entity.sm.LdapContext</class>
-    <class>jm.com.dpbennett.business.entity.sm.Manufacturer</class>
     <class>jm.com.dpbennett.business.entity.pm.Supplier</class>
     <class>jm.com.dpbennett.business.entity.rm.FieldUpdate</class>
     <class>jm.com.dpbennett.business.entity.rm.GeneratedForm</class>
@@ -243,6 +242,7 @@
     <class>jm.com.dpbennett.business.entity.hrm.User</class>
     <class>jm.com.dpbennett.business.entity.StatusNote</class>
     <class>jm.com.dpbennett.business.entity.jmts.JobCostingAndPayment</class>
+    <class>jm.com.dpbennett.business.entity.hrm.Manufacturer</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/enerbase"/>
       <property name="javax.persistence.jdbc.password" value=""/>

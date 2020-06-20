@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -76,6 +77,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     private List<Address> addresses;
     @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
+    @Column(length = 1024)
     private String notes;
     private Boolean internal;
     @Temporal(javax.persistence.TemporalType.DATE)

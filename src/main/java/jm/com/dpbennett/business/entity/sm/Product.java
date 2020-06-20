@@ -20,6 +20,8 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.sm;
 
+import jm.com.dpbennett.business.entity.hrm.Manufacturer;
+
 /**
  *
  * @author Desmond Bennett
