@@ -49,7 +49,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "manufacturer")
 @NamedQueries({
-    @NamedQuery(name = "findAllManufacturers", query = "SELECT e FROM Manufacturer e ORDER BY e.name")
+    @NamedQuery(name = "findAllManufacturers", query = "SELECT m FROM Manufacturer m ORDER BY m.name")
 })
 @XmlRootElement
 public class Manufacturer implements Serializable, BusinessEntity, Comparable {
@@ -76,10 +76,27 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
     private Boolean isDirty;
 
     public Manufacturer() {
+        this.name = "";
+        this.tag = false;
+        this.notes = "";
+        this.type = "Manufacturer";
+        contacts = new ArrayList<>();
+        addresses = new ArrayList<>();
+        internet = new Internet();
+        active = true;
+        international = false;
     }
 
     public Manufacturer(String name) {
         this.name = name;
+        this.tag = false;
+        this.notes = "";
+        this.type = "Manufacturer";
+        contacts = new ArrayList<>();
+        addresses = new ArrayList<>();
+        internet = new Internet();
+        active = true;
+        international = false;
     }
 
     @Override
@@ -90,6 +107,22 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public String getIsActive() {
+        if (getActive()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+
+    public void setIsActive(String active) {
+        if (active.equals("Yes")) {
+            setActive(true);
+        } else {
+            setActive(false);
+        }
     }
 
     public String getTruncatedName() {
@@ -133,7 +166,7 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
     }
 
     public Boolean getActive() {
-        
+
         if (active == null) {
             active = true;
         }
@@ -145,7 +178,7 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
     }
 
     public Boolean getInternational() {
-        
+
         if (internet == null) {
             internet = new Internet();
         }
@@ -306,10 +339,66 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
 
         return manufacturer;
     }
+    
+    public static List<Manufacturer> findActiveManufacturersByAnyPartOfName(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Manufacturer> manufacturers
+                    = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
+                            + value + "%'"
+                            + " AND m.active = 1"
+                            + " ORDER BY m.id", Manufacturer.class).setMaxResults(10).getResultList();
+            return manufacturers;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<Manufacturer> findManufacturersByAnyPartOfName(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Manufacturer> manufacturers
+                    = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
+                            + value + "%'"
+                            + " ORDER BY m.id", Manufacturer.class).getResultList();
+            
+            return manufacturers;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            // Save contacts and addresses
+            for (Contact contact : getContacts()) {
+                if (contact.getId() == null) {
+                    contact.save(em);
+                }
+            }
+            for (Address address : getAddresses()) {
+                if (address.getId() == null) {
+                    address.save(em);
+                }
+            }
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Manufacturer not saved");
     }
 
     @Override
