@@ -20,7 +20,6 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.sc;
 
-import jm.com.dpbennett.business.entity.sc.Distributor;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.hrm.Business;
@@ -75,7 +74,7 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Distributor distributor;
+    private Client distributor;
     private String brand;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateChecked;
@@ -89,7 +88,7 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     private String countryOfOrigin;
     private Boolean hasBusinessSource = false;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Business businessSource;
+    private Client businessSource;
     private Boolean hasIngredients = false;
     @Column(length = 1024)
     private String ingredients;
@@ -173,14 +172,14 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
         this.productCategory = productCategory;
     }
 
-    public Distributor getDistributor() {
+    public Client getDistributor() {
         if (distributor == null) {
-            distributor = new Distributor();
+            distributor = new Client();
         }
         return distributor;
     }
 
-    public void setDistributor(Distributor distributor) {
+    public void setDistributor(Client distributor) {
         this.distributor = distributor;
     }
 
@@ -525,14 +524,14 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
         this.brand = brand;
     }
 
-    public Business getBusinessSource() {
+    public Client getBusinessSource() {
         if (businessSource == null) {
-            businessSource = new Business();
+            return new Client();
         }
         return businessSource;
     }
 
-    public void setBusinessSource(Business businessSource) {
+    public void setBusinessSource(Client businessSource) {
         this.businessSource = businessSource;
     }
 
