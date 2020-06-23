@@ -340,6 +340,37 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
         return manufacturer;
     }
     
+    public static Manufacturer findActiveManufacturerByName(EntityManager em, String value, Boolean ignoreCase) {
+
+        List<Manufacturer> manufacturers;
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            if (ignoreCase) {
+                manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
+                        + "WHERE UPPER(m.name) "
+                        + "= '" + value.toUpperCase() + "'"
+                        + " AND m.active = 1", Manufacturer.class).getResultList();
+            } else {
+                manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
+                        + "WHERE m.name "
+                        + "= '" + value + "'"
+                        + " AND m.active = 1", Manufacturer.class).getResultList();
+            }
+
+            if (!manufacturers.isEmpty()) {
+                return manufacturers.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    
+    
     public static List<Manufacturer> findActiveManufacturersByAnyPartOfName(EntityManager em, String value) {
 
         try {
