@@ -107,6 +107,8 @@ public class ComplianceSurvey
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact brokerRepresentative;
     @OneToOne(cascade = CascadeType.REFRESH)
+    private Address brokerAddress;
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client consignee;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact consigneeRepresentative;
@@ -667,13 +669,24 @@ public class ComplianceSurvey
 
     public Contact getBrokerRepresentative() {
         if (brokerRepresentative == null) {
-            brokerRepresentative = new Contact();
+            return new Contact();
         }
         return brokerRepresentative;
     }
 
     public void setBrokerRepresentative(Contact brokerRepresentative) {
         this.brokerRepresentative = brokerRepresentative;
+    }
+
+    public Address getBrokerAddress() {
+        if (brokerAddress == null) {
+            return new Address();
+        }
+        return brokerAddress;
+    }
+
+    public void setBrokerAddress(Address brokerAddress) {
+        this.brokerAddress = brokerAddress;
     }
 
     public Client getConsignee() {

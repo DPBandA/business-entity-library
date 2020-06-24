@@ -100,6 +100,10 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
 
     public DocumentStandard() {
     }
+    
+    public DocumentStandard(String name) {
+        this.name = name;
+    }
 
     public DocumentStandard(DocumentType documentType) {
         this.documentType = documentType;
@@ -388,6 +392,35 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
 
     public void setDocumentType(DocumentType documentType) {
         this.documentType = documentType;
+    }
+    
+    public static DocumentStandard findActiveDocumentStandardByName(EntityManager em, String value, Boolean ignoreCase) {
+
+        List<DocumentStandard> documentStandards;
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            if (ignoreCase) {
+                documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
+                        + "WHERE UPPER(d.name) "
+                        + "= '" + value.toUpperCase() + "'"
+                        + " AND d.active = 1", DocumentStandard.class).getResultList();
+            } else {
+                documentStandards = em.createQuery("SELECT d FROM Client d "
+                        + "WHERE d.name "
+                        + "= '" + value + "'"
+                        + " AND d.active = 1", DocumentStandard.class).getResultList();
+            }
+
+            if (!documentStandards.isEmpty()) {
+                return documentStandards.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
 
     public static List<DocumentStandard> findDocumentStandardsByDateSearchField(

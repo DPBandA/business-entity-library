@@ -1650,16 +1650,17 @@ public class Job implements Serializable, BusinessEntity {
 //        // taxes was changed
 //        this.getJobCostingAndPayment().calculateAmountDue();
 //    }
-    public static List<String> findJobNumbers(EntityManager em, String query) {
+    public static List<Job> findAllByJobNumber(EntityManager em, String query) {
 
         try {
             String newName = query.replaceAll("'", "''");
 
-            List<String> numbers
-                    = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) like '"
+            List<Job> numbers
+                    = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) LIKE '"
                             + newName.toUpperCase().trim() + "%'"
-                            + " ORDER BY j.jobNumber", String.class).getResultList();
+                            + " ORDER BY j.jobNumber", Job.class).setMaxResults(25).getResultList();
             return numbers;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
