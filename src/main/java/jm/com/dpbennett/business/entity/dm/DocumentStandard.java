@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.dm;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -99,8 +98,9 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
     private Boolean isDirty;
 
     public DocumentStandard() {
+        this.name = "";
     }
-    
+
     public DocumentStandard(String name) {
         this.name = name;
     }
@@ -108,7 +108,7 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
     public DocumentStandard(DocumentType documentType) {
         this.documentType = documentType;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -393,7 +393,7 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
     public void setDocumentType(DocumentType documentType) {
         this.documentType = documentType;
     }
-    
+
     public static DocumentStandard findActiveDocumentStandardByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<DocumentStandard> documentStandards;
@@ -438,8 +438,8 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
         switch (searchType) {
             case "General":
                 if (!searchText.equals("")) {
-                    searchTextAndClause =
-                            " AND ("
+                    searchTextAndClause
+                            = " AND ("
                             + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -448,8 +448,8 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
                             + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " )";
                 }
-                searchQuery =
-                        "SELECT doc FROM DocumentStandard doc"
+                searchQuery
+                        = "SELECT doc FROM DocumentStandard doc"
                         + " JOIN doc.classification classification"
                         + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                         + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
@@ -457,12 +457,12 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
                         + " ORDER BY doc." + dateSearchField + " DESC";
                 break;
             case "By type":
-                searchTextAndClause =
-                        " AND ("
+                searchTextAndClause
+                        = " AND ("
                         + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
                         + " )";
-                searchQuery =
-                        "SELECT doc FROM DocumentStandard doc"
+                searchQuery
+                        = "SELECT doc FROM DocumentStandard doc"
                         + " JOIN doc.documentType t"
                         + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                         + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
@@ -482,6 +482,60 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
         }
 
         return foundDocuments;
+    }
+
+    public static List<DocumentStandard> findActiveDocumentStandardsByAnyPartOfName(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<DocumentStandard> documentStandards
+                    = em.createQuery("SELECT d FROM DocumentStandard d WHERE d.name like '%"
+                            + value + "%'"
+                            + " AND d.active = 1"
+                            + " ORDER BY d.id", DocumentStandard.class).setMaxResults(10).getResultList();
+            return documentStandards;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<DocumentStandard> findActiveDocumentStandardsByAnyPartOfNameOrNumber(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<DocumentStandard> documentStandards
+                    = em.createQuery("SELECT d FROM DocumentStandard d WHERE (d.name like '%"
+                            + value + "%'"
+                            + " OR d.number like '%"
+                            + value + "%')"
+                            + " AND d.active = 1"
+                            + " ORDER BY d.id", DocumentStandard.class).setMaxResults(10).getResultList();
+            return documentStandards;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<DocumentStandard> findDocumentStandardsByAnyPartOfNameOrNumber(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<DocumentStandard> documentStandards
+                    = em.createQuery("SELECT d FROM DocumentStandard d WHERE d.name like '%"
+                            + value + "%'"
+                            + " OR d.number like '%"
+                            + value + "%'"
+                            + " ORDER BY d.id", DocumentStandard.class).setMaxResults(10).getResultList();
+            return documentStandards;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
     }
 
     public static DocumentStandard findDocumentStandardById(EntityManager em, Long Id) {
@@ -527,5 +581,21 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
     @Override
     public void setDescription(String description) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public String getIsActive() {
+        if (getActive()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+
+    public void setIsActive(String active) {
+        if (active.equals("Yes")) {
+            setActive(true);
+        } else {
+            setActive(false);
+        }
     }
 }
