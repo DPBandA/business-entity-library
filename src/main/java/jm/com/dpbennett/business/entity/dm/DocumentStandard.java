@@ -591,7 +591,7 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
 
     @Override
     public void setDescription(String description) {
-        
+        this.synopsis = description;
     }
 
     public String getIsActive() {
