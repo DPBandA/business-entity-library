@@ -1057,7 +1057,6 @@ public class ComplianceSurvey
             Date endDate,
             Boolean includeProductInspectionSearch) {
 
-//        List<ComplianceSurvey> foundComplianceSurveys;
         List<ComplianceSurvey> foundComplianceSurveys;
         String searchQuery = null;
         String searchTextAndClause = "";
@@ -1071,17 +1070,17 @@ public class ComplianceSurvey
         }
 
         joinClause
-                = " JOIN complianceSurvey.retailOutlet retailOutlet"
-                + " JOIN complianceSurvey.retailRepresentative retailRepresentative"
-                + " JOIN complianceSurvey.consignee consignee"
-                + " JOIN complianceSurvey.consigneeRepresentative consigneeRepresentative"
-                + " JOIN complianceSurvey.broker broker"
-                + " JOIN complianceSurvey.editedBy editedBy"
-                + " JOIN complianceSurvey.brokerRepresentative brokerRepresentative"
-                + " JOIN complianceSurvey.entryDocumentInspection entryDocumentInspection"
+                = " LEFT JOIN complianceSurvey.retailOutlet retailOutlet"
+                + " LEFT JOIN complianceSurvey.retailRepresentative retailRepresentative"
+                + " LEFT JOIN complianceSurvey.consignee consignee"
+                + " LEFT JOIN complianceSurvey.consigneeRepresentative consigneeRepresentative"
+                + " LEFT JOIN complianceSurvey.broker broker"
+                + " LEFT JOIN complianceSurvey.editedBy editedBy"
+                + " LEFT JOIN complianceSurvey.brokerRepresentative brokerRepresentative"
+                + " LEFT JOIN complianceSurvey.entryDocumentInspection entryDocumentInspection"
                 + (includeProductInspectionSearch ? " JOIN complianceSurvey.productInspections productInspections" : "")
                 //+ " JOIN complianceSurvey.productInspections productInspections"
-                + " JOIN complianceSurvey.inspector inspector";
+                + " LEFT JOIN complianceSurvey.inspector inspector";
         switch (searchType) {
             case "General":
                 if (!searchText.equals("")) {
