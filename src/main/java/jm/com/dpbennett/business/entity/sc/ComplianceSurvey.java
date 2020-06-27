@@ -100,9 +100,9 @@ public class ComplianceSurvey
     private String typeOfPortOfEntry;
     private String portOfEntry;
     private String inspectionPoint;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Address inspectionAddress;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Client broker;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact brokerRepresentative;
