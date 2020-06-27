@@ -22,7 +22,6 @@ package jm.com.dpbennett.business.entity.sc;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.cm.Client;
-import jm.com.dpbennett.business.entity.hrm.Business;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.Date;
@@ -41,6 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.sm.Product;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -80,7 +80,7 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     private Date dateChecked;
     @Temporal(javax.persistence.TemporalType.TIME)
     private Date timeChecked;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client client;
     @Column(length = 1024)
     private String specificationSummary;
@@ -657,11 +657,22 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Product Inspection not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 }

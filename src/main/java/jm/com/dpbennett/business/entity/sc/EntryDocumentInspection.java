@@ -304,6 +304,7 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
                 for (ShippingContainer shippingContainer : getShippingContainers()) {
                     if ((shippingContainer.getIsDirty() || shippingContainer.getId() == null)
                             && !shippingContainer.save(em).isSuccess()) {
+
                         return new ReturnMessage(false,
                                 "Shipping container save error occurred",
                                 "An error occurred while saving a Shipping container",
@@ -312,27 +313,17 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
                 }
             }
 
-            // Save   
-            if (isDirty || id == null) {
-                em.getTransaction().begin();
-                isDirty = false;
-                BusinessEntityUtils.saveBusinessEntity(em, this);
-                em.getTransaction().commit();
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
 
-                return new ReturnMessage();
-            } else {
-                return new ReturnMessage(true,
-                        "Entry document NOT saved",
-                        "Not saved because it was not edited or an error occurred",
-                        Message.SEVERITY_INFO_NAME);
-            }
+            return new ReturnMessage();
 
         } catch (Exception e) {
-            return new ReturnMessage(false,
-                    "Entry document save error occurred!",
-                    "An error occurred while saving the Entry document: " + e,
-                    Message.SEVERITY_ERROR_NAME);
+            System.out.println(e);
         }
+
+        return new ReturnMessage(false, "Entry Document not saved");
     }
 
     @Override

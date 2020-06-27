@@ -47,6 +47,7 @@ import jm.com.dpbennett.business.entity.dm.DocumentStandard;
 import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.auth.Signature;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 //import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
@@ -102,7 +103,7 @@ public class ComplianceSurvey
     private String inspectionPoint;
     @OneToOne(cascade = CascadeType.ALL)
     private Address inspectionAddress;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client broker;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact brokerRepresentative;
@@ -181,7 +182,7 @@ public class ComplianceSurvey
     private Employee editedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private EntryDocumentInspection entryDocumentInspection;
     private String jobNumber; // tk replace with Job field?
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -489,6 +490,9 @@ public class ComplianceSurvey
     }
 
     public Boolean getNoticeOfReleaseFromDetentionIssuedForDomesticMarket() {
+        if (noticeOfReleaseFromDetentionIssuedForDomesticMarket == null) {
+            noticeOfReleaseFromDetentionIssuedForDomesticMarket = false;
+        }
         return noticeOfReleaseFromDetentionIssuedForDomesticMarket;
     }
 
@@ -497,6 +501,9 @@ public class ComplianceSurvey
     }
 
     public Boolean getRequestForDetentionIssuedForPortOfEntry() {
+        if (requestForDetentionIssuedForPortOfEntry == null) {
+            requestForDetentionIssuedForPortOfEntry = false;
+        }
         return requestForDetentionIssuedForPortOfEntry;
     }
 
@@ -658,7 +665,7 @@ public class ComplianceSurvey
 
     public Client getBroker() {
         if (broker == null) {
-            broker = new Client("", false);
+            return new Client("", false);
         }
         return broker;
     }
@@ -712,12 +719,10 @@ public class ComplianceSurvey
     }
 
     public Contact getConsigneeRepresentative() {
-        if (consigneeRepresentative == null) {
-            if (consignee != null) {
-                setConsigneeRepresentative(consignee.getMainContact());
-            } else {
+        if (consigneeRepresentative == null) {    
+            
                 return new Contact();
-            }
+         
         }
         return consigneeRepresentative;
     }
@@ -834,7 +839,7 @@ public class ComplianceSurvey
 
     public Client getRetailOutlet() {
         if (retailOutlet == null) {
-            retailOutlet = new Client("", false);
+            return new Client("", false);
         }
         return retailOutlet;
     }
@@ -844,16 +849,11 @@ public class ComplianceSurvey
     }
 
     public Contact getRetailRepresentative() {
-        if (retailRepresentative == null) {
-            // try to first contact from the retail outlet
-            // or use default
-            if (!getRetailOutlet().getContacts().isEmpty()) {
-                retailRepresentative = getRetailOutlet().getContacts().get(0);
-            } else {
-                retailRepresentative = new Contact();
-            }
-
+        if (retailRepresentative == null) {          
+           
+                return new Contact();
         }
+        
         return retailRepresentative;
     }
 
@@ -1156,32 +1156,6 @@ public class ComplianceSurvey
 
     }
 
-    public static Boolean save(EntityManager em, ComplianceSurvey survey) {
-
-        try {
-            //Employee employee = Employee.findEmployeeByName(em, survey.getEditedBy().getName());
-            //survey.setDateEdited(new Date());
-            //survey.setEditedBy(employee);
-
-            em.getTransaction().begin();
-
-            // now save survey            
-            Long id = BusinessEntityUtils.saveBusinessEntity(em, survey);
-            em.getTransaction().commit();
-
-            if (id == null) {
-                return false;
-            } else {
-                return id != 0L;
-            }
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        return true;
-    }
-
     public static ComplianceSurvey findDefaultComplianceSurvey(
             EntityManager em,
             String name,
@@ -1226,9 +1200,23 @@ public class ComplianceSurvey
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            // Save contained entities where necessary
-            if (getEntryDocumentInspection().getIsDirty()) {
+            // NB: Save contained entities where necessary
+            //if (getEntryDocumentInspection().getIsDirty()) {
                 getEntryDocumentInspection().save(em);
+            //}
+
+            // Save product inspections
+            if (!getProductInspections().isEmpty()) {
+                for (ProductInspection productInspection : getProductInspections()) {
+                    if ((productInspection.getIsDirty() || productInspection.getId() == null)
+                            && !productInspection.save(em).isSuccess()) {
+
+                        return new ReturnMessage(false,
+                                "Shipping container save error occurred",
+                                "An error occurred while saving a Shipping container",
+                                Message.SEVERITY_ERROR_NAME);
+                    }
+                }
             }
 
             em.getTransaction().begin();
