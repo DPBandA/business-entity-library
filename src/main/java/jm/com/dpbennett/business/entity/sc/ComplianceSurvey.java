@@ -184,7 +184,7 @@ public class ComplianceSurvey
     private Date dateEdited;
     @OneToOne(cascade = CascadeType.ALL)
     private EntryDocumentInspection entryDocumentInspection;
-    private String jobNumber; // tk replace with Job field?
+    private String jobNumber;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<DocumentStandard> standardsBreached;
     @Transient
