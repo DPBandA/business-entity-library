@@ -174,7 +174,7 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
 
     public Client getDistributor() {
         if (distributor == null) {
-            distributor = new Client();
+            return new Client();
         }
         return distributor;
     }
