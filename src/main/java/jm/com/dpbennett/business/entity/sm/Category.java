@@ -17,9 +17,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity.fm;
+package jm.com.dpbennett.business.entity.sm;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -29,6 +30,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -42,11 +44,23 @@ public class Category implements BusinessEntity, Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id = null;
-    private String name = "";
-    private String type = "";
+    private Long id;
+    private String name;
+    private String type;
     @Transient
     private Boolean isDirty;
+
+    public Category() {
+        this.name = "";
+        this.type = "";
+        this.isDirty = false;
+    }
+
+    public Category(String name) {
+        this.name = name;
+        this.type = "";
+        this.isDirty = false;
+    }
 
     @Override
     public Long getId() {
@@ -91,15 +105,44 @@ public class Category implements BusinessEntity, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+
         if (!(object instanceof Category)) {
             return false;
         }
         Category other = (Category) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
+
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
+
+    }
+
+    public static List<Category> findAllCategories(EntityManager em) {
+
+        try {
+            List<Category> categories = em.createQuery("SELECT c FROM Category c ORDER BY c.name", Category.class).getResultList();
+
+            return categories;
+
+        } catch (Exception e) {
+            System.out.println(e);
+
+            return new ArrayList<>();
         }
-        return true;
+    }
+    
+    public static List<Category> findCategoriesByName(EntityManager em, String name) {
+
+        try {
+            List<Category> categories
+                    = em.createQuery("SELECT c FROM Category c where UPPER(c.name) like '%"
+                            + name.toUpperCase().trim() + "%' ORDER BY c.name", Category.class).getResultList();
+            
+            return categories;
+            
+        } catch (Exception e) {
+            
+            System.out.println(e);
+            return new ArrayList<>();
+        }
     }
 
     public static List<Category> findCategoriesByType(EntityManager em, String value) {
@@ -119,17 +162,27 @@ public class Category implements BusinessEntity, Serializable {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.Category[id=" + id + "]";
+        return name;
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Category not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 
     @Override
