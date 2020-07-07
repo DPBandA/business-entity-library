@@ -112,6 +112,10 @@
     <class>jm.com.dpbennett.business.entity.jmts.JobCostingAndPayment</class>
     <class>jm.com.dpbennett.business.entity.hrm.Manufacturer</class>
     <class>jm.com.dpbennett.business.entity.sm.Category</class>
+    <class>jm.com.dpbennett.business.entity.Field</class>
+    <class>jm.com.dpbennett.business.entity.fa.FinancialAccount</class>
+    <class>jm.com.dpbennett.business.entity.sc.Complaint</class>
+    <class>jm.com.dpbennett.business.entity.sm.StatusTracking</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -243,6 +247,10 @@
     <class>jm.com.dpbennett.business.entity.jmts.JobCostingAndPayment</class>
     <class>jm.com.dpbennett.business.entity.hrm.Manufacturer</class>
     <class>jm.com.dpbennett.business.entity.sm.Category</class>
+    <class>jm.com.dpbennett.business.entity.Field</class>
+    <class>jm.com.dpbennett.business.entity.fa.FinancialAccount</class>
+    <class>jm.com.dpbennett.business.entity.sc.Complaint</class>
+    <class>jm.com.dpbennett.business.entity.sm.StatusTracking</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/enerbase"/>
       <property name="javax.persistence.jdbc.password" value=""/>
