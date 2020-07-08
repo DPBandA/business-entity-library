@@ -42,6 +42,7 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -68,7 +69,6 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     private Date dateReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateResolved;
-    private String portOfEntry;
     private String actionTaken;
     @Column(length = 1024)
     private String comments;
@@ -213,14 +213,6 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
 
     public void setReceivedVia(Client receivedVia) {
         this.receivedVia = receivedVia;
-    }
-
-    public String getPortOfEntry() {
-        return portOfEntry;
-    }
-
-    public void setPortOfEntry(String portOfEntry) {
-        this.portOfEntry = portOfEntry;
     }
 
     public String getActionTaken() {
@@ -393,11 +385,36 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+          
+            // Save product inspections
+            if (!getProductInspections().isEmpty()) {
+                for (ProductInspection productInspection : getProductInspections()) {
+                    if ((productInspection.getIsDirty() || productInspection.getId() == null)
+                            && !productInspection.save(em).isSuccess()) {
+
+                        return new ReturnMessage(false,
+                                "Product save error occurred",
+                                "An error occurred while saving a product",
+                                Message.SEVERITY_ERROR_NAME);
+                    }
+                }
+            }
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Complaint not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         return new ReturnMessage();
     }
 }

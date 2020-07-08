@@ -1210,9 +1210,9 @@ public class ComplianceSurvey
                     if ((productInspection.getIsDirty() || productInspection.getId() == null)
                             && !productInspection.save(em).isSuccess()) {
 
-                        return new ReturnMessage(false,
-                                "Shipping container save error occurred",
-                                "An error occurred while saving a Shipping container",
+                         return new ReturnMessage(false,
+                                "Product save error occurred",
+                                "An error occurred while saving a product",
                                 Message.SEVERITY_ERROR_NAME);
                     }
                 }
