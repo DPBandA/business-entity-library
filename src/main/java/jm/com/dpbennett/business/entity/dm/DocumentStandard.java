@@ -99,14 +99,18 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
 
     public DocumentStandard() {
         this.name = "";
+        this.active = true;
     }
 
     public DocumentStandard(String name) {
         this.name = name;
+        this.active = true;
     }
 
     public DocumentStandard(DocumentType documentType) {
         this.documentType = documentType;
+        this.name = "";
+        this.active = true;
     }
 
     @Override

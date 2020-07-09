@@ -9,7 +9,6 @@ import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.StatusNote;
 import jm.com.dpbennett.business.entity.sc.Complaint;
 import org.junit.Test;
 
@@ -27,7 +26,7 @@ public class CreateEntitiesTest {
         prop.put("javax.persistence.jdbc.password",
                 ""); // NB: REMOVE PWD WHEN DONE AND SET SKIPTEST TO TRUE
         prop.put("javax.persistence.jdbc.url",
-                "jdbc:mysql://172.16.0.39:3306/jmts");
+                "jdbc:mysql://172.16.0.10:3306/jmtstest");
         prop.put("javax.persistence.jdbc.driver",
                 "com.mysql.jdbc.Driver");
 

@@ -63,14 +63,13 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee officer;
+    private String complaintOfficer;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfCorrespondence;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateResolved;
-    private String actionTaken;
-    @Column(length = 1024)
+    private Date dateResolved;   
     private String comments;
     @Column(length = 1024)
     private String complaint;
@@ -90,6 +89,9 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     @Transient
     private Boolean isDirty;
 
+    public Complaint() {
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -98,6 +100,14 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getComplaintOfficer() {
+        return complaintOfficer;
+    }
+
+    public void setComplaintOfficer(String complaintOfficer) {
+        this.complaintOfficer = complaintOfficer;
     }
 
     public Date getDateResolved() {
@@ -211,20 +221,12 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
         if (receivedVia == null) {
             return new Client();
         }
-        
+
         return receivedVia;
     }
 
     public void setReceivedVia(Client receivedVia) {
         this.receivedVia = receivedVia;
-    }
-
-    public String getActionTaken() {
-        return actionTaken;
-    }
-
-    public void setActionTaken(String actionTaken) {
-        this.actionTaken = actionTaken;
     }
 
     public String getComments() {
@@ -306,8 +308,22 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     public void setName(String name) {
         this.name = name;
     }
+    
+     public static  List<Complaint> findAllComplaints(EntityManager em) {
 
-    public static List<Complaint> findDocumentInspectionsByDateSearchField(
+        try {
+                      
+            return em.createQuery("SELECT c FROM Complaint c", 
+                    Complaint.class).setMaxResults(100).getResultList();
+          
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Complaint> findComplaintsByDateSearchField(
             EntityManager em,
             User user,
             String dateSearchField,
@@ -316,8 +332,8 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
             Date startDate,
             Date endDate) {
 
-        List<Complaint> foundDocumentInspections;
-        String searchQuery = null;
+        List<Complaint> foundComplaints;
+        String searchQuery = "";
         String searchTextAndClause = "";
         String joinClause;
         String searchText;
@@ -328,61 +344,73 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
             searchText = "";
         }
 
-        joinClause = " JOIN documentInspection.inspector inspector";
+        joinClause = " LEFT JOIN complaint.enteredBy enteredBy"
+                + " LEFT JOIN complaint.officer officer"
+                + " LEFT JOIN complaint.productInspections productInspections"
+                + " LEFT JOIN complaint.referredTo referredTo"
+                + " LEFT JOIN complaint.complainant complainant"
+                + " LEFT JOIN complaint.receivedVia receivedVia";
 
         if (searchType.equals("General")) {
             if (!searchText.equals("")) {
                 searchTextAndClause
                         = " AND ("
-                        + " UPPER(documentInspection.portOfEntry) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(inspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(inspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(documentInspection.type) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(documentInspection.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(documentInspection.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(documentInspection.actionTaken) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " UPPER(complaint.actionTaken) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(enteredBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(enteredBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(officer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(officer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(referredTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(referredTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(complaint.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(complaint.actionsResults) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(complaint.actions) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(complaint.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(complaint.complaint) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
             }
             if ((startDate == null) || (endDate == null)) {
+                
                 searchQuery
-                        = "SELECT documentInspection FROM DocumentInspection documentInspection"
+                        = "SELECT complaint FROM Complaint complaint"
                         + joinClause
-                        + " WHERE (0 = 0)" // used as place holder
+                        + " WHERE (0 = 0)"
                         + searchTextAndClause
-                        //                        + " GROUP BY documentInspection.id"
-                        + " ORDER BY documentInspection.id DESC";
+                        + " ORDER BY complaint.id DESC";
             } else {
                 searchQuery
-                        = "SELECT documentInspection FROM DocumentInspection documentInspection"
+                        = "SELECT complaint FROM Complaint complaint"
                         + joinClause
-                        + " WHERE (documentInspection." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND documentInspection." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " WHERE (complaint." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND complaint." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                         + searchTextAndClause
-                        //                        + " GROUP BY complianceSurvey.id"
-                        + " ORDER BY documentInspection.id DESC";
+                        + " ORDER BY complaint.id DESC";
             }
         } else if (searchType.equals("?")) {
         }
 
         try {
-            foundDocumentInspections = em.createQuery(searchQuery, Complaint.class).getResultList();
-            if (foundDocumentInspections == null) {
-                foundDocumentInspections = new ArrayList<Complaint>();
+            foundComplaints = em.createQuery(searchQuery, Complaint.class).setMaxResults(100).getResultList();
+            if (foundComplaints == null) {
+                foundComplaints = new ArrayList<>();
             }
         } catch (Exception e) {
             System.out.println(e);
-            return null;
+            
+            return new ArrayList<>();
         }
 
-        return foundDocumentInspections;
+        return foundComplaints;
     }
 
-    public static Complaint findDocumentInspectionById(EntityManager em, Long Id) {
+    public static Complaint findComplaintById(EntityManager em, Long Id) {
 
         try {
-            Complaint documentInspection = em.find(Complaint.class, Id);
-            return documentInspection;
+            
+           return em.find(Complaint.class, Id);
         } catch (Exception e) {
+            System.out.println(e);
+            
             return null;
         }
     }
