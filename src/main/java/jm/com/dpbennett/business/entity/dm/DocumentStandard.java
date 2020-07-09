@@ -551,6 +551,19 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
             return null;
         }
     }
+    
+    public static  List<DocumentStandard>  findAllActiveDocumentStandards(EntityManager em) {
+
+        try {
+                      
+            return em.createQuery("SELECT d FROM DocumentStandard d "
+                        + "WHERE d.active = 1", DocumentStandard.class).setMaxResults(100).getResultList();
+          
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     public String getUsable() {
         if (getActive()) {
