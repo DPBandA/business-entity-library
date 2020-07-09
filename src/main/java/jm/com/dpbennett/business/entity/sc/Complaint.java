@@ -197,6 +197,9 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     }
 
     public Client getComplainant() {
+        if (complainant == null) {
+            return new Client();
+        }
         return complainant;
     }
 
@@ -206,8 +209,9 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
 
     public Client getReceivedVia() {
         if (receivedVia == null) {
-            receivedVia = new Client("", false);
+            return new Client();
         }
+        
         return receivedVia;
     }
 
@@ -386,7 +390,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-          
+
             // Save product inspections
             if (!getProductInspections().isEmpty()) {
                 for (ProductInspection productInspection : getProductInspections()) {
@@ -415,6 +419,6 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-         return new ReturnMessage();
+        return new ReturnMessage();
     }
 }
