@@ -313,7 +313,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
 
         try {
                       
-            return em.createQuery("SELECT c FROM Complaint c", 
+            return em.createQuery("SELECT c FROM Complaint c ORDER BY c.id DESC", 
                     Complaint.class).setMaxResults(100).getResultList();
           
         } catch (Exception e) {
@@ -354,9 +354,8 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
         if (searchType.equals("General")) {
             if (!searchText.equals("")) {
                 searchTextAndClause
-                        = " AND ("
-                        + " UPPER(complaint.actionTaken) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(enteredBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        = " AND ("                       
+                        + " UPPER(enteredBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(enteredBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(officer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(officer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -372,14 +371,14 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
             if ((startDate == null) || (endDate == null)) {
                 
                 searchQuery
-                        = "SELECT complaint FROM Complaint complaint"
+                        = "SELECT DISTINCT complaint FROM Complaint complaint"
                         + joinClause
                         + " WHERE (0 = 0)"
                         + searchTextAndClause
                         + " ORDER BY complaint.id DESC";
             } else {
                 searchQuery
-                        = "SELECT complaint FROM Complaint complaint"
+                        = "SELECT DISTINCT complaint FROM Complaint complaint"
                         + joinClause
                         + " WHERE (complaint." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                         + " AND complaint." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
