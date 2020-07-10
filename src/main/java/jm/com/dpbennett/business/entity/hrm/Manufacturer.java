@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,6 +37,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
@@ -65,10 +67,20 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
     private String registrationStatus;
     private String businessRegistration;
     private String taxRegistration;
+    private Integer yearOfLastProductTest;
+    private String paymentStatus;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date paymentDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateRegistrationDue;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateLastVisited;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee productLastSampledBy;
     @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
     @Column(length = 1024)
@@ -114,6 +126,22 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
         this.id = id;
     }
 
+    public String getBusinessRegistration() {
+        return businessRegistration;
+    }
+
+    public void setBusinessRegistration(String businessRegistration) {
+        this.businessRegistration = businessRegistration;
+    }
+
+    public String getTaxRegistration() {
+        return taxRegistration;
+    }
+
+    public void setTaxRegistration(String taxRegistration) {
+        this.taxRegistration = taxRegistration;
+    }
+
     public String getRegistrationStatus() {
         return registrationStatus;
     }
@@ -137,7 +165,7 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
     public void setCode(String code) {
         this.code = code;
     }
-    
+
     public String getIsActive() {
         if (getActive()) {
             return "Yes";
@@ -368,7 +396,7 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
 
         return manufacturer;
     }
-    
+
     public static Manufacturer findActiveManufacturerByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Manufacturer> manufacturers;
@@ -397,9 +425,7 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
-    
-    
-    
+
     public static List<Manufacturer> findActiveManufacturersByAnyPartOfName(EntityManager em, String value) {
 
         try {
@@ -416,7 +442,7 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Manufacturer> findManufacturersByAnyPartOfName(EntityManager em, String value) {
 
         try {
@@ -426,7 +452,7 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
                     = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
                             + value + "%'"
                             + " ORDER BY m.id", Manufacturer.class).getResultList();
-            
+
             return manufacturers;
         } catch (Exception e) {
             System.out.println(e);
