@@ -40,6 +40,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
@@ -69,7 +70,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateResolved;   
+    private Date dateResolved;
     private String comments;
     @Column(length = 1024)
     private String complaint;
@@ -85,11 +86,16 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     private List<ProductInspection> productInspections;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> referredTo;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Department> referredToDepartment;
     private String jobNumber;
+    private Boolean internal;
+    private String workProgress;
     @Transient
     private Boolean isDirty;
 
     public Complaint() {
+        internal = false;
     }
 
     @Override
@@ -100,6 +106,35 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getWorkProgress() {
+        return workProgress;
+    }
+
+    public void setWorkProgress(String workProgress) {
+        this.workProgress = workProgress;
+    }
+
+    public Boolean getInternal() {
+        return internal;
+    }
+
+    public void setInternal(Boolean internal) {
+        this.internal = internal;
+    }
+
+    public List<Department> getReferredToDepartment() {
+
+        if (referredToDepartment == null) {
+            referredToDepartment = new ArrayList<>();
+        }
+        
+        return referredToDepartment;
+    }
+
+    public void setReferredToDepartment(List<Department> referredToDepartment) {
+        this.referredToDepartment = referredToDepartment;
     }
 
     public String getComplaintOfficer() {
@@ -308,17 +343,17 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
-     public static  List<Complaint> findAllComplaints(EntityManager em) {
+
+    public static List<Complaint> findAllComplaints(EntityManager em) {
 
         try {
-                      
-            return em.createQuery("SELECT c FROM Complaint c ORDER BY c.id DESC", 
+
+            return em.createQuery("SELECT c FROM Complaint c ORDER BY c.id DESC",
                     Complaint.class).setMaxResults(100).getResultList();
-          
+
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return new ArrayList<>();
         }
     }
@@ -354,7 +389,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
         if (searchType.equals("General")) {
             if (!searchText.equals("")) {
                 searchTextAndClause
-                        = " AND ("                       
+                        = " AND ("
                         + " UPPER(enteredBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(enteredBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(officer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -362,6 +397,8 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
                         + " OR UPPER(referredTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(referredTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(complaint.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(complaint.complaintOfficer) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(complaint.workProgress) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(complaint.actionsResults) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(complaint.actions) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(complaint.comments) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -369,7 +406,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
                         + " )";
             }
             if ((startDate == null) || (endDate == null)) {
-                
+
                 searchQuery
                         = "SELECT DISTINCT complaint FROM Complaint complaint"
                         + joinClause
@@ -395,7 +432,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
             }
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return new ArrayList<>();
         }
 
@@ -405,11 +442,11 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     public static Complaint findComplaintById(EntityManager em, Long Id) {
 
         try {
-            
-           return em.find(Complaint.class, Id);
+
+            return em.find(Complaint.class, Id);
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return null;
         }
     }
