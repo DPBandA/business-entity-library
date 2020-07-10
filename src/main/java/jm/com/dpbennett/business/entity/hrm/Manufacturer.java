@@ -60,6 +60,11 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
     private Long id;
     private String name;
     private String type;
+    private String code;
+    private String status;
+    private String registrationStatus;
+    private String businessRegistration;
+    private String taxRegistration;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
     @OneToMany(cascade = CascadeType.ALL)
@@ -107,6 +112,30 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getRegistrationStatus() {
+        return registrationStatus;
+    }
+
+    public void setRegistrationStatus(String registrationStatus) {
+        this.registrationStatus = registrationStatus;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
     
     public String getIsActive() {

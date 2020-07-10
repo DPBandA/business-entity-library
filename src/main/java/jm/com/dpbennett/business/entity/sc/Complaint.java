@@ -63,7 +63,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee officer;
+    private Employee receivedBy;
     private String complaintOfficer;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfCorrespondence;
@@ -129,7 +129,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
         if (referredToDepartment == null) {
             referredToDepartment = new ArrayList<>();
         }
-        
+
         return referredToDepartment;
     }
 
@@ -211,12 +211,15 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
         this.productInspections = productInspections;
     }
 
-    public Employee getOfficer() {
-        return officer;
+    public Employee getReceivedBy() {
+        if (receivedBy == null) {
+            return new Employee();
+        }
+        return receivedBy;
     }
 
-    public void setOfficer(Employee officer) {
-        this.officer = officer;
+    public void setReceivedBy(Employee receivedBy) {
+        this.receivedBy = receivedBy;
     }
 
     public Date getDateReceived() {
@@ -380,7 +383,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
         }
 
         joinClause = " LEFT JOIN complaint.enteredBy enteredBy"
-                + " LEFT JOIN complaint.officer officer"
+                + " LEFT JOIN complaint.receivedBy receivedBy"
                 + " LEFT JOIN complaint.productInspections productInspections"
                 + " LEFT JOIN complaint.referredTo referredTo"
                 + " LEFT JOIN complaint.complainant complainant"
@@ -392,8 +395,8 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
                         = " AND ("
                         + " UPPER(enteredBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(enteredBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(officer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(officer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(receivedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(receivedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(referredTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(referredTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(complaint.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
