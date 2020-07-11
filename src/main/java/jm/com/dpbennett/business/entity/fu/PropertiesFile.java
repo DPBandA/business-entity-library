@@ -145,8 +145,9 @@ public class PropertiesFile {
 
         try {
        
-            props.store(new FileOutputStream(FileUtils.getAbsoluteFilePath(filePath, getClass())),
-                    "Properties File");
+//            props.store(new FileOutputStream(FileUtils.getAbsoluteFilePath(filePath, getClass())),
+//                    "Properties File");
+            props.store(new FileOutputStream(filePath), "Properties File");
             
             return true;
 
@@ -167,8 +168,9 @@ public class PropertiesFile {
 
         try {
 
-            props.store(new FileOutputStream(FileUtils.getAbsoluteFilePath(filePath, getClass())),
-                    header);
+//            props.store(new FileOutputStream(FileUtils.getAbsoluteFilePath(filePath, getClass())),
+//                    header);
+             props.store(new FileOutputStream(filePath), header);  
             
             return true;
 
