@@ -181,10 +181,10 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
     }
-    
+
     public List<StatusNote> getStatusNotes(EntityManager em) {
-        
-       return StatusNote.findActiveStatusNotesByEntityId(em, id);
+
+        return StatusNote.findActiveStatusNotesByEntityId(em, id);
     }
 
     public Integer getNoOfInspections() {
@@ -462,60 +462,59 @@ public class Job implements Serializable, BusinessEntity {
     }
 
     public static Job copy(EntityManager em,
-            Job currentJob,
+            Job job,
             User user,
             Boolean autoGenerateJobNumber,
             Boolean copySamples) {
-        Job job = new Job();
 
-        job.setClient(new Client("", false));
-        job.setIsToBeCopied(true);
+        Job copy = new Job();
 
-        job.setReportNumber("");
-        job.setJobDescription("");
-
-        job.setBusiness(currentJob.getBusiness());
-        job.setBusinessOffice(currentJob.getBusinessOffice());
-        job.setDepartment(currentJob.getDepartment());
-        job.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
-        job.setClassification(Classification.findClassificationByName(em, "--"));
-        job.setSector(Sector.findSectorByName(em, "--"));
-        job.setJobCategory(JobCategory.findJobCategoryByName(em, "--"));
-        job.setJobSubCategory(JobSubCategory.findJobSubCategoryByName(em, "--"));
-        // service contract
-        job.setServiceContract(ServiceContract.create());
-        // set default values
-        job.setAutoGenerateJobNumber(autoGenerateJobNumber);
-        job.setIsEarningJob(Boolean.TRUE);
-        job.setYearReceived(Calendar.getInstance().get(Calendar.YEAR));
-        // job status and tracking
-        job.setJobStatusAndTracking(new JobStatusAndTracking());
-        job.getJobStatusAndTracking().setDateAndTimeEntered(new Date());
-        job.getJobStatusAndTracking().setDateSubmitted(new Date());
-        job.getJobStatusAndTracking().setAlertDate(null);
-        job.getJobStatusAndTracking().setDateJobEmailWasSent(null);
-        // job costing and payment 
-        job.setJobCostingAndPayment(JobCostingAndPayment.create(em));
-        // this is done here because job number is dependent on business office, department/subcontracted department
-
-        // copy samples
+        // General
+        copy.setIsEarningJob(job.getIsEarningJob());
+        copy.setAutoGenerateJobNumber(autoGenerateJobNumber);
+        copy.setYearReceived(Calendar.getInstance().get(Calendar.YEAR));
+        copy.setBusiness(job.getBusiness());
+        copy.setBusinessOffice(job.getBusinessOffice());
+        copy.setClassification(job.getClassification());
+        copy.setClient(job.getClient());
+        copy.setBillingAddress(job.getBillingAddress());
+        copy.setContact(job.getContact());
+        copy.getJobStatusAndTracking().setDateSubmitted(new Date());
+        copy.setDepartment(job.getDepartment());
+        copy.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
+        copy.setAssignedTo(job.getAssignedTo());
+        copy.setInstructions(job.getInstructions());
+        // Services
+        copy.setServiceLocation(job.getServiceLocation());
+        copy.setServiceContract(ServiceContract.create());
+        // Samples
         if (copySamples) {
-            List<JobSample> samples = currentJob.getJobSamples();
-            job.setNumberOfSamples(currentJob.getNumberOfSamples());
+            List<JobSample> samples = job.getJobSamples();
+            copy.setNumberOfSamples(job.getNumberOfSamples());
             for (JobSample jobSample : samples) {
-                job.getJobSamples().add(new JobSample(jobSample));
+                copy.getJobSamples().add(new JobSample(jobSample));
             }
         }
-
-        // Set sequence number
-        job.setJobSequenceNumber(currentJob.getJobSequenceNumber());
-
+        //Costing and Payment
+        copy.setJobCostingAndPayment(JobCostingAndPayment.create(em));
+        // Grouping
+        copy.setSector(job.getSector());
+        copy.setJobCategory(job.getJobCategory());
+        copy.setJobSubCategory(job.getJobSubCategory());
+        // Status and Tracking
+        copy.setJobStatusAndTracking(new JobStatusAndTracking());
+        copy.getJobStatusAndTracking().setDateAndTimeEntered(new Date());
+        // Reporting
+        copy.setReportNumber("");
+        // Other
+        copy.setIsToBeCopied(true);
+        copy.setJobDescription(job.getJobDescription());
         // Set job number
-        if (job.getAutoGenerateJobNumber()) {
-            job.setJobNumber(Job.getJobNumber(job, em));
+        if (copy.getAutoGenerateJobNumber()) {
+            copy.setJobNumber(Job.getJobNumber(copy, em));
         }
 
-        return job;
+        return copy;
     }
 
     public static Job create(EntityManager em,
@@ -970,7 +969,7 @@ public class Job implements Serializable, BusinessEntity {
     }
 
     public Employee getAssignedTo() {
-        
+
         return assignedTo;
     }
 
@@ -1203,7 +1202,7 @@ public class Job implements Serializable, BusinessEntity {
                 + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
                 + " LEFT JOIN job.jobSamples jobSamples"
                 + " LEFT JOIN job.representatives representatives";
-        
+
         if (searchText != null) {
             searchText = searchText.trim().replaceAll("'", "''");
         } else {
@@ -1235,9 +1234,9 @@ public class Job implements Serializable, BusinessEntity {
                 + " OR UPPER(jobSamples.productModel) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(jobSamples.productSerialNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(jobSamples.productCode) LIKE '%" + searchText.toUpperCase() + "%'";
-        
+
         String datePeriodSubClause = "jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-");
+                + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-");
 
         // Build query based on search type
         switch (searchType) {
@@ -1660,7 +1659,7 @@ public class Job implements Serializable, BusinessEntity {
                             + newName.toUpperCase().trim() + "%'"
                             + " ORDER BY j.jobNumber", Job.class).setMaxResults(25).getResultList();
             return numbers;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();

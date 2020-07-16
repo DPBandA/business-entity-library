@@ -94,10 +94,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     private Double minDeposit;
     private Double totalTax;
     private Double totalCost;
-//    @Transient
-//    private Double estimatedCostIncludingTaxes;
-//    @Transient
-//    private Double minDepositIncludingTaxes;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee lastPaymentEnteredBy;
     private String percentageGCT;

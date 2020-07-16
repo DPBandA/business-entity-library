@@ -54,7 +54,7 @@ public class ServiceContract implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long jobId; // tk needed?
+    private Long jobId;
     // Requested services    
     private Boolean serviceRequestedTesting;
     private Boolean serviceRequestedCalibration;
@@ -92,13 +92,13 @@ public class ServiceContract implements Serializable, BusinessEntity {
     private String intendedMarketOtherText;
     @Transient
     private Boolean isDirty;
-    private Long billingAddressId; // tk needed?
+    private Long billingAddressId;
     @Column(length = 1024)
     private String specialInstructions;
     private String submittedBy;
     private String receivedBy;
     private Integer estimatedTurnAroundTime;
-    private Boolean autoAddSampleInformation; // tk needed? How is it used?
+    private Boolean autoAddSampleInformation;
 
     public ServiceContract() {
         // Requested services
@@ -578,15 +578,13 @@ public class ServiceContract implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        
         if (!(object instanceof ServiceContract)) {
             return false;
         }
         ServiceContract other = (ServiceContract) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
