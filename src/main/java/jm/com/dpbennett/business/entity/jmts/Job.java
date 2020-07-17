@@ -478,8 +478,7 @@ public class Job implements Serializable, BusinessEntity {
         copy.setClassification(job.getClassification());
         copy.setClient(job.getClient());
         copy.setBillingAddress(job.getBillingAddress());
-        copy.setContact(job.getContact());
-        copy.getJobStatusAndTracking().setDateSubmitted(new Date());
+        copy.setContact(job.getContact());        
         copy.setDepartment(job.getDepartment());
         copy.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
         copy.setAssignedTo(job.getAssignedTo());
@@ -503,6 +502,7 @@ public class Job implements Serializable, BusinessEntity {
         copy.setJobSubCategory(job.getJobSubCategory());
         // Status and Tracking
         copy.setJobStatusAndTracking(new JobStatusAndTracking());
+        copy.getJobStatusAndTracking().setDateSubmitted(new Date());
         copy.getJobStatusAndTracking().setDateAndTimeEntered(new Date());
         // Reporting
         copy.setReportNumber("");
