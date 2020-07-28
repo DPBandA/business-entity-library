@@ -482,6 +482,9 @@ public class Job implements Serializable, BusinessEntity {
         copy.setDepartment(job.getDepartment());
         copy.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
         copy.setAssignedTo(job.getAssignedTo());
+        copy.setRepresentatives(job.getRepresentatives());
+        copy.setEstimatedTurnAroundTimeInDays(job.getEstimatedTurnAroundTimeInDays());
+        copy.setEstimatedTurnAroundTimeRequired(job.getEstimatedTurnAroundTimeRequired());
         copy.setInstructions(job.getInstructions());
         // Services
         copy.setServiceLocation(job.getServiceLocation());
@@ -504,6 +507,8 @@ public class Job implements Serializable, BusinessEntity {
         copy.setJobStatusAndTracking(new JobStatusAndTracking());
         copy.getJobStatusAndTracking().setDateSubmitted(new Date());
         copy.getJobStatusAndTracking().setDateAndTimeEntered(new Date());
+        copy.getJobStatusAndTracking().setWorkProgress("Not started");
+        copy.getJobStatusAndTracking().setStartDate(null);        
         // Reporting
         copy.setReportNumber("");
         // Other
