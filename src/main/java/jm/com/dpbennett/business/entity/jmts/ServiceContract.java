@@ -298,12 +298,6 @@ public class ServiceContract implements Serializable, BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public static ServiceContract create() {
-        ServiceContract serviceContract = new ServiceContract();
-
-        return serviceContract;
-    }
-
     @Override
     public Long getId() {
         return id;

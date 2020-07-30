@@ -488,7 +488,9 @@ public class Job implements Serializable, BusinessEntity {
         copy.setInstructions(job.getInstructions());
         // Services
         copy.setServiceLocation(job.getServiceLocation());
-        copy.setServiceContract(ServiceContract.create());
+        copy.setServiceContract(new ServiceContract(job.getServiceContract()));
+        copy.setServices(job.getServices());
+        //copy.setServiceContract(new ServiceContract());
         // Samples
         if (copySamples) {
             List<JobSample> samples = job.getJobSamples();
@@ -551,7 +553,7 @@ public class Job implements Serializable, BusinessEntity {
         job.setJobCategory(JobCategory.findJobCategoryByName(em, "--"));
         job.setJobSubCategory(JobSubCategory.findJobSubCategoryByName(em, "--"));
         // service contract
-        job.setServiceContract(ServiceContract.create());
+        job.setServiceContract(new ServiceContract());
         // set default values
         job.setAutoGenerateJobNumber(autoGenerateJobNumber);
         job.setIsEarningJob(Boolean.TRUE);
