@@ -43,8 +43,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "servicecontract")
 @NamedQueries({
-    @NamedQuery(name = "findAllServiceContracts", query = "SELECT s FROM ServiceContract s ORDER BY s.id")
-    ,
+    @NamedQuery(name = "findAllServiceContracts", query = "SELECT s FROM ServiceContract s ORDER BY s.id"),
     @NamedQuery(name = "findByJobId", query = "SELECT s FROM ServiceContract s WHERE s.jobId = :jobId")
 })
 @XmlRootElement
@@ -136,6 +135,44 @@ public class ServiceContract implements Serializable, BusinessEntity {
         intendedMarketCanada = false;
         intendedMarketOther = false;
         intendedMarketOtherText = "";
+    }
+
+    public ServiceContract(ServiceContract src) {
+        // Requested services
+        serviceRequestedTesting = src.serviceRequestedTesting;
+        serviceRequestedCalibration = src.serviceRequestedCalibration;
+        serviceRequestedLabelEvaluation = src.serviceRequestedLabelEvaluation;
+        serviceRequestedInspection = src.serviceRequestedInspection;
+        serviceRequestedConsultancy = src.serviceRequestedConsultancy;
+        serviceRequestedTraining = src.serviceRequestedTraining;
+        serviceRequestedFoodInspectorate = src.serviceRequestedFoodInspectorate;
+        serviceRequestedLegalMetrology = src.serviceRequestedLegalMetrology;
+        serviceRequestedSaleOfPublication = src.serviceRequestedSaleOfPublication;
+        serviceRequestedStationeryOrPhotocopy = src.serviceRequestedStationeryOrPhotocopy;
+        serviceRequestedCertification = src.serviceRequestedCertification;
+        serviceRequestedCertificationStandards = src.serviceRequestedCertificationStandards;
+        serviceRequestedDetentionRehabInspection = src.serviceRequestedDetentionRehabInspection;
+        serviceRequestedFacilitiesManagement = src.serviceRequestedFacilitiesManagement;
+        serviceRequestedCementTesting = src.serviceRequestedCementTesting;
+        serviceRequestedPetrolSampling = src.serviceRequestedPetrolSampling;
+        serviceRequestedOther = src.serviceRequestedOther;
+        serviceRequestedOtherText = src.serviceRequestedOtherText;
+        serviceRequestedDetails = src.serviceRequestedDetails;
+        // Additional services
+        additionalServiceUrgent = src.additionalServiceUrgent;
+        additionalServiceFaxResults = src.additionalServiceFaxResults;
+        additionalServiceTelephonePresumptiveResults = src.additionalServiceTelephonePresumptiveResults;
+        additionalServiceSendMoreContractForms = src.additionalServiceSendMoreContractForms;
+        additionalServiceOther = src.additionalServiceOther;
+        additionalServiceOtherText = src.additionalServiceOtherText;
+        // Intended market
+        intendedMarketLocal = src.intendedMarketLocal;
+        intendedMarketCaricom = src.intendedMarketCaricom;
+        intendedMarketUK = src.intendedMarketUK;
+        intendedMarketUSA = src.intendedMarketUSA;
+        intendedMarketCanada = src.intendedMarketCanada;
+        intendedMarketOther = src.intendedMarketOther;
+        intendedMarketOtherText = src.intendedMarketOtherText;
     }
 
     public Boolean getServiceRequestedPetrolSampling() {
@@ -578,12 +615,12 @@ public class ServiceContract implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof ServiceContract)) {
             return false;
         }
         ServiceContract other = (ServiceContract) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
