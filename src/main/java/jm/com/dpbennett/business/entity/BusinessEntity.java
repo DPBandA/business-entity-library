@@ -50,7 +50,7 @@ public interface BusinessEntity {
      */
     public enum Action {
         CREATE, COMPLETE, EDIT, APPROVE, DELETE, CANCEL, PREPARE, INVOICE,
-        COSTING, REQUEST
+        COSTING, REQUEST, PAYMENT
     }
     
 }

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2020  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -156,6 +156,8 @@ public class Job implements Serializable, BusinessEntity {
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Service> services;
     private String serviceLocation;
+    @Transient
+    private List<BusinessEntity.Action> actions;
 
     public Job() {
         this.name = "";
@@ -163,6 +165,7 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
+        this.actions = new ArrayList<>();
     }
 
     public Job(String name) {
@@ -171,6 +174,7 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
+        this.actions = new ArrayList<>();
     }
 
     public Job(Long id) {
@@ -180,8 +184,9 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeSubcontracted = false;
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
+        this.actions = new ArrayList<>();
     }
-
+    
     public List<StatusNote> getStatusNotes(EntityManager em) {
 
         return StatusNote.findActiveStatusNotesByEntityId(em, id);
@@ -2219,4 +2224,11 @@ public class Job implements Serializable, BusinessEntity {
         }
     }
 
+    public List<Action> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
+    }
 }
