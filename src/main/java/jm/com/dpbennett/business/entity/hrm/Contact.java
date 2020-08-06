@@ -104,6 +104,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         doCopy(src);
     }
 
+    @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
             isDirty = false;
@@ -111,6 +112,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         return isDirty;
     }
 
+    @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }

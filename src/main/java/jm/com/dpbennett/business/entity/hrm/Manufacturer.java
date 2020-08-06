@@ -380,6 +380,19 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
     public String toString() {
         return name;
     }
+    
+    public static List<Manufacturer> findAllActiveManufacturers(EntityManager em) {
+
+        try {
+            
+            return em.createQuery("SELECT m FROM Manufacturer m WHERE m.active = 1 ORDER BY m.name", Manufacturer.class)
+                    .setMaxResults(500).getResultList();
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     public static List<Manufacturer> findManufacturersBySearchPattern(EntityManager em, String searchPattern) {
 
