@@ -126,6 +126,54 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
         this.id = id;
     }
 
+    public Integer getYearOfLastProductTest() {
+        return yearOfLastProductTest;
+    }
+
+    public void setYearOfLastProductTest(Integer yearOfLastProductTest) {
+        this.yearOfLastProductTest = yearOfLastProductTest;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public Date getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(Date paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
+    public Date getDateRegistrationDue() {
+        return dateRegistrationDue;
+    }
+
+    public void setDateRegistrationDue(Date dateRegistrationDue) {
+        this.dateRegistrationDue = dateRegistrationDue;
+    }
+
+    public Date getDateLastVisited() {
+        return dateLastVisited;
+    }
+
+    public void setDateLastVisited(Date dateLastVisited) {
+        this.dateLastVisited = dateLastVisited;
+    }
+
+    public Employee getProductLastSampledBy() {
+        return productLastSampledBy;
+    }
+
+    public void setProductLastSampledBy(Employee productLastSampledBy) {
+        this.productLastSampledBy = productLastSampledBy;
+    }
+
     public String getBusinessRegistration() {
         return businessRegistration;
     }
