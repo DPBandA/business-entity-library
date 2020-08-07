@@ -116,6 +116,8 @@
     <class>jm.com.dpbennett.business.entity.fa.FinancialAccount</class>
     <class>jm.com.dpbennett.business.entity.sc.Complaint</class>
     <class>jm.com.dpbennett.business.entity.sm.StatusTracking</class>
+    <class>jm.com.dpbennett.business.entity.sc.InspectionComponent</class>
+    <class>jm.com.dpbennett.business.entity.sc.MarketProduct</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -251,6 +253,8 @@
     <class>jm.com.dpbennett.business.entity.fa.FinancialAccount</class>
     <class>jm.com.dpbennett.business.entity.sc.Complaint</class>
     <class>jm.com.dpbennett.business.entity.sm.StatusTracking</class>
+    <class>jm.com.dpbennett.business.entity.sc.InspectionComponent</class>
+    <class>jm.com.dpbennett.business.entity.sc.MarketProduct</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/enerbase"/>
       <property name="javax.persistence.jdbc.password" value=""/>

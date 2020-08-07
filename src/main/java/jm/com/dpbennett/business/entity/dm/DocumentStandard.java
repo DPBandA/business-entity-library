@@ -516,7 +516,7 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
                             + " OR d.number like '%"
                             + value + "%')"
                             + " AND d.active = 1"
-                            + " ORDER BY d.id", DocumentStandard.class).setMaxResults(10).getResultList();
+                            + " ORDER BY d.id", DocumentStandard.class).setMaxResults(500).getResultList();
             return documentStandards;
         } catch (Exception e) {
             System.out.println(e);
@@ -534,7 +534,7 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
                             + value + "%'"
                             + " OR d.number like '%"
                             + value + "%'"
-                            + " ORDER BY d.id", DocumentStandard.class).setMaxResults(10).getResultList();
+                            + " ORDER BY d.id", DocumentStandard.class).setMaxResults(500).getResultList();
             return documentStandards;
         } catch (Exception e) {
             System.out.println(e);
