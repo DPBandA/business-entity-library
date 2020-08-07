@@ -64,12 +64,14 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
     private Boolean isDirty;
 
     public MarketProduct() {
-        categories = new ArrayList<>();
+        this.active = true;
+        this.categories = new ArrayList<>();
     }
 
     public MarketProduct(String name) {
+        this.active = true;
         this.name = name;
-        categories = new ArrayList<>();
+        this.categories = new ArrayList<>();
     }
 
     public static List<MarketProduct> findActiveMarketProductsByAnyPartOfNameOrDescription(EntityManager em, String value) {
