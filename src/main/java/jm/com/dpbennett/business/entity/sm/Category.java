@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2020  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -140,6 +140,78 @@ public class Category implements BusinessEntity, Serializable {
             
         } catch (Exception e) {
             
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+     public static Category findActiveCategoryByName(EntityManager em, String value, Boolean ignoreCase) {
+
+        List<Category> categories;
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            if (ignoreCase) {
+                categories = em.createQuery("SELECT c FROM Category c"
+                        + " WHERE UPPER(c.name)"
+                        + " = '" + value.toUpperCase() + "'", Category.class).getResultList();
+            } else {
+                categories = em.createQuery("SELECT c FROM Category c"
+                        + " WHERE c.name "
+                        + "= '" + value + "'", Category.class).getResultList();
+            }
+
+            if (!categories.isEmpty()) {
+                return categories.get(0);
+            }
+            
+            return null;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static List<Category> findActiveCategoriesByAnyPartOfName(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Category> categories
+                    = em.createQuery("SELECT c FROM Category c WHERE c.name like '%"
+                            + value + "%'"
+                            //+ " OR c.brand like '%"
+                            //+ value + "%')"
+                            //+ " AND d.active = 1"
+                            + " ORDER BY c.id", Category.class).setMaxResults(500).getResultList();
+            
+            return categories;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+     public static List<Category> findActiveCategoriesByAnyPartOfNameAndType(
+             EntityManager em, String type, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Category> categories
+                    = em.createQuery("SELECT c FROM Category c WHERE c.name like '%"
+                            + value + "%'"
+                            + " AND c.type = '"
+                            + type + "'"
+                            //+ " AND d.active = 1"
+                            + " ORDER BY c.id", Category.class).setMaxResults(500).getResultList();
+            
+            return categories;
+            
+        } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }

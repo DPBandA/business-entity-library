@@ -411,7 +411,7 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
                         + "= '" + value.toUpperCase() + "'"
                         + " AND d.active = 1", DocumentStandard.class).getResultList();
             } else {
-                documentStandards = em.createQuery("SELECT d FROM Client d "
+                documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
                         + "WHERE d.name "
                         + "= '" + value + "'"
                         + " AND d.active = 1", DocumentStandard.class).getResultList();

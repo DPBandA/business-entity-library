@@ -73,6 +73,22 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
         this.name = name;
         this.categories = new ArrayList<>();
     }
+    
+     public static List<MarketProduct> findAllActiveMarketProducts(EntityManager em) {
+
+        try {
+            List<MarketProduct> marketProducts = 
+                    em.createQuery("SELECT m FROM MarketProduct m WHERE m.active = 1 ORDER BY m.name", 
+                            MarketProduct.class).getResultList();
+
+            return marketProducts;
+
+        } catch (Exception e) {
+            System.out.println(e);
+
+            return new ArrayList<>();
+        }
+    }
 
     public static List<MarketProduct> findActiveMarketProductsByAnyPartOfNameOrDescription(EntityManager em, String value) {
 
