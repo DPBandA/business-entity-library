@@ -41,6 +41,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.sc.MarketProduct;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -75,6 +76,8 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
     private Date dateRegistrationDue;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastVisited;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<MarketProduct> marketProducts;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
     @OneToMany(cascade = CascadeType.ALL)
@@ -97,6 +100,7 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
         this.tag = false;
         this.notes = "";
         this.type = "Manufacturer";
+        marketProducts = new ArrayList<>();
         contacts = new ArrayList<>();
         addresses = new ArrayList<>();
         internet = new Internet();
@@ -108,7 +112,8 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
         this.name = name;
         this.tag = false;
         this.notes = "";
-        this.type = "Manufacturer";
+        this.type = "Manufacturer"; 
+        marketProducts = new ArrayList<>();        
         contacts = new ArrayList<>();
         addresses = new ArrayList<>();
         internet = new Internet();
@@ -124,6 +129,14 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<MarketProduct> getMarketProducts() {
+        return marketProducts;
+    }
+
+    public void setMarketProducts(List<MarketProduct> marketProducts) {
+        this.marketProducts = marketProducts;
     }
 
     public Integer getYearOfLastProductTest() {
