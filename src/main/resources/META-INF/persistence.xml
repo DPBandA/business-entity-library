@@ -46,10 +46,8 @@
     <class>jm.com.dpbennett.business.entity.mt.EnergyLabel</class>
     <class>jm.com.dpbennett.business.entity.mt.EnergyConsumptionAndEfficiency</class>
     <class>jm.com.dpbennett.business.entity.fi.FoodFactory</class>
-    <class>jm.com.dpbennett.business.entity.fi.FactoryInspection</class>
     <class>jm.com.dpbennett.business.entity.fi.FoodSample</class>
     <class>jm.com.dpbennett.business.entity.fi.FoodTest</class>
-    <class>jm.com.dpbennett.business.entity.fi.FactoryInspectionComponent</class>
     <class>jm.com.dpbennett.business.entity.fi.FoodProduct</class>
     <class>jm.com.dpbennett.business.entity.hrm.Email</class>
     <class>jm.com.dpbennett.business.entity.hrm.Internet</class>
@@ -118,6 +116,8 @@
     <class>jm.com.dpbennett.business.entity.sm.StatusTracking</class>
     <class>jm.com.dpbennett.business.entity.sc.InspectionComponent</class>
     <class>jm.com.dpbennett.business.entity.sc.MarketProduct</class>
+    <class>jm.com.dpbennett.business.entity.sc.FactoryInspection</class>
+    <class>jm.com.dpbennett.business.entity.sc.FactoryInspectionComponent</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -183,10 +183,8 @@
     <class>jm.com.dpbennett.business.entity.mt.EnergyLabel</class>
     <class>jm.com.dpbennett.business.entity.mt.EnergyConsumptionAndEfficiency</class>
     <class>jm.com.dpbennett.business.entity.fi.FoodFactory</class>
-    <class>jm.com.dpbennett.business.entity.fi.FactoryInspection</class>
     <class>jm.com.dpbennett.business.entity.fi.FoodSample</class>
     <class>jm.com.dpbennett.business.entity.fi.FoodTest</class>
-    <class>jm.com.dpbennett.business.entity.fi.FactoryInspectionComponent</class>
     <class>jm.com.dpbennett.business.entity.fi.FoodProduct</class>
     <class>jm.com.dpbennett.business.entity.hrm.Email</class>
     <class>jm.com.dpbennett.business.entity.hrm.Internet</class>
@@ -255,6 +253,8 @@
     <class>jm.com.dpbennett.business.entity.sm.StatusTracking</class>
     <class>jm.com.dpbennett.business.entity.sc.InspectionComponent</class>
     <class>jm.com.dpbennett.business.entity.sc.MarketProduct</class>
+    <class>jm.com.dpbennett.business.entity.sc.FactoryInspection</class>
+    <class>jm.com.dpbennett.business.entity.sc.FactoryInspectionComponent</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/enerbase"/>
       <property name="javax.persistence.jdbc.password" value=""/>

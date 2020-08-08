@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2020  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 Email: info@dpbennett.com.jm
  */
 
-package jm.com.dpbennett.business.entity.fi;
+package jm.com.dpbennett.business.entity.sc;
 
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -30,6 +30,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -54,6 +55,9 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable 
     private Boolean isDirty;
 
     public FactoryInspectionComponent() {
+        this.category = "";
+        this.name = "";
+        this.isHeading = false;
     }
 
     public FactoryInspectionComponent(String category, String name, Boolean isHeading) {
@@ -111,9 +115,7 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable 
     }
 
     public String getResults() {
-//        if (results == null) {
-//            results = "--";
-//        }
+
         return results;
     }
 
@@ -143,7 +145,7 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable 
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FactoryInspectionComponent[id=" + id + "]";
+        return getName();
     }
 
     @Override
@@ -158,7 +160,18 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable 
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Factory inspection component not saved");
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2020  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,8 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
-package jm.com.dpbennett.business.entity.fi;
+package jm.com.dpbennett.business.entity.sc;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Contact;
@@ -40,10 +39,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
- * 
+ *
  * @author Desmond Bennett
  */
 @Entity
@@ -67,9 +68,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     private String generalComments;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedInspector;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Contact factoryRepresentative;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<FactoryInspectionComponent> inspectionComponents;
     private String name;
     private Integer maxDaysForCompliance;
@@ -92,7 +93,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -117,6 +118,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     /**
      * Get all the entities contained in lists in this class
+     *
      * @return
      */
     public List<BusinessEntity> getAllBusinessEntitiesLists() {
@@ -171,6 +173,10 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         return inspectionComponents;
     }
 
+    public void setInspectionComponents(List<FactoryInspectionComponent> inspectionComponents) {
+        this.inspectionComponents = inspectionComponents;
+    }
+
     public List<FactoryInspectionComponent> getInspectionComponentsByCategory(String category) {
         ArrayList<FactoryInspectionComponent> components = new ArrayList<>();
 
@@ -182,10 +188,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             }
         }
         return components;
-    }
-
-    public void setInspectionComponents(List<FactoryInspectionComponent> inspectionComponents) {
-        this.inspectionComponents = inspectionComponents;
     }
 
     public Date getInspectionDate() {
@@ -268,7 +270,32 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            // Save product inspections
+            if (!getProductInspections().isEmpty()) {
+                for (ProductInspection productInspection : getProductInspections()) {
+                    if ((productInspection.getIsDirty() || productInspection.getId() == null)
+                            && !productInspection.save(em).isSuccess()) {
+
+                        return new ReturnMessage(false,
+                                "Product save error occurred",
+                                "An error occurred while saving a product",
+                                Message.SEVERITY_ERROR_NAME);
+                    }
+                }
+            }
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Factory inspection not saved");
     }
 
     @Override
