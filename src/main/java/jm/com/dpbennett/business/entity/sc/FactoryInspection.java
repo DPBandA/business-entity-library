@@ -39,6 +39,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.hrm.Address;
+import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -69,12 +71,16 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedInspector;
     @OneToOne(cascade = CascadeType.REFRESH)
+    private Address address;
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Contact factoryRepresentative;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<FactoryInspectionComponent> inspectionComponents;
     private String name;
     private Integer maxDaysForCompliance;
     private String actionsTaken;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice businessOffice;
     @Transient
@@ -106,6 +112,28 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+    }
+
+    public Address getAddress() {
+        if (address == null) {
+            return new Address();
+        }
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Manufacturer getManufacturer() {
+        if (manufacturer == null) {
+            return new Manufacturer();
+        }
+        return manufacturer;
+    }
+
+    public void setManufacturer(Manufacturer manufacturer) {
+        this.manufacturer = manufacturer;
     }
 
     public BusinessOffice getBusinessOffice() {
@@ -154,6 +182,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     public Contact getFactoryRepresentative() {
+        if (factoryRepresentative == null) {
+            return new Contact();
+        }
         return factoryRepresentative;
     }
 
@@ -255,7 +286,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FactoryInspection[id=" + id + "]";
+        return getName();
     }
 
     @Override
@@ -273,14 +304,14 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         try {
 
             // Save product inspections
-            if (!getProductInspections().isEmpty()) {
-                for (ProductInspection productInspection : getProductInspections()) {
-                    if ((productInspection.getIsDirty() || productInspection.getId() == null)
-                            && !productInspection.save(em).isSuccess()) {
+            if (!getInspectionComponents().isEmpty()) {
+                for (FactoryInspectionComponent inspectionComponent : getInspectionComponents()) {
+                    if ((inspectionComponent.getIsDirty() || inspectionComponent.getId() == null)
+                            && !inspectionComponent.save(em).isSuccess()) {
 
                         return new ReturnMessage(false,
-                                "Product save error occurred",
-                                "An error occurred while saving a product",
+                                "Inspection component save error occurred",
+                                "An error occurred while saving an Inspection component",
                                 Message.SEVERITY_ERROR_NAME);
                     }
                 }
