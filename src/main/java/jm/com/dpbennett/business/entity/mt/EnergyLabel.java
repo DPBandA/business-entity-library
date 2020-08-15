@@ -1,6 +1,6 @@
 /*
 LabelPrint - A general purpose energy label printing application 
-Copyright (C) 2018  D P Bennett & Associates Limited
+Copyright (C) 2020  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -56,6 +56,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String starRating;
     private Boolean calcStarRating;
     private String ratedVoltage;
+    private String ratedCurrent;
     private String ratedFrequency;
     private String annualConsumption;
     private String brand;
@@ -95,6 +96,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private Boolean isDirty;
     @Transient
     private Boolean showSampleWatermark;
+    private String yearOfEvaluation;
 
     /**
      * The default constructor of an EnergyLabel.
@@ -138,6 +140,24 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         validity = "";
         isDirty = false;
         showSampleWatermark = false;
+        yearOfEvaluation = "";
+        ratedCurrent = "";
+    }
+
+    public String getRatedCurrent() {
+        return ratedCurrent;
+    }
+
+    public void setRatedCurrent(String ratedCurrent) {
+        this.ratedCurrent = ratedCurrent;
+    }
+
+    public String getYearOfEvaluation() {
+        return yearOfEvaluation;
+    }
+
+    public void setYearOfEvaluation(String yearOfEvaluation) {
+        this.yearOfEvaluation = yearOfEvaluation;
     }
 
     /**
