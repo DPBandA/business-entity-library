@@ -172,6 +172,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     public String getFeature1() {
+        if (feature1 == null) {
+            feature1 = "";
+        }
         return feature1;
     }
 
@@ -180,6 +183,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     public String getFeature2() {
+        if (feature2 == null) {
+            feature2 = "";
+        }
         return feature2;
     }
 
