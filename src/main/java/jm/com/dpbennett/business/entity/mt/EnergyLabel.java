@@ -100,6 +100,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String feature1;
     private String feature2;
     private String letterRating;
+    private String batchCode;
 
     /**
      * The default constructor of an EnergyLabel.
@@ -148,6 +149,15 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         feature1 = "";
         feature2 = "";
         letterRating = "A";
+        batchCode = "";
+    }
+
+    public String getBatchCode() {
+        return batchCode;
+    }
+
+    public void setBatchCode(String batchCode) {
+        this.batchCode = batchCode;
     }
 
     public String getLetterRating() {
