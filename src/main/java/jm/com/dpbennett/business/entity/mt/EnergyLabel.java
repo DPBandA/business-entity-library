@@ -97,6 +97,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     @Transient
     private Boolean showSampleWatermark;
     private String yearOfEvaluation;
+    private String feature1;
+    private String feature2;
+    private String letterRating;
 
     /**
      * The default constructor of an EnergyLabel.
@@ -142,6 +145,36 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         showSampleWatermark = false;
         yearOfEvaluation = "";
         ratedCurrent = "";
+        feature1 = "";
+        feature2 = "";
+        letterRating = "A";
+    }
+
+    public String getLetterRating() {
+        if (letterRating == null) {
+            letterRating = "A";
+        }
+        return letterRating;
+    }
+
+    public void setLetterRating(String letterRating) {
+        this.letterRating = letterRating;
+    }
+
+    public String getFeature1() {
+        return feature1;
+    }
+
+    public void setFeature1(String feature1) {
+        this.feature1 = feature1;
+    }
+
+    public String getFeature2() {
+        return feature2;
+    }
+
+    public void setFeature2(String feature2) {
+        this.feature2 = feature2;
     }
 
     public String getRatedCurrent() {
