@@ -303,7 +303,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            // Save product inspections
+            // Save inspection components
             if (!getInspectionComponents().isEmpty()) {
                 for (FactoryInspectionComponent inspectionComponent : getInspectionComponents()) {
                     if ((inspectionComponent.getIsDirty() || inspectionComponent.getId() == null)
@@ -331,6 +331,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 }
