@@ -467,7 +467,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
             return null;
         }
     }
-    
+
     public static Contact findClientContact(EntityManager em, String query, Client client) {
 
         try {
@@ -505,6 +505,28 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
                             && contact.getLastName().equals(employee.getLastName())) {
                         return contact;
                     }
+                }
+            }
+
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Contact findContact(EntityManager em, String query, List<Contact> contactsList) {
+
+        try {
+            String newQuery = query.replaceAll("'", "''");
+            String contacts[] = newQuery.split(", ");
+            String lastname = contacts[0];
+            String firstname = contacts[1];
+
+            for (Contact contact : contactsList) {
+                if (contact.getFirstName().equals(firstname)
+                        && contact.getLastName().equals(lastname)) {
+                    return contact;
                 }
             }
 
