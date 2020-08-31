@@ -65,6 +65,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     private Date inspectionEndTime;
     @Column(length = 1024)
     private String workInProgress;
+    private String workProgress;
     private String inspectionType;
     @Column(length = 1024)
     private String generalComments;
@@ -98,6 +99,14 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getWorkProgress() {
+        return workProgress;
+    }
+
+    public void setWorkProgress(String workProgress) {
+        this.workProgress = workProgress;
     }
 
     @Override
