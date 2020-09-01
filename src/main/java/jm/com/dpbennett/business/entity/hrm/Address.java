@@ -419,7 +419,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     public static Address findClientAddressById(EntityManager em, String query, Long clientId) {
 
         try {
-            
+
             String address[] = query.split("; ");
             String addressLine1 = address[0];
             String addressLine2 = address[1];
@@ -445,11 +445,11 @@ public class Address implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
-    
+
     public static Address findClientAddress(String query, Client client) {
 
         try {
-            
+
             String address[] = query.split("; ");
             String addressLine1 = address[0];
             String addressLine2 = address[1];
@@ -473,7 +473,33 @@ public class Address implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
-    
+
+    public static Address findAddress(String query, List<Address> addresses) {
+
+        try {
+
+            String address[] = query.split("; ");
+            String addressLine1 = address[0];
+            String addressLine2 = address[1];
+            String city = address[2];
+            String stateOrProvince = address[3];
+
+            for (Address addr : addresses) {
+                if (addr.getAddressLine1().equals(addressLine1)
+                        && addr.getAddressLine2().equals(addressLine2)
+                        && addr.getCity().equals(city)
+                        && addr.getStateOrProvince().equals(stateOrProvince)) {
+                    return addr;
+                }
+            }
+
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     public static List<Address> findClientAddresses(EntityManager em, String value) {
 
         try {
