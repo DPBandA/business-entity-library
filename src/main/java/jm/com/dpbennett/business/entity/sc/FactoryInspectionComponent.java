@@ -60,6 +60,14 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable 
         this.isHeading = false;
     }
 
+    public FactoryInspectionComponent(FactoryInspectionComponent src) {
+        this.name = src.name;
+        this.category = src.category;
+        this.comments = src.comments;
+        this.isHeading = src.isHeading;
+        this.results = src.results;
+    }        
+
     public FactoryInspectionComponent(String category, String name, Boolean isHeading) {
         this.category = category;
         this.name = name;
