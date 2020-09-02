@@ -40,6 +40,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.hrm.Address;
+import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
@@ -99,6 +100,43 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+     public static List<FactoryInspection> findFactoryInspectionsByName(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<FactoryInspection> factoryInspections
+                    = em.createQuery("SELECT f FROM FactoryInspection f WHERE UPPER(f.name) LIKE '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY f.name", FactoryInspection.class).getResultList();
+            
+            return factoryInspections;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+     
+    public static FactoryInspection findFactoryInspectionByName(EntityManager em, String value) {
+
+        try {
+            
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<FactoryInspection> factoryInspections = em.createQuery("SELECT f FROM FactoryInspection f "
+                    + "WHERE UPPER(f.name) "
+                    + "= '" + value.toUpperCase() + "'", FactoryInspection.class).getResultList();
+            
+            if (factoryInspections.size() > 0) {
+                return factoryInspections.get(0);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
 
     public String getWorkProgress() {
