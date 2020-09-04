@@ -24,6 +24,7 @@ import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -39,6 +40,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.fm.CostComponent;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -247,6 +249,17 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     public List<FactoryInspectionComponent> getInspectionComponents() {
+        if (inspectionComponents == null) {
+            inspectionComponents = new ArrayList<>();
+        }
+        
+        return inspectionComponents;
+    }
+    
+    public List<FactoryInspectionComponent> getAllSortedFactoryInspectionComponents() {
+
+        Collections.sort(getInspectionComponents());
+
         return inspectionComponents;
     }
 

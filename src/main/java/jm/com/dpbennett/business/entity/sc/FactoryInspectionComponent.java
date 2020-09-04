@@ -21,6 +21,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.sc;
 
 import java.io.Serializable;
+import java.text.Collator;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -39,7 +40,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "factoryinspectioncomponent")
-public class FactoryInspectionComponent implements BusinessEntity, Serializable {
+public class FactoryInspectionComponent implements BusinessEntity, Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -153,9 +154,9 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable 
 
     @Override
     public String toString() {
-        return getName();
+        return "FactoryInspectionComponent{" + "id=" + id + '}';
     }
-
+    
     @Override
     public String getName() {
         return name;
@@ -185,5 +186,10 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable 
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.toString(), ((FactoryInspectionComponent) o).toString());
     }
 }
