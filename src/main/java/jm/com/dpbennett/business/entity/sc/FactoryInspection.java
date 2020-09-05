@@ -40,9 +40,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.fm.CostComponent;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
+import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -102,8 +102,82 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-     public static List<FactoryInspection> findFactoryInspectionsByName(EntityManager em, String value) {
+
+    public static List<FactoryInspection> findFactoryInspectionsByDateSearchField(
+            EntityManager em,
+            String dateSearchField,
+            String searchType,
+            String originalSearchText,
+            Date startDate,
+            Date endDate) {
+
+        List<FactoryInspection> foundFactoryInspections;
+        String searchQuery = null;
+        String searchTextAndClause = "";
+        String joinClause;
+        String searchText;
+
+        if (originalSearchText != null) {
+            searchText = originalSearchText.replaceAll("'", "''").replaceAll("&amp;", "&");
+        } else {
+            searchText = "";
+        }
+
+        joinClause
+                = " LEFT JOIN factoryinspection.assignedInspector assignedInspector"
+                + " LEFT JOIN factoryinspection.manufacturer manufacturer";
+
+        switch (searchType) {
+            case "General":
+                if (!searchText.equals("")) {
+                    searchTextAndClause
+                            = " AND ("
+                            + " UPPER(factoryinspection.workInProgress) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(factoryinspection.workProgress) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(factoryinspection.inspectionType) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(factoryinspection.generalComments) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(factoryinspection.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(factoryinspection.actionsTaken) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(assignedInspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(assignedInspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(manufacturer.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " )";
+                }
+                if ((startDate == null) || (endDate == null)) {
+                    searchQuery
+                            = "SELECT DISTINCT factoryInspection FROM FactoryInspection factoryInspection"
+                            + joinClause
+                            + " WHERE (0 = 0)" // used as place holder
+                            + searchTextAndClause
+                            + " ORDER BY factoryInspection.id DESC";
+                } else {
+                    searchQuery
+                            = "SELECT DISTINCT factoryInspection FROM FactoryInspection factoryInspection"
+                            + joinClause
+                            + " WHERE (factoryInspection." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                            + " AND factoryInspection." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                            + searchTextAndClause
+                            + " ORDER BY factoryInspection.id DESC";
+                }
+                break;
+            case "?":
+                break;
+        }
+
+        try {
+            foundFactoryInspections = em.createQuery(searchQuery, FactoryInspection.class).setMaxResults(100).getResultList();
+            if (foundFactoryInspections == null) {
+                foundFactoryInspections = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
+        return foundFactoryInspections;
+    }
+
+    public static List<FactoryInspection> findFactoryInspectionsByName(EntityManager em, String value) {
 
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
@@ -111,28 +185,28 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             List<FactoryInspection> factoryInspections
                     = em.createQuery("SELECT f FROM FactoryInspection f WHERE UPPER(f.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' ORDER BY f.name", FactoryInspection.class).getResultList();
-            
+
             return factoryInspections;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
-     
+
     public static FactoryInspection findFactoryInspectionByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<FactoryInspection> factoryInspections = em.createQuery("SELECT f FROM FactoryInspection f "
                     + "WHERE UPPER(f.name) "
                     + "= '" + value.toUpperCase() + "'", FactoryInspection.class).getResultList();
-            
+
             if (factoryInspections.size() > 0) {
                 return factoryInspections.get(0);
             }
-            
+
             return null;
         } catch (Exception e) {
             System.out.println(e);
@@ -252,10 +326,10 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         if (inspectionComponents == null) {
             inspectionComponents = new ArrayList<>();
         }
-        
+
         return inspectionComponents;
     }
-    
+
     public List<FactoryInspectionComponent> getAllSortedFactoryInspectionComponents() {
 
         Collections.sort(getInspectionComponents());
