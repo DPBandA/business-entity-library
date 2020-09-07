@@ -47,32 +47,44 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable,
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String item;
     private String category;
     @Column(length = 1024)
     private String comments;
     private Boolean isHeading;
     private String results;
+    private Boolean satisfactory;
     @Transient
     private Boolean isDirty;
 
-    public FactoryInspectionComponent() {
-        this.category = "";
+    public FactoryInspectionComponent() {        
         this.name = "";
+        this.item = "";
+        this.category = "";
+        this.comments = "";
         this.isHeading = false;
+        this.results = "";
+        this.satisfactory = false;
     }
 
     public FactoryInspectionComponent(FactoryInspectionComponent src) {
         this.name = src.name;
+        this.item = src.item;
         this.category = src.category;
         this.comments = src.comments;
         this.isHeading = src.isHeading;
         this.results = src.results;
+        this.satisfactory = src.satisfactory;
     }        
 
-    public FactoryInspectionComponent(String category, String name, Boolean isHeading) {
-        this.category = category;
+    public FactoryInspectionComponent(String name, String category, Boolean isHeading) {
         this.name = name;
+        this.item = "";
+        this.category = category;
+        this.comments = "";
         this.isHeading = isHeading;
+        this.results = "";
+        this.satisfactory = false;
     }
 
     @Override
