@@ -96,6 +96,38 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable,
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getItem() {
+        return item;
+    }
+
+    public void setItem(String item) {
+        this.item = item;
+    }
+
+    public Boolean getSatisfactory() {
+        return satisfactory;
+    }
+
+    public void setSatisfactory(Boolean satisfactory) {
+        this.satisfactory = satisfactory;
+    }
+    
+    public String getIsSatisfactory() {
+        if (getSatisfactory()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+    
+    public void setIsSatisfactory(String satisfactory) {
+        if (satisfactory.equals("Yes")) {
+            setSatisfactory(true);
+        } else {
+            setSatisfactory(false);
+        }
+    }
     
     @Override
     public Boolean getIsDirty() {
