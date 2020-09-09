@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sc;
 
 import java.io.Serializable;
@@ -57,7 +56,7 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable,
     @Transient
     private Boolean isDirty;
 
-    public FactoryInspectionComponent() {        
+    public FactoryInspectionComponent() {
         this.name = "";
         this.item = "";
         this.category = "";
@@ -75,7 +74,7 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable,
         this.isHeading = src.isHeading;
         this.results = src.results;
         this.satisfactory = src.satisfactory;
-    }        
+    }
 
     public FactoryInspectionComponent(String name, String category, Boolean isHeading) {
         this.name = name;
@@ -106,13 +105,16 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable,
     }
 
     public Boolean getSatisfactory() {
+        if (satisfactory == null) {
+            satisfactory = false;
+        }
         return satisfactory;
     }
 
     public void setSatisfactory(Boolean satisfactory) {
         this.satisfactory = satisfactory;
     }
-    
+
     public String getIsSatisfactory() {
         if (getSatisfactory()) {
             return "Yes";
@@ -120,7 +122,7 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable,
             return "No";
         }
     }
-    
+
     public void setIsSatisfactory(String satisfactory) {
         if (satisfactory.equals("Yes")) {
             setSatisfactory(true);
@@ -128,7 +130,7 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable,
             setSatisfactory(false);
         }
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -200,7 +202,7 @@ public class FactoryInspectionComponent implements BusinessEntity, Serializable,
     public String toString() {
         return "FactoryInspectionComponent{" + "id=" + id + '}';
     }
-    
+
     @Override
     public String getName() {
         return name;
