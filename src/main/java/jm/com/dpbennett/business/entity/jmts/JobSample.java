@@ -282,7 +282,7 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
 
     @Override
     public Employee getReceivedBy() {
-       
+
         return receivedBy;
     }
 
@@ -473,7 +473,8 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
     @Override
     public int compareTo(Object o) {
         if (((JobSample) o).getId() != null && this.getId() != null) {
-            return Collator.getInstance().compare(this.getId().toString(), ((JobSample) o).getId().toString());
+//            return Collator.getInstance().compare(this.getId().toString(), ((JobSample) o).getId().toString());
+            return Collator.getInstance().compare(this.getReference(), ((JobSample) o).getReference());
         } else {
             return 1;
         }
@@ -630,6 +631,6 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 }
