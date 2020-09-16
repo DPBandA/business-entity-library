@@ -719,10 +719,10 @@ public class ComplianceSurvey
     }
 
     public Contact getConsigneeRepresentative() {
-        if (consigneeRepresentative == null) {    
-            
-                return new Contact();
-         
+        if (consigneeRepresentative == null) {
+
+            return new Contact();
+
         }
         return consigneeRepresentative;
     }
@@ -849,11 +849,11 @@ public class ComplianceSurvey
     }
 
     public Contact getRetailRepresentative() {
-        if (retailRepresentative == null) {          
-           
-                return new Contact();
+        if (retailRepresentative == null) {
+
+            return new Contact();
         }
-        
+
         return retailRepresentative;
     }
 
@@ -1199,10 +1199,8 @@ public class ComplianceSurvey
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            // NB: Save contained entities where necessary
-            //if (getEntryDocumentInspection().getIsDirty()) {
-                getEntryDocumentInspection().save(em);
-            //}
+
+            getEntryDocumentInspection().save(em);
 
             // Save product inspections
             if (!getProductInspections().isEmpty()) {
@@ -1210,7 +1208,7 @@ public class ComplianceSurvey
                     if ((productInspection.getIsDirty() || productInspection.getId() == null)
                             && !productInspection.save(em).isSuccess()) {
 
-                         return new ReturnMessage(false,
+                        return new ReturnMessage(false,
                                 "Product save error occurred",
                                 "An error occurred while saving a product",
                                 Message.SEVERITY_ERROR_NAME);

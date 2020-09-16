@@ -78,6 +78,8 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     private Contact factoryRepresentative;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<FactoryInspectionComponent> inspectionComponents;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<ProductInspection> productInspections;
     private String name;
     private Integer maxDaysForCompliance;
     private String actionsTaken;
@@ -100,6 +102,20 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<ProductInspection> getProductInspections() {
+        if (productInspections != null) {
+            Collections.sort(productInspections);
+        } else {
+            productInspections = new ArrayList<>();
+        }
+
+        return productInspections;
+    }
+
+    public void setProductInspections(List<ProductInspection> productInspections) {
+        this.productInspections = productInspections;
     }
 
     public static List<FactoryInspection> findFactoryInspectionsByDateSearchField(
@@ -444,6 +460,20 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                         return new ReturnMessage(false,
                                 "Inspection component save error occurred",
                                 "An error occurred while saving an Inspection component",
+                                Message.SEVERITY_ERROR_NAME);
+                    }
+                }
+            }
+
+            // Save product inspections
+            if (!getProductInspections().isEmpty()) {
+                for (ProductInspection productInspection : getProductInspections()) {
+                    if ((productInspection.getIsDirty() || productInspection.getId() == null)
+                            && !productInspection.save(em).isSuccess()) {
+
+                        return new ReturnMessage(false,
+                                "Product save error occurred",
+                                "An error occurred while saving a product",
                                 Message.SEVERITY_ERROR_NAME);
                     }
                 }
