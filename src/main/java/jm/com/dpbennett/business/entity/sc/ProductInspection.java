@@ -75,6 +75,8 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client distributor;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private MarketProduct marketProduct;
     private String brand;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateChecked;
@@ -137,6 +139,14 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+    }
+
+    public MarketProduct getMarketProduct() {
+        return marketProduct;
+    }
+
+    public void setMarketProduct(MarketProduct marketProduct) {
+        this.marketProduct = marketProduct;
     }
 
     public String getTariffCode() {
