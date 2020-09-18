@@ -188,6 +188,8 @@ public class ComplianceSurvey
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<DocumentStandard> standardsBreached;
     private String workProgress;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Employee> inspectors;
     @Transient
     private Boolean isDirty;
 
@@ -203,6 +205,17 @@ public class ComplianceSurvey
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Employee> getInspectors() {
+        if (inspectors == null) {
+            inspectors = new ArrayList<>();
+        }
+        return inspectors;
+    }
+
+    public void setInspectors(List<Employee> inspectors) {
+        this.inspectors = inspectors;
     }
 
     @Override
