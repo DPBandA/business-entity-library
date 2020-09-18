@@ -187,6 +187,7 @@ public class ComplianceSurvey
     private String jobNumber;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<DocumentStandard> standardsBreached;
+    private String workProgress;
     @Transient
     private Boolean isDirty;
 
@@ -215,6 +216,17 @@ public class ComplianceSurvey
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+    }
+
+    public String getWorkProgress() {
+        if (workProgress == null) {
+            workProgress = "Ongoing";
+        }
+        return workProgress;
+    }
+
+    public void setWorkProgress(String workProgress) {
+        this.workProgress = workProgress;
     }
 
     public String getJobNumber() {
