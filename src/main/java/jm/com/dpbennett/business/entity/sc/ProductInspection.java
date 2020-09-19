@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2020  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -115,6 +115,8 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspector;
     private String tariffCode;
+    private String heatNumber;
+    private String coilNumber;
     @Transient
     private Boolean isDirty;
 
@@ -139,6 +141,22 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+    }
+
+    public String getHeatNumber() {
+        return heatNumber;
+    }
+
+    public void setHeatNumber(String heatNumber) {
+        this.heatNumber = heatNumber;
+    }
+
+    public String getCoilNumber() {
+        return coilNumber;
+    }
+
+    public void setCoilNumber(String coilNumber) {
+        this.coilNumber = coilNumber;
     }
 
     public MarketProduct getMarketProduct() {
