@@ -118,10 +118,10 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<MarketProduct> marketProducts
-                    = em.createQuery("SELECT m FROM MarketProduct m WHERE (m.name like '%"
-                            + value + "%'"
-                            + " OR m.description like '%"
-                            + value + "%')"
+                    = em.createQuery("SELECT m FROM MarketProduct m WHERE (UPPER(m.name) like '%"
+                            + value.toUpperCase() + "%'"
+                            + " OR UPPER(m.description) like '%"
+                            + value.toUpperCase() + "%')"
                             + " AND m.active = 1"
                             + " ORDER BY m.name", MarketProduct.class).setMaxResults(500).getResultList();
 
@@ -139,10 +139,10 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<MarketProduct> marketProducts
-                    = em.createQuery("SELECT m FROM MarketProduct m WHERE m.name like '%"
-                            + value + "%'"
-                            + " OR m.description like '%"
-                            + value + "%'"
+                    = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
+                            + value.toUpperCase() + "%'"
+                            + " OR UPPER(m.description) like '%"
+                            + value.toUpperCase() + "%'"
                             + " ORDER BY m.name", MarketProduct.class).setMaxResults(500).getResultList();
 
             return marketProducts;
