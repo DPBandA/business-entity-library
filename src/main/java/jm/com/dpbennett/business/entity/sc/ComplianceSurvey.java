@@ -190,6 +190,7 @@ public class ComplianceSurvey
     private String workProgress;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> inspectors;
+    private Boolean applicationForRehabilitation;
     @Transient
     private Boolean isDirty;
 
@@ -205,6 +206,17 @@ public class ComplianceSurvey
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getApplicationForRehabilitation() {
+        if (applicationForRehabilitation == null) {
+            applicationForRehabilitation = false;
+        }
+        return applicationForRehabilitation;
+    }
+
+    public void setApplicationForRehabilitation(Boolean applicationForRehabilitation) {
+        this.applicationForRehabilitation = applicationForRehabilitation;
     }
 
     public List<Employee> getInspectors() {
