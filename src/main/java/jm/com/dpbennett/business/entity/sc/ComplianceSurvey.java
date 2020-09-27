@@ -207,6 +207,12 @@ public class ComplianceSurvey
     public void setId(Long id) {
         this.id = id;
     }
+    
+    
+    public Boolean getDisableVerificationReport() {
+        
+        return false;
+    }
 
     public Boolean getApplicationForRehabilitation() {
         if (applicationForRehabilitation == null) {
