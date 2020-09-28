@@ -501,7 +501,7 @@ public class Job implements Serializable, BusinessEntity {
             List<JobSample> samples = job.getJobSamples();
             copy.setNumberOfSamples(job.getNumberOfSamples());
             for (JobSample jobSample : samples) {
-                copy.getJobSamples().add(new JobSample(jobSample));
+                copy.getJobSamples().add(jobSample); //add(new JobSample(jobSample));
             }
         }
         //Costing and Payment
