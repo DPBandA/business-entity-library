@@ -890,19 +890,22 @@ public class Job implements Serializable, BusinessEntity {
      * @return
      */
     public List<JobSample> getFilteredJobSamples() {
-        if (hasOnlyDefaultJobSample()) {
-            return new ArrayList<>();
-        } else {
-            return getJobSamples();
-        }
+        //if (hasOnlyDefaultJobSample()) {
+         //   return new ArrayList<>();
+        //} else {
+        //    return getJobSamples();
+        //}
+        Collections.sort(getJobSamples());
+        
+        return jobSamples;
     }
 
     @XmlTransient
     //@JsonIgnore
     public List<JobSample> getJobSamples() {
-        if (jobSamples != null) {
-            Collections.sort(jobSamples);
-        } else {
+        if (jobSamples == null) {
+        //    Collections.sort(jobSamples);
+        //} else {
             jobSamples = new ArrayList<>();
         }
 

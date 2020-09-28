@@ -467,18 +467,19 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
 
     @Override
     public String toString() {
-        return "(" + reference + ") " + description;
+        
+        return "jm.org.bsj.entity.JobSample[id=" + id + "]";
     }
 
     @Override
     public int compareTo(Object o) {
-        if (((JobSample) o).getId() != null && this.getId() != null) {
-//            return Collator.getInstance().compare(this.getId().toString(), ((JobSample) o).getId().toString());
-            return Collator.getInstance().compare(this.getReference(), ((JobSample) o).getReference());
-        } else {
+        if (((JobSample) o).getReferenceIndex() < this.getReferenceIndex()) {
             return 1;
+        } else if (Objects.equals(((JobSample) o).getReferenceIndex(), this.getReferenceIndex())) {
+            return 0;
+        } else {
+            return -1;
         }
-        //return Collator.getInstance().compare(this.reference, ((JobSample) o).reference);        
     }
 
     @Override
@@ -581,10 +582,8 @@ public class JobSample implements Product, Sample, Serializable, Comparable, Bus
             detail = detail + ", " + productCode;
         }
 
-        //if (sampleQuantity != null && !productCode.equals("")) {
         detail = detail + ", Sample Qty: " + getSampleQuantity();
-        //}
-
+        
         detail = detail + ", Product Qty: " + getQuantity();
 
         return detail;
