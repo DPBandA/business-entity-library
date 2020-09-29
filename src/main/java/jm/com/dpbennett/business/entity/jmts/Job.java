@@ -186,7 +186,7 @@ public class Job implements Serializable, BusinessEntity {
         this.jobSamples = new ArrayList<>();
         this.actions = new ArrayList<>();
     }
-    
+
     public List<StatusNote> getStatusNotes(EntityManager em) {
 
         return StatusNote.findActiveStatusNotesByEntityId(em, id);
@@ -470,7 +470,7 @@ public class Job implements Serializable, BusinessEntity {
             Job job,
             User user,
             Boolean autoGenerateJobNumber,
-            Boolean copySamples) {
+            Boolean linkSamples) {
 
         Job copy = new Job();
 
@@ -483,7 +483,7 @@ public class Job implements Serializable, BusinessEntity {
         copy.setClassification(job.getClassification());
         copy.setClient(job.getClient());
         copy.setBillingAddress(job.getBillingAddress());
-        copy.setContact(job.getContact());        
+        copy.setContact(job.getContact());
         copy.setDepartment(job.getDepartment());
         copy.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
         copy.setAssignedTo(job.getAssignedTo());
@@ -495,13 +495,16 @@ public class Job implements Serializable, BusinessEntity {
         copy.setServiceLocation(job.getServiceLocation());
         copy.setServiceContract(new ServiceContract(job.getServiceContract()));
         copy.setServices(job.getServices());
-        //copy.setServiceContract(new ServiceContract());
-        // Samples
-        if (copySamples) {
-            List<JobSample> samples = job.getJobSamples();
-            copy.setNumberOfSamples(job.getNumberOfSamples());
+        // Copy or link samples
+        List<JobSample> samples = job.getJobSamples();
+        copy.setNumberOfSamples(job.getNumberOfSamples());
+        if (linkSamples) {
             for (JobSample jobSample : samples) {
-                copy.getJobSamples().add(jobSample); //add(new JobSample(jobSample));
+                copy.getJobSamples().add(jobSample);
+            }
+        } else {
+            for (JobSample jobSample : samples) {
+                copy.getJobSamples().add(new JobSample(jobSample));
             }
         }
         //Costing and Payment
@@ -515,7 +518,7 @@ public class Job implements Serializable, BusinessEntity {
         copy.getJobStatusAndTracking().setDateSubmitted(new Date());
         copy.getJobStatusAndTracking().setDateAndTimeEntered(new Date());
         copy.getJobStatusAndTracking().setWorkProgress("Not started");
-        copy.getJobStatusAndTracking().setStartDate(null);        
+        copy.getJobStatusAndTracking().setStartDate(null);
         // Reporting
         copy.setReportNumber("");
         // Other
@@ -891,12 +894,12 @@ public class Job implements Serializable, BusinessEntity {
      */
     public List<JobSample> getFilteredJobSamples() {
         //if (hasOnlyDefaultJobSample()) {
-         //   return new ArrayList<>();
+        //   return new ArrayList<>();
         //} else {
         //    return getJobSamples();
         //}
         Collections.sort(getJobSamples());
-        
+
         return jobSamples;
     }
 
@@ -904,8 +907,8 @@ public class Job implements Serializable, BusinessEntity {
     //@JsonIgnore
     public List<JobSample> getJobSamples() {
         if (jobSamples == null) {
-        //    Collections.sort(jobSamples);
-        //} else {
+            //    Collections.sort(jobSamples);
+            //} else {
             jobSamples = new ArrayList<>();
         }
 
