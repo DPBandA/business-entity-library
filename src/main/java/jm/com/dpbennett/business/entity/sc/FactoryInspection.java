@@ -89,6 +89,8 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     private BusinessOffice businessOffice;
     @Transient
     private Boolean isDirty;
+    @Transient
+    private String editStatus;
 
     public FactoryInspection() {
         inspectionComponents = new ArrayList<>();
@@ -103,6 +105,16 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getEditStatus() {
+        return editStatus;
+    }
+
+    public void setEditStatus(String editStatus) {
+        this.editStatus = editStatus;
+    }
+    
+    
 
     public List<ProductInspection> getProductInspections() {
         if (productInspections != null) {
@@ -249,6 +261,12 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+       
+        if (isDirty) {
+            setEditStatus("(edited)");
+        } else {
+            setEditStatus("        ");
+        }
     }
 
     public Address getAddress() {

@@ -193,6 +193,8 @@ public class ComplianceSurvey
     private Boolean applicationForRehabilitation;
     @Transient
     private Boolean isDirty;
+    @Transient
+    private String editStatus; 
 
     public ComplianceSurvey() {
         this.surveyType = "";
@@ -207,6 +209,15 @@ public class ComplianceSurvey
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getEditStatus() {
+        return editStatus;
+    }
+
+    public void setEditStatus(String editStatus) {
+        this.editStatus = editStatus;
+    }
+    
     
     
     public Boolean getDisableVerificationReport() {
