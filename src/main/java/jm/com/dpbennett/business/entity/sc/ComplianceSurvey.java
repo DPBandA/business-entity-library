@@ -135,6 +135,7 @@ public class ComplianceSurvey
     private Boolean requestForReleaseIssuedForPortOfEntry;
     private Boolean noticeOfDetentionIssuedForDomesticMarket;
     private Boolean noticeOfReleaseFromDetentionIssuedForDomesticMarket;
+    private Boolean compliant;
     private String portOfEntryDetentionNumber;
     private String domesticMarketDetentionNumber;
     // Signatures, dates and names
@@ -194,7 +195,7 @@ public class ComplianceSurvey
     @Transient
     private Boolean isDirty;
     @Transient
-    private String editStatus; 
+    private String editStatus;
 
     public ComplianceSurvey() {
         this.surveyType = "";
@@ -210,6 +211,17 @@ public class ComplianceSurvey
         this.id = id;
     }
 
+    public Boolean getCompliant() {
+        if (compliant == null) {
+            compliant = false;
+        }
+        return compliant;
+    }
+
+    public void setCompliant(Boolean compliant) {
+        this.compliant = compliant;
+    }
+
     public String getEditStatus() {
         return editStatus;
     }
@@ -217,11 +229,9 @@ public class ComplianceSurvey
     public void setEditStatus(String editStatus) {
         this.editStatus = editStatus;
     }
-    
-    
-    
+
     public Boolean getDisableVerificationReport() {
-        
+
         return false;
     }
 
