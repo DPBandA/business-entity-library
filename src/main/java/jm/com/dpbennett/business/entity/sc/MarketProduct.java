@@ -73,12 +73,12 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
         this.name = name;
         this.categories = new ArrayList<>();
     }
-    
-     public static List<MarketProduct> findAllActiveMarketProducts(EntityManager em) {
+
+    public static List<MarketProduct> findAllActiveMarketProducts(EntityManager em) {
 
         try {
-            List<MarketProduct> marketProducts = 
-                    em.createQuery("SELECT m FROM MarketProduct m WHERE m.active = 1 ORDER BY m.name", 
+            List<MarketProduct> marketProducts
+                    = em.createQuery("SELECT m FROM MarketProduct m WHERE m.active = 1 ORDER BY m.name",
                             MarketProduct.class).getResultList();
 
             return marketProducts;
@@ -89,23 +89,23 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
             return new ArrayList<>();
         }
     }
-     
-     public static MarketProduct findActiveMarketProductByName(EntityManager em, String value) {
+
+    public static MarketProduct findActiveMarketProductByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<MarketProduct> marketProducts = em.createQuery("SELECT m FROM MarketProduct m "
                     + "WHERE m.active = 1 AND UPPER(m.name) "
                     + "= '" + value.toUpperCase() + "'", MarketProduct.class).getResultList();
-            
+
             if (marketProducts.size() > 0) {
                 return marketProducts.get(0);
             }
-            
+
             return null;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -260,6 +260,9 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
 
     @Override
     public String getName() {
+        if (name == null) {
+            name = "";
+        }
         return name;
     }
 

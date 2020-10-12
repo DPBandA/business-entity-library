@@ -160,6 +160,8 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     }
 
     public MarketProduct getMarketProduct() {
+        if (marketProduct == null)
+            marketProduct = new MarketProduct();
         return marketProduct;
     }
 
