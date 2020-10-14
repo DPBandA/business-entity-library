@@ -39,6 +39,7 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
+import jm.com.dpbennett.business.entity.sm.Category;
 import jm.com.dpbennett.business.entity.sm.Product;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -62,7 +63,8 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     private String serialNumber = "";
     private String containerSize = "";
     private String containerNumber = "";
-    private String productCategory = "";
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Category productCategory;
     private String productGroupPackageType = "";
     private Integer numGroupPackages;
     private Integer numProductsPerGroupPackage;
@@ -191,14 +193,14 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
         this.inspector = inspector;
     }
 
-    public String getProductCategory() {
+    public Category getProductCategory() {
         if (productCategory == null) {
-            productCategory = "";
+            return new Category();
         }
         return productCategory;
     }
 
-    public void setProductCategory(String productCategory) {
+    public void setProductCategory(Category productCategory) {
         this.productCategory = productCategory;
     }
 
