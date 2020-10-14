@@ -398,8 +398,7 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
 
         try {
             
-            return em.createQuery("SELECT m FROM Manufacturer m WHERE m.active = 1 ORDER BY m.name", Manufacturer.class)
-                    .setMaxResults(500).getResultList();
+            return em.createQuery("SELECT m FROM Manufacturer m WHERE m.active = 1 OR m.active IS NULL ORDER BY m.name", Manufacturer.class).getResultList();
             
         } catch (Exception e) {
             System.out.println(e);
@@ -509,7 +508,7 @@ public class Manufacturer implements Serializable, BusinessEntity, Comparable {
                     = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
                             + value + "%'"
                             + " AND m.active = 1"
-                            + " ORDER BY m.id", Manufacturer.class).setMaxResults(10).getResultList();
+                            + " ORDER BY m.id", Manufacturer.class).getResultList();
             return manufacturers;
         } catch (Exception e) {
             System.out.println(e);
