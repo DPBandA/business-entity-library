@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sc;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -131,7 +130,7 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -162,8 +161,9 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     }
 
     public MarketProduct getMarketProduct() {
-        if (marketProduct == null)
+        if (marketProduct == null) {
             marketProduct = new MarketProduct();
+        }
         return marketProduct;
     }
 
@@ -549,6 +549,9 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     }
 
     public String getBrand() {
+        if (brand == null) {
+            brand = "";
+        }
         return brand;
     }
 
@@ -567,7 +570,6 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
         this.businessSource = businessSource;
     }
 
-   
     public Client getClient() {
         if (client == null) {
             return new Client("");
@@ -680,9 +682,9 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
 
     @Override
     public int compareTo(Object o) {
-        String thisIdStr = (this.getId() == null ? "" + Integer.MAX_VALUE : this.getId().toString()); 
-        String oIdStr = (((ProductInspection) o).getId() == null ? "" + Integer.MAX_VALUE : ((ProductInspection) o).getId().toString()); 
-        
+        String thisIdStr = (this.getId() == null ? "" + Integer.MAX_VALUE : this.getId().toString());
+        String oIdStr = (((ProductInspection) o).getId() == null ? "" + Integer.MAX_VALUE : ((ProductInspection) o).getId().toString());
+
         //return Collator.getInstance().compare(this.getId().toString(), ((ProductInspection) o).getId().toString());
         return Collator.getInstance().compare(thisIdStr, oIdStr);
     }
