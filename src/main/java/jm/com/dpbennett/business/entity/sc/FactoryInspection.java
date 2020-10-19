@@ -114,8 +114,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         this.editStatus = editStatus;
     }
     
-    
-
     public List<ProductInspection> getProductInspections() {
         if (productInspections != null) {
             Collections.sort(productInspections);

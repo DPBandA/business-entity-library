@@ -93,6 +93,8 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     private String workProgress;
     @Transient
     private Boolean isDirty;
+    @Transient
+    private String editStatus;
 
     public Complaint() {
         internal = false;
@@ -106,6 +108,14 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getEditStatus() {
+        return editStatus;
+    }
+
+    public void setEditStatus(String editStatus) {
+        this.editStatus = editStatus;
     }
 
     public String getWorkProgress() {
@@ -242,6 +252,12 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+
+        if (isDirty) {
+            setEditStatus("(edited)");
+        } else {
+            setEditStatus("        ");
+        }
     }
 
     public Client getComplainant() {
