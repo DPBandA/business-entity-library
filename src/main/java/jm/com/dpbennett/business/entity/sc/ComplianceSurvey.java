@@ -92,6 +92,8 @@ public class ComplianceSurvey
     private Date releaseFromDetentionReportDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfDetention;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateOfNoticeOfDetention;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<ProductInspection> productInspections;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -209,6 +211,14 @@ public class ComplianceSurvey
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Date getDateOfNoticeOfDetention() {
+        return dateOfNoticeOfDetention;
+    }
+
+    public void setDateOfNoticeOfDetention(Date dateOfNoticeOfDetention) {
+        this.dateOfNoticeOfDetention = dateOfNoticeOfDetention;
     }
 
     public Boolean getCompliant() {

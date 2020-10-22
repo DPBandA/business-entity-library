@@ -197,7 +197,11 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
             if (!getBillingAddresses().isEmpty()) {
                 billingAddress = getBillingAddresses().get(0);
             }
+            else {
+                return new Address();
+            }
         }
+        
         return billingAddress;
     }
 
