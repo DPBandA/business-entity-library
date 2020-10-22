@@ -278,6 +278,12 @@ public class ComplianceSurvey
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+
+        if (isDirty) {
+            setEditStatus("(edited)");
+        } else {
+            setEditStatus("        ");
+        }
     }
 
     public String getWorkProgress() {
