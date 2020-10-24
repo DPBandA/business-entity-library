@@ -1634,39 +1634,6 @@ public class Job implements Serializable, BusinessEntity {
         return jobNumbersWithCosts;
     }
 
-//    public void findPossibleSubcontracts(EntityManager em) {
-//        
-//            List<Job> jobs = Job.findJobsByYearReceivedAndJobSequenceNumber(em,
-//                    this.getYearReceived(),
-//                    this.getJobSequenceNumber());
-//            if (jobs != null) {
-//                for (Job job : jobs) {
-//                    if (job.getIsSubContract() && !this.getIsSubContract()
-//                            && (job.getJobStatusAndTracking().getWorkProgress().equals("Completed"))) {
-//                        String ccName = "Subcontract to " + job.getSubContractedDepartment().getName() + " (" + job.getJobNumber() + ")";
-//                        // Check that this cost component does not already exist.
-//                        // The assumption is that only one component will be found if any
-//                        if (!CostComponent.findCostComponentsByName(ccName,
-//                                this.getJobCostingAndPayment().getCostComponents()).isEmpty()) {
-//                            //deleteCostComponentByName(ccName);
-//                        }
-//                        CostComponent cc
-//                                = new CostComponent(
-//                                        ccName,
-//                                        job.getJobCostingAndPayment().getFinalCost(),
-//                                        true, false);
-//
-//                        this.getJobCostingAndPayment().getCostComponents().add(cc);
-//                        //setDirty(true);
-//                        this.setIsDirty(true);
-//                    }
-//                }
-//            }
-//        //}
-//        // NB: Ensure that amount due is recalc. in case something affects
-//        // taxes was changed
-//        this.getJobCostingAndPayment().calculateAmountDue();
-//    }
     public static List<Job> findAllByJobNumber(EntityManager em, String query) {
 
         try {

@@ -172,6 +172,10 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     }
 
     public String getJobNumber() {
+        if (jobNumber == null) {
+            jobNumber = "";
+        }
+        
         return jobNumber;
     }
 

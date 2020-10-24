@@ -87,6 +87,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice businessOffice;
+    private String jobNumber;
     @Transient
     private Boolean isDirty;
     @Transient
@@ -104,6 +105,14 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getJobNumber() {
+        return jobNumber;
+    }
+
+    public void setJobNumber(String jobNumber) {
+        this.jobNumber = jobNumber;
     }
 
     public String getEditStatus() {
