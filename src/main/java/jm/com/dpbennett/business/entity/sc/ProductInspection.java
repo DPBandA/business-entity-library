@@ -62,6 +62,7 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     private String serialNumber = "";
     private String containerSize = "";
     private String containerNumber = "";
+    private String entryDocumentNumber;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Category productCategory;
     private String productGroupPackageType = "";
@@ -129,6 +130,14 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getEntryDocumentNumber() {
+        return entryDocumentNumber;
+    }
+
+    public void setEntryDocumentNumber(String entryDocumentNumber) {
+        this.entryDocumentNumber = entryDocumentNumber;
     }
 
     @Override
