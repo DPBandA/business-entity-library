@@ -1169,6 +1169,7 @@ public class ComplianceSurvey
                             + " UPPER(complianceSurvey.portOfEntry) LIKE '%" + searchText.toUpperCase() + "%'"
                             + (includeProductInspectionSearch ? " OR UPPER(productInspections.name) LIKE '%" + searchText.toUpperCase() + "%'" : "")
                             + " OR UPPER(complianceSurvey.inspectionPoint) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(retailOutlet.name) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(broker.name) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(consignee.name) LIKE '%" + searchText.toUpperCase() + "%'"
