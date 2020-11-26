@@ -168,6 +168,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                             = " AND ("
                             + " UPPER(factoryinspection.workInProgress) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(factoryinspection.workProgress) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(factoryinspection.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(factoryinspection.inspectionType) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(factoryinspection.generalComments) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(factoryinspection.name) LIKE '%" + searchText.toUpperCase() + "%'"
