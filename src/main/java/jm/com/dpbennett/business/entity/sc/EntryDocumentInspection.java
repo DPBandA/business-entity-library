@@ -200,6 +200,9 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
     }
 
     public Double getCIF() {
+        if (CIF == null) {
+            CIF = 0.0;
+        }
         return CIF;
     }
 
