@@ -119,6 +119,7 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     private String tariffCode;
     private String heatNumber;
     private String coilNumber;
+    private String enforcementAction;
     @Transient
     private Boolean isDirty;
 
@@ -130,6 +131,14 @@ public class ProductInspection implements Serializable, Comparable, BusinessEnti
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getEnforcementAction() {
+        return enforcementAction;
+    }
+
+    public void setEnforcementAction(String enforcementAction) {
+        this.enforcementAction = enforcementAction;
     }
 
     public String getEntryDocumentNumber() {
