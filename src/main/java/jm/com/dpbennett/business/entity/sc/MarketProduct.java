@@ -111,16 +111,66 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
             return null;
         }
     }
+    
+    public static MarketProduct findActiveMarketProductByNameAndBrand(EntityManager em, String value) {
+
+        try {
+
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+            
+            String nameAndBrand[] = value.split("-");
+            String name = nameAndBrand[0].trim();
+            String brand = nameAndBrand[1].trim();
+
+            List<MarketProduct> marketProducts = 
+                    em.createQuery("SELECT m FROM MarketProduct m "
+                    + "WHERE m.active = 1 AND UPPER(m.name) "
+                    + "= '" + name.toUpperCase() + "'"
+                    + " AND UPPER(m.brand) "
+                    + "= '" + brand.toUpperCase() + "'", MarketProduct.class).getResultList();
+
+            if (marketProducts.size() > 0) {
+                return marketProducts.get(0);
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     public static List<MarketProduct> findActiveMarketProductsByAnyPartOfNameOrDescription(EntityManager em, String value) {
 
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<MarketProduct> marketProducts
                     = em.createQuery("SELECT m FROM MarketProduct m WHERE (UPPER(m.name) like '%"
                             + value.toUpperCase() + "%'"
                             + " OR UPPER(m.description) like '%"
+                            + value.toUpperCase() + "%')"
+                            + " AND m.active = 1"
+                            + " ORDER BY m.name", MarketProduct.class).setMaxResults(500).getResultList();
+
+            return marketProducts;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<MarketProduct> findActiveMarketProductsByAnyPartOfNameOrBrand(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+            
+            List<MarketProduct> marketProducts
+                    = em.createQuery("SELECT m FROM MarketProduct m WHERE (UPPER(m.name) like '%"
+                            + value.toUpperCase() + "%'"
+                            + " OR UPPER(m.brand) like '%"
                             + value.toUpperCase() + "%')"
                             + " AND m.active = 1"
                             + " ORDER BY m.name", MarketProduct.class).setMaxResults(500).getResultList();
@@ -234,7 +284,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof MarketProduct)) {
             return false;
         }
@@ -245,7 +295,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
 
     @Override
     public String toString() {
-        return getName();
+        return getName() + " - " + getBrand();
     }
 
     @Override
