@@ -65,6 +65,7 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
     private Double CIF;
     private Double SCF;
     private String documentStamped;
+    private String profileFlagged; 
     private String countryOfConsignment;
     private String vessel;
     private String waybill;
@@ -197,6 +198,14 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
 
     public void setDocumentStamped(String documentStamped) {
         this.documentStamped = documentStamped;
+    }
+
+    public String getProfileFlagged() {
+        return profileFlagged;
+    }
+
+    public void setProfileFlagged(String profileFlagged) {
+        this.profileFlagged = profileFlagged;
     }
 
     public Double getCIF() {
