@@ -212,6 +212,122 @@ public class ComplianceSurvey
     public void setId(Long id) {
         this.id = id;
     }
+    
+    public static List<Object[]> getReportRecords(
+            EntityManager em,
+            String startDate,
+            String endDate,
+            Long departmentId) {
+
+        String reportSQL = "SELECT"
+                + "     GROUP_CONCAT(jobsample.`NAME` SEPARATOR ', ') AS samples," // 0
+                + "     GROUP_CONCAT(jobsample.`PRODUCTBRAND` SEPARATOR ', ') AS sampleBrands," // 1
+                + "     GROUP_CONCAT(jobsample.`PRODUCTMODEL` SEPARATOR ', ') AS sampleModels," // 2    
+                + "     job.`JOBDESCRIPTION` AS job_JOBDESCRIPTION," // 3   
+                + "     job.`NOOFTESTS` AS job_NOOFTESTS," // 4
+                + "     job.`NUMBEROFSAMPLES` AS job_NUMBEROFSAMPLES," // 5    
+                + "     job.`JOBNUMBER` AS job_JOBNUMBER," // 6             
+                + "     job.`COMMENT` AS job_COMMENT," // 7               
+                + "     client.`NAME` AS client_NAME," // 8                        
+                + "     department.`NAME` AS department_NAME," // 9              
+                + "     department_A.`NAME` AS department_A_NAME," // 10
+                + "     businessoffice.`NAME` AS businessoffice_NAME," // 11
+                + "     jobstatusandtracking.`WORKPROGRESS` AS jobstatusandtracking_WORKPROGRESS," // 12
+                + "     classification.`NAME` AS classification_NAME," // 13              
+                + "     jobcategory.`CATEGORY` AS jobcategory_CATEGORY," // 14
+                + "     jobsubcategory.`SubCategory` AS jobsubcategory_SubCategory," // 15             
+                + "     sector.`NAME` AS sector_NAME," // 16
+                + "     jobstatusandtracking.`EXPECTEDDATEOFCOMPLETION` AS jobstatusandtracking_EXPECTEDDATEOFCOMPLETION," // 17
+                + "     jobstatusandtracking.`ENTEREDBY_ID` AS jobstatusandtracking_ENTEREDBY_ID," // 18
+                + "     jobstatusandtracking.`DATEOFCOMPLETION` AS jobstatusandtracking_DATEOFCOMPLETION," // 19
+                + "     jobstatusandtracking.`DATEANDTIMEENTERED` AS jobstatusandtracking_DATEANDTIMEENTERED," // 20                
+                + "     employee.`FIRSTNAME` AS employee_FIRSTNAME," // 21
+                + "     employee.`LASTNAME` AS employee_LASTNAME," // 22               
+                + "     employee_A.`ID` AS employee_A_ID," // 23
+                + "     employee_A.`FIRSTNAME` AS employee_A_FIRSTNAME," // 24
+                + "     employee_A.`LASTNAME` AS employee_A_LASTNAME," // 25               
+                + "     jobcostingandpayment.`DEPOSIT` AS jobcostingandpayment_DEPOSIT," // 26
+                + "     jobcostingandpayment.`FINALCOST` AS jobcostingandpayment_FINALCOST," // 27
+                + "     jobcostingandpayment.`ESTIMATEDCOST` AS jobcostingandpayment_ESTIMATEDCOST," // 28
+                + "     jobstatusandtracking.`DATESUBMITTED` AS jobstatusandtracking_DATESUBMITTED," // 29
+                + "     job.`INSTRUCTIONS` AS job_INSTRUCTIONS," // 30
+                + "     GROUP_CONCAT(DISTINCT(service.`NAME`) SEPARATOR ', ') AS services," // 31
+                + "     CASE"
+                + "     WHEN job.`SERVICELOCATION` = 'In-house' THEN 'Yes'"
+                + "     WHEN job.`SERVICELOCATION` = 'In-house & On-site' THEN 'Yes'"
+                + "     WHEN job.`SERVICELOCATION` = 'On-site' THEN 'No'"
+                + "     ELSE '?'"
+                + "     END AS service_location_in_house," // 32
+                + "     department_ENTRY.`NAME` AS department_ENTRY_NAME," // 33
+                + "     SUM(jobsample.`QUANTITY`) AS sample_product_quantity," // 34
+                + "     job.`NOOFCALIBRATIONS` AS job_NOOFCALIBRATIONS," // 35
+                + "     job.`NOOFINSPECTIONS` AS job_NOOFINSPECTIONS," // 36
+                + "     job.`NOOFTRAININGS` AS job_NOOFTRAININGS," // 37
+                + "     job.`NOOFLABELASSESSMENTS` AS job_NOOFLABELASSESSMENTS," // 38
+                + "     job.`NOOFCERTIFICATIONS` AS job_NOOFCERTIFICATIONS," // 39
+                + "     job.`NOOFCONSULTATIONS` AS job_NOOFCONSULTATIONS," // 40
+                + "     job.`NOOFOTHERASSESSMENTS` AS job_NOOFOTHERASSESSMENTS," // 41
+                + "     serviceContract.`SERVICEREQUESTEDOTHERTEXT` AS serviceContract_SERVICEREQUESTEDOTHERTEXT," // 42
+                + "     CASE"
+                + "     WHEN serviceContract.`ADDITIONALSERVICEURGENT` = 1 THEN 'Yes'"
+                + "     ELSE 'No'"
+                + "     END AS additionalservice_urgent," // 43
+                + "     (SELECT SUM(cashpayment.PAYMENT) FROM cashpayment"
+                + "     INNER JOIN `jobcostingandpayment_cashpayment` jobcostingandpayment_cashpayment ON cashpayment.ID = jobcostingandpayment_cashpayment.cashPayments_ID"
+                + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON jobcostingandpayment.ID = jobcostingandpayment_cashpayment.JobCostingAndPayment_ID"
+                + "     WHERE cashpayment.PAYMENTPURPOSE = 'Deposit' AND jobcostingandpayment.ID = job.JOBCOSTINGANDPAYMENT_ID) AS jobcostingandpayment_TOTALDEPOSIT," // 44
+                + "     (SELECT SUM(cashpayment.PAYMENT) FROM cashpayment"
+                + "     INNER JOIN `jobcostingandpayment_cashpayment` jobcostingandpayment_cashpayment ON cashpayment.ID = jobcostingandpayment_cashpayment.cashPayments_ID"
+                + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON jobcostingandpayment.ID = jobcostingandpayment_cashpayment.JobCostingAndPayment_ID"
+                + "     WHERE jobcostingandpayment.ID = job.JOBCOSTINGANDPAYMENT_ID) AS jobcostingandpayment_TOTALPAYMENT," // 45
+                + "     job.`ESTIMATEDTURNAROUNDTIMEINDAYS` AS job_ESTIMATEDTURNAROUNDTIMEINDAYS," // 46
+                + "     jobstatusandtracking.`EXPECTEDSTARTDATE` AS jobstatusandtracking_EXPECTEDSTARTDATE," // 47
+                + "     jobstatusandtracking.`STARTDATE` AS jobstatusandtracking_STARTDATE" // 48
+                + " FROM"
+                + "     `jobstatusandtracking` jobstatusandtracking INNER JOIN `job` job ON jobstatusandtracking.`ID` = job.`JOBSTATUSANDTRACKING_ID`"
+                + "     INNER JOIN `client` client ON job.`CLIENT_ID` = client.`ID`"
+                + "     INNER JOIN `serviceContract` serviceContract ON job.`SERVICECONTRACT_ID` = serviceContract.`ID`"
+                + "     INNER JOIN `department` department ON job.`DEPARTMENT_ID` = department.`ID`"
+                + "     INNER JOIN `department` department_A ON job.`SUBCONTRACTEDDEPARTMENT_ID` = department_A.`ID`"
+                + "     INNER JOIN `businessoffice` businessoffice ON job.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
+                + "     INNER JOIN `classification` classification ON job.`CLASSIFICATION_ID` = classification.`ID`"
+                + "     INNER JOIN `jobcategory` jobcategory ON job.`JOBCATEGORY_ID` = jobcategory.`ID`"
+                + "     INNER JOIN `jobsubcategory` jobsubcategory ON job.`JOBSUBCATEGORY_ID` = jobsubcategory.`ID`"
+                + "     INNER JOIN `sector` sector ON job.`SECTOR_ID` = sector.`ID`"
+                + "     INNER JOIN `employee` employee ON job.`ASSIGNEDTO_ID` = employee.`ID`"
+                + "     INNER JOIN `jobcostingandpayment` jobcostingandpayment ON job.`JOBCOSTINGANDPAYMENT_ID` = jobcostingandpayment.`ID`"
+                + "     LEFT JOIN `job_jobsample` job_jobsample ON job.`ID` = job_jobsample.`Job_ID`"
+                + "     LEFT JOIN `jobsample` jobsample ON job_jobsample.`jobSamples_ID` = jobsample.`ID`"
+                + "     LEFT JOIN `job_service` job_service ON job.`ID` = job_service.`Job_ID`"
+                + "     LEFT JOIN `service` service ON job_service.`services_ID` = service.`ID`"
+                + "     INNER JOIN `employee` employee_A ON jobstatusandtracking.`ENTEREDBY_ID` = employee_A.`ID`"
+                + "     INNER JOIN `department` department_ENTRY ON department_ENTRY.`ID` = employee_A.`DEPARTMENT_ID`"
+                + " WHERE"
+                + "     ((jobstatusandtracking.`DATESUBMITTED` >= " + startDate
+                + " AND jobstatusandtracking.`DATESUBMITTED` <= " + endDate + ")"
+                + "  OR (jobstatusandtracking.`DATEOFCOMPLETION` >= " + startDate
+                + " AND jobstatusandtracking.`DATEOFCOMPLETION` <= " + endDate + ")"
+                + "  OR (jobstatusandtracking.`EXPECTEDDATEOFCOMPLETION` >= " + startDate
+                + " AND jobstatusandtracking.`EXPECTEDDATEOFCOMPLETION` <= " + endDate + ")"
+                + "  OR (jobstatusandtracking.`DATEANDTIMEENTERED` >= " + startDate
+                + " AND jobstatusandtracking.`DATEANDTIMEENTERED` <= " + endDate + "))"
+                + " AND (department.`ID` = " + departmentId
+                + "  OR department_A.`ID` = " + departmentId + ")"
+                + " AND jobstatusandtracking.`WORKPROGRESS` <> 'Cancelled'"
+                + " GROUP BY"
+                + "     job.`ID`"
+                + " ORDER BY"
+                + "     job.`ID` DESC,"
+                + "     employee.`LASTNAME` ASC";
+
+        try {
+            return em.createNativeQuery(reportSQL).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+
+    }
 
     public Date getDateOfNoticeOfDetention() {
         return dateOfNoticeOfDetention;
