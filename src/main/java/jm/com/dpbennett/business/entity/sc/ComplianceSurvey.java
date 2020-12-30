@@ -46,6 +46,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.dm.DocumentStandard;
 import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.auth.Signature;
+import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -72,6 +73,8 @@ public class ComplianceSurvey
     private String surveyType;
     private String surveyLocationType;
     private String typeOfEstablishment;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private BusinessOffice businessOffice;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client retailOutlet;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -211,6 +214,14 @@ public class ComplianceSurvey
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public BusinessOffice getBusinessOffice() {
+        return businessOffice;
+    }
+
+    public void setBusinessOffice(BusinessOffice businessOffice) {
+        this.businessOffice = businessOffice;
     }
     
     public static List<Object[]> getReportRecords(

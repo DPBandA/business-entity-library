@@ -40,6 +40,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -60,6 +61,8 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     private Long id;
     private String name;
     private String type;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private BusinessOffice businessOffice;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -108,6 +111,14 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public BusinessOffice getBusinessOffice() {
+        return businessOffice;
+    }
+
+    public void setBusinessOffice(BusinessOffice businessOffice) {
+        this.businessOffice = businessOffice;
     }
 
     public String getEditStatus() {
@@ -175,7 +186,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
         if (jobNumber == null) {
             jobNumber = "";
         }
-        
+
         return jobNumber;
     }
 
