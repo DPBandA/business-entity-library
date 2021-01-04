@@ -231,17 +231,17 @@ public class ComplianceSurvey
             Long departmentId) {
 
         String reportSQL = "SELECT"
-                + "     compliancesurvey.`COMMENTS` AS compliancesurvey_COMMENTS," // 0  
-                + "     compliancesurvey.`JOBNUMBER` AS compliancesurvey_JOBNUMBER" // 1    
-//                + "     consignee.`NAME` AS consignee_NAME," // 2  
-//                + "     businessoffice.`NAME` AS businessoffice_NAME," // 3                 
-//                + "     inspector.`FIRSTNAME` AS inspector_FIRSTNAME," // 4
-//                + "     inspector.`LASTNAME` AS inspector_LASTNAME" // 5                 
+                + "     compliancesurvey.`JOBNUMBER`," // 0  
+                + "     consignee.`NAME`," // 1
+                + "     compliancesurvey.`COMMENTS`," // 2                  
+                + "     businessoffice.`NAME`," // 3                 
+                + "     inspector.`FIRSTNAME`," // 4
+                + "     inspector.`LASTNAME`" // 5                 
                 + " FROM"
                 + "     compliancesurvey"
-//                + "     LEFT JOIN `client` consignee ON compliancesurvey.`CONSIGNEE_ID` = consignee.`ID`"                
-//                + "     LEFT JOIN `businessoffice` businessoffice ON compliancesurvey.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
-//                + "     LEFT JOIN `employee` inspector ON compliancesurvey.`INSPECTOR_ID` = inspector.`ID`"
+                + "     LEFT JOIN `client` consignee ON compliancesurvey.`CONSIGNEE_ID` = consignee.`ID`"                
+                + "     LEFT JOIN `businessoffice` businessoffice ON compliancesurvey.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
+                + "     LEFT JOIN `employee` inspector ON compliancesurvey.`INSPECTOR_ID` = inspector.`ID`"
                 + " WHERE"
                 + "     (compliancesurvey.`DATEOFSURVEY` >= " + startDate
                 + " AND compliancesurvey.`DATEOFSURVEY` <= " + endDate + ")"
