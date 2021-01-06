@@ -70,6 +70,12 @@ public class ReportManagerTest {
                 System.out.println("Business office: " + (String) rowData[3]);
                 System.out.println("Inspector first name: " + (String) rowData[4]);
                 System.out.println("Inspector last name: " + (String) rowData[5]);
+                
+                System.out.println("Date of Survey: " + (Date) rowData[10]);
+                
+                System.out.println("Standards Breached: " + (String) rowData[16]);
+                
+                System.out.println("Inspectors: " + (String) rowData[18]);
             }
         } else {
             System.out.println("Department not found!");

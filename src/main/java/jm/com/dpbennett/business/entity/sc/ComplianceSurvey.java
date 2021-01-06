@@ -97,8 +97,6 @@ public class ComplianceSurvey
     private Date dateOfDetention;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfNoticeOfDetention;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<ProductInspection> productInspections;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspector;
     @Column(length = 1024)
@@ -196,6 +194,8 @@ public class ComplianceSurvey
     private String workProgress;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> inspectors;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<ProductInspection> productInspections;
     private Boolean applicationForRehabilitation;
     @Transient
     private Boolean isDirty;
@@ -223,7 +223,7 @@ public class ComplianceSurvey
     public void setBusinessOffice(BusinessOffice businessOffice) {
         this.businessOffice = businessOffice;
     }
-    
+
     public static List<Object[]> getReportRecords(
             EntityManager em,
             String startDate,
@@ -231,18 +231,36 @@ public class ComplianceSurvey
             Long departmentId) {
 
         String reportSQL = "SELECT"
-                + "     compliancesurvey.`JOBNUMBER`," // 0  
-                + "     consignee.`NAME`," // 1
-                + "     compliancesurvey.`COMMENTS`," // 2                  
-                + "     businessoffice.`NAME`," // 3                 
-                + "     inspector.`FIRSTNAME`," // 4
-                + "     inspector.`LASTNAME`," // 5   
-                + "     compliancesurvey.`SURVEYTYPE`" // 6  
+                + "     compliancesurvey.`JOBNUMBER`," // 0 - Job Number 
+                + "     consignee.`NAME`," // 1 - Consignee
+                + "     compliancesurvey.`COMMENTS`," // 2 - Comments                  
+                + "     businessoffice.`NAME`," // 3 - Business Office                 
+                + "     inspector.`FIRSTNAME`," // 4 - Inspector Firsname
+                + "     inspector.`LASTNAME`," // 5 - Inspector Lastname  
+                + "     compliancesurvey.`SURVEYTYPE`," // 6 - Survey Type
+                + "     compliancesurvey.`SURVEYLOCATIONTYPE`," // 7 - Survey Location Type 
+                + "     compliancesurvey.`TYPEOFESTABLISHMENT`," // 8 - Type of Establishment
+                + "     retailoutlet.`NAME`," // 9 - Retail Outlet  
+                + "     compliancesurvey.`DATEOFSURVEY`," // 10 - Date of Survey
+                + "     compliancesurvey.`TYPEOFPORTOFENTRY`," // 11 - Type of Port of Entry
+                + "     compliancesurvey.`PORTOFENTRY`," // 12 - Port of Entry
+                + "     compliancesurvey.`INSPECTIONPOINT`," // 13 - Inspection Point
+                + "     broker.`NAME`," // 14 - Broker
+                + "     compliancesurvey.`REASONFORDETENTION`," // 15 - Reason for Detention
+                + "     GROUP_CONCAT(documentstandard.`NAME` SEPARATOR ', ') AS standardsBreached," // 16 - Standards Breached
+                + "     compliancesurvey.`WORKPROGRESS`," // 17 - Work Progress 
+                + "     GROUP_CONCAT(DISTINCT employee.`NAME` SEPARATOR '; ') AS inspectors" // 18 - Inspectors
                 + " FROM"
                 + "     compliancesurvey"
-                + "     LEFT JOIN `client` consignee ON compliancesurvey.`CONSIGNEE_ID` = consignee.`ID`"                
+                + "     LEFT JOIN `client` consignee ON compliancesurvey.`CONSIGNEE_ID` = consignee.`ID`"
+                + "     LEFT JOIN `client` broker ON compliancesurvey.`BROKER_ID` = broker.`ID`"
                 + "     LEFT JOIN `businessoffice` businessoffice ON compliancesurvey.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
+                + "     LEFT JOIN `client` retailoutlet ON compliancesurvey.`RETAILOUTLET_ID` = retailoutlet.`ID`"
                 + "     LEFT JOIN `employee` inspector ON compliancesurvey.`INSPECTOR_ID` = inspector.`ID`"
+                + "     LEFT JOIN `compliancesurvey_documentstandard` compliancesurvey_documentstandard ON compliancesurvey.`ID` = compliancesurvey_documentstandard.`ComplianceSurvey_ID`"
+                + "     LEFT JOIN `documentstandard` documentstandard ON compliancesurvey_documentstandard.`standardsBreached_ID` = documentstandard.`ID`"
+                + "     LEFT JOIN `compliancesurvey_employee` compliancesurvey_employee ON compliancesurvey.`ID` = compliancesurvey_employee.`ComplianceSurvey_ID`"
+                + "     LEFT JOIN `employee` employee ON compliancesurvey_employee.`inspectors_ID` = employee.`ID`"
                 + " WHERE"
                 + "     (compliancesurvey.`DATEOFSURVEY` >= " + startDate
                 + " AND compliancesurvey.`DATEOFSURVEY` <= " + endDate + ")"
