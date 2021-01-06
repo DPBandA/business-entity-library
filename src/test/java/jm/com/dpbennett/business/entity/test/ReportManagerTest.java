@@ -37,7 +37,6 @@ import org.junit.Test;
  */
 public class ReportManagerTest {
 
-    
     @Test
     public void getDepartmentFullCode() {
         HashMap prop = new HashMap();
@@ -57,18 +56,25 @@ public class ReportManagerTest {
         Department dept = Department.findDepartmentByName(em, "Inspectorate - Standards Compliance");
         if (dept != null) {
             List<Object[]> reportData = ComplianceSurvey.getReportRecords(
-                em,
-                BusinessEntityUtils.getDateString(new Date(), "'", "YMD", "-"),
-                BusinessEntityUtils.getDateString(new Date(), "'", "YMD", "-"),
-                dept.getId());
-            
-            // Data
-            System.out.println("Data: " + reportData);
-        }
-        else {
+                    em,
+                    BusinessEntityUtils.getDateString(new Date(), "'", "YMD", "-"),
+                    BusinessEntityUtils.getDateString(new Date(), "'", "YMD", "-"),
+                    dept.getId());
+
+            // Print data data
+            for (Object[] rowData : reportData) {
+
+                System.out.println("Job number: " + (String) rowData[0]);
+                System.out.println("Consignee: " + (String) rowData[1]);
+                System.out.println("Comments: " + (String) rowData[2]);
+                System.out.println("Business office: " + (String) rowData[3]);
+                System.out.println("Inspector first name: " + (String) rowData[4]);
+                System.out.println("Inspector last name: " + (String) rowData[5]);
+            }
+        } else {
             System.out.println("Department not found!");
         }
 
     }
-    
+
 }

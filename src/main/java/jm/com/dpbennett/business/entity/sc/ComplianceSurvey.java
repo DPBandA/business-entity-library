@@ -236,7 +236,8 @@ public class ComplianceSurvey
                 + "     compliancesurvey.`COMMENTS`," // 2                  
                 + "     businessoffice.`NAME`," // 3                 
                 + "     inspector.`FIRSTNAME`," // 4
-                + "     inspector.`LASTNAME`" // 5                 
+                + "     inspector.`LASTNAME`," // 5   
+                + "     compliancesurvey.`SURVEYTYPE`" // 6  
                 + " FROM"
                 + "     compliancesurvey"
                 + "     LEFT JOIN `client` consignee ON compliancesurvey.`CONSIGNEE_ID` = consignee.`ID`"                
