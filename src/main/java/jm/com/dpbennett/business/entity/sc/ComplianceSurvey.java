@@ -247,7 +247,7 @@ public class ComplianceSurvey
                 + "     compliancesurvey.`INSPECTIONPOINT`," // 13 - Inspection Point
                 + "     broker.`NAME`," // 14 - Broker
                 + "     compliancesurvey.`REASONFORDETENTION`," // 15 - Reason for Detention
-                + "     GROUP_CONCAT(documentstandard.`NAME` SEPARATOR ', ') AS standardsBreached," // 16 - Standards Breached
+                + "     GROUP_CONCAT(DISTINCT documentstandard.`NAME` SEPARATOR ', ') AS standardsBreached," // 16 - Standards Breached
                 + "     compliancesurvey.`WORKPROGRESS`," // 17 - Work Progress 
                 + "     GROUP_CONCAT(DISTINCT employee.`NAME` SEPARATOR '; ') AS inspectors" // 18 - Inspectors
                 + " FROM"
