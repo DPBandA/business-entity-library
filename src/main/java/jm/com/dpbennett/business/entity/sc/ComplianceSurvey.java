@@ -1276,7 +1276,7 @@ public class ComplianceSurvey
         }
 
         try { // tk make max result to return an option
-            foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).setMaxResults(100).getResultList();
+            foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).getResultList();
             if (foundComplianceSurveys == null) {
                 foundComplianceSurveys = new ArrayList<>();
             }

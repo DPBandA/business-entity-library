@@ -383,7 +383,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
         try {
 
             return em.createQuery("SELECT c FROM Complaint c ORDER BY c.id DESC",
-                    Complaint.class).setMaxResults(100).getResultList();
+                    Complaint.class).getResultList();
 
         } catch (Exception e) {
             System.out.println(e);
@@ -460,7 +460,7 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
         }
 
         try {
-            foundComplaints = em.createQuery(searchQuery, Complaint.class).setMaxResults(100).getResultList();
+            foundComplaints = em.createQuery(searchQuery, Complaint.class).getResultList();
             if (foundComplaints == null) {
                 foundComplaints = new ArrayList<>();
             }

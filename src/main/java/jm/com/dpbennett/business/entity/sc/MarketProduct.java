@@ -152,7 +152,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
                             + " OR UPPER(m.description) like '%"
                             + value.toUpperCase() + "%')"
                             + " AND m.active = 1"
-                            + " ORDER BY m.name", MarketProduct.class).setMaxResults(500).getResultList();
+                            + " ORDER BY m.name", MarketProduct.class).getResultList();
 
             return marketProducts;
 
@@ -173,7 +173,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
                             + " OR UPPER(m.brand) like '%"
                             + value.toUpperCase() + "%')"
                             + " AND m.active = 1"
-                            + " ORDER BY m.name", MarketProduct.class).setMaxResults(500).getResultList();
+                            + " ORDER BY m.name", MarketProduct.class).getResultList();
 
             return marketProducts;
 
@@ -193,7 +193,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
                             + value.toUpperCase() + "%'"
                             + " OR UPPER(m.description) like '%"
                             + value.toUpperCase() + "%'"
-                            + " ORDER BY m.name", MarketProduct.class).setMaxResults(500).getResultList();
+                            + " ORDER BY m.name", MarketProduct.class).getResultList();
 
             return marketProducts;
 

@@ -200,7 +200,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         }
 
         try {
-            foundFactoryInspections = em.createQuery(searchQuery, FactoryInspection.class).setMaxResults(100).getResultList();
+            foundFactoryInspections = em.createQuery(searchQuery, FactoryInspection.class).getResultList();
             if (foundFactoryInspections == null) {
                 foundFactoryInspections = new ArrayList<>();
             }
