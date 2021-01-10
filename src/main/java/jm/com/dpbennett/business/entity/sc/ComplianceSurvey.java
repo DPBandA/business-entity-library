@@ -230,37 +230,60 @@ public class ComplianceSurvey
             String endDate,
             Long departmentId) {
 
-        String reportSQL = "SELECT"
-                + "     compliancesurvey.`JOBNUMBER`," // 0 - Job Number 
+        String reportSQL = "SELECT DISTINCT"
+                + "     compliancesurvey.`JOBNUMBER`," // 0 - Job number 
                 + "     consignee.`NAME`," // 1 - Consignee
                 + "     compliancesurvey.`COMMENTS`," // 2 - Comments                  
-                + "     businessoffice.`NAME`," // 3 - Business Office                 
-                + "     inspector.`FIRSTNAME`," // 4 - Inspector Firsname
-                + "     inspector.`LASTNAME`," // 5 - Inspector Lastname  
-                + "     compliancesurvey.`SURVEYTYPE`," // 6 - Survey Type
-                + "     compliancesurvey.`SURVEYLOCATIONTYPE`," // 7 - Survey Location Type 
-                + "     compliancesurvey.`TYPEOFESTABLISHMENT`," // 8 - Type of Establishment
-                + "     retailoutlet.`NAME`," // 9 - Retail Outlet  
-                + "     compliancesurvey.`DATEOFSURVEY`," // 10 - Date of Survey
-                + "     compliancesurvey.`TYPEOFPORTOFENTRY`," // 11 - Type of Port of Entry
-                + "     compliancesurvey.`PORTOFENTRY`," // 12 - Port of Entry
-                + "     compliancesurvey.`INSPECTIONPOINT`," // 13 - Inspection Point
+                + "     businessoffice.`NAME`," // 3 - Business office                 
+                + "     entrydocumentinspection.`ENTRYDOCUMENTNUMBER`," // 4 - Entry document #s
+                + "     entrydocumentinspection.`CONTAINERNUMBERS`," // 5 - Containers
+                + "     compliancesurvey.`SURVEYTYPE`," // 6 - Survey type
+                + "     compliancesurvey.`SURVEYLOCATIONTYPE`," // 7 - Survey location type 
+                + "     compliancesurvey.`TYPEOFESTABLISHMENT`," // 8 - Type of establishment
+                + "     retailoutlet.`NAME`," // 9 - Retail outlet  
+                + "     compliancesurvey.`DATEOFSURVEY`," // 10 - Date of survey
+                + "     compliancesurvey.`TYPEOFPORTOFENTRY`," // 11 - Type of port of entry
+                + "     compliancesurvey.`PORTOFENTRY`," // 12 - Port of entry
+                + "     compliancesurvey.`INSPECTIONPOINT`," // 13 - Inspection point
                 + "     broker.`NAME`," // 14 - Broker
-                + "     compliancesurvey.`REASONFORDETENTION`," // 15 - Reason for Detention
-                + "     GROUP_CONCAT(DISTINCT documentstandard.`NAME` SEPARATOR ', ') AS standardsBreached," // 16 - Standards Breached
-                + "     compliancesurvey.`WORKPROGRESS`," // 17 - Work Progress 
-                + "     GROUP_CONCAT(DISTINCT employee.`NAME` SEPARATOR '; ') AS inspectors" // 18 - Inspectors
+                + "     compliancesurvey.`REASONFORDETENTION`," // 15 - Reason for detention
+                + "     GROUP_CONCAT(DISTINCT documentstandard.`NAME` SEPARATOR ', ') AS standardsBreached," // 16 - Standards breached
+                + "     compliancesurvey.`WORKPROGRESS`," // 17 - Work progress 
+                + "     GROUP_CONCAT(DISTINCT employee.`NAME` SEPARATOR '; ') AS inspectors," // 18 - Inspectors
+                + "     SUM(DISTINCT productinspection.`QUANTITY`)," // 19 - Product quantity
+                + "     entrydocumentinspection.`PROFILEFLAGGED`," // 20 - Profile flagged
+                + "     GROUP_CONCAT(DISTINCT productinspection.`TARIFFCODE` SEPARATOR ', ')," // 21 - Commodity codes
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Detention', '')))" 
+                + "     / LENGTH('Detention')," // 22 Detentions            
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Destruction', '')))" 
+                + "     / LENGTH('Destruction')," // 23 Destructions
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Seizure', '')))" 
+                + "     / LENGTH('Seizure')," // 24 Seizures
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Condemnation', '')))" 
+                + "     / LENGTH('Condemnation')," // 25 Condemnations
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Verification', '')))" 
+                + "     / LENGTH('Verification')," // 26 Verifications
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Withdrawal', '')))" 
+                + "     / LENGTH('Withdrawal')" // 27 Withdrawals
                 + " FROM"
                 + "     compliancesurvey"
                 + "     LEFT JOIN `client` consignee ON compliancesurvey.`CONSIGNEE_ID` = consignee.`ID`"
                 + "     LEFT JOIN `client` broker ON compliancesurvey.`BROKER_ID` = broker.`ID`"
                 + "     LEFT JOIN `businessoffice` businessoffice ON compliancesurvey.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
+                + "     LEFT JOIN `entrydocumentinspection` entrydocumentInspection ON compliancesurvey.`ENTRYDOCUMENTINSPECTION_ID` = entrydocumentInspection.`ID`"
                 + "     LEFT JOIN `client` retailoutlet ON compliancesurvey.`RETAILOUTLET_ID` = retailoutlet.`ID`"
-                + "     LEFT JOIN `employee` inspector ON compliancesurvey.`INSPECTOR_ID` = inspector.`ID`"
                 + "     LEFT JOIN `compliancesurvey_documentstandard` compliancesurvey_documentstandard ON compliancesurvey.`ID` = compliancesurvey_documentstandard.`ComplianceSurvey_ID`"
                 + "     LEFT JOIN `documentstandard` documentstandard ON compliancesurvey_documentstandard.`standardsBreached_ID` = documentstandard.`ID`"
                 + "     LEFT JOIN `compliancesurvey_employee` compliancesurvey_employee ON compliancesurvey.`ID` = compliancesurvey_employee.`ComplianceSurvey_ID`"
                 + "     LEFT JOIN `employee` employee ON compliancesurvey_employee.`inspectors_ID` = employee.`ID`"
+                + "     LEFT JOIN `compliancesurvey_productinspection` compliancesurvey_productinspection ON compliancesurvey.`ID` = compliancesurvey_productinspection.`ComplianceSurvey_ID`"
+                + "     LEFT JOIN `productinspection` productinspection ON compliancesurvey_productinspection.`productInspections_ID` = productinspection.`ID`"
                 + " WHERE"
                 + "     (compliancesurvey.`DATEOFSURVEY` >= " + startDate
                 + " AND compliancesurvey.`DATEOFSURVEY` <= " + endDate + ")"
@@ -319,6 +342,16 @@ public class ComplianceSurvey
 
     public void setApplicationForRehabilitation(Boolean applicationForRehabilitation) {
         this.applicationForRehabilitation = applicationForRehabilitation;
+    }
+    
+    public String getInspectorList() {
+        String list = "";
+        
+        for (Employee employee : getInspectors()) {
+            list = list + " " + employee.toString();
+        }
+        
+        return list;
     }
 
     public List<Employee> getInspectors() {

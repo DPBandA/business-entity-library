@@ -112,6 +112,8 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+    
+    
 
     public BusinessOffice getBusinessOffice() {
         return businessOffice;

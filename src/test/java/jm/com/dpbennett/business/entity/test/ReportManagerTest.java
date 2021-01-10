@@ -19,6 +19,7 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.test;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -55,10 +56,12 @@ public class ReportManagerTest {
 
         Department dept = Department.findDepartmentByName(em, "Inspectorate - Standards Compliance");
         if (dept != null) {
+            Date date = BusinessEntityUtils.createDate(2021, 0, 6);
+            
             List<Object[]> reportData = ComplianceSurvey.getReportRecords(
                     em,
-                    BusinessEntityUtils.getDateString(new Date(), "'", "YMD", "-"),
-                    BusinessEntityUtils.getDateString(new Date(), "'", "YMD", "-"),
+                    BusinessEntityUtils.getDateString(date, "'", "YMD", "-"),
+                    BusinessEntityUtils.getDateString(date, "'", "YMD", "-"),
                     dept.getId());
 
             // Print data data
@@ -68,14 +71,23 @@ public class ReportManagerTest {
                 System.out.println("Consignee: " + (String) rowData[1]);
                 System.out.println("Comments: " + (String) rowData[2]);
                 System.out.println("Business office: " + (String) rowData[3]);
-                System.out.println("Inspector first name: " + (String) rowData[4]);
-                System.out.println("Inspector last name: " + (String) rowData[5]);
+                System.out.println("Entry document #s: " + (String) rowData[4]);
+                System.out.println("Containers: " + (String) rowData[5]);
                 
-                System.out.println("Date of Survey: " + (Date) rowData[10]);
+                System.out.println("Date of survey: " + (Date) rowData[10]);
                 
-                System.out.println("Standards Breached: " + (String) rowData[16]);
+                System.out.println("Standards breached: " + (String) rowData[16]);
                 
                 System.out.println("Inspectors: " + (String) rowData[18]);
+                System.out.println("Product quantity: " + ((BigDecimal) rowData[19]).intValue());
+                System.out.println("Profile flagged: " + ((String) rowData[20]));
+                System.out.println("Commodity code: " + ((String) rowData[21]));
+                System.out.println("Detentions: " + ((BigDecimal) rowData[22]).intValue());
+                System.out.println("Destructions: " + ((BigDecimal) rowData[23]).intValue());
+                System.out.println("Seizures: " + ((BigDecimal) rowData[24]).intValue());
+                System.out.println("Condemnations: " + ((BigDecimal) rowData[25]).intValue());
+                System.out.println("Verifications: " + ((BigDecimal) rowData[26]).intValue());
+                System.out.println("Withdrawals: " + ((BigDecimal) rowData[27]).intValue());
             }
         } else {
             System.out.println("Department not found!");
