@@ -112,8 +112,42 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    
+
+    public static List<Object[]> getReportRecords(
+            EntityManager em,
+            String startDate,
+            String endDate,
+            Long departmentId) {
+
+        String reportSQL = "SELECT DISTINCT"
+                + "     complaint.`JOBNUMBER`," // 0 - Job number 
+                + "     businessoffice.`NAME`," // 1 - Business office
+                + "     complaint.`COMMENTS`," // 2 - Comments                  
+                + "     enteredBy.`NAME`," // 3 - Entered by     
+                + "     complaint.`DATERECEIVED`," // 4 - Date received
+                + "     complaint.`COMPLAINT`," // 5 - Complaint
+                + "     complainant.`NAME`" // 6 - Complainant             
+                + " FROM"
+                + "     complaint"
+                + "     LEFT JOIN `businessoffice` businessoffice ON complaint.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
+                + "     LEFT JOIN `employee` enteredBy ON complaint.`ENTEREDBY_ID` = enteredBy.`ID`"
+                + "     LEFT JOIN `client` complainant ON complaint.`COMPLAINANT_ID` = complainant.`ID`"
+                + " WHERE"
+                + "     (complaint.`DATERECEIVED` >= " + startDate
+                + " AND complaint.`DATERECEIVED` <= " + endDate + ")"
+                + " GROUP BY"
+                + "     complaint.`ID`"
+                + " ORDER BY"
+                + "     complaint.`ID` DESC";
+
+        try {
+            return em.createNativeQuery(reportSQL).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+
+    }
 
     public BusinessOffice getBusinessOffice() {
         return businessOffice;

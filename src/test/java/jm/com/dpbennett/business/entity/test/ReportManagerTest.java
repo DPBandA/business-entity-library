@@ -28,6 +28,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.User;
+import jm.com.dpbennett.business.entity.sc.Complaint;
 import jm.com.dpbennett.business.entity.sc.ComplianceSurvey;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import org.junit.Test;
@@ -56,9 +57,9 @@ public class ReportManagerTest {
 
         Department dept = Department.findDepartmentByName(em, "Inspectorate - Standards Compliance");
         if (dept != null) {
-            Date date = BusinessEntityUtils.createDate(2021, 0, 6);
-            
-            List<Object[]> reportData = ComplianceSurvey.getReportRecords(
+            Date date = BusinessEntityUtils.createDate(2020, 9, 17);
+
+            List<Object[]> reportData = Complaint.getReportRecords(
                     em,
                     BusinessEntityUtils.getDateString(date, "'", "YMD", "-"),
                     BusinessEntityUtils.getDateString(date, "'", "YMD", "-"),
@@ -68,26 +69,27 @@ public class ReportManagerTest {
             for (Object[] rowData : reportData) {
 
                 System.out.println("Job number: " + (String) rowData[0]);
-                System.out.println("Consignee: " + (String) rowData[1]);
-                System.out.println("Comments: " + (String) rowData[2]);
-                System.out.println("Business office: " + (String) rowData[3]);
-                System.out.println("Entry document #s: " + (String) rowData[4]);
-                System.out.println("Containers: " + (String) rowData[5]);
-                
-                System.out.println("Date of survey: " + (Date) rowData[10]);
-                
-                System.out.println("Standards breached: " + (String) rowData[16]);
-                
-                System.out.println("Inspectors: " + (String) rowData[18]);
-                System.out.println("Product quantity: " + ((BigDecimal) rowData[19]).intValue());
-                System.out.println("Profile flagged: " + ((String) rowData[20]));
-                System.out.println("Commodity code: " + ((String) rowData[21]));
-                System.out.println("Detentions: " + ((BigDecimal) rowData[22]).intValue());
-                System.out.println("Destructions: " + ((BigDecimal) rowData[23]).intValue());
-                System.out.println("Seizures: " + ((BigDecimal) rowData[24]).intValue());
-                System.out.println("Condemnations: " + ((BigDecimal) rowData[25]).intValue());
-                System.out.println("Verifications: " + ((BigDecimal) rowData[26]).intValue());
-                System.out.println("Withdrawals: " + ((BigDecimal) rowData[27]).intValue());
+                System.out.println("Business office: " + (String) rowData[1]);
+//                System.out.println("Consignee: " + (String) rowData[1]);
+//                System.out.println("Comments: " + (String) rowData[2]);
+
+//                System.out.println("Entry document #s: " + (String) rowData[4]);
+//                System.out.println("Containers: " + (String) rowData[5]);
+//                
+//                System.out.println("Date of survey: " + (Date) rowData[10]);
+//                
+//                System.out.println("Standards breached: " + (String) rowData[16]);
+//                
+//                System.out.println("Inspectors: " + (String) rowData[18]);
+//                System.out.println("Product quantity: " + ((BigDecimal) rowData[19]).intValue());
+//                System.out.println("Profile flagged: " + ((String) rowData[20]));
+//                System.out.println("Commodity code: " + ((String) rowData[21]));
+//                System.out.println("Detentions: " + ((BigDecimal) rowData[22]).intValue());
+//                System.out.println("Destructions: " + ((BigDecimal) rowData[23]).intValue());
+//                System.out.println("Seizures: " + ((BigDecimal) rowData[24]).intValue());
+//                System.out.println("Condemnations: " + ((BigDecimal) rowData[25]).intValue());
+//                System.out.println("Verifications: " + ((BigDecimal) rowData[26]).intValue());
+//                System.out.println("Withdrawals: " + ((BigDecimal) rowData[27]).intValue());
             }
         } else {
             System.out.println("Department not found!");
