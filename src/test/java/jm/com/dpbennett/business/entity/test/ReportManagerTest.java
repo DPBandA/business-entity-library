@@ -30,6 +30,7 @@ import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.sc.Complaint;
 import jm.com.dpbennett.business.entity.sc.ComplianceSurvey;
+import jm.com.dpbennett.business.entity.sc.FactoryInspection;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class ReportManagerTest {
         prop.put("javax.persistence.jdbc.user",
                 "root");
         prop.put("javax.persistence.jdbc.password",
-                "bsj0001"); // TK REMOVE PWD WHEN DONE AND DISABLE TESTING.
+                ""); // TK REMOVE PWD WHEN DONE AND DISABLE TESTING.
         prop.put("javax.persistence.jdbc.url",
                 "jdbc:mysql://172.16.0.10:3306/jmtstest");
         prop.put("javax.persistence.jdbc.driver",
@@ -57,9 +58,9 @@ public class ReportManagerTest {
 
         Department dept = Department.findDepartmentByName(em, "Inspectorate - Standards Compliance");
         if (dept != null) {
-            Date date = BusinessEntityUtils.createDate(2020, 9, 17);
+            Date date = BusinessEntityUtils.createDate(2020, 9, 1);
 
-            List<Object[]> reportData = Complaint.getReportRecords(
+            List<Object[]> reportData = FactoryInspection.getReportRecords(
                     em,
                     BusinessEntityUtils.getDateString(date, "'", "YMD", "-"),
                     BusinessEntityUtils.getDateString(date, "'", "YMD", "-"),
@@ -69,7 +70,7 @@ public class ReportManagerTest {
             for (Object[] rowData : reportData) {
 
                 System.out.println("Job number: " + (String) rowData[0]);
-                System.out.println("Business office: " + (String) rowData[1]);
+//                System.out.println("Business office: " + (String) rowData[1]);
 //                System.out.println("Consignee: " + (String) rowData[1]);
 //                System.out.println("Comments: " + (String) rowData[2]);
 

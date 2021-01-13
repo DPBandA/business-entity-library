@@ -106,6 +106,46 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+    
+    public static List<Object[]> getReportRecords(
+            EntityManager em,
+            String startDate,
+            String endDate,
+            Long departmentId) {
+
+        String reportSQL = "SELECT DISTINCT"
+                + "     factoryinspection.`JOBNUMBER`," // 0 - Job number 
+                + "     assignedInspector.`NAME`," // 1 - Assigned inspector
+                + "     factoryinspection.`GENERALCOMMENTS`," // 2 - General comments                  
+                + "     businessoffice.`NAME`," // 3 - Business office   
+                + "     manufacturer.`NAME`," // 4 - Manufacturer  
+                + "     factoryinspection.`INSPECTIONDATE`," // 5 - Inspection date
+                + "     factoryinspection.`WORKPROGRESS`," // 6 - Work progress 
+                + "     factoryinspection.`WORKINPROGRESS`," // 7 - Work in progress
+                + "     SUM(DISTINCT productinspection.`QUANTITY`)" // 8 - Product quantity
+                + " FROM"
+                + "     factoryinspection"
+                + "     LEFT JOIN `employee` assignedInspector ON factoryinspection.`ASSIGNEDINSPECTOR_ID` = assignedInspector.`ID`"
+                + "     LEFT JOIN `manufacturer` manufacturer ON factoryinspection.`MANUFACTURER_ID` = manufacturer.`ID`"
+                + "     LEFT JOIN `businessoffice` businessoffice ON factoryinspection.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
+                + "     LEFT JOIN `factoryinspection_productinspection` factoryinspection_productinspection ON factoryinspection.`ID` = factoryinspection_productinspection.`FactoryInspection_ID`"
+                + "     LEFT JOIN `productinspection` productinspection ON factoryinspection_productinspection.`productInspections_ID` = productinspection.`ID`"
+                + " WHERE"
+                + "     (factoryinspection.`INSPECTIONDATE` >= " + startDate
+                + " AND factoryinspection.`INSPECTIONDATE` <= " + endDate + ")"
+                + " GROUP BY"
+                + "     factoryinspection.`ID`"
+                + " ORDER BY"
+                + "     factoryinspection.`ID` DESC";
+
+        try {
+            return em.createNativeQuery(reportSQL).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+
+    }
 
     public String getJobNumber() {
         return jobNumber;
