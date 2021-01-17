@@ -270,7 +270,9 @@ public class ComplianceSurvey
                 + "     / LENGTH('Verification')," // 26 Verifications
                 + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
                 + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Withdrawal', '')))" 
-                + "     / LENGTH('Withdrawal')" // 27 Withdrawals
+                + "     / LENGTH('Withdrawal')," // 27 Withdrawals
+                + "     GROUP_CONCAT(DISTINCT marketproduct.`NAME` SEPARATOR ', ')," // 28 - Products
+                + "     GROUP_CONCAT(DISTINCT productcategory.`NAME` SEPARATOR ', ')" // 29 - Product categories
                 + " FROM"
                 + "     compliancesurvey"
                 + "     LEFT JOIN `client` consignee ON compliancesurvey.`CONSIGNEE_ID` = consignee.`ID`"
@@ -284,6 +286,8 @@ public class ComplianceSurvey
                 + "     LEFT JOIN `employee` employee ON compliancesurvey_employee.`inspectors_ID` = employee.`ID`"
                 + "     LEFT JOIN `compliancesurvey_productinspection` compliancesurvey_productinspection ON compliancesurvey.`ID` = compliancesurvey_productinspection.`ComplianceSurvey_ID`"
                 + "     LEFT JOIN `productinspection` productinspection ON compliancesurvey_productinspection.`productInspections_ID` = productinspection.`ID`"
+                + "     LEFT JOIN `marketproduct` marketproduct ON productinspection.`MARKETPRODUCT_ID` = marketproduct.`ID`"
+                + "     LEFT JOIN `category` productcategory ON productinspection.`PRODUCTCATEGORY_ID` = productcategory.`ID`"
                 + " WHERE"
                 + "     (compliancesurvey.`DATEOFSURVEY` >= " + startDate
                 + " AND compliancesurvey.`DATEOFSURVEY` <= " + endDate + ")"

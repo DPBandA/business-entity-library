@@ -47,7 +47,7 @@ public class ReportManagerTest {
         prop.put("javax.persistence.jdbc.user",
                 "root");
         prop.put("javax.persistence.jdbc.password",
-                ""); // TK REMOVE PWD WHEN DONE AND DISABLE TESTING.
+                ""); // NB: REMOVE PWD WHEN DONE AND DISABLE TESTING.
         prop.put("javax.persistence.jdbc.url",
                 "jdbc:mysql://172.16.0.10:3306/jmtstest");
         prop.put("javax.persistence.jdbc.driver",
@@ -58,9 +58,9 @@ public class ReportManagerTest {
 
         Department dept = Department.findDepartmentByName(em, "Inspectorate - Standards Compliance");
         if (dept != null) {
-            Date date = BusinessEntityUtils.createDate(2020, 9, 1);
+            Date date = BusinessEntityUtils.createDate(2021, 0, 6);
 
-            List<Object[]> reportData = FactoryInspection.getReportRecords(
+            List<Object[]> reportData = ComplianceSurvey.getReportRecords(
                     em,
                     BusinessEntityUtils.getDateString(date, "'", "YMD", "-"),
                     BusinessEntityUtils.getDateString(date, "'", "YMD", "-"),
@@ -70,6 +70,8 @@ public class ReportManagerTest {
             for (Object[] rowData : reportData) {
 
                 System.out.println("Job number: " + (String) rowData[0]);
+                System.out.println("Market products: " + (String) rowData[28]);
+                System.out.println("Product categories: " + (String) rowData[29]);
 //                System.out.println("Business office: " + (String) rowData[1]);
 //                System.out.println("Consignee: " + (String) rowData[1]);
 //                System.out.println("Comments: " + (String) rowData[2]);
