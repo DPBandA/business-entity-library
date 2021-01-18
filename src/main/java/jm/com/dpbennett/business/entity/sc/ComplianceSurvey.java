@@ -231,6 +231,7 @@ public class ComplianceSurvey
             Long departmentId) {
 
         String reportSQL = "SELECT DISTINCT"
+//                + "     compliancesurvey.`ID`" // 0 - ID
                 + "     compliancesurvey.`JOBNUMBER`," // 0 - Job number 
                 + "     consignee.`NAME`," // 1 - Consignee
                 + "     compliancesurvey.`COMMENTS`," // 2 - Comments                  
@@ -272,7 +273,8 @@ public class ComplianceSurvey
                 + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Withdrawal', '')))" 
                 + "     / LENGTH('Withdrawal')," // 27 Withdrawals
                 + "     GROUP_CONCAT(DISTINCT marketproduct.`NAME` SEPARATOR ', ')," // 28 - Products
-                + "     GROUP_CONCAT(DISTINCT productcategory.`NAME` SEPARATOR ', ')" // 29 - Product categories
+                + "     GROUP_CONCAT(DISTINCT productcategory.`NAME` SEPARATOR ', ')," // 29 - Product categories
+                + "     compliancesurvey.`ID`" // 30
                 + " FROM"
                 + "     compliancesurvey"
                 + "     LEFT JOIN `client` consignee ON compliancesurvey.`CONSIGNEE_ID` = consignee.`ID`"

@@ -122,7 +122,8 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                 + "     factoryinspection.`INSPECTIONDATE`," // 5 - Inspection date
                 + "     factoryinspection.`WORKPROGRESS`," // 6 - Work progress 
                 + "     factoryinspection.`WORKINPROGRESS`," // 7 - Work in progress
-                + "     SUM(DISTINCT productinspection.`QUANTITY`)" // 8 - Product quantity
+                + "     SUM(DISTINCT productinspection.`QUANTITY`)," // 8 - Product quantity
+                + "     factoryinspection.`ID`" // 9 - ID
                 + " FROM"
                 + "     factoryinspection"
                 + "     LEFT JOIN `employee` assignedInspector ON factoryinspection.`ASSIGNEDINSPECTOR_ID` = assignedInspector.`ID`"

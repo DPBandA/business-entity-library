@@ -126,7 +126,8 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
                 + "     enteredBy.`NAME`," // 3 - Entered by     
                 + "     complaint.`DATERECEIVED`," // 4 - Date received
                 + "     complaint.`COMPLAINT`," // 5 - Complaint
-                + "     complainant.`NAME`" // 6 - Complainant             
+                + "     complainant.`NAME`," // 6 - Complainant  
+                + "     complainant.`ID`" // 7 - ID             
                 + " FROM"
                 + "     complaint"
                 + "     LEFT JOIN `businessoffice` businessoffice ON complaint.`BUSINESSOFFICE_ID` = businessoffice.`ID`"

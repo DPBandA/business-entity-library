@@ -58,20 +58,23 @@ public class ReportManagerTest {
 
         Department dept = Department.findDepartmentByName(em, "Inspectorate - Standards Compliance");
         if (dept != null) {
-            Date date = BusinessEntityUtils.createDate(2021, 0, 6);
+            Date date = BusinessEntityUtils.createDate(2020, 3, 1);
+            Date date2 = BusinessEntityUtils.createDate(2021, 2, 31);
 
-            List<Object[]> reportData = ComplianceSurvey.getReportRecords(
+            List<Object[]> reportData = FactoryInspection.getReportRecords(
                     em,
                     BusinessEntityUtils.getDateString(date, "'", "YMD", "-"),
-                    BusinessEntityUtils.getDateString(date, "'", "YMD", "-"),
+                    BusinessEntityUtils.getDateString(date2, "'", "YMD", "-"),
                     dept.getId());
+            
+            System.out.println("Records found: " + reportData.size());
 
             // Print data data
-            for (Object[] rowData : reportData) {
-
-                System.out.println("Job number: " + (String) rowData[0]);
-                System.out.println("Market products: " + (String) rowData[28]);
-                System.out.println("Product categories: " + (String) rowData[29]);
+//            for (Object[] rowData : reportData) {
+//
+//                System.out.println("Job number: " + (String) rowData[0]);
+//                System.out.println("Market products: " + (String) rowData[28]);
+//                System.out.println("Product categories: " + (String) rowData[29]);
 //                System.out.println("Business office: " + (String) rowData[1]);
 //                System.out.println("Consignee: " + (String) rowData[1]);
 //                System.out.println("Comments: " + (String) rowData[2]);
@@ -94,9 +97,9 @@ public class ReportManagerTest {
 //                System.out.println("Verifications: " + ((BigDecimal) rowData[26]).intValue());
 //                System.out.println("Withdrawals: " + ((BigDecimal) rowData[27]).intValue());
             }
-        } else {
-            System.out.println("Department not found!");
-        }
+//        } else {
+//            System.out.println("Department not found!");
+//        }
 
     }
 
