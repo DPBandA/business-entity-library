@@ -111,6 +111,7 @@ public class Discount implements Serializable, BusinessEntity {
 
         if (discount == null) {
             discount = new Discount(name, value, type);
+            discount.setActive(false);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, discount);
