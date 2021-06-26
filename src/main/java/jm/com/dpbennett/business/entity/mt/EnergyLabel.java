@@ -166,6 +166,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     public String getBatchCode() {
+        if (batchCode == null) {
+            batchCode = "";
+        }
         return batchCode;
     }
 
@@ -215,6 +218,9 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     public String getYearOfEvaluation() {
+        if (yearOfEvaluation == null) {
+            yearOfEvaluation = "";
+        }
         return yearOfEvaluation;
     }
 
