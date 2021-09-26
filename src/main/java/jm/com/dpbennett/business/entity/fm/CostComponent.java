@@ -73,7 +73,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     public CostComponent() {
         name = "";
         code = "";
-        type = "FIXED";
+        type = "Fixed";
         category = "";
         cost = 0.0;
         comments = "";
@@ -91,7 +91,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     public CostComponent(String name) {
         this.name = name;
         code = "";
-        type = "FIXED";
+        type = "Fixed";
         category = "";
         cost = 0.0;
         comments = "";
@@ -106,8 +106,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.id = id;
         this.name = name;
         code = "";
-        type = "FIXED";
-        type = "FIXED";
+        type = "Fixed";
+        category = "";
         cost = 0.0;
         comments = "";
         isHeading = false;
@@ -121,7 +121,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.isHeading = isHeading;
         this.name = name;
         cost = 0.0;
-        type = "FIXED";
+        type = "Fixed";
         isFixedCost = false;
         isEditable = true;
         description = "";
@@ -133,7 +133,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.cost = cost;
         this.isFixedCost = isFixedCost;
         this.isEditable = isEditable;
-        type = "FIXED";
+        type = "Fixed";
         hours = 0.0;
         hoursOrQuantity = 0.0;
         rate = 0.0;
@@ -151,13 +151,15 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     public void update() {
         switch (getType()) {
-            case "FIXED":
+            case "Fixed":
+            case "FIXED":    
                 setIsFixedCost(true);
                 setIsHeading(false);
                 setHours(0.0);
                 setHoursOrQuantity(1.0);
                 setRate(getCost());
                 break;
+            case "Heading":    
             case "HEADING":
                 setIsFixedCost(false);
                 setIsHeading(true);
@@ -166,10 +168,12 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
                 setRate(0.0);
                 setCost(0.0);
                 break;
+            case "Variable":    
             case "VARIABLE":
                 setIsFixedCost(false);
                 setIsHeading(false);
                 break;
+            case "Subcontract":    
             case "SUBCONTRACT":
                 setIsFixedCost(true);
                 setIsHeading(false);
@@ -259,11 +263,11 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Boolean getIsSubcontract() {
-        return getType().equals("SUBCONTRACT");
+        return getType().toUpperCase().equals("SUBCONTRACT");
     }
 
     public Boolean getIsVariable() {
-        return getType().equals("VARIABLE");
+        return getType().toUpperCase().equals("VARIABLE");
     }
 
     public Boolean getIsFixedCost() {
