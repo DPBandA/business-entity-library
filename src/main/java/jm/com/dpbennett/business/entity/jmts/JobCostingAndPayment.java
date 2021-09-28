@@ -105,6 +105,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @Transient
     private Boolean isDirty;
     private Boolean active;
+    @Column(length = 1024)
+    private String description;
 
     public JobCostingAndPayment() {
         this.totalCost = 0.0;
@@ -1123,4 +1125,16 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
     }
+
+    public String getDescription() {
+        if (description == null) {
+            description = "";
+        }
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }
