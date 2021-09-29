@@ -107,6 +107,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     private Boolean active;
     @Column(length = 1024)
     private String description;
+    private Boolean estimate;
 
     public JobCostingAndPayment() {
         this.totalCost = 0.0;
@@ -131,6 +132,17 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getEstimate() {
+        if (estimate == null) {
+            estimate = false;
+        }
+        return estimate;
+    }
+
+    public void setEstimate(Boolean estimate) {
+        this.estimate = estimate;
     }
 
     public Boolean getActive() {
