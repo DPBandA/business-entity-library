@@ -1148,5 +1148,28 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public void setDescription(String description) {
         this.description = description;
     }
+    
+    public static List<JobCostingAndPayment> findAllEstimateJobCostingAndPayments(
+            EntityManager em,
+            String jobCostingAndPaymentName) {
+
+        try {
+            String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
+            
+            List<JobCostingAndPayment> jobCostingAndPayments
+                    = em.createQuery("SELECT jobCostingAndPayment FROM JobCostingAndPayment jobCostingAndPayment"
+                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
+                            + newJobCostingAndPaymentName.toUpperCase().trim() + "%'"
+                            + " AND (jobCostingAndPayment.estimate = 1)"
+                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
+                            JobCostingAndPayment.class).setMaxResults(500).getResultList();
+            
+           return jobCostingAndPayments;
+           
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }        
+    }
 
 }
