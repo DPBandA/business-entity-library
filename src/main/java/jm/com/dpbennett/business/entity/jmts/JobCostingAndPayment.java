@@ -389,7 +389,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public String getTotalTaxLabel() {
-        return "Tax:";
+        return "TAX ($):";
     }
 
     public String getTotalCostWithTaxLabel() {
