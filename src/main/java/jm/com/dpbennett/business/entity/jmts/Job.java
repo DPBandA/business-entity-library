@@ -1079,6 +1079,11 @@ public class Job implements Serializable, BusinessEntity {
         this.noOfTestsOrCalibrations = noOfTestsOrCalibrations;
     }
 
+    /**
+     * This currently not implemented. Use the samples collection to get the
+     * number of samples.
+     * @return 
+     */
     public Long getNumberOfSamples() {
         if (numberOfSamples == null) {
             numberOfSamples = 0L;
