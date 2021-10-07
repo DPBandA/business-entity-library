@@ -1306,6 +1306,22 @@ public class Job implements Serializable, BusinessEntity {
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";
                 break;
+            case "Invoiced jobs":
+                searchTextAndClause
+                        = " AND subContractedDepartment.name = '--' AND ("
+                        + mainSearchWhereClause
+                        + " )";
+                searchQuery
+                        = selectClause
+                        + mainJoinClause
+                        + " WHERE (" + datePeriodSubClause
+                        + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
+                        + " AND (jobCostingAndPayment.costingApproved = 1)"
+                        + " AND (classification.isEarning = 1)"
+                        + " AND (jobCostingAndPayment.invoiced = 1)" + ")"
+                        + searchTextAndClause
+                        + " ORDER BY job.id DESC";
+                break;    
             case "Parent jobs only":
                 searchTextAndClause
                         = " AND subContractedDepartment.name = '--' AND ("
