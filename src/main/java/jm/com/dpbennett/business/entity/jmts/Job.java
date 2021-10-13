@@ -410,14 +410,17 @@ public class Job implements Serializable, BusinessEntity {
                 this.getJobStatusAndTracking().setEditedBy(employee);
             }
 
-            // Modify job number with sequence number if required
-            if (this.getAutoGenerateJobNumber()) {
-                if ((this.getJobSequenceNumber() == null)) {
-                    nextJobSequenceNumber = JobSequenceNumber.findNextJobSequenceNumber(em, this.getYearReceived());
-                    this.setJobSequenceNumber(nextJobSequenceNumber.getSequentialNumber());
-                    this.setJobNumber(Job.getJobNumber(this, em));
-                } else {
-                    this.setJobNumber(Job.getJobNumber(this, em));
+            if (!this.getJobCostingAndPayment().getEstimate()) 
+            {
+                // Modify job number with sequence number if required
+                if (this.getAutoGenerateJobNumber()) {
+                    if ((this.getJobSequenceNumber() == null)) {
+                        nextJobSequenceNumber = JobSequenceNumber.findNextJobSequenceNumber(em, this.getYearReceived());
+                        this.setJobSequenceNumber(nextJobSequenceNumber.getSequentialNumber());
+                        this.setJobNumber(Job.getJobNumber(this, em));
+                    } else {
+                        this.setJobNumber(Job.getJobNumber(this, em));
+                    }
                 }
             }
 
@@ -1082,7 +1085,8 @@ public class Job implements Serializable, BusinessEntity {
     /**
      * This currently not implemented. Use the samples collection to get the
      * number of samples.
-     * @return 
+     *
+     * @return
      */
     public Long getNumberOfSamples() {
         if (numberOfSamples == null) {
@@ -1321,7 +1325,7 @@ public class Job implements Serializable, BusinessEntity {
                         + " AND (jobCostingAndPayment.invoiced = 1)" + ")"
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";
-                break;    
+                break;
             case "Parent jobs only":
                 searchTextAndClause
                         = " AND subContractedDepartment.name = '--' AND ("
