@@ -560,6 +560,14 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public void setDeposit(Double deposit) {
         this.deposit = deposit;
     }
+    
+    public Double getReimbursable() {
+        return deposit;
+    }
+    
+    public void setReimbursable(Double deposit) {
+        this.deposit = deposit;
+    }
 
     /**
      * Get the total payments from cash payments and deposit if any.
