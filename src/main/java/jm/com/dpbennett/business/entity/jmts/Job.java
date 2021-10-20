@@ -374,24 +374,6 @@ public class Job implements Serializable, BusinessEntity {
             // Get employee for later use
             Employee employee = user.getEmployee();
 
-//            // Do not save changed job if it's already marked as completed in the database
-//            // However, saving is allowed if the user belongs to the "Invoicing department"
-//            // or is a system administrator
-//            if (this.getId() != null) {
-//                Job job = Job.findJobById(em, this.getId());
-//                if (job.getJobStatusAndTracking().getWorkProgress().equals("Completed")
-//                        && !user.isMemberOf(em, Department.findDepartmentBySystemOptionDeptId("invoicingDepartmentId", em))
-//                        //&& !user.getPrivilege().getCanBeJMTSAdministrator()
-//                        && !User.isUserDepartmentSupervisor(this, user, em)) {
-//                    
-//                    this.setIsDirty(false);
-//                    
-//                    return new ReturnMessage(false,
-//                            "Job Cannot Be Saved",
-//                            "This job is marked as completed so changes cannot be saved. You may contact your department's supervisor or a system administrator",
-//                            Message.SEVERITY_ERROR_NAME);
-//                }
-//            }
             // Set date entered
             if (this.getJobStatusAndTracking().getDateAndTimeEntered() == null) {
                 this.getJobStatusAndTracking().setDateAndTimeEntered(now);
@@ -410,17 +392,14 @@ public class Job implements Serializable, BusinessEntity {
                 this.getJobStatusAndTracking().setEditedBy(employee);
             }
 
-            if (!this.getJobCostingAndPayment().getEstimate()) 
-            {
-                // Modify job number with sequence number if required
-                if (this.getAutoGenerateJobNumber()) {
-                    if ((this.getJobSequenceNumber() == null)) {
-                        nextJobSequenceNumber = JobSequenceNumber.findNextJobSequenceNumber(em, this.getYearReceived());
-                        this.setJobSequenceNumber(nextJobSequenceNumber.getSequentialNumber());
-                        this.setJobNumber(Job.getJobNumber(this, em));
-                    } else {
-                        this.setJobNumber(Job.getJobNumber(this, em));
-                    }
+            // Modify job number with sequence number if required
+            if (this.getAutoGenerateJobNumber()) {
+                if ((this.getJobSequenceNumber() == null)) {
+                    nextJobSequenceNumber = JobSequenceNumber.findNextJobSequenceNumber(em, this.getYearReceived());
+                    this.setJobSequenceNumber(nextJobSequenceNumber.getSequentialNumber());
+                    this.setJobNumber(Job.generateJobNumber(this, em));
+                } else {
+                    this.setJobNumber(Job.generateJobNumber(this, em));
                 }
             }
 
@@ -529,7 +508,7 @@ public class Job implements Serializable, BusinessEntity {
         copy.setJobDescription(job.getJobDescription());
         // Set job number
         if (copy.getAutoGenerateJobNumber()) {
-            copy.setJobNumber(Job.getJobNumber(copy, em));
+            copy.setJobNumber(Job.generateJobNumber(copy, em));
         }
 
         return copy;
@@ -579,13 +558,13 @@ public class Job implements Serializable, BusinessEntity {
         // this is done here because job number is dependent on business office, department/subcontracted department
         job.setNumberOfSamples(0L);
         if (job.getAutoGenerateJobNumber()) {
-            job.setJobNumber(Job.getJobNumber(job, em));
+            job.setJobNumber(Job.generateJobNumber(job, em));
         }
 
         return job;
     }
 
-    public static String getJobNumber(Job job, EntityManager em) {
+    private static String buildJobNumber(Job job, EntityManager em) {
         Calendar c = Calendar.getInstance();
         String departmentOrCompanyCode;
         String year = "?";
@@ -630,6 +609,71 @@ public class Job implements Serializable, BusinessEntity {
         }
 
         return job.getJobNumber();
+    }
+
+    private static String buildProformaNumber(Job job, EntityManager em) {
+        Calendar c = Calendar.getInstance();
+        String departmentOrCompanyCode;
+        String month;
+        String day;
+        String hour;
+        String min;
+        String sec;
+
+        departmentOrCompanyCode = job.getDepartment().getCode().equals("") ? "?" : job.getDepartment().getCode();
+
+        c.setTime(new Date());
+        // Year
+        String year = "" + c.get(Calendar.YEAR);
+        year = year.substring(year.length() - 2, year.length());
+        // Month        
+        int month_int = c.get(Calendar.MONTH) + 1;
+        if (month_int < 10) {
+            month = "0" + month_int;
+        } else {
+            month = "" + month_int;
+        }
+        // Day
+        int day_int = c.get(Calendar.DAY_OF_MONTH);
+        if (day_int < 10) {
+            day = "0" + day_int;
+        } else {
+            day = "" + day_int;
+        }
+        // Hour
+        int hour_int = c.get(Calendar.HOUR_OF_DAY); 
+        if (hour_int < 10) {
+            hour = "0" + hour_int;
+        } else {
+            hour = "" + hour_int;
+        }
+        // Min
+        int min_int = c.get(Calendar.MINUTE); 
+        if (min_int < 10) {
+            min = "0" + min_int;
+        } else {
+            min = "" + min_int;
+        }
+        // Min
+        int sec_int = c.get(Calendar.SECOND); 
+        if (sec_int < 10) {
+            sec = "0" + sec_int;
+        } else {
+            sec = "" + sec_int;
+        }
+        
+        job.setJobNumber(departmentOrCompanyCode + " - " + year + month + day + 
+                " - " + hour + min + sec);
+
+        return job.getJobNumber();
+    }
+
+    public static String generateJobNumber(Job job, EntityManager em) {
+        if (job.getJobCostingAndPayment().getEstimate()) {
+            return buildProformaNumber(job, em);
+        } else {
+            return buildJobNumber(job, em);
+        }
     }
 
     public Boolean getIsToBeCopied() {
@@ -2229,4 +2273,5 @@ public class Job implements Serializable, BusinessEntity {
     public void setActions(List<Action> actions) {
         this.actions = actions;
     }
+
 }

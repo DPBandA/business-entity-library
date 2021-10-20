@@ -1043,6 +1043,13 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public void setTotalCost(Double totalCost) {
         this.totalCost = totalCost;
     }
+    
+    public Double getProformaTotalCost() {
+
+        totalCost = getFinalCostWithDiscount() + getTotalTax() + getReimbursable();
+
+        return totalCost;
+    }
 
     /**
      *
