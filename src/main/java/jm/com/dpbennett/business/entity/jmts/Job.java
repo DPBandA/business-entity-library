@@ -641,29 +641,34 @@ public class Job implements Serializable, BusinessEntity {
             day = "" + day_int;
         }
         // Hour
-        int hour_int = c.get(Calendar.HOUR_OF_DAY); 
+        int hour_int = c.get(Calendar.HOUR_OF_DAY);
         if (hour_int < 10) {
             hour = "0" + hour_int;
         } else {
             hour = "" + hour_int;
         }
         // Min
-        int min_int = c.get(Calendar.MINUTE); 
+        int min_int = c.get(Calendar.MINUTE);
         if (min_int < 10) {
             min = "0" + min_int;
         } else {
             min = "" + min_int;
         }
         // Min
-        int sec_int = c.get(Calendar.SECOND); 
+        int sec_int = c.get(Calendar.SECOND);
         if (sec_int < 10) {
             sec = "0" + sec_int;
         } else {
             sec = "" + sec_int;
         }
-        
-        job.setJobNumber(departmentOrCompanyCode + " - " + year + month + day + 
-                " - " + hour + min + sec);
+
+        if (job.getJobSequenceNumber() != null) {
+            job.setJobNumber(departmentOrCompanyCode + " - " + year + month + day
+                    + " - " + hour + min + sec);
+        } else {
+            job.setJobNumber("?" + " - " + "?" + "?" + "?"
+                    + " - " + "?" + "?" + "?");
+        }
 
         return job.getJobNumber();
     }
