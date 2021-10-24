@@ -1256,11 +1256,13 @@ public class Job implements Serializable, BusinessEntity {
             DatePeriod dateSearchPeriod,
             String searchType,
             String searchText,
-            Integer maxResults) {
+            Integer maxResults,
+            Boolean estimate) {
 
         List<Job> foundJobs;
         String searchQuery = null;
         String searchTextAndClause;
+        String costEstimateSubclause;
         String selectClause = "SELECT DISTINCT job FROM Job job";
         String mainJoinClause = " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                 + " LEFT JOIN job.business business"
@@ -1278,6 +1280,13 @@ public class Job implements Serializable, BusinessEntity {
                 + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
                 + " LEFT JOIN job.jobSamples jobSamples"
                 + " LEFT JOIN job.representatives representatives";
+        
+        if (estimate) {
+            costEstimateSubclause = " AND (jobCostingAndPayment.estimate = 1)";
+        }
+        else {
+            costEstimateSubclause = " AND (jobCostingAndPayment.estimate IS NULL OR jobCostingAndPayment.estimate = 0)";
+        }
 
         if (searchText != null) {
             searchText = searchText.trim().replaceAll("'", "''");
@@ -1325,6 +1334,7 @@ public class Job implements Serializable, BusinessEntity {
                         = selectClause
                         + mainJoinClause
                         + " WHERE (" + datePeriodSubClause
+                        + costEstimateSubclause
                         + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
                         + " AND (jobCostingAndPayment.costingApproved = 1)"
                         + " AND (classification.isEarning = 1)"
@@ -1341,6 +1351,7 @@ public class Job implements Serializable, BusinessEntity {
                         = selectClause
                         + mainJoinClause
                         + " WHERE (" + datePeriodSubClause
+                        + costEstimateSubclause
                         + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
                         + " AND (jobCostingAndPayment.costingApproved IS NULL OR jobCostingAndPayment.costingApproved = 0)" + ")"
                         + searchTextAndClause
@@ -1355,6 +1366,7 @@ public class Job implements Serializable, BusinessEntity {
                         = selectClause
                         + mainJoinClause
                         + " WHERE (" + datePeriodSubClause
+                        + costEstimateSubclause
                         + " AND jobStatusAndTracking.workProgress NOT LIKE 'Completed' AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'" + ")"
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";
@@ -1368,6 +1380,7 @@ public class Job implements Serializable, BusinessEntity {
                         = selectClause
                         + mainJoinClause
                         + " WHERE (" + datePeriodSubClause
+                        + costEstimateSubclause
                         + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
                         + " AND (jobCostingAndPayment.costingApproved = 1)"
                         + " AND (classification.isEarning = 1)"
@@ -1383,7 +1396,9 @@ public class Job implements Serializable, BusinessEntity {
                 searchQuery
                         = selectClause
                         + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause + " )"
+                        + " WHERE (" + datePeriodSubClause 
+                        + costEstimateSubclause
+                        + " )"
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";
                 break;
@@ -1395,7 +1410,9 @@ public class Job implements Serializable, BusinessEntity {
                 searchQuery
                         = selectClause
                         + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause + " )"
+                        + " WHERE (" + datePeriodSubClause 
+                        + costEstimateSubclause
+                        + " )"
                         + searchTextAndClause
                         + " ORDER BY job.id DESC";
                 break;
@@ -1404,6 +1421,7 @@ public class Job implements Serializable, BusinessEntity {
                         = selectClause
                         + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
                         + " WHERE (" + datePeriodSubClause
+                        + costEstimateSubclause
                         + " ORDER BY job.id DESC";
                 break;
             case "Monthly report":
@@ -1411,6 +1429,7 @@ public class Job implements Serializable, BusinessEntity {
                         = selectClause
                         + mainJoinClause
                         + " WHERE (" + datePeriodSubClause
+                        + costEstimateSubclause
                         + " AND ( UPPER(department.name) = '" + searchText.toUpperCase() + "'"
                         + " OR UPPER(subContractedDepartment.name) = '" + searchText.toUpperCase() + "'"
                         + " )"
@@ -1424,7 +1443,9 @@ public class Job implements Serializable, BusinessEntity {
                 searchQuery
                         = selectClause
                         + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause + " )"
+                        + " WHERE (" + datePeriodSubClause 
+                        + costEstimateSubclause
+                        + " )"
                         + searchTextAndClause
                         + " AND ( UPPER(department.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
                         + " OR UPPER(subContractedDepartment.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
@@ -1443,7 +1464,9 @@ public class Job implements Serializable, BusinessEntity {
                 searchQuery
                         = selectClause
                         + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause + " )"
+                        + " WHERE (" + datePeriodSubClause 
+                        + costEstimateSubclause
+                        + " )"
                         + searchTextAndClause
                         + " AND ( (UPPER(assignedTo.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
                         + " AND UPPER(assignedTo.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%')"
@@ -1458,6 +1481,7 @@ public class Job implements Serializable, BusinessEntity {
                         = selectClause
                         + mainJoinClause
                         + " WHERE (" + datePeriodSubClause
+                        + costEstimateSubclause
                         + " AND ( UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )"
