@@ -215,6 +215,10 @@ public class ComplianceSurvey
     public void setId(Long id) {
         this.id = id;
     }
+    
+    public Boolean getIsJobNumberValid() {
+        return !getJobNumber().isEmpty();
+    }
 
     public BusinessOffice getBusinessOffice() {
         return businessOffice;

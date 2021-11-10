@@ -1738,9 +1738,9 @@ public class Job implements Serializable, BusinessEntity {
             String newName = query.replaceAll("'", "''");
 
             List<Job> numbers
-                    = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) LIKE '"
+                    = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) LIKE '%"
                             + newName.toUpperCase().trim() + "%'"
-                            + " ORDER BY j.jobNumber", Job.class).setMaxResults(25).getResultList();
+                            + " ORDER BY j.id DESC", Job.class).setMaxResults(25).getResultList();
             return numbers;
 
         } catch (Exception e) {
