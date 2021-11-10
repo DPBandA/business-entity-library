@@ -215,7 +215,7 @@ public class ComplianceSurvey
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Boolean getIsJobNumberValid() {
         return !getJobNumber().isEmpty();
     }
@@ -235,7 +235,7 @@ public class ComplianceSurvey
             Long departmentId) {
 
         String reportSQL = "SELECT DISTINCT"
-//                + "     compliancesurvey.`ID`" // 0 - ID
+                //                + "     compliancesurvey.`ID`" // 0 - ID
                 + "     compliancesurvey.`JOBNUMBER`," // 0 - Job number 
                 + "     consignee.`NAME`," // 1 - Consignee
                 + "     compliancesurvey.`COMMENTS`," // 2 - Comments                  
@@ -259,22 +259,22 @@ public class ComplianceSurvey
                 + "     entrydocumentinspection.`PROFILEFLAGGED`," // 20 - Profile flagged
                 + "     GROUP_CONCAT(DISTINCT productinspection.`TARIFFCODE` SEPARATOR ', ')," // 21 - Commodity codes
                 + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Detention', '')))" 
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Detention', '')))"
                 + "     / LENGTH('Detention')," // 22 Detentions            
                 + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Destruction', '')))" 
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Destruction', '')))"
                 + "     / LENGTH('Destruction')," // 23 Destructions
                 + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Seizure', '')))" 
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Seizure', '')))"
                 + "     / LENGTH('Seizure')," // 24 Seizures
                 + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Condemnation', '')))" 
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Condemnation', '')))"
                 + "     / LENGTH('Condemnation')," // 25 Condemnations
                 + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Verification', '')))" 
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Verification', '')))"
                 + "     / LENGTH('Verification')," // 26 Verifications
                 + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Withdrawal', '')))" 
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Withdrawal', '')))"
                 + "     / LENGTH('Withdrawal')," // 27 Withdrawals
                 + "     GROUP_CONCAT(DISTINCT marketproduct.`NAME` SEPARATOR ', ')," // 28 - Products
                 + "     GROUP_CONCAT(DISTINCT productcategory.`NAME` SEPARATOR ', ')," // 29 - Product categories
@@ -353,14 +353,14 @@ public class ComplianceSurvey
     public void setApplicationForRehabilitation(Boolean applicationForRehabilitation) {
         this.applicationForRehabilitation = applicationForRehabilitation;
     }
-    
+
     public String getInspectorList() {
         String list = "";
-        
+
         for (Employee employee : getInspectors()) {
             list = list + " " + employee.toString();
         }
-        
+
         return list;
     }
 
@@ -1221,8 +1221,7 @@ public class ComplianceSurvey
                 break;
         }
 
-        try { // tk make max result to return an option
-//            foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).getResultList(); //.setMaxResults(500).getResultList();
+        try {
             foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurveySearchResult.class).setMaxResults(maxResult).getResultList();
             if (foundComplianceSurveys == null) {
                 foundComplianceSurveys = new ArrayList<>();
@@ -1243,7 +1242,8 @@ public class ComplianceSurvey
             String originalSearchText,
             Date startDate,
             Date endDate,
-            Boolean includeProductInspectionSearch) {
+            Boolean includeProductInspectionSearch,
+            int maxResults) {
 
         List<ComplianceSurvey> foundComplianceSurveys;
         String searchQuery = null;
@@ -1318,8 +1318,13 @@ public class ComplianceSurvey
                 break;
         }
 
-        try { // tk make max result to return an option
-            foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).getResultList();
+        try {
+            if (maxResults == 0) {
+                foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).getResultList();
+            }
+            else {
+               foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).setMaxResults(maxResults).getResultList(); 
+            }
             if (foundComplianceSurveys == null) {
                 foundComplianceSurveys = new ArrayList<>();
             }
