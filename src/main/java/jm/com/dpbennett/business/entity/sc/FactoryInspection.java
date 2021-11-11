@@ -107,6 +107,10 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         this.id = id;
     }
     
+    public Boolean getIsJobNumberValid() {
+        return !getJobNumber().isEmpty();
+    }
+    
     public static List<Object[]> getReportRecords(
             EntityManager em,
             String startDate,
