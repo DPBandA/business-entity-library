@@ -112,6 +112,10 @@ public class Complaint implements Comparable, BusinessEntity, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+    
+    public Boolean getIsJobNumberValid() {
+        return !getJobNumber().isEmpty();
+    }
 
     public static List<Object[]> getReportRecords(
             EntityManager em,
