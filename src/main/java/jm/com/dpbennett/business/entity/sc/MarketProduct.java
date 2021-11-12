@@ -204,6 +204,8 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
     }
 
     public String getModel() {
+        if (model == null)
+            model = "";
         return model;
     }
 
@@ -244,6 +246,8 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
     }
 
     public String getBrand() {
+        if (brand == null)
+            brand = "";
         return brand;
     }
 
@@ -252,6 +256,8 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
     }
 
     public String getCode() {
+        if (code == null)
+            code = "";
         return code;
     }
 
