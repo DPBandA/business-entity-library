@@ -102,9 +102,9 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
 
         try {
             List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
-                    + "WHERE m.active = 1 AND UPPER(m.type) " + "like '%" + newType
-                    + "%' AND UPPER(m.brand) like '%" + newBrand + "%'"
-                    + "' AND UPPER(m.model) like '%" + newModel + "%'",
+                    + "WHERE m.active = 1 AND UPPER(m.type)" + " = '" + newType
+                    + "' AND UPPER(m.brand) = '" + newBrand + "'"
+                    + " AND UPPER(m.model) = '" + newModel + "'",
                     MarketProduct.class).getResultList();
             if (products.size() > 0) {
                 MarketProduct product = products.get(0);
@@ -112,6 +112,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
                 return product;
             }
         } catch (Exception e) {
+            System.out.println("Error finding market product: " + e);
             return null;
         }
 
@@ -125,11 +126,12 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
         if (names.length == 3) {
 
             return MarketProduct.findActiveMarketProductByName(em,
-                    names[0].trim(),
-                    names[1].trim(),
-                    names[2].trim());
+                    names[0],
+                    names[1],
+                    names[2]);
 
         } else {
+
             return null;
         }
     }
@@ -326,7 +328,13 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
 
     @Override
     public String toString() {
-        return getType() + ", " + getBrand() + ", " + getModel();
+       if (type == null && brand == null && model == null) {
+           return "";
+       }
+       else {
+            return getType() + ", " + getBrand() + ", " + getModel();
+       }
+       // return getType() + ", " + getBrand() + ", " + getModel();
     }
 
     @Override
@@ -341,10 +349,18 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
 
     @Override
     public String getName() {
-        
+
         this.name = toString();
 
         return name;
+    }
+
+    public String getStoredName() {
+        return name;
+    }
+    
+    public void setStoredName(String name) {
+        this.name = name;
     }
 
     @Override
