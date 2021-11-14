@@ -40,7 +40,7 @@ public class EntityTest {
         prop.put("javax.persistence.jdbc.user",
                 "root");
         prop.put("javax.persistence.jdbc.password",
-                "?Des12300!"); // NB: REMOVE PWD WHEN DONE AND DISABLE TESTING.
+                ""); // NB: REMOVE PWD WHEN DONE AND DISABLE TESTING.
         prop.put("javax.persistence.jdbc.url",
                 "jdbc:mysql://localhost:3306/jmts");
         prop.put("javax.persistence.jdbc.driver",
