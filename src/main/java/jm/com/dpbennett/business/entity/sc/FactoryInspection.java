@@ -106,11 +106,11 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Boolean getIsJobNumberValid() {
         return !getJobNumber().isEmpty();
     }
-    
+
     public static List<Object[]> getReportRecords(
             EntityManager em,
             String startDate,
@@ -153,6 +153,10 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     public String getJobNumber() {
+        if (jobNumber == null) {
+            jobNumber = "";
+        }
+        
         return jobNumber;
     }
 
@@ -167,7 +171,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public void setEditStatus(String editStatus) {
         this.editStatus = editStatus;
     }
-    
+
     public List<ProductInspection> getProductInspections() {
         if (productInspections != null) {
             Collections.sort(productInspections);
@@ -314,7 +318,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
-       
+
         if (isDirty) {
             setEditStatus("(edited)");
         } else {

@@ -1732,7 +1732,8 @@ public class Job implements Serializable, BusinessEntity {
         return jobNumbersWithCosts;
     }
 
-    public static List<Job> findAllByJobNumber(EntityManager em, String query) {
+    public static List<Job> findAllByJobNumber(
+            EntityManager em, String query, int maxResults) {
 
         try {
             String newName = query.replaceAll("'", "''");
@@ -1740,7 +1741,7 @@ public class Job implements Serializable, BusinessEntity {
             List<Job> numbers
                     = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) LIKE '%"
                             + newName.toUpperCase().trim() + "%'"
-                            + " ORDER BY j.id DESC", Job.class).setMaxResults(25).getResultList();
+                            + " ORDER BY j.id DESC", Job.class).setMaxResults(maxResults).getResultList();
             return numbers;
 
         } catch (Exception e) {

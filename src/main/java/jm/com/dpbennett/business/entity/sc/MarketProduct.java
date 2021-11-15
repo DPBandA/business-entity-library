@@ -142,7 +142,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
 
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            String nameAndBrand[] = value.split("-");
+            String nameAndBrand[] = value.split(",");
             String name = nameAndBrand[0].trim();
             String brand = nameAndBrand[1].trim();
 
