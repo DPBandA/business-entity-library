@@ -75,11 +75,21 @@ public class AccPacDocument implements Serializable, BusinessEntity {
     private Integer documentType;
     @Column(name = "SWPAID", columnDefinition = "SMALLINT(5,0)")
     private Integer fullyPaid; 
+    @Column(length = 22, name = "IDORDERNBR")
+    private String idORDERNBR;
     @Transient
     private Boolean isDirty;
     
     public AccPacDocument() {
         
+    }
+
+    public String getIdORDERNBR() {
+        return idORDERNBR;
+    }
+
+    public void setIdORDERNBR(String idORDERNBR) {
+        this.idORDERNBR = idORDERNBR;
     }
 
     public String getIdInvc() {
