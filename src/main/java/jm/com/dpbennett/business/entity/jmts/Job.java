@@ -622,7 +622,11 @@ public class Job implements Serializable, BusinessEntity {
 
         departmentOrCompanyCode = job.getDepartment().getCode().equals("") ? "?" : job.getDepartment().getCode();
 
-        c.setTime(new Date());
+        if (job.getJobStatusAndTracking().getDateCostingCompleted()!= null) {
+            c.setTime(job.getJobStatusAndTracking().getDateCostingCompleted());
+        } else {
+            c.setTime(new Date());
+        }
         // Year
         String year = "" + c.get(Calendar.YEAR);
         year = year.substring(year.length() - 2, year.length());
@@ -1280,11 +1284,10 @@ public class Job implements Serializable, BusinessEntity {
                 + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
                 + " LEFT JOIN job.jobSamples jobSamples"
                 + " LEFT JOIN job.representatives representatives";
-        
+
         if (estimate) {
             costEstimateSubclause = " AND (jobCostingAndPayment.estimate = 1)";
-        }
-        else {
+        } else {
             costEstimateSubclause = " AND (jobCostingAndPayment.estimate IS NULL OR jobCostingAndPayment.estimate = 0)";
         }
 
@@ -1396,7 +1399,7 @@ public class Job implements Serializable, BusinessEntity {
                 searchQuery
                         = selectClause
                         + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause 
+                        + " WHERE (" + datePeriodSubClause
                         + costEstimateSubclause
                         + " )"
                         + searchTextAndClause
@@ -1410,7 +1413,7 @@ public class Job implements Serializable, BusinessEntity {
                 searchQuery
                         = selectClause
                         + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause 
+                        + " WHERE (" + datePeriodSubClause
                         + costEstimateSubclause
                         + " )"
                         + searchTextAndClause
@@ -1443,7 +1446,7 @@ public class Job implements Serializable, BusinessEntity {
                 searchQuery
                         = selectClause
                         + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause 
+                        + " WHERE (" + datePeriodSubClause
                         + costEstimateSubclause
                         + " )"
                         + searchTextAndClause
@@ -1464,7 +1467,7 @@ public class Job implements Serializable, BusinessEntity {
                 searchQuery
                         = selectClause
                         + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause 
+                        + " WHERE (" + datePeriodSubClause
                         + costEstimateSubclause
                         + " )"
                         + searchTextAndClause

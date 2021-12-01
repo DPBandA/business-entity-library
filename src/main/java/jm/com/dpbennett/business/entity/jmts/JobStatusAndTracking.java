@@ -93,9 +93,9 @@ public class JobStatusAndTracking implements Serializable {
     private Date dateOfLastPayment;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date depositDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date costingDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date dateCostingCompleted;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateCostingApproved;
