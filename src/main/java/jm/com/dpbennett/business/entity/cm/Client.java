@@ -132,10 +132,13 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         accountingId = "";
         typeOfBusiness = "";
         identification = "";
-        identificationType = ""; 
+        identificationType = "";
     }
 
     public String getIdentification() {
+        if (identification == null) {
+            identification = "";
+        }
         return identification;
     }
 
@@ -196,12 +199,11 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         if (billingAddress == null) {
             if (!getBillingAddresses().isEmpty()) {
                 billingAddress = getBillingAddresses().get(0);
-            }
-            else {
+            } else {
                 return new Address();
             }
         }
-        
+
         return billingAddress;
     }
 
@@ -334,7 +336,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     }
 
     public Employee getEnteredBy() {
-        
+
         return enteredBy;
     }
 
@@ -414,6 +416,9 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
 
     @Override
     public String getTaxRegistrationNumber() {
+        if (taxRegistrationNumber == null) {
+            taxRegistrationNumber = "";
+        }
         return taxRegistrationNumber;
     }
 
