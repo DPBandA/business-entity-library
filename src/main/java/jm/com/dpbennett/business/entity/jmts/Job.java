@@ -658,7 +658,7 @@ public class Job implements Serializable, BusinessEntity {
         } else {
             min = "" + min_int;
         }
-        // Min
+        // Sec
         int sec_int = c.get(Calendar.SECOND);
         if (sec_int < 10) {
             sec = "0" + sec_int;
