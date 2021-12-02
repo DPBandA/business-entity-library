@@ -1046,9 +1046,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     
     public Double getProformaTotalCost() {
 
-        totalCost = getFinalCostWithDiscount() + getTotalTax() + getReimbursable();
+        return getFinalCostWithDiscount() + getTotalTax() + getReimbursable();
 
-        return totalCost;
     }
 
     /**
