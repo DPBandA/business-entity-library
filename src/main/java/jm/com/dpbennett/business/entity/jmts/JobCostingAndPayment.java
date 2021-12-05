@@ -560,11 +560,11 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public void setDeposit(Double deposit) {
         this.deposit = deposit;
     }
-    
+
     public Double getReimbursable() {
         return deposit;
     }
-    
+
     public void setReimbursable(Double deposit) {
         this.deposit = deposit;
     }
@@ -658,10 +658,16 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
         for (CashPayment cashPayment : getCashPayments()) {
             if (index == 0) {
-                paymentTerms = "(" + (index + 1) + ") " + cashPayment.getPaymentTerms();
+                paymentTerms = "(" + (index + 1) + ") "
+                        + cashPayment.getPaymentTerms()
+                        + ". Payment type: " + cashPayment.getType()
+                        + ". Purpose of payment: " + cashPayment.getPaymentPurpose();
             } else {
                 if (!cashPayment.getPaymentTerms().trim().equals("")) {
-                    paymentTerms = paymentTerms + ", " + "(" + (index + 1) + ") " + cashPayment.getPaymentTerms();
+                    paymentTerms = paymentTerms + ", " + "(" + (index + 1) + ") "
+                            + cashPayment.getPaymentTerms()
+                            + ". Payment type: " + cashPayment.getType()
+                            + ". Purpose of payment: " + cashPayment.getPaymentPurpose();
                 }
             }
 
@@ -1043,7 +1049,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public void setTotalCost(Double totalCost) {
         this.totalCost = totalCost;
     }
-    
+
     public Double getProformaTotalCost() {
 
         return getFinalCostWithDiscount() + getTotalTax() + getReimbursable();
@@ -1162,14 +1168,14 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public static List<JobCostingAndPayment> findAllEstimateJobCostingAndPayments(
             EntityManager em,
             String jobCostingAndPaymentName) {
 
         try {
             String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
-            
+
             List<JobCostingAndPayment> jobCostingAndPayments
                     = em.createQuery("SELECT jobCostingAndPayment FROM JobCostingAndPayment jobCostingAndPayment"
                             + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
@@ -1177,13 +1183,13 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
                             + " AND (jobCostingAndPayment.estimate = 1)"
                             + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
                             JobCostingAndPayment.class).setMaxResults(500).getResultList();
-            
-           return jobCostingAndPayments;
-           
+
+            return jobCostingAndPayments;
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
-        }        
+        }
     }
 
 }
