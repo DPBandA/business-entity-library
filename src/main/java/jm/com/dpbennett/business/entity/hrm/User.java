@@ -79,7 +79,7 @@ public class User implements Serializable, BusinessEntity {
     private Employee employee;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Privilege privilege;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Modules modules;
     @Transient
     private Boolean isDirty;
