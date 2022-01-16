@@ -52,6 +52,7 @@ public class Privilege implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Boolean active;
     private String name;
     private String type;
     private String category;
@@ -103,7 +104,6 @@ public class Privilege implements Serializable, BusinessEntity {
     private Boolean canAccessCRMUnit;
     private Boolean canAccessHRMUnit;
     private Boolean canAccessReportUnit;
-
     @Transient
     private Boolean isDirty;
 
@@ -114,6 +114,19 @@ public class Privilege implements Serializable, BusinessEntity {
     public Privilege(String name) {
         init(name);
     }
+
+    public Boolean getActive() {
+        if (active == null) {
+            active = true;
+        }
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+    
+    
 
     @Override
     public Boolean getIsDirty() {
