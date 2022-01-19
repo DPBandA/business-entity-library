@@ -114,6 +114,24 @@ public class Privilege implements Serializable, BusinessEntity {
     public Privilege(String name) {
         init(name);
     }
+    
+    public static List<Privilege> findActivePrivileges(EntityManager em, String query) {
+        try {
+            String newQuery = query.toUpperCase().trim().replaceAll("'", "''");
+
+            List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p"
+                    + " WHERE (p.active = 1) AND (UPPER(p.name) like '%"
+                    + newQuery + "%'" + " OR UPPER(p.category) like '%"
+                    + newQuery + "%'" + " OR UPPER(p.description) like '%"
+                    + newQuery + "%') ORDER BY p.name", Privilege.class).getResultList();
+
+            return privileges;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     public Boolean getActive() {
         if (active == null) {
