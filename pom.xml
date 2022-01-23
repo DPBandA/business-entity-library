@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>jm.com.dpbennett</groupId>
     <artifactId>business-entity-library</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     
-    <name>Business Entity Library</name>
+    <name>BEL, v1</name>
     <description>A library of business entities and utilities.</description>
     
     <properties>
