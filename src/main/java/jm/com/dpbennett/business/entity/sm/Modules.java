@@ -6,14 +6,19 @@
 package jm.com.dpbennett.business.entity.sm;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.auth.Privilege;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -29,6 +34,16 @@ public class Modules implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Boolean active;
+    private String name;
+    private String type;
+    private String category;
+    private String description;
+    // tk: Create table modules_privilege
+    // tk: Create field: Modules_ID (BIGINT, part of primary key/ an index)
+    // tk: Create field: privileges_ID ((BIGINT, part of primary key/ an index)
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Privilege> privileges;
     private Boolean legalMetrologyModule;
     private Boolean jobManagementAndTrackingModule;
     private Boolean complianceModule;
@@ -46,6 +61,39 @@ public class Modules implements Serializable, BusinessEntity {
     @Transient
     private Boolean isDirty;
 
+    public Modules() {
+        this.active = true;
+        this.name = "";
+        this.type = "";
+        this.category = "";
+        this.description = "";
+    }
+
+    public Modules(Boolean active,
+            String name,
+            String type,
+            String category,
+            String description) {
+
+        this.active = active;
+        this.name = name;
+        this.type = type;
+        this.category = category;
+        this.description = description;
+    }
+
+    public List<Privilege> getPrivileges() {
+        if (privileges == null) {
+            privileges = new ArrayList<>();
+        }
+        
+        return privileges;
+    }
+
+    public void setPrivileges(List<Privilege> privileges) {
+        this.privileges = privileges;
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -54,6 +102,38 @@ public class Modules implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -237,7 +317,7 @@ public class Modules implements Serializable, BusinessEntity {
             return false;
         }
         Modules other = (Modules) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -248,11 +328,12 @@ public class Modules implements Serializable, BusinessEntity {
 
     @Override
     public String getName() {
-        return "Modules";
+        return name;
     }
 
     @Override
     public void setName(String name) {
+        this.name = name;
     }
 
     @Override

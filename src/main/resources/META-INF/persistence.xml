@@ -95,7 +95,6 @@
     <class>jm.com.dpbennett.business.entity.auth.Privilege</class>
     <class>jm.com.dpbennett.business.entity.auth.Signature</class>
     <class>jm.com.dpbennett.business.entity.sm.Preference</class>
-    <class>jm.com.dpbennett.business.entity.sm.Modules</class>
     <class>jm.com.dpbennett.business.entity.sm.SystemOption</class>
     <class>jm.com.dpbennett.business.entity.sm.SequenceNumber</class>
     <class>jm.com.dpbennett.business.entity.sm.Country</class>
@@ -118,6 +117,7 @@
     <class>jm.com.dpbennett.business.entity.sc.MarketProduct</class>
     <class>jm.com.dpbennett.business.entity.sc.FactoryInspection</class>
     <class>jm.com.dpbennett.business.entity.sc.FactoryInspectionComponent</class>
+    <class>jm.com.dpbennett.business.entity.sm.Modules</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -232,7 +232,6 @@
     <class>jm.com.dpbennett.business.entity.auth.Privilege</class>
     <class>jm.com.dpbennett.business.entity.auth.Signature</class>
     <class>jm.com.dpbennett.business.entity.sm.Preference</class>
-    <class>jm.com.dpbennett.business.entity.sm.Modules</class>
     <class>jm.com.dpbennett.business.entity.sm.SystemOption</class>
     <class>jm.com.dpbennett.business.entity.sm.SequenceNumber</class>
     <class>jm.com.dpbennett.business.entity.sm.Country</class>
@@ -255,6 +254,7 @@
     <class>jm.com.dpbennett.business.entity.sc.MarketProduct</class>
     <class>jm.com.dpbennett.business.entity.sc.FactoryInspection</class>
     <class>jm.com.dpbennett.business.entity.sc.FactoryInspectionComponent</class>
+    <class>jm.com.dpbennett.business.entity.sm.Modules</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/enerbase"/>
       <property name="javax.persistence.jdbc.password" value=""/>
