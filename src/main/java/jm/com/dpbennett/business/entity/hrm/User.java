@@ -163,27 +163,27 @@ public class User implements Serializable, BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public Modules getModule() {
+    public Modules getModules() {
         if (modules == null) {
             modules = new Modules();
         }
         return modules;
     }
 
-    public void setModule(Modules modules) {
+    public void setModules(Modules modules) {
         this.modules = modules;
     }
 
     public Boolean getIsJobsPreferredJobTableView() {
-        return getModule().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Jobs");
+        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Jobs");
     }
 
     public Boolean getIsCashierPreferredJobTableView() {
-        return getModule().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Cashier View");
+        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Cashier View");
     }
 
     public Boolean getIsJobCostingsPreferredJobTableView() {
-        return getModule().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Job Costings");
+        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Job Costings");
     }
 
     public static Boolean isUserDepartmentSupervisor(Job job, User user, EntityManager em) {
@@ -558,9 +558,9 @@ public class User implements Serializable, BusinessEntity {
                 getPrivilege().setIsDirty(false);
             }
 
-            if (getModule().getId() == null || getModule().getIsDirty()) {
-                getModule().save(em);
-                getModule().setIsDirty(false);
+            if (getModules().getId() == null || getModules().getIsDirty()) {
+                getModules().save(em);
+                getModules().setIsDirty(false);
             }
 
             em.getTransaction().begin();

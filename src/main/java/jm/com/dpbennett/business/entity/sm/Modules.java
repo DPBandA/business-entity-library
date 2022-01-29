@@ -355,5 +355,23 @@ public class Modules implements Serializable, BusinessEntity {
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
     }
+    
+    public static List<Modules> findActiveModules(EntityManager em, String query) {
+        try {
+            String newQuery = query.toUpperCase().trim().replaceAll("'", "''");
+
+            List<Modules> modules = em.createQuery("SELECT m FROM Modules m"
+                    + " WHERE (m.active = 1) AND (UPPER(m.name) like '%"
+                    + newQuery + "%'" + " OR UPPER(m.category) like '%"
+                    + newQuery + "%'" + " OR UPPER(m.description) like '%"
+                    + newQuery + "%') ORDER BY m.name", Modules.class).getResultList();
+
+            return modules;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
 }
