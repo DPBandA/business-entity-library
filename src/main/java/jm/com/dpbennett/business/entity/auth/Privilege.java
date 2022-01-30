@@ -691,6 +691,25 @@ public class Privilege implements Serializable, BusinessEntity {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public static Privilege findActivePrivilegeByName(EntityManager em, String value) {
+
+        try {
+            
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p "
+                    + "WHERE p.active = 1 AND UPPER(p.name) "
+                    + "= '" + value.toUpperCase() + "'", Privilege.class).getResultList();
+            if (privileges.size() > 0) {
+                return privileges.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     public static Privilege findPrivilegeByName(EntityManager em, String name) {
 
