@@ -39,6 +39,8 @@ public class Modules implements Serializable, BusinessEntity {
     private String type;
     private String category;
     private String description;
+    private String dashboardTitle;
+    private String mainViewTitle;
     // tk: Create table modules_privilege
     // tk: Create field: Modules_ID (BIGINT, part of primary key/ an index)
     // tk: Create field: privileges_ID ((BIGINT, part of primary key/ an index)
@@ -67,19 +69,41 @@ public class Modules implements Serializable, BusinessEntity {
         this.type = "";
         this.category = "";
         this.description = "";
-    }
+        this.dashboardTitle = "";
+        this.mainViewTitle = "";
+    }   
 
     public Modules(Boolean active,
             String name,
             String type,
             String category,
-            String description) {
+            String description,
+            String dashboardTitle,
+            String mainViewTitle) {
 
         this.active = active;
         this.name = name;
         this.type = type;
         this.category = category;
         this.description = description;
+        this.dashboardTitle = dashboardTitle;
+        this.mainViewTitle = mainViewTitle;
+    }
+
+    public String getDashboardTitle() {
+        return dashboardTitle;
+    }
+
+    public void setDashboardTitle(String dashboardTitle) {
+        this.dashboardTitle = dashboardTitle;
+    }
+
+    public String getMainViewTitle() {
+        return mainViewTitle;
+    }
+
+    public void setMainViewTitle(String mainViewTitle) {
+        this.mainViewTitle = mainViewTitle;
     }
 
     public List<Privilege> getPrivileges() {
