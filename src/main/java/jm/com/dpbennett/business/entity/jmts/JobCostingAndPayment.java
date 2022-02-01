@@ -389,21 +389,21 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public String getTotalTaxLabel() {
-        return "TAX ($):";
+        return "TAX ($)";
     }
 
     public String getTotalCostWithTaxLabel() {
         if (getDiscount().getDiscountValue() == 0.0) {
             if (getTax().getTaxValue() != 0.0) {
-                return "Total cost (incl. tax)($): ";
+                return "Total cost (incl. tax)($)";
             } else {
-                return "Total cost ($): ";
+                return "Total cost ($)";
             }
         } else {
             if (getTax().getTaxValue() != 0.0) {
-                return "Total cost (incl. tax & discount)($): ";
+                return "Total cost (incl. tax & discount)($)";
             } else {
-                return "Total cost (incl. discount)($): ";
+                return "Total cost (incl. discount)($)";
             }
         }
     }
@@ -411,15 +411,15 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     public String getCalculatedCostEstimateLabel() {
         if (getDiscount().getDiscountValue() == 0.0) {
             if (getTax().getTaxValue() != 0.0) {
-                return "Calc'ed cost estimate (incl. tax)($): ";
+                return "Calc'ed cost estimate (incl. tax)($)";
             } else {
-                return "Calc'ed cost estimate ($): ";
+                return "Calc'ed cost estimate ($)";
             }
         } else {
             if (getTax().getTaxValue() != 0.0) {
-                return "Calc'ed cost estimate (incl. tax & discount)($): ";
+                return "Calc'ed cost estimate (incl. tax & discount)($)";
             } else {
-                return "Calc'ed cost estimate (incl. discount)($): ";
+                return "Calc'ed cost estimate (incl. discount)($)";
             }
         }
     }
@@ -428,15 +428,15 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
         if (getDiscount().getDiscountValue() == 0.0) {
             if (getTax().getTaxValue() != 0.0) {
-                return "Calc'ed min. deposit (incl. tax)($): ";
+                return "Calc'ed min. deposit (incl. tax)($)";
             } else {
-                return "Calc'ed min. deposit ($): ";
+                return "Calc'ed min. deposit ($)";
             }
         } else {
             if (getTax().getTaxValue() != 0.0) {
-                return "Calc'ed min. deposit (incl. tax & discount)($): ";
+                return "Calc'ed min. deposit (incl. tax & discount)($)";
             } else {
-                return "Calc'ed min. deposit (incl. discount)($): ";
+                return "Calc'ed min. deposit (incl. discount)($)";
             }
         }
     }
