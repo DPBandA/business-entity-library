@@ -40,10 +40,7 @@ public class Modules implements Serializable, BusinessEntity {
     private String category;
     private String description;
     private String dashboardTitle;
-    private String mainViewTitle;
-    // tk: Create table modules_privilege
-    // tk: Create field: Modules_ID (BIGINT, part of primary key/ an index)
-    // tk: Create field: privileges_ID ((BIGINT, part of primary key/ an index)
+    private String mainViewTitle;    
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
     private Boolean legalMetrologyModule;
