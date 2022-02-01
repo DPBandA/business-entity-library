@@ -34,6 +34,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -81,6 +82,8 @@ public class User implements Serializable, BusinessEntity {
     private Privilege privilege;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Modules modules;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Modules> activeModules;
     @Transient
     private Boolean isDirty;
     private Boolean active;
@@ -89,6 +92,17 @@ public class User implements Serializable, BusinessEntity {
         privilege = new Privilege();
         modules = new Modules();
         username = "";
+    }
+
+    public List<Modules> getActiveModules() {
+        if (activeModules == null) {
+            activeModules = new ArrayList<>();
+        }
+        return activeModules;
+    }
+
+    public void setActiveModules(List<Modules> activeModules) {
+        this.activeModules = activeModules;
     }
 
     public Boolean isMemberOf(EntityManager em, Department department) {
@@ -344,7 +358,7 @@ public class User implements Serializable, BusinessEntity {
     }
 
     public Employee getEmployee() {
-       
+
         return employee;
     }
 
