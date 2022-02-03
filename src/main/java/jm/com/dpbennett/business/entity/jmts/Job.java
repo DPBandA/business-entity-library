@@ -486,6 +486,8 @@ public class Job implements Serializable, BusinessEntity {
             }
         } else {
             for (JobSample jobSample : samples) {
+                jobSample.setDateSampled(new Date());
+                jobSample.setDateReceived(new Date());
                 copy.getJobSamples().add(new JobSample(jobSample));
             }
         }
