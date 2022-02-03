@@ -20,6 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.jmts;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -28,11 +29,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.fm.Service;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -54,6 +57,8 @@ public class ServiceContract implements Serializable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long jobId;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Service selectedService;
     // Requested services    
     private Boolean serviceRequestedTesting;
     private Boolean serviceRequestedCalibration;
@@ -100,6 +105,7 @@ public class ServiceContract implements Serializable, BusinessEntity {
     private Boolean autoAddSampleInformation;
 
     public ServiceContract() {
+        selectedService = new Service();
         // Requested services
         serviceRequestedTesting = false;
         serviceRequestedCalibration = false;
@@ -138,6 +144,7 @@ public class ServiceContract implements Serializable, BusinessEntity {
     }
 
     public ServiceContract(ServiceContract src) {
+        selectedService = new Service();
         // Requested services
         serviceRequestedTesting = src.serviceRequestedTesting;
         serviceRequestedCalibration = src.serviceRequestedCalibration;
@@ -173,6 +180,14 @@ public class ServiceContract implements Serializable, BusinessEntity {
         intendedMarketCanada = src.intendedMarketCanada;
         intendedMarketOther = src.intendedMarketOther;
         intendedMarketOtherText = src.intendedMarketOtherText;
+    }
+
+    public Service getSelectedService() {
+        return selectedService;
+    }
+
+    public void setSelectedService(Service selectedService) {
+        this.selectedService = selectedService;
     }
 
     public Boolean getServiceRequestedPetrolSampling() {
