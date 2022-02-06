@@ -95,6 +95,16 @@ public class User implements Serializable, BusinessEntity {
         modules = new Modules();
         username = "";
     }
+    
+    public Boolean can(String privilegeName) {
+        for (Privilege priv : privileges) {
+            if (priv.getName().equals(privilegeName)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     public List<Privilege> getPrivileges() {
         if (privileges == null) {
@@ -240,7 +250,7 @@ public class User implements Serializable, BusinessEntity {
         return false;
     }
 
-    private Privilege getPrivilege() {
+    public Privilege getPrivilege() {
         if (privilege == null) {
             privilege = new Privilege(username);
         }
