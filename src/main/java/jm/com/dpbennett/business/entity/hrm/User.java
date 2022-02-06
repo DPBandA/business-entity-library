@@ -78,10 +78,12 @@ public class User implements Serializable, BusinessEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Modules modules;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Privilege> privileges;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Modules> activeModules;
     @Transient
@@ -92,6 +94,17 @@ public class User implements Serializable, BusinessEntity {
         privilege = new Privilege();
         modules = new Modules();
         username = "";
+    }
+
+    public List<Privilege> getPrivileges() {
+        if (privileges == null) {
+            privileges = new ArrayList<>();
+        }
+        return privileges;
+    }
+
+    public void setPrivileges(List<Privilege> privileges) {
+        this.privileges = privileges;
     }
 
     public List<Modules> getActiveModules() {
@@ -227,16 +240,12 @@ public class User implements Serializable, BusinessEntity {
         return false;
     }
 
-    public Privilege getPrivilege() {
+    private Privilege getPrivilege() {
         if (privilege == null) {
             privilege = new Privilege(username);
         }
 
         return privilege;
-    }
-
-    public void setPrivilege(Privilege privilege) {
-        this.privilege = privilege;
     }
 
     public Boolean getAuthenticate() {
@@ -567,15 +576,15 @@ public class User implements Serializable, BusinessEntity {
 
         try {
 
-            if (getPrivilege().getId() == null || getPrivilege().getIsDirty()) {
-                getPrivilege().save(em);
-                getPrivilege().setIsDirty(false);
-            }
-
-            if (getModules().getId() == null || getModules().getIsDirty()) {
-                getModules().save(em);
-                getModules().setIsDirty(false);
-            }
+//            if (getPrivilege().getId() == null || getPrivilege().getIsDirty()) {
+//                getPrivilege().save(em);
+//                getPrivilege().setIsDirty(false);
+//            }
+//
+//            if (getModules().getId() == null || getModules().getIsDirty()) {
+//                getModules().save(em);
+//                getModules().setIsDirty(false);
+//            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
