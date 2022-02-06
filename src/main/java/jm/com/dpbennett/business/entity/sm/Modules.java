@@ -69,6 +69,16 @@ public class Modules implements Serializable, BusinessEntity {
         this.dashboardTitle = "";
         this.mainViewTitle = "";
     }   
+    
+     public Modules(String name) {
+        this.active = true;
+        this.name = name;
+        this.type = "";
+        this.category = "";
+        this.description = "";
+        this.dashboardTitle = "";
+        this.mainViewTitle = "";
+    } 
 
     public Modules(Boolean active,
             String name,
@@ -375,6 +385,25 @@ public class Modules implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
+    }
+    
+    public static Modules findActiveModuleByName(EntityManager em, String value) {
+
+        try {
+            
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Modules> modules = em.createQuery("SELECT m FROM Modules m "
+                    + "WHERE m.active = 1 AND UPPER(m.name) "
+                    + "= '" + value.toUpperCase() + "'", Modules.class).getResultList();
+            if (modules.size() > 0) {
+                return modules.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
     
     public static List<Modules> findActiveModules(EntityManager em, String query) {
