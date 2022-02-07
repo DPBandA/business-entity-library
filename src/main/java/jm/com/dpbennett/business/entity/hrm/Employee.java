@@ -118,6 +118,23 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         phoneNumbers = new ArrayList<>();
         active = true;
     }
+    
+    public String getEmploymentPositions () {
+        String eps = "";
+        int index = 0;
+        for (EmployeePosition ep : positions) {
+            if (index == 0) {
+                eps = ep.getName();
+            }
+            else {
+                eps = eps + ", " + ep.getName();
+            }
+            
+            index++;
+        }
+        
+        return eps;
+    }
 
     public Boolean isProcurementOfficer() {
         for (EmployeePosition position : positions) {
