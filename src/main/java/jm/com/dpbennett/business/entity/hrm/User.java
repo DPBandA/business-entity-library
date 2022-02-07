@@ -78,7 +78,7 @@ public class User implements Serializable, BusinessEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Modules modules;
@@ -207,21 +207,21 @@ public class User implements Serializable, BusinessEntity {
         return modules;
     }
 
-    public void setModules(Modules modules) {
-        this.modules = modules;
-    }
+    //public void setModules(Modules modules) {
+    //    this.modules = modules;
+    //}
 
-    public Boolean getIsJobsPreferredJobTableView() {
-        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Jobs");
-    }
-
-    public Boolean getIsCashierPreferredJobTableView() {
-        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Cashier View");
-    }
-
-    public Boolean getIsJobCostingsPreferredJobTableView() {
-        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Job Costings");
-    }
+//    public Boolean getIsJobsPreferredJobTableView() {
+//        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Jobs");
+//    }
+//
+//    public Boolean getIsCashierPreferredJobTableView() {
+//        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Cashier View");
+//    }
+//
+//    public Boolean getIsJobCostingsPreferredJobTableView() {
+//        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Job Costings");
+//    }
 
     public static Boolean isUserDepartmentSupervisor(Job job, User user, EntityManager em) {
 
