@@ -78,11 +78,11 @@ public class User implements Serializable, BusinessEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Privilege privilege;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Modules modules;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Modules> activeModules;
