@@ -40,7 +40,7 @@ public class Modules implements Serializable, BusinessEntity {
     private String category;
     private String description;
     private String dashboardTitle;
-    private String mainViewTitle;    
+    private String mainViewTitle;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
     private Boolean legalMetrologyModule;
@@ -79,24 +79,7 @@ public class Modules implements Serializable, BusinessEntity {
         this.dashboardTitle = "";
         this.mainViewTitle = "";
     } 
-
-    public Modules(Boolean active,
-            String name,
-            String type,
-            String category,
-            String description,
-            String dashboardTitle,
-            String mainViewTitle) {
-
-        this.active = active;
-        this.name = name;
-        this.type = type;
-        this.category = category;
-        this.description = description;
-        this.dashboardTitle = dashboardTitle;
-        this.mainViewTitle = mainViewTitle;
-    }
-
+    
     public String getDashboardTitle() {
         return dashboardTitle;
     }
