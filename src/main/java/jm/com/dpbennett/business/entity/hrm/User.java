@@ -221,17 +221,17 @@ public class User implements Serializable, BusinessEntity {
     //    this.modules = modules;
     //}
 
-//    public Boolean getIsJobsPreferredJobTableView() {
-//        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Jobs");
-//    }
-//
-//    public Boolean getIsCashierPreferredJobTableView() {
-//        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Cashier View");
-//    }
-//
-//    public Boolean getIsJobCostingsPreferredJobTableView() {
-//        return getModules().getJobManagementAndTrackingModule() && getJobTableViewPreference().equals("Job Costings");
-//    }
+    public Boolean getIsJobsPreferredJobTableView() {
+        return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Jobs");
+    }
+
+    public Boolean getIsCashierPreferredJobTableView() {
+        return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Cashier View");
+    }
+
+    public Boolean getIsJobCostingsPreferredJobTableView() {
+        return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Job Costings");
+    }
 
     public static Boolean isUserDepartmentSupervisor(Job job, User user, EntityManager em) {
 
