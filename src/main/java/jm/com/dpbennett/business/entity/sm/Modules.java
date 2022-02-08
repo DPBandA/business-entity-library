@@ -423,5 +423,20 @@ public class Modules implements Serializable, BusinessEntity {
             return null;
         }
     }
+    
+    public static List<Modules> findAllActiveModules(EntityManager em) {
+        try {
+           
+
+            List<Modules> modules = em.createQuery("SELECT m FROM Modules m"
+                    + " WHERE m.active = 1 ORDER BY m.name", Modules.class).getResultList();
+
+            return modules;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
 }
