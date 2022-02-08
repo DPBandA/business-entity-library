@@ -80,7 +80,7 @@ public class User implements Serializable, BusinessEntity {
     private Employee employee;
     @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Modules modules;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
@@ -585,16 +585,6 @@ public class User implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
-
-//            if (getPrivilege().getId() == null || getPrivilege().getIsDirty()) {
-//                getPrivilege().save(em);
-//                getPrivilege().setIsDirty(false);
-//            }
-//
-//            if (getModules().getId() == null || getModules().getIsDirty()) {
-//                getModules().save(em);
-//                getModules().setIsDirty(false);
-//            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
