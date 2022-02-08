@@ -61,7 +61,7 @@ public class Modules implements Serializable, BusinessEntity {
     private Boolean isDirty;
 
     public Modules() {
-        this.active = true;
+        this.active = false;
         this.name = "";
         this.type = "";
         this.category = "";
@@ -71,7 +71,7 @@ public class Modules implements Serializable, BusinessEntity {
     }   
     
      public Modules(String name) {
-        this.active = true;
+        this.active = false;
         this.name = name;
         this.type = "";
         this.category = "";
