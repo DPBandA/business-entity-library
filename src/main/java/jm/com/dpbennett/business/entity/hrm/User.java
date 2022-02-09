@@ -106,6 +106,16 @@ public class User implements Serializable, BusinessEntity {
         return false;
     }
     
+    public Modules getActiveModule(String moduleName) {
+        for (Modules mod : getActiveModules()) {
+            if (mod.getName().equals(moduleName)) {
+                return mod;
+            }
+        }
+        
+        return null;
+    }
+    
     public Boolean can(String privilegeName) {
         for (Privilege priv : getPrivileges()) {
             if (priv.getName().equals(privilegeName)) {
