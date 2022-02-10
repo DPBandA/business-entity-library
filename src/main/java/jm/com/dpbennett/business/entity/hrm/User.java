@@ -220,16 +220,12 @@ public class User implements Serializable, BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public Modules getModules() {
+    public Modules getActiveModule() {
         if (modules == null) {
             modules = new Modules();
         }
         return modules;
     }
-
-    //public void setModules(Modules modules) {
-    //    this.modules = modules;
-    //}
 
     public Boolean getIsJobsPreferredJobTableView() {
         return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Jobs");
@@ -262,7 +258,7 @@ public class User implements Serializable, BusinessEntity {
             case CANENTERJOB:
                 // NB: Aspects of the job are to be considered before 
                 // privilege can be determined 
-                if (getPrivilege().getCanEnterJob()) {
+                if (getActivePrivilege().getCanEnterJob()) {
                     return true;
                 }
                 break;
@@ -270,7 +266,7 @@ public class User implements Serializable, BusinessEntity {
         return false;
     }
 
-    public Privilege getPrivilege() {
+    public Privilege getActivePrivilege() {
         if (privilege == null) {
             privilege = new Privilege(username);
         }
