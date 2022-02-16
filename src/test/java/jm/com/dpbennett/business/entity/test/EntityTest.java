@@ -40,31 +40,27 @@ public class EntityTest {
         prop.put("javax.persistence.jdbc.user",
                 "root");
         prop.put("javax.persistence.jdbc.password",
-                ""); // NB: REMOVE PWD WHEN DONE AND DISABLE TESTING.
+                "?Des12300!"); // NB: REMOVE PWD WHEN DONE AND DISABLE TESTING.
         prop.put("javax.persistence.jdbc.url",
-                "jdbc:mysql://appsrv:3306/jmts");
+                "jdbc:mysql://localhost:3306/jmts");
         prop.put("javax.persistence.jdbc.driver",
-                "com.mysql.jdbc.Driver");
+                "com.mysql.cj.jdbc.Driver");
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU", prop);
         EntityManager em = emf.createEntityManager();
 
-        List<MarketProduct> products = MarketProduct.findAllActiveMarketProducts(em);
-
-        for (MarketProduct product : products) {
-            
-            String names[] = product.getStoredName().split("-");
-            //System.out.println("Names[0]: " + names[0].trim());
-            product.setType(names[0].trim());
-            product.setStoredName(product.toString());
-            
-            //product.setName(product.toString());
-            //product.save(em);
-            System.out.println("Name: " + product.getName());
-            //System.out.println("Model: " + product.getModel());
-            //System.out.println("Stored name: " + product.getStoredName());
+        em.getTransaction().begin();
+        
+        java.sql.Connection connection = em.unwrap(java.sql.Connection.class);
+         if (connection == null) {
+            System.out.println("No Connection");
+        } else {
+            System.out.println("Connection!!!");
         }
 
+        em.getTransaction().commit();
+
+   
     }
 
 }
