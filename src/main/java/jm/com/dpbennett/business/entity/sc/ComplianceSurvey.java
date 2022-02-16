@@ -40,8 +40,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.dm.DocumentStandard;
 import jm.com.dpbennett.business.entity.hrm.User;
@@ -50,7 +48,6 @@ import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
-//import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  *
@@ -58,8 +55,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "compliancesurvey")
-//@JsonIgnoreProperties(ignoreUnknown = true)
-@XmlRootElement
 public class ComplianceSurvey
         implements
         Serializable,
@@ -995,7 +990,6 @@ public class ComplianceSurvey
         this.inspector = inspector;
     }
 
-    @XmlTransient
     public List<ProductInspection> getProductInspections() {
         if (productInspections != null) {
             Collections.sort(productInspections);
@@ -1010,7 +1004,6 @@ public class ComplianceSurvey
         this.productInspections = productInspections;
     }
 
-    @XmlTransient
     public List<DocumentStandard> getStandardsBreached() {
         if (standardsBreached != null) {
             Collections.sort(standardsBreached);

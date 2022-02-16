@@ -21,14 +21,11 @@ package jm.com.dpbennett.business.entity.sc;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.util.Date;
-import javax.xml.bind.annotation.XmlRootElement;
-
 
 /**
  *
  * @author desbenn
  */
-@XmlRootElement
 public class ComplianceSurveySearchResult {
     private Long id;
     private Date dateOfSurvey;

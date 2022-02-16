@@ -38,8 +38,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.fm.JobCategory;
 import jm.com.dpbennett.business.entity.auth.Privilege;
@@ -60,7 +58,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     ,
     @NamedQuery(name = "findBySubGroupCode", query = "SELECT e FROM Department e WHERE e.code = :code")
 })
-@XmlRootElement
 public class Department implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;
@@ -175,7 +172,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.internet = internet;
     }
 
-    @XmlTransient
     public List<Laboratory> getLaboratories() {
         if (laboratories == null) {
             laboratories = new ArrayList<>();
@@ -187,7 +183,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.laboratories = laboratories;
     }
 
-    @XmlTransient
     public List<DepartmentUnit> getDepartmentUnits() {
         if (departmentUnits == null) {
             departmentUnits = new ArrayList<>();
@@ -228,7 +223,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.actingHead = actingHead;
     }
 
-    @XmlTransient
     public List<JobCategory> getJobCategories() {
         return jobCategories;
     }
@@ -237,7 +231,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.jobCategories = jobCategories;
     }
 
-    @XmlTransient
     public List<Employee> getStaff() {
         return staff;
     }

@@ -33,7 +33,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.fm.Service;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -49,7 +48,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllServiceContracts", query = "SELECT s FROM ServiceContract s ORDER BY s.id"),
     @NamedQuery(name = "findByJobId", query = "SELECT s FROM ServiceContract s WHERE s.jobId = :jobId")
 })
-@XmlRootElement
 public class ServiceContract implements Serializable, BusinessEntity {
 
     private static final Long serialVersionUId = 1L;

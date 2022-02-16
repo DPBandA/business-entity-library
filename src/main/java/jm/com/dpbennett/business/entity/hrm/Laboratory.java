@@ -35,7 +35,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -49,7 +48,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllLaboratories", query = "SELECT l FROM Laboratory l ORDER BY l.name")
 })
-@XmlRootElement
 public class Laboratory implements BusinessEntity, Company, Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -20,13 +20,11 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.util;
 
 import java.util.Date;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author desbenn
  */
-@XmlRootElement
 public class SearchInputParameters {
     private String searchType;
     private String dateField;

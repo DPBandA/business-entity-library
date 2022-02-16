@@ -33,7 +33,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -44,7 +43,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "subgroup")
-@XmlRootElement
 public class Subgroup implements BusinessEntity, Comparable, Serializable {
 
     private static final long serialVersionUID = 1L;

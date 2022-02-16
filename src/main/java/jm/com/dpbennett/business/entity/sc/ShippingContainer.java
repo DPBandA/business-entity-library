@@ -19,7 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sc;
 
-import jm.com.dpbennett.business.entity.sc.ComplianceSurvey;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Entity;
@@ -29,7 +28,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -40,7 +38,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "shippingcontainer")
-@XmlRootElement
 public class ShippingContainer implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;

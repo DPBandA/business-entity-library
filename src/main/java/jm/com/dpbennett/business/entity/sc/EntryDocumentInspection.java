@@ -35,8 +35,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
@@ -48,7 +46,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "entrydocumentinspection")
-@XmlRootElement
 public class EntryDocumentInspection implements Serializable, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -235,7 +232,6 @@ public class EntryDocumentInspection implements Serializable, Comparable, Busine
         this.entryDocumentNumber = entryDocumentNumber;
     }
 
-    @XmlTransient
     public List<ShippingContainer> getShippingContainers() {
         if (shippingContainers == null) {
             shippingContainers = new ArrayList<>();

@@ -33,7 +33,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -41,7 +40,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "jobstatusandtracking")
-@XmlRootElement
 public class JobStatusAndTracking implements Serializable {
 
     private static final long serialVersionUID = 1L;

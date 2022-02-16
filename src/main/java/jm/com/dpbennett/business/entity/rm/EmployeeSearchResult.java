@@ -19,13 +19,10 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.rm;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
  *
  * @author Desmond Bennett
  */
-@XmlRootElement
 public class EmployeeSearchResult {
     private Long id;
     private String firstName;

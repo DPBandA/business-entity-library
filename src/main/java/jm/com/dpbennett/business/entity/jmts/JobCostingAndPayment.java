@@ -37,8 +37,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.fm.AccountingCode;
 import jm.com.dpbennett.business.entity.fm.CashPayment;
@@ -55,7 +53,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "jobcostingandpayment")
-@XmlRootElement
 public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -524,8 +521,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
      *
      * @return
      */
-    @XmlTransient
-    //@JsonIgnore
     public List<CashPayment> getCashPayments() {
         if (cashPayments != null) {
             Collections.sort(cashPayments);
@@ -762,8 +757,6 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         this.name = name;
     }
 
-    @XmlTransient
-    //@JsonIgnore
     public List<CostComponent> getCostComponents() {
         if (costComponents == null) {
             costComponents = new ArrayList<>();

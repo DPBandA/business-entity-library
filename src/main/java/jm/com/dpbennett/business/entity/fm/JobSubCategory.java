@@ -37,8 +37,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -57,7 +55,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     ,
     @NamedQuery(name = "findByCategoryId", query = "SELECT e FROM JobSubCategory e WHERE e.categoryId = :categoryId")
 })
-@XmlRootElement
 public class JobSubCategory implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;
@@ -150,8 +147,6 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
         this.active = active;
     }
 
-    @XmlTransient
-    //@JsonIgnore
     public List<Department> getDepartments() {
         if (departments == null) {
             departments = new ArrayList<>();

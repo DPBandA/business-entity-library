@@ -31,7 +31,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -46,7 +45,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllDistributors", query = "SELECT e FROM Distributor e ORDER BY e.name")
 })
-@XmlRootElement
 public class Distributor implements Serializable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;

@@ -43,8 +43,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -58,7 +56,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllSuppliers", query = "SELECT s FROM Supplier s ORDER BY s.name")
 })
 
-@XmlRootElement
 public class Supplier implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;
@@ -344,7 +341,6 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         setName(name);
     }
 
-    @XmlTransient
     public List<Address> getAddresses() {
         if (addresses != null) {
             Collections.sort(addresses);
@@ -371,7 +367,6 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         this.addresses = addresses;
     }
 
-    @XmlTransient
     public List<Contact> getContacts() {
         if (contacts != null) {
             Collections.sort(contacts);

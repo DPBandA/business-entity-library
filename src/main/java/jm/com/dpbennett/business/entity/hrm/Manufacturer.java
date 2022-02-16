@@ -39,7 +39,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.sc.MarketProduct;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -54,7 +53,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllManufacturers", query = "SELECT m FROM Manufacturer m ORDER BY m.name")
 })
-@XmlRootElement
 public class Manufacturer implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;

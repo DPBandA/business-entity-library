@@ -44,8 +44,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.auth.Signature;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -61,7 +59,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllEmployees", query = "SELECT e FROM Employee e ORDER BY e.lastName")
 })
-@XmlRootElement
 public class Employee implements Person, Serializable, Comparable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;
@@ -235,18 +232,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         this.internet = internet;
     }
 
-//    public BusinessOffice getBusinessOffice() {
-//        if (businessOffice == null) {
-//            businessOffice = new BusinessOffice();
-//        }
-//        return businessOffice;
-//    }
-//
-//    public void setBusinessOffice(BusinessOffice businessOffice) {
-//        this.businessOffice = businessOffice;
-//    }
-    //@JsonBackReference
-    @XmlTransient
     public Department getDepartment() {
         if (department == null) {
             department = new Department();
@@ -258,9 +243,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         this.department = department;
     }
 
-    //@XmlTransient
-    @XmlTransient
-    //@JsonIgnore
     public List<Address> getAddresses() {
         return addresses;
     }
@@ -269,9 +251,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         this.addresses = addresses;
     }
 
-    //@XmlTransient
-    @XmlTransient
-    //@JsonIgnore
     public List<PhoneNumber> getPhoneNumbers() {
         return phoneNumbers;
     }

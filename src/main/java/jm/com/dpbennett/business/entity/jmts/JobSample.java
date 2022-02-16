@@ -42,7 +42,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.sm.Product;
@@ -61,7 +60,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllJobSamples", query = "SELECT e FROM JobSample e ORDER BY e.dateReceived")
 })
-@XmlRootElement
 public class JobSample implements Product, Sample, Serializable, Comparable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;

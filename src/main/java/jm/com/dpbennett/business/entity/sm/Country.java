@@ -32,7 +32,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -45,7 +44,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({   
     @NamedQuery(name = "findAllCountries", query = "SELECT c FROM Country c ORDER BY c.name")   
 })
-@XmlRootElement
 public class Country implements Serializable, BusinessEntity {
     private static final long serialVersionUID = 1L;
     @Id

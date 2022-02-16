@@ -35,7 +35,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -49,7 +48,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllDivisions", query = "SELECT e FROM Division e ORDER BY e.name")
 })
-@XmlRootElement
 public class Division implements BusinessEntity, Comparable, Serializable {
 
     private static final long serialVersionUID = 1L;
