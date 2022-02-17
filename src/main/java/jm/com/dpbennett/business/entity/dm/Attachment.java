@@ -57,6 +57,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String type;
     private String sourceURL;
     private String destinationURL;
     private String contentType;
@@ -68,28 +69,43 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     private Boolean isDirty;
 
     public Attachment() {
-        this.name = "";
+
         this.active = true;
+        this.name = "";
         this.description = "";
         this.category = "";
         this.sourceURL = "";
         this.destinationURL = "";
         this.contentType = "";
-        isDirty = false;
+        this.type = "";
+        this.isDirty = false;
     }
 
     public Attachment(String name,
             String sourceURL,
             String destinationURL,
             String contentType) {
-        this.name = name;
+
         this.active = true;
-        this.description = "";
-        this.category = "";
+        this.name = name;
         this.sourceURL = sourceURL;
         this.destinationURL = destinationURL;
         this.contentType = contentType;
-        isDirty = false;
+        this.description = "";
+        this.category = "";
+        this.type = "";
+        this.isDirty = false;
+    }
+
+    public String getType() {
+        if (type == null) {
+            type = "";
+        }
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getContentType() {
@@ -305,18 +321,18 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         return new File(destinationURL).delete();
 
     }
-    
+
     public InputStream getFileInputStream() {
         File file = new File(destinationURL);
         try {
             InputStream inputStream = new FileInputStream(file);
-            
+
             return inputStream;
         } catch (FileNotFoundException ex) {
             System.out.println("File attachment not found!");
-        }      
-        
-        return null;        
+        }
+
+        return null;
     }
 
     @Override
