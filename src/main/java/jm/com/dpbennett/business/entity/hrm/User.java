@@ -296,7 +296,7 @@ public class User implements Serializable, BusinessEntity {
 
     public String getUserInterfaceThemeName() {
         if (userInterfaceThemeName == null) {
-            userInterfaceThemeName = "redmond";
+            userInterfaceThemeName = "saga";
         }
 
         return userInterfaceThemeName;
