@@ -304,7 +304,7 @@ public class User implements Serializable, BusinessEntity {
                 case "arya":
                     break;
                 default:
-                    userInterfaceThemeName = "saga";
+                    return userInterfaceThemeName;
             }
         }
 
