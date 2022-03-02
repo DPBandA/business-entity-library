@@ -297,14 +297,15 @@ public class User implements Serializable, BusinessEntity {
     public String getUserInterfaceThemeName() {
         if (userInterfaceThemeName == null) {
             userInterfaceThemeName = "saga";
-        } else {
+        } 
+        else {
             switch (userInterfaceThemeName) {
                 case "saga":
                 case "vela":
                 case "arya":
                     break;
                 default:
-                    return userInterfaceThemeName;
+                    return  "saga";
             }
         }
 
