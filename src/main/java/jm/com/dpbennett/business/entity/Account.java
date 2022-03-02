@@ -34,5 +34,6 @@ public interface Account extends BusinessEntity {
 
     public String getType();
 
-    public void setType(String type);
+    public void setType(String type);   
+    
 }

@@ -23,6 +23,7 @@ import jm.com.dpbennett.business.entity.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -31,8 +32,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.fm.AccountingCode;
+import jm.com.dpbennett.business.entity.fm.Currency;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -54,30 +58,85 @@ public class FinancialAccount implements Serializable, Account {
     private Long id;
     private Boolean active;
     private String name;
-    private String code;
     private String type;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private FinancialAccount parent;
+    @OneToOne(cascade = CascadeType.ALL)
+    private AccountingCode code;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Currency currency;
     @Column(length = 1024)
     private String description;
     private String category;
+    private Boolean hidden;
+    private Boolean placeholder;
     @Transient
     private Boolean isDirty;
 
     public FinancialAccount() {
         active = true;
         name = "";
-        code = "";
-        type = "";
         description = "";
         category = "";
+        code = new AccountingCode();
     }
 
     public FinancialAccount(String name) {
         active = true;
         this.name = name;
-        code = "";
         type = "";
         description = "";
         category = "";
+        code = new AccountingCode();
+    }
+
+    public Boolean getHidden() {
+        if (hidden == null) {
+            hidden = false;
+        }
+        return hidden;
+    }
+
+    public void setHidden(Boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    public Boolean getPlaceholder() {
+        if (placeholder == null) {
+            placeholder = false;
+        }
+        return placeholder;
+    }
+
+    public void setPlaceholder(Boolean placeholder) {
+        this.placeholder = placeholder;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    public FinancialAccount getParent() {
+        return parent;
+    }
+
+    public void setParent(FinancialAccount parent) {
+        this.parent = parent;
+    }
+
+    public AccountingCode getCode() {
+        if (code == null) {
+            code = new AccountingCode();
+        }
+        return code;
+    }
+
+    public void setCode(AccountingCode code) {
+        this.code = code;
     }
 
     public Boolean getActive() {
@@ -97,14 +156,6 @@ public class FinancialAccount implements Serializable, Account {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public static List<FinancialAccount> findAllFields(EntityManager em) {
@@ -147,8 +198,8 @@ public class FinancialAccount implements Serializable, Account {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<FinancialAccount> fields
-                    = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim() 
-                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim() 
+                    = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
@@ -202,7 +253,7 @@ public class FinancialAccount implements Serializable, Account {
             return false;
         }
         FinancialAccount other = (FinancialAccount) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
