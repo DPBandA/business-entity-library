@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2019  D P Bennett & Associates Limited
+Copyright (C) 2022  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -50,7 +50,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllFields",
             query = "SELECT f FROM Field f ORDER BY f.name")
 })
-public class FinancialAccount implements Serializable, Account {
+public class FinancialAccount implements Serializable, Account, Comparable<FinancialAccount> {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -70,6 +70,7 @@ public class FinancialAccount implements Serializable, Account {
     private String category;
     private Boolean hidden;
     private Boolean placeholder;
+    private Double total;
     @Transient
     private Boolean isDirty;
 
@@ -79,6 +80,7 @@ public class FinancialAccount implements Serializable, Account {
         description = "";
         category = "";
         code = new AccountingCode();
+        total = 0.0;
     }
 
     public FinancialAccount(String name) {
@@ -88,6 +90,25 @@ public class FinancialAccount implements Serializable, Account {
         description = "";
         category = "";
         code = new AccountingCode();
+        total = 0.0;
+    }
+    
+    public FinancialAccount(String name, String description, Double total) {
+        active = true;
+        this.name = name;
+        type = "";
+        this.description = description;
+        category = "";
+        code = new AccountingCode();
+        this.total = total;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
     }
 
     public Boolean getHidden() {
@@ -231,10 +252,12 @@ public class FinancialAccount implements Serializable, Account {
         this.description = description;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }
@@ -358,4 +381,11 @@ public class FinancialAccount implements Serializable, Account {
             return null;
         }
     }
+
+    @Override
+    public int compareTo(FinancialAccount fa) {
+        return this.getName().compareTo(fa.getName());
+    }
+    
+   
 }
