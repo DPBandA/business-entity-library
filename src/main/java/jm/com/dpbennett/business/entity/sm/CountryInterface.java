@@ -17,31 +17,32 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.sm;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *
  * @author Desmond Bennett
  */
+public interface CountryInterface extends BusinessEntity {
+       
+    public String getTwoDigitCode();
 
-public interface SystemOptionInterface extends BusinessEntity {
-
-    public String getComments();
-
-    public void setComments(String comments);
-
-    public String getCategory();
-
-    public void setCategory(String category);
-
-    public String getOptionValue();
-
-    public void setOptionValue(String optionValue);
-
-    public String getOptionValueType();
-
-    public void setOptionValueType(String optionValueType);
+    public void setTwoDigitCode(String twoDigitCode);
     
 }

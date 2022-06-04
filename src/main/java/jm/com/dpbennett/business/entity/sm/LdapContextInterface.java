@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2022  D P Bennett & Associates Limited
+Copyright (C) 2017  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -19,29 +19,43 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sm;
 
+import javax.naming.ldap.InitialLdapContext;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 
 /**
  *
  * @author Desmond Bennett
  */
+public interface LdapContextInterface extends BusinessEntity {
 
-public interface SystemOptionInterface extends BusinessEntity {
+    String getDomainName();
 
-    public String getComments();
+    String getInitialContextFactory();
 
-    public void setComments(String comments);
+    InitialLdapContext getInitialLDAPContext(String username, String password);
 
-    public String getCategory();
+    String getProviderUrl();
 
-    public void setCategory(String category);
+    String getSecurityAuthentication();
 
-    public String getOptionValue();
+    String getSecurityCredentials();
 
-    public void setOptionValue(String optionValue);
+    String getSecurityPrincipal();
 
-    public String getOptionValueType();
+    String getUsable();
 
-    public void setOptionValueType(String optionValueType);
+    void setDomainName(String domainName);
+
+    void setInitialContextFactory(String initialContextFactory);
+
+    void setProviderUrl(String providerUrl);
+
+    void setSecurityAuthentication(String securityAuthentication);
+
+    void setSecurityCredentials(String securityCredentials);
+
+    void setSecurityPrincipal(String securityPrincipal);
+
+    void setUsable(String usable);
     
 }

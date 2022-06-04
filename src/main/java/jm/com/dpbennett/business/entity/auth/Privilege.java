@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2022  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -44,7 +43,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllPrivileges", query = "SELECT p FROM Privilege p ORDER BY p.name"),
     @NamedQuery(name = "findByPrivilegesName", query = "SELECT p FROM Privilege p WHERE p.name = :name")
 })
-public class Privilege implements Serializable, BusinessEntity {
+public class Privilege implements Serializable, PrivilegeInterface {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -623,34 +622,42 @@ public class Privilege implements Serializable, BusinessEntity {
         this.canEnterJob = canEnterJob;
     }
 
+    @Override
     public String getCategory() {
         return category;
     }
 
+    @Override
     public void setCategory(String category) {
         this.category = category;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public String getRoles() {
         return roles;
     }
 
+    @Override
     public void setRoles(String roles) {
         this.roles = roles;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }
@@ -669,10 +676,8 @@ public class Privilege implements Serializable, BusinessEntity {
             return false;
         }
         Privilege other = (Privilege) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -699,7 +704,7 @@ public class Privilege implements Serializable, BusinessEntity {
             List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p "
                     + "WHERE p.active = 1 AND UPPER(p.name) "
                     + "= '" + value.toUpperCase() + "'", Privilege.class).getResultList();
-            if (privileges.size() > 0) {
+            if (!privileges.isEmpty()) {
                 return privileges.get(0);
             }
             return null;
@@ -718,7 +723,7 @@ public class Privilege implements Serializable, BusinessEntity {
                     + "WHERE UPPER(p.name) "
                     + "LIKE '" + newName.toUpperCase() + "%'", Privilege.class).getResultList();
 
-            if (privileges.size() > 0) {
+            if (!privileges.isEmpty()) {
                 // Make sure this is the current option stored in the database
                 Privilege privilege = privileges.get(0);
                 em.refresh(privilege);

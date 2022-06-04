@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2022  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -37,14 +37,14 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "country")
 @NamedQueries({   
     @NamedQuery(name = "findAllCountries", query = "SELECT c FROM Country c ORDER BY c.name")   
 })
-public class Country implements Serializable, BusinessEntity {
+public class Country implements CountryInterface, Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -85,10 +85,12 @@ public class Country implements Serializable, BusinessEntity {
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
+    @Override
     public String getTwoDigitCode() {
         return twoDigitCode;
     }
 
+    @Override
     public void setTwoDigitCode(String twoDigitCode) {
         this.twoDigitCode = twoDigitCode;
     }
@@ -107,10 +109,7 @@ public class Country implements Serializable, BusinessEntity {
             return false;
         }
         Country other = (Country) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -162,7 +161,7 @@ public class Country implements Serializable, BusinessEntity {
             List<Country> countries = em.createQuery("SELECT c FROM Sector c "
                     + "WHERE UPPER(c.name) "
                     + "= '" + newCountryName.toUpperCase() + "'", Country.class).getResultList();
-            if (countries.size() > 0) {
+            if (!countries.isEmpty()) {
                 return countries.get(0);
             }
             return null;

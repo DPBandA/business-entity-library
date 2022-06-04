@@ -50,7 +50,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     ,
     @NamedQuery(name = "findAllActiveLdapContexts", query = "SELECT e FROM LdapContext e WHERE e.active = 1 ORDER BY e.name")
 })
-public class LdapContext implements BusinessEntity, Serializable {
+public class LdapContext implements  Serializable, LdapContextInterface {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -110,6 +110,7 @@ public class LdapContext implements BusinessEntity, Serializable {
         this.isDirty = isDirty;
     }
 
+    @Override
     public String getUsable() {
         if (getActive()) {
             return "Yes";
@@ -118,6 +119,7 @@ public class LdapContext implements BusinessEntity, Serializable {
         }
     }
 
+    @Override
     public void setUsable(String usable) {
         if (usable.equals("Yes")) {
             setActive(true);
@@ -137,50 +139,62 @@ public class LdapContext implements BusinessEntity, Serializable {
         this.active = active;
     }
 
+    @Override
     public String getDomainName() {
         return domainName;
     }
 
+    @Override
     public void setDomainName(String domainName) {
         this.domainName = domainName;
     }
 
+    @Override
     public String getInitialContextFactory() {
         return initialContextFactory;
     }
 
+    @Override
     public void setInitialContextFactory(String initialContextFactory) {
         this.initialContextFactory = initialContextFactory;
     }
 
+    @Override
     public String getSecurityAuthentication() {
         return securityAuthentication;
     }
 
+    @Override
     public void setSecurityAuthentication(String securityAuthentication) {
         this.securityAuthentication = securityAuthentication;
     }
 
+    @Override
     public String getSecurityPrincipal() {
         return securityPrincipal;
     }
 
+    @Override
     public void setSecurityPrincipal(String securityPrincipal) {
         this.securityPrincipal = securityPrincipal;
     }
 
+    @Override
     public String getSecurityCredentials() {
         return securityCredentials;
     }
 
+    @Override
     public void setSecurityCredentials(String securityCredentials) {
         this.securityCredentials = securityCredentials;
     }
 
+    @Override
     public String getProviderUrl() {
         return providerUrl;
     }
 
+    @Override
     public void setProviderUrl(String providerUrl) {
         this.providerUrl = providerUrl;
     }
@@ -199,10 +213,8 @@ public class LdapContext implements BusinessEntity, Serializable {
             return false;
         }
         LdapContext other = (LdapContext) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -278,6 +290,7 @@ public class LdapContext implements BusinessEntity, Serializable {
         }
     }
 
+    @Override
     public InitialLdapContext getInitialLDAPContext(String username, String password) {
 
         try {

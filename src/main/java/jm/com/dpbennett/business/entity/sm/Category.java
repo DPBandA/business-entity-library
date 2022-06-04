@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2020  D P Bennett & Associates Limited
+Copyright (C) 2022  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -29,17 +29,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "category")
-public class Category implements BusinessEntity, Serializable {
+public class Category implements CategoryInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -85,6 +84,7 @@ public class Category implements BusinessEntity, Serializable {
         this.name = name;
     }
 
+    @Override
     public String getType() {
         if (type == null) {
             type = "";
@@ -92,6 +92,7 @@ public class Category implements BusinessEntity, Serializable {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }

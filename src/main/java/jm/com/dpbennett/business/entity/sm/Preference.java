@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2022  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -46,7 +45,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllPreferencesByName", query = "SELECT p FROM Preference p WHERE p.name = :name ORDER BY p.name"),
     @NamedQuery(name = "findAllPreferences", query = "SELECT p FROM Preference p ORDER BY p.name")
 })
-public class Preference implements Serializable, BusinessEntity {
+public class Preference implements Serializable, PreferenceInterface {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -92,6 +91,7 @@ public class Preference implements Serializable, BusinessEntity {
         this.isDirty = isDirty;
     }
 
+    @Override
     public String getPreferenceValue() {
         if (preferenceValue == null) {
             preferenceValue = "";
@@ -99,38 +99,47 @@ public class Preference implements Serializable, BusinessEntity {
         return preferenceValue;
     }
 
+    @Override
     public void setPreferenceValue(String preferenceValue) {
         this.preferenceValue = preferenceValue;
     }
 
+    @Override
     public String getCategory() {
         return category;
     }
 
+    @Override
     public void setCategory(String category) {
         this.category = category;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public String getRoles() {
         return roles;
     }
 
+    @Override
     public void setRoles(String roles) {
         this.roles = roles;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }
@@ -149,10 +158,8 @@ public class Preference implements Serializable, BusinessEntity {
             return false;
         }
         Preference other = (Preference) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -233,7 +240,7 @@ public class Preference implements Serializable, BusinessEntity {
             List<Preference> preferences = em.createQuery("SELECT p FROM Preference p "
                     + "WHERE UPPER(p.preferenceValue) "
                     + "= '" + newValue.toUpperCase() + "'", Preference.class).getResultList();
-            if (preferences.size() > 0) {
+            if (!preferences.isEmpty()) {
                 return preferences.get(0);
             }
             return null;

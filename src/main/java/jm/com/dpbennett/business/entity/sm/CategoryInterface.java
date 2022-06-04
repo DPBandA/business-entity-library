@@ -19,29 +19,18 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sm;
 
+import javax.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *
  * @author Desmond Bennett
  */
+public interface CategoryInterface extends BusinessEntity {
 
-public interface SystemOptionInterface extends BusinessEntity {
+    public String getType();
 
-    public String getComments();
-
-    public void setComments(String comments);
-
-    public String getCategory();
-
-    public void setCategory(String category);
-
-    public String getOptionValue();
-
-    public void setOptionValue(String optionValue);
-
-    public String getOptionValueType();
-
-    public void setOptionValueType(String optionValueType);
-    
+    public void setType(String type);
+   
 }

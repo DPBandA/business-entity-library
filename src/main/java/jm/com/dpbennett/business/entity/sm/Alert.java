@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2022  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -23,28 +23,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "alert")
-public class Alert implements Serializable, BusinessEntity {
+public class Alert implements AlertInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -71,15 +67,9 @@ public class Alert implements Serializable, BusinessEntity {
     @Column(length = 1024)
     private String message;
     @Transient
-    private ArrayList<String> statuses;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee recipient;
-    @Transient
     private Boolean isDirty;
 
     public Alert() {
-        this.statuses = new ArrayList<>();
-        this.recipient = null;
         this.message = "";
         this.subject = "";
         this.active = false;
@@ -100,8 +90,6 @@ public class Alert implements Serializable, BusinessEntity {
     public Alert(Long ownerId,
             Date dueTime,
             String status) {
-        this.statuses = new ArrayList<>();
-        this.recipient = null;
         this.message = "";
         this.subject = "";
         this.active = false;
@@ -117,7 +105,6 @@ public class Alert implements Serializable, BusinessEntity {
         this.name = "";
         this.ownerId = 0L;
         active = true;
-        statuses = new ArrayList<>();
         this.ownerId = ownerId;
         this.dueTime = dueTime;
         this.status = status;
@@ -146,73 +133,66 @@ public class Alert implements Serializable, BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public Employee getRecipient() {
-        return recipient;
-    }
-
-    public void setRecipient(Employee recipient) {
-        this.recipient = recipient;
-    }
-
-//    public static ArrayList<String> getStatuses() {
-//        if (statuses.isEmpty()) {
-//            statuses.add("Job saved");
-//            statuses.add("Job entered");
-//            statuses.add("Job to be completed");
-//            statuses.add("Job costing due");
-//            statuses.add("New job email sent");
-//            statuses.add("Job update email sent");
-//            statuses.add("Job is being tracked");
-//        }
-//
-//        Collections.sort(statuses);
-//
-//        return statuses;
-//    }
+    @Override
     public Long getOwnerId() {
         return ownerId;
     }
 
+    @Override
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
     }
 
+    @Override
     public String getSubject() {
         return subject;
     }
 
+    @Override
     public void setSubject(String subject) {
         this.subject = subject;
     }
 
+    @Override
     public String getMessage() {
         return message;
     }
 
+    @Override
     public void setMessage(String message) {
         this.message = message;
     }
 
+    @Override
     public Boolean getActive() {
         return active;
     }
 
+    /**
+     *
+     * @param active
+     */
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
 
+    @Override
     public String getActionToTake() {
         return actionToTake;
     }
 
+    @Override
     public void setActionToTake(String actionToTake) {
         this.actionToTake = actionToTake;
     }
 
+    @Override
     public String getActionTaken() {
         return actionTaken;
     }
 
+    @Override
     public void setActionTaken(String actionTaken) {
         this.actionTaken = actionTaken;
     }
@@ -231,10 +211,7 @@ public class Alert implements Serializable, BusinessEntity {
             return false;
         }
         Alert other = (Alert) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -252,58 +229,72 @@ public class Alert implements Serializable, BusinessEntity {
         this.name = name;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }
 
+    @Override
     public String getReference() {
         return reference;
     }
 
+    @Override
     public void setReference(String reference) {
         this.reference = reference;
     }
 
+    @Override
     public Date getDueTime() {
         return dueTime;
     }
 
+    @Override
     public void setDueTime(Date dueTime) {
         this.dueTime = dueTime;
     }
 
+    @Override
     public String getPeriodType() {
         return periodType;
     }
 
+    @Override
     public void setPeriodType(String periodType) {
         this.periodType = periodType;
     }
 
+    @Override
     public Long getRecurrencePeriod() {
         return recurrencePeriod;
     }
 
+    @Override
     public void setRecurrencePeriod(Long recurrencePeriod) {
         this.recurrencePeriod = recurrencePeriod;
     }
 
+    @Override
     public String getComment() {
         return comment;
     }
 
+    @Override
     public void setComment(String comment) {
         this.comment = comment;
     }
 
+    @Override
     public String getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(String status) {
         this.status = status;
     }
@@ -344,10 +335,11 @@ public class Alert implements Serializable, BusinessEntity {
             return alerts;
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<Alert>();
+            return new ArrayList<>();
         }
     }
 
+   
     @Override
     public ReturnMessage save(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

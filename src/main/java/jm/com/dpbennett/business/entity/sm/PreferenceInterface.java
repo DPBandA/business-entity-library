@@ -25,23 +25,26 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
  *
  * @author Desmond Bennett
  */
+public interface PreferenceInterface extends BusinessEntity {
 
-public interface SystemOptionInterface extends BusinessEntity {
+    String getCategory();
 
-    public String getComments();
+    String getDescription();
 
-    public void setComments(String comments);
+    String getPreferenceValue();
 
-    public String getCategory();
+    String getRoles();
 
-    public void setCategory(String category);
+    String getType();
 
-    public String getOptionValue();
+    void setCategory(String category);
 
-    public void setOptionValue(String optionValue);
+    void setDescription(String description);
 
-    public String getOptionValueType();
+    void setPreferenceValue(String preferenceValue);
 
-    public void setOptionValueType(String optionValueType);
+    void setRoles(String roles);
+
+    void setType(String type);
     
 }
