@@ -33,7 +33,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -49,7 +48,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllFinancialSystemOptions",
             query = "SELECT s FROM SystemOption s WHERE s.category LIKE '%FINANCE%' OR s.category LIKE '%Finance%' ORDER BY s.comments")
 })
-public class SystemOption implements BusinessEntity, Serializable {
+public class SystemOption implements SystemOptionInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -96,22 +95,27 @@ public class SystemOption implements BusinessEntity, Serializable {
         this.isDirty = isDirty;
     }
 
+    @Override
     public String getComments() {
         return comments;
     }
 
+    @Override
     public void setComments(String comments) {
         this.comments = comments;
     }
 
+    @Override
     public String getCategory() {
         return category;
     }
 
+    @Override
     public void setCategory(String category) {
         this.category = category;
     }
 
+    @Override
     public String getOptionValue() {
         if (optionValue == null) {
             optionValue = "";
@@ -119,6 +123,7 @@ public class SystemOption implements BusinessEntity, Serializable {
         return optionValue;
     }
 
+    @Override
     public void setOptionValue(String optionValue) {
         this.optionValue = optionValue;
     }
@@ -162,6 +167,7 @@ public class SystemOption implements BusinessEntity, Serializable {
         return list;
     }
 
+    @Override
     public String getOptionValueType() {
         if (optionValueType == null) {
             optionValueType = "";
@@ -169,6 +175,7 @@ public class SystemOption implements BusinessEntity, Serializable {
         return optionValueType;
     }
 
+    @Override
     public void setOptionValueType(String optionValueType) {
         this.optionValueType = optionValueType;
     }
@@ -187,10 +194,8 @@ public class SystemOption implements BusinessEntity, Serializable {
             return false;
         }
         SystemOption other = (SystemOption) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -223,7 +228,7 @@ public class SystemOption implements BusinessEntity, Serializable {
                     + "WHERE UPPER(o.name) "
                     + "LIKE '" + newName.toUpperCase() + "%'", SystemOption.class).getResultList();
 
-            if (options.size() > 0) {
+            if (!options.isEmpty()) {
                 // Make sure this is the current option stored in the database
                 SystemOption option = options.get(0);
                 em.refresh(option);
