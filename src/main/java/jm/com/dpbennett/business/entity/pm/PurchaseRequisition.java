@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2022  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -154,11 +154,29 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Attachment> attachments;
     @Column(length = 1024)
-    private String shippingInstructions;
-    @Column(length = 1024)
     private String pleaseSupplyNote;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
+    // Shipping instructions
+    private Boolean airFreight;
+    private Boolean surface;
+    private Boolean airParcelPost;
+    @Column(length = 1024)
+    private String shippingInstructions;
+    // Budget information
+    private Boolean budgeted;
+    // Recurrent
+    private Double budgetedRecurrent;
+    private Double yearToDateRecurrent;
+    private Double balanceRecurrent;
+    // Capital
+    private Double budgetedCapital;
+    private Double yearToDateCapital;
+    private Double balanceCapital;
+    // Recoverable
+    private Double budgetedRecoverable;
+    private Double yearToDateRecoverable;
+    private Double balanceRecoverable;
 
     /**
      * Default constructor.
@@ -168,6 +186,122 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         costComponents = new ArrayList<>();
         actions = new ArrayList<>();
         description = "";
+    }
+
+    public Boolean getAirFreight() {
+        if (airFreight == null) {
+            airFreight = false;
+        }
+        return airFreight;
+    }
+
+    public void setAirFreight(Boolean airFreight) {
+        this.airFreight = airFreight;
+    }
+
+    public Boolean getSurface() {
+        if (surface == null) {
+            surface = false;
+        }
+        return surface;
+    }
+
+    public void setSurface(Boolean surface) {
+        this.surface = surface;
+    }
+
+    public Boolean getAirParcelPost() {
+        if (airParcelPost == null) {
+            airParcelPost = false;
+        }
+        return airParcelPost;
+    }
+
+    public void setAirParcelPost(Boolean airParcelPost) {
+        this.airParcelPost = airParcelPost;
+    }
+
+    public Boolean getBudgeted() {
+        if (budgeted == null) {
+            budgeted = false;
+        }
+        return budgeted;
+    }
+
+    public void setBudgeted(Boolean budgeted) {
+        this.budgeted = budgeted;
+    }
+
+    public Double getBudgetedRecurrent() {
+        return budgetedRecurrent;
+    }
+
+    public void setBudgetedRecurrent(Double budgetedRecurrent) {
+        this.budgetedRecurrent = budgetedRecurrent;
+    }
+
+    public Double getBudgetedCapital() {
+        return budgetedCapital;
+    }
+
+    public void setBudgetedCapital(Double budgetedCapital) {
+        this.budgetedCapital = budgetedCapital;
+    }
+
+    public Double getBudgetedRecoverable() {
+        return budgetedRecoverable;
+    }
+
+    public void setBudgetedRecoverable(Double budgetedRecoverable) {
+        this.budgetedRecoverable = budgetedRecoverable;
+    }
+
+    public Double getYearToDateRecurrent() {
+        return yearToDateRecurrent;
+    }
+
+    public void setYearToDateRecurrent(Double yearToDateRecurrent) {
+        this.yearToDateRecurrent = yearToDateRecurrent;
+    }
+
+    public Double getYearToDateCapital() {
+        return yearToDateCapital;
+    }
+
+    public void setYearToDateCapital(Double yearToDateCapital) {
+        this.yearToDateCapital = yearToDateCapital;
+    }
+
+    public Double getYearToDateRecoverable() {
+        return yearToDateRecoverable;
+    }
+
+    public void setYearToDateRecoverable(Double yearToDateRecoverable) {
+        this.yearToDateRecoverable = yearToDateRecoverable;
+    }
+
+    public Double getBalanceRecurrent() {
+        return balanceRecurrent;
+    }
+
+    public void setBalanceRecurrent(Double balanceRecurrent) {
+        this.balanceRecurrent = balanceRecurrent;
+    }
+
+    public Double getBalanceCapital() {
+        return balanceCapital;
+    }
+
+    public void setBalanceCapital(Double balanceCapital) {
+        this.balanceCapital = balanceCapital;
+    }
+
+    public Double getBalanceRecoverable() {
+        return balanceRecoverable;
+    }
+
+    public void setBalanceRecoverable(Double balanceRecoverable) {
+        this.balanceRecoverable = balanceRecoverable;
     }
 
     public Currency getCurrency() {
@@ -519,7 +653,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public void setCostComponents(List<CostComponent> costComponents) {
         this.costComponents = costComponents;
     }
-    
+
     public List<Attachment> getAllSortedAttachments() {
 
         Collections.sort(getAttachments());
@@ -1039,12 +1173,12 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                 for (Attachment attachment : getAttachments()) {
                     if ((attachment.getId() == null || attachment.getIsDirty())
                             && !attachment.save(em).isSuccess()) {
-                        
+
                         return new ReturnMessage(false,
                                 "Attachment save error occurred",
                                 "An error occurred while saving an attachment",
                                 Message.SEVERITY_ERROR_NAME);
-                        
+
                     }
                 }
             }
