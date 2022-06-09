@@ -161,6 +161,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private Boolean airFreight;
     private Boolean surface;
     private Boolean airParcelPost;
+    // To be used as special instructions
     @Column(length = 1024)
     private String shippingInstructions;
     // Budget information
@@ -233,6 +234,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public Double getBudgetedRecurrent() {
+        if (budgetedRecurrent == null) {
+            budgetedRecurrent = 0.0;
+        }
         return budgetedRecurrent;
     }
 
@@ -241,6 +245,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public Double getBudgetedCapital() {
+        if (budgetedCapital == null) {
+            budgetedCapital = 0.0;
+        }
         return budgetedCapital;
     }
 
@@ -249,6 +256,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public Double getBudgetedRecoverable() {
+        if (budgetedRecoverable == null) {
+            budgetedRecoverable = 0.0;
+        }
         return budgetedRecoverable;
     }
 
@@ -257,6 +267,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public Double getYearToDateRecurrent() {
+        if (yearToDateRecurrent == null) {
+            yearToDateRecurrent = 0.0;
+        }
         return yearToDateRecurrent;
     }
 
@@ -265,6 +278,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public Double getYearToDateCapital() {
+        if (yearToDateCapital == null) {
+            yearToDateCapital = 0.0;
+        }
         return yearToDateCapital;
     }
 
@@ -273,6 +289,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public Double getYearToDateRecoverable() {
+        if (yearToDateRecoverable == null) {
+            yearToDateRecoverable = 0.0;
+        }
         return yearToDateRecoverable;
     }
 
@@ -281,6 +300,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public Double getBalanceRecurrent() {
+        if (balanceRecurrent == null) {
+            balanceRecurrent = 0.0;
+        }
         return balanceRecurrent;
     }
 
@@ -289,6 +311,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public Double getBalanceCapital() {
+        if (balanceCapital == null) {
+            balanceCapital = 0.0;
+        }
         return balanceCapital;
     }
 
@@ -297,6 +322,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public Double getBalanceRecoverable() {
+        if (balanceRecoverable == null) {
+            balanceRecoverable = 0.0;
+        }
         return balanceRecoverable;
     }
 
