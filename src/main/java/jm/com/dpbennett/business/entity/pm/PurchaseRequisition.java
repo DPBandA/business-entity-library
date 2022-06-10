@@ -52,6 +52,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.fm.Discount;
+import jm.com.dpbennett.business.entity.fm.Tax;
 import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
@@ -178,6 +180,10 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private Double budgetedRecoverable;
     private Double yearToDateRecoverable;
     private Double balanceRecoverable;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Tax tax;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Discount discount;
 
     /**
      * Default constructor.
@@ -187,6 +193,22 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         costComponents = new ArrayList<>();
         actions = new ArrayList<>();
         description = "";
+    }
+
+    public Tax getTax() {
+        return (tax == null ? new Tax() : tax);
+    }
+
+    public void setTax(Tax tax) {
+        this.tax = tax;
+    }
+
+    public Discount getDiscount() {
+        return (discount == null ? new Discount() : discount);
+    }
+
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
     }
 
     public Boolean getAirFreight() {
