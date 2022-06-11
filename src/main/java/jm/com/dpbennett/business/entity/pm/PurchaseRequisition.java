@@ -629,8 +629,17 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
     }
 
-    // tk placeholder for now
-    public Double getTotalCost() {
+    public Double getTotalTax() {
+
+        if (getTax().getTaxValueType().equals("Percentage")) {
+            return getTotalCostWithDiscount() * getTax().getValue();
+        } else {
+            return getTax().getValue();
+        }
+
+    }
+
+    public Double getTotalCostComponentCosts() {
         Double total = 0.0;
 
         for (CostComponent component : costComponents) {
@@ -638,6 +647,25 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         }
 
         return total;
+    }
+
+    private Double getTotalCostWithDiscount() {
+        Double totalCostWithDiscount;
+
+        if (getDiscount().getDiscountValueType().equals("Percentage")) {
+            totalCostWithDiscount = getTotalCostComponentCosts()
+                    - getTotalCostComponentCosts() * getDiscount().getValue();
+        } else {
+            totalCostWithDiscount = getTotalCostComponentCosts() - getDiscount().getValue();
+        }
+
+        return totalCostWithDiscount;
+    }
+
+    // tk to be updated to include discount and tax.
+    public Double getTotalCost() {
+
+        return getTotalCostWithDiscount() + getTotalTax();
     }
 
     /**
