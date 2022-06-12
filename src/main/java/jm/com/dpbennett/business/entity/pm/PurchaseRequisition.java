@@ -23,7 +23,6 @@ import jm.com.dpbennett.business.entity.dm.DocumentType;
 import jm.com.dpbennett.business.entity.dm.Document;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Department;
-import jm.com.dpbennett.business.entity.hrm.EmployeePosition;
 import jm.com.dpbennett.business.entity.fm.Classification;
 import jm.com.dpbennett.business.entity.fm.CostComponent;
 import jm.com.dpbennett.business.entity.fm.Currency;
@@ -87,8 +86,34 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private Employee procurementOfficer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee originator;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Employee> approvers;
+    // Approvers    
+    private Integer approvals;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee approver1;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee approver2;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee approver3;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee approver4;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee approver5;
+//    @Transient
+//    private Employee [] approversArray = new Employee [ 5 ] ;
+    @Transient
+    private ArrayList<Employee> approvers;
+    // Recommenders
+    private Integer recommendations;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee recommender1;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee recommender2;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee recommender3;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee recommender4;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee recommender5;
     @Column(length = 1024)
     private String description;
     @Column(length = 1024)
@@ -130,17 +155,15 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private String editStatus;
     // Approval dates
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date approvalDate;
+    private Date approvalOrRecommendationDate1;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date teamLeaderApprovalDate;
+    private Date approvalOrRecommendationDate2;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date divisionalManagerApprovalDate;
+    private Date approvalOrRecommendationDate3;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date divisionalDirectorApprovalDate;
+    private Date approvalOrRecommendationDate4;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date financeManagerApprovalDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date executiveDirectorApprovalDate;
+    private Date approvalOrRecommendationDate5;
     // Purchase order detail    
     private String quotationNumber;
     private String purchaseOrderNumber;
@@ -189,10 +212,125 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
      * Default constructor.
      */
     public PurchaseRequisition() {
-        approvers = new ArrayList<>();
         costComponents = new ArrayList<>();
+        approvers = new ArrayList<>();
         actions = new ArrayList<>();
+//        approversArray[0] = approver1;
+//        approversArray[1] = approver2;
+//        approversArray[2] = approver3;
+//        approversArray[3] = approver4;
+//        approversArray[4] = approver5;
         description = "";
+
+    }
+
+//    public Employee [] getApproversArray() {
+//        return approversArray;
+//    }
+//
+//    public void setApproversArray(Employee[] approversArray) {
+//        this.approversArray = approversArray;
+//    }
+    public Integer getApprovals() {
+        if (approvals == null) {
+            approvals = 0;
+        }
+        return approvals;
+    }
+
+    public void setApprovals(Integer approvals) {
+        this.approvals = approvals;
+    }
+
+    public Integer getRecommendations() {
+        if (recommendations == null) {
+            recommendations = 0;
+        }
+        return recommendations;
+    }
+
+    public void setRecommendations(Integer recommendations) {
+        this.recommendations = recommendations;
+    }
+
+    public Employee getApprover1() {
+        return approver1;
+    }
+
+    public void setApprover1(Employee approver1) {
+        this.approver1 = approver1;
+    }
+
+    public Employee getApprover2() {
+        return approver2;
+    }
+
+    public void setApprover2(Employee approver2) {
+        this.approver2 = approver2;
+    }
+
+    public Employee getApprover3() {
+        return approver3;
+    }
+
+    public void setApprover3(Employee approver3) {
+        this.approver3 = approver3;
+    }
+
+    public Employee getApprover4() {
+        return approver4;
+    }
+
+    public void setApprover4(Employee approver4) {
+        this.approver4 = approver4;
+    }
+
+    public Employee getApprover5() {
+        return approver5;
+    }
+
+    public void setApprover5(Employee approver5) {
+        this.approver5 = approver5;
+    }
+
+    public Employee getRecommender1() {
+        return recommender1;
+    }
+
+    public void setRecommender1(Employee recommender1) {
+        this.recommender1 = recommender1;
+    }
+
+    public Employee getRecommender2() {
+        return recommender2;
+    }
+
+    public void setRecommender2(Employee recommender2) {
+        this.recommender2 = recommender2;
+    }
+
+    public Employee getRecommender3() {
+        return recommender3;
+    }
+
+    public void setRecommender3(Employee recommender3) {
+        this.recommender3 = recommender3;
+    }
+
+    public Employee getRecommender4() {
+        return recommender4;
+    }
+
+    public void setRecommender4(Employee recommender4) {
+        this.recommender4 = recommender4;
+    }
+
+    public Employee getRecommender5() {
+        return recommender5;
+    }
+
+    public void setRecommender5(Employee recommender5) {
+        this.recommender5 = recommender5;
     }
 
     public Tax getTax() {
@@ -432,18 +570,17 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         return descriptionParts;
     }
 
-    public Employee getFirstApproverByPositionTitle(String positionTitle) {
-        for (Employee approver : approvers) {
-            for (EmployeePosition position : approver.getPositions()) {
-                if (position.getTitle().equals(positionTitle)) {
-                    return approver;
-                }
-            }
-        }
-
-        return null;
-    }
-
+//    public Employee getFirstApproverByPositionTitle(String positionTitle) {
+//        for (Employee approver : approversArray) {
+//            for (EmployeePosition position : approver.getPositions()) {
+//                if (position.getTitle().equals(positionTitle)) {
+//                    return approver;
+//                }
+//            }
+//        }
+//
+//        return null;
+//    }
     public void addAction(BusinessEntity.Action action) {
 
         // Just return if the action already exists.
@@ -510,58 +647,49 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         return this;
     }
 
-    public Date getApprovalDate() {
-        return approvalDate;
+    public Date getApprovalOrRecommendationDate1() {
+        return approvalOrRecommendationDate1;
     }
 
-    public void setApprovalDate(Date approvalDate) {
-        this.approvalDate = approvalDate;
+    public void setApprovalOrRecommendationDate1(Date approvalOrRecommendationDate1) {
+        this.approvalOrRecommendationDate1 = approvalOrRecommendationDate1;
     }
 
-    public Date getTeamLeaderApprovalDate() {
-        return teamLeaderApprovalDate;
+    public Date getApprovalOrRecommendationDate2() {
+        return approvalOrRecommendationDate2;
     }
 
-    public void setTeamLeaderApprovalDate(Date teamLeaderApprovalDate) {
-        this.teamLeaderApprovalDate = teamLeaderApprovalDate;
+    public void setApprovalOrRecommendationDate2(Date approvalOrRecommendationDate2) {
+        this.approvalOrRecommendationDate2 = approvalOrRecommendationDate2;
     }
 
-    public Date getDivisionalManagerApprovalDate() {
-        return divisionalManagerApprovalDate;
+    public Date getApprovalOrRecommendationDate3() {
+        return approvalOrRecommendationDate3;
     }
 
-    public void setDivisionalManagerApprovalDate(Date divisionalManagerApprovalDate) {
-        this.divisionalManagerApprovalDate = divisionalManagerApprovalDate;
+    public void setApprovalOrRecommendationDate3(Date approvalOrRecommendationDate3) {
+        this.approvalOrRecommendationDate3 = approvalOrRecommendationDate3;
     }
 
-    public Date getDivisionalDirectorApprovalDate() {
-        return divisionalDirectorApprovalDate;
+    public Date getApprovalOrRecommendationDate4() {
+        return approvalOrRecommendationDate4;
     }
 
-    public void setDivisionalDirectorApprovalDate(Date divisionalDirectorApprovalDate) {
-        this.divisionalDirectorApprovalDate = divisionalDirectorApprovalDate;
+    public void setApprovalOrRecommendationDate4(Date approvalOrRecommendationDate4) {
+        this.approvalOrRecommendationDate4 = approvalOrRecommendationDate4;
     }
 
-    public Date getFinanceManagerApprovalDate() {
-        return financeManagerApprovalDate;
+    public Date getApprovalOrRecommendationDate5() {
+        return approvalOrRecommendationDate5;
     }
 
-    public void setFinanceManagerApprovalDate(Date financeManagerApprovalDate) {
-        this.financeManagerApprovalDate = financeManagerApprovalDate;
+    public void setApprovalOrRecommendationDate5(Date approvalOrRecommendationDate5) {
+        this.approvalOrRecommendationDate5 = approvalOrRecommendationDate5;
     }
 
-    public Date getExecutiveDirectorApprovalDate() {
-        return executiveDirectorApprovalDate;
-    }
-
-    public void setExecutiveDirectorApprovalDate(Date executiveDirectorApprovalDate) {
-        this.executiveDirectorApprovalDate = executiveDirectorApprovalDate;
-    }
-
-    public Boolean isApproved(int requiredNumOfApprover) {
-        return getApprovers().size() >= requiredNumOfApprover;
-    }
-
+//    public Boolean isApproved(int requiredNumOfApprover) {
+//        return getApprovers().size() >= requiredNumOfApprover;
+//    }
     public void clean() {
         setIsDirty(false);
     }
@@ -798,17 +926,38 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         this.dateEdited = dateEdited;
     }
 
-    public List<Employee> getApprovers() {
-        if (approvers == null) {
-            approvers = new ArrayList<>();
+    public ArrayList<Employee> getApprovers() {
+
+        //for (int i = 0; i < 5; i++) {
+        if (approver1 != null) {
+            approvers.add(approver1);
         }
+        if (approver2 != null) {
+            approvers.add(approver2);
+        }
+        if (approver3 != null) {
+            approvers.add(approver3);
+        }
+        if (approver4!= null) {
+            approvers.add(approver4);
+        }
+        if (approver5 != null) {
+            approvers.add(approver5);
+        }
+
+        //}
         return approvers;
     }
 
-    public void setApprovers(List<Employee> approvers) {
+    public void setApprovers(ArrayList<Employee> approvers) {
         this.approvers = approvers;
     }
 
+//    public void setApprovers(ArrayList<Employee> approvers) {
+//        for (Employee approver : approvers) {
+//            app
+//        }
+//    }
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {

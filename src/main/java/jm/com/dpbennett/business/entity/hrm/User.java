@@ -66,7 +66,7 @@ public class User implements Serializable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String username;
-    private String userInterfaceThemeName;
+    private String PFThemeName;
     private String jobTableViewPreference;
     private Boolean authenticate;
     private String activity;
@@ -294,26 +294,16 @@ public class User implements Serializable, BusinessEntity {
         this.jobTableViewPreference = jobTableViewPreference;
     }
 
-    public String getUserInterfaceThemeName() {
-        if (userInterfaceThemeName == null) {
-            userInterfaceThemeName = "saga";
-        } 
-        else {
-            switch (userInterfaceThemeName) {
-                case "saga":
-                case "vela":
-                case "arya":
-                    break;
-                default:
-                    return  "saga";
-            }
+    public String getPFThemeName() {
+        if (PFThemeName == null) {
+            PFThemeName = "saga";
         }
 
-        return userInterfaceThemeName;
+        return PFThemeName;
     }
 
-    public void setUserInterfaceThemeName(String userInterfaceThemeName) {
-        this.userInterfaceThemeName = userInterfaceThemeName;
+    public void setPFThemeName(String PFThemeName) {
+        this.PFThemeName = PFThemeName;
     }
 
     /**
