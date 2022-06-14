@@ -98,10 +98,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private Employee approver4;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver5;
-//    @Transient
-//    private Employee [] approversArray = new Employee [ 5 ] ;
-    @Transient
-    private ArrayList<Employee> approvers;
     // Recommenders
     private Integer recommendations;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -114,6 +110,8 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private Employee recommender4;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender5;
+    @Transient
+    private ArrayList<Employee> approversAndRecommenders;
     @Column(length = 1024)
     private String description;
     @Column(length = 1024)
@@ -213,24 +211,11 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
      */
     public PurchaseRequisition() {
         costComponents = new ArrayList<>();
-        approvers = new ArrayList<>();
+        approversAndRecommenders = new ArrayList<>();
         actions = new ArrayList<>();
-//        approversArray[0] = approver1;
-//        approversArray[1] = approver2;
-//        approversArray[2] = approver3;
-//        approversArray[3] = approver4;
-//        approversArray[4] = approver5;
         description = "";
-
     }
 
-//    public Employee [] getApproversArray() {
-//        return approversArray;
-//    }
-//
-//    public void setApproversArray(Employee[] approversArray) {
-//        this.approversArray = approversArray;
-//    }
     public Integer getApprovals() {
         if (approvals == null) {
             approvals = 0;
@@ -570,17 +555,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         return descriptionParts;
     }
 
-//    public Employee getFirstApproverByPositionTitle(String positionTitle) {
-//        for (Employee approver : approversArray) {
-//            for (EmployeePosition position : approver.getPositions()) {
-//                if (position.getTitle().equals(positionTitle)) {
-//                    return approver;
-//                }
-//            }
-//        }
-//
-//        return null;
-//    }
     public void addAction(BusinessEntity.Action action) {
 
         // Just return if the action already exists.
@@ -687,9 +661,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         this.approvalOrRecommendationDate5 = approvalOrRecommendationDate5;
     }
 
-//    public Boolean isApproved(int requiredNumOfApprover) {
-//        return getApprovers().size() >= requiredNumOfApprover;
-//    }
     public void clean() {
         setIsDirty(false);
     }
@@ -790,7 +761,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         return totalCostWithDiscount;
     }
 
-    // tk to be updated to include discount and tax.
     public Double getTotalCost() {
 
         return getTotalCostWithDiscount() + getTotalTax();
@@ -926,38 +896,49 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         this.dateEdited = dateEdited;
     }
 
-    public ArrayList<Employee> getApprovers() {
+    public ArrayList<Employee> getApproversAndRecommenders() {
 
-        //for (int i = 0; i < 5; i++) {
+        approversAndRecommenders.clear();
+        // Add approvers
         if (approver1 != null) {
-            approvers.add(approver1);
+            approversAndRecommenders.add(approver1);
         }
         if (approver2 != null) {
-            approvers.add(approver2);
+            approversAndRecommenders.add(approver2);
         }
         if (approver3 != null) {
-            approvers.add(approver3);
+            approversAndRecommenders.add(approver3);
         }
-        if (approver4!= null) {
-            approvers.add(approver4);
+        if (approver4 != null) {
+            approversAndRecommenders.add(approver4);
         }
         if (approver5 != null) {
-            approvers.add(approver5);
+            approversAndRecommenders.add(approver5);
+        }        
+        // Add recommenders
+        if (recommender1 != null) {
+            approversAndRecommenders.add(recommender1);
+        }
+        if (recommender2 != null) {
+            approversAndRecommenders.add(recommender2);
+        }
+        if (recommender3 != null) {
+            approversAndRecommenders.add(recommender3);
+        }
+        if (recommender4 != null) {
+            approversAndRecommenders.add(recommender4);
+        }
+        if (recommender5 != null) {
+            approversAndRecommenders.add(recommender5);
         }
 
-        //}
-        return approvers;
+        return approversAndRecommenders;
     }
 
-    public void setApprovers(ArrayList<Employee> approvers) {
-        this.approvers = approvers;
+    public void setApproversAndRecommenders(ArrayList<Employee> approversAndRecommenders) {
+        this.approversAndRecommenders = approversAndRecommenders;
     }
 
-//    public void setApprovers(ArrayList<Employee> approvers) {
-//        for (Employee approver : approvers) {
-//            app
-//        }
-//    }
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
