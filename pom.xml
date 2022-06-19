@@ -8,7 +8,7 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
     
-    <name>BEL, v1</name>
+    <name>BEL</name>
     <description>A library of business entities and utilities.</description>
     
     <properties>
