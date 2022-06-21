@@ -61,6 +61,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     private String sourceURL;
     private String destinationURL;
     private String contentType;
+    private String documentType;
     private Boolean active;
     @Column(length = 1024)
     private String description;
@@ -95,6 +96,17 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         this.category = "";
         this.type = "";
         this.isDirty = false;
+    }
+
+    public String getDocumentType() {
+        if (documentType == null) {
+            documentType = "";
+        }
+        return documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
     }
 
     public String getType() {
