@@ -308,7 +308,7 @@ public class Classification implements BusinessEntity, Serializable {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Classification> classifications
-                    = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
+                    = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '%"
                             + value.toUpperCase().trim() + "%' AND c.active = 1 ORDER BY c.name", Classification.class).getResultList();
             return classifications;
         } catch (Exception e) {
