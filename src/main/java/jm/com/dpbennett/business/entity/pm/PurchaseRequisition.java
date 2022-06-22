@@ -212,8 +212,19 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public PurchaseRequisition() {
         costComponents = new ArrayList<>();
         approversAndRecommenders = new ArrayList<>();
+        attachments = new ArrayList<>();
         actions = new ArrayList<>();
         description = "";
+    }
+    
+    public Boolean hasJustification() {
+        for (Attachment attachment : attachments) {
+            if (attachment.getDocumentType().equalsIgnoreCase("Justification")) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public Integer getApprovals() {
