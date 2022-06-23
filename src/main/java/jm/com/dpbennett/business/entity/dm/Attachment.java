@@ -80,6 +80,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         this.contentType = "";
         this.type = "";
         this.isDirty = false;
+        this.documentType = "Other";
     }
 
     public Attachment(String name,
@@ -96,6 +97,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         this.category = "";
         this.type = "";
         this.isDirty = false;
+        this.documentType = "Other";
     }
 
     public String getDocumentType() {
