@@ -53,6 +53,7 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.fm.Discount;
 import jm.com.dpbennett.business.entity.fm.Tax;
+import jm.com.dpbennett.business.entity.hrm.ApproverOrRecommender;
 import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
@@ -111,7 +112,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender5;
     @Transient
-    private ArrayList<Employee> approversAndRecommenders;
+    private ArrayList<ApproverOrRecommender> approversAndRecommenders;
     @Column(length = 1024)
     private String description;
     @Column(length = 1024)
@@ -907,46 +908,54 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         this.dateEdited = dateEdited;
     }
 
-    public ArrayList<Employee> getApproversAndRecommenders() {
+    public ArrayList<ApproverOrRecommender> getApproversAndRecommenders() {
 
         approversAndRecommenders.clear();
         // Add approvers
         if (approver1 != null) {
-            approversAndRecommenders.add(approver1);
+            approversAndRecommenders.add( 
+                    new ApproverOrRecommender(true, approver1));
         }
         if (approver2 != null) {
-            approversAndRecommenders.add(approver2);
+            approversAndRecommenders.add(new ApproverOrRecommender(true, approver2));
         }
         if (approver3 != null) {
-            approversAndRecommenders.add(approver3);
+            approversAndRecommenders.add(new ApproverOrRecommender(true, approver3));
         }
         if (approver4 != null) {
-            approversAndRecommenders.add(approver4);
+            approversAndRecommenders.add(new ApproverOrRecommender(true, approver4));
         }
         if (approver5 != null) {
-            approversAndRecommenders.add(approver5);
-        }        
+            approversAndRecommenders.add(new ApproverOrRecommender(true,
+                            approver5.getFirstName(), approver5.getLastName()));
+        } 
+        
         // Add recommenders
         if (recommender1 != null) {
-            approversAndRecommenders.add(recommender1);
+            approversAndRecommenders.add(new ApproverOrRecommender(false,
+                            recommender1.getFirstName(), recommender1.getLastName()));
         }
         if (recommender2 != null) {
-            approversAndRecommenders.add(recommender2);
+            approversAndRecommenders.add(new ApproverOrRecommender(false,
+                            recommender2.getFirstName(), recommender2.getLastName()));
         }
         if (recommender3 != null) {
-            approversAndRecommenders.add(recommender3);
+            approversAndRecommenders.add(new ApproverOrRecommender(false,
+                            recommender3.getFirstName(), recommender3.getLastName()));
         }
         if (recommender4 != null) {
-            approversAndRecommenders.add(recommender4);
+            approversAndRecommenders.add(new ApproverOrRecommender(false,
+                            recommender4.getFirstName(), recommender4.getLastName()));
         }
         if (recommender5 != null) {
-            approversAndRecommenders.add(recommender5);
+            approversAndRecommenders.add(new ApproverOrRecommender(false,
+                            recommender5.getFirstName(), recommender5.getLastName()));
         }
 
         return approversAndRecommenders;
     }
 
-    public void setApproversAndRecommenders(ArrayList<Employee> approversAndRecommenders) {
+    public void setApproversAndRecommenders(ArrayList<ApproverOrRecommender> approversAndRecommenders) {
         this.approversAndRecommenders = approversAndRecommenders;
     }
 
