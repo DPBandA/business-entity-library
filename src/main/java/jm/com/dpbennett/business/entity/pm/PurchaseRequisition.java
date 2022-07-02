@@ -217,14 +217,14 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         actions = new ArrayList<>();
         description = "";
     }
-    
+
     public Boolean hasJustification() {
         for (Attachment attachment : attachments) {
             if (attachment.getDocumentType().equalsIgnoreCase("Justification")) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -913,8 +913,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         approversAndRecommenders.clear();
         // Add approvers
         if (approver1 != null) {
-            approversAndRecommenders.add( 
-                    new ApproverOrRecommender(true, approver1));
+            approversAndRecommenders.add(new ApproverOrRecommender(true, approver1));
         }
         if (approver2 != null) {
             approversAndRecommenders.add(new ApproverOrRecommender(true, approver2));
@@ -926,30 +925,24 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
             approversAndRecommenders.add(new ApproverOrRecommender(true, approver4));
         }
         if (approver5 != null) {
-            approversAndRecommenders.add(new ApproverOrRecommender(true,
-                            approver5.getFirstName(), approver5.getLastName()));
-        } 
-        
+            approversAndRecommenders.add(new ApproverOrRecommender(true, approver5));
+        }
+
         // Add recommenders
         if (recommender1 != null) {
-            approversAndRecommenders.add(new ApproverOrRecommender(false,
-                            recommender1.getFirstName(), recommender1.getLastName()));
+            approversAndRecommenders.add(new ApproverOrRecommender(false, recommender1));
         }
         if (recommender2 != null) {
-            approversAndRecommenders.add(new ApproverOrRecommender(false,
-                            recommender2.getFirstName(), recommender2.getLastName()));
+            approversAndRecommenders.add(new ApproverOrRecommender(false, recommender2));
         }
         if (recommender3 != null) {
-            approversAndRecommenders.add(new ApproverOrRecommender(false,
-                            recommender3.getFirstName(), recommender3.getLastName()));
+            approversAndRecommenders.add(new ApproverOrRecommender(false, recommender3));
         }
         if (recommender4 != null) {
-            approversAndRecommenders.add(new ApproverOrRecommender(false,
-                            recommender4.getFirstName(), recommender4.getLastName()));
+            approversAndRecommenders.add(new ApproverOrRecommender(false, recommender4));
         }
         if (recommender5 != null) {
-            approversAndRecommenders.add(new ApproverOrRecommender(false,
-                            recommender5.getFirstName(), recommender5.getLastName()));
+            approversAndRecommenders.add(new ApproverOrRecommender(false, recommender5));
         }
 
         return approversAndRecommenders;
