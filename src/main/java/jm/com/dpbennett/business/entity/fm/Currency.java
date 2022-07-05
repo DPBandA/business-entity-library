@@ -60,7 +60,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
     public Currency() {
         this.name = "";
         this.code = "";
-        this.symbol = "";
+        this.symbol = "$";
         this.description = "";
         this.isDirty = false;
     }      
@@ -70,7 +70,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
     public Currency(String name) {
         this.name = name;
         this.code = "";
-        this.symbol = "";
+        this.symbol = "$";
     }
 
     @Override

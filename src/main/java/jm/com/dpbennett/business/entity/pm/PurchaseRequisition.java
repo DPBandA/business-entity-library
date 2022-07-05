@@ -490,7 +490,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public Currency getCurrency() {
-        return currency;
+        return (currency == null ? new Currency() : currency);
     }
 
     public void setCurrency(Currency currency) {
