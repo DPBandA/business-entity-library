@@ -217,7 +217,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         actions = new ArrayList<>();
         description = "";
     }
-
+  
     public Boolean hasJustification() {
         for (Attachment attachment : attachments) {
             if (attachment.getDocumentType().equalsIgnoreCase("Justification")) {
@@ -487,6 +487,10 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
     public void setBalanceRecoverable(Double balanceRecoverable) {
         this.balanceRecoverable = balanceRecoverable;
+    }
+    
+    public String getCurrencySymbol() {
+        return getCurrency().getSymbol();
     }
 
     public Currency getCurrency() {
