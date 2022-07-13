@@ -55,6 +55,7 @@ import jm.com.dpbennett.business.entity.fm.Discount;
 import jm.com.dpbennett.business.entity.fm.Tax;
 import jm.com.dpbennett.business.entity.hrm.ApproverOrRecommender;
 import jm.com.dpbennett.business.entity.hrm.User;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -217,7 +218,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         actions = new ArrayList<>();
         description = "";
     }
-  
+
     public Boolean hasJustification() {
         for (Attachment attachment : attachments) {
             if (attachment.getDocumentType().equalsIgnoreCase("Justification")) {
@@ -488,7 +489,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public void setBalanceRecoverable(Double balanceRecoverable) {
         this.balanceRecoverable = balanceRecoverable;
     }
-    
+
     public String getCurrencySymbol() {
         return getCurrency().getSymbol();
     }
@@ -1133,6 +1134,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
     @Override
     public String getNumber() {
+        if (number == null) {
+            return "--";
+        }
         return number;
     }
 
@@ -1428,6 +1432,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public ReturnMessage prepareAndSave(EntityManager em, User user) {
         Date now = new Date();
         PurchaseReqNumber nextPurchaseReqNumber = null;
+        Boolean enableYearDependentPRSeqNum = SystemOption.getBoolean(em, "enableYearDependentPRSeqNum");
 
         try {
             // Get employee for later use
@@ -1457,7 +1462,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
             }
 
             // Modify number with sequence number if required
-            if (getAutoGenerateNumber()) {
+            if (/*getAutoGenerateNumber()*/enableYearDependentPRSeqNum) {
                 if ((getSequenceNumber() == null)) {
                     nextPurchaseReqNumber = PurchaseReqNumber.
                             findNextPurchaseReqNumber(em,
@@ -1470,6 +1475,11 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                 } else {
                     generateNumber();
                     generatePurchaseOrderNumber();
+                }
+            }
+            else { // Get sequence number from system option
+                if (number == null) {
+                    
                 }
             }
 
@@ -1486,7 +1496,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
             } else {
 
                 // Reset number if number is set to auto-generate
-                if (getAutoGenerateNumber()) {
+                if (/*getAutoGenerateNumber()*/enableYearDependentPRSeqNum) {
                     setSequenceNumber(null);
                     generateNumber();
                 }
@@ -1502,7 +1512,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         } catch (Exception e) {
 
             // Reset number if number is set to auto-generate
-            if (getAutoGenerateNumber()) {
+            if (/*getAutoGenerateNumber()*/enableYearDependentPRSeqNum) {
                 setSequenceNumber(null);
                 generateNumber();
             }
