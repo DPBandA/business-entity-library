@@ -821,6 +821,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public String getPurchaseOrderNumber() {
+        if (purchaseOrderNumber == null) {
+            return "--";
+        }
         return purchaseOrderNumber;
     }
 
@@ -1432,16 +1435,12 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public ReturnMessage prepareAndSave(EntityManager em, User user) {
         Date now = new Date();
         PurchaseReqNumber nextPurchaseReqNumber = null;
-        Long nextPurchaseReqSequenceNumber = null;
-        // SystemOption.getLong(em, "PRSequenceNumber");
+        SystemOption nextPurchaseReqSequenceNumber = null;
 
         try {
             // Get employee for later use
             Employee employee = user.getEmployee();
 
-            // Do not save changed PR if it's already marked as completed in the database
-            // However, saving is allowed if the user belongs to the "Invoicing department"
-            // or is a procurement officer.
             if (getId() != null) {
                 PurchaseRequisition pr = PurchaseRequisition.findById(em, getId());
                 if (pr.getWorkProgress().equals("Completed")
@@ -1456,15 +1455,13 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                 }
             }
 
-            // Update re the person who last edited/entered the PR etc.
             if (getIsDirty()) {
                 setDateEdited(now);
                 setEditedBy(employee);
             }
 
-            // Modify number with sequence number if required
             if (getAutoGenerateNumber()) {
-                if ((getSequenceNumber() == null)) {
+                if (sequenceNumber == null) {
                     nextPurchaseReqNumber = PurchaseReqNumber.
                             findNextPurchaseReqNumber(em,
                                     BusinessEntityUtils.getYearFromDate(getRequisitionDate()));
@@ -1472,18 +1469,20 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                     setSequenceNumber(nextPurchaseReqNumber.getSequentialNumber());
                     generateNumber();
                     generatePurchaseOrderNumber();
-                    //setPurchaseOrderNumber(purchaseOrderNumber);
                 } else {
                     generateNumber();
                     generatePurchaseOrderNumber();
                 }
-            } else { // Get next sequence number from system option
+            } else {
                 if (number == null) {
-
+                    nextPurchaseReqSequenceNumber = getNextSequenceNumberFromSystemOption(em);
+                    setNumber(nextPurchaseReqSequenceNumber.getOptionValue());
+                    setPurchaseOrderNumber(number);
+                } else {
+                    setPurchaseOrderNumber(number);
                 }
             }
 
-            // Finally..save the PR
             ReturnMessage returnMessage = save(em);
 
             if (returnMessage.isSuccess()) {
@@ -1493,7 +1492,10 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                         nextPurchaseReqNumber.save(em);
                     }
                 } else {
-                    // Save sequence number in system option tk
+                    // Save sequence number in system option
+                    if (nextPurchaseReqSequenceNumber != null) {
+                        nextPurchaseReqSequenceNumber.save(em);
+                    }
                 }
 
                 clean();
@@ -1503,6 +1505,10 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                 if (getAutoGenerateNumber()) {
                     setSequenceNumber(null);
                     generateNumber();
+                    setPurchaseOrderNumber(null);
+                } else {
+                    setNumber(null);
+                    setPurchaseOrderNumber(null);
                 }
 
                 return new ReturnMessage(false,
@@ -1519,6 +1525,10 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
             if (getAutoGenerateNumber()) {
                 setSequenceNumber(null);
                 generateNumber();
+                setPurchaseOrderNumber(null);
+            } else {
+                setNumber(null);
+                setPurchaseOrderNumber(null);
             }
 
             return new ReturnMessage(false,
@@ -1530,6 +1540,17 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         }
 
         return new ReturnMessage();
+    }
+
+    public SystemOption getNextSequenceNumberFromSystemOption(EntityManager em) {
+        SystemOption sequenceNumberSystemOption = SystemOption.findSystemOptionByName(em, "PRSequenceNumber");
+
+        Long currentSequenceNumber = SystemOption.getLong(em, "PRSequenceNumber");
+        Long nextSequenceNumber = currentSequenceNumber + 1;
+
+        sequenceNumberSystemOption.setOptionValue(Long.toString(nextSequenceNumber));
+
+        return sequenceNumberSystemOption;
     }
 
     @Override

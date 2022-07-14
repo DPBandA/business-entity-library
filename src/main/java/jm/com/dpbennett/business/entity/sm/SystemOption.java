@@ -311,7 +311,7 @@ public class SystemOption implements SystemOptionInterface, Serializable {
      * @param name
      * @return
      */
-    private static SystemOption findSystemOptionByName(EntityManager em, String name) {
+    public static SystemOption findSystemOptionByName(EntityManager em, String name) {
 
         try {
             String newName = name.replaceAll("'", "''").trim();

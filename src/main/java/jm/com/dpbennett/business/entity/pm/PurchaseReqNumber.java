@@ -173,7 +173,7 @@ public class PurchaseReqNumber implements Serializable, BusinessEntity {
 
         return purchaseReqNumber.getSequentialNumber();
     }
-
+   
     public static PurchaseReqNumber findNextPurchaseReqNumber(EntityManager em, Integer year) {
         Long last;
 
