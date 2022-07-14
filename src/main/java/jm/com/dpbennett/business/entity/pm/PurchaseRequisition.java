@@ -1432,7 +1432,8 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     public ReturnMessage prepareAndSave(EntityManager em, User user) {
         Date now = new Date();
         PurchaseReqNumber nextPurchaseReqNumber = null;
-        Boolean enableYearDependentPRSeqNum = SystemOption.getBoolean(em, "enableYearDependentPRSeqNum");
+        Long nextPurchaseReqSequenceNumber = null;
+        // SystemOption.getLong(em, "PRSequenceNumber");
 
         try {
             // Get employee for later use
@@ -1462,7 +1463,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
             }
 
             // Modify number with sequence number if required
-            if (/*getAutoGenerateNumber()*/enableYearDependentPRSeqNum) {
+            if (getAutoGenerateNumber()) {
                 if ((getSequenceNumber() == null)) {
                     nextPurchaseReqNumber = PurchaseReqNumber.
                             findNextPurchaseReqNumber(em,
@@ -1471,15 +1472,14 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                     setSequenceNumber(nextPurchaseReqNumber.getSequentialNumber());
                     generateNumber();
                     generatePurchaseOrderNumber();
-                    setPurchaseOrderNumber(purchaseOrderNumber);
+                    //setPurchaseOrderNumber(purchaseOrderNumber);
                 } else {
                     generateNumber();
                     generatePurchaseOrderNumber();
                 }
-            }
-            else { // Get sequence number from system option
+            } else { // Get next sequence number from system option
                 if (number == null) {
-                    
+
                 }
             }
 
@@ -1488,15 +1488,19 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
             if (returnMessage.isSuccess()) {
                 // Save PR sequence number since it was used by this PR
-                if (nextPurchaseReqNumber != null) {
-                    nextPurchaseReqNumber.save(em);
+                if (getAutoGenerateNumber()) {
+                    if (nextPurchaseReqNumber != null) {
+                        nextPurchaseReqNumber.save(em);
+                    }
+                } else {
+                    // Save sequence number in system option tk
                 }
 
                 clean();
             } else {
 
                 // Reset number if number is set to auto-generate
-                if (/*getAutoGenerateNumber()*/enableYearDependentPRSeqNum) {
+                if (getAutoGenerateNumber()) {
                     setSequenceNumber(null);
                     generateNumber();
                 }
@@ -1512,7 +1516,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         } catch (Exception e) {
 
             // Reset number if number is set to auto-generate
-            if (/*getAutoGenerateNumber()*/enableYearDependentPRSeqNum) {
+            if (getAutoGenerateNumber()) {
                 setSequenceNumber(null);
                 generateNumber();
             }
