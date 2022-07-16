@@ -207,6 +207,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     private Tax tax;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
+    private String procurementMethod;
 
     /**
      * Default constructor.
@@ -217,6 +218,14 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         attachments = new ArrayList<>();
         actions = new ArrayList<>();
         description = "";
+    }
+
+    public String getProcurementMethod() {
+        return procurementMethod;
+    }
+
+    public void setProcurementMethod(String procurementMethod) {
+        this.procurementMethod = procurementMethod;
     }
 
     public Boolean hasJustification() {
