@@ -51,6 +51,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.fm.CashPayment;
 import jm.com.dpbennett.business.entity.fm.Discount;
 import jm.com.dpbennett.business.entity.fm.Tax;
 import jm.com.dpbennett.business.entity.hrm.ApproverOrRecommender;
@@ -208,6 +209,8 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
     private String procurementMethod;
+    @Transient
+    private List<CashPayment> cashPayments;
 
     /**
      * Default constructor.
@@ -218,6 +221,13 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         attachments = new ArrayList<>();
         actions = new ArrayList<>();
         description = "";
+    }
+
+    public List<CashPayment> getCashPayments() {
+        if (cashPayments == null) {
+            cashPayments = new ArrayList<>();
+        }
+        return cashPayments;
     }
 
     public String getProcurementMethod() {
@@ -923,6 +933,23 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
     public void setDateEdited(Date dateEdited) {
         this.dateEdited = dateEdited;
+    }
+
+    public Boolean hasRecommender() {
+        if (recommender1 != null) {
+            return true;
+        }
+        if (recommender2 != null) {
+            return true;
+        }
+        if (recommender3 != null) {
+            return true;
+        }
+        if (recommender4 != null) {
+            return true;
+        }
+
+        return recommender5 != null;
     }
 
     public ArrayList<ApproverOrRecommender> getApproversAndRecommenders() {

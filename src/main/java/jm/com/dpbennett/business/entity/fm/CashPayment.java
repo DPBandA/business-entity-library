@@ -20,7 +20,9 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -55,6 +57,7 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
     private Long jobId;
     private Double payment;
     private String receiptNumber;
+    private String invoiceNumber;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfPayment;
     private String payeeTitle;
@@ -67,7 +70,8 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
     private String paymentTerms;
     private String paymentPurpose;
     @Transient
-    private Boolean isDirty;
+    private Boolean isDirty;   
+    private Long ownerId;
 
     public CashPayment() {
         this.discount = 0.0;
@@ -119,7 +123,21 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
         this.id = id;
     }
 
-    
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
+
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
 
     public String getPaymentPurpose() {
         return paymentPurpose;
@@ -323,8 +341,9 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
     /**
      * Compare payments using the date of payment
+     *
      * @param o
-     * @return 
+     * @return
      */
     @Override
     public int compareTo(Object o) {
