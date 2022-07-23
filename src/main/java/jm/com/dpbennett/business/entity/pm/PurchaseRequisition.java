@@ -224,9 +224,13 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     public List<CashPayment> getCashPayments() {
-        if (cashPayments == null) {
+
+        if (cashPayments != null) {
+            Collections.sort(cashPayments);
+        } else {
             cashPayments = new ArrayList<>();
         }
+
         return cashPayments;
     }
 
