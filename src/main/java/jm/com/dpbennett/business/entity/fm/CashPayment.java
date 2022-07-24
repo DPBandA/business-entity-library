@@ -34,7 +34,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.StatusNote;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -71,7 +70,7 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
     private String paymentTerms;
     private String paymentPurpose;
     @Transient
-    private Boolean isDirty;   
+    private Boolean isDirty;
     private Long ownerId;
 
     public CashPayment() {
@@ -123,17 +122,17 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public static List<CashPayment> findCashPaymentsByOwnerId(EntityManager em, Long ownerId) {
 
         try {
-            
+
             List<CashPayment> cashPayments
-                    = em.createQuery("SELECT c FROM CashPayment c WHERE" 
+                    = em.createQuery("SELECT c FROM CashPayment c WHERE"
                             + " c.ownerId = " + ownerId
                             + " ORDER BY c.id DESC",
                             CashPayment.class).getResultList();
-            
+
             return cashPayments;
         } catch (Exception e) {
             System.out.println(e);
@@ -150,6 +149,9 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
     }
 
     public String getInvoiceNumber() {
+        if (invoiceNumber == null) {
+            invoiceNumber = "";
+        }
         return invoiceNumber;
     }
 
