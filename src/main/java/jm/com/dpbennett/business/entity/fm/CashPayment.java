@@ -20,7 +20,9 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -32,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.StatusNote;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -119,6 +122,23 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public static List<CashPayment> findCashPaymentsByOwnerId(EntityManager em, Long ownerId) {
+
+        try {
+            
+            List<CashPayment> cashPayments
+                    = em.createQuery("SELECT c FROM CashPayment c WHERE" 
+                            + " c.ownerId = " + ownerId
+                            + " ORDER BY c.id DESC",
+                            CashPayment.class).getResultList();
+            
+            return cashPayments;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
     }
 
     public Long getOwnerId() {

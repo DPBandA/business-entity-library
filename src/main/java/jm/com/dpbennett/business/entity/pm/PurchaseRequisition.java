@@ -209,8 +209,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
     private String procurementMethod;
-    @Transient
-    private List<CashPayment> cashPayments;
 
     /**
      * Default constructor.
@@ -221,17 +219,6 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         attachments = new ArrayList<>();
         actions = new ArrayList<>();
         description = "";
-    }
-
-    public List<CashPayment> getCashPayments() {
-
-        if (cashPayments != null) {
-            Collections.sort(cashPayments);
-        } else {
-            cashPayments = new ArrayList<>();
-        }
-
-        return cashPayments;
     }
 
     public String getProcurementMethod() {
