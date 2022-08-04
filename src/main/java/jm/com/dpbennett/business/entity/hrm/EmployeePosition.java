@@ -20,6 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.hrm;
 
 import java.io.Serializable;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -47,7 +48,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     ,
     @NamedQuery(name = "findAllActiveEmployeePositions", query = "SELECT e FROM EmployeePosition e WHERE e.active = 1 ORDER BY e.title")
 })
-public class EmployeePosition implements Serializable, BusinessEntity {
+public class EmployeePosition implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;
     @Id
@@ -374,5 +375,10 @@ public class EmployeePosition implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.toString(), ((EmployeePosition) o).toString());
     }
 }
