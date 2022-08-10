@@ -24,6 +24,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import jm.com.dpbennett.business.entity.pm.ProcurementMethod;
 import jm.com.dpbennett.business.entity.sc.MarketProduct;
 import org.junit.Test;
 
@@ -35,32 +36,15 @@ public class EntityTest {
 
     @Test
     public void testFindActiveMarketProductByName() {
-        HashMap prop = new HashMap();
 
-        prop.put("javax.persistence.jdbc.user",
-                "root");
-        prop.put("javax.persistence.jdbc.password",
-                ""); // NB: REMOVE PWD WHEN DONE AND DISABLE TESTING.
-        prop.put("javax.persistence.jdbc.url",
-                "jdbc:mysql://localhost:3306/jmts");
-        prop.put("javax.persistence.jdbc.driver",
-                "com.mysql.cj.jdbc.Driver");
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU", prop);
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
         EntityManager em = emf.createEntityManager();
 
-        em.getTransaction().begin();
-        
-        java.sql.Connection connection = em.unwrap(java.sql.Connection.class);
-         if (connection == null) {
-            System.out.println("No Connection");
-        } else {
-            System.out.println("Connection!!!");
-        }
+        System.out.println("Creating and saving entity...");
+        ProcurementMethod pm = new ProcurementMethod();
+        pm.setProcurementMethod("Test");
+        pm.save(em);
 
-        em.getTransaction().commit();
-
-   
     }
 
 }

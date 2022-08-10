@@ -50,10 +50,10 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
-@Table(name = "purchaserequisition")
+@Table(name = "procurementmethod")
 @NamedQueries({
-    @NamedQuery(name = "findAllPurchaseRequisitions",
-            query = "SELECT p FROM PurchaseRequisition p ORDER BY p.number")
+    @NamedQuery(name = "findAllProcurementMethods",
+            query = "SELECT p FROM ProcurementMethod p ORDER BY p.procurementMethod")
 })
 public class ProcurementMethod implements Serializable, BusinessEntity {
 
@@ -74,6 +74,8 @@ public class ProcurementMethod implements Serializable, BusinessEntity {
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<EmployeePosition> requiredSignatoryPositions;
     private String procurementMethod;
+    private Double lowerSigningLimit;
+    private Double upperSigningLimit;
 
     /**
      * Default constructor.
@@ -81,6 +83,22 @@ public class ProcurementMethod implements Serializable, BusinessEntity {
     public ProcurementMethod() {
         requiredSignatoryPositions = new ArrayList<>();
         description = "";
+    }
+
+    public Double getLowerSigningLimit() {
+        return lowerSigningLimit;
+    }
+
+    public void setLowerSigningLimit(Double lowerSigningLimit) {
+        this.lowerSigningLimit = lowerSigningLimit;
+    }
+
+    public Double getUpperSigningLimit() {
+        return upperSigningLimit;
+    }
+
+    public void setUpperSigningLimit(Double upperSigningLimit) {
+        this.upperSigningLimit = upperSigningLimit;
     }
 
     public String getProcurementMethod() {
@@ -243,6 +261,21 @@ public class ProcurementMethod implements Serializable, BusinessEntity {
         } catch (Exception e) {
             System.out.println(e);
             return null;
+        }
+    }
+    
+    public static List<ProcurementMethod> findAllByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<ProcurementMethod> procurementMethods
+                    = em.createQuery("SELECT p FROM ProcurementMethod p WHERE UPPER(p.procurementMethod) LIKE '%"
+                            + newName.toUpperCase().trim() + "%' ORDER BY p.procurementMethod", ProcurementMethod.class).getResultList();
+            return procurementMethods;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
         }
     }
 
