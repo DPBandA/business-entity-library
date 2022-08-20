@@ -76,6 +76,8 @@ public class ProcurementMethod implements Serializable, BusinessEntity {
     private String procurementMethod;
     private Double lowerSigningLimit;
     private Double upperSigningLimit;
+    private Integer quotationsRequired;
+    private Boolean active;
 
     /**
      * Default constructor.
@@ -83,6 +85,44 @@ public class ProcurementMethod implements Serializable, BusinessEntity {
     public ProcurementMethod() {
         requiredSignatoryPositions = new ArrayList<>();
         description = "";
+    }
+    
+    public String getUsable() {
+        if (getActive()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+
+    public void setUsable(String usable) {
+        if (usable.equals("Yes")) {
+            setActive(true);
+        } else {
+            setActive(false);
+        }
+    }
+
+    public Integer getQuotationsRequired() {
+        if (quotationsRequired == null) {
+            quotationsRequired = 1;
+        }
+        return quotationsRequired;
+    }
+
+    public void setQuotationsRequired(Integer quotationsRequired) {
+        this.quotationsRequired = quotationsRequired;
+    }
+
+    public Boolean getActive() {
+        if (active == null) {
+            active = true;
+        }
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public Double getLowerSigningLimit() {
@@ -263,7 +303,7 @@ public class ProcurementMethod implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static List<ProcurementMethod> findAllByName(EntityManager em, String name) {
 
         try {
