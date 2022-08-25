@@ -32,6 +32,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -39,8 +41,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
-@Table(name = "alert")
-public class Alert implements AlertInterface, Serializable {
+@Table(name = "notification")
+public class Notification implements NotificationInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -69,7 +71,7 @@ public class Alert implements AlertInterface, Serializable {
     @Transient
     private Boolean isDirty;
 
-    public Alert() {
+    public Notification() {
         this.message = "";
         this.subject = "";
         this.active = false;
@@ -87,7 +89,7 @@ public class Alert implements AlertInterface, Serializable {
         active = true;
     }
 
-    public Alert(Long ownerId,
+    public Notification(Long ownerId,
             Date dueTime,
             String status) {
         this.message = "";
@@ -207,10 +209,10 @@ public class Alert implements AlertInterface, Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Alert)) {
+        if (!(object instanceof Notification)) {
             return false;
         }
-        Alert other = (Alert) object;
+        Notification other = (Notification) object;
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -299,22 +301,22 @@ public class Alert implements AlertInterface, Serializable {
         this.status = status;
     }
 
-    public static Alert findAlertById(EntityManager em, Long Id) {
+    public static Notification findAlertById(EntityManager em, Long Id) {
 
         try {
-            return em.find(Alert.class, Id);
+            return em.find(Notification.class, Id);
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
 
-    public static Alert findFirstAlertByOwnerId(EntityManager em, Long ownerId) {
+    public static Notification findFirstAlertByOwnerId(EntityManager em, Long ownerId) {
 
         try {
-            List<Alert> alerts = em.createQuery("SELECT a FROM Alert a "
+            List<Notification> alerts = em.createQuery("SELECT a FROM Alert a "
                     + "WHERE a.ownerId"
-                    + "= " + ownerId + " ORDER BY a.id", Alert.class).getResultList();
+                    + "= " + ownerId + " ORDER BY a.id", Notification.class).getResultList();
 
             if (!alerts.isEmpty()) {
                 return alerts.get(0);
@@ -326,11 +328,11 @@ public class Alert implements AlertInterface, Serializable {
         }
     }
 
-    public static List<Alert> findAllActiveAlerts(EntityManager em) {
+    public static List<Notification> findAllActiveAlerts(EntityManager em) {
 
         try {
-            List<Alert> alerts = em.createQuery("SELECT a FROM Alert a "
-                    + "WHERE a.active = 1 ORDER BY a.id", Alert.class).getResultList();
+            List<Notification> alerts = em.createQuery("SELECT a FROM Alert a "
+                    + "WHERE a.active = 1 ORDER BY a.id", Notification.class).getResultList();
 
             return alerts;
         } catch (Exception e) {
@@ -342,11 +344,25 @@ public class Alert implements AlertInterface, Serializable {
    
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+
+        } catch (Exception e) {
+            return new ReturnMessage(false,
+                    "Notification Save Error Occurred!",
+                    "An error occurred while saving Notification"
+                    + "\n" + e,
+                    Message.SEVERITY_ERROR_NAME);
+        }
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 }

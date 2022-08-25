@@ -26,7 +26,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
  *
  * @author Desmond Bennett
  */
-public interface AlertInterface extends BusinessEntity {
+public interface NotificationInterface extends BusinessEntity {
 
     public Long getOwnerId();
 

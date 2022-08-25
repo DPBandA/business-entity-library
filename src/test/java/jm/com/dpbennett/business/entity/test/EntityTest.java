@@ -19,13 +19,10 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.test;
 
-import java.util.HashMap;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.pm.ProcurementMethod;
-import jm.com.dpbennett.business.entity.sc.MarketProduct;
+import jm.com.dpbennett.business.entity.sm.Notification;
 import org.junit.Test;
 
 /**
@@ -41,10 +38,8 @@ public class EntityTest {
         EntityManager em = emf.createEntityManager();
 
         System.out.println("Creating and saving entity...");
-        ProcurementMethod pm = new ProcurementMethod();
-        pm.setProcurementMethod("Test");
-        pm.save(em);
+        Notification n = new Notification();
+        n.save(em);
 
     }
-
 }
