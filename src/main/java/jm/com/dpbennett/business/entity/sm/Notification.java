@@ -178,6 +178,22 @@ public class Notification implements NotificationInterface, Serializable {
     public void setActive(Boolean active) {
         this.active = active;
     }
+    
+    public String getUsable() {
+        if (getActive()) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+
+    public void setUsable(String usable) {
+        if (usable.equals("Yes")) {
+            setActive(true);
+        } else {
+            setActive(false);
+        }
+    }
 
     @Override
     public String getActionToTake() {
@@ -308,6 +324,22 @@ public class Notification implements NotificationInterface, Serializable {
         } catch (Exception e) {
             System.out.println(e);
             return null;
+        }
+    }
+    
+    public static List<Notification> findNotificationsByName(EntityManager em, String name) {
+
+        try {
+            List<Notification> notifications
+                    = em.createQuery("SELECT n FROM Notification n WHERE UPPER(n.name) LIKE '%"
+                            + name.toUpperCase().trim() + "%' ORDER BY n.name", Notification.class).getResultList();
+            
+            return notifications;
+            
+        } catch (Exception e) {
+            
+            System.out.println(e);
+            return new ArrayList<>();
         }
     }
 
