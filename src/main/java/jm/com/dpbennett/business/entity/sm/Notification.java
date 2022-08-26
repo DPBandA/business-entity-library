@@ -301,7 +301,7 @@ public class Notification implements NotificationInterface, Serializable {
         this.status = status;
     }
 
-    public static Notification findAlertById(EntityManager em, Long Id) {
+    public static Notification findNotificationById(EntityManager em, Long Id) {
 
         try {
             return em.find(Notification.class, Id);
@@ -311,15 +311,15 @@ public class Notification implements NotificationInterface, Serializable {
         }
     }
 
-    public static Notification findFirstAlertByOwnerId(EntityManager em, Long ownerId) {
+    public static Notification findFirstNotificationByOwnerId(EntityManager em, Long ownerId) {
 
         try {
-            List<Notification> alerts = em.createQuery("SELECT a FROM Alert a "
-                    + "WHERE a.ownerId"
-                    + "= " + ownerId + " ORDER BY a.id", Notification.class).getResultList();
+            List<Notification> notifications = em.createQuery("SELECT n FROM Notification n "
+                    + "WHERE n.ownerId"
+                    + "= " + ownerId + " ORDER BY n.id", Notification.class).getResultList();
 
-            if (!alerts.isEmpty()) {
-                return alerts.get(0);
+            if (!notifications.isEmpty()) {
+                return notifications.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -328,11 +328,11 @@ public class Notification implements NotificationInterface, Serializable {
         }
     }
 
-    public static List<Notification> findAllActiveAlerts(EntityManager em) {
+    public static List<Notification> findAllActiveNotifications(EntityManager em) {
 
         try {
-            List<Notification> alerts = em.createQuery("SELECT a FROM Alert a "
-                    + "WHERE a.active = 1 ORDER BY a.id", Notification.class).getResultList();
+            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
+                    + "WHERE n.active = 1 ORDER BY n.id", Notification.class).getResultList();
 
             return alerts;
         } catch (Exception e) {
