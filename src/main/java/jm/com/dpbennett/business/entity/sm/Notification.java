@@ -20,6 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.sm;
 
 import java.io.Serializable;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +55,8 @@ public class Notification implements NotificationInterface, Serializable {
     private String reference;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date dueTime;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date issueTime;
     private String periodType;
     private Long recurrencePeriod;
     @Column(length = 1024)
@@ -101,7 +104,6 @@ public class Notification implements NotificationInterface, Serializable {
         this.comment = "";
         this.recurrencePeriod = null;
         this.periodType = "";
-        this.dueTime = null;
         this.reference = "";
         this.type = "";
         this.name = "";
@@ -120,6 +122,14 @@ public class Notification implements NotificationInterface, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Date getIssueTime() {
+        return issueTime;
+    }
+
+    public void setIssueTime(Date issueTime) {
+        this.issueTime = issueTime;
     }
 
     @Override
@@ -178,7 +188,7 @@ public class Notification implements NotificationInterface, Serializable {
     public void setActive(Boolean active) {
         this.active = active;
     }
-    
+
     public String getUsable() {
         if (getActive()) {
             return "Yes";
@@ -326,18 +336,18 @@ public class Notification implements NotificationInterface, Serializable {
             return null;
         }
     }
-    
+
     public static List<Notification> findNotificationsByName(EntityManager em, String name) {
 
         try {
             List<Notification> notifications
                     = em.createQuery("SELECT n FROM Notification n WHERE UPPER(n.name) LIKE '%"
                             + name.toUpperCase().trim() + "%' ORDER BY n.name", Notification.class).getResultList();
-            
+
             return notifications;
-            
+
         } catch (Exception e) {
-            
+
             System.out.println(e);
             return new ArrayList<>();
         }
@@ -373,7 +383,21 @@ public class Notification implements NotificationInterface, Serializable {
         }
     }
 
-   
+    public static List<Notification> findActiveNotificationsByOwnerId(EntityManager em, Long ownerId) {
+
+        try {
+            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
+                    + "WHERE n.active = 1 AND "
+                    + "n.ownerId = " + ownerId
+                    + " ORDER BY n.id", Notification.class).getResultList();
+
+            return alerts;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
