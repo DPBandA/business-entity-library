@@ -91,6 +91,24 @@ public class Notification implements NotificationInterface, Serializable {
         this.ownerId = 0L;
         active = true;
     }
+    
+    public Notification(String name) {
+        this.message = "";
+        this.subject = "";
+        this.active = false;
+        this.actionTaken = "";
+        this.actionToTake = "";
+        this.status = "";
+        this.comment = "";
+        this.recurrencePeriod = null;
+        this.periodType = "";
+        this.dueTime = null;
+        this.reference = "";
+        this.type = "";
+        this.name = name;
+        this.ownerId = 0L;
+        active = true;
+    }
 
     public Notification(Long ownerId,
             Date dueTime,
@@ -395,6 +413,35 @@ public class Notification implements NotificationInterface, Serializable {
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
+        }
+    }
+    
+    public static Notification findActiveNotificationByName(EntityManager em, String value, Boolean ignoreCase) {
+
+        List<Notification> notifications;
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            if (ignoreCase) {
+                notifications = em.createQuery("SELECT n FROM Notification n"
+                        + " WHERE UPPER(n.name)"
+                        + " = '" + value.toUpperCase() + "'", Notification.class).getResultList();
+            } else {
+                notifications = em.createQuery("SELECT n FROM Notification n"
+                        + " WHERE n.name "
+                        + "= '" + value + "'", Notification.class).getResultList();
+            }
+
+            if (!notifications.isEmpty()) {
+                return notifications.get(0);
+            }
+            
+            return null;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
         }
     }
 
