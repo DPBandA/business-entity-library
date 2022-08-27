@@ -444,6 +444,41 @@ public class Notification implements NotificationInterface, Serializable {
             return null;
         }
     }
+    
+    public static Notification findActiveNotificationByNameAndOwnerId(
+            EntityManager em, 
+            String value, 
+            Long ownerId,
+            Boolean ignoreCase) {
+
+        List<Notification> notifications;
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            if (ignoreCase) {
+                notifications = em.createQuery("SELECT n FROM Notification n"
+                        + " WHERE UPPER(n.name)"
+                        + " = '" + value.toUpperCase() + "'" +
+                        " AND n.ownerId = " + ownerId, Notification.class).getResultList();
+            } else {
+                notifications = em.createQuery("SELECT n FROM Notification n"
+                        + " WHERE n.name "
+                        + "= '" + value + "'" +
+                        " AND n.ownerId = " + ownerId, Notification.class).getResultList();
+            }
+
+            if (!notifications.isEmpty()) {
+                return notifications.get(0);
+            }
+            
+            return null;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
