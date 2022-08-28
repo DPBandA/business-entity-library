@@ -131,6 +131,14 @@ public class Notification implements NotificationInterface, Serializable {
         this.dueTime = dueTime;
         this.status = status;
     }
+    
+    public String getStyle() {
+        if (active) {
+            return "font-weight: bold";
+        }
+        
+        return "font-weight: normal";
+    }
 
     @Override
     public Long getId() {
@@ -407,7 +415,21 @@ public class Notification implements NotificationInterface, Serializable {
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
                     + "WHERE n.active = 1 AND "
                     + "n.ownerId = " + ownerId
-                    + " ORDER BY n.id", Notification.class).getResultList();
+                    + " ORDER BY n.id, n.active DESC", Notification.class).getResultList();
+
+            return alerts;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+     public static List<Notification> findNotificationsByOwnerId(EntityManager em, Long ownerId) {
+
+        try {
+            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n"
+                    + " WHERE n.ownerId = " + ownerId
+                    + " ORDER BY n.id, n.active DESC", Notification.class).getResultList();
 
             return alerts;
         } catch (Exception e) {
@@ -445,7 +467,7 @@ public class Notification implements NotificationInterface, Serializable {
         }
     }
     
-    public static Notification findActiveNotificationByNameAndOwnerId(
+    public static Notification findNotificationByNameAndOwnerId(
             EntityManager em, 
             String value, 
             Long ownerId,
