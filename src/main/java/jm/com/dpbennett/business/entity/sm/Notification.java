@@ -437,7 +437,7 @@ public class Notification implements NotificationInterface, Serializable {
         }
     }
     
-    public static Notification findActiveNotificationByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static Notification findNotificationByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Notification> notifications;
 
