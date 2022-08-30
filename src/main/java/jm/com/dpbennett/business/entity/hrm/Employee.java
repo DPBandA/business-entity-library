@@ -115,21 +115,20 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         phoneNumbers = new ArrayList<>();
         active = true;
     }
-    
-    public String getEmploymentPositions () {
+
+    public String getEmploymentPositions() {
         String eps = "";
         int index = 0;
         for (EmployeePosition ep : positions) {
             if (index == 0) {
                 eps = ep.getName();
-            }
-            else {
+            } else {
                 eps = eps + ", " + ep.getName();
             }
-            
+
             index++;
         }
-        
+
         return eps;
     }
 
@@ -347,6 +346,9 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
     @Override
     public String getTitle() {
+        if (title == null) {
+            title = "";
+        }
         return title;
     }
 
