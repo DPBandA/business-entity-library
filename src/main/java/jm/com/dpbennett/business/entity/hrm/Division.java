@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -94,6 +95,23 @@ public class Division implements BusinessEntity, Comparable, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public static Employee findHeadOfActiveDivistionByDepartment (EntityManager em,
+            Department department) {
+        
+        List<Division> activeDivistions = Division.findAllActive(em);
+        
+        for (Division activeDivistion : activeDivistions) {
+            List<Department> departments = activeDivistion.getDepartments();
+            for (Department department1 : departments) {
+                if (Objects.equals(department1.getId(), department.getId())) {
+                    return activeDivistion.getHead();
+                }
+            }
+        }
+       
+        return null;
     }
 
     public String getCode() {
