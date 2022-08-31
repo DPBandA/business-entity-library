@@ -611,6 +611,14 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                     getActions().add(BusinessEntity.Action.APPROVE);
                 }
                 break;
+            case RECOMMEND:
+                if ((findAction(BusinessEntity.Action.CREATE) == null)
+                        && (findAction(BusinessEntity.Action.COMPLETE) == null)) {
+
+                    getActions().clear();
+                    getActions().add(BusinessEntity.Action.RECOMMEND);
+                }
+                break;    
             case COMPLETE:
                 if ((findAction(BusinessEntity.Action.CREATE) == null)) {
                     getActions().clear();
