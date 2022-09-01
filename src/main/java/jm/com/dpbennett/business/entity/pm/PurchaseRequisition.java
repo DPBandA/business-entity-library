@@ -245,8 +245,9 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         selectedPurchaseRequisition.setTax(Tax.findDefault(em, "0.0"));
         selectedPurchaseRequisition.setDiscount(Discount.findDefault(em, "0.0"));
         selectedPurchaseRequisition.setCurrency(defaultCurrency);
+        selectedPurchaseRequisition.setIsDirty(true);
 
-        selectedPurchaseRequisition.save(em);
+        selectedPurchaseRequisition.prepareAndSave(em, user);
 
         return selectedPurchaseRequisition;
     }
