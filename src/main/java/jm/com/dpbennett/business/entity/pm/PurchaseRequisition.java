@@ -51,7 +51,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.fm.CashPayment;
 import jm.com.dpbennett.business.entity.fm.Discount;
 import jm.com.dpbennett.business.entity.fm.Tax;
 import jm.com.dpbennett.business.entity.hrm.ApproverOrRecommender;
@@ -219,6 +218,37 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         attachments = new ArrayList<>();
         actions = new ArrayList<>();
         description = "";
+    }
+
+    public static PurchaseRequisition create(EntityManager em, User user) {
+  
+        String defaultCurrencyName = SystemOption.getString(em,
+                "defaultCurrency");
+        Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
+
+        PurchaseRequisition selectedPurchaseRequisition = new PurchaseRequisition();
+        selectedPurchaseRequisition.setAutoGenerateNumber(SystemOption.getBoolean(em, "enableYearDependentPRSeqNum"));
+        selectedPurchaseRequisition.setPurchasingDepartment(Department.findDefaultDepartment(em,
+                "--"));
+        selectedPurchaseRequisition.setProcurementOfficer(Employee.findDefaultEmployee(em,
+                "--", "--", false));
+        selectedPurchaseRequisition.
+                setOriginatingDepartment(user.getEmployee().getDepartment());
+        selectedPurchaseRequisition.setProcurementMethod(SystemOption.getString(em,
+                "defaultProcurementMethod"));
+        selectedPurchaseRequisition.setOriginator(user.getEmployee());
+        selectedPurchaseRequisition.setRequisitionDate(new Date());
+        if (selectedPurchaseRequisition.getAutoGenerateNumber()) {
+            selectedPurchaseRequisition.generateNumber();
+        }
+        selectedPurchaseRequisition.addAction(BusinessEntity.Action.CREATE);
+        selectedPurchaseRequisition.setTax(Tax.findDefault(em, "0.0"));
+        selectedPurchaseRequisition.setDiscount(Discount.findDefault(em, "0.0"));
+        selectedPurchaseRequisition.setCurrency(defaultCurrency);
+
+        selectedPurchaseRequisition.save(em);
+
+        return selectedPurchaseRequisition;
     }
 
     public String getProcurementMethod() {
@@ -618,7 +648,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
                     getActions().clear();
                     getActions().add(BusinessEntity.Action.RECOMMEND);
                 }
-                break;    
+                break;
             case COMPLETE:
                 if ((findAction(BusinessEntity.Action.CREATE) == null)) {
                     getActions().clear();

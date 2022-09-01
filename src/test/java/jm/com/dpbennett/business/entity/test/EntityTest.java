@@ -25,6 +25,7 @@ import javax.persistence.Persistence;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.Division;
 import jm.com.dpbennett.business.entity.hrm.Employee;
+import jm.com.dpbennett.business.entity.pm.PurchaseRequisition;
 import jm.com.dpbennett.business.entity.sm.Notification;
 import org.junit.Test;
 
@@ -40,17 +41,8 @@ public class EntityTest {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
         EntityManager em = emf.createEntityManager();
 
-        Department department = em.find(Department.class, 26L);
-        System.out.println("Department: " + department.getName());
-        
-        Employee head = Division.findHeadOfActiveDivistionByDepartment(em, department);
-        if ( head != null) {
-             System.out.println("The head of a division that has the department " + department.getName() + " is " +
-                            head.toString());
-        }
-        else {
-            System.out.println("A division head was not found!");
-        }
+        //Department department = em.find(Department.class, 26L);
+       PurchaseRequisition pr = new PurchaseRequisition();
 
     }
 }
