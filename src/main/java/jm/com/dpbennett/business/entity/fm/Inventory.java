@@ -77,6 +77,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String status;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee editedBy;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateEntered;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
     @Transient
@@ -96,6 +100,22 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.id = id;
     }
 
+    public Employee getEditedBy() {
+        return editedBy;
+    }
+
+    public void setEditedBy(Employee editedBy) {
+        this.editedBy = editedBy;
+    }
+
+    public Date getDateEntered() {
+        return dateEntered;
+    }
+
+    public void setDateEntered(Date dateEntered) {
+        this.dateEntered = dateEntered;
+    }
+
     public ReturnMessage prepareAndSave(EntityManager em, User user) {
         Date now = new Date();
 
@@ -103,11 +123,14 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             // Get employee for later use
             Employee employee = user.getEmployee();
 
-            if (getIsDirty()) {
-                setDateEdited(now);
+            if (getIsDirty()) {                
                 if (getEnteredBy() == null) {
-                    setEnteredBy(employee);
+                    setDateEntered(now);
+                    setEnteredBy(employee);                    
                 }
+                
+                setDateEdited(now);
+                setEditedBy(employee);
             }
 
             ReturnMessage returnMessage = save(em);
@@ -385,9 +408,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     }
 
     public Employee getEnteredBy() {
-        if (enteredBy == null) {
-            return new Employee();
-        }
+
         return enteredBy;
     }
 
@@ -439,9 +460,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public String getName() {
-        if (name == null) {
-            name = "";
-        }
+
+        name = getProduct().getName();
+
         return name;
     }
 
