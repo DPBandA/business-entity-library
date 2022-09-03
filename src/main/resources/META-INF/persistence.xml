@@ -252,7 +252,7 @@
     <class>jm.com.dpbennett.business.entity.fm.Inventory</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jmts"/>
-      <property name="javax.persistence.jdbc.password" value="?Des12300!"/>
+      <property name="javax.persistence.jdbc.password" value=""/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.user" value="root"/>
       <property name="eclipselink.ddl-generation" value="create-tables"/>
