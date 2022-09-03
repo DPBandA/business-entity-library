@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2020  D P Bennett & Associates Limited
+Copyright (C) 2022  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity.sc;
+package jm.com.dpbennett.business.entity.fm;
 
 import jm.com.dpbennett.business.entity.sm.Category;
 import java.io.Serializable;
@@ -32,9 +32,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.hrm.Manufacturer;
+import jm.com.dpbennett.business.entity.sm.Product;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -44,7 +47,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "marketproduct")
-public class MarketProduct implements BusinessEntity, Comparable, Serializable {
+public class MarketProduct implements BusinessEntity, Comparable, Serializable, Product {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -58,6 +61,8 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
     private Boolean active;
     @Column(length = 1024)
     private String description;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Manufacturer manufacturer;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Category> categories;
     @Transient
@@ -74,12 +79,25 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
         this.categories = new ArrayList<>();
     }
 
+    @Override
+    public Manufacturer getManufacturer() {
+        if (manufacturer == null) {
+            manufacturer = new Manufacturer();
+        }
+        return manufacturer;
+    }
+
+    @Override
+    public void setManufacturer(Manufacturer manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
     public static List<MarketProduct> findAllActiveMarketProducts(EntityManager em) {
 
         try {
-            List<MarketProduct> marketProducts
-                    = em.createQuery("SELECT m FROM MarketProduct m WHERE m.active = 1 ORDER BY m.name",
-                            MarketProduct.class).getResultList();
+            List<MarketProduct> marketProducts;
+            marketProducts = em.createQuery("SELECT m FROM MarketProduct m WHERE m.active = 1 ORDER BY m.name",
+                    MarketProduct.class).getResultList();
 
             return marketProducts;
 
@@ -106,7 +124,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
                     + "' AND UPPER(m.brand) = '" + newBrand + "'"
                     + " AND UPPER(m.model) = '" + newModel + "'",
                     MarketProduct.class).getResultList();
-            if (products.size() > 0) {
+            if (!products.isEmpty()) {
                 MarketProduct product = products.get(0);
 
                 return product;
@@ -153,7 +171,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
                             + " AND UPPER(m.brand) "
                             + "= '" + brand.toUpperCase() + "'", MarketProduct.class).getResultList();
 
-            if (marketProducts.size() > 0) {
+            if (!marketProducts.isEmpty()) {
                 return marketProducts.get(0);
             }
 
@@ -328,13 +346,12 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
 
     @Override
     public String toString() {
-       if (type == null && brand == null && model == null) {
-           return "";
-       }
-       else {
+        if (type == null && brand == null && model == null) {
+            return "";
+        } else {
             return getType() + ", " + getBrand() + ", " + getModel();
-       }
-       // return getType() + ", " + getBrand() + ", " + getModel();
+        }
+        // return getType() + ", " + getBrand() + ", " + getModel();
     }
 
     @Override
@@ -358,7 +375,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
     public String getStoredName() {
         return name;
     }
-    
+
     public void setStoredName(String name) {
         this.name = name;
     }
@@ -368,6 +385,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
         this.name = name;
     }
 
+    @Override
     public String getType() {
         if (type == null) {
 
@@ -378,6 +396,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }

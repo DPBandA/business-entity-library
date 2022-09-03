@@ -113,7 +113,6 @@
     <class>jm.com.dpbennett.business.entity.sc.Complaint</class>
     <class>jm.com.dpbennett.business.entity.sm.StatusTracking</class>
     <class>jm.com.dpbennett.business.entity.sc.InspectionComponent</class>
-    <class>jm.com.dpbennett.business.entity.sc.MarketProduct</class>
     <class>jm.com.dpbennett.business.entity.sc.FactoryInspection</class>
     <class>jm.com.dpbennett.business.entity.sc.FactoryInspectionComponent</class>
     <class>jm.com.dpbennett.business.entity.sm.Modules</class>
@@ -121,6 +120,7 @@
     <class>jm.com.dpbennett.business.entity.sc.ManufacturerInspection</class>
     <class>jm.com.dpbennett.business.entity.sm.Notification</class>
     <class>jm.com.dpbennett.business.entity.fm.Inventory</class>
+    <class>jm.com.dpbennett.business.entity.fm.MarketProduct</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -136,6 +136,7 @@
       <property name="eclipselink.cache.shared.default" value="false"/>
     </properties>
   </persistence-unit>
+  <!--
   <persistence-unit name="PU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>jm.com.dpbennett.business.entity.Field</class>
@@ -232,7 +233,6 @@
     <class>jm.com.dpbennett.business.entity.sc.FactoryInspectionComponent</class>
     <class>jm.com.dpbennett.business.entity.sc.InspectionComponent</class>
     <class>jm.com.dpbennett.business.entity.sc.ManufacturerInspection</class>
-    <class>jm.com.dpbennett.business.entity.sc.MarketProduct</class>
     <class>jm.com.dpbennett.business.entity.sc.ProductInspection</class>
     <class>jm.com.dpbennett.business.entity.sc.ProductTest</class>
     <class>jm.com.dpbennett.business.entity.sc.Registration</class>
@@ -250,6 +250,7 @@
     <class>jm.com.dpbennett.business.entity.sm.SystemOption</class>
     <class>jm.com.dpbennett.business.entity.sm.Notification</class>
     <class>jm.com.dpbennett.business.entity.fm.Inventory</class>
+    <class>jm.com.dpbennett.business.entity.fm.MarketProduct</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jmts"/>
       <property name="javax.persistence.jdbc.password" value=""/>
@@ -259,4 +260,5 @@
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
+  -->
 </persistence>

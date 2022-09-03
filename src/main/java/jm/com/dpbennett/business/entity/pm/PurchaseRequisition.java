@@ -1599,7 +1599,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
 
             return new ReturnMessage(false,
                     "Undefined Error!",
-                    "An undefined error occurred while purchase requisition "
+                    "An undefined error occurred while saving purchase requisition "
                     + getNumber() + ":\n"
                     + e,
                     Message.SEVERITY_ERROR_NAME);

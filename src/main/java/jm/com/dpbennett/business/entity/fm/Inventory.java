@@ -19,7 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fm;
 
-import jm.com.dpbennett.business.entity.sc.*;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
@@ -36,14 +35,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.hrm.User;
-import jm.com.dpbennett.business.entity.jmts.Job;
 import jm.com.dpbennett.business.entity.pm.Supplier;
-import jm.com.dpbennett.business.entity.rm.DatePeriod;
 import jm.com.dpbennett.business.entity.sm.Category;
-import jm.com.dpbennett.business.entity.sm.Product;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -52,7 +48,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "inventory")
-public class Inventory implements Serializable, Comparable, BusinessEntity, Product {
+public class Inventory implements Serializable, Comparable, BusinessEntity, Asset {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -68,8 +64,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Prod
     private String stockKeepingUnit;
     private String measurementUnit;
     private String valuationMethod;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private MarketProduct product;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -87,6 +81,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Prod
     private Date dateEdited;
     @Transient
     private Boolean isDirty;
+    @Transient
+    private String editStatus;
+    @Transient
+    private List<BusinessEntity.Action> actions;
 
     @Override
     public Long getId() {
@@ -97,8 +95,145 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Prod
     public void setId(Long id) {
         this.id = id;
     }
-    
-     public static List<Inventory> find(
+
+    public ReturnMessage prepareAndSave(EntityManager em, User user) {
+        Date now = new Date();
+
+        try {
+            // Get employee for later use
+            Employee employee = user.getEmployee();
+
+            if (getIsDirty()) {
+                setDateEdited(now);
+                if (getEnteredBy() == null) {
+                    setEnteredBy(employee);
+                }
+            }
+
+            ReturnMessage returnMessage = save(em);
+
+            if (returnMessage.isSuccess()) {
+
+                setIsDirty(false);
+            } else {
+
+                return new ReturnMessage(false,
+                        "Undefined Error!",
+                        "An undefined error occurred while saving inventory"
+                        + ":\n"
+                        + returnMessage.getDetail(),
+                        Message.SEVERITY_ERROR_NAME);
+            }
+
+        } catch (Exception e) {
+
+            return new ReturnMessage(false,
+                    "Undefined Error!",
+                    "An undefined error occurred while saving inventory"
+                    + ":\n"
+                    + e,
+                    Message.SEVERITY_ERROR_NAME);
+        }
+
+        return new ReturnMessage();
+    }
+
+    public List<BusinessEntity.Action> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<BusinessEntity.Action> actions) {
+        this.actions = actions;
+    }
+
+    public void addAction(BusinessEntity.Action action) {
+
+        // Just return if the action already exists.
+        for (Action existingAction : getActions()) {
+            if (existingAction == action) {
+                return;
+            }
+        }
+        // Add a new action if possible
+        switch (action) {
+            case CREATE:
+                getActions().add(BusinessEntity.Action.CREATE);
+                break;
+            case EDIT:
+                if ((findAction(BusinessEntity.Action.CREATE) == null)
+                        && (findAction(BusinessEntity.Action.APPROVE) == null)
+                        && (findAction(BusinessEntity.Action.COMPLETE) == null)) {
+
+                    getActions().add(action);
+                }
+                break;
+            case APPROVE:
+                if ((findAction(BusinessEntity.Action.CREATE) == null)
+                        && (findAction(BusinessEntity.Action.COMPLETE) == null)) {
+
+                    getActions().clear();
+                    getActions().add(BusinessEntity.Action.APPROVE);
+                }
+                break;
+            case RECOMMEND:
+                if ((findAction(BusinessEntity.Action.CREATE) == null)
+                        && (findAction(BusinessEntity.Action.COMPLETE) == null)) {
+
+                    getActions().clear();
+                    getActions().add(BusinessEntity.Action.RECOMMEND);
+                }
+                break;
+            case COMPLETE:
+                if ((findAction(BusinessEntity.Action.CREATE) == null)) {
+                    getActions().clear();
+                    getActions().add(BusinessEntity.Action.COMPLETE);
+                }
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    public Action findAction(BusinessEntity.Action action) {
+        for (Action existingAction : getActions()) {
+            if (existingAction == action) {
+                return action;
+            }
+        }
+
+        return null;
+    }
+
+    public Inventory removeAction(BusinessEntity.Action action) {
+        int index = 0;
+
+        for (Action existingAction : getActions()) {
+            if (existingAction == action) {
+                actions.remove(index);
+
+                return this;
+            }
+            ++index;
+        }
+
+        return this;
+    }
+
+    public String getEditStatus() {
+        return editStatus;
+    }
+
+    public void setEditStatus(String editStatus) {
+        this.editStatus = editStatus;
+    }
+
+    public static Inventory findById(EntityManager em, Long Id) {
+
+        return em.find(Inventory.class, Id);
+    }
+
+    public static List<Inventory> find(
             EntityManager em,
             String searchText,
             Integer maxResults) {
@@ -107,245 +242,52 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Prod
         String searchQuery;
         String searchTextAndClause;
         String selectClause = "SELECT inventory FROM Inventory inventory";
-        String mainJoinClause = " JOIN inventory.category category"
-                + " JOIN inventory.manufacturer manufacturer"
-                + " JOIN job.department department"
-                + " JOIN job.subContractedDepartment subContractedDepartment"
-                + " LEFT JOIN job.department.staff staff"
-                + " LEFT JOIN job.subContractedDepartment.staff staff2"
-                + " JOIN job.classification classification"
-                + " JOIN job.sector sector"
-                + " JOIN job.client client"
-                + " JOIN job.jobCategory jobCategory"
-                + " JOIN job.jobSubCategory jobSubCategory"
-                + " JOIN job.assignedTo assignedTo"
-                + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                + " LEFT JOIN job.jobSamples jobSamples"
-                + " LEFT JOIN job.representatives representatives";
-
-        if (estimate) {
-            costEstimateSubclause = " AND (jobCostingAndPayment.estimate = 1)";
-        } else {
-            costEstimateSubclause = " AND (jobCostingAndPayment.estimate IS NULL OR jobCostingAndPayment.estimate = 0)";
-        }
+        String mainJoinClause
+                = " JOIN inventory.category category"
+                + " JOIN inventory.supplier supplier"
+                + " JOIN inventory.product product"
+                + " JOIN inventory.enteredBy enteredBy";
 
         if (searchText != null) {
             searchText = searchText.trim().replaceAll("'", "''");
         } else {
             searchText = "";
         }
-        String mainSearchWhereClause = " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(business.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(job.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(job.reportNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(job.comment) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobStatusAndTracking.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(job.instructions) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(assignedTo.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobCostingAndPayment.invoiceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobCostingAndPayment.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobSamples.reference) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobSamples.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobSamples.productBrand) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobSamples.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobSamples.productModel) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobSamples.productSerialNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(jobSamples.productCode) LIKE '%" + searchText.toUpperCase() + "%'";
 
-        String datePeriodSubClause = "jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-");
+        String mainSearchWhereClause = " UPPER(category.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(product.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.type) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.stockKeepingUnit) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.measurementUnit) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.valuationMethod) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.batchCode) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.dateMark) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.status) LIKE '%" + searchText.toUpperCase() + "%'";
 
-        // Build query based on search type
-        switch (searchType) {
-            case "Appr'd & uninv'd jobs":
-                searchTextAndClause
-                        = " AND subContractedDepartment.name = '--' AND ("
-                        + mainSearchWhereClause
-                        + " )";
-                searchQuery
-                        = selectClause
-                        + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause
-                        + costEstimateSubclause
-                        + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
-                        + " AND (jobCostingAndPayment.costingApproved = 1)"
-                        + " AND (classification.isEarning = 1)"
-                        + " AND (jobCostingAndPayment.invoiced IS NULL OR jobCostingAndPayment.invoiced = 0)" + ")"
-                        + searchTextAndClause
-                        + " ORDER BY job.id DESC";
-                break;
-            case "Unapproved job costings":
-                searchTextAndClause
-                        = " AND ("
-                        + mainSearchWhereClause
-                        + " )";
-                searchQuery
-                        = selectClause
-                        + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause
-                        + costEstimateSubclause
-                        + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
-                        + " AND (jobCostingAndPayment.costingApproved IS NULL OR jobCostingAndPayment.costingApproved = 0)" + ")"
-                        + searchTextAndClause
-                        + " ORDER BY job.id DESC";
-                break;
-            case "Incomplete jobs":
-                searchTextAndClause
-                        = " AND ("
-                        + mainSearchWhereClause
-                        + " )";
-                searchQuery
-                        = selectClause
-                        + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause
-                        + costEstimateSubclause
-                        + " AND jobStatusAndTracking.workProgress NOT LIKE 'Completed' AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'" + ")"
-                        + searchTextAndClause
-                        + " ORDER BY job.id DESC";
-                break;
-            case "Invoiced jobs":
-                searchTextAndClause
-                        = " AND subContractedDepartment.name = '--' AND ("
-                        + mainSearchWhereClause
-                        + " )";
-                searchQuery
-                        = selectClause
-                        + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause
-                        + costEstimateSubclause
-                        + " AND jobStatusAndTracking.workProgress NOT LIKE 'Cancelled'"
-                        + " AND (jobCostingAndPayment.costingApproved = 1)"
-                        + " AND (classification.isEarning = 1)"
-                        + " AND (jobCostingAndPayment.invoiced = 1)" + ")"
-                        + searchTextAndClause
-                        + " ORDER BY job.id DESC";
-                break;
-            case "Parent jobs only":
-                searchTextAndClause
-                        = " AND subContractedDepartment.name = '--' AND ("
-                        + mainSearchWhereClause
-                        + " )";
-                searchQuery
-                        = selectClause
-                        + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause
-                        + costEstimateSubclause
-                        + " )"
-                        + searchTextAndClause
-                        + " ORDER BY job.id DESC";
-                break;
-            case "General":
-                searchTextAndClause
-                        = " AND ("
-                        + mainSearchWhereClause
-                        + " )";
-                searchQuery
-                        = selectClause
-                        + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause
-                        + costEstimateSubclause
-                        + " )"
-                        + searchTextAndClause
-                        + " ORDER BY job.id DESC";
-                break;
-            case "Jobs in period":
-                searchQuery
-                        = selectClause
-                        + " JOIN job.jobStatusAndTracking jobStatusAndTracking"
-                        + " WHERE (" + datePeriodSubClause
-                        + costEstimateSubclause
-                        + " ORDER BY job.id DESC";
-                break;
-            case "Monthly report":
-                searchQuery
-                        = selectClause
-                        + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause
-                        + costEstimateSubclause
-                        + " AND ( UPPER(department.name) = '" + searchText.toUpperCase() + "'"
-                        + " OR UPPER(subContractedDepartment.name) = '" + searchText.toUpperCase() + "'"
-                        + " )"
-                        + " ORDER BY job.id DESC";
-                break;
-            case "My department's jobs":
-                searchTextAndClause
-                        = " AND ("
-                        + mainSearchWhereClause
-                        + " )";
-                searchQuery
-                        = selectClause
-                        + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause
-                        + costEstimateSubclause
-                        + " )"
-                        + searchTextAndClause
-                        + " AND ( UPPER(department.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
-                        + " OR UPPER(subContractedDepartment.name) LIKE '%" + user.getEmployee().getDepartment().getName().toUpperCase() + "%'"
-                        + " OR (UPPER(staff.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
-                        + " AND UPPER(staff.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%')"
-                        + " OR (UPPER(staff2.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
-                        + " AND UPPER(staff2.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%')"
-                        + " )"
-                        + " ORDER BY job.id DESC";
-                break;
-            case "My jobs":
-                searchTextAndClause
-                        = " AND ("
-                        + mainSearchWhereClause
-                        + " )";
-                searchQuery
-                        = selectClause
-                        + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause
-                        + costEstimateSubclause
-                        + " )"
-                        + searchTextAndClause
-                        + " AND ( (UPPER(assignedTo.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
-                        + " AND UPPER(assignedTo.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%')"
-                        + " OR (UPPER(representatives.lastName) LIKE '%" + user.getEmployee().getLastName().toUpperCase() + "%'"
-                        + " AND UPPER(representatives.firstName) LIKE '%" + user.getEmployee().getFirstName().toUpperCase() + "%')"
-                        + " )"
-                        + " ORDER BY job.id DESC";
-                break;
-            case "Jobs for my department":
-                searchText = user.getEmployee().getDepartment().getName().replaceAll("'", "''");
-                searchQuery
-                        = selectClause
-                        + mainJoinClause
-                        + " WHERE (" + datePeriodSubClause
-                        + costEstimateSubclause
-                        + " AND ( UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(subContractedDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " )"
-                        + " ORDER BY job.id DESC";
-                break;
-            default:
-                System.out.println("Default search to be implemented");
-
-                break;
-        }
+        // Build query     
+        searchTextAndClause
+                = " WHERE"
+                + mainSearchWhereClause;
+        searchQuery
+                = selectClause
+                + mainJoinClause
+                + searchTextAndClause
+                + " ORDER BY inventory.id DESC";
 
         try {
             if (maxResults == 0) {
-                foundJobs = em.createQuery(searchQuery, Job.class).getResultList();
+                foundInventory = em.createQuery(searchQuery, Inventory.class).getResultList();
             } else {
-                foundJobs = em.createQuery(searchQuery, Job.class).setMaxResults(maxResults).getResultList();
+                foundInventory = em.createQuery(searchQuery, Inventory.class).setMaxResults(maxResults).getResultList();
             }
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
 
-        return foundJobs;
+        return foundInventory;
     }
 
     public String getMeasurementUnit() {
@@ -381,6 +323,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Prod
     }
 
     public Double getCost() {
+        if (cost == null) {
+            cost = 0.0;
+        }
         return cost;
     }
 
@@ -516,20 +461,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Prod
     @Override
     public void setType(String type) {
         this.type = type;
-    }
-
-    @Override
-    public Manufacturer getManufacturer() {
-        if (manufacturer == null) {
-            return new Manufacturer();
-        }
-
-        return manufacturer;
-    }
-
-    @Override
-    public void setManufacturer(Manufacturer manufacturer) {
-        this.manufacturer = manufacturer;
     }
 
     public String getBatchCode() {

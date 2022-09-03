@@ -19,11 +19,17 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.test;
 
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import jm.com.dpbennett.business.entity.fm.Inventory;
+import jm.com.dpbennett.business.entity.fm.MarketProduct;
 import jm.com.dpbennett.business.entity.hrm.Department;
+import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.pm.PurchaseRequisition;
+import jm.com.dpbennett.business.entity.pm.Supplier;
+import jm.com.dpbennett.business.entity.sm.Category;
 import org.junit.Test;
 
 /**
@@ -38,9 +44,28 @@ public class EntityTest {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
         EntityManager em = emf.createEntityManager();
 
-        Department department = em.find(Department.class, 26L);
-        System.out.println("Dept. : " + department.getName());
-        //PurchaseRequisition pr = new PurchaseRequisition();
+        List<Inventory> inventory = Inventory.find(em, "Test", Integer.MAX_VALUE);
+        System.out.println("Inventory found: " + inventory);
+        
+        // Create and save inventory
+        System.out.println("Create and save inventory...");
+        Inventory invtry;
+        invtry = new Inventory();
+        
+        invtry.setName("Test");
+        invtry.setType("None");
+        invtry.setCategory(em.find(Category.class, 1724203L));
+        invtry.setStockKeepingUnit("001");
+        invtry.setMeasurementUnit("each");
+        invtry.setValuationMethod("FIFO");
+        invtry.setProduct(em.find(MarketProduct.class, 1738815L));
+        invtry.setSupplier(em.find(Supplier.class, 1613313L));
+        invtry.setEnteredBy(em.find(Employee.class, 46L));
+        
+        invtry.save(em);
+        
+        inventory = Inventory.find(em, "Test", Integer.MAX_VALUE);
+        System.out.println("Inventory found: " + inventory);
 
     }
 }
