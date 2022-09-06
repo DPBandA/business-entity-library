@@ -123,12 +123,12 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             // Get employee for later use
             Employee employee = user.getEmployee();
 
-            if (getIsDirty()) {                
+            if (getIsDirty()) {
                 if (getEnteredBy() == null) {
                     setDateEntered(now);
-                    setEnteredBy(employee);                    
+                    setEnteredBy(employee);
                 }
-                
+
                 setDateEdited(now);
                 setEditedBy(employee);
             }
@@ -322,6 +322,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     }
 
     public String getValuationMethod() {
+        if (valuationMethod == null) {
+            valuationMethod = "--";
+        }
+        
         return valuationMethod;
     }
 
