@@ -367,7 +367,7 @@ public class Notification implements NotificationInterface, Serializable {
         try {
             List<Notification> notifications
                     = em.createQuery("SELECT n FROM Notification n WHERE UPPER(n.name) LIKE '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY n.name", Notification.class).getResultList();
+                            + name.toUpperCase().trim() + "%' ORDER BY n.issueTime DESC", Notification.class).getResultList();
 
             return notifications;
 
@@ -383,7 +383,7 @@ public class Notification implements NotificationInterface, Serializable {
         try {
             List<Notification> notifications = em.createQuery("SELECT n FROM Notification n "
                     + "WHERE n.ownerId"
-                    + "= " + ownerId + " ORDER BY n.id", Notification.class).getResultList();
+                    + "= " + ownerId + " ORDER BY n.issueTime DESC", Notification.class).getResultList();
 
             if (!notifications.isEmpty()) {
                 return notifications.get(0);
@@ -399,7 +399,7 @@ public class Notification implements NotificationInterface, Serializable {
 
         try {
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
-                    + "WHERE n.active = 1 ORDER BY n.id", Notification.class).getResultList();
+                    + "WHERE n.active = 1 ORDER BY n.issueTime DESC", Notification.class).getResultList();
 
             return alerts;
         } catch (Exception e) {
@@ -414,7 +414,7 @@ public class Notification implements NotificationInterface, Serializable {
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
                     + "WHERE n.active = 1 AND "
                     + "n.ownerId = " + ownerId
-                    + " ORDER BY n.id, n.active DESC", Notification.class).getResultList();
+                    + " ORDER BY n.issueTime DESC", Notification.class).getResultList();
 
             return alerts;
         } catch (Exception e) {
@@ -428,7 +428,7 @@ public class Notification implements NotificationInterface, Serializable {
         try {
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n"
                     + " WHERE n.ownerId = " + ownerId
-                    + " ORDER BY n.id, n.active DESC", Notification.class).getResultList();
+                    + " ORDER BY n.issueTime DESC", Notification.class).getResultList();
 
             return alerts;
         } catch (Exception e) {
