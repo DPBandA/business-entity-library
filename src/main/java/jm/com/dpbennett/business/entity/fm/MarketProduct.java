@@ -54,6 +54,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String commonName;
     private String brand;
     private String model;
     private String type;
@@ -77,6 +78,14 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
         this.active = true;
         this.name = name;
         this.categories = new ArrayList<>();
+    }
+
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
     }
 
     @Override
@@ -345,13 +354,12 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     }
 
     @Override
-    public String toString() {
+    public String toString() { // tk update to remove commas where not needed?
         if (type == null && brand == null && model == null) {
             return "";
         } else {
             return getType() + ", " + getBrand() + ", " + getModel();
         }
-        // return getType() + ", " + getBrand() + ", " + getModel();
     }
 
     @Override
