@@ -81,6 +81,9 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     }
 
     public String getCommonName() {
+        if (commonName == null) {
+            commonName = "";
+        }
         return commonName;
     }
 

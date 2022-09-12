@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity.fm;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -89,6 +90,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String editStatus;
     @Transient
     private List<BusinessEntity.Action> actions;
+
+    public Inventory() {
+        actions = new ArrayList<>();
+    }
 
     @Override
     public Long getId() {
