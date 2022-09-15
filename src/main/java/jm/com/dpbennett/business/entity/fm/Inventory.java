@@ -68,7 +68,13 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @OneToOne(cascade = CascadeType.REFRESH)
     private MarketProduct product;
     @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateAcquired;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateChecked;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateEntered;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateEdited;
     @Temporal(javax.persistence.TemporalType.TIME)
     private Date timeChecked;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -80,10 +86,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEntered;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEdited;
     @Transient
     private Boolean isDirty;
     @Transient
@@ -103,6 +105,14 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Date getDateAcquired() {
+        return dateAcquired;
+    }
+
+    public void setDateAcquired(Date dateAcquired) {
+        this.dateAcquired = dateAcquired;
     }
 
     public Employee getEditedBy() {
@@ -330,7 +340,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         if (valuationMethod == null) {
             valuationMethod = "--";
         }
-        
+
         return valuationMethod;
     }
 
