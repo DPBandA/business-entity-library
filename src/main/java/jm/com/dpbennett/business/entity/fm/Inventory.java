@@ -349,6 +349,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     }
 
     public Long getQuantity() {
+        if (quantity == null) {
+            quantity = 1L;
+        }
         return quantity;
     }
 
@@ -357,6 +360,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     }
 
     public Double getUnitCost() {
+        if (unitCost == null) {
+            unitCost = 0.0;
+        }
         return unitCost;
     }
 
