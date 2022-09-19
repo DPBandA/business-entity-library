@@ -62,6 +62,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private Long quantity;
     private Double unitCost;
     private Double cost;
+    private Double budget;
     private String stockKeepingUnit;
     private String measurementUnit;
     private String valuationMethod;
@@ -105,6 +106,17 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Double getBudget() {
+        if (budget == null) {
+            budget = 0.0;
+        }
+        return budget;
+    }
+
+    public void setBudget(Double budget) {
+        this.budget = budget;
     }
 
     public Date getDateAcquired() {
