@@ -102,6 +102,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         actions = new ArrayList<>();
         costComponents = new ArrayList<>();
     }
+    
+    public Double getTotalCost() {
+        return getTotalCostComponentCosts();
+    }
 
     public Double getTotalCostComponentCosts() {
         Double total = 0.0;
