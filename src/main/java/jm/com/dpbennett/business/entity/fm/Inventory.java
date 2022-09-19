@@ -23,6 +23,7 @@ import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -31,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -87,6 +89,8 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<CostComponent> costComponents;
     @Transient
     private Boolean isDirty;
     @Transient
@@ -96,6 +100,41 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public Inventory() {
         actions = new ArrayList<>();
+        costComponents = new ArrayList<>();
+    }
+
+    public Double getTotalCostComponentCosts() {
+        Double total = 0.0;
+
+        for (CostComponent component : costComponents) {
+            total = total + component.getCost();
+        }
+
+        return total;
+    }
+
+    /**
+     * Builds and return a list of cost components with the costing to which the
+     * cost component used as a header cost component belong
+     *
+     * @return
+     */
+    public List<CostComponent> getAllSortedCostComponents() {
+
+        Collections.sort(getCostComponents());
+
+        return costComponents;
+    }
+
+    public List<CostComponent> getCostComponents() {
+        if (costComponents == null) {
+            costComponents = new ArrayList<>();
+        }
+        return costComponents;
+    }
+
+    public void setCostComponents(List<CostComponent> costComponents) {
+        this.costComponents = costComponents;
     }
 
     @Override
@@ -564,6 +603,21 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            // Save new/edited cost components
+            if (!getCostComponents().isEmpty()) {
+                for (CostComponent costComponent : getCostComponents()) {
+                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
+                            && !costComponent.save(em).isSuccess()) {
+
+                        return new ReturnMessage(false,
+                                "Cost component save error occurred",
+                                "An error occurred while saving a cost component",
+                                Message.SEVERITY_ERROR_NAME);
+
+                    }
+                }
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

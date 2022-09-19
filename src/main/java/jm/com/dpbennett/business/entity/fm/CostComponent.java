@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity.fm;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,6 +33,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -69,6 +71,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private Boolean isDirty;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
+     @Temporal(javax.persistence.TemporalType.DATE)
+    private Date costDate;
 
     public CostComponent() {
         name = "";
@@ -139,6 +143,14 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         rate = 0.0;
         description = "";
         unit = "";
+    }
+
+    public Date getCostDate() {
+        return costDate;
+    }
+
+    public void setCostDate(Date costDate) {
+        this.costDate = costDate;
     }
 
     public Currency getCurrency() {
