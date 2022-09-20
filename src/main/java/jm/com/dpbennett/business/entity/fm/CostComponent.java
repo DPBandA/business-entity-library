@@ -358,7 +358,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Double getCost() {
-         if (cost == null) {
+        if (cost == null) {
             cost = 0.0;
         }
         
