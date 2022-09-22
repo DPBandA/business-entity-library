@@ -61,7 +61,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String type;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Category category;
-    private Long quantity;
+    private Double quantity;
     private Double unitCost;
     private Double cost;
     private Double budget;
@@ -102,7 +102,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         actions = new ArrayList<>();
         costComponents = new ArrayList<>();
     }
-    
+
     public Double getTotalCost() {
         return getTotalCostComponentCosts();
     }
@@ -112,6 +112,16 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
         for (CostComponent component : costComponents) {
             total = total + component.getCost();
+        }
+
+        return total;
+    }
+
+    public Double getTotalCostComponentQuantities() {
+        Double total = 0.0;
+
+        for (CostComponent component : costComponents) {
+            total = total + component.getHoursOrQuantity();
         }
 
         return total;
@@ -403,15 +413,11 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.valuationMethod = valuationMethod;
     }
 
-    public Long getQuantity() {
-        if (quantity == null) {
-            quantity = 1L;
-        }
-        return quantity;
-    }
+    public Double getQuantity() {
 
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
+        quantity = getTotalCostComponentQuantities();
+
+        return quantity;
     }
 
     public Double getUnitCost() {
@@ -426,14 +432,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     }
 
     public Double getCost() {
-        if (cost == null) {
-            cost = 0.0;
-        }
-        return cost;
-    }
 
-    public void setCost(Double cost) {
-        this.cost = cost;
+        cost = getTotalCost();
+
+        return cost;
     }
 
     public String getStockKeepingUnit() {
