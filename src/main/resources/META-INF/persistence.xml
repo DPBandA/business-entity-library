@@ -109,7 +109,6 @@
     <class>jm.com.dpbennett.business.entity.hrm.Manufacturer</class>
     <class>jm.com.dpbennett.business.entity.sm.Category</class>
     <class>jm.com.dpbennett.business.entity.Field</class>
-    <class>jm.com.dpbennett.business.entity.fa.FinancialAccount</class>
     <class>jm.com.dpbennett.business.entity.sc.Complaint</class>
     <class>jm.com.dpbennett.business.entity.sm.StatusTracking</class>
     <class>jm.com.dpbennett.business.entity.sc.InspectionComponent</class>
@@ -121,6 +120,7 @@
     <class>jm.com.dpbennett.business.entity.sm.Notification</class>
     <class>jm.com.dpbennett.business.entity.fm.Inventory</class>
     <class>jm.com.dpbennett.business.entity.fm.MarketProduct</class>
+    <class>jm.com.dpbennett.business.entity.fm.FinancialAccount</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
