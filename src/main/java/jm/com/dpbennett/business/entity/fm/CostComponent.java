@@ -162,45 +162,36 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public void update() {
+
         switch (getType()) {
             case "Fixed":
-            case "FIXED":    
                 setIsFixedCost(true);
                 setIsHeading(false);
                 setHours(0.0);
-                setHoursOrQuantity(1.0);
-                setRate(getCost());
+                setHoursOrQuantity(0.0);
+                setRate(0.0);
                 break;
-            case "Heading":    
-            case "HEADING":
+            case "Heading":
                 setIsFixedCost(false);
                 setIsHeading(true);
                 setHours(0.0);
                 setHoursOrQuantity(0.0);
                 setRate(0.0);
                 setCost(0.0);
+                setUnit("");
                 break;
-            case "Variable":    
-            case "VARIABLE":
+            case "Variable":
                 setIsFixedCost(false);
                 setIsHeading(false);
                 break;
-            case "Subcontract":    
-            case "SUBCONTRACT":
-                setIsFixedCost(true);
-                setIsHeading(false);
-                setHours(0.0);
-                setHoursOrQuantity(1.0);
-                setRate(getCost());
-                break;
             default:
-                setIsFixedCost(true);
+                setIsFixedCost(false);
                 setIsHeading(false);
-                setHours(0.0);
-                setHoursOrQuantity(1.0);
-                setRate(getCost());
                 break;
         }
+
+        // Recalculate cost
+        getCost();
     }
 
     public String getType() {

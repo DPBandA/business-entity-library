@@ -1,5 +1,5 @@
 /*
-Business Entity Library (BEL) 
+Business Entity Library (BEL)
 Copyright (C) 2022  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
@@ -17,17 +17,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity.test;
+package jm.com.dpbennett.business.entity.utils;
 
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import jm.com.dpbennett.business.entity.fm.Inventory;
 import jm.com.dpbennett.business.entity.fm.MarketProduct;
-import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.Employee;
-import jm.com.dpbennett.business.entity.pm.PurchaseRequisition;
 import jm.com.dpbennett.business.entity.pm.Supplier;
 import jm.com.dpbennett.business.entity.sm.Category;
 import org.junit.Test;
@@ -36,17 +33,14 @@ import org.junit.Test;
  *
  * @author Desmond Bennett
  */
-public class EntityTest {
+public class CreateInventory {
 
     @Test
-    public void testEntity() {
+    public void create() {
         
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
         EntityManager em = emf.createEntityManager();
 
-        
-        Inventory inventory = em.find(Inventory.class, 1957701L);
-        System.out.println("Inventory found: " + inventory);
         
         // Create and save inventory
         System.out.println("Create and save inventory...");

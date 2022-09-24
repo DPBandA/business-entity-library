@@ -121,6 +121,7 @@
     <class>jm.com.dpbennett.business.entity.fm.Inventory</class>
     <class>jm.com.dpbennett.business.entity.fm.MarketProduct</class>
     <class>jm.com.dpbennett.business.entity.fm.FinancialAccount</class>
+    <class>jm.com.dpbennett.business.entity.fm.InventoryDisbursement</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
@@ -251,6 +252,8 @@
     <class>jm.com.dpbennett.business.entity.sm.Notification</class>
     <class>jm.com.dpbennett.business.entity.fm.Inventory</class>
     <class>jm.com.dpbennett.business.entity.fm.MarketProduct</class>
+    <class>jm.com.dpbennett.business.entity.fm.FinancialAccount</class>
+    <class>jm.com.dpbennett.business.entity.fm.InventoryDisbursement</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jmts"/>
       <property name="javax.persistence.jdbc.password" value=""/>

@@ -58,6 +58,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String code;
     private String type;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Category category;
@@ -101,6 +102,17 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     public Inventory() {
         actions = new ArrayList<>();
         costComponents = new ArrayList<>();
+    }
+
+    public String getCode() {
+        if (code == null) {
+            code = "";
+        }
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Double getTotalCost() {

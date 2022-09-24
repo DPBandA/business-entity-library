@@ -59,14 +59,17 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @OneToOne(cascade = CascadeType.REFRESH)
     private Inventory inventory;
     private Double quantityOrdered;
-    private Double quantityReceived;    
+    private Double quantityReceived;   
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateOrdered;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateReceived;
     private Double unitCost;
     private Double cost;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEntered;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
-    @OneToOne(cascade = CascadeType.REFRESH)
     private String status;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
@@ -93,6 +96,22 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Date getDateOrdered() {
+        return dateOrdered;
+    }
+
+    public void setDateOrdered(Date dateOrdered) {
+        this.dateOrdered = dateOrdered;
+    }
+
+    public Date getDateReceived() {
+        return dateReceived;
+    }
+
+    public void setDateReceived(Date dateReceived) {
+        this.dateReceived = dateReceived;
     }
 
     public Double getUnitCost() {
@@ -354,6 +373,10 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     public Double getCost() {
 
         return cost;
+    }
+
+    public void setCost(Double cost) {
+        this.cost = cost;
     }
 
     public Date getDateEdited() {
