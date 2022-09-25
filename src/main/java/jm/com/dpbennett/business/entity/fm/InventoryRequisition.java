@@ -23,15 +23,16 @@ import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -47,36 +48,26 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
-@Table(name = "inventorydisbursement")
-public class InventoryDisbursement implements Serializable, Comparable, BusinessEntity, Asset {
+@Table(name = "inventoryrequisition")
+public class InventoryRequisition implements Serializable, Comparable, BusinessEntity, Asset {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String code;
     private String type;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Inventory inventory;
-    private Double quantityOrdered;
-    private Double quantityReceived;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOrdered;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateReceived;
-    private Double unitCost;
-    private Double cost;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEntered;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
-    private String status;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
-    @Column(length = 1024)
-    private String description;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<InventoryDisbursement> inventoryDisbursements;
     @Transient
     private Boolean isDirty;
     @Transient
@@ -84,8 +75,38 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Transient
     private List<BusinessEntity.Action> actions;
 
-    public InventoryDisbursement() {
+    public InventoryRequisition() {
         actions = new ArrayList<>();
+        inventoryDisbursements = new ArrayList<>();
+    }
+
+    public String getCode() {
+        if (code == null) {
+            code = "";
+        }
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public List<InventoryDisbursement> getAllSortedInventoryDisbursements() {
+
+        Collections.sort(getInventoryDisbursements());
+
+        return inventoryDisbursements;
+    }
+
+    public List<InventoryDisbursement> getInventoryDisbursements() {
+        if (inventoryDisbursements == null) {
+            inventoryDisbursements = new ArrayList<>();
+        }
+        return inventoryDisbursements;
+    }
+
+    public void setInventoryDisbursements(List<InventoryDisbursement> inventoryDisbursements) {
+        this.inventoryDisbursements = inventoryDisbursements;
     }
 
     @Override
@@ -96,57 +117,6 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Date getDateOrdered() {
-        return dateOrdered;
-    }
-
-    public void setDateOrdered(Date dateOrdered) {
-        this.dateOrdered = dateOrdered;
-    }
-
-    public Date getDateReceived() {
-        return dateReceived;
-    }
-
-    public void setDateReceived(Date dateReceived) {
-        this.dateReceived = dateReceived;
-    }
-
-    public Double getUnitCost() {
-        return unitCost;
-    }
-
-    public void setUnitCost(Double unitCost) {
-        this.unitCost = unitCost;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Inventory getInventory() {
-        if (inventory == null) {
-            return new Inventory();
-        }
-        return inventory;
-    }
-
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
-    }
-
-    public Double getQuantityReceived() {
-        return quantityReceived;
-    }
-
-    public void setQuantityReceived(Double quantityReceived) {
-        this.quantityReceived = quantityReceived;
     }
 
     public Employee getEditedBy() {
@@ -191,7 +161,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
                 return new ReturnMessage(false,
                         "Undefined Error!",
-                        "An undefined error occurred while saving inventory"
+                        "An undefined error occurred while saving inventory requisition"
                         + ":\n"
                         + returnMessage.getDetail(),
                         Message.SEVERITY_ERROR_NAME);
@@ -201,7 +171,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
             return new ReturnMessage(false,
                     "Undefined Error!",
-                    "An undefined error occurred while saving inventory"
+                    "An undefined error occurred while saving inventory requisition"
                     + ":\n"
                     + e,
                     Message.SEVERITY_ERROR_NAME);
@@ -277,7 +247,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         return null;
     }
 
-    public InventoryDisbursement removeAction(BusinessEntity.Action action) {
+    public InventoryRequisition removeAction(BusinessEntity.Action action) {
         int index = 0;
 
         for (Action existingAction : getActions()) {
@@ -300,24 +270,23 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         this.editStatus = editStatus;
     }
 
-    public static InventoryDisbursement findById(EntityManager em, Long Id) {
+    public static InventoryRequisition findById(EntityManager em, Long Id) {
 
-        return em.find(InventoryDisbursement.class, Id);
+        return em.find(InventoryRequisition.class, Id);
     }
 
-    public static List<InventoryDisbursement> find(
+    public static List<InventoryRequisition> find(
             EntityManager em,
             String searchText,
             Integer maxResults) {
 
-        List<InventoryDisbursement> foundInventoryDisbursements;
+        List<InventoryRequisition> foundInventoryRequisitions;
         String searchQuery;
         String searchTextAndClause;
-        String selectClause = "SELECT inventoryDisbursement FROM InventoryDisbursement inventoryDisbursement";
+        String selectClause = "SELECT InventoryRequisition FROM InventoryRequisition inventoryRequisition";
         String mainJoinClause
-                = " JOIN inventoryDisbursement.inventory inventory"
-                + " JOIN inventoryDisbursement.enteredBy enteredBy"
-                + " JOIN inventoryDisbursement.editedBy editedBy";
+                = " JOIN inventoryRequisition.editedBy editedBy"              
+                + " JOIN inventoryRequisition.enteredBy enteredBy";
 
         if (searchText != null) {
             searchText = searchText.trim().replaceAll("'", "''");
@@ -325,13 +294,11 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
             searchText = "";
         }
 
-        String mainSearchWhereClause = " UPPER(inventoryDisbursement.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventoryDisbursement.type) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventoryDisbursement.status) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventoryDisbursement.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(enteredBy.name) LIKE '%" + searchText.toUpperCase() + "%'"            
-                + " OR UPPER(editedBy.name) LIKE '%" + searchText.toUpperCase() + "%'";
+        String mainSearchWhereClause = " UPPER(inventoryRequisition.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventoryRequisition.code) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventoryRequisition.type) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(editedBy.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(enteredBy.name) LIKE '%" + searchText.toUpperCase() + "%'";
 
         // Build query     
         searchTextAndClause
@@ -341,37 +308,20 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
                 = selectClause
                 + mainJoinClause
                 + searchTextAndClause
-                + " ORDER BY inventoryDisbursement.id DESC";
+                + " ORDER BY inventoryRequisition.id DESC";
 
         try {
             if (maxResults == 0) {
-                foundInventoryDisbursements = em.createQuery(searchQuery, InventoryDisbursement.class).getResultList();
+                foundInventoryRequisitions = em.createQuery(searchQuery, InventoryRequisition.class).getResultList();
             } else {
-                foundInventoryDisbursements = em.createQuery(searchQuery, InventoryDisbursement.class).setMaxResults(maxResults).getResultList();
+                foundInventoryRequisitions = em.createQuery(searchQuery, InventoryRequisition.class).setMaxResults(maxResults).getResultList();
             }
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
 
-        return foundInventoryDisbursements;
-    }
-
-    public Double getQuantityOrdered() {
-        return quantityOrdered;
-    }
-
-    public void setQuantityOrdered(Double quantityOrdered) {
-        this.quantityOrdered = quantityOrdered;
-    }
-
-    public Double getCost() {
-
-        return cost;
-    }
-
-    public void setCost(Double cost) {
-        this.cost = cost;
+        return foundInventoryRequisitions;
     }
 
     public Date getDateEdited() {
@@ -404,14 +354,6 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         this.enteredBy = enteredBy;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -422,10 +364,10 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof InventoryDisbursement)) {
+        if (!(object instanceof InventoryRequisition)) {
             return false;
         }
-        InventoryDisbursement other = (InventoryDisbursement) object;
+        InventoryRequisition other = (InventoryRequisition) object;
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
@@ -441,6 +383,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         if (name == null) {
             name = "";
         }
+
         return name;
     }
 
@@ -465,7 +408,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public int compareTo(Object o) {
         String thisIdStr = (this.getId() == null ? "" + Integer.MAX_VALUE : this.getId().toString());
-        String oIdStr = (((InventoryDisbursement) o).getId() == null ? "" + Integer.MAX_VALUE : ((InventoryDisbursement) o).getId().toString());
+        String oIdStr = (((InventoryRequisition) o).getId() == null ? "" + Integer.MAX_VALUE : ((InventoryRequisition) o).getId().toString());
 
         return Collator.getInstance().compare(thisIdStr, oIdStr);
     }
@@ -473,6 +416,21 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            // Save new/edited cost components
+            if (!getInventoryDisbursements().isEmpty()) {
+                for (InventoryDisbursement inventoryDisbursement : getInventoryDisbursements()) {
+                    if ((inventoryDisbursement.getIsDirty() || inventoryDisbursement.getId() == null)
+                            && !inventoryDisbursement.save(em).isSuccess()) {
+
+                        return new ReturnMessage(false,
+                                "Inventory disbursement save error occurred",
+                                "An error occurred while saving an inventory disbursement",
+                                Message.SEVERITY_ERROR_NAME);
+
+                    }
+                }
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -483,7 +441,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Inventory Disbusement not saved");
+        return new ReturnMessage(false, "Inventory Disbursement not saved");
     }
 
     @Override
