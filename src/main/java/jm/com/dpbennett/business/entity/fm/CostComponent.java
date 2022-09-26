@@ -194,6 +194,10 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         getCost();
     }
 
+    /**
+     * Types can be Heading, Variable, Fixed, Subcontract, Purchase, Sale, Disbursement, etc.
+     * @return 
+     */
     public String getType() {
         if (type == null) {
             type = "--";
