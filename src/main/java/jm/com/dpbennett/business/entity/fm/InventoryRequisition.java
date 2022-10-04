@@ -59,9 +59,21 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     private String code;
     private String type;
     @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateRequisitionApproved;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateInventoryReceived;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateOfRequisition;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEntered;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee requisitionApprovedBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee inventoryReceivedBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee requisitionBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -78,6 +90,54 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public InventoryRequisition() {
         actions = new ArrayList<>();
         inventoryDisbursements = new ArrayList<>();
+    }
+
+    public Date getDateRequisitionApproved() {
+        return dateRequisitionApproved;
+    }
+
+    public void setDateRequisitionApproved(Date dateRequisitionApproved) {
+        this.dateRequisitionApproved = dateRequisitionApproved;
+    }
+
+    public Date getDateInventoryReceived() {
+        return dateInventoryReceived;
+    }
+
+    public void setDateInventoryReceived(Date dateInventoryReceived) {
+        this.dateInventoryReceived = dateInventoryReceived;
+    }
+
+    public Date getDateOfRequisition() {
+        return dateOfRequisition;
+    }
+
+    public void setDateOfRequisition(Date dateOfRequisition) {
+        this.dateOfRequisition = dateOfRequisition;
+    }
+
+    public Employee getRequisitionApprovedBy() {
+        return requisitionApprovedBy;
+    }
+
+    public void setRequisitionApprovedBy(Employee requisitionApprovedBy) {
+        this.requisitionApprovedBy = requisitionApprovedBy;
+    }
+
+    public Employee getInventoryReceivedBy() {
+        return inventoryReceivedBy;
+    }
+
+    public void setInventoryReceivedBy(Employee inventoryReceivedBy) {
+        this.inventoryReceivedBy = inventoryReceivedBy;
+    }
+
+    public Employee getRequisitionBy() {
+        return requisitionBy;
+    }
+
+    public void setRequisitionBy(Employee requisitionBy) {
+        this.requisitionBy = requisitionBy;
     }
 
     public String getCode() {
@@ -285,7 +345,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
         String searchTextAndClause;
         String selectClause = "SELECT InventoryRequisition FROM InventoryRequisition inventoryRequisition";
         String mainJoinClause
-                = " JOIN inventoryRequisition.editedBy editedBy"              
+                = " JOIN inventoryRequisition.editedBy editedBy"
                 + " JOIN inventoryRequisition.enteredBy enteredBy";
 
         if (searchText != null) {
