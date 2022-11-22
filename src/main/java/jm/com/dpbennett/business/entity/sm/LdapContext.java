@@ -23,8 +23,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.BasicAttributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 import javax.naming.ldap.InitialLdapContext;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -35,7 +44,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -46,11 +54,10 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "ldapcontext")
 @NamedQueries({
-    @NamedQuery(name = "findAllLdapContexts", query = "SELECT e FROM LdapContext e ORDER BY e.name")
-    ,
+    @NamedQuery(name = "findAllLdapContexts", query = "SELECT e FROM LdapContext e ORDER BY e.name"),
     @NamedQuery(name = "findAllActiveLdapContexts", query = "SELECT e FROM LdapContext e WHERE e.active = 1 ORDER BY e.name")
 })
-public class LdapContext implements  Serializable, LdapContextInterface {
+public class LdapContext implements Serializable, LdapContextInterface {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -96,7 +103,7 @@ public class LdapContext implements  Serializable, LdapContextInterface {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -213,7 +220,7 @@ public class LdapContext implements  Serializable, LdapContextInterface {
             return false;
         }
         LdapContext other = (LdapContext) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -330,5 +337,86 @@ public class LdapContext implements  Serializable, LdapContextInterface {
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
+    }
+
+    public static LdapContext findActiveLdapContextByName(EntityManager em, String value) {
+
+        try {
+
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<LdapContext> ldapContexts = em.createQuery("SELECT l FROM LdapContext l "
+                    + "WHERE l.active = 1 AND UPPER(l.name) "
+                    + "= '" + value.toUpperCase() + "'", LdapContext.class).getResultList();
+            if (!ldapContexts.isEmpty()) {
+                return ldapContexts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static DirContext getConnection(EntityManager em, String name) {
+        LdapContext context = LdapContext.findActiveLdapContextByName(em, name);
+        Properties env = new Properties();
+
+        env.put(Context.INITIAL_CONTEXT_FACTORY, context.initialContextFactory);
+        env.put(Context.PROVIDER_URL, context.providerUrl);
+        env.put(Context.SECURITY_PRINCIPAL, context.securityPrincipal);
+        env.put(Context.SECURITY_CREDENTIALS, context.securityCredentials);
+
+        try {
+            return new InitialDirContext(env);
+
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+
+        return null;
+    }
+   
+    /*
+    MAY (
+		audio $ businessCategory $ carLicense $ departmentNumber $
+		displayName $ employeeNumber $ employeeType $ givenName $
+		homePhone $ homePostalAddress $ initials $ jpegPhoto $
+		labeledURI $ mail $ manager $ mobile $ o $ pager $
+		photo $ roomNumber $ secretary $ uid $ userCertificate $
+		x500uniqueIdentifier $ preferredLanguage $
+		userSMIMECertificate $ userPKCS12 )
+	)
+    */
+    public static void addUser(
+            EntityManager em, 
+            String userName,
+            String firstName,
+            String lastName,
+            String email) {
+        Attributes attributes = new BasicAttributes();
+        Attribute inetOrgPerson = new BasicAttribute("objectClass");
+
+        inetOrgPerson.add("inetOrgPerson");
+
+        attributes.put(inetOrgPerson);
+        attributes.put("uid", userName);
+        attributes.put("cn", firstName);
+        //attributes.put("uid", uid);
+        attributes.put("sn", "Bennett");
+        //attributes.put("userPassword", "kjkjjk");
+
+        try {
+            DirContext connection = getConnection(em, "LDAP"); // tk provide as parameter
+            // tk for null before using
+            connection.createSubcontext(
+                    "cn=" + firstName + ",dc=dpbennett,dc=com,dc=jm",
+                    //"",
+                    attributes);
+            System.out.println("User added!"); // tk 
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+
     }
 }

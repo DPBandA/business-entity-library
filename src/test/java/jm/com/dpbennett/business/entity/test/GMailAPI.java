@@ -19,22 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.test;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import org.junit.Test;
 
 /**
  *
  * @author Desmond Bennett
  */
-public class SecurityTest {
+public class GMailAPI {
+    
+    // client_secret_157905242940-v9btu3depdh6lklj0bq8hjfub8pees5f.apps.googleusercontent.com.json
 
     @Test
-    public void encryptAndDecrypt() {
-//        String plainText = "Hello World";
-//        System.out.println("Plain: " + plainText);
-//
-//        String encryptedText = Security.encrypt(plainText);
-//        System.out.println("Encrypted: " + encryptedText);
-//
-//        System.out.println("Decrypted: " + Security.decrypt(encryptedText));
+    public void testEmail() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
+        EntityManager em = emf.createEntityManager();        
+
     }
 }
