@@ -56,51 +56,51 @@ public class Privilege implements Serializable, PrivilegeInterface {
     private String roles;
     private String description;
     // System admininistration privileges    
-    private Boolean canBeSuperUser;
-    private Boolean canBeJMTSAdministrator;
+    //private Boolean canBeSuperUser;
+    //private Boolean canBeJMTSAdministrator;
     // Job privileges
-    private Boolean canEnterJob;
-    private Boolean canEnterOwnJob;
-    private Boolean canEnterDepartmentJob;
-    private Boolean canDeleteJob;
-    private Boolean canEditJob;
-    private Boolean canEditOwnJob;
-    private Boolean canEditDepartmentJob;
-    private Boolean canApproveJobCosting;
-    private Boolean canEnterParentJob;
-    private Boolean canEditDisabledJobField;
+//    private Boolean canEnterJob;
+//    private Boolean canEnterOwnJob;
+//    private Boolean canEnterDepartmentJob;
+//    private Boolean canDeleteJob;
+//    private Boolean canEditJob;
+//    private Boolean canEditOwnJob;
+//    private Boolean canEditDepartmentJob;
+//    private Boolean canApproveJobCosting;
+//    private Boolean canEnterParentJob;
+//    private Boolean canEditDisabledJobField;
     // Client privileges 
-    private Boolean canAddClient;
-    private Boolean canDeleteClient;
+//    private Boolean canAddClient;
+//    private Boolean canDeleteClient;
     // HR privileges
-    private Boolean canAddEmployee;
-    private Boolean canDeleteEmployee;
-    private Boolean canAddDepartment;
-    private Boolean canDeleteDepartment;
+//    private Boolean canAddEmployee;
+//    private Boolean canDeleteEmployee;
+//    private Boolean canAddDepartment;
+//    private Boolean canDeleteDepartment;
     // Compliance privileges
-    private Boolean canAuthDetentionRequest;
-    private Boolean canAuthDetentionNotice;
-    private Boolean canApprvReleaseRequest;
+//    private Boolean canAuthDetentionRequest;
+//    private Boolean canAuthDetentionNotice;
+//    private Boolean canApprvReleaseRequest;
     // Financial privileges
-    private Boolean canBeFinancialAdministrator;
-    private Boolean canEditInvoicingAndPayment;
+//    private Boolean canBeFinancialAdministrator;
+//    private Boolean canEditInvoicingAndPayment;
     private Boolean canApplyTaxesToJobCosting;
-    private Boolean canApplyDiscountsToJobCosting;
-    private Boolean canAddAccountingCode;
-    private Boolean canAddSupplier;
+//    private Boolean canApplyDiscountsToJobCosting;
+//    private Boolean canAddAccountingCode;
+//    private Boolean canAddSupplier;
     // Module/unit access       
-    private Boolean canAccessProcurementUnit;
-    private Boolean canAccessLegalMetrologyUnit;
-    private Boolean canAccessJobManagementUnit;
-    private Boolean canAccessComplianceUnit;
-    private Boolean canAccessFoodsUnit;
-    private Boolean canAccessStandardsUnit;
-    private Boolean canAccessCertificationUnit;
-    private Boolean canAccessServiceRequestUnit;
-    private Boolean canAccessLegalOfficeUnit;
-    private Boolean canAccessCRMUnit;
-    private Boolean canAccessHRMUnit;
-    private Boolean canAccessReportUnit;
+//    private Boolean canAccessProcurementUnit;
+//    private Boolean canAccessLegalMetrologyUnit;
+//    private Boolean canAccessJobManagementUnit;
+//    private Boolean canAccessComplianceUnit;
+//    private Boolean canAccessFoodsUnit;
+//    private Boolean canAccessStandardsUnit;
+//    private Boolean canAccessCertificationUnit;
+//    private Boolean canAccessServiceRequestUnit;
+//    private Boolean canAccessLegalOfficeUnit;
+//    private Boolean canAccessCRMUnit;
+//    private Boolean canAccessHRMUnit;
+//    private Boolean canAccessReportUnit;
     @Transient
     private Boolean isDirty;
 
@@ -156,159 +156,159 @@ public class Privilege implements Serializable, PrivilegeInterface {
         this.isDirty = isDirty;
     }
 
-    public Boolean getCanAddAccountingCode() {
-        if (canAddAccountingCode == null) {
-            canAddAccountingCode = false;
-        }
-        return canAddAccountingCode;
-    }
+//    public Boolean getCanAddAccountingCode() {
+//        if (canAddAccountingCode == null) {
+//            canAddAccountingCode = false;
+//        }
+//        return canAddAccountingCode;
+//    }
+//
+//    public void setCanAddAccountingCode(Boolean canAddAccountingCode) {
+//        this.canAddAccountingCode = canAddAccountingCode;
+//    }
 
-    public void setCanAddAccountingCode(Boolean canAddAccountingCode) {
-        this.canAddAccountingCode = canAddAccountingCode;
-    }
+//    public Boolean getCanAddSupplier() {
+//        if (canAddSupplier == null) {
+//            canAddSupplier = true;
+//        }
+//        return canAddSupplier;
+//    }
+//
+//    public void setCanAddSupplier(Boolean canAddSupplier) {
+//        this.canAddSupplier = canAddSupplier;
+//    }
 
-    public Boolean getCanAddSupplier() {
-        if (canAddSupplier == null) {
-            canAddSupplier = true;
-        }
-        return canAddSupplier;
-    }
+//    public Boolean getCanAccessProcurementUnit() {
+//        if (canAccessProcurementUnit == null) {
+//            canAccessProcurementUnit = false;
+//        }
+//        return canAccessProcurementUnit;
+//    }
+//
+//    public void setCanAccessProcurementUnit(Boolean canAccessProcurementUnit) {
+//        this.canAccessProcurementUnit = canAccessProcurementUnit;
+//    }
 
-    public void setCanAddSupplier(Boolean canAddSupplier) {
-        this.canAddSupplier = canAddSupplier;
-    }
+//    public Boolean getCanAccessHRMUnit() {
+//        if (canAccessHRMUnit == null) {
+//            canAccessHRMUnit = false;
+//        }
+//        return canAccessHRMUnit;
+//    }
+//
+//    public void setCanAccessHRMUnit(Boolean canAccessHRMUnit) {
+//        this.canAccessHRMUnit = canAccessHRMUnit;
+//    }
 
-    public Boolean getCanAccessProcurementUnit() {
-        if (canAccessProcurementUnit == null) {
-            canAccessProcurementUnit = false;
-        }
-        return canAccessProcurementUnit;
-    }
+//    public Boolean getCanAccessReportUnit() {
+//        if (canAccessReportUnit == null) {
+//            canAccessReportUnit = false;
+//        }
+//        return canAccessReportUnit;
+//    }
+//
+//    public void setCanAccessReportUnit(Boolean canAccessReportUnit) {
+//        this.canAccessReportUnit = canAccessReportUnit;
+//    }
 
-    public void setCanAccessProcurementUnit(Boolean canAccessProcurementUnit) {
-        this.canAccessProcurementUnit = canAccessProcurementUnit;
-    }
+//    public Boolean getCanAccessCRMUnit() {
+//        if (canAccessCRMUnit == null) {
+//            canAccessCRMUnit = false;
+//        }
+//        return canAccessCRMUnit;
+//    }
+//
+//    public void setCanAccessCRMUnit(Boolean canAccessCRMUnit) {
+//        this.canAccessCRMUnit = canAccessCRMUnit;
+//    }
 
-    public Boolean getCanAccessHRMUnit() {
-        if (canAccessHRMUnit == null) {
-            canAccessHRMUnit = false;
-        }
-        return canAccessHRMUnit;
-    }
+//    public Boolean getCanAccessLegalMetrologyUnit() {
+//        if (canAccessLegalMetrologyUnit == null) {
+//            canAccessLegalMetrologyUnit = false;
+//        }
+//        return canAccessLegalMetrologyUnit;
+//    }
+//
+//    public void setCanAccessLegalMetrologyUnit(Boolean canAccessLegalMetrologyUnit) {
+//        this.canAccessLegalMetrologyUnit = canAccessLegalMetrologyUnit;
+//    }
 
-    public void setCanAccessHRMUnit(Boolean canAccessHRMUnit) {
-        this.canAccessHRMUnit = canAccessHRMUnit;
-    }
+//    public Boolean getCanAccessJobManagementUnit() {
+//        if (canAccessJobManagementUnit == null) {
+//            canAccessJobManagementUnit = true;
+//        }
+//        return canAccessJobManagementUnit;
+//    }
+//
+//    public void setCanAccessJobManagementUnit(Boolean canAccessJobManagementUnit) {
+//        this.canAccessJobManagementUnit = canAccessJobManagementUnit;
+//    }
 
-    public Boolean getCanAccessReportUnit() {
-        if (canAccessReportUnit == null) {
-            canAccessReportUnit = false;
-        }
-        return canAccessReportUnit;
-    }
+//    public Boolean getCanAccessComplianceUnit() {
+//        if (canAccessComplianceUnit == null) {
+//            canAccessComplianceUnit = false;
+//        }
+//        return canAccessComplianceUnit;
+//    }
+//
+//    public void setCanAccessComplianceUnit(Boolean canAccessComplianceUnit) {
+//        this.canAccessComplianceUnit = canAccessComplianceUnit;
+//    }
 
-    public void setCanAccessReportUnit(Boolean canAccessReportUnit) {
-        this.canAccessReportUnit = canAccessReportUnit;
-    }
+//    public Boolean getCanAccessFoodsUnit() {
+//        if (canAccessFoodsUnit == null) {
+//            canAccessFoodsUnit = false;
+//        }
+//        return canAccessFoodsUnit;
+//    }
+//
+//    public void setCanAccessFoodsUnit(Boolean canAccessFoodsUnit) {
+//        this.canAccessFoodsUnit = canAccessFoodsUnit;
+//    }
 
-    public Boolean getCanAccessCRMUnit() {
-        if (canAccessCRMUnit == null) {
-            canAccessCRMUnit = false;
-        }
-        return canAccessCRMUnit;
-    }
+//    public Boolean getCanAccessStandardsUnit() {
+//        if (canAccessStandardsUnit == null) {
+//            canAccessStandardsUnit = false;
+//        }
+//        return canAccessStandardsUnit;
+//    }
+//
+//    public void setCanAccessStandardsUnit(Boolean canAccessStandardsUnit) {
+//        this.canAccessStandardsUnit = canAccessStandardsUnit;
+//    }
 
-    public void setCanAccessCRMUnit(Boolean canAccessCRMUnit) {
-        this.canAccessCRMUnit = canAccessCRMUnit;
-    }
+//    public Boolean getCanAccessCertificationUnit() {
+//        if (canAccessCertificationUnit == null) {
+//            canAccessCertificationUnit = false;
+//        }
+//        return canAccessCertificationUnit;
+//    }
+//
+//    public void setCanAccessCertificationUnit(Boolean canAccessCertificationUnit) {
+//        this.canAccessCertificationUnit = canAccessCertificationUnit;
+//    }
 
-    public Boolean getCanAccessLegalMetrologyUnit() {
-        if (canAccessLegalMetrologyUnit == null) {
-            canAccessLegalMetrologyUnit = false;
-        }
-        return canAccessLegalMetrologyUnit;
-    }
+//    public Boolean getCanAccessServiceRequestUnit() {
+//        if (canAccessServiceRequestUnit == null) {
+//            canAccessServiceRequestUnit = false;
+//        }
+//        return canAccessServiceRequestUnit;
+//    }
+//
+//    public void setCanAccessServiceRequestUnit(Boolean canAccessServiceRequestUnit) {
+//        this.canAccessServiceRequestUnit = canAccessServiceRequestUnit;
+//    }
 
-    public void setCanAccessLegalMetrologyUnit(Boolean canAccessLegalMetrologyUnit) {
-        this.canAccessLegalMetrologyUnit = canAccessLegalMetrologyUnit;
-    }
-
-    public Boolean getCanAccessJobManagementUnit() {
-        if (canAccessJobManagementUnit == null) {
-            canAccessJobManagementUnit = true;
-        }
-        return canAccessJobManagementUnit;
-    }
-
-    public void setCanAccessJobManagementUnit(Boolean canAccessJobManagementUnit) {
-        this.canAccessJobManagementUnit = canAccessJobManagementUnit;
-    }
-
-    public Boolean getCanAccessComplianceUnit() {
-        if (canAccessComplianceUnit == null) {
-            canAccessComplianceUnit = false;
-        }
-        return canAccessComplianceUnit;
-    }
-
-    public void setCanAccessComplianceUnit(Boolean canAccessComplianceUnit) {
-        this.canAccessComplianceUnit = canAccessComplianceUnit;
-    }
-
-    public Boolean getCanAccessFoodsUnit() {
-        if (canAccessFoodsUnit == null) {
-            canAccessFoodsUnit = false;
-        }
-        return canAccessFoodsUnit;
-    }
-
-    public void setCanAccessFoodsUnit(Boolean canAccessFoodsUnit) {
-        this.canAccessFoodsUnit = canAccessFoodsUnit;
-    }
-
-    public Boolean getCanAccessStandardsUnit() {
-        if (canAccessStandardsUnit == null) {
-            canAccessStandardsUnit = false;
-        }
-        return canAccessStandardsUnit;
-    }
-
-    public void setCanAccessStandardsUnit(Boolean canAccessStandardsUnit) {
-        this.canAccessStandardsUnit = canAccessStandardsUnit;
-    }
-
-    public Boolean getCanAccessCertificationUnit() {
-        if (canAccessCertificationUnit == null) {
-            canAccessCertificationUnit = false;
-        }
-        return canAccessCertificationUnit;
-    }
-
-    public void setCanAccessCertificationUnit(Boolean canAccessCertificationUnit) {
-        this.canAccessCertificationUnit = canAccessCertificationUnit;
-    }
-
-    public Boolean getCanAccessServiceRequestUnit() {
-        if (canAccessServiceRequestUnit == null) {
-            canAccessServiceRequestUnit = false;
-        }
-        return canAccessServiceRequestUnit;
-    }
-
-    public void setCanAccessServiceRequestUnit(Boolean canAccessServiceRequestUnit) {
-        this.canAccessServiceRequestUnit = canAccessServiceRequestUnit;
-    }
-
-    public Boolean getCanAccessLegalOfficeUnit() {
-        if (canAccessLegalOfficeUnit == null) {
-            canAccessLegalOfficeUnit = false;
-        }
-        return canAccessLegalOfficeUnit;
-    }
-
-    public void setCanAccessLegalOfficeUnit(Boolean canAccessLegalOfficeUnit) {
-        this.canAccessLegalOfficeUnit = canAccessLegalOfficeUnit;
-    }
+//    public Boolean getCanAccessLegalOfficeUnit() {
+//        if (canAccessLegalOfficeUnit == null) {
+//            canAccessLegalOfficeUnit = false;
+//        }
+//        return canAccessLegalOfficeUnit;
+//    }
+//
+//    public void setCanAccessLegalOfficeUnit(Boolean canAccessLegalOfficeUnit) {
+//        this.canAccessLegalOfficeUnit = canAccessLegalOfficeUnit;
+//    }
 
     /**
      * NB: Temp code included to be removed in the future
@@ -316,23 +316,23 @@ public class Privilege implements Serializable, PrivilegeInterface {
     private void init(String name) {
         // default privileges
         this.name = name;
-        canEnterJob = false;
-        canEnterOwnJob = true;
-        canEnterDepartmentJob = true;
-        canDeleteJob = false;
-        canEditJob = false;
-        canEditOwnJob = true;
-        canEditDepartmentJob = true;
-        canAddClient = false;
-        canDeleteClient = false;
-        canAddEmployee = false;
-        canDeleteEmployee = false;
-        canAddDepartment = false;
-        canDeleteDepartment = false;
-        canBeJMTSAdministrator = false;
-        canBeSuperUser = false;
-        canApproveJobCosting = false;
-        canEnterParentJob = true;
+//        canEnterJob = false;
+//        canEnterOwnJob = true;
+//        canEnterDepartmentJob = true;
+//        canDeleteJob = false;
+//        canEditJob = false;
+//        canEditOwnJob = true;
+//        canEditDepartmentJob = true;
+//        canAddClient = false;
+//        canDeleteClient = false;
+//        canAddEmployee = false;
+//        canDeleteEmployee = false;
+//        canAddDepartment = false;
+//        canDeleteDepartment = false;
+//        canBeJMTSAdministrator = false;
+//        canBeSuperUser = false;
+//        canApproveJobCosting = false;
+//        canEnterParentJob = true;
     }
 
     @Override
@@ -345,16 +345,16 @@ public class Privilege implements Serializable, PrivilegeInterface {
         this.id = id;
     }
 
-    public Boolean getCanBeFinancialAdministrator() {
-        if (canBeFinancialAdministrator == null) {
-            canBeFinancialAdministrator = false;
-        }
-        return canBeFinancialAdministrator;
-    }
-
-    public void setCanBeFinancialAdministrator(Boolean canBeFinancialAdministrator) {
-        this.canBeFinancialAdministrator = canBeFinancialAdministrator;
-    }
+//    public Boolean getCanBeFinancialAdministrator() {
+//        if (canBeFinancialAdministrator == null) {
+//            canBeFinancialAdministrator = false;
+//        }
+//        return canBeFinancialAdministrator;
+//    }
+//
+//    public void setCanBeFinancialAdministrator(Boolean canBeFinancialAdministrator) {
+//        this.canBeFinancialAdministrator = canBeFinancialAdministrator;
+//    }
 
     public Boolean getCanApplyTaxesToJobCosting() {
         if (canApplyTaxesToJobCosting == null) {
@@ -367,260 +367,260 @@ public class Privilege implements Serializable, PrivilegeInterface {
         this.canApplyTaxesToJobCosting = canApplyTaxesToJobCosting;
     }
 
-    public Boolean getCanApplyDiscountsToJobCosting() {
-        if (canApplyDiscountsToJobCosting == null) {
-            canApplyDiscountsToJobCosting = false;
-        }
+//    public Boolean getCanApplyDiscountsToJobCosting() {
+//        if (canApplyDiscountsToJobCosting == null) {
+//            canApplyDiscountsToJobCosting = false;
+//        }
+//
+//        return canApplyDiscountsToJobCosting;
+//    }
+//
+//    public void setCanApplyDiscountsToJobCosting(Boolean canApplyDiscountsToJobCosting) {
+//        this.canApplyDiscountsToJobCosting = canApplyDiscountsToJobCosting;
+//    }
 
-        return canApplyDiscountsToJobCosting;
-    }
+//    public Boolean getCanApprvReleaseRequest() {
+//        if (canApprvReleaseRequest == null) {
+//            canApprvReleaseRequest = false;
+//        }
+//        return canApprvReleaseRequest;
+//    }
+//
+//    public void setCanApprvReleaseRequest(Boolean canApprvReleaseRequest) {
+//        this.canApprvReleaseRequest = canApprvReleaseRequest;
+//    }
 
-    public void setCanApplyDiscountsToJobCosting(Boolean canApplyDiscountsToJobCosting) {
-        this.canApplyDiscountsToJobCosting = canApplyDiscountsToJobCosting;
-    }
+//    public Boolean getCanAuthDetentionNotice() {
+//        if (canAuthDetentionNotice == null) {
+//            canAuthDetentionNotice = false;
+//        }
+//        return canAuthDetentionNotice;
+//    }
+//
+//    public void setCanAuthDetentionNotice(Boolean canAuthDetentionNotice) {
+//        this.canAuthDetentionNotice = canAuthDetentionNotice;
+//    }
 
-    public Boolean getCanApprvReleaseRequest() {
-        if (canApprvReleaseRequest == null) {
-            canApprvReleaseRequest = false;
-        }
-        return canApprvReleaseRequest;
-    }
+//    public Boolean getCanAuthDetentionRequest() {
+//        if (canAuthDetentionRequest == null) {
+//            canAuthDetentionRequest = false;
+//        }
+//        return canAuthDetentionRequest;
+//    }
+//
+//    public void setCanAuthDetentionRequest(Boolean canAuthDetentionRequest) {
+//        this.canAuthDetentionRequest = canAuthDetentionRequest;
+//    }
 
-    public void setCanApprvReleaseRequest(Boolean canApprvReleaseRequest) {
-        this.canApprvReleaseRequest = canApprvReleaseRequest;
-    }
+//    public Boolean getCanEditInvoicingAndPayment() {
+//        if (canEditInvoicingAndPayment == null) {
+//            canEditInvoicingAndPayment = false;
+//        }
+//        return canEditInvoicingAndPayment;
+//    }
+//
+//    public void setCanEditInvoicingAndPayment(Boolean canEditInvoicingAndPayment) {
+//        this.canEditInvoicingAndPayment = canEditInvoicingAndPayment;
+//    }
 
-    public Boolean getCanAuthDetentionNotice() {
-        if (canAuthDetentionNotice == null) {
-            canAuthDetentionNotice = false;
-        }
-        return canAuthDetentionNotice;
-    }
+//    public Boolean getCanApproveJobCosting() {
+//        if (canApproveJobCosting == null) {
+//            canApproveJobCosting = false;
+//        }
+//        return canApproveJobCosting;
+//    }
 
-    public void setCanAuthDetentionNotice(Boolean canAuthDetentionNotice) {
-        this.canAuthDetentionNotice = canAuthDetentionNotice;
-    }
+//    public void setCanApproveJobCosting(Boolean canApproveJobCosting) {
+//        this.canApproveJobCosting = canApproveJobCosting;
+//    }
+//
+//    public Boolean getCanEnterParentJob() {
+//        if (canEnterParentJob == null) {
+//            canEnterParentJob = false;
+//        }
+//        return canEnterParentJob;
+//    }
 
-    public Boolean getCanAuthDetentionRequest() {
-        if (canAuthDetentionRequest == null) {
-            canAuthDetentionRequest = false;
-        }
-        return canAuthDetentionRequest;
-    }
+//    public void setCanEnterParentJob(Boolean canEnterParentJob) {
+//        this.canEnterParentJob = canEnterParentJob;
+//    }
+//
+//    public Boolean getCanEditDisabledJobField() {
+//        if (canEditDisabledJobField == null) {
+//            canEditDisabledJobField = false;
+//        }
+//        return canEditDisabledJobField;
+//    }
 
-    public void setCanAuthDetentionRequest(Boolean canAuthDetentionRequest) {
-        this.canAuthDetentionRequest = canAuthDetentionRequest;
-    }
+//    public void setCanEditDisabledJobField(Boolean canEditDisabledJobField) {
+//        this.canEditDisabledJobField = canEditDisabledJobField;
+//    }
+//
+//    public Boolean getCanEnterOwnJob() {
+//        if (canEnterOwnJob == null) {
+//            canEnterOwnJob = false;
+//        }
+//        return canEnterOwnJob;
+//    }
+//
+//    public void setCanEnterOwnJob(Boolean canEnterOwnJob) {
+//        this.canEnterOwnJob = canEnterOwnJob;
+//    }
 
-    public Boolean getCanEditInvoicingAndPayment() {
-        if (canEditInvoicingAndPayment == null) {
-            canEditInvoicingAndPayment = false;
-        }
-        return canEditInvoicingAndPayment;
-    }
+//    public Boolean getCanEnterDepartmentJob() {
+//        if (canEnterDepartmentJob == null) {
+//            canEnterDepartmentJob = true;
+//        }
+//        return canEnterDepartmentJob;
+//    }
+//
+//    public void setCanEnterDepartmentJob(Boolean canEnterDepartmentJob) {
+//        this.canEnterDepartmentJob = canEnterDepartmentJob;
+//    }
 
-    public void setCanEditInvoicingAndPayment(Boolean canEditInvoicingAndPayment) {
-        this.canEditInvoicingAndPayment = canEditInvoicingAndPayment;
-    }
+//    public Boolean getCanBeJMTSAdministrator() {
+//        if (canBeJMTSAdministrator == null) {
+//            canBeJMTSAdministrator = false;
+//        }
+//
+//        return canBeJMTSAdministrator;
+//    }
+//
+//    public void setCanBeJMTSAdministrator(Boolean canBeJMTSAdministrator) {
+//        this.canBeJMTSAdministrator = canBeJMTSAdministrator;
+//    }
 
-    public Boolean getCanApproveJobCosting() {
-        if (canApproveJobCosting == null) {
-            canApproveJobCosting = false;
-        }
-        return canApproveJobCosting;
-    }
+//    public Boolean getCanBeSuperUser() {
+//        if (canBeSuperUser == null) {
+//            canBeSuperUser = false;
+//        }
+//        return canBeSuperUser;
+//    }
+//
+//    public void setCanBeSuperUser(Boolean canBeSuperUser) {
+//        this.canBeSuperUser = canBeSuperUser;
+//    }
 
-    public void setCanApproveJobCosting(Boolean canApproveJobCosting) {
-        this.canApproveJobCosting = canApproveJobCosting;
-    }
+//    public Boolean getCanAddClient() {
+//        if (canAddClient == null) {
+//            canAddClient = false;
+//        }
+//        return canAddClient;
+//    }
+//
+//    public void setCanAddClient(Boolean canAddClient) {
+//        this.canAddClient = canAddClient;
+//    }
 
-    public Boolean getCanEnterParentJob() {
-        if (canEnterParentJob == null) {
-            canEnterParentJob = false;
-        }
-        return canEnterParentJob;
-    }
+//    public Boolean getCanAddDepartment() {
+//        if (canAddDepartment == null) {
+//            canAddDepartment = false;
+//        }
+//        return canAddDepartment;
+//    }
+//
+//    public void setCanAddDepartment(Boolean canAddDepartment) {
+//        this.canAddDepartment = canAddDepartment;
+//    }
 
-    public void setCanEnterParentJob(Boolean canEnterParentJob) {
-        this.canEnterParentJob = canEnterParentJob;
-    }
+//    public Boolean getCanAddEmployee() {
+//        if (canAddEmployee == null) {
+//            canAddEmployee = false;
+//        }
+//        return canAddEmployee;
+//    }
+//
+//    public void setCanAddEmployee(Boolean canAddEmployee) {
+//        this.canAddEmployee = canAddEmployee;
+//    }
 
-    public Boolean getCanEditDisabledJobField() {
-        if (canEditDisabledJobField == null) {
-            canEditDisabledJobField = false;
-        }
-        return canEditDisabledJobField;
-    }
+//    public Boolean getCanDeleteClient() {
+//        if (canDeleteClient == null) {
+//            canDeleteClient = false;
+//        }
+//        return canDeleteClient;
+//    }
+//
+//    public void setCanDeleteClient(Boolean canDeleteClient) {
+//        this.canDeleteClient = canDeleteClient;
+//    }
 
-    public void setCanEditDisabledJobField(Boolean canEditDisabledJobField) {
-        this.canEditDisabledJobField = canEditDisabledJobField;
-    }
+//    public Boolean getCanDeleteDepartment() {
+//        if (canDeleteDepartment == null) {
+//            canDeleteDepartment = false;
+//        }
+//        return canDeleteDepartment;
+//    }
+//
+//    public void setCanDeleteDepartment(Boolean canDeleteDepartment) {
+//        this.canDeleteDepartment = canDeleteDepartment;
+//    }
 
-    public Boolean getCanEnterOwnJob() {
-        if (canEnterOwnJob == null) {
-            canEnterOwnJob = false;
-        }
-        return canEnterOwnJob;
-    }
+//    public Boolean getCanDeleteEmployee() {
+//        if (canDeleteEmployee == null) {
+//            canDeleteEmployee = false;
+//        }
+//        return canDeleteEmployee;
+//    }
+//
+//    public void setCanDeleteEmployee(Boolean canDeleteEmployee) {
+//        this.canDeleteEmployee = canDeleteEmployee;
+//    }
 
-    public void setCanEnterOwnJob(Boolean canEnterOwnJob) {
-        this.canEnterOwnJob = canEnterOwnJob;
-    }
+//    public Boolean getCanEditDepartmentJob() {
+//        if (canEditDepartmentJob == null) {
+//            canEditDepartmentJob = true;
+//        }
+//        return canEditDepartmentJob;
+//    }
+//
+//    public void setCanEditDepartmentJob(Boolean canEditDepartmentJob) {
+//        this.canEditDepartmentJob = canEditDepartmentJob;
+//    }
 
-    public Boolean getCanEnterDepartmentJob() {
-        if (canEnterDepartmentJob == null) {
-            canEnterDepartmentJob = true;
-        }
-        return canEnterDepartmentJob;
-    }
+//    public Boolean getCanDeleteJob() {
+//        if (canDeleteJob == null) {
+//            canDeleteJob = false;
+//        }
+//        return canDeleteJob;
+//    }
+//
+//    public void setCanDeleteJob(Boolean canDeleteJob) {
+//        this.canDeleteJob = canDeleteJob;
+//    }
 
-    public void setCanEnterDepartmentJob(Boolean canEnterDepartmentJob) {
-        this.canEnterDepartmentJob = canEnterDepartmentJob;
-    }
+//    public Boolean getCanEditJob() {
+//        if (canEditJob == null) {
+//            canEditJob = false;
+//        }
+//        return canEditJob;
+//    }
+//
+//    public void setCanEditJob(Boolean canEditJob) {
+//        this.canEditJob = canEditJob;
+//    }
 
-    public Boolean getCanBeJMTSAdministrator() {
-        if (canBeJMTSAdministrator == null) {
-            canBeJMTSAdministrator = false;
-        }
+//    public Boolean getCanEditOwnJob() {
+//        if (canEditOwnJob == null) {
+//            canEditOwnJob = false;
+//        }
+//        return canEditOwnJob;
+//    }
+//
+//    public void setCanEditOwnJob(Boolean canEditOwnJob) {
+//        this.canEditOwnJob = canEditOwnJob;
+//    }
 
-        return canBeJMTSAdministrator;
-    }
-
-    public void setCanBeJMTSAdministrator(Boolean canBeJMTSAdministrator) {
-        this.canBeJMTSAdministrator = canBeJMTSAdministrator;
-    }
-
-    public Boolean getCanBeSuperUser() {
-        if (canBeSuperUser == null) {
-            canBeSuperUser = false;
-        }
-        return canBeSuperUser;
-    }
-
-    public void setCanBeSuperUser(Boolean canBeSuperUser) {
-        this.canBeSuperUser = canBeSuperUser;
-    }
-
-    public Boolean getCanAddClient() {
-        if (canAddClient == null) {
-            canAddClient = false;
-        }
-        return canAddClient;
-    }
-
-    public void setCanAddClient(Boolean canAddClient) {
-        this.canAddClient = canAddClient;
-    }
-
-    public Boolean getCanAddDepartment() {
-        if (canAddDepartment == null) {
-            canAddDepartment = false;
-        }
-        return canAddDepartment;
-    }
-
-    public void setCanAddDepartment(Boolean canAddDepartment) {
-        this.canAddDepartment = canAddDepartment;
-    }
-
-    public Boolean getCanAddEmployee() {
-        if (canAddEmployee == null) {
-            canAddEmployee = false;
-        }
-        return canAddEmployee;
-    }
-
-    public void setCanAddEmployee(Boolean canAddEmployee) {
-        this.canAddEmployee = canAddEmployee;
-    }
-
-    public Boolean getCanDeleteClient() {
-        if (canDeleteClient == null) {
-            canDeleteClient = false;
-        }
-        return canDeleteClient;
-    }
-
-    public void setCanDeleteClient(Boolean canDeleteClient) {
-        this.canDeleteClient = canDeleteClient;
-    }
-
-    public Boolean getCanDeleteDepartment() {
-        if (canDeleteDepartment == null) {
-            canDeleteDepartment = false;
-        }
-        return canDeleteDepartment;
-    }
-
-    public void setCanDeleteDepartment(Boolean canDeleteDepartment) {
-        this.canDeleteDepartment = canDeleteDepartment;
-    }
-
-    public Boolean getCanDeleteEmployee() {
-        if (canDeleteEmployee == null) {
-            canDeleteEmployee = false;
-        }
-        return canDeleteEmployee;
-    }
-
-    public void setCanDeleteEmployee(Boolean canDeleteEmployee) {
-        this.canDeleteEmployee = canDeleteEmployee;
-    }
-
-    public Boolean getCanEditDepartmentJob() {
-        if (canEditDepartmentJob == null) {
-            canEditDepartmentJob = true;
-        }
-        return canEditDepartmentJob;
-    }
-
-    public void setCanEditDepartmentJob(Boolean canEditDepartmentJob) {
-        this.canEditDepartmentJob = canEditDepartmentJob;
-    }
-
-    public Boolean getCanDeleteJob() {
-        if (canDeleteJob == null) {
-            canDeleteJob = false;
-        }
-        return canDeleteJob;
-    }
-
-    public void setCanDeleteJob(Boolean canDeleteJob) {
-        this.canDeleteJob = canDeleteJob;
-    }
-
-    public Boolean getCanEditJob() {
-        if (canEditJob == null) {
-            canEditJob = false;
-        }
-        return canEditJob;
-    }
-
-    public void setCanEditJob(Boolean canEditJob) {
-        this.canEditJob = canEditJob;
-    }
-
-    public Boolean getCanEditOwnJob() {
-        if (canEditOwnJob == null) {
-            canEditOwnJob = false;
-        }
-        return canEditOwnJob;
-    }
-
-    public void setCanEditOwnJob(Boolean canEditOwnJob) {
-        this.canEditOwnJob = canEditOwnJob;
-    }
-
-    public Boolean getCanEnterJob() {
-        if (canEnterJob == null) {
-            canEnterJob = false;
-        }
-        return canEnterJob;
-    }
-
-    public void setCanEnterJob(Boolean canEnterJob) {
-        this.canEnterJob = canEnterJob;
-    }
+//    public Boolean getCanEnterJob() {
+//        if (canEnterJob == null) {
+//            canEnterJob = false;
+//        }
+//        return canEnterJob;
+//    }
+//
+//    public void setCanEnterJob(Boolean canEnterJob) {
+//        this.canEnterJob = canEnterJob;
+//    }
 
     @Override
     public String getCategory() {

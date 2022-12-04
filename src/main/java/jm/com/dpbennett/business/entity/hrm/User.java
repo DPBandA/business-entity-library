@@ -256,7 +256,8 @@ public class User implements Serializable, BusinessEntity {
             case CANENTERJOB:
                 // NB: Aspects of the job are to be considered before 
                 // privilege can be determined 
-                if (getActivePrivilege().getCanEnterJob()) {
+//                if (getActivePrivilege().getCanEnterJob()) {
+                if (can("EnterJob")) {
                     return true;
                 }
                 break;
