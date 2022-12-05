@@ -88,6 +88,10 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         actions = new ArrayList<>();
     }
 
+    public void update() {
+
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -330,7 +334,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
                 + " OR UPPER(inventoryDisbursement.status) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(inventoryDisbursement.description) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(inventory.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(enteredBy.name) LIKE '%" + searchText.toUpperCase() + "%'"            
+                + " OR UPPER(enteredBy.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(editedBy.name) LIKE '%" + searchText.toUpperCase() + "%'";
 
         // Build query     
