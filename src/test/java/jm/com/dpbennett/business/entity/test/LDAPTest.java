@@ -24,7 +24,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import jm.com.dpbennett.business.entity.fm.Inventory;
+import jm.com.dpbennett.business.entity.hrm.Employee;
+import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.sm.LdapContext;
+import jm.com.dpbennett.business.entity.util.Security;
 import org.junit.Test;
 
 /**
@@ -37,16 +40,34 @@ public class LDAPTest {
     public void testLDAP() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
         EntityManager em = emf.createEntityManager();
-        
-        //LdapContext.addUser(em, "mbennett", "Milton", "Bennett", "milton@dpbennett.com.jm");
-        
-//        DirContext dc = LdapContext.getConnection(em, "LDAP");
-//
-//        if (dc != null) {
-//            System.out.println("Connection made!");
+        LdapContext ldap = LdapContext.findActiveLdapContextByName(em, "LDAP");
+
+//        if (LdapContext.addUser(em, "LDAP", "mbennett", 
+//                Security.encrypt("123456789"), 
+//                "Milton",
+//                "Bennett")) {
+//            System.out.println("User Added!");
+//        }
+//        if (LdapContext.authenticateUser(em, ldap, "mbennett", "")) {
+//            System.out.println("User authenticated!");
 //        }
 //        else {
-//            System.out.println("Connection failed!");
+//            System.out.println("User NOT authenticated");
 //        }
+//        if (LdapContext.updateUserPassword(em, ldap, "mbennett", "")) {
+//            System.out.println("Password updated!");
+//        } else {
+//            System.out.println("Password NOT updated!");
+//        }
+//        User user = new User();
+//        Employee emp = new Employee("Milton", "Bennett");
+//        user.setUsername("mbennett");
+//        user.setEmployee(emp);
+//        if (LdapContext.updateUser(em, ldap, user)) {
+//            System.out.println("User updated!");
+//        } else {
+//            System.out.println("User NOT updated!");
+//        }
+
     }
 }

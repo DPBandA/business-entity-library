@@ -59,16 +59,16 @@ public class Privilege implements Serializable, PrivilegeInterface {
     //private Boolean canBeSuperUser;
     //private Boolean canBeJMTSAdministrator;
     // Job privileges
-//    private Boolean canEnterJob;
+    private Boolean canEnterJob;
 //    private Boolean canEnterOwnJob;
 //    private Boolean canEnterDepartmentJob;
 //    private Boolean canDeleteJob;
-//    private Boolean canEditJob;
+    private Boolean canEditJob;
 //    private Boolean canEditOwnJob;
 //    private Boolean canEditDepartmentJob;
 //    private Boolean canApproveJobCosting;
 //    private Boolean canEnterParentJob;
-//    private Boolean canEditDisabledJobField;
+    private Boolean canEditDisabledJobField;
     // Client privileges 
 //    private Boolean canAddClient;
 //    private Boolean canDeleteClient;
@@ -83,9 +83,9 @@ public class Privilege implements Serializable, PrivilegeInterface {
 //    private Boolean canApprvReleaseRequest;
     // Financial privileges
 //    private Boolean canBeFinancialAdministrator;
-//    private Boolean canEditInvoicingAndPayment;
+    private Boolean canEditInvoicingAndPayment;
     private Boolean canApplyTaxesToJobCosting;
-//    private Boolean canApplyDiscountsToJobCosting;
+    private Boolean canApplyDiscountsToJobCosting;
 //    private Boolean canAddAccountingCode;
 //    private Boolean canAddSupplier;
     // Module/unit access       
@@ -367,17 +367,17 @@ public class Privilege implements Serializable, PrivilegeInterface {
         this.canApplyTaxesToJobCosting = canApplyTaxesToJobCosting;
     }
 
-//    public Boolean getCanApplyDiscountsToJobCosting() {
-//        if (canApplyDiscountsToJobCosting == null) {
-//            canApplyDiscountsToJobCosting = false;
-//        }
-//
-//        return canApplyDiscountsToJobCosting;
-//    }
-//
-//    public void setCanApplyDiscountsToJobCosting(Boolean canApplyDiscountsToJobCosting) {
-//        this.canApplyDiscountsToJobCosting = canApplyDiscountsToJobCosting;
-//    }
+    public Boolean getCanApplyDiscountsToJobCosting() {
+        if (canApplyDiscountsToJobCosting == null) {
+            canApplyDiscountsToJobCosting = false;
+        }
+
+        return canApplyDiscountsToJobCosting;
+    }
+
+    public void setCanApplyDiscountsToJobCosting(Boolean canApplyDiscountsToJobCosting) {
+        this.canApplyDiscountsToJobCosting = canApplyDiscountsToJobCosting;
+    }
 
 //    public Boolean getCanApprvReleaseRequest() {
 //        if (canApprvReleaseRequest == null) {
@@ -412,16 +412,16 @@ public class Privilege implements Serializable, PrivilegeInterface {
 //        this.canAuthDetentionRequest = canAuthDetentionRequest;
 //    }
 
-//    public Boolean getCanEditInvoicingAndPayment() {
-//        if (canEditInvoicingAndPayment == null) {
-//            canEditInvoicingAndPayment = false;
-//        }
-//        return canEditInvoicingAndPayment;
-//    }
-//
-//    public void setCanEditInvoicingAndPayment(Boolean canEditInvoicingAndPayment) {
-//        this.canEditInvoicingAndPayment = canEditInvoicingAndPayment;
-//    }
+    public Boolean getCanEditInvoicingAndPayment() {
+        if (canEditInvoicingAndPayment == null) {
+            canEditInvoicingAndPayment = false;
+        }
+        return canEditInvoicingAndPayment;
+    }
+
+    public void setCanEditInvoicingAndPayment(Boolean canEditInvoicingAndPayment) {
+        this.canEditInvoicingAndPayment = canEditInvoicingAndPayment;
+    }
 
 //    public Boolean getCanApproveJobCosting() {
 //        if (canApproveJobCosting == null) {
@@ -445,16 +445,16 @@ public class Privilege implements Serializable, PrivilegeInterface {
 //        this.canEnterParentJob = canEnterParentJob;
 //    }
 //
-//    public Boolean getCanEditDisabledJobField() {
-//        if (canEditDisabledJobField == null) {
-//            canEditDisabledJobField = false;
-//        }
-//        return canEditDisabledJobField;
-//    }
+    public Boolean getCanEditDisabledJobField() {
+        if (canEditDisabledJobField == null) {
+            canEditDisabledJobField = false;
+        }
+        return canEditDisabledJobField;
+    }
 
-//    public void setCanEditDisabledJobField(Boolean canEditDisabledJobField) {
-//        this.canEditDisabledJobField = canEditDisabledJobField;
-//    }
+    public void setCanEditDisabledJobField(Boolean canEditDisabledJobField) {
+        this.canEditDisabledJobField = canEditDisabledJobField;
+    }
 //
 //    public Boolean getCanEnterOwnJob() {
 //        if (canEnterOwnJob == null) {
@@ -589,16 +589,16 @@ public class Privilege implements Serializable, PrivilegeInterface {
 //        this.canDeleteJob = canDeleteJob;
 //    }
 
-//    public Boolean getCanEditJob() {
-//        if (canEditJob == null) {
-//            canEditJob = false;
-//        }
-//        return canEditJob;
-//    }
-//
-//    public void setCanEditJob(Boolean canEditJob) {
-//        this.canEditJob = canEditJob;
-//    }
+    public Boolean getCanEditJob() {
+        if (canEditJob == null) {
+            canEditJob = false;
+        }
+        return canEditJob;
+    }
+
+    public void setCanEditJob(Boolean canEditJob) {
+        this.canEditJob = canEditJob;
+    }
 
 //    public Boolean getCanEditOwnJob() {
 //        if (canEditOwnJob == null) {
@@ -611,16 +611,16 @@ public class Privilege implements Serializable, PrivilegeInterface {
 //        this.canEditOwnJob = canEditOwnJob;
 //    }
 
-//    public Boolean getCanEnterJob() {
-//        if (canEnterJob == null) {
-//            canEnterJob = false;
-//        }
-//        return canEnterJob;
-//    }
-//
-//    public void setCanEnterJob(Boolean canEnterJob) {
-//        this.canEnterJob = canEnterJob;
-//    }
+    public Boolean getCanEnterJob() {
+        if (canEnterJob == null) {
+            canEnterJob = false;
+        }
+        return canEnterJob;
+    }
+
+    public void setCanEnterJob(Boolean canEnterJob) {
+        this.canEnterJob = canEnterJob;
+    }
 
     @Override
     public String getCategory() {

@@ -31,11 +31,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Security {
 
-    public static String KEY = "9k#y@&K8$3d!4^8a";
-
-    public static String encrypt(String plainText) {
+    public static String encrypt(String securityKey, String plainText) {
         try {
-            Key aesKey = new SecretKeySpec(KEY.getBytes(), "AES");
+            Key aesKey = new SecretKeySpec(securityKey.getBytes(), "AES");
             Cipher cipher = Cipher.getInstance("AES");
 
             cipher.init(Cipher.ENCRYPT_MODE, aesKey);
@@ -53,11 +51,11 @@ public class Security {
 
     }
 
-    public static String decrypt(String encryptedText) {
+    public static String decrypt(String securityKey, String encryptedText) {
         String decryptedText = "";
 
         try {
-            Key aesKey = new SecretKeySpec(KEY.getBytes(), "AES");
+            Key aesKey = new SecretKeySpec(securityKey.getBytes(), "AES");
             Cipher cipher = Cipher.getInstance("AES");
 
             cipher.init(Cipher.DECRYPT_MODE, aesKey);
@@ -71,9 +69,9 @@ public class Security {
                 | NoSuchPaddingException | InvalidKeyException e) {
 
             System.out.println(e);
-        } finally {
-            return decryptedText;
-        }
+        } 
+        
+        return decryptedText;
 
     }
 

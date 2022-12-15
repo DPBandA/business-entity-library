@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -34,6 +32,7 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.ModificationItem;
 import javax.naming.ldap.InitialLdapContext;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -44,8 +43,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
+import jm.com.dpbennett.business.entity.util.Security;
 
 /**
  *
@@ -376,47 +377,149 @@ public class LdapContext implements Serializable, LdapContextInterface {
 
         return null;
     }
-   
-    /*
-    MAY (
-		audio $ businessCategory $ carLicense $ departmentNumber $
-		displayName $ employeeNumber $ employeeType $ givenName $
-		homePhone $ homePostalAddress $ initials $ jpegPhoto $
-		labeledURI $ mail $ manager $ mobile $ o $ pager $
-		photo $ roomNumber $ secretary $ uid $ userCertificate $
-		x500uniqueIdentifier $ preferredLanguage $
-		userSMIMECertificate $ userPKCS12 )
-	)
-    */
-    public static void addUser(
-            EntityManager em, 
-            String userName,
-            String firstName,
-            String lastName,
-            String email) {
+
+    public static DirContext getConnection(LdapContext context) {
+
+        Properties env = new Properties();
+
+        env.put(Context.INITIAL_CONTEXT_FACTORY, context.initialContextFactory);
+        env.put(Context.PROVIDER_URL, context.providerUrl);
+        env.put(Context.SECURITY_PRINCIPAL, context.securityPrincipal);
+        env.put(Context.SECURITY_CREDENTIALS, context.securityCredentials);
+
+        try {
+            return new InitialDirContext(env);
+
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+
+        return null;
+    }
+
+    public static boolean addUser(
+            EntityManager em,
+            LdapContext context,
+            User user) {
+
+        String securityKey = SystemOption.getString(em, "securityKey");
         Attributes attributes = new BasicAttributes();
         Attribute inetOrgPerson = new BasicAttribute("objectClass");
 
         inetOrgPerson.add("inetOrgPerson");
 
         attributes.put(inetOrgPerson);
-        attributes.put("uid", userName);
-        attributes.put("cn", firstName);
-        //attributes.put("uid", uid);
-        attributes.put("sn", "Bennett");
-        //attributes.put("userPassword", "kjkjjk");
+        attributes.put("uid", user.getUsername());
+        attributes.put("userPassword", Security.encrypt(securityKey, user.getPassword()));
+        attributes.put("cn", user.getEmployeeFirstname());
+        attributes.put("sn", user.getEmployeeLastname());
 
         try {
-            DirContext connection = getConnection(em, "LDAP"); // tk provide as parameter
-            // tk for null before using
-            connection.createSubcontext(
-                    "cn=" + firstName + ",dc=dpbennett,dc=com,dc=jm",
-                    //"",
-                    attributes);
-            System.out.println("User added!"); // tk 
+            DirContext connection = getConnection(context);
+
+            if (connection != null) {
+                connection.createSubcontext(
+                        "uid=" + user.getUsername() + "," + context.domainName,
+                        attributes);
+                return true;
+            }
+
         } catch (NamingException ex) {
             System.out.println(ex);
         }
+
+        return false;
+
+    }
+
+    public static boolean authenticateUser(
+            EntityManager em,
+            LdapContext context,
+            String userName,
+            String userPassword) {
+
+        try {
+
+            String securityKey = SystemOption.getString(em, "securityKey");
+            Properties env = new Properties();
+
+            env.put(Context.INITIAL_CONTEXT_FACTORY, context.initialContextFactory);
+            env.put(Context.PROVIDER_URL, context.providerUrl);
+            env.put(Context.SECURITY_PRINCIPAL, "uid=" + userName + ","
+                    + context.domainName);
+            env.put(Context.SECURITY_CREDENTIALS,
+                    Security.encrypt(securityKey, userPassword));
+
+            DirContext con = new InitialDirContext(env);
+            con.close();
+
+            return true;
+
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+
+        return false;
+
+    }
+
+    public static boolean updateUserPassword(
+            EntityManager em,
+            LdapContext context,
+            String userName,
+            String password) {
+
+        String securityKey = SystemOption.getString(em, "securityKey");
+        ModificationItem[] mods = new ModificationItem[1];
+        mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
+                new BasicAttribute("userPassword", Security.encrypt(securityKey, password)));
+
+        try {
+            DirContext connection = getConnection(context);
+
+            if (connection != null) {
+                connection.modifyAttributes(
+                        "uid=" + userName + "," + context.domainName,
+                        mods);
+
+                return true;
+            }
+
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+
+        return false;
+
+    }
+
+    public static boolean updateUser(
+            LdapContext context,
+            User user) {
+
+        ModificationItem[] mods = new ModificationItem[2];
+
+        mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
+                new BasicAttribute("cn", user.getEmployeeFirstname()));
+        mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
+                new BasicAttribute("sn", user.getEmployeeLastname()));
+
+        try {
+            DirContext connection = getConnection(context);
+
+            if (connection != null) {
+                connection.modifyAttributes(
+                        "uid=" + user.getUsername() + "," + context.domainName,
+                        mods);
+
+                return true;
+            }
+
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+
+        return false;
 
     }
 }

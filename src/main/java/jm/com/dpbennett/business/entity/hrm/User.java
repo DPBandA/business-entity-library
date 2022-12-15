@@ -65,6 +65,7 @@ public class User implements Serializable, BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Boolean active;
     private String username;
     private String PFThemeName;
     private String jobTableViewPreference;
@@ -86,12 +87,37 @@ public class User implements Serializable, BusinessEntity {
     private List<Modules> activeModules;
     @Transient
     private Boolean isDirty;
-    private Boolean active;
+    @Transient
+    private String newPassword;
+    @Transient
+    private String confirmedNewPassword;
 
     public User() {
         privilege = new Privilege();
         modules = new Modules();
         username = "";
+    }
+
+    public String getNewPassword() {
+        if (newPassword == null) {
+            newPassword = "";
+        }
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmedNewPassword() {
+        if (confirmedNewPassword == null) {
+            confirmedNewPassword = "";
+        }
+        return confirmedNewPassword;
+    }
+
+    public void setConfirmedNewPassword(String confirmedNewPassword) {
+        this.confirmedNewPassword = confirmedNewPassword;
     }
 
     public Boolean hasModule(String moduleName) {
