@@ -30,10 +30,10 @@ import org.junit.Test;
  */
 public class DatePeriodTest {
 
-    @Test
-    public void generateDatePeriods() {
-        Date now = new Date();
-        System.out.println("now: " + now);
+//    @Test
+//    public void generateDatePeriods() {
+//        Date now = new Date();
+//        System.out.println("now: " + now);
         
         
 //        DatePeriod dp = new DatePeriod();
@@ -45,5 +45,5 @@ public class DatePeriodTest {
 //        System.out.println("End date: " + dp.getEndDate());
 //          System.out.println("Adjusted date: " + 
 //                  BusinessEntityUtils.adjustDate(new Date(), Calendar.DAY_OF_MONTH, 10));  
-    }
+//    }
 }

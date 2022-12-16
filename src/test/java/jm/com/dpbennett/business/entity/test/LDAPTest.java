@@ -36,11 +36,11 @@ import org.junit.Test;
  */
 public class LDAPTest {
 
-    @Test
-    public void testLDAP() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
-        EntityManager em = emf.createEntityManager();
-        LdapContext ldap = LdapContext.findActiveLdapContextByName(em, "LDAP");
+//    @Test
+//    public void testLDAP() {
+//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
+//        EntityManager em = emf.createEntityManager();
+//        LdapContext ldap = LdapContext.findActiveLdapContextByName(em, "LDAP");
 
 //        if (LdapContext.addUser(em, "LDAP", "mbennett", 
 //                Security.encrypt("123456789"), 
@@ -69,5 +69,5 @@ public class LDAPTest {
 //            System.out.println("User NOT updated!");
 //        }
 
-    }
+//    }
 }

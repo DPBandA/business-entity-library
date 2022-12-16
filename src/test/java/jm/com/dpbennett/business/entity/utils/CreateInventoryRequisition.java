@@ -35,25 +35,25 @@ import org.junit.Test;
  */
 public class CreateInventoryRequisition {
 
-    @Test
-    public void create() {
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
-        EntityManager em = emf.createEntityManager();
-
-        System.out.println("Create and save inventory requisition...");
-        InventoryRequisition inventoryRequisition = new InventoryRequisition();
-        inventoryRequisition.setName("InventoryRequisition Test Name");
-        inventoryRequisition.setCode("000123");
-        inventoryRequisition.setType("Test Type");
-        inventoryRequisition.getInventoryDisbursements().
-                add(em.find(InventoryDisbursement.class, 1958051L));
-        inventoryRequisition.setDateEntered(new Date());
-        inventoryRequisition.setDateEdited(new Date());
-        inventoryRequisition.setEnteredBy(em.find(Employee.class, 46L));
-        inventoryRequisition.setEditedBy(em.find(Employee.class, 46L));
-        
-        inventoryRequisition.save(em);
-
-    }
+//    @Test
+//    public void create() {
+//
+//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
+//        EntityManager em = emf.createEntityManager();
+//
+//        System.out.println("Create and save inventory requisition...");
+//        InventoryRequisition inventoryRequisition = new InventoryRequisition();
+//        inventoryRequisition.setName("InventoryRequisition Test Name");
+//        inventoryRequisition.setCode("000123");
+//        inventoryRequisition.setType("Test Type");
+//        inventoryRequisition.getInventoryDisbursements().
+//                add(em.find(InventoryDisbursement.class, 1958051L));
+//        inventoryRequisition.setDateEntered(new Date());
+//        inventoryRequisition.setDateEdited(new Date());
+//        inventoryRequisition.setEnteredBy(em.find(Employee.class, 46L));
+//        inventoryRequisition.setEditedBy(em.find(Employee.class, 46L));
+//        
+//        inventoryRequisition.save(em);
+//
+//    }
 }

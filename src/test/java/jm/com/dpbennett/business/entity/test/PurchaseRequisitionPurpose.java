@@ -29,14 +29,14 @@ import org.junit.Test;
  */
 public class PurchaseRequisitionPurpose {
 
-    @Test
-    public void splitDescription() {
-        PurchaseRequisition pr = new PurchaseRequisition();
-        
-        pr.setDescription("This is a very long description to be split into three....");
-        System.out.println("PR description: " + pr.getDescription() + "\n");
-        System.out.println("PR description in 3 parts: " + 
-                Arrays.toString(pr.splitDescription(10, 20, 28)));
-
-    }
+//    @Test
+//    public void splitDescription() {
+//        PurchaseRequisition pr = new PurchaseRequisition();
+//        
+//        pr.setDescription("This is a very long description to be split into three....");
+//        System.out.println("PR description: " + pr.getDescription() + "\n");
+//        System.out.println("PR description in 3 parts: " + 
+//                Arrays.toString(pr.splitDescription(10, 20, 28)));
+//
+//    }
 }

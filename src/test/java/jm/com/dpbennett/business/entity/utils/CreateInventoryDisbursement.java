@@ -37,35 +37,35 @@ public class CreateInventoryDisbursement {
     @Test
     public void create() {
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
-        EntityManager em = emf.createEntityManager();
-
-        Inventory inv = em.find(Inventory.class, 1957701L);
-
-        // Create and save inventory disbursement
-        System.out.println("Create and save inventory disbursement...");
-        InventoryDisbursement inventoryDisbursement;
-        inventoryDisbursement = new InventoryDisbursement();
-        inventoryDisbursement.setInventory(inv);
-        inventoryDisbursement.setName("Test");
-        inventoryDisbursement.setType("None");
-        inventoryDisbursement.setQuantityOrdered(1.0);
-        inventoryDisbursement.setQuantityReceived(1.0);
-        inventoryDisbursement.setDateOrdered(new Date());
-        inventoryDisbursement.setDateReceived(new Date());
-        if (!inv.getAllSortedCostComponents().isEmpty()) {
-            inventoryDisbursement.setUnitCost(inv.getAllSortedCostComponents().get(0).getRate());
-        } else {
-            inventoryDisbursement.setUnitCost(0.0);
-        }
-        inventoryDisbursement.setCost(inventoryDisbursement.getQuantityOrdered()
-                * inventoryDisbursement.getUnitCost());
-        inventoryDisbursement.setDateEntered(new Date());
-        inventoryDisbursement.setDateEdited(new Date());
-        inventoryDisbursement.setEnteredBy(em.find(Employee.class, 46L));
-        inventoryDisbursement.setEditedBy(em.find(Employee.class, 46L));
-
-        inventoryDisbursement.save(em);
+//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
+//        EntityManager em = emf.createEntityManager();
+//
+//        Inventory inv = em.find(Inventory.class, 1957701L);
+//
+//        // Create and save inventory disbursement
+//        System.out.println("Create and save inventory disbursement...");
+//        InventoryDisbursement inventoryDisbursement;
+//        inventoryDisbursement = new InventoryDisbursement();
+//        inventoryDisbursement.setInventory(inv);
+//        inventoryDisbursement.setName("Test");
+//        inventoryDisbursement.setType("None");
+//        inventoryDisbursement.setQuantityOrdered(1.0);
+//        inventoryDisbursement.setQuantityReceived(1.0);
+//        inventoryDisbursement.setDateOrdered(new Date());
+//        inventoryDisbursement.setDateReceived(new Date());
+//        if (!inv.getAllSortedCostComponents().isEmpty()) {
+//            inventoryDisbursement.setUnitCost(inv.getAllSortedCostComponents().get(0).getRate());
+//        } else {
+//            inventoryDisbursement.setUnitCost(0.0);
+//        }
+//        inventoryDisbursement.setCost(inventoryDisbursement.getQuantityOrdered()
+//                * inventoryDisbursement.getUnitCost());
+//        inventoryDisbursement.setDateEntered(new Date());
+//        inventoryDisbursement.setDateEdited(new Date());
+//        inventoryDisbursement.setEnteredBy(em.find(Employee.class, 46L));
+//        inventoryDisbursement.setEditedBy(em.find(Employee.class, 46L));
+//
+//        inventoryDisbursement.save(em);
 
     }
 }

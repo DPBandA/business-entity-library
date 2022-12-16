@@ -32,10 +32,10 @@ public class GMailAPI {
     
     // client_secret_157905242940-v9btu3depdh6lklj0bq8hjfub8pees5f.apps.googleusercontent.com.json
 
-    @Test
-    public void testEmail() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
-        EntityManager em = emf.createEntityManager();        
-
-    }
+//    @Test
+//    public void testEmail() {
+//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
+//        EntityManager em = emf.createEntityManager();        
+//
+//    }
 }

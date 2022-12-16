@@ -38,26 +38,26 @@ public class CreateInventory {
     @Test
     public void create() {
         
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
-        EntityManager em = emf.createEntityManager();
-
-        
-        // Create and save inventory
-        System.out.println("Create and save inventory...");
-        Inventory invtry;
-        invtry = new Inventory();
-        
-        invtry.setName("Test");
-        invtry.setType("None");
-        invtry.setCategory(em.find(Category.class, 1724203L));
-        invtry.setStockKeepingUnit("001");
-        invtry.setMeasurementUnit("each");
-        invtry.setValuationMethod("FIFO");
-        invtry.setProduct(em.find(MarketProduct.class, 1738815L));
-        invtry.setSupplier(em.find(Supplier.class, 1613313L));
-        invtry.setEnteredBy(em.find(Employee.class, 46L));
-        
-        invtry.save(em);
+//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
+//        EntityManager em = emf.createEntityManager();
+//
+//        
+//        // Create and save inventory
+//        System.out.println("Create and save inventory...");
+//        Inventory invtry;
+//        invtry = new Inventory();
+//        
+//        invtry.setName("Test");
+//        invtry.setType("None");
+//        invtry.setCategory(em.find(Category.class, 1724203L));
+//        invtry.setStockKeepingUnit("001");
+//        invtry.setMeasurementUnit("each");
+//        invtry.setValuationMethod("FIFO");
+//        invtry.setProduct(em.find(MarketProduct.class, 1738815L));
+//        invtry.setSupplier(em.find(Supplier.class, 1613313L));
+//        invtry.setEnteredBy(em.find(Employee.class, 46L));
+//        
+//        invtry.save(em);
       
 
     }
