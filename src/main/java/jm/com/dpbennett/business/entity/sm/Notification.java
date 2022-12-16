@@ -424,11 +424,14 @@ public class Notification implements NotificationInterface, Serializable {
     }
     
      public static List<Notification> findNotificationsByOwnerId(EntityManager em, Long ownerId) {
-
+         
+        int maxResults = SystemOption.getInteger(em, "maxNotificationsSearchResults");  
+         
         try {
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n"
                     + " WHERE n.ownerId = " + ownerId
-                    + " ORDER BY n.issueTime DESC", Notification.class).getResultList();
+                    + " ORDER BY n.issueTime DESC", Notification.class)
+                    .setMaxResults(maxResults).getResultList();
 
             return alerts;
         } catch (Exception e) {
