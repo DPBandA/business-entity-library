@@ -62,7 +62,10 @@ public class MailUtils {
                     @Override
                     public void run() {
                         try {
-                            postMail(null, null, null, subject, message,
+                            postMail(null,
+                                    SystemOption.getString(em, "jobManagerEmailAddress"),
+                                    SystemOption.getString(em, "softwareDeveloperEmailAddress"),
+                                    subject, message,
                                     "text/plain", em);
                         } catch (Exception e) {
                             System.out.println("Error sending error mail!");
@@ -170,13 +173,13 @@ public class MailUtils {
             addressTo = new InternetAddress[1];
             addressTo[0] = new InternetAddress(to);
 
-            msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);            
+            msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
             msg.setSubject(subject);
             if (contentType == null) {
                 contentType = "text/plain";
             }
             msg.setContent(message, contentType);
-            
+
             Transport.send(msg);
 
             return new ReturnMessage();
