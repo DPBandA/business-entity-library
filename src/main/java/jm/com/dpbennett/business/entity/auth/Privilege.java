@@ -55,52 +55,18 @@ public class Privilege implements Serializable, PrivilegeInterface {
     private String category;
     private String roles;
     private String description;
-    // System admininistration privileges    
-    //private Boolean canBeSuperUser;
-    //private Boolean canBeJMTSAdministrator;
     // Job privileges
     private Boolean canEnterJob;
-//    private Boolean canEnterOwnJob;
-//    private Boolean canEnterDepartmentJob;
-//    private Boolean canDeleteJob;
     private Boolean canEditJob;
-//    private Boolean canEditOwnJob;
-//    private Boolean canEditDepartmentJob;
-//    private Boolean canApproveJobCosting;
-//    private Boolean canEnterParentJob;
     private Boolean canEditDisabledJobField;
     // Client privileges 
-//    private Boolean canAddClient;
-//    private Boolean canDeleteClient;
-    // HR privileges
-//    private Boolean canAddEmployee;
-//    private Boolean canDeleteEmployee;
-//    private Boolean canAddDepartment;
-//    private Boolean canDeleteDepartment;
-    // Compliance privileges
-//    private Boolean canAuthDetentionRequest;
-//    private Boolean canAuthDetentionNotice;
-//    private Boolean canApprvReleaseRequest;
+    private Boolean canAddClient;
+    private Boolean canDeleteClient;
     // Financial privileges
-//    private Boolean canBeFinancialAdministrator;
     private Boolean canEditInvoicingAndPayment;
     private Boolean canApplyTaxesToJobCosting;
     private Boolean canApplyDiscountsToJobCosting;
-//    private Boolean canAddAccountingCode;
-//    private Boolean canAddSupplier;
-    // Module/unit access       
-//    private Boolean canAccessProcurementUnit;
-//    private Boolean canAccessLegalMetrologyUnit;
-//    private Boolean canAccessJobManagementUnit;
-//    private Boolean canAccessComplianceUnit;
-//    private Boolean canAccessFoodsUnit;
-//    private Boolean canAccessStandardsUnit;
-//    private Boolean canAccessCertificationUnit;
-//    private Boolean canAccessServiceRequestUnit;
-//    private Boolean canAccessLegalOfficeUnit;
-//    private Boolean canAccessCRMUnit;
-//    private Boolean canAccessHRMUnit;
-//    private Boolean canAccessReportUnit;
+
     @Transient
     private Boolean isDirty;
 
@@ -111,7 +77,7 @@ public class Privilege implements Serializable, PrivilegeInterface {
     public Privilege(String name) {
         init(name);
     }
-    
+
     public static List<Privilege> findActivePrivileges(EntityManager em, String query) {
         try {
             String newQuery = query.toUpperCase().trim().replaceAll("'", "''");
@@ -140,8 +106,6 @@ public class Privilege implements Serializable, PrivilegeInterface {
     public void setActive(Boolean active) {
         this.active = active;
     }
-    
-    
 
     @Override
     public Boolean getIsDirty() {
@@ -156,183 +120,8 @@ public class Privilege implements Serializable, PrivilegeInterface {
         this.isDirty = isDirty;
     }
 
-//    public Boolean getCanAddAccountingCode() {
-//        if (canAddAccountingCode == null) {
-//            canAddAccountingCode = false;
-//        }
-//        return canAddAccountingCode;
-//    }
-//
-//    public void setCanAddAccountingCode(Boolean canAddAccountingCode) {
-//        this.canAddAccountingCode = canAddAccountingCode;
-//    }
-
-//    public Boolean getCanAddSupplier() {
-//        if (canAddSupplier == null) {
-//            canAddSupplier = true;
-//        }
-//        return canAddSupplier;
-//    }
-//
-//    public void setCanAddSupplier(Boolean canAddSupplier) {
-//        this.canAddSupplier = canAddSupplier;
-//    }
-
-//    public Boolean getCanAccessProcurementUnit() {
-//        if (canAccessProcurementUnit == null) {
-//            canAccessProcurementUnit = false;
-//        }
-//        return canAccessProcurementUnit;
-//    }
-//
-//    public void setCanAccessProcurementUnit(Boolean canAccessProcurementUnit) {
-//        this.canAccessProcurementUnit = canAccessProcurementUnit;
-//    }
-
-//    public Boolean getCanAccessHRMUnit() {
-//        if (canAccessHRMUnit == null) {
-//            canAccessHRMUnit = false;
-//        }
-//        return canAccessHRMUnit;
-//    }
-//
-//    public void setCanAccessHRMUnit(Boolean canAccessHRMUnit) {
-//        this.canAccessHRMUnit = canAccessHRMUnit;
-//    }
-
-//    public Boolean getCanAccessReportUnit() {
-//        if (canAccessReportUnit == null) {
-//            canAccessReportUnit = false;
-//        }
-//        return canAccessReportUnit;
-//    }
-//
-//    public void setCanAccessReportUnit(Boolean canAccessReportUnit) {
-//        this.canAccessReportUnit = canAccessReportUnit;
-//    }
-
-//    public Boolean getCanAccessCRMUnit() {
-//        if (canAccessCRMUnit == null) {
-//            canAccessCRMUnit = false;
-//        }
-//        return canAccessCRMUnit;
-//    }
-//
-//    public void setCanAccessCRMUnit(Boolean canAccessCRMUnit) {
-//        this.canAccessCRMUnit = canAccessCRMUnit;
-//    }
-
-//    public Boolean getCanAccessLegalMetrologyUnit() {
-//        if (canAccessLegalMetrologyUnit == null) {
-//            canAccessLegalMetrologyUnit = false;
-//        }
-//        return canAccessLegalMetrologyUnit;
-//    }
-//
-//    public void setCanAccessLegalMetrologyUnit(Boolean canAccessLegalMetrologyUnit) {
-//        this.canAccessLegalMetrologyUnit = canAccessLegalMetrologyUnit;
-//    }
-
-//    public Boolean getCanAccessJobManagementUnit() {
-//        if (canAccessJobManagementUnit == null) {
-//            canAccessJobManagementUnit = true;
-//        }
-//        return canAccessJobManagementUnit;
-//    }
-//
-//    public void setCanAccessJobManagementUnit(Boolean canAccessJobManagementUnit) {
-//        this.canAccessJobManagementUnit = canAccessJobManagementUnit;
-//    }
-
-//    public Boolean getCanAccessComplianceUnit() {
-//        if (canAccessComplianceUnit == null) {
-//            canAccessComplianceUnit = false;
-//        }
-//        return canAccessComplianceUnit;
-//    }
-//
-//    public void setCanAccessComplianceUnit(Boolean canAccessComplianceUnit) {
-//        this.canAccessComplianceUnit = canAccessComplianceUnit;
-//    }
-
-//    public Boolean getCanAccessFoodsUnit() {
-//        if (canAccessFoodsUnit == null) {
-//            canAccessFoodsUnit = false;
-//        }
-//        return canAccessFoodsUnit;
-//    }
-//
-//    public void setCanAccessFoodsUnit(Boolean canAccessFoodsUnit) {
-//        this.canAccessFoodsUnit = canAccessFoodsUnit;
-//    }
-
-//    public Boolean getCanAccessStandardsUnit() {
-//        if (canAccessStandardsUnit == null) {
-//            canAccessStandardsUnit = false;
-//        }
-//        return canAccessStandardsUnit;
-//    }
-//
-//    public void setCanAccessStandardsUnit(Boolean canAccessStandardsUnit) {
-//        this.canAccessStandardsUnit = canAccessStandardsUnit;
-//    }
-
-//    public Boolean getCanAccessCertificationUnit() {
-//        if (canAccessCertificationUnit == null) {
-//            canAccessCertificationUnit = false;
-//        }
-//        return canAccessCertificationUnit;
-//    }
-//
-//    public void setCanAccessCertificationUnit(Boolean canAccessCertificationUnit) {
-//        this.canAccessCertificationUnit = canAccessCertificationUnit;
-//    }
-
-//    public Boolean getCanAccessServiceRequestUnit() {
-//        if (canAccessServiceRequestUnit == null) {
-//            canAccessServiceRequestUnit = false;
-//        }
-//        return canAccessServiceRequestUnit;
-//    }
-//
-//    public void setCanAccessServiceRequestUnit(Boolean canAccessServiceRequestUnit) {
-//        this.canAccessServiceRequestUnit = canAccessServiceRequestUnit;
-//    }
-
-//    public Boolean getCanAccessLegalOfficeUnit() {
-//        if (canAccessLegalOfficeUnit == null) {
-//            canAccessLegalOfficeUnit = false;
-//        }
-//        return canAccessLegalOfficeUnit;
-//    }
-//
-//    public void setCanAccessLegalOfficeUnit(Boolean canAccessLegalOfficeUnit) {
-//        this.canAccessLegalOfficeUnit = canAccessLegalOfficeUnit;
-//    }
-
-    /**
-     * NB: Temp code included to be removed in the future
-     */
     private void init(String name) {
-        // default privileges
         this.name = name;
-//        canEnterJob = false;
-//        canEnterOwnJob = true;
-//        canEnterDepartmentJob = true;
-//        canDeleteJob = false;
-//        canEditJob = false;
-//        canEditOwnJob = true;
-//        canEditDepartmentJob = true;
-//        canAddClient = false;
-//        canDeleteClient = false;
-//        canAddEmployee = false;
-//        canDeleteEmployee = false;
-//        canAddDepartment = false;
-//        canDeleteDepartment = false;
-//        canBeJMTSAdministrator = false;
-//        canBeSuperUser = false;
-//        canApproveJobCosting = false;
-//        canEnterParentJob = true;
     }
 
     @Override
@@ -344,17 +133,6 @@ public class Privilege implements Serializable, PrivilegeInterface {
     public void setId(Long id) {
         this.id = id;
     }
-
-//    public Boolean getCanBeFinancialAdministrator() {
-//        if (canBeFinancialAdministrator == null) {
-//            canBeFinancialAdministrator = false;
-//        }
-//        return canBeFinancialAdministrator;
-//    }
-//
-//    public void setCanBeFinancialAdministrator(Boolean canBeFinancialAdministrator) {
-//        this.canBeFinancialAdministrator = canBeFinancialAdministrator;
-//    }
 
     public Boolean getCanApplyTaxesToJobCosting() {
         if (canApplyTaxesToJobCosting == null) {
@@ -379,39 +157,6 @@ public class Privilege implements Serializable, PrivilegeInterface {
         this.canApplyDiscountsToJobCosting = canApplyDiscountsToJobCosting;
     }
 
-//    public Boolean getCanApprvReleaseRequest() {
-//        if (canApprvReleaseRequest == null) {
-//            canApprvReleaseRequest = false;
-//        }
-//        return canApprvReleaseRequest;
-//    }
-//
-//    public void setCanApprvReleaseRequest(Boolean canApprvReleaseRequest) {
-//        this.canApprvReleaseRequest = canApprvReleaseRequest;
-//    }
-
-//    public Boolean getCanAuthDetentionNotice() {
-//        if (canAuthDetentionNotice == null) {
-//            canAuthDetentionNotice = false;
-//        }
-//        return canAuthDetentionNotice;
-//    }
-//
-//    public void setCanAuthDetentionNotice(Boolean canAuthDetentionNotice) {
-//        this.canAuthDetentionNotice = canAuthDetentionNotice;
-//    }
-
-//    public Boolean getCanAuthDetentionRequest() {
-//        if (canAuthDetentionRequest == null) {
-//            canAuthDetentionRequest = false;
-//        }
-//        return canAuthDetentionRequest;
-//    }
-//
-//    public void setCanAuthDetentionRequest(Boolean canAuthDetentionRequest) {
-//        this.canAuthDetentionRequest = canAuthDetentionRequest;
-//    }
-
     public Boolean getCanEditInvoicingAndPayment() {
         if (canEditInvoicingAndPayment == null) {
             canEditInvoicingAndPayment = false;
@@ -423,28 +168,6 @@ public class Privilege implements Serializable, PrivilegeInterface {
         this.canEditInvoicingAndPayment = canEditInvoicingAndPayment;
     }
 
-//    public Boolean getCanApproveJobCosting() {
-//        if (canApproveJobCosting == null) {
-//            canApproveJobCosting = false;
-//        }
-//        return canApproveJobCosting;
-//    }
-
-//    public void setCanApproveJobCosting(Boolean canApproveJobCosting) {
-//        this.canApproveJobCosting = canApproveJobCosting;
-//    }
-//
-//    public Boolean getCanEnterParentJob() {
-//        if (canEnterParentJob == null) {
-//            canEnterParentJob = false;
-//        }
-//        return canEnterParentJob;
-//    }
-
-//    public void setCanEnterParentJob(Boolean canEnterParentJob) {
-//        this.canEnterParentJob = canEnterParentJob;
-//    }
-//
     public Boolean getCanEditDisabledJobField() {
         if (canEditDisabledJobField == null) {
             canEditDisabledJobField = false;
@@ -455,139 +178,28 @@ public class Privilege implements Serializable, PrivilegeInterface {
     public void setCanEditDisabledJobField(Boolean canEditDisabledJobField) {
         this.canEditDisabledJobField = canEditDisabledJobField;
     }
-//
-//    public Boolean getCanEnterOwnJob() {
-//        if (canEnterOwnJob == null) {
-//            canEnterOwnJob = false;
-//        }
-//        return canEnterOwnJob;
-//    }
-//
-//    public void setCanEnterOwnJob(Boolean canEnterOwnJob) {
-//        this.canEnterOwnJob = canEnterOwnJob;
-//    }
 
-//    public Boolean getCanEnterDepartmentJob() {
-//        if (canEnterDepartmentJob == null) {
-//            canEnterDepartmentJob = true;
-//        }
-//        return canEnterDepartmentJob;
-//    }
-//
-//    public void setCanEnterDepartmentJob(Boolean canEnterDepartmentJob) {
-//        this.canEnterDepartmentJob = canEnterDepartmentJob;
-//    }
+    public Boolean getCanAddClient() {
+        if (canAddClient == null) {
+            canAddClient = false;
+        }
+        return canAddClient;
+    }
 
-//    public Boolean getCanBeJMTSAdministrator() {
-//        if (canBeJMTSAdministrator == null) {
-//            canBeJMTSAdministrator = false;
-//        }
-//
-//        return canBeJMTSAdministrator;
-//    }
-//
-//    public void setCanBeJMTSAdministrator(Boolean canBeJMTSAdministrator) {
-//        this.canBeJMTSAdministrator = canBeJMTSAdministrator;
-//    }
+    public void setCanAddClient(Boolean canAddClient) {
+        this.canAddClient = canAddClient;
+    }
 
-//    public Boolean getCanBeSuperUser() {
-//        if (canBeSuperUser == null) {
-//            canBeSuperUser = false;
-//        }
-//        return canBeSuperUser;
-//    }
-//
-//    public void setCanBeSuperUser(Boolean canBeSuperUser) {
-//        this.canBeSuperUser = canBeSuperUser;
-//    }
+    public Boolean getCanDeleteClient() {
+        if (canDeleteClient == null) {
+            canDeleteClient = false;
+        }
+        return canDeleteClient;
+    }
 
-//    public Boolean getCanAddClient() {
-//        if (canAddClient == null) {
-//            canAddClient = false;
-//        }
-//        return canAddClient;
-//    }
-//
-//    public void setCanAddClient(Boolean canAddClient) {
-//        this.canAddClient = canAddClient;
-//    }
-
-//    public Boolean getCanAddDepartment() {
-//        if (canAddDepartment == null) {
-//            canAddDepartment = false;
-//        }
-//        return canAddDepartment;
-//    }
-//
-//    public void setCanAddDepartment(Boolean canAddDepartment) {
-//        this.canAddDepartment = canAddDepartment;
-//    }
-
-//    public Boolean getCanAddEmployee() {
-//        if (canAddEmployee == null) {
-//            canAddEmployee = false;
-//        }
-//        return canAddEmployee;
-//    }
-//
-//    public void setCanAddEmployee(Boolean canAddEmployee) {
-//        this.canAddEmployee = canAddEmployee;
-//    }
-
-//    public Boolean getCanDeleteClient() {
-//        if (canDeleteClient == null) {
-//            canDeleteClient = false;
-//        }
-//        return canDeleteClient;
-//    }
-//
-//    public void setCanDeleteClient(Boolean canDeleteClient) {
-//        this.canDeleteClient = canDeleteClient;
-//    }
-
-//    public Boolean getCanDeleteDepartment() {
-//        if (canDeleteDepartment == null) {
-//            canDeleteDepartment = false;
-//        }
-//        return canDeleteDepartment;
-//    }
-//
-//    public void setCanDeleteDepartment(Boolean canDeleteDepartment) {
-//        this.canDeleteDepartment = canDeleteDepartment;
-//    }
-
-//    public Boolean getCanDeleteEmployee() {
-//        if (canDeleteEmployee == null) {
-//            canDeleteEmployee = false;
-//        }
-//        return canDeleteEmployee;
-//    }
-//
-//    public void setCanDeleteEmployee(Boolean canDeleteEmployee) {
-//        this.canDeleteEmployee = canDeleteEmployee;
-//    }
-
-//    public Boolean getCanEditDepartmentJob() {
-//        if (canEditDepartmentJob == null) {
-//            canEditDepartmentJob = true;
-//        }
-//        return canEditDepartmentJob;
-//    }
-//
-//    public void setCanEditDepartmentJob(Boolean canEditDepartmentJob) {
-//        this.canEditDepartmentJob = canEditDepartmentJob;
-//    }
-
-//    public Boolean getCanDeleteJob() {
-//        if (canDeleteJob == null) {
-//            canDeleteJob = false;
-//        }
-//        return canDeleteJob;
-//    }
-//
-//    public void setCanDeleteJob(Boolean canDeleteJob) {
-//        this.canDeleteJob = canDeleteJob;
-//    }
+    public void setCanDeleteClient(Boolean canDeleteClient) {
+        this.canDeleteClient = canDeleteClient;
+    }
 
     public Boolean getCanEditJob() {
         if (canEditJob == null) {
@@ -599,17 +211,6 @@ public class Privilege implements Serializable, PrivilegeInterface {
     public void setCanEditJob(Boolean canEditJob) {
         this.canEditJob = canEditJob;
     }
-
-//    public Boolean getCanEditOwnJob() {
-//        if (canEditOwnJob == null) {
-//            canEditOwnJob = false;
-//        }
-//        return canEditOwnJob;
-//    }
-//
-//    public void setCanEditOwnJob(Boolean canEditOwnJob) {
-//        this.canEditOwnJob = canEditOwnJob;
-//    }
 
     public Boolean getCanEnterJob() {
         if (canEnterJob == null) {
@@ -671,12 +272,12 @@ public class Privilege implements Serializable, PrivilegeInterface {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        
         if (!(object instanceof Privilege)) {
             return false;
         }
         Privilege other = (Privilege) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -694,11 +295,11 @@ public class Privilege implements Serializable, PrivilegeInterface {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public static Privilege findActivePrivilegeByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p "
@@ -724,7 +325,7 @@ public class Privilege implements Serializable, PrivilegeInterface {
                     + "LIKE '" + newName.toUpperCase() + "%'", Privilege.class).getResultList();
 
             if (!privileges.isEmpty()) {
-                // Make sure this is the current option stored in the database
+                
                 Privilege privilege = privileges.get(0);
                 em.refresh(privilege);
 
@@ -755,6 +356,6 @@ public class Privilege implements Serializable, PrivilegeInterface {
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

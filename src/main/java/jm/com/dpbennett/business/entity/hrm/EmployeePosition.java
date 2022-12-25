@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2022  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -57,13 +57,13 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     private String title;
     private String classification;
     private String category;    
-    private Boolean active;
-    @Column(length = 1024)
-    private String description;
+    private Boolean active;    
     private Double salary;
     private Double manHourRate;
     private Double lowerApprovalLevel;
     private Double upperApprovalLevel;
+    @Column(length = 1024)
+    private String description;
     @Transient
     private Boolean isDirty;
 
