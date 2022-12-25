@@ -119,7 +119,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         }
         return isDirty;
     }
-
+    
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
@@ -550,5 +550,18 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public static Boolean validate(Address address) {
+
+        if (address != null) {
+            if (!BusinessEntityUtils.validateName(address.getAddressLine1().trim())) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+        return true;
     }
 }

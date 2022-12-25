@@ -590,4 +590,17 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    public static Boolean validate(Contact contact) {
+
+        if (contact != null) {
+            if (!BusinessEntityUtils.validateText(contact.toString().trim())) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+        return true;
+    }
 }
