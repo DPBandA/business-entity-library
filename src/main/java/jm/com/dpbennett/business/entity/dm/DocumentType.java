@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2022  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -49,6 +50,8 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
     private String name;
     private String type;
     private String code;
+    @Column(length = 1024)
+    private String description;
     @Transient
     private Boolean isDirty;
 
@@ -72,6 +75,17 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        if (description == null) {
+            description = "";
+        }
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -239,8 +253,8 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
         }
 
     }
-    
-     public static DocumentType findDefaultDocumentType(EntityManager em,
+
+    public static DocumentType findDefaultDocumentType(EntityManager em,
             String name) {
         DocumentType documentType = DocumentType.findDocumentTypeByName(em, name);
 
