@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity.sm;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -46,6 +47,8 @@ public class Category implements CategoryInterface, Serializable {
     private Long id;
     private String name;
     private String type;
+    @Column(length = 1024)
+    private String description;
     @Transient
     private Boolean isDirty;
 
@@ -69,6 +72,17 @@ public class Category implements CategoryInterface, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        if (description == null) {
+            description = "";
+        }
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -129,24 +143,24 @@ public class Category implements CategoryInterface, Serializable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Category> findCategoriesByName(EntityManager em, String name) {
 
         try {
             List<Category> categories
                     = em.createQuery("SELECT c FROM Category c where UPPER(c.name) like '%"
                             + name.toUpperCase().trim() + "%' ORDER BY c.name", Category.class).getResultList();
-            
+
             return categories;
-            
+
         } catch (Exception e) {
-            
+
             System.out.println(e);
             return new ArrayList<>();
         }
     }
-    
-     public static Category findActiveCategoryByName(EntityManager em, String value, Boolean ignoreCase) {
+
+    public static Category findActiveCategoryByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Category> categories;
 
@@ -166,15 +180,15 @@ public class Category implements CategoryInterface, Serializable {
             if (!categories.isEmpty()) {
                 return categories.get(0);
             }
-            
+
             return null;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
-    
+
     public static List<Category> findActiveCategoriesByAnyPartOfName(EntityManager em, String value) {
 
         try {
@@ -187,17 +201,17 @@ public class Category implements CategoryInterface, Serializable {
                             //+ value + "%')"
                             //+ " AND d.active = 1"
                             + " ORDER BY c.id", Category.class).setMaxResults(500).getResultList();
-            
+
             return categories;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
-    
-     public static List<Category> findActiveCategoriesByAnyPartOfNameAndType(
-             EntityManager em, String type, String value) {
+
+    public static List<Category> findActiveCategoriesByAnyPartOfNameAndType(
+            EntityManager em, String type, String value) {
 
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
@@ -209,9 +223,9 @@ public class Category implements CategoryInterface, Serializable {
                             + type + "'"
                             //+ " AND d.active = 1"
                             + " ORDER BY c.id", Category.class).setMaxResults(500).getResultList();
-            
+
             return categories;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();

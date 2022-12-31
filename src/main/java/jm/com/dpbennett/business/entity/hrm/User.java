@@ -665,4 +665,28 @@ public class User implements Serializable, BusinessEntity {
                     && Department.findDepartmentAssignedToJob(foundJob, em).getActingHeadActive();
         }
     }
+
+    public ReturnMessage saveUnique(EntityManager em) {
+
+        try {
+
+            if (this.id == null) {
+                User existingUser = User.findJobManagerUserByUsername(em, this.username);
+                if (existingUser != null) {
+                    return new ReturnMessage(false, "User exists");
+                }
+                else {
+                  return save(em);  
+                }
+            }
+            else {
+                return save(em);
+            }
+            
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "User not saved");
+    }
 }
