@@ -20,6 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.sm;
 
 import java.util.Date;
+import javax.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 
 /**
@@ -79,5 +80,7 @@ public interface NotificationInterface extends BusinessEntity {
     public String getStatus();
 
     public void setStatus(String status);
+    
+    public Boolean delete(EntityManager em);
 
 }

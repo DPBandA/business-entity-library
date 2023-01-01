@@ -90,7 +90,7 @@ public class Notification implements NotificationInterface, Serializable {
         this.ownerId = 0L;
         active = true;
     }
-    
+
     public Notification(String name) {
         this.message = "";
         this.subject = "";
@@ -130,12 +130,12 @@ public class Notification implements NotificationInterface, Serializable {
         this.dueTime = dueTime;
         this.status = status;
     }
-    
+
     public String getStyle() {
         if (active) {
             return "font-weight: bold";
         }
-        
+
         return "font-weight: normal";
     }
 
@@ -422,11 +422,11 @@ public class Notification implements NotificationInterface, Serializable {
             return new ArrayList<>();
         }
     }
-    
-     public static List<Notification> findNotificationsByOwnerId(EntityManager em, Long ownerId) {
-         
-        int maxResults = SystemOption.getInteger(em, "maxNotificationsSearchResults");  
-         
+
+    public static List<Notification> findNotificationsByOwnerId(EntityManager em, Long ownerId) {
+
+        int maxResults = SystemOption.getInteger(em, "maxNotificationsSearchResults");
+
         try {
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n"
                     + " WHERE n.ownerId = " + ownerId
@@ -439,7 +439,7 @@ public class Notification implements NotificationInterface, Serializable {
             return new ArrayList<>();
         }
     }
-    
+
     public static Notification findNotificationByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Notification> notifications;
@@ -460,18 +460,18 @@ public class Notification implements NotificationInterface, Serializable {
             if (!notifications.isEmpty()) {
                 return notifications.get(0);
             }
-            
+
             return null;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
-    
+
     public static Notification findNotificationByNameAndOwnerId(
-            EntityManager em, 
-            String value, 
+            EntityManager em,
+            String value,
             Long ownerId,
             Boolean ignoreCase) {
 
@@ -483,21 +483,21 @@ public class Notification implements NotificationInterface, Serializable {
             if (ignoreCase) {
                 notifications = em.createQuery("SELECT n FROM Notification n"
                         + " WHERE UPPER(n.name)"
-                        + " = '" + value.toUpperCase() + "'" +
-                        " AND n.ownerId = " + ownerId, Notification.class).getResultList();
+                        + " = '" + value.toUpperCase() + "'"
+                        + " AND n.ownerId = " + ownerId, Notification.class).getResultList();
             } else {
                 notifications = em.createQuery("SELECT n FROM Notification n"
                         + " WHERE n.name "
-                        + "= '" + value + "'" +
-                        " AND n.ownerId = " + ownerId, Notification.class).getResultList();
+                        + "= '" + value + "'"
+                        + " AND n.ownerId = " + ownerId, Notification.class).getResultList();
             }
 
             if (!notifications.isEmpty()) {
                 return notifications.get(0);
             }
-            
+
             return null;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -526,5 +526,22 @@ public class Notification implements NotificationInterface, Serializable {
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
+    }
+
+    @Override
+    public Boolean delete(EntityManager em) {
+        try {
+            em.getTransaction().begin();
+            Notification n = em.find(Notification.class, this.id);
+            em.remove(n);
+            em.getTransaction().commit();
+            em.close();
+        } catch (Exception e) {
+            System.out.println(e);
+
+            return false;
+        }
+
+        return true;
     }
 }
