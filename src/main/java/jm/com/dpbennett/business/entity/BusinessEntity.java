@@ -20,6 +20,7 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity;
 
+import java.util.Date;
 import javax.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -32,18 +33,40 @@ public interface BusinessEntity {
     public Long getId();
 
     public void setId(Long id);
+    
+//    public Boolean getActive();
+//    
+//    public void setActive(Boolean active);
 
     public String getName();
 
     public void setName(String name);
+    
+//    public Date getDateEntered();
+//    
+//    public void setDateEntered(Date dateEntered);
 
     public ReturnMessage save(EntityManager em);
+    
+//    public ReturnMessage delete(EntityManager em);
 
     public ReturnMessage validate(EntityManager em);  
 
     public Boolean getIsDirty();
     
     public void setIsDirty(Boolean isDirty);
+    
+//    public String getDescription();
+//    
+//    public void setDescription(String description);
+    
+//    public Person getEditedBy();
+//    
+//    public void setEditedBy(Person person);
+//    
+//    public Person getEnteredBy();
+//    
+//    public void setEnteredBy(Person person);
     
     /**
      * The actions that can be performed with respect to an entity.
