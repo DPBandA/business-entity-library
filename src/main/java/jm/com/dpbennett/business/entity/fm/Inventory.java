@@ -90,6 +90,8 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Currency currency;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<CostComponent> costComponents;
     @Transient
@@ -102,6 +104,18 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     public Inventory() {
         actions = new ArrayList<>();
         costComponents = new ArrayList<>();
+    }
+
+    public Currency getCurrency() {
+        return (currency == null ? new Currency() : currency);
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    public String getCurrencySymbol() {
+        return getCurrency().getSymbol();
     }
 
     public String getCode() {
