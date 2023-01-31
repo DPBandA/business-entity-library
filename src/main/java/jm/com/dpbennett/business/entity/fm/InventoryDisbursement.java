@@ -85,6 +85,11 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private List<BusinessEntity.Action> actions;
 
     public InventoryDisbursement() {
+        quantityOrdered = 1.0;
+        quantityReceived = 1.0;
+        unitCost = 0.0;
+        cost = 0.0;
+        
         actions = new ArrayList<>();
     }
 
@@ -136,7 +141,9 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     public Inventory getInventory() {
         if (inventory == null) {
-            return new Inventory();
+            Inventory invtry = new Inventory();
+
+            return invtry;
         }
         return inventory;
     }
