@@ -90,6 +90,8 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         unitCost = 0.0;
         cost = 0.0;
         
+        // tk init inventory and product here?
+        
         actions = new ArrayList<>();
     }
 

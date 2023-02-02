@@ -82,8 +82,8 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
     public String getCommonName() {
         if (commonName == null) {
-            // Type was used to store the common name so assign it.
-            commonName = getType();
+            
+            commonName = "";
         }
         return commonName;
     }
