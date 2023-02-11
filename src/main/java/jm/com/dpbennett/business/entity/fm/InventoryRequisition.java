@@ -203,11 +203,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
             Employee employee = user.getEmployee();
 
             if (getIsDirty()) {
-                if (getEnteredBy() == null) {
-                    setDateEntered(now);
-                    setEnteredBy(employee);
-                }
-
+              
                 setDateEdited(now);
                 setEditedBy(employee);
             }
