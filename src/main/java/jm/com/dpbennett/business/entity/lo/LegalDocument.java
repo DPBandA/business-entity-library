@@ -583,7 +583,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         searchText = searchText.replaceAll("'", "''");
        
         switch (searchType) {
-            case "Legal documents":
+            case "Legal Documents":
                 if (!searchText.equals("")) {
                     searchTextAndClause
                             = " AND ("
