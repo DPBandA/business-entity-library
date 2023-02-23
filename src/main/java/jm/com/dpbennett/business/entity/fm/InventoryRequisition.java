@@ -203,7 +203,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
             Employee employee = user.getEmployee();
 
             if (getIsDirty()) {
-              
+
                 setDateEdited(now);
                 setEditedBy(employee);
             }
@@ -436,9 +436,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     @Override
     public String getName() {
 
-        if (name == null) {
-            name = "";
-        }
+        name = getInventoryDisbursements().toString();
 
         return name;
     }

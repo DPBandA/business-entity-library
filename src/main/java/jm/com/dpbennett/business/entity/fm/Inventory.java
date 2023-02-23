@@ -105,6 +105,12 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         actions = new ArrayList<>();
         costComponents = new ArrayList<>();
     }
+    
+    public Inventory(String name) {
+        this.name = name;        
+        actions = new ArrayList<>();
+        costComponents = new ArrayList<>();
+    }
 
     public Currency getCurrency() {
         return (currency == null ? new Currency() : currency);
@@ -360,6 +366,47 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     public static Inventory findById(EntityManager em, Long Id) {
 
         return em.find(Inventory.class, Id);
+    }
+    
+    public static List<Inventory> findAllByName(EntityManager em, 
+            String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Inventory> inventory
+                    = em.createQuery("SELECT i FROM Inventory i WHERE UPPER(i.name) like '%"
+                            + newName.toUpperCase() + "%'"  
+                            + " ORDER BY i.name", Inventory.class).getResultList();
+
+            return inventory;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static Inventory findByName(
+            EntityManager em, String name) {
+
+        String newName = name.replaceAll("'", "''").trim().toUpperCase();
+
+        try {
+            List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
+                    + "WHERE UPPER(i.name)" + " = '" + newName,
+                    Inventory.class).getResultList();
+            if (!inventory.isEmpty()) {
+                Inventory inventoryItem = inventory.get(0);
+
+                return inventoryItem;
+            }
+        } catch (Exception e) {
+            System.out.println("Error finding inventory: " + e);
+            return null;
+        }
+
+        return null;
     }
 
     public static List<Inventory> find(

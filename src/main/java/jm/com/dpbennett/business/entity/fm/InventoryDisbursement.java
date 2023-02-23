@@ -89,9 +89,8 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         quantityReceived = 1.0;
         unitCost = 0.0;
         cost = 0.0;
-        
+
         // tk init inventory and product here?
-        
         actions = new ArrayList<>();
     }
 
@@ -451,9 +450,8 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public String getName() {
 
-        if (name == null) {
-            name = "";
-        }
+        name = getInventory().getName();
+
         return name;
     }
 
