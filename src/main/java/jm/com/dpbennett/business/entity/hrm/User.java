@@ -94,6 +94,7 @@ public class User implements Serializable, BusinessEntity {
 
     public User() {
         privilege = new Privilege();
+        employee = new Employee();
         modules = new Modules();
         username = "";
     }

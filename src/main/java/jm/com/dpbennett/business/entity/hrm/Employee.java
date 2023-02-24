@@ -106,6 +106,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
+        positions  = new ArrayList<>();
         active = true;
     }
 
@@ -115,6 +116,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
+        positions  = new ArrayList<>();
         active = true;
     }
 
