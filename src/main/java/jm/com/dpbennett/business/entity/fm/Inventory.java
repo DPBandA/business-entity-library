@@ -394,7 +394,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
         try {
             List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
-                    + "WHERE UPPER(i.name)" + " = '" + newName,
+                    + "WHERE UPPER(i.name)" + " = '" + newName + "'" ,
                     Inventory.class).getResultList();
             if (!inventory.isEmpty()) {
                 Inventory inventoryItem = inventory.get(0);
