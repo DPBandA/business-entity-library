@@ -336,7 +336,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
             String searchText,
             Integer maxResults) {
 
-        List<InventoryRequisition> foundInventoryRequisitions;
+        List<InventoryRequisition> foundInventoryRequisitions = new ArrayList<>();
         String searchQuery;
         String searchTextAndClause;
         String selectClause = "SELECT InventoryRequisition FROM InventoryRequisition inventoryRequisition";
@@ -374,7 +374,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
             }
         } catch (Exception e) {
             System.out.println(e);
-            return null;
+            return foundInventoryRequisitions;
         }
 
         return foundInventoryRequisitions;

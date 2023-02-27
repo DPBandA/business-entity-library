@@ -414,7 +414,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             String searchText,
             Integer maxResults) {
 
-        List<Inventory> foundInventory;
+        List<Inventory> foundInventory = new ArrayList<>();
         String searchQuery;
         String searchTextAndClause;
         String selectClause = "SELECT inventory FROM Inventory inventory";
@@ -460,7 +460,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             }
         } catch (Exception e) {
             System.out.println(e);
-            return null;
+            return foundInventory;
         }
 
         return foundInventory;
