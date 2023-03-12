@@ -42,6 +42,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -59,6 +61,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllClients", query = "SELECT c FROM Client c ORDER BY c.name")
 })
+@XmlRootElement
 public class Client implements Customer, Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;
@@ -469,6 +472,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     }
 
     @Override
+    @XmlTransient
     public List<Address> getAddresses() {
         if (addresses != null) {
             Collections.sort(addresses);
@@ -497,6 +501,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
     }
 
     @Override
+    @XmlTransient
     public List<Contact> getContacts() {
         if (contacts != null) {
             Collections.sort(contacts);

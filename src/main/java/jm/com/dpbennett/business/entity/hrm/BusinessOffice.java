@@ -33,6 +33,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -46,6 +47,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllBusinessOffices", query = "SELECT e FROM BusinessOffice e ORDER BY e.name")
 })
+@XmlRootElement
 public class BusinessOffice implements Serializable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;

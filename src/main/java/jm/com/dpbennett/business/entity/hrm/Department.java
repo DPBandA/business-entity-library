@@ -19,6 +19,7 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jm.com.dpbennett.business.entity.jmts.Job;
 import java.io.Serializable;
 import java.text.Collator;
@@ -38,6 +39,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.fm.JobCategory;
 import jm.com.dpbennett.business.entity.auth.Privilege;
@@ -52,12 +55,11 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "department")
 @NamedQueries({
-    @NamedQuery(name = "findAllDepartments", query = "SELECT e FROM Department e ORDER BY e.name")
-    ,
-    @NamedQuery(name = "findAllActiveDepartments", query = "SELECT e FROM Department e WHERE e.active = 1 ORDER BY e.name")
-    ,
+    @NamedQuery(name = "findAllDepartments", query = "SELECT e FROM Department e ORDER BY e.name"),
+    @NamedQuery(name = "findAllActiveDepartments", query = "SELECT e FROM Department e WHERE e.active = 1 ORDER BY e.name"),
     @NamedQuery(name = "findBySubGroupCode", query = "SELECT e FROM Department e WHERE e.code = :code")
 })
+@XmlRootElement
 public class Department implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;
@@ -172,6 +174,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.internet = internet;
     }
 
+    @XmlTransient
     public List<Laboratory> getLaboratories() {
         if (laboratories == null) {
             laboratories = new ArrayList<>();
@@ -183,6 +186,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.laboratories = laboratories;
     }
 
+    @XmlTransient
     public List<DepartmentUnit> getDepartmentUnits() {
         if (departmentUnits == null) {
             departmentUnits = new ArrayList<>();
@@ -206,7 +210,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     }
 
     public Employee getHead() {
-        
+
         return head;
     }
 
@@ -215,7 +219,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     }
 
     public Employee getActingHead() {
-        
+
         return actingHead;
     }
 
@@ -223,6 +227,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.actingHead = actingHead;
     }
 
+    @XmlTransient
     public List<JobCategory> getJobCategories() {
         return jobCategories;
     }
@@ -231,6 +236,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.jobCategories = jobCategories;
     }
 
+    @XmlTransient
     public List<Employee> getStaff() {
         return staff;
     }
@@ -244,7 +250,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         if (name == null) {
             name = "";
         }
-               
+
         return name;
     }
 
@@ -351,7 +357,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static Department findDepartmentByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
+            value = value.trim().replaceAll("'", "''");//.replaceAll("&amp;", "&");
 
             List<Department> departments = em.createQuery("SELECT d FROM Department d "
                     + "WHERE UPPER(d.name) "
@@ -369,7 +375,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static Department findActiveDepartmentByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<Department> departments = em.createQuery("SELECT d FROM Department d "

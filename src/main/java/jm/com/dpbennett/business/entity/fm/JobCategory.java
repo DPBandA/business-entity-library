@@ -35,6 +35,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -52,6 +53,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     ,
     @NamedQuery(name = "findByCategory", query = "SELECT e FROM JobCategory e WHERE e.category = :category ORDER BY e.category")
 })
+@XmlRootElement
 public class JobCategory implements Serializable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;

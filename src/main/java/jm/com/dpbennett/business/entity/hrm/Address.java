@@ -33,6 +33,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -47,6 +48,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllAddresses", query = "SELECT e FROM Address e ORDER BY e.type")
 })
+@XmlRootElement
 public class Address implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;

@@ -35,6 +35,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -45,6 +47,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "contact")
+@XmlRootElement
 public class Contact implements Person, BusinessEntity, Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
@@ -127,7 +130,9 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     }
 
     public List getContactTypes() {
-        throw new UnsupportedOperationException("Not supported yet: getContactTypes() to be put in Contact class");
+        
+        return new ArrayList();
+        //throw new UnsupportedOperationException("Not supported yet: getContactTypes() to be put in Contact class");
         //return Application.getStringListAsSortableSelectItems(getEntityManager(), "personalContactTypes");
     }
 
@@ -190,6 +195,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         this.salutation = salutation;
     }
 
+    @XmlTransient
     public List<Address> getAddresses() {
         return addresses;
     }
@@ -209,6 +215,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         this.internet = internet;
     }
 
+    @XmlTransient
     public List<PhoneNumber> getPhoneNumbers() {
         if (phoneNumbers == null) {
             phoneNumbers = new ArrayList<>();
