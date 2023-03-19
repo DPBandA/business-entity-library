@@ -409,17 +409,17 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public Address getDefaultAddress() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new Address();
     }
 
     @Override
     public Contact getDefaultContact() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new Contact();
     }
 
     @Override
     public List<BusinessOffice> getBusinessOffices() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ArrayList<>();
     }
 
     @Override
