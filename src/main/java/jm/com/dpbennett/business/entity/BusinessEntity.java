@@ -42,6 +42,10 @@ public interface BusinessEntity {
 
     public void setName(String name);
     
+//    public String getType();
+//
+//    public void setType(String type);
+    
 //    public Date getDateEntered();
 //    
 //    public void setDateEntered(Date dateEntered);

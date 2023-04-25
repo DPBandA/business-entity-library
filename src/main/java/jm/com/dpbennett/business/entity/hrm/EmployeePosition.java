@@ -54,11 +54,13 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String type;
     private String title;
     private String classification;
     private String category;    
     private Boolean active;    
     private Double salary;
+    private String payCycle;
     private Double manHourRate;
     private Double lowerApprovalLevel;
     private Double upperApprovalLevel;
@@ -72,10 +74,12 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
      * 
      */
     public EmployeePosition() {
+        type = "";
         title = "";
         classification = "";
         category = "";
         salary = 0.0;
+        payCycle = "";
         manHourRate = 0.0;
         lowerApprovalLevel = 0.0;
         upperApprovalLevel = 0.0;
@@ -93,6 +97,22 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
         upperApprovalLevel = 0.0;
         active = true;
         description = "";
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getPayCycle() {
+        return payCycle;
+    }
+
+    public void setPayCycle(String payCycle) {
+        this.payCycle = payCycle;
     }
 
     @Override
