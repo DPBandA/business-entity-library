@@ -314,6 +314,21 @@ public class Subgroup implements BusinessEntity, Comparable, Serializable {
             return new ArrayList<>();
         }
     }
+    
+    public static List<Subgroup> findAllActiveByName(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Subgroup> subgroups
+                    = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
+                            + value.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Subgroup.class).getResultList();
+            return subgroups;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     /**
      * Finds the first subgroup that contains the specified department.

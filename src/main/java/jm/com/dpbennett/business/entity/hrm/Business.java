@@ -386,6 +386,21 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
             return new ArrayList<>();
         }
     }
+    
+    public static List<Business> findActiveBusinessesByName(EntityManager em, String value) {
+
+        try {
+            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+
+            List<Business> businesses
+                    = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
+                            + value.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", Business.class).getResultList();
+            return businesses;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     @Override
     public ReturnMessage save(EntityManager em) {

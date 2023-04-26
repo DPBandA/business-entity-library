@@ -334,6 +334,21 @@ public class Division implements BusinessEntity, Comparable, Serializable {
             return new ArrayList<>();
         }
     }
+    
+    public static List<Division> findAllActiveByName(EntityManager em, String name) {
+
+        try {
+            String newName = name.replaceAll("'", "''");
+
+            List<Division> divisions
+                    = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
+                            + newName.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Division.class).getResultList();
+            return divisions;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     public static List<Division> findAllActive(EntityManager em) {
 
