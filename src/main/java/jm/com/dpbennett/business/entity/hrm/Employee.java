@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2022  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jm.com.dpbennett.business.entity.Person;
 import java.io.Serializable;
 import java.text.Collator;
@@ -28,11 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import javax.json.bind.annotation.JsonbTransient;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -94,14 +88,10 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private Date birthDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateHired;
-    //private Double billingRate;
     private String notes;
     private Boolean active;
-    //private String employmentType;
     @OneToOne(cascade = CascadeType.ALL)
     private Signature signature;
-    //private String post;
-    //private String payCycle;
     @Transient
     private Boolean isDirty;
 
@@ -111,7 +101,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
-        positions  = new ArrayList<>();
+        positions = new ArrayList<>();
         active = true;
     }
 
@@ -121,17 +111,9 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
-        positions  = new ArrayList<>();
+        positions = new ArrayList<>();
         active = true;
     }
-
-//    public String getPayCycle() {
-//        return payCycle;
-//    }
-//
-//    public void setPayCycle(String payCycle) {
-//        this.payCycle = payCycle;
-//    }
 
     public String getEmploymentPositions() {
         String eps = "";
@@ -199,14 +181,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         this.isDirty = isDirty;
     }
 
-//    public String getPost() {
-//        return post;
-//    }
-//
-//    public void setPost(String post) {
-//        this.post = post;
-//    }
-
     public Signature getSignature() {
         return signature;
     }
@@ -214,14 +188,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public void setSignature(Signature signature) {
         this.signature = signature;
     }
-
-//    public String getEmploymentType() {
-//        return employmentType;
-//    }
-//
-//    public void setEmploymentType(String employmentType) {
-//        this.employmentType = employmentType;
-//    }
 
     public Boolean getActive() {
         return active;
@@ -279,14 +245,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public void setUsername(String username) {
         this.username = username;
     }
-
-//    public Double getBillingRate() {
-//        return billingRate;
-//    }
-//
-//    public void setBillingRate(Double billingRate) {
-//        this.billingRate = billingRate;
-//    }
 
     public Date getBirthDate() {
         return birthDate;
@@ -390,12 +348,12 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof Employee)) {
             return false;
         }
         Employee other = (Employee) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -528,42 +486,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    public static Employee findEmployeeByUsername(EntityManager em, String username, javax.naming.ldap.LdapContext ctx) {
-
-        try {
-
-            SearchControls constraints = new SearchControls();
-            constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            String[] attrIDs = {"displayName"};
-
-            constraints.setReturningAttributes(attrIDs);
-
-            // tk make DC=? option
-            NamingEnumeration answer = ctx.search("DC=bos,DC=local", "SAMAccountName=" 
-                    + username, constraints);
-            if (answer.hasMore()) { // assuming only one match
-                Attributes attrs = ((SearchResult) answer.next()).getAttributes();
-                // return the employee for the given first and last names
-                String name[] = attrs.get("displayName").get().toString().split(" ");
-                if (name.length == 2) { // simple first and last names
-                    return findEmployeeByName(em, name[0].trim(), name[1].trim());
-                } else if (name.length == 3) { // double barrel first name without hyphen and last name
-                    return findEmployeeByName(em, name[0].trim() + " " + name[1].trim(), name[2].trim());
-                } else if (name.length == 3) { // double barrel first name without hyphen and last name
-                    return findEmployeeByName(em, name[0].trim() + "-" + name[1].trim(), name[2].trim());
-                }
-
-            } else {
-                return null;
-            }
-
-        } catch (NamingException ex) {
-            System.out.println(ex);
-        }
-
-        return null;
-    }
-
     /**
      * Gets first employee with the given firstname and lasname
      *
@@ -673,9 +595,9 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
             employee = new Employee();
             employee.setFirstName(firstName);
             employee.setLastName(lastName);
-            
+
             employee.setDepartment(Department.findDefaultDepartment(em, "--"));
-            
+
             if (userTransaction) {
                 em.getTransaction().begin();
                 BusinessEntityUtils.saveBusinessEntity(em, employee);
@@ -750,7 +672,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new ReturnMessage();
     }
 
     public static String findEmployeeDefaultEmailAdress(Employee employee, EntityManager em) {
@@ -759,7 +681,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         if (!employee.getInternet().getEmail1().trim().equals("")) {
             address = employee.getInternet().getEmail1();
         } else {
-               
+
             String listAsString = (String) SystemOption.getOptionValueObject(em, "domainNames");
             String domainNames[] = listAsString.split(";");
 
@@ -781,7 +703,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         List<String> emails = new ArrayList<>();
 
         emails.add(Employee.findEmployeeDefaultEmailAdress(department.getHead(), em));
-        
+
         if (department.getActingHeadActive()) {
             emails.add(Employee.findEmployeeDefaultEmailAdress(department.getActingHead(), em));
         }
