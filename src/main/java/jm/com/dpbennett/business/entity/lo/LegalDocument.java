@@ -69,7 +69,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     @OneToOne(cascade = CascadeType.REFRESH)
     private DocumentType type;
     private String number;
-    private Boolean autoGenerateNumber;   
+    private Boolean autoGenerateNumber;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department requestingDepartment;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -116,7 +116,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     private Boolean isDirty;
     @Transient
     private Boolean visited;
-    
+
     /**
      * Default constructor.
      */
@@ -133,7 +133,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
 
     public Integer getActualTurnaroundTime() {
         actualTurnaroundTime = getCurrentDocumentActualTurnaroundTime();
-        
+
         return actualTurnaroundTime;
     }
 
@@ -265,8 +265,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     public void setNumberOfDocuments(Long numberOfDocuments) {
         this.numberOfDocuments = numberOfDocuments;
     }
-    
-     private Integer getCurrentDocumentTurnaroundTime() {
+
+    private Integer getCurrentDocumentTurnaroundTime() {
         if (dateReceived != null && expectedDateOfCompletion != null) {
             return BusinessEntityUtils.calculatePeriodInWorkingDays(dateReceived, expectedDateOfCompletion);
         } else {
@@ -275,8 +275,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     }
 
     public Integer getTurnaroundTime() {
-        turnaroundTime = getCurrentDocumentTurnaroundTime(); 
-        
+        turnaroundTime = getCurrentDocumentTurnaroundTime();
+
         return turnaroundTime;
     }
 
@@ -581,29 +581,29 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         String searchQuery = null;
         String searchTextAndClause = "";
         searchText = searchText.replaceAll("'", "''");
-       
+
         switch (searchType) {
             case "Legal Documents":
-                if (!searchText.equals("")) {
-                    searchTextAndClause
-                            = " AND ("
-                            + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(responsibleDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(responsibleOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(responsibleOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(submittedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(submittedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.status) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.priorityLevel) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.url) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " )";
-                }
+                //if (!searchText.equals("")) {
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(responsibleDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(responsibleOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(responsibleOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(submittedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(submittedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.description) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.status) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.priorityLevel) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.url) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+                //}
                 searchQuery
                         = "SELECT doc FROM LegalDocument doc"
                         + " JOIN doc.responsibleDepartment responsibleDepartment"
@@ -627,8 +627,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
                         + " AND doc." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
                         + searchTextAndClause
                         + " ORDER BY doc.dateReceived DESC";
-                break;         
-            default: 
+                break;
+            default:
                 break;
         }
 
