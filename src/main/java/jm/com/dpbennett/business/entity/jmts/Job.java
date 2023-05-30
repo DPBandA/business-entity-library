@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2020  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -111,7 +111,7 @@ public class Job implements Serializable, BusinessEntity {
     private List<JobSample> jobSamples;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedTo;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL) // tk previously REFRESH
     private JobCostingAndPayment jobCostingAndPayment;
     @OneToOne(cascade = CascadeType.ALL)
     private ServiceContract serviceContract;
@@ -626,7 +626,7 @@ public class Job implements Serializable, BusinessEntity {
 
         departmentOrCompanyCode = job.getDepartment().getCode().equals("") ? "?" : job.getDepartment().getCode();
 
-        if (job.getJobStatusAndTracking().getDateCostingCompleted()!= null) {
+        if (job.getJobStatusAndTracking().getDateCostingCompleted() != null) {
             c.setTime(job.getJobStatusAndTracking().getDateCostingCompleted());
         } else {
             c.setTime(new Date());
@@ -2051,11 +2051,11 @@ public class Job implements Serializable, BusinessEntity {
                 return returnMessage;
             }
 
-            // Save job    
+            // Save job
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
-
+          
             return new ReturnMessage();
 
         } catch (Exception e) {
