@@ -158,6 +158,7 @@ public class Job implements Serializable, BusinessEntity {
     private String serviceLocation;
     @Transient
     private List<BusinessEntity.Action> actions;
+    private String type;
 
     public Job() {
         this.name = "";
@@ -185,6 +186,18 @@ public class Job implements Serializable, BusinessEntity {
         this.isToBeCopied = false;
         this.jobSamples = new ArrayList<>();
         this.actions = new ArrayList<>();
+    }
+
+    public String getType() {
+        if (type == null) {
+            type = "Job";
+        }
+        
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public List<StatusNote> getStatusNotes(EntityManager em) {
@@ -2055,7 +2068,7 @@ public class Job implements Serializable, BusinessEntity {
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
-          
+
             return new ReturnMessage();
 
         } catch (Exception e) {
