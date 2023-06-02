@@ -187,6 +187,24 @@ public class Job implements Serializable, BusinessEntity {
         this.jobSamples = new ArrayList<>();
         this.actions = new ArrayList<>();
     }
+    
+    public String getJobNumberLabel () {
+        switch(getType()) {
+            case "Proforma Invoice":
+                return "Proforma #";
+            default:
+                return "Job number";
+        }
+    }
+    
+    public String getCostingAndPaymentTabLabel () {
+        switch(getType()) {
+            case "Proforma Invoice":
+                return "Costing";
+            default:
+                return "Costing & Payment";
+        }
+    }
 
     public String getType() {
         if (type == null) {
