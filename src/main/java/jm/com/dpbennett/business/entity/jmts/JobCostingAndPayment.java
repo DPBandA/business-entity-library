@@ -944,7 +944,13 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     }
 
     public static JobCostingAndPayment findJobCostingAndPaymentById(EntityManager em, Long Id) {
-        return em.find(JobCostingAndPayment.class, Id);
+        // tk testing 
+        if (Id != null) {
+            return em.find(JobCostingAndPayment.class, Id);
+        }
+        else {
+            return null;
+        }
     }
 
     private Double getFinalCostWithDiscount() {
