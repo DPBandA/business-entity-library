@@ -40,8 +40,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.StatusNote;
@@ -73,7 +71,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllJobs", query = "SELECT j FROM Job j ORDER BY j.jobNumber"),
     @NamedQuery(name = "findByJobNumber", query = "SELECT j FROM Job j WHERE j.jobNumber = :jobNumber")
 })
-@XmlRootElement
 public class Job implements Serializable, BusinessEntity {
 
     private static final Long serialVersionUId = 1L;
@@ -358,7 +355,6 @@ public class Job implements Serializable, BusinessEntity {
         this.visited = visited;
     }
 
-    @XmlTransient
     public List<Employee> getRepresentatives() {
         if (representatives == null) {
             representatives = new ArrayList<>();
@@ -370,7 +366,6 @@ public class Job implements Serializable, BusinessEntity {
         this.representatives = representatives;
     }
 
-    @XmlTransient
     public List<Service> getServices() {
         if (services == null) {
             services = new ArrayList<>();
@@ -994,7 +989,6 @@ public class Job implements Serializable, BusinessEntity {
         return jobSamples;
     }
 
-    @XmlTransient
     public List<JobSample> getJobSamples() {
         if (jobSamples == null) {
             //    Collections.sort(jobSamples);

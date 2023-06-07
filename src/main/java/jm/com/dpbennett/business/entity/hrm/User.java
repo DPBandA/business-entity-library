@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2022  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -39,8 +39,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.sm.Modules;
 import jm.com.dpbennett.business.entity.auth.Privilege;
@@ -59,7 +57,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findByJobManagerUsername", query = "SELECT e FROM User e WHERE UPPER(e.username) = :username")
 
 })
-@XmlRootElement
 public class User implements Serializable, BusinessEntity {
 
     public static final int CANENTERJOB = 0;
@@ -154,7 +151,6 @@ public class User implements Serializable, BusinessEntity {
         return false;
     }
 
-    @XmlTransient
     public List<Privilege> getPrivileges() {
         if (privileges == null) {
             privileges = new ArrayList<>();
@@ -166,7 +162,6 @@ public class User implements Serializable, BusinessEntity {
         this.privileges = privileges;
     }
 
-    @XmlTransient
     public List<Modules> getActiveModules() {
         if (activeModules == null) {
             activeModules = new ArrayList<>();

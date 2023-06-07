@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -36,8 +36,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.cm.Customer;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -49,7 +47,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "business")
-@XmlRootElement
 public class Business implements Customer, Company, BusinessEntity, Comparable, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -148,7 +145,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         this.head = head;
     }
 
-    @XmlTransient
     public List<Department> getDepartments() {
         if (departments == null) {
             departments = new ArrayList<>();
@@ -235,7 +231,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     @Override
-    @XmlTransient
     public List<Address> getAddresses() {
         return addresses;
     }
@@ -246,7 +241,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     @Override
-    @XmlTransient
     public List<Contact> getContacts() {
         return contacts;
     }

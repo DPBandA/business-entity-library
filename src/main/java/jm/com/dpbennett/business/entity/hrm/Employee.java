@@ -41,8 +41,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.auth.Signature;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -58,7 +56,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllEmployees", query = "SELECT e FROM Employee e ORDER BY e.lastName")
 })
-@XmlRootElement
 public class Employee implements Person, Serializable, Comparable, BusinessEntity {
 
     private static final long serialVersionUId = 1L;
@@ -141,7 +138,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         return false;
     }
 
-    @XmlTransient
     public List<EmployeePosition> getPositions() {
         if (positions == null) {
             positions = new ArrayList<>();
@@ -220,7 +216,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         this.department = department;
     }
 
-    @XmlTransient
     public List<Address> getAddresses() {
         return addresses;
     }
@@ -229,7 +224,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         this.addresses = addresses;
     }
 
-    @XmlTransient
     public List<PhoneNumber> getPhoneNumbers() {
         return phoneNumbers;
     }

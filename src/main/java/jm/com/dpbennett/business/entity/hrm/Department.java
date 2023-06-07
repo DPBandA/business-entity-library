@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jm.com.dpbennett.business.entity.jmts.Job;
 import java.io.Serializable;
 import java.text.Collator;
@@ -39,8 +38,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.fm.JobCategory;
 import jm.com.dpbennett.business.entity.auth.Privilege;
@@ -59,7 +56,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllActiveDepartments", query = "SELECT e FROM Department e WHERE e.active = 1 ORDER BY e.name"),
     @NamedQuery(name = "findBySubGroupCode", query = "SELECT e FROM Department e WHERE e.code = :code")
 })
-@XmlRootElement
 public class Department implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUId = 1L;
@@ -174,7 +170,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.internet = internet;
     }
 
-    @XmlTransient
     public List<Laboratory> getLaboratories() {
         if (laboratories == null) {
             laboratories = new ArrayList<>();
@@ -186,7 +181,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.laboratories = laboratories;
     }
 
-    @XmlTransient
     public List<DepartmentUnit> getDepartmentUnits() {
         if (departmentUnits == null) {
             departmentUnits = new ArrayList<>();
@@ -227,7 +221,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.actingHead = actingHead;
     }
 
-    @XmlTransient
     public List<JobCategory> getJobCategories() {
         return jobCategories;
     }
@@ -236,7 +229,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         this.jobCategories = jobCategories;
     }
 
-    @XmlTransient
     public List<Employee> getStaff() {
         return staff;
     }
