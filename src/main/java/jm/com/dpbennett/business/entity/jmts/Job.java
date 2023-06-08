@@ -450,7 +450,7 @@ public class Job implements Serializable, BusinessEntity {
 
                 return new ReturnMessage(false,
                         "Undefined Error!",
-                        "An undefined error occurred while saving job "
+                        "An undefined error occurred while saving "
                         + this.getJobNumber() + ":\n"
                         + returnMessage.getDetail(),
                         Message.SEVERITY_ERROR_NAME);
@@ -460,7 +460,7 @@ public class Job implements Serializable, BusinessEntity {
 
             return new ReturnMessage(false,
                     "Undefined Error!",
-                    "An undefined error occurred while saving job "
+                    "An undefined error occurred while saving "
                     + this.getJobNumber() + ":\n"
                     + e,
                     Message.SEVERITY_ERROR_NAME);
