@@ -22,7 +22,6 @@ package jm.com.dpbennett.business.entity.cm;
 import jm.com.dpbennett.business.entity.fm.Discount;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import jm.com.dpbennett.business.entity.fm.AccPacCustomer;
-import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +41,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Internet;
@@ -59,9 +57,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllClients", query = "SELECT c FROM Client c ORDER BY c.name")
 })
-public class Client implements Customer, Serializable, BusinessEntity, Comparable {
+public class Client implements ClientInterface {
 
-    private static final long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -132,6 +129,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         identificationType = "";
     }
 
+    @Override
     public String getIdentification() {
         if (identification == null) {
             identification = "";
@@ -139,34 +137,42 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return identification;
     }
 
+    @Override
     public void setIdentification(String identification) {
         this.identification = identification;
     }
 
+    @Override
     public String getIdentificationType() {
         return identificationType;
     }
 
+    @Override
     public void setIdentificationType(String identificationType) {
         this.identificationType = identificationType;
     }
 
+    @Override
     public String getTypeOfBusiness() {
         return typeOfBusiness;
     }
 
+    @Override
     public void setTypeOfBusiness(String typeOfBusiness) {
         this.typeOfBusiness = typeOfBusiness;
     }
 
+    @Override
     public Tax getDefaultTax() {
         return (defaultTax == null ? new Tax() : defaultTax);
     }
 
+    @Override
     public void setDefaultTax(Tax defaultTax) {
         this.defaultTax = defaultTax;
     }
 
+    @Override
     public String getAccountingId() {
         if (accountingId == null) {
             accountingId = "";
@@ -174,10 +180,12 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return accountingId;
     }
 
+    @Override
     public void setAccountingId(String accountingId) {
         this.accountingId = accountingId;
     }
 
+    @Override
     public AccPacCustomer getFinancialAccount() {
         if (financialAccount == null) {
             financialAccount = new AccPacCustomer(getAccountingId(), getName());
@@ -185,6 +193,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return financialAccount;
     }
 
+    @Override
     public void setFinancialAccount(AccPacCustomer financialAccount) {
         this.financialAccount = financialAccount;
         if (financialAccount != null) {
@@ -192,6 +201,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
+    @Override
     public Address getBillingAddress() {
         if (billingAddress == null) {
             if (!getBillingAddresses().isEmpty()) {
@@ -204,10 +214,12 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return billingAddress;
     }
 
+    @Override
     public void setBillingAddress(Address billingAddress) {
         this.billingAddress = billingAddress;
     }
 
+    @Override
     public Contact getBillingContact() {
         if (billingContact == null) {
             if (!getContacts().isEmpty()) {
@@ -217,18 +229,22 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return billingContact;
     }
 
+    @Override
     public void setBillingContact(Contact billingContact) {
         this.billingContact = billingContact;
     }
 
+    @Override
     public Discount getDiscount() {
         return (discount == null ? new Discount() : discount);
     }
 
+    @Override
     public void setDiscount(Discount discount) {
         this.discount = discount;
     }
 
+    @Override
     public Boolean getTaxExempt() {
         if (taxExempt == null) {
             taxExempt = false;
@@ -236,10 +252,12 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return taxExempt;
     }
 
+    @Override
     public void setTaxExempt(Boolean taxExempt) {
         this.taxExempt = taxExempt;
     }
 
+    @Override
     public Double getCreditLimit() {
         if (creditLimit == null) {
             creditLimit = 0.0;
@@ -247,6 +265,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return creditLimit;
     }
 
+    @Override
     public void setCreditLimit(Double creditLimit) {
         this.creditLimit = creditLimit;
     }
@@ -264,18 +283,22 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.isDirty = isDirty;
     }
 
+    @Override
     public Date getDateEdited() {
         return dateEdited;
     }
 
+    @Override
     public void setDateEdited(Date dateEdited) {
         this.dateEdited = dateEdited;
     }
 
+    @Override
     public Employee getEditedBy() {
         return editedBy;
     }
 
+    @Override
     public void setEditedBy(Employee editedBy) {
         this.editedBy = editedBy;
     }
@@ -313,6 +336,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.active = active;
     }
 
+    @Override
     public Boolean getInternational() {
         if (international == null) {
             international = false;
@@ -320,23 +344,28 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return international;
     }
 
+    @Override
     public void setInternational(Boolean international) {
         this.international = international;
     }
 
+    @Override
     public Date getDateEntered() {
         return dateEntered;
     }
 
+    @Override
     public void setDateEntered(Date dateEntered) {
         this.dateEntered = dateEntered;
     }
 
+    @Override
     public Employee getEnteredBy() {
 
         return enteredBy;
     }
 
+    @Override
     public void setEnteredBy(Employee enteredBy) {
         this.enteredBy = enteredBy;
     }
@@ -346,6 +375,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
      *
      * @param src
      */
+    @Override
     public final void doCopy(Client src) {
         contacts = new ArrayList<>();
         addresses = new ArrayList<>();
@@ -384,6 +414,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.id = id;
     }
 
+    @Override
     public Boolean getActive() {
         if (active == null) {
             active = true;
@@ -391,10 +422,12 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return active;
     }
 
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
 
+    @Override
     public String getIsActive() {
         if (getActive()) {
             return "Yes";
@@ -403,6 +436,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
+    @Override
     public void setIsActive(String active) {
         if (active.equals("Yes")) {
             setActive(true);
@@ -424,6 +458,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.taxRegistrationNumber = taxRegistrationNumber;
     }
 
+    @Override
     public Internet getInternet() {
         if (internet == null) {
             internet = new Internet();
@@ -431,6 +466,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return internet;
     }
 
+    @Override
     public void setInternet(Internet internet) {
         this.internet = internet;
     }
@@ -456,6 +492,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
      *
      * @return
      */
+    @Override
     public String getTruncatedName() {
         if (getName().length() >= 50) {
             return getName().substring(0, 50);
@@ -464,6 +501,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
+    @Override
     public void setTruncatedName(String name) {
         setName(name);
     }
@@ -479,6 +517,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         return addresses;
     }
 
+    @Override
     public List<Address> getBillingAddresses() {
         ArrayList<Address> billingAddresses = new ArrayList<>();
 
@@ -512,6 +551,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.contacts = contacts;
     }
 
+    @Override
     public String getStringListOfContactPhoneNumbers() {
         String list = "";
 
@@ -551,6 +591,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
      *
      * @return
      */
+    @Override
     public Contact getMainContact() {
         if (!getContacts().isEmpty()) {
             //return getContacts().get(0);
@@ -571,6 +612,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
+    @Override
     public Contact addContact(Contact contact) {
         getContacts().add(contact);
         return getContacts().get(0);
@@ -597,6 +639,7 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         }
     }
 
+    @Override
     public Address addAddress(Address address) {
         getAddresses().add(address);
         return getAddresses().get(0);
@@ -629,10 +672,12 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.dateFirstReceived = dateFirstReceived;
     }
 
+    @Override
     public Boolean getInternal() {
         return internal;
     }
 
+    @Override
     public void setInternal(Boolean internal) {
         this.internal = internal;
     }
@@ -647,10 +692,12 @@ public class Client implements Customer, Serializable, BusinessEntity, Comparabl
         this.notes = notes;
     }
 
+    @Override
     public Boolean getTag() {
         return tag;
     }
 
+    @Override
     public void setTag(Boolean tag) {
         this.tag = tag;
     }

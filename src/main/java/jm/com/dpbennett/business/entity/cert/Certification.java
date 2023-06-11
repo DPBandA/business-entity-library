@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -21,9 +21,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.cert;
 
 import jm.com.dpbennett.business.entity.hrm.Business;
-import java.io.Serializable;
 import java.text.Collator;
-import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -35,7 +33,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -46,7 +43,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "certification")
-public class Certification implements BusinessEntity, Serializable, Comparable {
+public class Certification implements CertificationInterface {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -96,6 +93,7 @@ public class Certification implements BusinessEntity, Serializable, Comparable {
         this.id = id;
     }
 
+    @Override
     public Client getApplicant() {
         if (applicant == null) {
             return new Client("");
@@ -103,43 +101,53 @@ public class Certification implements BusinessEntity, Serializable, Comparable {
         return applicant;
     }
 
+    @Override
     public void setApplicant(Client applicant) {
         this.applicant = applicant;
     }
 
+    @Override
     public Boolean getActive() {
         return active;
     }
 
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
 
+    @Override
     public String getNotes() {
         return notes;
     }
 
+    @Override
     public void setNotes(String notes) {
         this.notes = notes;
     }
 
+    @Override
     public String getCertificateNumber() {
         return certificateNumber;
     }
 
+    @Override
     public void setCertificateNumber(String certificateNumber) {
         this.certificateNumber = certificateNumber;
     }
 
+    @Override
     public Employee getCertificateSignedBy() {
         
         return certificateSignedBy;
     }
 
+    @Override
     public void setCertificateSignedBy(Employee certificateSignedBy) {
         this.certificateSignedBy = certificateSignedBy;
     }
 
+    @Override
     public Business getGrantedTo() {
         if (grantedTo == null) {
             return new Business();
@@ -147,34 +155,42 @@ public class Certification implements BusinessEntity, Serializable, Comparable {
         return grantedTo;
     }
 
+    @Override
     public void setGrantedTo(Business grantedTo) {
         this.grantedTo = grantedTo;
     }
 
+    @Override
     public String getNumber() {
         return number;
     }
 
+    @Override
     public void setNumber(String number) {
         this.number = number;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }
 
+    @Override
     public Date getDateIssued() {
         return dateIssued;
     }
 
+    @Override
     public void setDateIssued(Date dateIssued) {
         this.dateIssued = dateIssued;
     }
 
+    @Override
     public Date getExpiryDate() {
         // tk get the option that dictates how the expiry date is to calculated.
 //        if ((expiryDate == null) && (dateIssued != null)) {
@@ -189,6 +205,7 @@ public class Certification implements BusinessEntity, Serializable, Comparable {
         return expiryDate;
     }
 
+    @Override
     public void setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
     }
@@ -206,11 +223,10 @@ public class Certification implements BusinessEntity, Serializable, Comparable {
         if (!(object instanceof Certification)) {
             return false;
         }
+        
         Certification other = (Certification) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -223,8 +239,8 @@ public class Certification implements BusinessEntity, Serializable, Comparable {
         // this sorts in descending based on issue date.
         if ((((Certification) o).dateIssued != null) && (this.dateIssued != null)) {
             return Collator.getInstance().compare(
-                    new Long(((Certification) o).dateIssued.getTime()).toString(),
-                    new Long(this.dateIssued.getTime()).toString());
+                    Long.toString(((Certification) o).dateIssued.getTime()),
+                    Long.toString(this.dateIssued.getTime()));
         } else {
             return 0;
         }
