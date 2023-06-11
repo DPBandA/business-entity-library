@@ -44,7 +44,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findByPrivilegesName", query = "SELECT p FROM Privilege p WHERE p.name = :name")
 })
 
-public class Privilege implements Serializable, PrivilegeInterface {
+public class Privilege implements PrivilegeInterface {
 
     private static final long serialVersionUID = 1L;
     @Id
