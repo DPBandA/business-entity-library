@@ -41,8 +41,10 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.fm.AccountingCode;
 import jm.com.dpbennett.business.entity.fm.CashPayment;
 import jm.com.dpbennett.business.entity.fm.CostComponent;
+import jm.com.dpbennett.business.entity.fm.Currency;
 import jm.com.dpbennett.business.entity.fm.Discount;
 import jm.com.dpbennett.business.entity.fm.Tax;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -105,6 +107,8 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @Column(length = 1024)
     private String description;
     private Boolean estimate;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Currency currency;
 
     public JobCostingAndPayment() {
         this.totalCost = 0.0;
@@ -129,6 +133,14 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
     }
 
     public Boolean getEstimate() {
@@ -325,11 +337,15 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
 
     public static JobCostingAndPayment create(EntityManager em) {
         JobCostingAndPayment jobCostingAndPayment = new JobCostingAndPayment();
+        String defaultCurrencyName = SystemOption.getString(em,
+                "defaultCurrency");
+        Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
 
         jobCostingAndPayment.setPurchaseOrderNumber("");
         jobCostingAndPayment.setTax(Tax.findDefault(em, "0.0"));
         jobCostingAndPayment.setDiscount(Discount.findDefault(em, "0.0"));
-
+        jobCostingAndPayment.setCurrency(defaultCurrency);
+        
         return jobCostingAndPayment;
     }
 
@@ -942,8 +958,7 @@ public class JobCostingAndPayment implements Serializable, BusinessEntity {
         // tk testing 
         if (Id != null) {
             return em.find(JobCostingAndPayment.class, Id);
-        }
-        else {
+        } else {
             return null;
         }
     }

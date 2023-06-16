@@ -71,7 +71,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private Boolean isDirty;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
-     @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date costDate;
 
     public CostComponent() {
@@ -195,8 +195,10 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     /**
-     * Types can be Heading, Variable, Fixed, Subcontract, Purchase, Sale, Disbursement, etc.
-     * @return 
+     * Types can be Heading, Variable, Fixed, Subcontract, Purchase, Sale,
+     * Disbursement, etc.
+     *
+     * @return
      */
     public String getType() {
         if (type == null) {
@@ -356,7 +358,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         if (cost == null) {
             cost = 0.0;
         }
-        
+
         if (!getIsFixedCost()) {
             cost = getRate() * getHoursOrQuantity();
         }
