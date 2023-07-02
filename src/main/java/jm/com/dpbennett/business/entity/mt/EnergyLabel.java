@@ -1,6 +1,6 @@
 /*
-LabelPrint - A general purpose energy label printing application 
-Copyright (C) 2020  D P Bennett & Associates Limited
+LabelPrint (LP)
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
