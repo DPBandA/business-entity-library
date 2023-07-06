@@ -20,7 +20,6 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.hrm;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -334,34 +333,17 @@ public class User implements Serializable, BusinessEntity {
         this.PFThemeName = PFThemeName;
     }
 
-    /**
-     * Logs the poll time and activity of a user. The user is saved after the
-     * activity is logged.
-     *
-     * @param activity
-     * @param em
-     */
-    public void logActivity(String activity, EntityManager em) {
-        this.setPollTime(new Date());
-        this.setActivity(activity);
-        this.save(em);
-    }
-
-    /**
-     * Gets the activity and poll time of a user
-     *
-     * @return
-     */
-    public String getLoggedActivity() {
-
-        if (pollTime != null) {
-            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy");
-
-            return getActivity() + " (" + formatter.format(pollTime) + ")";
-        } else {
-            return getActivity();
-        }
-    }
+//    /**
+//     * Logs the poll time and activity of a user. The user is saved after the
+//     * activity is logged.
+//     *
+//     * @param activity
+//     * @param em
+//     */
+//    public void logActivity(String activity, EntityManager em) {
+//        this.setActivity(activity);
+//        this.save(em);
+//    }
 
     public String getActivity() {
         if (activity == null) {
@@ -393,6 +375,10 @@ public class User implements Serializable, BusinessEntity {
     }
 
     public Date getPollTime() {
+        if (pollTime == null) {
+            pollTime = new Date();
+        }
+        
         return pollTime;
     }
 
@@ -675,15 +661,13 @@ public class User implements Serializable, BusinessEntity {
                 User existingUser = User.findJobManagerUserByUsername(em, this.username);
                 if (existingUser != null) {
                     return new ReturnMessage(false, "User exists");
+                } else {
+                    return save(em);
                 }
-                else {
-                  return save(em);  
-                }
-            }
-            else {
+            } else {
                 return save(em);
             }
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }
