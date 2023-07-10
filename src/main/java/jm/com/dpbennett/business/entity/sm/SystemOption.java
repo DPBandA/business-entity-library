@@ -318,7 +318,7 @@ public class SystemOption implements SystemOptionInterface, Serializable {
 
             List<SystemOption> options = em.createQuery("SELECT o FROM SystemOption o "
                     + "WHERE UPPER(o.name) "
-                    + "LIKE '" + newName.toUpperCase() + "%'", SystemOption.class).getResultList();
+                    + "LIKE '" + newName.toUpperCase() + "'", SystemOption.class).getResultList();
 
             if (!options.isEmpty()) {
                 // Make sure this is the current option stored in the database
