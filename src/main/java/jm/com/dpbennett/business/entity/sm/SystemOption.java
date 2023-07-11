@@ -395,6 +395,27 @@ public class SystemOption implements SystemOptionInterface, Serializable {
             return new ArrayList<>();
         }
     }
+    
+    public static List<SystemOption> findSystemOptions(EntityManager em, 
+            String queryString, String category) {
+
+        try {
+            String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
+
+            List<SystemOption> systemOptions
+                    = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = " 
+                            + "'" + category.toUpperCase() + "'" 
+                            + " AND ("
+                            + " UPPER(o.name) LIKE '%" + newQueryString + "%'"
+                            + " OR UPPER(o.optionValue) like '%" + newQueryString + "%'"
+                            + " OR UPPER(o.comments) like '%" + newQueryString + "%'"
+                            + " ) ORDER BY o.comments", SystemOption.class).getResultList();
+            return systemOptions;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
