@@ -62,8 +62,6 @@ public class SystemOption implements SystemOptionInterface, Serializable {
     private String comments;
     @Transient
     private Boolean isDirty;
-    @Transient
-    private String booleanValue;
    
     public SystemOption() {
         name = "";
@@ -81,14 +79,6 @@ public class SystemOption implements SystemOptionInterface, Serializable {
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getBooleanValue() {
-        return booleanValue;
-    }
-
-    public void setBooleanValue(String booleanValue) {
-        this.booleanValue = booleanValue;
     }
 
     @Override
