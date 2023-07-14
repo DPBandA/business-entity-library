@@ -71,6 +71,11 @@ public class SystemOption implements SystemOptionInterface, Serializable {
         comments = "";
     }
 
+    public SystemOption(String name, String optionValue) {
+        this.name = name;
+        this.optionValue = optionValue;
+    }
+
     @Override
     public Long getId() {
         return id;
