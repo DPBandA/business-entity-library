@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -62,7 +62,9 @@ public class SystemOption implements SystemOptionInterface, Serializable {
     private String comments;
     @Transient
     private Boolean isDirty;
-   
+    @Transient
+    private List<SystemOption> selectedSystemOptionTextList;
+
     public SystemOption() {
         name = "";
         optionValue = "";
@@ -74,6 +76,30 @@ public class SystemOption implements SystemOptionInterface, Serializable {
     public SystemOption(String name, String optionValue) {
         this.name = name;
         this.optionValue = optionValue;
+    }
+
+    public List<SystemOption> getSelectedSystemOptionTextList() {
+
+        if (selectedSystemOptionTextList == null) {
+            selectedSystemOptionTextList = new ArrayList<>();
+
+            List<String> selectedSystemOptionValues
+                    = (List<String>) SystemOption.getOptionValueObject(
+                            this);
+
+            for (String selectedSystemOptionValue : selectedSystemOptionValues) {
+                selectedSystemOptionTextList.add(
+                        new SystemOption(this.getName(),
+                                selectedSystemOptionValue)
+                );
+            }
+        }
+
+        return selectedSystemOptionTextList;
+    }
+
+    public void setSelectedSystemOptionTextList(List<SystemOption> selectedSystemOptionTextList) {
+        this.selectedSystemOptionTextList = selectedSystemOptionTextList;
     }
 
     @Override
@@ -251,11 +277,54 @@ public class SystemOption implements SystemOptionInterface, Serializable {
 
     }
 
+    public static Object getOptionValueObject(SystemOption option) {
+
+        try {
+            if (option != null) {
+                switch (option.getOptionValueType()) {
+                    case "String":
+                        return option.getOptionValue();
+                    case "Long":
+                        return Long.parseLong(option.getOptionValue());
+                    case "Integer":
+                        return Integer.parseInt(option.getOptionValue());
+                    case "Double":
+                        return Double.parseDouble(option.getOptionValue());
+                    case "Boolean":
+                        return Boolean.parseBoolean(option.getOptionValue());
+                    case "List<String>":
+                        return getOptionValueListObject(option.getOptionValue());
+                    default:
+                        return option.getOptionValue();
+                }
+
+            } else {
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+
+            return null;
+        }
+
+    }
+
     public static List<String> getOptionValueListObject(EntityManager em,
             String optionValue) {
         ArrayList list = new ArrayList();
         String itemSep = (String) SystemOption.getOptionValueObject(em,
                 "defaultListItemSeparationCharacter");
+
+        String items[] = optionValue.split(itemSep);
+
+        list.addAll(Arrays.asList(items));
+
+        return list;
+    }
+
+    public static List<String> getOptionValueListObject(String optionValue) {
+        ArrayList list = new ArrayList();
+        String itemSep = ";";
 
         String items[] = optionValue.split(itemSep);
 
@@ -400,16 +469,16 @@ public class SystemOption implements SystemOptionInterface, Serializable {
             return new ArrayList<>();
         }
     }
-    
-    public static List<SystemOption> findSystemOptions(EntityManager em, 
+
+    public static List<SystemOption> findSystemOptions(EntityManager em,
             String queryString, String category) {
 
         try {
             String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
 
             List<SystemOption> systemOptions
-                    = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = " 
-                            + "'" + category.toUpperCase() + "'" 
+                    = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = "
+                            + "'" + category.toUpperCase() + "'"
                             + " AND ("
                             + " UPPER(o.name) LIKE '%" + newQueryString + "%'"
                             + " OR UPPER(o.optionValue) like '%" + newQueryString + "%'"
