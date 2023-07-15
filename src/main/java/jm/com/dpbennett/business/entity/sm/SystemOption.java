@@ -63,7 +63,7 @@ public class SystemOption implements SystemOptionInterface, Serializable {
     @Transient
     private Boolean isDirty;
     @Transient
-    private List<SystemOption> selectedSystemOptionTextList;
+    private List<SystemOption> textList;
 
     public SystemOption() {
         name = "";
@@ -78,28 +78,78 @@ public class SystemOption implements SystemOptionInterface, Serializable {
         this.optionValue = optionValue;
     }
 
-    public List<SystemOption> getSelectedSystemOptionTextList() {
+    public void updateOptionValue() {
+        switch (optionValueType) {
+            case "String":
+            case "Long":
+            case "Integer":
+            case "Double":
+            case "Boolean":
+                break;
+            case "List<String>":
+                int index = 0;
+                String newTextList = "";
+                for (SystemOption systemOptionText : textList) {
 
-        if (selectedSystemOptionTextList == null) {
-            selectedSystemOptionTextList = new ArrayList<>();
+                    if (index == 0) {
+                        newTextList
+                                = newTextList
+                                + systemOptionText.getOptionValue();
+                    } else {
+                        newTextList
+                                = newTextList
+                                + ";" + systemOptionText.getOptionValue();
+                    }
 
-            List<String> selectedSystemOptionValues
+                    ++index;
+                }
+                
+                optionValue = newTextList;
+                
+                break;
+            default:
+                break;
+        }
+    }
+    
+     public void updateOptionValueType() {
+        switch (optionValueType) {
+            case "String":
+                break;
+            case "Long":
+            case "Integer":
+            case "Double":
+                optionValue = "0";
+            case "Boolean":
+            case "List<String>":               
+                break;
+            default:
+                break;
+        }
+    }
+
+    public List<SystemOption> getTextList() {
+
+        if (textList == null) {
+            textList = new ArrayList<>();
+
+            List<String> texts
                     = (List<String>) SystemOption.getOptionValueObject(
                             this);
 
-            for (String selectedSystemOptionValue : selectedSystemOptionValues) {
-                selectedSystemOptionTextList.add(
+            for (String text : texts) {
+                textList.add(
                         new SystemOption(this.getName(),
-                                selectedSystemOptionValue)
+                                text)
                 );
             }
         }
 
-        return selectedSystemOptionTextList;
+        return textList;
     }
 
-    public void setSelectedSystemOptionTextList(List<SystemOption> selectedSystemOptionTextList) {
-        this.selectedSystemOptionTextList = selectedSystemOptionTextList;
+    public void setTextList(List<SystemOption> textList) {
+        this.textList = textList;
     }
 
     @Override
