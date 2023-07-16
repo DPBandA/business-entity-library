@@ -103,16 +103,36 @@ public class SystemOption implements SystemOptionInterface, Serializable {
 
                     ++index;
                 }
-                
+
                 optionValue = newTextList;
-                
+
                 break;
             default:
                 break;
         }
     }
-    
-     public void updateOptionValueType() {
+
+    public String getOptionValueDisplay() {
+        switch (optionValueType) {
+            case "String":
+            case "Long":
+            case "Integer":
+            case "Double":
+            case "List<String>":
+                return optionValue;
+            case "Boolean":    
+                if (optionValue.equals("true")) {
+                    return "Yes";
+                }
+                else {
+                    return "No";
+                }
+            default:
+                return optionValue;
+        }
+    }
+
+    public void updateOptionValueType() {
         switch (optionValueType) {
             case "String":
                 break;
@@ -121,7 +141,7 @@ public class SystemOption implements SystemOptionInterface, Serializable {
             case "Double":
                 optionValue = "0";
             case "Boolean":
-            case "List<String>":               
+            case "List<String>":
                 break;
             default:
                 break;
