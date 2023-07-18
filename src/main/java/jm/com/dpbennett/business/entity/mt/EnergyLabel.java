@@ -127,7 +127,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         BEC = "";
         calcBEC = true;
         CEC = "";
-        ERF = "0.23";
+        ERF = "";
         totalAdjustedVol = "";
         calcTotalAdjustedVol = false;
         Cf = "";
