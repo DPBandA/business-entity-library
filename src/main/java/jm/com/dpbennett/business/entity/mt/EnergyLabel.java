@@ -104,6 +104,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     private String efficiencyRatio;
     @Transient
     private String editStatus;
+    private String serialNumber;
 
     /**
      * The default constructor of an EnergyLabel.
@@ -154,6 +155,20 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         letterRating = "A";
         batchCode = "";
         efficiencyRatio = "0.0";
+        serialNumber = "";
+    }
+
+    public String getSerialNumber() {
+
+        if (serialNumber == null) {
+            serialNumber = "";
+        }
+
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
     }
 
     public String getEditStatus() {
@@ -212,6 +227,7 @@ public class EnergyLabel implements Serializable, BusinessEntity {
         if (feature2 == null) {
             feature2 = "";
         }
+
         return feature2;
     }
 
@@ -220,6 +236,10 @@ public class EnergyLabel implements Serializable, BusinessEntity {
     }
 
     public String getRatedCurrent() {
+        if (ratedCurrent == null) {
+            ratedCurrent = "";
+        }
+
         return ratedCurrent;
     }
 
