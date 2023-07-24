@@ -58,9 +58,6 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 })
 public class User implements Serializable, BusinessEntity {
 
-    public static final int CANENTERJOB = 0;
-    public static final int CANEDITJOB = 1;
-    private static final long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -76,8 +73,8 @@ public class User implements Serializable, BusinessEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Privilege privilege;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    private Privilege privilege;
     @OneToOne(cascade = CascadeType.ALL)
     private Modules modules;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -90,12 +87,32 @@ public class User implements Serializable, BusinessEntity {
     private String newPassword;
     @Transient
     private String confirmedNewPassword;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date loginTime;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date logoutTime;
 
     public User() {
-        privilege = new Privilege();
+        //privilege = new Privilege();
         employee = new Employee();
         modules = new Modules();
         username = "";
+    }
+
+    public Date getLoginTime() {
+        return loginTime;
+    }
+
+    public void setLoginTime(Date loginTime) {
+        this.loginTime = loginTime;
+    }
+
+    public Date getLogoutTime() {
+        return logoutTime;
+    }
+
+    public void setLogoutTime(Date logoutTime) {
+        this.logoutTime = logoutTime;
     }
 
     public String getNewPassword() {
@@ -277,27 +294,13 @@ public class User implements Serializable, BusinessEntity {
         }
     }
 
-    public Boolean checkEffectiveJobPrivilege(int privilege, Job job) {
-        switch (privilege) {
-            case CANENTERJOB:
-                // NB: Aspects of the job are to be considered before 
-                // privilege can be determined 
-//                if (getActivePrivilege().getCanEnterJob()) {
-                if (can("EnterJob")) {
-                    return true;
-                }
-                break;
-        }
-        return false;
-    }
-
-    public Privilege getActivePrivilege() {
-        if (privilege == null) {
-            privilege = new Privilege(username);
-        }
-
-        return privilege;
-    }
+//    public Privilege getActivePrivilege() {
+//        if (privilege == null) {
+//            privilege = new Privilege(username);
+//        }
+//
+//        return privilege;
+//    }
 
     public Boolean getAuthenticate() {
         if (authenticate == null) {
