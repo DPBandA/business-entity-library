@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,6 @@ package jm.com.dpbennett.business.entity.dm;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.fm.Classification;
-import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +39,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -52,7 +52,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllDocumentStandards", query = "SELECT d FROM DocumentStandard d ORDER BY d.number")
 })
-public class DocumentStandard implements Document, Serializable, Comparable, BusinessEntity {
+public class DocumentStandard implements Document, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -127,6 +127,7 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
         this.isDirty = isDirty;
     }
 
+    @Override
     public Boolean getActive() {
         if (active == null) {
             active = false;
@@ -134,26 +135,32 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
         return active;
     }
 
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
 
+    @Override
     public Date getDateEntered() {
         return dateEntered;
     }
 
+    @Override
     public void setDateEntered(Date dateEntered) {
         this.dateEntered = dateEntered;
     }
 
+    @Override
     public Date getDateEdited() {
         return dateEdited;
     }
 
+    @Override
     public void setDateEdited(Date dateEdited) {
         this.dateEdited = dateEdited;
     }
 
+    @Override
     public Employee getEditedBy() {
         return editedBy;
     }
@@ -262,10 +269,8 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
             return false;
         }
         DocumentStandard other = (DocumentStandard) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -310,17 +315,12 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
     }
 
     @Override
-    public DocumentType getType() {
+    public DocumentType getDocumentType() {
         if (documentType == null) {
             return new DocumentType();
         }
 
         return documentType;
-    }
-
-    @Override
-    public void setType(DocumentType type) {
-        documentType = type;
     }
 
     public String getTitle() {
@@ -387,17 +387,16 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
         this.status = status;
     }
 
-    public DocumentType getDocumentType() {
-        if (documentType == null) {
-            return new DocumentType();
-        }
-        return documentType;
-    }
-
-    public void setDocumentType(DocumentType documentType) {
-        this.documentType = documentType;
-    }
-
+//    public DocumentType getDocumentType() {
+//        if (documentType == null) {
+//            return new DocumentType();
+//        }
+//        return documentType;
+//    }
+//
+//    public void setDocumentType(DocumentType documentType) {
+//        this.documentType = documentType;
+//    }
     public static DocumentStandard findActiveDocumentStandardByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<DocumentStandard> documentStandards;
@@ -555,14 +554,14 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
             return null;
         }
     }
-    
-    public static  List<DocumentStandard>  findAllActiveDocumentStandards(EntityManager em) {
+
+    public static List<DocumentStandard> findAllActiveDocumentStandards(EntityManager em) {
 
         try {
-                      
+
             return em.createQuery("SELECT d FROM DocumentStandard d "
-                        + "WHERE d.active = 1", DocumentStandard.class).getResultList();
-          
+                    + "WHERE d.active = 1", DocumentStandard.class).getResultList();
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -588,7 +587,7 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -625,5 +624,40 @@ public class DocumentStandard implements Document, Serializable, Comparable, Bus
         } else {
             setActive(false);
         }
+    }
+
+    @Override
+    public String getType() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setType(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDocumentType(DocumentType documentType) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

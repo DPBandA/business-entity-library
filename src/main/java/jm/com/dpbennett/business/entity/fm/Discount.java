@@ -21,6 +21,7 @@ package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,6 +36,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -96,10 +98,12 @@ public class Discount implements Serializable, BusinessEntity {
         category = "";
     }
 
+    @Override
     public Boolean getActive() {
         return active;
     }
 
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -231,18 +235,22 @@ public class Discount implements Serializable, BusinessEntity {
         this.id = id;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }
@@ -321,7 +329,7 @@ public class Discount implements Serializable, BusinessEntity {
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", Discount.class).getResultList();
-            if (discounts.size() > 0) {
+            if (!discounts.isEmpty()) {
                 return discounts.get(0);
             }
             return null;
@@ -337,7 +345,7 @@ public class Discount implements Serializable, BusinessEntity {
            
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d"
                     + " WHERE d.discountValue = " + value, Discount.class).getResultList();
-            if (discounts.size() > 0) {
+            if (!discounts.isEmpty()) {
                 return discounts.get(0);
             }
             return null;
@@ -356,7 +364,7 @@ public class Discount implements Serializable, BusinessEntity {
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d"
                     + " WHERE d.discountValue = " + value + 
                     " AND d.discountValueType LIKE '" + valueType + "'", Discount.class).getResultList();
-            if (discounts.size() > 0) {
+            if (!discounts.isEmpty()) {
                 return discounts.get(0);
             }
             return null;
@@ -364,5 +372,50 @@ public class Discount implements Serializable, BusinessEntity {
             System.out.println(e);
             return null;
         }
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEditedBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

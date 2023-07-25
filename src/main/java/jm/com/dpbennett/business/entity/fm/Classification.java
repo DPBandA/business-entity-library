@@ -21,6 +21,7 @@ package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,6 +36,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -126,6 +128,7 @@ public class Classification implements BusinessEntity, Serializable {
         this.isEarning = isEarning;
     }
 
+    @Override
     public String getDescription() {
         if (description == null) {
             description = "";
@@ -133,6 +136,7 @@ public class Classification implements BusinessEntity, Serializable {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
@@ -169,6 +173,7 @@ public class Classification implements BusinessEntity, Serializable {
         }
     }
 
+    @Override
     public Boolean getActive() {
         if (active == null) {
             active = false;
@@ -176,6 +181,7 @@ public class Classification implements BusinessEntity, Serializable {
         return active;
     }
 
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -261,7 +267,7 @@ public class Classification implements BusinessEntity, Serializable {
             List<Classification> classifications = em.createQuery("SELECT c FROM Classification c "
                     + "WHERE UPPER(c.name) "
                     + "= '" + value.toUpperCase() + "'", Classification.class).getResultList();
-            if (classifications.size() > 0) {
+            if (!classifications.isEmpty()) {
                 return classifications.get(0);
             }
             return null;
@@ -364,5 +370,60 @@ public class Classification implements BusinessEntity, Serializable {
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+    }
+
+    @Override
+    public String getType() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setType(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEditedBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

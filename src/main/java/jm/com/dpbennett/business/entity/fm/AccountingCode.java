@@ -21,6 +21,7 @@ package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,6 +34,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -83,6 +85,7 @@ public class AccountingCode implements Serializable, BusinessEntity {
         abbreviation = "";
     }
 
+    @Override
     public Boolean getActive() {
         if (active == null) {
             active = true;
@@ -90,6 +93,7 @@ public class AccountingCode implements Serializable, BusinessEntity {
         return active;
     }
 
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -184,18 +188,22 @@ public class AccountingCode implements Serializable, BusinessEntity {
         this.id = id;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }
@@ -214,10 +222,8 @@ public class AccountingCode implements Serializable, BusinessEntity {
             return false;
         }
         AccountingCode other = (AccountingCode) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -276,9 +282,11 @@ public class AccountingCode implements Serializable, BusinessEntity {
             List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", AccountingCode.class).getResultList();
-            if (accountingCodes.size() > 0) {
+          
+            if (!accountingCodes.isEmpty()) {
                 return accountingCodes.get(0);
             }
+            
             return null;
         } catch (Exception e) {
             System.out.println(e);
@@ -294,12 +302,14 @@ public class AccountingCode implements Serializable, BusinessEntity {
             List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "'", AccountingCode.class).getResultList();
-            if (accountingCodes.size() > 0) {
+            if (!accountingCodes.isEmpty()) {
                 return accountingCodes.get(0);
             }
+            
             return null;
         } catch (Exception e) {
             System.out.println(e);
+            
             return null;
         }
     }
@@ -312,7 +322,7 @@ public class AccountingCode implements Serializable, BusinessEntity {
             List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", AccountingCode.class).getResultList();
-            if (accountingCodes.size() > 0) {
+            if (!accountingCodes.isEmpty()) {
                 return accountingCodes.get(0);
             }
             return null;
@@ -320,5 +330,50 @@ public class AccountingCode implements Serializable, BusinessEntity {
             System.out.println(e);
             return null;
         }
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEditedBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -20,7 +20,6 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.fm;
 
-import jm.com.dpbennett.business.entity.fm.Asset;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,9 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 import java.text.Collator;
+import java.util.Date;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.cm.Client;
 
 /**
@@ -99,10 +100,12 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
         this.code = code;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
@@ -148,7 +151,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
             List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
                     + "WHERE UPPER(c.name) "
                     + "= '" + value.toUpperCase() + "'", Currency.class).getResultList();
-            if (currencies.size() > 0) {
+            if (!currencies.isEmpty()) {
                 return currencies.get(0);
             }
             return null;
@@ -167,7 +170,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
             List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
                     + "WHERE c.code "
                     + "= '" + newCode + "'", Currency.class).getResultList();
-            if (currencies.size() > 0) {
+            if (!currencies.isEmpty()) {
                 return currencies.get(0);
             }
             return null;
@@ -265,6 +268,61 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
     @Override
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.getName(), ((Client) o).getName());
+    }
+
+    @Override
+    public Boolean getActive() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setActive(Boolean active) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEditedBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

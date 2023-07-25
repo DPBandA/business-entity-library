@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2022  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.pm.Supplier;
 import jm.com.dpbennett.business.entity.sm.Category;
@@ -212,6 +213,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.dateAcquired = dateAcquired;
     }
 
+    @Override
     public Employee getEditedBy() {
         return editedBy;
     }
@@ -220,10 +222,12 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.editedBy = editedBy;
     }
 
+    @Override
     public Date getDateEntered() {
         return dateEntered;
     }
 
+    @Override
     public void setDateEntered(Date dateEntered) {
         this.dateEntered = dateEntered;
     }
@@ -530,10 +534,12 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.supplier = supplier;
     }
 
+    @Override
     public Date getDateEdited() {
         return dateEdited;
     }
 
+    @Override
     public void setDateEdited(Date dateEdited) {
         this.dateEdited = dateEdited;
     }
@@ -562,6 +568,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.product = product;
     }
 
+    @Override
     public Employee getEnteredBy() {
 
         return enteredBy;
@@ -713,5 +720,40 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
+    }
+
+    @Override
+    public Boolean getActive() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setActive(Boolean active) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDescription(String description) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

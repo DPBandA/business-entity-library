@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2019  D P Bennett & Associates Limited
+Copyright (C) 2023 D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -82,6 +83,7 @@ public class Field implements Serializable, BusinessEntity {
         category = "";
     }
 
+    @Override
     public Boolean getActive() {
         if (active == null) {
             active = true;
@@ -89,6 +91,7 @@ public class Field implements Serializable, BusinessEntity {
         return active;
     }
 
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -182,18 +185,22 @@ public class Field implements Serializable, BusinessEntity {
         this.id = id;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }
@@ -272,7 +279,7 @@ public class Field implements Serializable, BusinessEntity {
             List<Field> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", Field.class).getResultList();
-            if (fields.size() > 0) {
+            if (!fields.isEmpty()) {
                 return fields.get(0);
             }
             return null;
@@ -290,7 +297,7 @@ public class Field implements Serializable, BusinessEntity {
             List<Field> fields = em.createQuery("SELECT a FROM FieldField a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "'", Field.class).getResultList();
-            if (fields.size() > 0) {
+            if (!fields.isEmpty()) {
                 return fields.get(0);
             }
             return null;
@@ -308,7 +315,7 @@ public class Field implements Serializable, BusinessEntity {
             List<Field> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", Field.class).getResultList();
-            if (fields.size() > 0) {
+            if (!fields.isEmpty()) {
                 return fields.get(0);
             }
             return null;
@@ -316,5 +323,50 @@ public class Field implements Serializable, BusinessEntity {
             System.out.println(e);
             return null;
         }
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEditedBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

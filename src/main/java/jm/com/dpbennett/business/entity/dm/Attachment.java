@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2019  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,6 +39,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -111,6 +113,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         this.documentType = documentType;
     }
 
+    @Override
     public String getType() {
         if (type == null) {
             type = "";
@@ -118,6 +121,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }
@@ -167,6 +171,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         this.category = category;
     }
 
+    @Override
     public String getDescription() {
         if (description == null) {
             description = "";
@@ -174,6 +179,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
@@ -194,6 +200,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         }
     }
 
+    @Override
     public Boolean getActive() {
         if (active == null) {
             active = false;
@@ -201,6 +208,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         return active;
     }
 
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -274,7 +282,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
             List<Attachment> attachments = em.createQuery("SELECT a FROM Attachment a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", Attachment.class).getResultList();
-            if (attachments.size() > 0) {
+            if (!attachments.isEmpty()) {
                 return attachments.get(0);
             }
             return null;
@@ -371,5 +379,50 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     @Override
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.toString(), ((Attachment) o).toString());
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEditedBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

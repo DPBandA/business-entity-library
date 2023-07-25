@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -46,6 +46,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -65,7 +66,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private DocumentType type;
+    private DocumentType documentType;
     private String number;
     private Boolean autoGenerateNumber;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -127,13 +128,15 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
         this.isDirty = isDirty;
     }
 
+    @Override
     public Employee getEditedBy() {
         
         return editedBy;
     }
     
-    public void setEditedBy(Employee employee) {
-       editedBy =  employee;
+    @Override
+    public void setEditedBy(Person employee) {
+       editedBy =  (Employee)employee;
     }
 
     public String getStatus() {
@@ -185,8 +188,8 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
         this.externalClient = externalClient;
     }
 
-    public DocumentTracking(DocumentType type, Long numberOfDocuments) {
-        this.type = type;
+    public DocumentTracking(DocumentType documentType, Long numberOfDocuments) {
+        this.documentType = documentType;
         this.numberOfDocuments = numberOfDocuments;
     }
 
@@ -367,19 +370,6 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     }
 
     @Override
-    public DocumentType getType() {
-        if (type == null) {
-            return new DocumentType();
-        }
-        return type;
-    }
-
-    @Override
-    public void setType(DocumentType type) {
-        this.type = type;
-    }
-
-    @Override
     public String getUrl() {
         return url;
     }
@@ -403,10 +393,8 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
             return false;
         }
         DocumentTracking other = (DocumentTracking) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -465,24 +453,29 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
             Date startDate,
             Date endDate) {
 
-        List<DocumentTracking> foundDocuments = null;
+        List<DocumentTracking> foundDocuments;
         String searchQuery = null;
 
-        if (searchType.equals("General")) {
-
-            searchQuery =
-                    "SELECT new jm.com.dpbennett.entity.DocumentTracking(doc.type, COUNT(doc.type)) FROM DocumentTracking doc"
-                    + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                    + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                    + " GROUP BY doc.type";
-        } else if (searchType.equals("My documents")) {
-        } else if (searchType.equals("My department's documents")) {
+        switch (searchType) {
+            case "General":
+                searchQuery =
+                        "SELECT new jm.com.dpbennett.entity.DocumentTracking(doc.type, COUNT(doc.type)) FROM DocumentTracking doc"
+                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " GROUP BY doc.type";
+                break;
+            case "My documents":
+                break;
+            case "My department's documents":
+                break;
+            default:
+                break;
         }
 
         try {
             foundDocuments = em.createQuery(searchQuery, DocumentTracking.class).getResultList();
             if (foundDocuments == null) {
-                foundDocuments = new ArrayList<DocumentTracking>();
+                foundDocuments = new ArrayList<>();
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -500,55 +493,60 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
             Date startDate,
             Date endDate) {
 
-        List<DocumentTracking> foundDocuments = null;
+        List<DocumentTracking> foundDocuments;
         String searchQuery = null;
         String searchTextAndClause = "";
         String searchText = originalSearchText.replaceAll("'", "''");
 
-        if (searchType.equals("General")) {
-            if (!searchText.equals("")) {
+        switch (searchType) {
+            case "General":
+                if (!searchText.equals("")) {
+                    searchTextAndClause =
+                            " AND ("
+                            + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(responsibleDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(responsibleOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(responsibleOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(submittedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(submittedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.description) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.status) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.priorityLevel) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.url) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " )";
+                }   searchQuery =
+                        "SELECT doc FROM DocumentTracking doc"
+                        + " JOIN doc.responsibleDepartment responsibleDepartment"
+                        + " JOIN doc.responsibleOfficer responsibleOfficer"
+                        + " JOIN doc.submittedBy submittedBy"
+                        + " JOIN doc.classification classification"
+                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY doc.dateReceived DESC";
+                break;
+            case "By type":
                 searchTextAndClause =
                         " AND ("
-                        + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(responsibleDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(responsibleOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(responsibleOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(submittedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(submittedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.status) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.priorityLevel) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.url) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
                         + " )";
-            }
-            searchQuery =
-                    "SELECT doc FROM DocumentTracking doc"
-                    + " JOIN doc.responsibleDepartment responsibleDepartment"
-                    + " JOIN doc.responsibleOfficer responsibleOfficer"
-                    + " JOIN doc.submittedBy submittedBy"
-                    + " JOIN doc.classification classification"
-                    + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                    + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                    + searchTextAndClause
-                    + " ORDER BY doc.dateReceived DESC";
-        } else if (searchType.equals("By type")) {
-            searchTextAndClause =
-                    " AND ("
-                    + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
-                    + " )";
-            searchQuery =
-                    "SELECT doc FROM DocumentTracking doc"
-                    + " JOIN doc.type t"
-                    + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                    + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                    + searchTextAndClause
-                    + " ORDER BY doc.dateReceived DESC";
-        } else if (searchType.equals("My department's documents")) {
+                searchQuery =
+                        "SELECT doc FROM DocumentTracking doc"
+                        + " JOIN doc.type t"
+                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY doc.dateReceived DESC";
+                break;
+            case "My department's documents":
+                break;
+            default:
+                break;
         }
 
         try {
@@ -589,8 +587,8 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
             number = number + "?";
         }
         // append doc type
-        if (documentTracking.getType() != null) {
-            number = number + "_" + documentTracking.getType().getCode();
+        if (documentTracking.getDocumentType() != null) {
+            number = number + "_" + documentTracking.getDocumentType().getCode();
         }
         // append doc form
         if (documentTracking.getDocumentForm() != null) {
@@ -626,5 +624,70 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     @Override
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public DocumentType getDocumentType() {
+        return documentType;
+    }
+
+    @Override
+    public Boolean getActive() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setActive(Boolean active) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setType(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getType() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
     }
 }

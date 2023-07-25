@@ -35,25 +35,29 @@ public interface BusinessEntity extends Serializable{
 
     public void setId(Long id);
     
-//    public Boolean getActive();
-//    
-//    public void setActive(Boolean active);
+    public Boolean getActive();
+    
+    public void setActive(Boolean active);
 
     public String getName();
 
     public void setName(String name);
     
-//    public String getType();
-//
-//    public void setType(String type);
+    public String getType();
+
+    public void setType(String type);
     
-//    public Date getDateEntered();
-//    
-//    public void setDateEntered(Date dateEntered);
+    public Date getDateEntered();
+    
+    public void setDateEntered(Date dateEntered);
+    
+    public Date getDateEdited();
+    
+     public void setDateEdited(Date dateEdited);
 
     public ReturnMessage save(EntityManager em);
     
-//    public ReturnMessage delete(EntityManager em);
+    public ReturnMessage delete(EntityManager em);
 
     public ReturnMessage validate(EntityManager em);  
 
@@ -61,17 +65,17 @@ public interface BusinessEntity extends Serializable{
     
     public void setIsDirty(Boolean isDirty);
     
-//    public String getDescription();
-//    
-//    public void setDescription(String description);
+    public String getDescription();
     
-//    public Person getEditedBy();
-//    
-//    public void setEditedBy(Person person);
-//    
-//    public Person getEnteredBy();
-//    
-//    public void setEnteredBy(Person person);
+    public void setDescription(String description);
+    
+    public Person getEditedBy();
+    
+    public void setEditedBy(Person person);
+    
+    public Person getEnteredBy();
+    
+    public void setEnteredBy(Person person);
     
     /**
      * The actions that can be performed with respect to an entity.
