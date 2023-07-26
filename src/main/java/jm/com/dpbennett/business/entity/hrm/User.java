@@ -19,7 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +38,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.Modules;
 import jm.com.dpbennett.business.entity.auth.Privilege;
 import jm.com.dpbennett.business.entity.jmts.Job;
@@ -56,7 +56,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findByJobManagerUsername", query = "SELECT e FROM User e WHERE UPPER(e.username) = :username")
 
 })
-public class User implements Serializable, BusinessEntity {
+public class User implements BusinessEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -236,6 +236,7 @@ public class User implements Serializable, BusinessEntity {
         return null;
     }
 
+    @Override
     public Boolean getActive() {
         if (active == null) {
             active = true;
@@ -243,6 +244,7 @@ public class User implements Serializable, BusinessEntity {
         return active;
     }
 
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -286,11 +288,9 @@ public class User implements Serializable, BusinessEntity {
 
         if (Department.findDepartmentAssignedToJob(foundJob, em).getHead().getId().longValue() == user.getEmployee().getId().longValue()) {
             return true;
-        } else if ((Department.findDepartmentAssignedToJob(foundJob, em).getActingHead().getId().longValue() == user.getEmployee().getId().longValue())
-                && Department.findDepartmentAssignedToJob(foundJob, em).getActingHeadActive()) {
-            return true;
         } else {
-            return false;
+            return (Department.findDepartmentAssignedToJob(foundJob, em).getActingHead().getId().longValue() == user.getEmployee().getId().longValue())
+                    && Department.findDepartmentAssignedToJob(foundJob, em).getActingHeadActive();
         }
     }
 
@@ -301,7 +301,6 @@ public class User implements Serializable, BusinessEntity {
 //
 //        return privilege;
 //    }
-
     public Boolean getAuthenticate() {
         if (authenticate == null) {
             authenticate = true;
@@ -347,7 +346,6 @@ public class User implements Serializable, BusinessEntity {
 //        this.setActivity(activity);
 //        this.save(em);
 //    }
-
     public String getActivity() {
         if (activity == null) {
             activity = "";
@@ -381,7 +379,7 @@ public class User implements Serializable, BusinessEntity {
         if (pollTime == null) {
             pollTime = new Date();
         }
-        
+
         return pollTime;
     }
 
@@ -452,10 +450,8 @@ public class User implements Serializable, BusinessEntity {
             return false;
         }
         User other = (User) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -501,7 +497,7 @@ public class User implements Serializable, BusinessEntity {
                             User.class).
                             setParameter("username", newUsername.toUpperCase()).getResultList();
 
-            if (users.size() > 0) {
+            if (!users.isEmpty()) {
                 return users.get(0);
             }
             return null;
@@ -520,7 +516,7 @@ public class User implements Serializable, BusinessEntity {
             List<User> users = em.createQuery("SELECT j FROM User j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '"
                     + newUsername + "'", User.class).getResultList();
 
-            if (users.size() > 0) {
+            if (!users.isEmpty()) {
                 return users.get(0);
             }
             return null;
@@ -676,5 +672,100 @@ public class User implements Serializable, BusinessEntity {
         }
 
         return new ReturnMessage(false, "User not saved");
+    }
+
+    @Override
+    public String getType() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setType(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getCategory() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setCategory(String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDescription(String description) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getNotes() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setNotes(String notes) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getComments() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setComments(String comments) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEditedBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
