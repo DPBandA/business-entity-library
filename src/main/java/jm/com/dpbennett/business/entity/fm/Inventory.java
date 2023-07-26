@@ -106,9 +106,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         actions = new ArrayList<>();
         costComponents = new ArrayList<>();
     }
-    
+
     public Inventory(String name) {
-        this.name = name;        
+        this.name = name;
         actions = new ArrayList<>();
         costComponents = new ArrayList<>();
     }
@@ -371,8 +371,8 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
         return em.find(Inventory.class, Id);
     }
-    
-    public static List<Inventory> findAllByName(EntityManager em, 
+
+    public static List<Inventory> findAllByName(EntityManager em,
             String name) {
 
         try {
@@ -380,7 +380,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
             List<Inventory> inventory
                     = em.createQuery("SELECT i FROM Inventory i WHERE UPPER(i.name) like '%"
-                            + newName.toUpperCase() + "%'"  
+                            + newName.toUpperCase() + "%'"
                             + " ORDER BY i.name", Inventory.class).getResultList();
 
             return inventory;
@@ -390,7 +390,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             return new ArrayList<>();
         }
     }
-    
+
     public static Inventory findByName(
             EntityManager em, String name) {
 
@@ -398,7 +398,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
         try {
             List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
-                    + "WHERE UPPER(i.name)" + " = '" + newName + "'" ,
+                    + "WHERE UPPER(i.name)" + " = '" + newName + "'",
                     Inventory.class).getResultList();
             if (!inventory.isEmpty()) {
                 Inventory inventoryItem = inventory.get(0);
@@ -578,14 +578,14 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.enteredBy = enteredBy;
     }
 
-    public Category getCategory() {
+    public Category getInventoryCategory() {
         if (category == null) {
             return new Category();
         }
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setInventoryCategory(Category category) {
         this.category = category;
     }
 
@@ -754,6 +754,36 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getCategory() {
+        return getInventoryCategory().getName();
+    }
+
+    @Override
+    public void setCategory(String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getNotes() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setNotes(String notes) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getComments() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setComments(String comments) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

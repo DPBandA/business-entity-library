@@ -338,18 +338,22 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.code = code;
     }
 
+    @Override
     public String getCategory() {
         return category;
     }
 
+    @Override
     public void setCategory(String category) {
         this.category = category;
     }
 
+    @Override
     public String getComments() {
         return comments;
     }
 
+    @Override
     public void setComments(String comments) {
         this.comments = comments;
     }
@@ -520,6 +524,16 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     @Override
     public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getNotes() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setNotes(String notes) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

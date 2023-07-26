@@ -160,6 +160,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         this.id = id;
     }
 
+    @Override
     public String getCategory() {
         if (category == null) {
             category = "";
@@ -167,6 +168,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         return category;
     }
 
+    @Override
     public void setCategory(String category) {
         this.category = category;
     }
@@ -423,6 +425,26 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
 
     @Override
     public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getNotes() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setNotes(String notes) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getComments() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setComments(String comments) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

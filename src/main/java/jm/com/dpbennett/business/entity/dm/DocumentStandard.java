@@ -196,6 +196,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         this.documentForm = documentForm;
     }
 
+    @Override
     public String getComments() {
         if (comments == null) {
             comments = "";
@@ -203,6 +204,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         return comments;
     }
 
+    @Override
     public void setComments(String comments) {
         this.comments = comments;
     }
@@ -658,6 +660,16 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
 
     @Override
     public void setDocumentType(DocumentType documentType) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getCategory() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setCategory(String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

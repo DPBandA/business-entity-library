@@ -272,10 +272,12 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
         return responsibleDepartment;
     }
 
+    @Override
     public String getComments() {
         return comments;
     }
 
+    @Override
     public void setComments(String comments) {
         this.comments = comments;
     }
@@ -689,5 +691,15 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     @Override
     public void setDocumentType(DocumentType documentType) {
         this.documentType = documentType;
+    }
+
+    @Override
+    public String getCategory() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setCategory(String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

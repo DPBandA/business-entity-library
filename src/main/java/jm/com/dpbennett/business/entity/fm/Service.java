@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity.fm;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,6 +37,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -103,10 +105,12 @@ public class Service implements Serializable, BusinessEntity, Comparable {
         this.accountingCode = accountingCode;
     }
 
+    @Override
     public Boolean getActive() {
         return active;
     }
 
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -135,18 +139,22 @@ public class Service implements Serializable, BusinessEntity, Comparable {
         this.internal = internal;
     }
 
+    @Override
     public String getCategory() {
         return category;
     }
 
+    @Override
     public void setCategory(String category) {
         this.category = category;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
@@ -178,10 +186,8 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return false;
         }
         Service other = (Service) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -255,7 +261,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
                     + "WHERE UPPER(s.name) "
                     + "LIKE '%" + newServiceName.toUpperCase() + "%'", 
                     Service.class).getResultList();
-            if (services.size() > 0) {
+            if (!services.isEmpty()) {
                 return services.get(0);
             }
             return null;
@@ -275,7 +281,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
                     + "WHERE UPPER(s.name) "
                     + "= '" + newServiceName.toUpperCase() + "'", 
                     Service.class).getResultList();
-            if (services.size() > 0) {
+            if (!services.isEmpty()) {
                 return services.get(0);
             }
             return null;
@@ -295,7 +301,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
                     + "WHERE UPPER(s.name) "
                     + "LIKE '%" + newServiceName.toUpperCase() + "%' AND s.active = 1", 
                     Service.class).getResultList();
-            if (services.size() > 0) {
+            if (!services.isEmpty()) {
                 return services.get(0);
             }
             return null;
@@ -315,7 +321,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
                     + "WHERE UPPER(s.name) "
                     + "= '" + newServiceName.toUpperCase() + "' AND s.active = 1", 
                     Service.class).getResultList();
-            if (services.size() > 0) {
+            if (!services.isEmpty()) {
                 return services.get(0);
             }
             return null;
@@ -341,7 +347,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
                     + " AND accountingCode.code LIKE '%" + code + "%'",
                     Service.class).getResultList();
 
-            if (services.size() > 0) {
+            if (!services.isEmpty()) {
                 return services.get(0);
             }
             return null;
@@ -367,7 +373,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
                     + " AND accountingCode.code LIKE '%" + code + "%' AND s.active = 1",
                     Service.class).getResultList();
 
-            if (services.size() > 0) {
+            if (!services.isEmpty()) {
                 return services.get(0);
             }
             return null;
@@ -447,5 +453,80 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
+    }
+
+    @Override
+    public String getType() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setType(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getNotes() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setNotes(String notes) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getComments() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setComments(String comments) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEditedBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
