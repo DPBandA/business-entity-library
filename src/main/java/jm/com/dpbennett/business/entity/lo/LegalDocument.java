@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,6 @@ import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.fm.Classification;
-import java.io.Serializable;
 import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -47,6 +46,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.rm.DatePeriod;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -60,14 +60,14 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllLegalDocuments", query = "SELECT l FROM LegalDocument l ORDER BY l.number")
 })
-public class LegalDocument implements Document, Serializable, Comparable, BusinessEntity {
+public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private DocumentType type;
+    private DocumentType documentType;
     private String number;
     private Boolean autoGenerateNumber;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -193,15 +193,17 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         }
     }
 
-    public Employee getEditedBy() {
+    @Override
+    public Person getEditedBy() {
         if (editedBy == null) {
             return new Employee();
         }
         return editedBy;
     }
 
-    public void setEditedBy(Employee employee) {
-        editedBy = employee;
+    @Override
+    public void setEditedBy(Person person) {
+        editedBy = (Employee) person;
     }
 
     public String getStatus() {
@@ -253,8 +255,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         this.externalClient = externalClient;
     }
 
-    public LegalDocument(DocumentType type, Long numberOfDocuments) {
-        this.type = type;
+    public LegalDocument(DocumentType documentType, Long numberOfDocuments) {
+        this.documentType = documentType;
         this.numberOfDocuments = numberOfDocuments;
     }
 
@@ -344,10 +346,12 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
         return responsibleDepartment;
     }
 
+    @Override
     public String getComments() {
         return comments;
     }
 
+    @Override
     public void setComments(String comments) {
         this.comments = comments;
     }
@@ -451,16 +455,17 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     }
 
     @Override
-    public DocumentType getType() {
-        if (type == null) {
+    public DocumentType getDocumentType() {
+        if (documentType == null) {
             return new DocumentType();
         }
-        return type;
+
+        return documentType;
     }
 
     @Override
-    public void setType(DocumentType type) {
-        this.type = type;
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
     }
 
     @Override
@@ -579,7 +584,7 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
 
         List<LegalDocument> foundDocuments;
         String searchQuery = null;
-        String searchTextAndClause = "";
+        String searchTextAndClause;
         searchText = searchText.replaceAll("'", "''");
 
         switch (searchType) {
@@ -670,8 +675,8 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
             number = number + "?";
         }
         // append doc type
-        if (legalDocument.getType() != null) {
-            number = number + "_" + legalDocument.getType().getCode();
+        if (legalDocument.getDocumentType() != null) {
+            number = number + "_" + legalDocument.getDocumentType().getCode();
         }
         // append doc form
         if (legalDocument.getDocumentForm() != null) {
@@ -712,5 +717,70 @@ public class LegalDocument implements Document, Serializable, Comparable, Busine
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
+    }
+
+    @Override
+    public Boolean getActive() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setActive(Boolean active) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setType(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getCategory() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setCategory(String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getType() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

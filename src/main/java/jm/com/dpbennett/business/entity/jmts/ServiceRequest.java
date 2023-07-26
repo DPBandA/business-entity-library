@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -29,7 +29,6 @@ import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.fm.Classification;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -47,6 +46,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -57,13 +57,11 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "servicerequest")
 @NamedQueries({
-    @NamedQuery(name = "findAllServiceRequests", query = "SELECT s FROM ServiceRequest s ORDER BY s.serviceRequestNumber")
-    ,
+    @NamedQuery(name = "findAllServiceRequests", query = "SELECT s FROM ServiceRequest s ORDER BY s.serviceRequestNumber"),
     @NamedQuery(name = "findByServiceRequestNumber", query = "SELECT s FROM ServiceRequest s WHERE s.serviceRequestNumber = :serviceRequestNumber")
 })
-public class ServiceRequest implements Serializable, BusinessEntity {
+public class ServiceRequest implements BusinessEntity {
 
-    private static final Long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -164,7 +162,6 @@ public class ServiceRequest implements Serializable, BusinessEntity {
     }
 
     public String getServiceRequestNumber() {
-        Calendar c = Calendar.getInstance();
         String departmentOrCompanyCode;
         String year;
         String sequenceNumber;
@@ -243,17 +240,20 @@ public class ServiceRequest implements Serializable, BusinessEntity {
         this.dateSubmitted = dateSubmitted;
     }
 
-    public Employee getEditedBy() {
+    @Override
+    public Person getEditedBy() {
         if (editedBy == null) {
             return new Employee();
         }
         return editedBy;
     }
 
-    public void setEditedBy(Employee editedBy) {
-        this.editedBy = editedBy;
+    @Override
+    public void setEditedBy(Person editedBy) {
+        this.editedBy = (Employee) editedBy;
     }
 
+    @Override
     public Employee getEnteredBy() {
         if (enteredBy == null) {
             return new Employee();
@@ -473,10 +473,8 @@ public class ServiceRequest implements Serializable, BusinessEntity {
             return false;
         }
         ServiceRequest other = (ServiceRequest) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -514,7 +512,6 @@ public class ServiceRequest implements Serializable, BusinessEntity {
 //    public void setService(Service service) {
 //        this.service = service;
 //    }
-
     public static List<ServiceRequest> findServiceRequestsByDateSearchField(
             EntityManager em,
             User user,
@@ -591,7 +588,7 @@ public class ServiceRequest implements Serializable, BusinessEntity {
             List<ServiceRequest> requests = em.createQuery("SELECT s FROM ServiceRequest s "
                     + "WHERE UPPER(s.serviceRequestNumber) "
                     + "= '" + newNumber.toUpperCase() + "'", ServiceRequest.class).getResultList();
-            if (requests.size() > 0) {
+            if (!requests.isEmpty()) {
                 return requests.get(0);
             }
             return null;
@@ -609,5 +606,95 @@ public class ServiceRequest implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Boolean getActive() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setActive(Boolean active) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getType() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setType(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getCategory() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setCategory(String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDescription(String description) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getNotes() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setNotes(String notes) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getComments() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setComments(String comments) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
