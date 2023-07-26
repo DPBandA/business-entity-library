@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2022  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,6 @@ import jm.com.dpbennett.business.entity.fm.Classification;
 import jm.com.dpbennett.business.entity.fm.CostComponent;
 import jm.com.dpbennett.business.entity.fm.Currency;
 import jm.com.dpbennett.business.entity.dm.Attachment;
-import java.io.Serializable;
 import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -51,6 +50,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.Discount;
 import jm.com.dpbennett.business.entity.fm.Tax;
 import jm.com.dpbennett.business.entity.hrm.ApproverOrRecommender;
@@ -70,14 +70,14 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllPurchaseRequisitions",
             query = "SELECT p FROM PurchaseRequisition p ORDER BY p.number")
 })
-public class PurchaseRequisition implements Document, Serializable, Comparable, BusinessEntity {
+public class PurchaseRequisition implements Document, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private DocumentType type;
+    private DocumentType documentType;
     private String number;
     private Boolean autoGenerateNumber;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -957,10 +957,12 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         this.supplier = supplier;
     }
 
+    @Override
     public Date getDateEdited() {
         return dateEdited;
     }
 
+    @Override
     public void setDateEdited(Date dateEdited) {
         this.dateEdited = dateEdited;
     }
@@ -1078,6 +1080,7 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         }
     }
 
+    @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
             return new Employee();
@@ -1135,10 +1138,12 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
         return purchasingDepartment;
     }
 
+    @Override
     public String getComments() {
         return comments;
     }
 
+    @Override
     public void setComments(String comments) {
         this.comments = comments;
     }
@@ -1237,16 +1242,16 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     }
 
     @Override
-    public DocumentType getType() {
-        if (type == null) {
+    public DocumentType getDocumentType() {
+        if (documentType == null) {
             return new DocumentType();
         }
-        return type;
+        return documentType;
     }
 
     @Override
-    public void setType(DocumentType type) {
-        this.type = type;
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
     }
 
     @Override
@@ -1622,5 +1627,65 @@ public class PurchaseRequisition implements Document, Serializable, Comparable, 
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
+    }
+
+    @Override
+    public Boolean getActive() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setActive(Boolean active) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setType(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getCategory() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setCategory(String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getType() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

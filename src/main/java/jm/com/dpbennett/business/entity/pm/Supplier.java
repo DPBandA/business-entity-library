@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2023  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,6 @@ import jm.com.dpbennett.business.entity.hrm.Internet;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.hrm.Address;
-import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +43,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -56,9 +56,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllSuppliers", query = "SELECT s FROM Supplier s ORDER BY s.name")
 })
 
-public class Supplier implements Serializable, BusinessEntity, Comparable {
+public class Supplier implements BusinessEntity, Comparable {
 
-    private static final long serialVersionUId = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -176,14 +175,17 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         this.isDirty = isDirty;
     }
 
+    @Override
     public Date getDateEdited() {
         return dateEdited;
     }
 
+    @Override
     public void setDateEdited(Date dateEdited) {
         this.dateEdited = dateEdited;
     }
 
+    @Override
     public Employee getEditedBy() {
         return editedBy;
     }
@@ -209,23 +211,27 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         this.international = international;
     }
 
+    @Override
     public Date getDateEntered() {
         return dateEntered;
     }
 
+    @Override
     public void setDateEntered(Date dateEntered) {
         this.dateEntered = dateEntered;
     }
 
-    public Employee getEnteredBy() {
+    @Override
+    public Person getEnteredBy() {
         if (enteredBy == null) {
             return new Employee();
         }
         return enteredBy;
     }
 
-    public void setEnteredBy(Employee enteredBy) {
-        this.enteredBy = enteredBy;
+    @Override
+    public void setEnteredBy(Person person) {
+        this.enteredBy = (Employee) person;
     }
 
     /**
@@ -270,6 +276,7 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         this.id = id;
     }
 
+    @Override
     public Boolean getActive() {
         if (active == null) {
             active = true;
@@ -277,6 +284,7 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         return active;
     }
 
+    @Override
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -484,10 +492,12 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         return hash;
     }
 
+    @Override
     public String getNotes() {
         return notes;
     }
 
+    @Override
     public void setNotes(String notes) {
         this.notes = notes;
     }
@@ -528,11 +538,13 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
         this.number = number;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
    
+    @Override
     public void setType(String type) {
         this.type = type;
     }
@@ -804,4 +816,45 @@ public class Supplier implements Serializable, BusinessEntity, Comparable {
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.getName(), ((Supplier) o).getName());
     }
+
+    @Override
+    public String getCategory() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setCategory(String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDescription(String description) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getComments() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setComments(String comments) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }
