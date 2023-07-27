@@ -19,9 +19,9 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sm;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,6 +33,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -47,9 +49,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllFinancialSystemOptions",
             query = "SELECT s FROM SystemOption s WHERE s.category LIKE '%FINANCE%' OR s.category LIKE '%Finance%' ORDER BY s.comments")
 })
-public class SystemOption implements SystemOptionInterface, Serializable {
+public class SystemOption implements BusinessEntity {
 
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -215,7 +216,6 @@ public class SystemOption implements SystemOptionInterface, Serializable {
         this.category = category;
     }
 
-    @Override
     public String getOptionValue() {
         if (optionValue == null) {
             optionValue = "";
@@ -223,7 +223,6 @@ public class SystemOption implements SystemOptionInterface, Serializable {
         return optionValue;
     }
 
-    @Override
     public void setOptionValue(String optionValue) {
         this.optionValue = optionValue;
     }
@@ -244,8 +243,10 @@ public class SystemOption implements SystemOptionInterface, Serializable {
 
         if (option != null) {
             try {
-                return Long.parseLong(option.getOptionValue());
+                
+                return Long.valueOf(option.getOptionValue());
             } catch (NumberFormatException e) {
+                
                 return 0L;
             }
         }
@@ -259,8 +260,10 @@ public class SystemOption implements SystemOptionInterface, Serializable {
 
         if (option != null) {
             try {
-                return Integer.parseInt(option.getOptionValue());
+                
+                return Integer.valueOf(option.getOptionValue());
             } catch (NumberFormatException e) {
+                
                 return 0;
             }
         }
@@ -274,8 +277,10 @@ public class SystemOption implements SystemOptionInterface, Serializable {
 
         if (option != null) {
             try {
-                return Double.parseDouble(option.getOptionValue());
+                
+                return Double.valueOf(option.getOptionValue());
             } catch (NumberFormatException e) {
+                
                 return 0.0;
             }
         }
@@ -289,8 +294,10 @@ public class SystemOption implements SystemOptionInterface, Serializable {
 
         if (option != null) {
             try {
-                return Boolean.parseBoolean(option.getOptionValue());
+                
+                return Boolean.valueOf(option.getOptionValue());
             } catch (NumberFormatException e) {
+                
                 return false;
             }
         }
@@ -323,13 +330,13 @@ public class SystemOption implements SystemOptionInterface, Serializable {
                     case "String":
                         return option.getOptionValue();
                     case "Long":
-                        return Long.parseLong(option.getOptionValue());
+                        return Long.valueOf(option.getOptionValue());
                     case "Integer":
-                        return Integer.parseInt(option.getOptionValue());
+                        return Integer.valueOf(option.getOptionValue());
                     case "Double":
-                        return Double.parseDouble(option.getOptionValue());
+                        return Double.valueOf(option.getOptionValue());
                     case "Boolean":
-                        return Boolean.parseBoolean(option.getOptionValue());
+                        return Boolean.valueOf(option.getOptionValue());
                     case "List<String>":
                         return getOptionValueListObject(em, option.getOptionValue());
                     default:
@@ -355,13 +362,13 @@ public class SystemOption implements SystemOptionInterface, Serializable {
                     case "String":
                         return option.getOptionValue();
                     case "Long":
-                        return Long.parseLong(option.getOptionValue());
+                        return Long.valueOf(option.getOptionValue());
                     case "Integer":
-                        return Integer.parseInt(option.getOptionValue());
+                        return Integer.valueOf(option.getOptionValue());
                     case "Double":
-                        return Double.parseDouble(option.getOptionValue());
+                        return Double.valueOf(option.getOptionValue());
                     case "Boolean":
-                        return Boolean.parseBoolean(option.getOptionValue());
+                        return Boolean.valueOf(option.getOptionValue());
                     case "List<String>":
                         return getOptionValueListObject(option.getOptionValue());
                     default:
@@ -403,7 +410,6 @@ public class SystemOption implements SystemOptionInterface, Serializable {
         return list;
     }
 
-    @Override
     public String getOptionValueType() {
         if (optionValueType == null) {
             optionValueType = "";
@@ -411,7 +417,6 @@ public class SystemOption implements SystemOptionInterface, Serializable {
         return optionValueType;
     }
 
-    @Override
     public void setOptionValueType(String optionValueType) {
         this.optionValueType = optionValueType;
     }
@@ -580,6 +585,91 @@ public class SystemOption implements SystemOptionInterface, Serializable {
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Boolean getActive() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setActive(Boolean active) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getType() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setType(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDescription(String description) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getNotes() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setNotes(String notes) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEditedBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

@@ -19,7 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sm;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +31,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -42,7 +43,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "notification")
-public class Notification implements NotificationInterface, Serializable {
+public class Notification implements BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -170,32 +171,26 @@ public class Notification implements NotificationInterface, Serializable {
         this.isDirty = isDirty;
     }
 
-    @Override
     public Long getOwnerId() {
         return ownerId;
     }
 
-    @Override
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
     }
 
-    @Override
     public String getSubject() {
         return subject;
     }
 
-    @Override
     public void setSubject(String subject) {
         this.subject = subject;
     }
 
-    @Override
     public String getMessage() {
         return message;
     }
 
-    @Override
     public void setMessage(String message) {
         this.message = message;
     }
@@ -230,22 +225,18 @@ public class Notification implements NotificationInterface, Serializable {
         }
     }
 
-    @Override
     public String getActionToTake() {
         return actionToTake;
     }
 
-    @Override
     public void setActionToTake(String actionToTake) {
         this.actionToTake = actionToTake;
     }
 
-    @Override
     public String getActionTaken() {
         return actionTaken;
     }
 
-    @Override
     public void setActionTaken(String actionTaken) {
         this.actionTaken = actionTaken;
     }
@@ -292,62 +283,50 @@ public class Notification implements NotificationInterface, Serializable {
         this.type = type;
     }
 
-    @Override
     public String getReference() {
         return reference;
     }
 
-    @Override
     public void setReference(String reference) {
         this.reference = reference;
     }
 
-    @Override
     public Date getDueTime() {
         return dueTime;
     }
 
-    @Override
     public void setDueTime(Date dueTime) {
         this.dueTime = dueTime;
     }
 
-    @Override
     public String getPeriodType() {
         return periodType;
     }
 
-    @Override
     public void setPeriodType(String periodType) {
         this.periodType = periodType;
     }
 
-    @Override
     public Long getRecurrencePeriod() {
         return recurrencePeriod;
     }
 
-    @Override
     public void setRecurrencePeriod(Long recurrencePeriod) {
         this.recurrencePeriod = recurrencePeriod;
     }
 
-    @Override
     public String getComment() {
         return comment;
     }
 
-    @Override
     public void setComment(String comment) {
         this.comment = comment;
     }
 
-    @Override
     public String getStatus() {
         return status;
     }
 
-    @Override
     public void setStatus(String status) {
         this.status = status;
     }
@@ -529,7 +508,7 @@ public class Notification implements NotificationInterface, Serializable {
     }
 
     @Override
-    public Boolean delete(EntityManager em) {
+    public ReturnMessage delete(EntityManager em) {
         try {
             em.getTransaction().begin();
             Notification n = em.find(Notification.class, this.id);
@@ -539,9 +518,89 @@ public class Notification implements NotificationInterface, Serializable {
         } catch (Exception e) {
             System.out.println(e);
 
-            return false;
+            return new ReturnMessage(false, "Notification NOT deleted!");
         }
 
-        return true;
+        return new ReturnMessage();
+    }
+
+    @Override
+    public String getCategory() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setCategory(String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDescription(String description) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getNotes() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setNotes(String notes) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getComments() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setComments(String comments) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEditedBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
