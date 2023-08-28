@@ -76,7 +76,7 @@ public class User implements BusinessEntity {
 //    @OneToOne(cascade = CascadeType.ALL)
 //    private Privilege privilege;
     @OneToOne(cascade = CascadeType.ALL)
-    private Modules modules;
+    private Modules modules; // tk remove if no longer used
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
     @OneToMany(cascade = CascadeType.REFRESH)
