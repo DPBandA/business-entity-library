@@ -48,7 +48,6 @@ import jm.com.dpbennett.business.entity.Person;
  */
 public class BusinessEntityUtils {
 
-    
     private static EntityManagerFactory EMF;
     public static String MONTH_NAMES[] = {
         "January", "February", "March", "April", "May", "June",
@@ -72,14 +71,14 @@ public class BusinessEntityUtils {
 
         return -1;
     }
-    
-    public static Boolean isBusinessEntityInList(List<? extends BusinessEntity> list, Long id) { 
+
+    public static Boolean isBusinessEntityInList(List<? extends BusinessEntity> list, Long id) {
         for (BusinessEntity businessEntity : list) {
             if (Objects.equals(businessEntity.getId(), id)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -116,8 +115,7 @@ public class BusinessEntityUtils {
             return str.trim();
         }
     }
-    
-    
+
     public static int characterCount(String str, char chr) {
         int count = 0;
 
@@ -367,8 +365,8 @@ public class BusinessEntityUtils {
         }
 
     }
-    
-    public synchronized static void saveBusinessEntityInTransaction(EntityManager em, 
+
+    public synchronized static void saveBusinessEntityInTransaction(EntityManager em,
             BusinessEntity entity) {
         try {
 
@@ -384,7 +382,7 @@ public class BusinessEntityUtils {
     public static Date createDate(int year, int monthIndex, int day) {
         Calendar c;
 
-        c = Calendar.getInstance();        
+        c = Calendar.getInstance();
         c.clear();
         c.set(year, monthIndex, day, 0, 0, 0);
 
@@ -608,7 +606,7 @@ public class BusinessEntityUtils {
             return "";
         }
     }
-    
+
     public static String getDateInMediumDateFormat(Date date) {
         DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy");
 
@@ -743,14 +741,14 @@ public class BusinessEntityUtils {
     }
 
     public static int getCurrentYear() {
-        
+
         Calendar c = Calendar.getInstance();
 
         return c.get(Calendar.YEAR);
     }
-    
+
     public static int getNextYear() {
-        
+
         Calendar c = Calendar.getInstance();
 
         return c.get(Calendar.YEAR) + 1;
@@ -791,7 +789,7 @@ public class BusinessEntityUtils {
     }
 
     public static Date getEndOfLastMonth() {
-        
+
         Calendar c = Calendar.getInstance();
 
         Date date = getStartOfLastMonth();
@@ -974,10 +972,19 @@ public class BusinessEntityUtils {
         return cal.getTime();
     }
 
+    // tk
+    public static Connection getConnection(EntityManager em) {            
+        //em.getTransaction().begin();
+        //java.sql.Connection connection = em.unwrap(java.sql.Connection.class);
+        //...
+        //em.getTransaction().commit();
+        return em.unwrap(java.sql.Connection.class);
+    }
+
     /**
      *
      * @param driverClassName
-     * @param url 
+     * @param url
      * @param user
      * @param password
      * @return
@@ -1207,8 +1214,6 @@ public class BusinessEntityUtils {
         }
     }
 
-   
-
     public static String getMonthShortFormat(Date date) {
         String month = "";
         Calendar c = Calendar.getInstance();
@@ -1367,5 +1372,5 @@ public class BusinessEntityUtils {
 
         return true;
     }
-  
+
 }
