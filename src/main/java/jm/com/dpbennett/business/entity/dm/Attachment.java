@@ -302,7 +302,8 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
 
             List<Attachment> attachments
                     = em.createQuery("SELECT a FROM Attachment a where UPPER(a.name) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY a.name", Attachment.class).getResultList();
+                            + value.toUpperCase().trim() // tk max results to be made system option
+                            + "%' ORDER BY a.name", Attachment.class).setMaxResults(100).getResultList();
             return attachments;
         } catch (Exception e) {
             System.out.println(e);

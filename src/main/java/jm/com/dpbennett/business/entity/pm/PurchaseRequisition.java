@@ -247,7 +247,8 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         selectedPurchaseRequisition.setCurrency(defaultCurrency);
         selectedPurchaseRequisition.setIsDirty(true);
 
-        selectedPurchaseRequisition.prepareAndSave(em, user);
+        // tk the following was done because the PR was not opening
+        //selectedPurchaseRequisition.prepareAndSave(em, user);
 
         return selectedPurchaseRequisition;
     }
