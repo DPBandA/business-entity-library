@@ -296,7 +296,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     @Override
     public String toString() {
         if (code != null) {
-            return name + " (" + code + ")";
+            return name; // tk + " (" + code + ")";
         } else {
             if (name != null) {
                 return name;
