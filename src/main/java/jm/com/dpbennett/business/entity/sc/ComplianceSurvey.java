@@ -1302,7 +1302,7 @@ public class ComplianceSurvey implements BusinessEntity {
                 } else {
                     searchQuery
                             = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
-                            + joinClause
+                            + joinClause // tk date search field to be used when doing dashboard search
                             + " WHERE (complianceSurvey." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                             + " AND complianceSurvey." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                             + searchTextAndClause
