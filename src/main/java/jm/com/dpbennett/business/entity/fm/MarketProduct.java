@@ -369,7 +369,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
     @Override
     public String toString() {
-        String nameString = getCommonName();
+        String nameString = getCommonName(); // tk rem.
         
         if (!getBrand().isEmpty()) {
             nameString = nameString + ", " + getBrand();
