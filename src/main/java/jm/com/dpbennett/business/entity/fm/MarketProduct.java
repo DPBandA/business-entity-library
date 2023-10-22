@@ -85,7 +85,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     public String getCommonName() {
         if (commonName == null) {
             
-            commonName = "";
+            commonName = getName();
         }
         return commonName;
     }
@@ -369,7 +369,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
     @Override
     public String toString() {
-        String nameString = getCommonName(); // tk rem.
+        String nameString = getName();
         
         if (!getBrand().isEmpty()) {
             nameString = nameString + ", " + getBrand();
@@ -394,9 +394,6 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
     @Override
     public String getName() {
-
-        this.name = toString();
-
         return name;
     }
 
