@@ -84,7 +84,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
     public String getCommonName() {
         if (commonName == null) {
-            
+
             commonName = getName();
         }
         return commonName;
@@ -122,16 +122,16 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             return new ArrayList<>();
         }
     }
-    
-    public static List<MarketProduct> findAllActiveMarketProductsByType(EntityManager em, 
+
+    public static List<MarketProduct> findAllActiveMarketProductsByType(EntityManager em,
             String type) {
 
         try {
             List<MarketProduct> marketProducts;
-            marketProducts = em.createQuery("SELECT m FROM MarketProduct m WHERE " + 
-                    "m.active = 1 AND " + 
-                    "m.type = '" + type + "' " +
-                    "ORDER BY m.name",
+            marketProducts = em.createQuery("SELECT m FROM MarketProduct m WHERE "
+                    + "m.active = 1 AND "
+                    + "m.type = '" + type + "' "
+                    + "ORDER BY m.name",
                     MarketProduct.class).getResultList();
 
             return marketProducts;
@@ -142,7 +142,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             return new ArrayList<>();
         }
     }
-    
+
     public static MarketProduct findActiveMarketProduct(
             EntityManager em, String name) {
 
@@ -164,7 +164,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
         return null;
     }
-    
+
     public static MarketProduct findActiveMarketProductByType(
             EntityManager em, String name, String type) {
 
@@ -172,7 +172,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
         try {
             List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
-                    + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + newName 
+                    + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + newName
                     + "' AND m.type = '" + type + "'",
                     MarketProduct.class).getResultList();
             if (!products.isEmpty()) {
@@ -187,7 +187,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
         return null;
     }
-    
+
     public static List<MarketProduct> findActiveMarketProductsByName(EntityManager em, String value) {
 
         try {
@@ -195,7 +195,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
             List<MarketProduct> marketProducts
                     = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
-                            + value.toUpperCase() + "%'"                            
+                            + value.toUpperCase() + "%'"
                             + " AND m.active = 1"
                             + " ORDER BY m.name", MarketProduct.class).getResultList();
 
@@ -206,8 +206,8 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             return new ArrayList<>();
         }
     }
-    
-    public static List<MarketProduct> findActiveMarketProductsByNameAndType(EntityManager em, 
+
+    public static List<MarketProduct> findActiveMarketProductsByNameAndType(EntityManager em,
             String name, String type) {
 
         try {
@@ -215,8 +215,8 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
             List<MarketProduct> marketProducts
                     = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
-                            + newName.toUpperCase() + "%'"                            
-                            + " AND m.active = 1 AND m.type = '" + type + "'" 
+                            + newName.toUpperCase() + "%'"
+                            + " AND m.active = 1 AND m.type = '" + type + "'"
                             + " ORDER BY m.name", MarketProduct.class).getResultList();
 
             return marketProducts;
@@ -226,7 +226,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             return new ArrayList<>();
         }
     }
-    
+
     public static List<MarketProduct> findMarketProductsByName(EntityManager em, String value) {
 
         try {
@@ -244,8 +244,8 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             return new ArrayList<>();
         }
     }
-    
-    public static List<MarketProduct> findMarketProductsByNameAndType(EntityManager em, 
+
+    public static List<MarketProduct> findMarketProductsByNameAndType(EntityManager em,
             String name, String type) {
 
         try {
@@ -268,6 +268,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
         if (model == null) {
             model = "";
         }
+
         return model;
     }
 
@@ -277,6 +278,10 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
     @Override
     public String getDescription() {
+        if (description == null) {
+            description = "";
+        }
+
         return description;
     }
 
@@ -313,6 +318,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
         if (brand == null) {
             brand = "";
         }
+
         return brand;
     }
 
@@ -324,6 +330,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
         if (code == null) {
             code = "";
         }
+
         return code;
     }
 
@@ -333,6 +340,10 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
     @Override
     public Boolean getActive() {
+        if (active == null) {
+            active = true;
+        }
+
         return active;
     }
 
@@ -370,15 +381,15 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     @Override
     public String toString() {
         String nameString = getName();
-        
+
         if (!getBrand().isEmpty()) {
             nameString = nameString + ", " + getBrand();
         }
-        
+
         if (!getModel().isEmpty()) {
             nameString = nameString + ", " + getModel();
         }
-        
+
         return nameString;
     }
 
@@ -394,10 +405,18 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
     @Override
     public String getName() {
+        if (name == null) {
+            name = "";
+        }
+
         return name;
     }
 
     public String getStoredName() {
+        if (name == null) {
+            name = "";
+        }
+        
         return name;
     }
 
