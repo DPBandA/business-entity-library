@@ -33,6 +33,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -49,7 +50,10 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllFields",
             query = "SELECT f FROM Field f ORDER BY f.name")
 })
-public class FinancialAccount implements Serializable, Account, Comparable<FinancialAccount> {
+public class FinancialAccount implements
+        Serializable,
+        Account,
+        Comparable<FinancialAccount> {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -60,6 +64,8 @@ public class FinancialAccount implements Serializable, Account, Comparable<Finan
     private String type;
     @OneToOne(cascade = CascadeType.REFRESH)
     private FinancialAccount parent;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<FinancialAccount> children;
     @OneToOne(cascade = CascadeType.ALL)
     private AccountingCode code;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -91,7 +97,7 @@ public class FinancialAccount implements Serializable, Account, Comparable<Finan
         code = new AccountingCode();
         total = 0.0;
     }
-    
+
     public FinancialAccount(String name, String description, Double total) {
         active = true;
         this.name = name;
@@ -100,6 +106,19 @@ public class FinancialAccount implements Serializable, Account, Comparable<Finan
         category = "";
         code = new AccountingCode();
         this.total = total;
+    }
+
+    public List<FinancialAccount> getChildren() {
+
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+
+        return children;
+    }
+
+    public void setChildren(List<FinancialAccount> children) {
+        this.children = children;
     }
 
     public Double getTotal() {
@@ -270,7 +289,9 @@ public class FinancialAccount implements Serializable, Account, Comparable<Finan
     @Override
     public int hashCode() {
         int hash = 0;
+        
         hash += (id != null ? id.hashCode() : 0);
+        
         return hash;
     }
 
@@ -456,6 +477,5 @@ public class FinancialAccount implements Serializable, Account, Comparable<Finan
     public void setComments(String comments) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
-   
+
 }
