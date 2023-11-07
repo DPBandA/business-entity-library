@@ -101,6 +101,8 @@ public class ServiceContract implements BusinessEntity {
     private String receivedBy;
     private Integer estimatedTurnAroundTime;
     private Boolean autoAddSampleInformation;
+    @Transient
+    private Job job;
 
     public ServiceContract() {
         selectedService = new Service();
@@ -180,7 +182,27 @@ public class ServiceContract implements BusinessEntity {
         intendedMarketOtherText = src.intendedMarketOtherText;
     }
 
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
+
     public Service getSelectedService() {
+        if (selectedService == null) {
+            
+            if (job != null) {
+                if (!getJob().getServices().isEmpty()) {
+                    selectedService = getJob().getServices().get(0);
+                }
+            }
+        }
+        else {
+            return new Service("None");
+        }
+
         return selectedService;
     }
 
