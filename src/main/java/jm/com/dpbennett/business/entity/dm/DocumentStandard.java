@@ -389,16 +389,6 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         this.status = status;
     }
 
-//    public DocumentType getDocumentType() {
-//        if (documentType == null) {
-//            return new DocumentType();
-//        }
-//        return documentType;
-//    }
-//
-//    public void setDocumentType(DocumentType documentType) {
-//        this.documentType = documentType;
-//    }
     public static DocumentStandard findActiveDocumentStandardByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<DocumentStandard> documentStandards;
@@ -428,7 +418,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         }
     }
 
-    public static List<DocumentStandard> findDocumentStandardsByDateSearchField(
+    public static List<DocumentStandard> findByDateSearchField(
             EntityManager em,
             String dateSearchField,
             String searchType,
@@ -489,24 +479,10 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         return foundDocuments;
     }
 
-    public static List<DocumentStandard> findActiveDocumentStandardsByAnyPartOfName(EntityManager em, String value) {
-
-        try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
-            List<DocumentStandard> documentStandards
-                    = em.createQuery("SELECT d FROM DocumentStandard d WHERE d.name like '%"
-                            + value + "%'"
-                            + " AND d.active = 1"
-                            + " ORDER BY d.id", DocumentStandard.class).getResultList();
-            return documentStandards;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<DocumentStandard> findActiveDocumentStandardsByAnyPartOfNameOrNumber(EntityManager em, String value) {
+    public static List<DocumentStandard> findActive(
+            EntityManager em, 
+            String value,
+            int maxResults) {
 
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
@@ -517,15 +493,16 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
                             + " OR d.number like '%"
                             + value + "%')"
                             + " AND d.active = 1"
-                            + " ORDER BY d.id", DocumentStandard.class).getResultList();
+                            + " ORDER BY d.id", DocumentStandard.class).setMaxResults(maxResults).getResultList();
             return documentStandards;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
-
-    public static List<DocumentStandard> findDocumentStandardsByAnyPartOfNameOrNumber(EntityManager em, String value) {
+  
+    public static List<DocumentStandard> find(
+            EntityManager em, String value, int maxResults) {
 
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
@@ -535,7 +512,10 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
                             + value + "%'"
                             + " OR d.number like '%"
                             + value + "%'"
-                            + " ORDER BY d.id", DocumentStandard.class).getResultList();
+                            + " ORDER BY d.id", DocumentStandard.class).
+                            setMaxResults(maxResults).
+                            getResultList();
+            
             return documentStandards;
         } catch (Exception e) {
             System.out.println(e);
@@ -543,12 +523,12 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         }
     }
 
-    public static DocumentStandard findDocumentStandardById(EntityManager em, Long Id) {
+    public static DocumentStandard findById(EntityManager em, Long Id) {
 
         return em.find(DocumentStandard.class, Id);
     }
 
-    public static List<DocumentStandard> findAllDocumentStandards(EntityManager em) {
+    public static List<DocumentStandard> findAll(EntityManager em) {
 
         try {
             return em.createNamedQuery("findAllDocumentStandards", DocumentStandard.class).getResultList();
@@ -557,12 +537,27 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         }
     }
 
-    public static List<DocumentStandard> findAllActiveDocumentStandards(EntityManager em) {
+    public static List<DocumentStandard> findAllActive(EntityManager em) {
 
         try {
 
             return em.createQuery("SELECT d FROM DocumentStandard d "
                     + "WHERE d.active = 1", DocumentStandard.class).getResultList();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<DocumentStandard> findAllActive(
+            EntityManager em, int maxResults) {
+
+        try {
+
+            return em.createQuery("SELECT d FROM DocumentStandard d "
+                    + "WHERE d.active = 1", 
+                    DocumentStandard.class).setMaxResults(maxResults).getResultList();
 
         } catch (Exception e) {
             System.out.println(e);
