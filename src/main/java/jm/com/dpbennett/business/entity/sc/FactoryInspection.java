@@ -193,7 +193,8 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             String searchType,
             String originalSearchText,
             Date startDate,
-            Date endDate) {
+            Date endDate,
+            int maxResults) {
 
         List<FactoryInspection> foundFactoryInspections;
         String searchQuery = null;
@@ -250,7 +251,8 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         }
 
         try {
-            foundFactoryInspections = em.createQuery(searchQuery, FactoryInspection.class).getResultList();
+            foundFactoryInspections = em.createQuery(searchQuery, FactoryInspection.class).
+                    setMaxResults(maxResults).getResultList();
             if (foundFactoryInspections == null) {
                 foundFactoryInspections = new ArrayList<>();
             }

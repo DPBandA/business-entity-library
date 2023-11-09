@@ -1468,6 +1468,7 @@ public class Job implements BusinessEntity {
                         + " ORDER BY job.id DESC";
                 break;
             case "My department's jobs":
+            case "My dept's proforma invoices":    
                 searchTextAndClause
                         = " AND ("
                         + mainSearchWhereClause

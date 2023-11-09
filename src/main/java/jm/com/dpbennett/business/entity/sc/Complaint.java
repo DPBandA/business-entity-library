@@ -443,7 +443,8 @@ public class Complaint implements Comparable, BusinessEntity {
             String searchType,
             String originalSearchText,
             Date startDate,
-            Date endDate) {
+            Date endDate,
+            int maxResults) {
 
         List<Complaint> foundComplaints;
         String searchQuery = "";
@@ -504,7 +505,8 @@ public class Complaint implements Comparable, BusinessEntity {
         }
 
         try {
-            foundComplaints = em.createQuery(searchQuery, Complaint.class).getResultList();
+            foundComplaints = em.createQuery(searchQuery, Complaint.class)
+                    .setMaxResults(maxResults).getResultList();
             if (foundComplaints == null) {
                 foundComplaints = new ArrayList<>();
             }
