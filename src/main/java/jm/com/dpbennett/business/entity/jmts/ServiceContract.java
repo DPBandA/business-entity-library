@@ -191,23 +191,32 @@ public class ServiceContract implements BusinessEntity {
     }
 
     public Service getSelectedService() {
-        if (selectedService == null) {
-            
-            if (job != null) {
-                if (!getJob().getServices().isEmpty()) {
-                    selectedService = getJob().getServices().get(0);
-                }
-            }
-        }
-        else {
-            return new Service("None");
-        }
 
         return selectedService;
     }
 
     public void setSelectedService(Service selectedService) {
         this.selectedService = selectedService;
+    }
+
+    public Service getSelectedServiceForContract() {
+
+        if (selectedService == null) {
+
+            if (job != null) {
+                if (!getJob().getServices().isEmpty()) {
+                    return getJob().getServices().get(0);
+                } else {
+                    return new Service("None");
+                }
+            } else {
+                return new Service("None");
+            }
+
+        } else {
+           return selectedService;
+        }
+
     }
 
     public Boolean getServiceRequestedPetrolSampling() {
