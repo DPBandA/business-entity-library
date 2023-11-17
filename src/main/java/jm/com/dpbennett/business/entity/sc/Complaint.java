@@ -131,7 +131,8 @@ public class Complaint implements Comparable, BusinessEntity {
                 + "     complaint.`DATERECEIVED`," // 4 - Date received
                 + "     complaint.`COMPLAINT`," // 5 - Complaint
                 + "     complainant.`NAME`," // 6 - Complainant  
-                + "     complainant.`ID`" // 7 - ID             
+                + "     complainant.`ID`" // 7 - ID   
+                + "     complainant.`WORKPROGRESS`" // 8 - Work progress
                 + " FROM"
                 + "     complaint"
                 + "     LEFT JOIN `businessoffice` businessoffice ON complaint.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
