@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.EntityManager;
+import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**

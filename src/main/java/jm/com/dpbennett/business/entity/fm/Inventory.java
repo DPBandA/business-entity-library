@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -58,6 +59,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Boolean active;
     private String name;
     private String code;
     private String type;
@@ -70,6 +72,8 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String stockKeepingUnit;
     private String measurementUnit;
     private String valuationMethod;
+    private String productImage;
+    private String productURL;
     @OneToOne(cascade = CascadeType.REFRESH)
     private MarketProduct product;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -101,6 +105,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String editStatus;
     @Transient
     private List<BusinessEntity.Action> actions;
+    @Column(length = 1024)
+    private String description;
+    @Column(length = 1024)
+    private String notes;
 
     public Inventory() {
         actions = new ArrayList<>();
@@ -111,6 +119,22 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.name = name;
         actions = new ArrayList<>();
         costComponents = new ArrayList<>();
+    }
+
+    public String getProductImage() {
+        return productImage;
+    }
+
+    public void setProductImage(String productImage) {
+        this.productImage = productImage;
+    }
+
+    public String getProductURL() {
+        return productURL;
+    }
+
+    public void setProductURL(String productURL) {
+        this.productURL = productURL;
     }
 
     public Currency getCurrency() {
@@ -574,8 +598,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         return enteredBy;
     }
 
-    public void setEnteredBy(Employee enteredBy) {
-        this.enteredBy = enteredBy;
+    @Override
+    public void setEnteredBy(Person enteredBy) {
+        this.enteredBy = (Employee) enteredBy;
     }
 
     public Category getInventoryCategory() {
@@ -724,37 +749,36 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public Boolean getActive() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return active;
     }
 
     @Override
     public void setActive(Boolean active) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.active = active;
     }
 
     @Override
     public ReturnMessage delete(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return new ReturnMessage();
     }
 
     @Override
     public String getDescription() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (description == null) {
+            description = "";
+        }
+
+        return description;
     }
 
     @Override
     public void setDescription(String description) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.description = description;
     }
 
     @Override
     public void setEditedBy(Person person) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void setEnteredBy(Person person) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        editedBy = (Employee) person;
     }
 
     @Override
@@ -764,17 +788,17 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public void setCategory(String category) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        getInventoryCategory().setName(category);
     }
 
     @Override
     public String getNotes() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return notes;
     }
 
     @Override
     public void setNotes(String notes) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.notes = notes;
     }
 
     @Override
