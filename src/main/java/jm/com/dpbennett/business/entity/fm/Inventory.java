@@ -749,6 +749,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public Boolean getActive() {
+        if (active == null) {
+            active = true;
+        }
+        
         return active;
     }
 
