@@ -508,6 +508,63 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
         return foundInventory;
     }
+    
+    public static List<Inventory> findActive(
+            EntityManager em,
+            String searchText,
+            Integer maxResults) {
+
+        List<Inventory> foundInventory = new ArrayList<>();
+        String searchQuery;
+        String searchTextAndClause;
+        String selectClause = "SELECT inventory FROM Inventory inventory";
+        String mainJoinClause
+                = " JOIN inventory.category category"
+                + " JOIN inventory.supplier supplier"
+                + " JOIN inventory.product product"
+                + " JOIN inventory.enteredBy enteredBy";
+
+        if (searchText != null) {
+            searchText = searchText.trim().replaceAll("'", "''");
+        } else {
+            searchText = "";
+        }
+
+        String mainSearchWhereClause = " UPPER(category.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(product.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.type) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.stockKeepingUnit) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.measurementUnit) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.valuationMethod) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.batchCode) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.dateMark) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.status) LIKE '%" + searchText.toUpperCase() + "%')";
+
+        // Build query     
+        searchTextAndClause
+                = " WHERE  inventory.active = 1 AND ("
+                + mainSearchWhereClause;
+        searchQuery
+                = selectClause
+                + mainJoinClause
+                + searchTextAndClause
+                + " ORDER BY inventory.id DESC";
+
+        try {
+            if (maxResults == 0) {
+                foundInventory = em.createQuery(searchQuery, Inventory.class).getResultList();
+            } else {
+                foundInventory = em.createQuery(searchQuery, Inventory.class).setMaxResults(maxResults).getResultList();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return foundInventory;
+        }
+
+        return foundInventory;
+    }
 
     public String getMeasurementUnit() {
         return measurementUnit;
