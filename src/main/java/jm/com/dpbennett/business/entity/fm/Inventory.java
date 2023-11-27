@@ -59,7 +59,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Boolean active;
     private String name;
     private String code;
     private String type;
@@ -72,8 +71,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String stockKeepingUnit;
     private String measurementUnit;
     private String valuationMethod;
-    private String productImage;
-    private String productURL;
     @OneToOne(cascade = CascadeType.REFRESH)
     private MarketProduct product;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -106,9 +103,15 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Transient
     private List<BusinessEntity.Action> actions;
     @Column(length = 1024)
+    private Boolean active;
     private String description;
     @Column(length = 1024)
     private String notes;
+    @Column(length = 1024)
+    private String comments;
+    private String productImageURL;
+    private String productURL;
+    private Double sellingPrice;
 
     public Inventory() {
         actions = new ArrayList<>();
@@ -121,12 +124,24 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         costComponents = new ArrayList<>();
     }
 
-    public String getProductImage() {
-        return productImage;
+    public Double getSellingPrice() {
+        if (sellingPrice == null) {
+            sellingPrice = 0.0;
+        }
+        
+        return sellingPrice;
     }
 
-    public void setProductImage(String productImage) {
-        this.productImage = productImage;
+    public void setSellingPrice(Double sellingPrice) {
+        this.sellingPrice = sellingPrice;
+    }
+
+    public String getProductImageURL() {
+        return productImageURL;
+    }
+
+    public void setProductImageURL(String productImageURL) {
+        this.productImageURL = productImageURL;
     }
 
     public String getProductURL() {
@@ -752,7 +767,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         if (active == null) {
             active = true;
         }
-        
+
         return active;
     }
 
@@ -797,6 +812,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public String getNotes() {
+        if (notes == null) {
+            notes = "";
+        }
+
         return notes;
     }
 
@@ -807,11 +826,15 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public String getComments() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (comments == null) {
+            comments = "";
+        }
+
+        return comments;
     }
 
     @Override
     public void setComments(String comments) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.comments = comments;
     }
 }
