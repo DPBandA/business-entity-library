@@ -128,7 +128,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         if (sellingPrice == null) {
             sellingPrice = 0.0;
         }
-        
+
         return sellingPrice;
     }
 
@@ -137,6 +137,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     }
 
     public String getProductImageURL() {
+        if (productImageURL == null) {
+            productImageURL = "/";
+        }
+
         return productImageURL;
     }
 
@@ -145,6 +149,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     }
 
     public String getProductURL() {
+        if (productURL == null) {
+            productURL = "/";
+        }
+        
         return productURL;
     }
 
@@ -508,7 +516,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
         return foundInventory;
     }
-    
+
     public static List<Inventory> findActive(
             EntityManager em,
             String searchText,
