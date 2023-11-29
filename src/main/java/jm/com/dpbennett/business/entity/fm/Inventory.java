@@ -124,6 +124,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         costComponents = new ArrayList<>();
     }
 
+    public Boolean getShowSellingPrice() {
+        return getSellingPrice() != 0.0;
+    }
+
     public Double getSellingPrice() {
         if (sellingPrice == null) {
             sellingPrice = 0.0;
@@ -152,7 +156,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         if (productURL == null) {
             productURL = "/";
         }
-        
+
         return productURL;
     }
 
