@@ -50,7 +50,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "post")
 @NamedQueries({
-    @NamedQuery(name = "findAllPosts", query = "SELECT d FROM DocumentStandard d ORDER BY d.number")
+    @NamedQuery(name = "findAllPosts", query = "SELECT p FROM Post p ORDER BY p.number")
 })
 public class Post implements Document, Comparable, BusinessEntity {
 
@@ -266,7 +266,7 @@ public class Post implements Document, Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+       
         if (!(object instanceof Post)) {
             return false;
         }
@@ -277,7 +277,7 @@ public class Post implements Document, Comparable, BusinessEntity {
 
     @Override
     public String toString() {
-        return "DocumentStandard[name=" + getName() + "]";
+        return "Post[name=" + getName() + "]";
     }
 
     @Override
@@ -389,27 +389,27 @@ public class Post implements Document, Comparable, BusinessEntity {
         this.status = status;
     }
 
-    public static Post findActiveDocumentStandardByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static Post findActiveByName(EntityManager em, String value, Boolean ignoreCase) {
 
-        List<Post> documentStandards;
+        List<Post> posts;
 
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             if (ignoreCase) {
-                documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
-                        + "WHERE UPPER(d.name) "
+                posts = em.createQuery("SELECT p FROM Post p "
+                        + "WHERE UPPER(p.name) "
                         + "= '" + value.toUpperCase() + "'"
-                        + " AND d.active = 1", Post.class).getResultList();
+                        + " AND p.active = 1", Post.class).getResultList();
             } else {
-                documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
-                        + "WHERE d.name "
+                posts = em.createQuery("SELECT p FROM Post p "
+                        + "WHERE p.name "
                         + "= '" + value + "'"
-                        + " AND d.active = 1", Post.class).getResultList();
+                        + " AND p.active = 1", Post.class).getResultList();
             }
 
-            if (!documentStandards.isEmpty()) {
-                return documentStandards.get(0);
+            if (!posts.isEmpty()) {
+                return posts.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -426,7 +426,7 @@ public class Post implements Document, Comparable, BusinessEntity {
             Date startDate,
             Date endDate) {
 
-        List<Post> foundDocuments;
+        List<Post> foundPosts;
         String searchQuery = null;
         String searchTextAndClause = "";
         String searchText = originalSearchText.replaceAll("'", "''");
@@ -435,21 +435,21 @@ public class Post implements Document, Comparable, BusinessEntity {
                 if (!searchText.equals("")) {
                     searchTextAndClause
                             = " AND ("
-                            + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.url) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " UPPER(post.number) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(post.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(post.notes) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(post.url) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(post.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
                             + " )";
                 }
                 searchQuery
-                        = "SELECT doc FROM DocumentStandard doc"
-                        + " JOIN doc.classification classification"
-                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        = "SELECT post FROM Post post"
+                        + " JOIN post.classification classification"
+                        + " WHERE (post." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND post." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                         + searchTextAndClause
-                        + " ORDER BY doc." + dateSearchField + " DESC";
+                        + " ORDER BY post." + dateSearchField + " DESC";
                 break;
             case "By type":
                 searchTextAndClause
@@ -457,26 +457,26 @@ public class Post implements Document, Comparable, BusinessEntity {
                         + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
                         + " )";
                 searchQuery
-                        = "SELECT doc FROM DocumentStandard doc"
-                        + " JOIN doc.documentType t"
-                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        = "SELECT post FROM Post post"
+                        + " JOIN post.documentType t"
+                        + " WHERE (post." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND post." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                         + searchTextAndClause
-                        + " ORDER BY doc." + dateSearchField + " DESC";
+                        + " ORDER BY post." + dateSearchField + " DESC";
                 break;
         }
 
         try {
-            foundDocuments = em.createQuery(searchQuery, Post.class).getResultList();
-            if (foundDocuments == null) {
-                foundDocuments = new ArrayList<>();
+            foundPosts = em.createQuery(searchQuery, Post.class).getResultList();
+            if (foundPosts == null) {
+                foundPosts = new ArrayList<>();
             }
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
 
-        return foundDocuments;
+        return foundPosts;
     }
 
     public static List<Post> findActive(
@@ -487,14 +487,14 @@ public class Post implements Document, Comparable, BusinessEntity {
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<Post> documentStandards
-                    = em.createQuery("SELECT d FROM DocumentStandard d WHERE (d.name like '%"
+            List<Post> posts
+                    = em.createQuery("SELECT p FROM Post p WHERE (p.name like '%"
                             + value + "%'"
-                            + " OR d.number like '%"
+                            + " OR p.number like '%"
                             + value + "%')"
-                            + " AND d.active = 1"
-                            + " ORDER BY d.id", Post.class).setMaxResults(maxResults).getResultList();
-            return documentStandards;
+                            + " AND p.active = 1"
+                            + " ORDER BY p.id", Post.class).setMaxResults(maxResults).getResultList();
+            return posts;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -507,16 +507,17 @@ public class Post implements Document, Comparable, BusinessEntity {
         try {
             value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
-            List<Post> documentStandards
-                    = em.createQuery("SELECT d FROM DocumentStandard d WHERE d.name like '%"
+            List<Post> posts
+                    = em.createQuery("SELECT p FROM Post p WHERE p.name like '%"
                             + value + "%'"
-                            + " OR d.number like '%"
+                            + " OR p.number like '%"
                             + value + "%'"
-                            + " ORDER BY d.id", Post.class).
+                            + " ORDER BY p.id", Post.class).
                             setMaxResults(maxResults).
                             getResultList();
             
-            return documentStandards;
+            return posts;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -531,7 +532,7 @@ public class Post implements Document, Comparable, BusinessEntity {
     public static List<Post> findAll(EntityManager em) {
 
         try {
-            return em.createNamedQuery("findAllDocumentStandards", Post.class).getResultList();
+            return em.createNamedQuery("findAllPosts", Post.class).getResultList();
         } catch (Exception e) {
             return null;
         }
@@ -541,8 +542,8 @@ public class Post implements Document, Comparable, BusinessEntity {
 
         try {
 
-            return em.createQuery("SELECT d FROM DocumentStandard d "
-                    + "WHERE d.active = 1", Post.class).getResultList();
+            return em.createQuery("SELECT p FROM Post p "
+                    + "WHERE p.active = 1", Post.class).getResultList();
 
         } catch (Exception e) {
             System.out.println(e);
@@ -555,8 +556,8 @@ public class Post implements Document, Comparable, BusinessEntity {
 
         try {
 
-            return em.createQuery("SELECT d FROM DocumentStandard d "
-                    + "WHERE d.active = 1", 
+            return em.createQuery("SELECT p FROM Post p "
+                    + "WHERE p.active = 1", 
                     Post.class).setMaxResults(maxResults).getResultList();
 
         } catch (Exception e) {
@@ -594,7 +595,7 @@ public class Post implements Document, Comparable, BusinessEntity {
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Document Standard not saved");
+        return new ReturnMessage(false, "Post not saved");
     }
 
     @Override
