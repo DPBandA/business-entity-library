@@ -73,8 +73,8 @@ public class User implements BusinessEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-//    @OneToOne(cascade = CascadeType.ALL)
-//    private Privilege privilege;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Privilege privilege;
     @OneToOne(cascade = CascadeType.ALL)
     private Modules modules; // tk remove if no longer used
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -93,7 +93,7 @@ public class User implements BusinessEntity {
     private Date logoutTime;
 
     public User() {
-        //privilege = new Privilege();
+        privilege = new Privilege();
         employee = new Employee();
         modules = new Modules();
         username = "";
@@ -294,13 +294,14 @@ public class User implements BusinessEntity {
         }
     }
 
-//    public Privilege getActivePrivilege() {
-//        if (privilege == null) {
-//            privilege = new Privilege(username);
-//        }
-//
-//        return privilege;
-//    }
+    public Privilege getActivePrivilege() {
+        if (privilege == null) {
+            privilege = new Privilege(username);
+        }
+
+        return privilege;
+    }
+    
     public Boolean getAuthenticate() {
         if (authenticate == null) {
             authenticate = true;
@@ -335,17 +336,18 @@ public class User implements BusinessEntity {
         this.PFThemeName = PFThemeName;
     }
 
-//    /**
-//     * Logs the poll time and activity of a user. The user is saved after the
-//     * activity is logged.
-//     *
-//     * @param activity
-//     * @param em
-//     */
-//    public void logActivity(String activity, EntityManager em) {
-//        this.setActivity(activity);
-//        this.save(em);
-//    }
+    /**
+     * Logs the poll time and activity of a user. The user is saved after the
+     * activity is logged.
+     *
+     * @param activity
+     * @param em
+     */
+    public void logActivity(String activity, EntityManager em) {
+        this.setActivity(activity);
+        this.save(em);
+    }
+    
     public String getActivity() {
         if (activity == null) {
             activity = "";
@@ -414,17 +416,6 @@ public class User implements BusinessEntity {
         this.employee = employee;
     }
 
-//    @XmlTransient
-//    public Department getDepartment() {
-//        if (department == null) {
-//            department = getEmployee().getDepartment();
-//        }
-//        return department;
-//    }
-//
-//    public void setDepartment(Department department) {
-//        this.department = department;
-//    }
     public String getUsername() {
         if (username == null) {
             username = "";
@@ -445,7 +436,7 @@ public class User implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+   
         if (!(object instanceof User)) {
             return false;
         }
