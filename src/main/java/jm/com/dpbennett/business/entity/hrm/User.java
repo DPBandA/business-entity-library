@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -460,14 +460,18 @@ public class User implements BusinessEntity {
         username = name;
     }
 
-    public static List<User> findJobManagerUsersByUsername(EntityManager em, String username) {
+    public static List<User> findJobManagerUsersByUsername(
+            EntityManager em, 
+            String username,
+            int maxResults) {
 
         String newUsername = username.replaceAll("'", "''");
 
         try {
             List<User> users
                     = em.createQuery("SELECT j FROM User j where UPPER(j.username) like '%"
-                            + newUsername.toUpperCase().trim() + "%' ORDER BY j.username", User.class).getResultList();
+                            + newUsername.toUpperCase().trim() + "%' ORDER BY j.username", User.class)
+                            .setMaxResults(maxResults).getResultList();
             return users;
         } catch (Exception e) {
             System.out.println(e);
@@ -535,7 +539,10 @@ public class User implements BusinessEntity {
         }
     }
 
-    public static List<User> findJobManagerUsersByName(EntityManager em, String name) {
+    public static List<User> findJobManagerUsersByName(
+            EntityManager em, 
+            String name,
+            int maxResults) {
         try {
             String newName = name.toUpperCase().trim().replaceAll("'", "''");
 
@@ -544,7 +551,8 @@ public class User implements BusinessEntity {
                     + " WHERE UPPER(e.firstName) like '%"
                     + newName + "%'" + " OR UPPER(e.lastName) like '%"
                     + newName + "%'" + " OR UPPER(j.username) like '%"
-                    + newName + "%' ORDER BY j.username", User.class).getResultList();
+                    + newName + "%' ORDER BY j.username", User.class)
+                    .setMaxResults(maxResults).getResultList();
 
             return users;
 
@@ -554,7 +562,10 @@ public class User implements BusinessEntity {
         }
     }
 
-    public static List<User> findActiveJobManagerUsersByName(EntityManager em, String name) {
+    public static List<User> findActiveJobManagerUsersByName(
+            EntityManager em, 
+            String name,
+            int maxResults) {
         try {
             String newName = name.toUpperCase().trim().replaceAll("'", "''");
 
@@ -563,7 +574,8 @@ public class User implements BusinessEntity {
                     + " WHERE (j.active = 1 OR j.active IS NULL) AND (UPPER(e.firstName) like '%"
                     + newName + "%'" + " OR UPPER(e.lastName) like '%"
                     + newName + "%'" + " OR UPPER(j.username) like '%"
-                    + newName + "%') ORDER BY j.username", User.class).getResultList();
+                    + newName + "%') ORDER BY j.username", User.class).
+                    setMaxResults(maxResults).getResultList();
 
             return users;
 
@@ -573,11 +585,14 @@ public class User implements BusinessEntity {
         }
     }
 
-    public static List<User> findAllActiveJobManagerUsers(EntityManager em) {
+    public static List<User> findAllActiveJobManagerUsers(
+            EntityManager em,
+            int maxResults) {
 
         try {
 
-            List<User> users = em.createQuery("SELECT j FROM User j WHERE j.active = 1 OR j.active IS NULL ORDER BY j.username", User.class).getResultList();
+            List<User> users = em.createQuery("SELECT j FROM User j WHERE j.active = 1 OR j.active IS NULL ORDER BY j.username", User.class).
+                    setMaxResults(maxResults).getResultList();
 
             return users;
 
@@ -586,11 +601,14 @@ public class User implements BusinessEntity {
         }
     }
 
-    public static List<User> findAllJobManagerUsers(EntityManager em) {
+    public static List<User> findAllJobManagerUsers(
+            EntityManager em,
+            int maxResults) {
 
         try {
 
-            List<User> users = em.createQuery("SELECT j FROM User j WHERE j.active = 1 ORDER BY j.username", User.class).getResultList();
+            List<User> users = em.createQuery("SELECT j FROM User j WHERE j.active = 1 ORDER BY j.username", User.class).
+                    setMaxResults(maxResults).getResultList();
 
             return users;
 

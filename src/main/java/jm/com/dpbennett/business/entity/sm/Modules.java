@@ -412,7 +412,10 @@ public class Modules implements BusinessEntity {
         }
     }
     
-    public static List<Modules> findActiveModules(EntityManager em, String query) {
+    public static List<Modules> findActiveModules(
+            EntityManager em, 
+            String query,
+            int maxResults) {
         try {
             String newQuery = query.toUpperCase().trim().replaceAll("'", "''");
 
@@ -420,7 +423,8 @@ public class Modules implements BusinessEntity {
                     + " WHERE (m.active = 1) AND (UPPER(m.name) like '%"
                     + newQuery + "%'" + " OR UPPER(m.category) like '%"
                     + newQuery + "%'" + " OR UPPER(m.description) like '%"
-                    + newQuery + "%') ORDER BY m.name", Modules.class).getResultList();
+                    + newQuery + "%') ORDER BY m.name", Modules.class).
+                    setMaxResults(maxResults).getResultList();
 
             return modules;
 
@@ -430,12 +434,15 @@ public class Modules implements BusinessEntity {
         }
     }
     
-    public static List<Modules> findAllActiveModules(EntityManager em) {
+    public static List<Modules> findAllActiveModules(
+            EntityManager em,
+            int maxResults) {
         try {
            
 
             List<Modules> modules = em.createQuery("SELECT m FROM Modules m"
-                    + " WHERE m.active = 1 ORDER BY m.name", Modules.class).getResultList();
+                    + " WHERE m.active = 1 ORDER BY m.name", Modules.class).
+                    setMaxResults(maxResults).getResultList();
 
             return modules;
 
