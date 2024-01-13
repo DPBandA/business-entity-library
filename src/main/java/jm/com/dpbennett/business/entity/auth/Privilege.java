@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -82,13 +82,12 @@ public class Privilege implements PrivilegeInterface {
 
     public static List<Privilege> findActivePrivileges(EntityManager em, String query) {
         try {
-            String newQuery = query.toUpperCase().trim().replaceAll("'", "''");
-
+            
             List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p"
                     + " WHERE (p.active = 1) AND (UPPER(p.name) like '%"
-                    + newQuery + "%'" + " OR UPPER(p.category) like '%"
-                    + newQuery + "%'" + " OR UPPER(p.description) like '%"
-                    + newQuery + "%') ORDER BY p.name", Privilege.class).getResultList();
+                    + query + "%'" + " OR UPPER(p.category) like '%"
+                    + query + "%'" + " OR UPPER(p.description) like '%"
+                    + query + "%') ORDER BY p.name", Privilege.class).getResultList();
 
             return privileges;
 
@@ -304,8 +303,6 @@ public class Privilege implements PrivilegeInterface {
 
         try {
 
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
             List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p "
                     + "WHERE p.active = 1 AND UPPER(p.name) "
                     + "= '" + value.toUpperCase() + "'", Privilege.class).getResultList();
@@ -322,11 +319,10 @@ public class Privilege implements PrivilegeInterface {
     public static Privilege findPrivilegeByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''").trim();
-
+           
             List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p "
                     + "WHERE UPPER(p.name) "
-                    + "LIKE '" + newName.toUpperCase() + "%'", Privilege.class).getResultList();
+                    + "LIKE '" + name.toUpperCase() + "%'", Privilege.class).getResultList();
 
             if (!privileges.isEmpty()) {
                 

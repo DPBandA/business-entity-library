@@ -465,12 +465,10 @@ public class User implements BusinessEntity {
             String username,
             int maxResults) {
 
-        String newUsername = username.replaceAll("'", "''");
-
         try {
             List<User> users
                     = em.createQuery("SELECT j FROM User j where UPPER(j.username) like '%"
-                            + newUsername.toUpperCase().trim() + "%' ORDER BY j.username", User.class)
+                            + username.toUpperCase().trim() + "%' ORDER BY j.username", User.class)
                             .setMaxResults(maxResults).getResultList();
             return users;
         } catch (Exception e) {
@@ -485,12 +483,12 @@ public class User implements BusinessEntity {
 
     public static User findJobManagerUserByUsername(EntityManager em, String username) {
 
-        String newUsername = username.replaceAll("'", "''");
+      
         try {
             List<User> users
                     = em.createNamedQuery("findByJobManagerUsername",
                             User.class).
-                            setParameter("username", newUsername.toUpperCase()).getResultList();
+                            setParameter("username", username.toUpperCase()).getResultList();
 
             if (!users.isEmpty()) {
                 return users.get(0);
@@ -505,11 +503,11 @@ public class User implements BusinessEntity {
 
     public static User findActiveJobManagerUserByUsername(EntityManager em, String username) {
 
-        String newUsername = username.replaceAll("'", "''");
+        
         try {
 
             List<User> users = em.createQuery("SELECT j FROM User j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '"
-                    + newUsername + "'", User.class).getResultList();
+                    + username + "'", User.class).getResultList();
 
             if (!users.isEmpty()) {
                 return users.get(0);
@@ -544,14 +542,13 @@ public class User implements BusinessEntity {
             String name,
             int maxResults) {
         try {
-            String newName = name.toUpperCase().trim().replaceAll("'", "''");
-
+            
             List<User> users = em.createQuery("SELECT j FROM User j"
                     + " JOIN j.employee e"
                     + " WHERE UPPER(e.firstName) like '%"
-                    + newName + "%'" + " OR UPPER(e.lastName) like '%"
-                    + newName + "%'" + " OR UPPER(j.username) like '%"
-                    + newName + "%' ORDER BY j.username", User.class)
+                    + name + "%'" + " OR UPPER(e.lastName) like '%"
+                    + name + "%'" + " OR UPPER(j.username) like '%"
+                    + name + "%' ORDER BY j.username", User.class)
                     .setMaxResults(maxResults).getResultList();
 
             return users;
@@ -567,14 +564,13 @@ public class User implements BusinessEntity {
             String name,
             int maxResults) {
         try {
-            String newName = name.toUpperCase().trim().replaceAll("'", "''");
-
+            
             List<User> users = em.createQuery("SELECT j FROM User j"
                     + " JOIN j.employee e"
                     + " WHERE (j.active = 1 OR j.active IS NULL) AND (UPPER(e.firstName) like '%"
-                    + newName + "%'" + " OR UPPER(e.lastName) like '%"
-                    + newName + "%'" + " OR UPPER(j.username) like '%"
-                    + newName + "%') ORDER BY j.username", User.class).
+                    + name + "%'" + " OR UPPER(e.lastName) like '%"
+                    + name + "%'" + " OR UPPER(j.username) like '%"
+                    + name + "%') ORDER BY j.username", User.class).
                     setMaxResults(maxResults).getResultList();
 
             return users;

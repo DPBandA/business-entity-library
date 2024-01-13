@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2018  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -98,7 +99,7 @@ public class BusinessEntityUtils {
     }
 
     public static String getBasicAddress(Address address) {
-        String addressStr = "";
+        String addressStr;
 
         addressStr = getValidString(address.getAddressLine1()) + "\n"
                 + getValidString(address.getAddressLine2()) + "\n"
@@ -152,9 +153,17 @@ public class BusinessEntityUtils {
             return false;
         } else if (containsChar(name, '"')) {
             return false;
-        } else if (name.contains("''")) {
+        } else if (name.contains("`")) {
             return false;
+        } else if (name.contains("'")) {
+            return false;    
         } else if (name.contains(";")) {
+            return false;
+        } else if (name.contains("&")) {
+            return false;
+        } else if (name.contains(":")) {
+            return false;
+        } else if (name.contains("!")) {
             return false;
         }
 
@@ -165,11 +174,7 @@ public class BusinessEntityUtils {
 
         if (name == null) {
             return false;
-        } else if (name.equals("")) {
-            return false;
-        } else if (containsChar(name, '"')) {
-            return false;
-        } else if (name.contains("''")) {
+        } else if (name.isEmpty()) {
             return false;
         }
 
@@ -180,13 +185,7 @@ public class BusinessEntityUtils {
 
         if (name == null) {
             return false;
-        } else if (name.equals("")) {
-            return false;
-        } else if (containsChar(name, '"')) {
-            return false;
-        } else if (name.contains("''")) {
-            return false;
-        } else if (name.contains(";")) {
+        } else if (name.isEmpty()) {
             return false;
         }
 
@@ -195,33 +194,26 @@ public class BusinessEntityUtils {
 
     public static boolean validateNameOfBusinessEntity(BusinessEntity entity) {
 
-        if (entity.getName() == null) {
-            return false;
-        } else if (entity.getName().equals("")) {
-            return false;
-        } else if (containsChar(entity.getName(), '"')) {
-            return false;
-        } else if (entity.getName().contains("''")) {
-            return false;
-        }
-
-        return true;
+        return validateName(entity.getName());
     }
 
     public static Boolean isBasicDataType(String type) {
 
-        if (type.equals("java.lang.Long")) {
-            return Boolean.TRUE;
-        } else if (type.equals("java.lang.Integer")) {
-            return Boolean.TRUE;
-        } else if (type.equals("java.lang.Double")) {
-            return Boolean.TRUE;
-        } else if (type.equals("java.lang.Boolean")) {
-            return Boolean.TRUE;
-        } else if (type.equals("java.lang.String")) {
-            return Boolean.TRUE;
-        } else if (type.equals("java.util.Date")) {
-            return Boolean.TRUE;
+        switch (type) {
+            case "java.lang.Long":
+                return Boolean.TRUE;
+            case "java.lang.Integer":
+                return Boolean.TRUE;
+            case "java.lang.Double":
+                return Boolean.TRUE;
+            case "java.lang.Boolean":
+                return Boolean.TRUE;
+            case "java.lang.String":
+                return Boolean.TRUE;
+            case "java.util.Date":
+                return Boolean.TRUE;
+            default:
+                break;
         }
 
         return Boolean.FALSE;
@@ -262,7 +254,7 @@ public class BusinessEntityUtils {
             } while (i < methodName.length);
 
             return method;
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException ex) {
             System.out.println(ex);
             return null;
         }
@@ -656,14 +648,19 @@ public class BusinessEntityUtils {
             String year = getFourDigitString(c.get(Calendar.YEAR));
             int month = c.get(Calendar.MONTH) + 1;
             int day = c.get(Calendar.DAY_OF_MONTH);
-            if (format.equals("YMD")) {
-                str = delim + year + sep + month + sep + day + delim;
-            } else if (format.equals("MDY")) {
-                str = delim + month + sep + day + sep + year + delim;
-            } else if (format.equals("DMY")) {
-                str = delim + day + sep + month + sep + year + delim;
-            } else {
-                str = delim + year + sep + month + sep + day + delim;
+            switch (format) {
+                case "YMD":
+                    str = delim + year + sep + month + sep + day + delim;
+                    break;
+                case "MDY":
+                    str = delim + month + sep + day + sep + year + delim;
+                    break;
+                case "DMY":
+                    str = delim + day + sep + month + sep + year + delim;
+                    break;
+                default:
+                    str = delim + year + sep + month + sep + day + delim;
+                    break;
             }
             return str;
         }
@@ -728,7 +725,7 @@ public class BusinessEntityUtils {
         String monthStr = String.format("%02d", c.get(Calendar.MONTH) + 1);
         String dayStr = String.format("%02d", c.get(Calendar.DAY_OF_MONTH));
 
-        return new Integer(yearStr + monthStr + dayStr);
+        return Integer.parseInt(yearStr + monthStr + dayStr);
     }
 
     public static int getPreviousYear() {
@@ -878,7 +875,7 @@ public class BusinessEntityUtils {
         return workDays;
     }
 
-    // tk put this method in DatePerio class as a static or done away with the method
+    // Put this method in DatePeriod class as a static or done away with the method
     // and use the periods in selectedReport??
     public static DatePeriod[] getMonthlyReportDatePeriods(DatePeriod reportingPeriod) {
 
@@ -934,13 +931,6 @@ public class BusinessEntityUtils {
 
     }
 
-    public static List<String> removeDuplicatesFromStringList(List<String> list) {
-//        HashSet<String> hashSet = new HashSet<String>(list);
-
-        //Assign the HashSet to a new ArrayList
-//        return new ArrayList<String>(hashSet);
-        return list;
-    }
 
     public static Date getModifiedDate(Date orgDate, int modPeriod, int modAmount) {
         Calendar calendar;
@@ -953,11 +943,8 @@ public class BusinessEntityUtils {
     }
 
     public static Boolean areDatesEqual(Date date1, Date date2) {
-        if (removeTimeFromDate(date1).equals(removeTimeFromDate(date2))) {
-            return true;
-        } else {
-            return false;
-        }
+        
+        return removeTimeFromDate(date1).equals(removeTimeFromDate(date2));
     }
 
     public static Date removeTimeFromDate(Date date) {
@@ -972,12 +959,9 @@ public class BusinessEntityUtils {
         return cal.getTime();
     }
 
-    // tk
-    public static Connection getConnection(EntityManager em) {            
-        //em.getTransaction().begin();
-        //java.sql.Connection connection = em.unwrap(java.sql.Connection.class);
-        //...
-        //em.getTransaction().commit();
+    
+    public static Connection getConnection(EntityManager em) {
+     
         return em.unwrap(java.sql.Connection.class);
     }
 
@@ -998,7 +982,7 @@ public class BusinessEntityUtils {
         try {
             Class.forName(driverClassName);
             return DriverManager.getConnection(url, user, password);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | SQLException e) {
             System.out.println(e);
         }
 
@@ -1215,7 +1199,7 @@ public class BusinessEntityUtils {
     }
 
     public static String getMonthShortFormat(Date date) {
-        String month = "";
+        String month;
         Calendar c = Calendar.getInstance();
         c.setTime(date);
 
@@ -1278,7 +1262,7 @@ public class BusinessEntityUtils {
     }
 
     public static String getShortenedString(String string, int maxLength) {
-        String shortenedString = "";
+        String shortenedString;
 
         if (string.length() > maxLength) {
             shortenedString = string.substring(0, maxLength);
@@ -1333,7 +1317,7 @@ public class BusinessEntityUtils {
 
         String strValue = df.format(value);
 
-        return Double.parseDouble(strValue);
+        return Double.valueOf(strValue);
     }
 
     public static long getMediumDateStringAsLong(String dateStr) {

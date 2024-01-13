@@ -396,9 +396,7 @@ public class Modules implements BusinessEntity {
     public static Modules findActiveModuleByName(EntityManager em, String value) {
 
         try {
-            
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+          
             List<Modules> modules = em.createQuery("SELECT m FROM Modules m "
                     + "WHERE m.active = 1 AND UPPER(m.name) "
                     + "= '" + value.toUpperCase() + "'", Modules.class).getResultList();
@@ -417,13 +415,12 @@ public class Modules implements BusinessEntity {
             String query,
             int maxResults) {
         try {
-            String newQuery = query.toUpperCase().trim().replaceAll("'", "''");
-
+            
             List<Modules> modules = em.createQuery("SELECT m FROM Modules m"
                     + " WHERE (m.active = 1) AND (UPPER(m.name) like '%"
-                    + newQuery + "%'" + " OR UPPER(m.category) like '%"
-                    + newQuery + "%'" + " OR UPPER(m.description) like '%"
-                    + newQuery + "%') ORDER BY m.name", Modules.class).
+                    + query + "%'" + " OR UPPER(m.category) like '%"
+                    + query + "%'" + " OR UPPER(m.description) like '%"
+                    + query + "%') ORDER BY m.name", Modules.class).
                     setMaxResults(maxResults).getResultList();
 
             return modules;
