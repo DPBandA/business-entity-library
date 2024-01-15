@@ -318,8 +318,7 @@ public class Email implements Serializable, BusinessEntity {
     public static Email findEmailByName(EntityManager em, String name) {
 
         try {
-            name = name.trim().replaceAll("'", "''");
-
+           
             List<Email> emails = em.createQuery("SELECT e FROM Email e "
                     + "WHERE UPPER(e.name) "
                     + "= '" + name.toUpperCase() + "'", Email.class).getResultList();
@@ -338,8 +337,7 @@ public class Email implements Serializable, BusinessEntity {
     public static Email findActiveEmailByName(EntityManager em, String name) {
 
         try {
-            name = name.trim().replaceAll("'", "''");
-
+           
             List<Email> emails = em.createQuery("SELECT e FROM Email e "
                     + "WHERE e.active = 1 AND UPPER(e.name) "
                     + "= '" + name.toUpperCase() + "'", Email.class).getResultList();
@@ -358,8 +356,7 @@ public class Email implements Serializable, BusinessEntity {
     public static Email findEmailBySubject(EntityManager em, String subject) {
 
         try {
-            subject = subject.trim().replaceAll("'", "''");
-
+           
             List<Email> emails = em.createQuery("SELECT e FROM Email e "
                     + "WHERE UPPER(e.subject) "
                     + "= '" + subject.toUpperCase() + "'", Email.class).getResultList();
@@ -378,8 +375,7 @@ public class Email implements Serializable, BusinessEntity {
     public static List<Email> findEmailsBySubject(EntityManager em, String subject) {
 
         try {
-            subject = subject.replaceAll("'", "''");
-
+           
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where UPPER(e.subject) like '%"
                             + subject.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
@@ -395,8 +391,7 @@ public class Email implements Serializable, BusinessEntity {
     public static List<Email> findEmails(EntityManager em, String query) {
 
         try {
-            query = query.replaceAll("'", "''");
-
+           
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where UPPER(e.name) like '%" + query.toUpperCase().trim()
                             + "%' OR UPPER(e.subject) like '%" + query.toUpperCase().trim()
@@ -414,8 +409,7 @@ public class Email implements Serializable, BusinessEntity {
     public static List<Email> findActiveEmailsBySubject(EntityManager em, String query) {
 
         try {
-            query = query.replaceAll("'", "''");
-
+           
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where e.active = 1 AND UPPER(e.subject) like '%"
                             + query.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
@@ -432,9 +426,7 @@ public class Email implements Serializable, BusinessEntity {
             String category, String subject) {
 
         try {
-            subject = subject.replaceAll("'", "''");
-            category = category.replaceAll("'", "''");
-
+          
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where e.active = 1 AND UPPER(e.subject) like '%"
                             + subject.toUpperCase().trim() + "%'"
@@ -452,8 +444,7 @@ public class Email implements Serializable, BusinessEntity {
     public static List<Email> findActiveEmails(EntityManager em, String query) {
 
         try {
-            query = query.replaceAll("'", "''");
-
+           
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where e.active = 1 AND (UPPER(e.name) like '%" + query.toUpperCase().trim()
                             + "%' OR UPPER(e.subject) like '%" + query.toUpperCase().trim()

@@ -201,11 +201,10 @@ public class Distributor implements BusinessEntity {
     public static Distributor findDistributorByName(EntityManager em, String name) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
-
+           
             List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
                     + "WHERE UPPER(d.name) "
-                    + "= '" + newName.toUpperCase() + "'", Distributor.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", Distributor.class).getResultList();
             if (!distributors.isEmpty()) {
                 return distributors.get(0);
             }

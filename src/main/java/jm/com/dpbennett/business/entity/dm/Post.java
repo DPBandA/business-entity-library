@@ -394,8 +394,7 @@ public class Post implements Document, Comparable, BusinessEntity {
         List<Post> posts;
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             if (ignoreCase) {
                 posts = em.createQuery("SELECT p FROM Post p "
                         + "WHERE UPPER(p.name) "
@@ -429,7 +428,7 @@ public class Post implements Document, Comparable, BusinessEntity {
         List<Post> foundPosts;
         String searchQuery = null;
         String searchTextAndClause = "";
-        String searchText = originalSearchText.replaceAll("'", "''");
+        String searchText = originalSearchText;
         switch (searchType) {
             case "General":
                 if (!searchText.equals("")) {
@@ -485,8 +484,7 @@ public class Post implements Document, Comparable, BusinessEntity {
             int maxResults) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Post> posts
                     = em.createQuery("SELECT p FROM Post p WHERE (p.name like '%"
                             + value + "%'"
@@ -505,8 +503,7 @@ public class Post implements Document, Comparable, BusinessEntity {
             EntityManager em, String value, int maxResults) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Post> posts
                     = em.createQuery("SELECT p FROM Post p WHERE p.name like '%"
                             + value + "%'"

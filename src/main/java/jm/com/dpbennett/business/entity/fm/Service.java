@@ -254,12 +254,11 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static Service findByName(EntityManager em, String serviceName) {
 
         try {
-            String newServiceName = serviceName.trim().replaceAll("'", "''");
-
+           
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "LIKE '%" + newServiceName.toUpperCase() + "%'", 
+                    + "LIKE '%" + serviceName.toUpperCase() + "%'", 
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -274,12 +273,11 @@ public class Service implements Serializable, BusinessEntity, Comparable {
      public static Service findByExactName(EntityManager em, String serviceName) {
 
         try {
-            String newServiceName = serviceName.trim().replaceAll("'", "''");
-
+           
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "= '" + newServiceName.toUpperCase() + "'", 
+                    + "= '" + serviceName.toUpperCase() + "'", 
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -294,12 +292,11 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static Service findActiveByName(EntityManager em, String serviceName) {
 
         try {
-            String newServiceName = serviceName.trim().replaceAll("'", "''");
-
+           
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "LIKE '%" + newServiceName.toUpperCase() + "%' AND s.active = 1", 
+                    + "LIKE '%" + serviceName.toUpperCase() + "%' AND s.active = 1", 
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -314,12 +311,11 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static Service findActiveByExactName(EntityManager em, String serviceName) {
 
         try {
-            String newServiceName = serviceName.trim().replaceAll("'", "''");
-
+           
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "= '" + newServiceName.toUpperCase() + "' AND s.active = 1", 
+                    + "= '" + serviceName.toUpperCase() + "' AND s.active = 1", 
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -337,13 +333,12 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             String code) {
 
         try {
-            String newServiceName = serviceName.trim().replaceAll("'", "''");
-
+           
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s"
                     + " JOIN s.accountingCode accountingCode"
                     + " WHERE UPPER(s.name)"
-                    + " LIKE '%" + newServiceName.toUpperCase() + "%'"
+                    + " LIKE '%" + serviceName.toUpperCase() + "%'"
                     + " AND accountingCode.code LIKE '%" + code + "%'",
                     Service.class).getResultList();
 
@@ -363,13 +358,12 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             String code) {
 
         try {
-            String newServiceName = serviceName.trim().replaceAll("'", "''");
-
+            
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s"
                     + " JOIN s.accountingCode accountingCode"
                     + " WHERE UPPER(s.name)"
-                    + " LIKE '%" + newServiceName.toUpperCase() + "%'"
+                    + " LIKE '%" + serviceName.toUpperCase() + "%'"
                     + " AND accountingCode.code LIKE '%" + code + "%' AND s.active = 1",
                     Service.class).getResultList();
 
@@ -386,11 +380,10 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static List<Service> findAllByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+           
             List<Service> services
                     = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
-                            + newName.toUpperCase().trim() + "%' ORDER BY s.name", Service.class).getResultList();
+                            + name.toUpperCase().trim() + "%' ORDER BY s.name", Service.class).getResultList();
             return services;
         } catch (Exception e) {
             System.out.println(e);
@@ -401,11 +394,10 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static List<Service> findAllActiveByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+            
             List<Service> services
                     = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
-                            + newName.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Service.class).getResultList();
+                            + name.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Service.class).getResultList();
             return services;
         } catch (Exception e) {
             System.out.println(e);
@@ -419,13 +411,12 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             String code) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+           
             List<Service> services
                     = em.createQuery("SELECT s FROM Service s"
                             + " JOIN s.accountingCode accountingCode"
                             + " WHERE UPPER(s.name) LIKE '%"
-                            + newName.toUpperCase().trim() + "%' AND s.active = 1"
+                            + name.toUpperCase().trim() + "%' AND s.active = 1"
                             + " AND accountingCode.code LIKE '%" + code + "%'" 
                             + " ORDER BY s.name", Service.class).getResultList();
             return services;

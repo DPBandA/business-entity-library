@@ -264,8 +264,7 @@ public class Classification implements BusinessEntity, Serializable {
     public static Classification findClassificationByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Classification> classifications = em.createQuery("SELECT c FROM Classification c "
                     + "WHERE UPPER(c.name) "
                     + "= '" + value.toUpperCase() + "'", Classification.class).getResultList();
@@ -283,8 +282,7 @@ public class Classification implements BusinessEntity, Serializable {
     public static List<Classification> findClassificationsByName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY c.name", Classification.class).getResultList();
@@ -298,8 +296,7 @@ public class Classification implements BusinessEntity, Serializable {
     public static List<Classification> findClassificationsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '%"
                             + value.toUpperCase().trim() + "%' AND c.category = " + category + " ORDER BY c.name", Classification.class).getResultList();
@@ -313,8 +310,7 @@ public class Classification implements BusinessEntity, Serializable {
     public static List<Classification> findActiveClassificationsByName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '%"
                             + value.toUpperCase().trim() + "%' AND c.active = 1 ORDER BY c.name", Classification.class).getResultList();
@@ -328,8 +324,7 @@ public class Classification implements BusinessEntity, Serializable {
     public static List<Classification> findActiveClassificationsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
                             + value.toUpperCase().trim() + "%' AND c.active = 1 AND c.category = '" + category + "' ORDER BY c.name", Classification.class).getResultList();

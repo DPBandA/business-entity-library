@@ -173,7 +173,7 @@ public class ShippingContainer implements BusinessEntity {
             return false;
         }
         ShippingContainer other = (ShippingContainer) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -200,21 +200,20 @@ public class ShippingContainer implements BusinessEntity {
             Long complianceSurveyID) {
 
         try {
-            String newContainerNumber = containerNumber.trim().replaceAll("'", "''");
 
             ComplianceSurvey complianceSurvey = ComplianceSurvey.findComplianceSurveyById(em, complianceSurveyID);
             if (complianceSurvey != null) {
-//                List<ShippingContainer> shippingContainers = complianceSurvey.getEntryDocumentInspection().getShippingContainers();
-//                if (shippingContainers.isEmpty()) {
-//                    return null;
-//                } else {
-//                    //List<String> containerNums = complianceSurvey.getContainerNumberList();
-//                    for (ShippingContainer shippingContainer : shippingContainers) {
-//                        if (shippingContainer.getNumber().trim().equals(newContainerNumber)) {
-//                            return shippingContainer;
-//                        }
-//                    }
-//                }
+                List<ShippingContainer> shippingContainers = complianceSurvey.getEntryDocumentInspection().getShippingContainers();
+                if (shippingContainers.isEmpty()) {
+                    return null;
+                } else {
+                    //List<String> containerNums = complianceSurvey.getContainerNumberList();
+                    for (ShippingContainer shippingContainer : shippingContainers) {
+                        if (shippingContainer.getNumber().trim().equals(containerNumber)) {
+                            return shippingContainer;
+                        }
+                    }
+                }
 
             } else {
                 return null;
@@ -228,14 +227,14 @@ public class ShippingContainer implements BusinessEntity {
 
     }
 
-    public static ShippingContainer findShippingContainerByNumber(EntityManager em, String shippingContainerByNumber) {
+    public static ShippingContainer findShippingContainerByNumber(EntityManager em, 
+            String shippingContainerByNumber) {
 
         try {
-            String newShippingContainerByNumber = shippingContainerByNumber.trim().replaceAll("'", "''");
-
+            
             List<ShippingContainer> containers = em.createQuery("SELECT s FROM ShippingContainer s "
                     + "WHERE UPPER(s.number) "
-                    + "= '" + newShippingContainerByNumber.toUpperCase() + "'", ShippingContainer.class).getResultList();
+                    + "= '" + shippingContainerByNumber.toUpperCase() + "'", ShippingContainer.class).getResultList();
             if (!containers.isEmpty()) {
                 return containers.get(0);
             }

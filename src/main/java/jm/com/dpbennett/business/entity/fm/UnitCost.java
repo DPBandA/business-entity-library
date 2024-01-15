@@ -237,29 +237,13 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     public static List<UnitCost> findUnitCosts(
             EntityManager em,
-            String originalDepartmentName,
-            String originalSearchText) {
+            String departmentName,
+            String searchText) {
 
         List<UnitCost> foundUnitCosts;
         String searchQuery;
         String searchTextAndClause = "";
         String joinClause;
-        String searchText;
-        String departmentName;
-
-        // NB: replace ' with '' to avoid SQL query error
-        if (originalSearchText != null) {
-            searchText = originalSearchText.replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
-
-        // NB: replace ' with '' to avoid SQL query error
-        if (originalDepartmentName != null) {
-            departmentName = originalDepartmentName.replaceAll("'", "''");
-        } else {
-            departmentName = "";
-        }
 
         joinClause =
                 " JOIN unitCost.department department"

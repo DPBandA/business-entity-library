@@ -224,11 +224,10 @@ public class Sector implements BusinessEntity, Serializable {
     public static Sector findSectorByName(EntityManager em, String sectorName) {
 
         try {
-            String newSectorName = sectorName.trim().replaceAll("'", "''");
-
+           
             List<Sector> sectors = em.createQuery("SELECT s FROM Sector s "
                     + "WHERE UPPER(s.name) "
-                    + "= '" + newSectorName.toUpperCase() + "'", Sector.class).getResultList();
+                    + "= '" + sectorName.toUpperCase() + "'", Sector.class).getResultList();
             if (!sectors.isEmpty()) {
                 return sectors.get(0);
             }
@@ -243,11 +242,10 @@ public class Sector implements BusinessEntity, Serializable {
     public static List<Sector> findSectorsByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+           
             List<Sector> sectors
                     = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"
-                            + newName.toUpperCase().trim() + "%' ORDER BY s.name", Sector.class).getResultList();
+                            + name.toUpperCase().trim() + "%' ORDER BY s.name", Sector.class).getResultList();
             return sectors;
         } catch (Exception e) {
             System.out.println(e);
@@ -258,11 +256,10 @@ public class Sector implements BusinessEntity, Serializable {
     public static List<Sector> findActiveSectorsByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+           
             List<Sector> sectors
                     = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"
-                            + newName.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Sector.class).getResultList();
+                            + name.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Sector.class).getResultList();
             return sectors;
         } catch (Exception e) {
             System.out.println(e);

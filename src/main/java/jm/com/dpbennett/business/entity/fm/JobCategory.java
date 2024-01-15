@@ -305,11 +305,10 @@ public class JobCategory implements Serializable, BusinessEntity {
     public static JobCategory findJobCategoryByName(EntityManager em, String name) {
 
         try {
-            String newCategory = name.trim().replaceAll("'", "''");
-
+            
             List<JobCategory> jobCategories = em.createQuery("SELECT c FROM JobCategory c "
                     + "WHERE UPPER(c.category) "
-                    + "= '" + newCategory.toUpperCase() + "'", JobCategory.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", JobCategory.class).getResultList();
 
             if (!jobCategories.isEmpty()) {
                 return jobCategories.get(0);
@@ -325,11 +324,10 @@ public class JobCategory implements Serializable, BusinessEntity {
     public static List<JobCategory> findJobCategoriesByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+           
             List<JobCategory> jobCategories
                     = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"
-                            + newName.toUpperCase().trim() + "%' ORDER BY j.category", JobCategory.class).getResultList();
+                            + name.toUpperCase().trim() + "%' ORDER BY j.category", JobCategory.class).getResultList();
             return jobCategories;
         } catch (Exception e) {
             System.out.println(e);
@@ -340,11 +338,10 @@ public class JobCategory implements Serializable, BusinessEntity {
     public static List<JobCategory> findActiveJobCategoriesByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+           
             List<JobCategory> jobCategories
                     = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"
-                            + newName.toUpperCase().trim() + "%' AND j.active = 1 ORDER BY j.category", JobCategory.class).getResultList();
+                            + name.toUpperCase().trim() + "%' AND j.active = 1 ORDER BY j.category", JobCategory.class).getResultList();
             return jobCategories;
         } catch (Exception e) {
             System.out.println(e);

@@ -317,11 +317,10 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     public static EmployeePosition findEmployeePositionByTitle(EntityManager em, String title) {
 
         try {
-            String newTitle = title.trim().replaceAll("'", "''");
-
+           
             List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
                     + "WHERE UPPER(e.title) "
-                    + "= '" + newTitle.toUpperCase() + "'", EmployeePosition.class).getResultList();
+                    + "= '" + title.toUpperCase() + "'", EmployeePosition.class).getResultList();
 
             if (!employeePositions.isEmpty()) {
                 return employeePositions.get(0);
@@ -337,11 +336,10 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     public static List<EmployeePosition> findEmployeePositionsByTitle(EntityManager em, String title) {
 
         try {
-            String newTitle = title.replaceAll("'", "''");
-
+           
             List<EmployeePosition> employeePositions
                     = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
-                            + newTitle.toUpperCase().trim() + "%' ORDER BY e.title", EmployeePosition.class).getResultList();
+                            + title.toUpperCase().trim() + "%' ORDER BY e.title", EmployeePosition.class).getResultList();
             return employeePositions;
         } catch (Exception e) {
             System.out.println(e);
@@ -352,11 +350,10 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     public static List<EmployeePosition> findActiveEmployeePositionsByTitle(EntityManager em, String title) {
 
         try {
-            String newTitle = title.replaceAll("'", "''");
-
+           
             List<EmployeePosition> employeePositions
                     = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
-                            + newTitle.toUpperCase().trim() + "%' AND e.active = 1 ORDER BY e.title", EmployeePosition.class).getResultList();
+                            + title.toUpperCase().trim() + "%' AND e.active = 1 ORDER BY e.title", EmployeePosition.class).getResultList();
             return employeePositions;
         } catch (Exception e) {
             System.out.println(e);
@@ -367,12 +364,10 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     public static EmployeePosition findActiveEmployeePositionByTitle(EntityManager em,
             String title) {
 
-        String newTitle = title.replaceAll("'", "''").trim().toUpperCase();
-
         try {
             List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
                     + "WHERE e.active = 1 AND UPPER(e.title) "
-                    + "= '" + newTitle + "'",
+                    + "= '" + title + "'",
                     EmployeePosition.class).getResultList();
             if (!employeePositions.isEmpty()) {
                 EmployeePosition employeePosition = employeePositions.get(0);

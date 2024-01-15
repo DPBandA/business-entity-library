@@ -207,21 +207,14 @@ public class SampleRequest implements BusinessEntity, Form {
             User user,
             String dateSearchField,
             String searchType,
-            String originalSearchText,
+            String searchText,
             Date startDate,
             Date endDate) {
 
         List<SampleRequest> foundSampleRequests;
         String searchQuery = null;
         String searchTextAndClause = "";
-        String searchText;
-
-        if (originalSearchText != null) {
-            searchText = originalSearchText.replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
-
+       
         if (searchType.equals("General")) {
             if (!searchText.equals("")) {
                 searchTextAndClause =

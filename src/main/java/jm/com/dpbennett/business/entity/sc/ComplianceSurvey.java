@@ -1138,7 +1138,7 @@ public class ComplianceSurvey implements BusinessEntity {
             User user,
             String dateSearchField,
             String searchType,
-            String originalSearchText,
+            String searchText,
             Date startDate,
             Date endDate,
             Boolean includeProductInspectionSearch,
@@ -1148,13 +1148,6 @@ public class ComplianceSurvey implements BusinessEntity {
         String searchQuery = null;
         String searchTextAndClause = "";
         String joinClause;
-        String searchText;
-
-        if (originalSearchText != null) {
-            searchText = originalSearchText.replaceAll("'", "''").replaceAll("&amp;", "&");
-        } else {
-            searchText = "";
-        }
 
         joinClause
                 = " JOIN complianceSurvey.retailOutlet retailOutlet"
@@ -1234,7 +1227,7 @@ public class ComplianceSurvey implements BusinessEntity {
             User user,
             String dateSearchField,
             String searchType,
-            String originalSearchText,
+            String searchText,
             Date startDate,
             Date endDate,
             Boolean includeProductInspectionSearch,
@@ -1244,13 +1237,6 @@ public class ComplianceSurvey implements BusinessEntity {
         String searchQuery = null;
         String searchTextAndClause = "";
         String joinClause;
-        String searchText;
-
-        if (originalSearchText != null) {
-            searchText = originalSearchText.replaceAll("'", "''").replaceAll("&amp;", "&");
-        } else {
-            searchText = "";
-        }
 
         joinClause
                 = " LEFT JOIN complianceSurvey.retailOutlet retailOutlet"
@@ -1370,11 +1356,10 @@ public class ComplianceSurvey implements BusinessEntity {
     public static ComplianceSurvey findComplianceSurveyByName(EntityManager em, String name) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
-
+           
             List<ComplianceSurvey> complianceSurveys = em.createQuery("SELECT c FROM  ComplianceSurvey c "
                     + "WHERE UPPER(c.name) "
-                    + "= '" + newName.toUpperCase() + "'", ComplianceSurvey.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", ComplianceSurvey.class).getResultList();
             if (!complianceSurveys.isEmpty()) {
                 return complianceSurveys.get(0);
             }

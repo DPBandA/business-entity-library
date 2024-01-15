@@ -217,8 +217,7 @@ public class FinancialAccount implements
     public static List<FinancialAccount> findFields(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<FinancialAccount> fields
                     = em.createQuery("SELECT a FROM Field a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
@@ -238,8 +237,7 @@ public class FinancialAccount implements
     public static List<FinancialAccount> findActiveFields(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<FinancialAccount> fields
                     = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
@@ -357,8 +355,7 @@ public class FinancialAccount implements
     public static FinancialAccount findByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<FinancialAccount> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", FinancialAccount.class).getResultList();
@@ -375,8 +372,7 @@ public class FinancialAccount implements
     public static FinancialAccount findByCode(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<FinancialAccount> fields = em.createQuery("SELECT a FROM FieldField a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "'", FinancialAccount.class).getResultList();
@@ -393,8 +389,7 @@ public class FinancialAccount implements
     public static FinancialAccount findActiveByCode(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<FinancialAccount> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", FinancialAccount.class).getResultList();

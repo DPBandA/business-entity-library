@@ -313,11 +313,10 @@ public class ProcurementMethod implements BusinessEntity {
     public static List<ProcurementMethod> findAllByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+           
             List<ProcurementMethod> procurementMethods
                     = em.createQuery("SELECT p FROM ProcurementMethod p WHERE UPPER(p.procurementMethod) LIKE '%"
-                            + newName.toUpperCase().trim() + "%' ORDER BY p.procurementMethod", ProcurementMethod.class).getResultList();
+                            + name.toUpperCase().trim() + "%' ORDER BY p.procurementMethod", ProcurementMethod.class).getResultList();
             return procurementMethods;
         } catch (Exception e) {
             System.out.println(e);

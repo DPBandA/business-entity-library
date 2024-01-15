@@ -278,11 +278,10 @@ public class Division implements BusinessEntity, Comparable {
     public static Division findByName(EntityManager em, String name) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
-
+           
             List<Division> divisions = em.createQuery("SELECT d FROM Division d "
                     + "WHERE UPPER(d.name) "
-                    + "= '" + newName.toUpperCase() + "'", Division.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", Division.class).getResultList();
 
             if (!divisions.isEmpty()) {
                 return divisions.get(0);
@@ -328,11 +327,10 @@ public class Division implements BusinessEntity, Comparable {
     public static List<Division> findAllByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+            
             List<Division> divisions
                     = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
-                            + newName.toUpperCase().trim() + "%' ORDER BY d.name", Division.class).getResultList();
+                            + name.toUpperCase().trim() + "%' ORDER BY d.name", Division.class).getResultList();
             return divisions;
         } catch (Exception e) {
             System.out.println(e);
@@ -343,11 +341,10 @@ public class Division implements BusinessEntity, Comparable {
     public static List<Division> findAllActiveByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+          
             List<Division> divisions
                     = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
-                            + newName.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Division.class).getResultList();
+                            + name.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Division.class).getResultList();
             return divisions;
         } catch (Exception e) {
             System.out.println(e);

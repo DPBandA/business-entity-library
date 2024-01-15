@@ -196,8 +196,7 @@ public class StatusNote implements Serializable, BusinessEntity {
     public static List<StatusNote> findstatusNotes(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<StatusNote> statusNotes
                     = em.createQuery("SELECT s FROM StatusNote s WHERE UPPER(s.text) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(s.description) LIKE '%" + value.toUpperCase().trim()
@@ -215,8 +214,7 @@ public class StatusNote implements Serializable, BusinessEntity {
     public static List<StatusNote> findActiveStatusNotes(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<StatusNote> statusNotes
                     = em.createQuery("SELECT s FROM StatusNote s WHERE (UPPER(s.text) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(s.description) LIKE '%" + value.toUpperCase().trim()

@@ -392,12 +392,11 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public static List<Employee> findEmployeesByName(EntityManager em, String name) {
 
         try {
-            String newName = name.toUpperCase().trim().replaceAll("'", "''");
-
+            
             List<Employee> employees
                     = em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
-                            + newName + "%'" + " OR UPPER(e.lastName) like '%"
-                            + newName + "%'"
+                            + name + "%'" + " OR UPPER(e.lastName) like '%"
+                            + name + "%'"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
         } catch (Exception e) {
@@ -409,13 +408,12 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public static List<Employee> findEmployees(EntityManager em, String query) {
 
         try {
-            String newQuery = query.toUpperCase().trim().replaceAll("'", "''");
-
+           
             List<Employee> employees
                     = em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
-                            + newQuery + "%'" + " OR UPPER(e.lastName) like '%"
-                            + newQuery + "%'" + " OR UPPER(e.department.name) like '%"
-                            + newQuery + "%'"
+                            + query + "%'" + " OR UPPER(e.lastName) like '%"
+                            + query + "%'" + " OR UPPER(e.department.name) like '%"
+                            + query + "%'"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
         } catch (Exception e) {
@@ -427,12 +425,11 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public static List<Employee> findActiveEmployeesByName(EntityManager em, String name) {
 
         try {
-            String newName = name.toUpperCase().trim().replaceAll("'", "''");
-
+           
             List<Employee> employees
                     = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '"
-                            + newName + "%'" + " OR UPPER(e.lastName) like '"
-                            + newName + "%'"
+                            + name + "%'" + " OR UPPER(e.lastName) like '"
+                            + name + "%'"
                             + ") AND e.active = 1"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
@@ -446,8 +443,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
             String positionTitle) {
 
         try {
-            positionTitle = positionTitle.toUpperCase().trim().replaceAll("'", "''");
-
+            
             List<Employee> employees
                     = em.createQuery("SELECT e FROM Employee e"
                             + " JOIN e.positions positions"
@@ -465,13 +461,12 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public static List<Employee> findActiveEmployees(EntityManager em, String query) {
 
         try {
-            String newQuery = query.toUpperCase().trim().replaceAll("'", "''");
-
+           
             List<Employee> employees
                     = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '"
-                            + newQuery + "%'" + " OR UPPER(e.lastName) like '"
-                            + newQuery + "%'" + " OR UPPER(e.department.name) like '%"
-                            + newQuery + "%')"
+                            + query + "%'" + " OR UPPER(e.lastName) like '"
+                            + query + "%'" + " OR UPPER(e.department.name) like '%"
+                            + query + "%')"
                             + " AND e.active = 1 OR e.active IS NULL"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
@@ -489,15 +484,16 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
      * @param lastName
      * @return
      */
-    public static Employee findEmployeeByName(EntityManager em, String firstName, String lastName) {
+    public static Employee findEmployeeByName(EntityManager em, 
+            String firstName, String lastName) {
 
         if (firstName != null && lastName != null) {
-            String newFirstName = firstName.replaceAll("'", "''").trim().toUpperCase();
-            String newLastName = lastName.replaceAll("'", "''").trim().toUpperCase();
+           
             try {
                 List<Employee> employees = em.createQuery("SELECT e FROM Employee e "
                         + "WHERE UPPER(e.firstName) "
-                        + "= '" + newFirstName + "' AND UPPER(e.lastName) = '" + newLastName + "'",
+                        + "= '" + firstName + "' AND UPPER(e.lastName) = '" 
+                        + lastName + "'",
                         Employee.class).getResultList();
                 if (!employees.isEmpty()) {
                     Employee employee = employees.get(0);
@@ -522,12 +518,12 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public static Employee findActiveEmployeeByName(EntityManager em, String firstName, String lastName) {
 
         if (firstName != null && lastName != null) {
-            String newFirstName = firstName.replaceAll("'", "''").trim().toUpperCase();
-            String newLastName = lastName.replaceAll("'", "''").trim().toUpperCase();
+           
             try {
                 List<Employee> employees = em.createQuery("SELECT e FROM Employee e "
                         + "WHERE e.active = 1 AND UPPER(e.firstName) "
-                        + "= '" + newFirstName + "' AND UPPER(e.lastName) = '" + newLastName + "'",
+                        + "= '" + firstName + "' AND UPPER(e.lastName) = '" 
+                        + lastName + "'",
                         Employee.class).getResultList();
                 if (!employees.isEmpty()) {
                     Employee employee = employees.get(0);

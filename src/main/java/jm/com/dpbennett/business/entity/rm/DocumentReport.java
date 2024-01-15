@@ -359,11 +359,10 @@ public class DocumentReport implements BusinessEntity {
     public static DocumentReport findDocumentReportByName(EntityManager em, String documentReportName) {
 
         try {
-            String newDocumentReportName = documentReportName.trim().replaceAll("'", "''");
-
+           
             List<DocumentReport> reports = em.createQuery("SELECT d FROM DocumentReport d "
                     + "WHERE UPPER(d.name) "
-                    + "= '" + newDocumentReportName.toUpperCase() + "'", DocumentReport.class).getResultList();
+                    + "= '" + documentReportName.toUpperCase() + "'", DocumentReport.class).getResultList();
             if (!reports.isEmpty()) {
                 return reports.get(0);
             }

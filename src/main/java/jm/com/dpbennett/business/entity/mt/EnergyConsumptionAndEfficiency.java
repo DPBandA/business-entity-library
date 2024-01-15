@@ -472,8 +472,7 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
     public static List<BusinessEntity> findAllByProductType(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+          
             List<BusinessEntity> list
                     = em.createQuery("SELECT e FROM EnergyConsumptionAndEfficiency e where UPPER(e.productType) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY e.productType", BusinessEntity.class).getResultList();

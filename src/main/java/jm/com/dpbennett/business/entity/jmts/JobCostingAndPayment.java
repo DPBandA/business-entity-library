@@ -794,21 +794,19 @@ public class JobCostingAndPayment implements BusinessEntity {
         List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
 
         try {
-            String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
-            String newDepartmentName = departmentName.replaceAll("'", "''");
-
+           
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
                             + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
                             + " JOIN job.department department"
                             + " JOIN job.subContractedDepartment subContractedDepartment"
                             + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
-                            + newJobCostingAndPaymentName.toUpperCase().trim() + "%'"
-                            + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
-                            + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
+                            + jobCostingAndPaymentName.toUpperCase().trim() + "%'"
+                            + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
+                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
                             + " )"
                             + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
-                            Job.class).setMaxResults(50).getResultList();
+                            Job.class).setMaxResults(50).getResultList(); // tk use max result setting
             if (!jobs.isEmpty()) {
                 for (int i = 0; i < jobs.size(); i++) {
                     if (!jobs.get(i).getJobCostingAndPayment().getName().trim().equals("")) {
@@ -832,18 +830,16 @@ public class JobCostingAndPayment implements BusinessEntity {
         List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
 
         try {
-            String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
-            String newDepartmentName = departmentName.replaceAll("'", "''");
-
+            
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
                             + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
                             + " JOIN job.department department"
                             + " JOIN job.subContractedDepartment subContractedDepartment"
                             + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
-                            + newJobCostingAndPaymentName.toUpperCase().trim() + "%'"
-                            + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
-                            + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
+                            + jobCostingAndPaymentName.toUpperCase().trim() + "%'"
+                            + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
+                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
                             + " )"
                             + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"
                             + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
@@ -869,18 +865,16 @@ public class JobCostingAndPayment implements BusinessEntity {
             String jobCostingAndPaymentName) {
 
         try {
-            String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
-            String newDepartmentName = departmentName.replaceAll("'", "''");
-
+            
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
                             + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
                             + " JOIN job.department department"
                             + " JOIN job.subContractedDepartment subContractedDepartment"
                             + " WHERE UPPER(jobCostingAndPayment.name) = '"
-                            + newJobCostingAndPaymentName.toUpperCase().trim() + "'"
-                            + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
-                            + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
+                            + jobCostingAndPaymentName.toUpperCase().trim() + "'"
+                            + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
+                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
                             + " )"
                             + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
             if (!jobs.isEmpty()) {
@@ -894,54 +888,22 @@ public class JobCostingAndPayment implements BusinessEntity {
         return null;
     }
 
-//    public static JobCostingAndPayment findActiveJobCostingAndPaymentByName(
-//            EntityManager em,
-//            String jobCostingAndPaymentName) {
-//
-//        try {
-//            String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
-//            String newDepartmentName = departmentName.replaceAll("'", "''");
-//
-//            List<Job> jobs
-//                    = em.createQuery("SELECT job FROM Job job"
-//                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-//                            + " JOIN job.department department"
-//                            + " JOIN job.subContractedDepartment subContractedDepartment"
-//                            + " WHERE UPPER(jobCostingAndPayment.name) = '"
-//                            + newJobCostingAndPaymentName.toUpperCase().trim() + "'"
-//                            + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
-//                            + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
-//                            + " )"
-//                            + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"
-//                            + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
-//            if (!jobs.isEmpty()) {
-//                return jobs.get(0).getJobCostingAndPayment();
-//            }
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return null;
-//        }
-//
-//        return null;
-//    }
     public static JobCostingAndPayment findActiveJobCostingAndPaymentByDepartmentAndName(
             EntityManager em,
             String departmentName,
             String jobCostingAndPaymentName) {
 
         try {
-            String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
-            String newDepartmentName = departmentName.replaceAll("'", "''");
-
+           
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
                             + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
                             + " JOIN job.department department"
                             + " JOIN job.subContractedDepartment subContractedDepartment"
                             + " WHERE UPPER(jobCostingAndPayment.name) = '"
-                            + newJobCostingAndPaymentName.toUpperCase().trim() + "'"
-                            + " AND ( UPPER(department.name) = '" + newDepartmentName.toUpperCase() + "'"
-                            + " OR UPPER(subContractedDepartment.name) = '" + newDepartmentName.toUpperCase() + "'"
+                            + jobCostingAndPaymentName.toUpperCase().trim() + "'"
+                            + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
+                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
                             + " )"
                             + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"
                             + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
@@ -1192,15 +1154,14 @@ public class JobCostingAndPayment implements BusinessEntity {
             String jobCostingAndPaymentName) {
 
         try {
-            String newJobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("'", "''");
-
+           
             List<JobCostingAndPayment> jobCostingAndPayments
                     = em.createQuery("SELECT jobCostingAndPayment FROM JobCostingAndPayment jobCostingAndPayment"
                             + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
-                            + newJobCostingAndPaymentName.toUpperCase().trim() + "%'"
+                            + jobCostingAndPaymentName.toUpperCase().trim() + "%'"
                             + " AND (jobCostingAndPayment.estimate = 1)"
                             + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
-                            JobCostingAndPayment.class).setMaxResults(500).getResultList();
+                            JobCostingAndPayment.class).setMaxResults(500).getResultList(); // tk use max result setting
 
             return jobCostingAndPayments;
 

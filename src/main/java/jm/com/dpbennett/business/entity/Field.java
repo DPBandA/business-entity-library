@@ -158,8 +158,7 @@ public class Field implements Serializable, BusinessEntity {
     public static List<Field> findActiveFields(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Field> fields
                     = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim() 
                             + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim() 
@@ -275,8 +274,7 @@ public class Field implements Serializable, BusinessEntity {
     public static Field findByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Field> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", Field.class).getResultList();
@@ -293,8 +291,7 @@ public class Field implements Serializable, BusinessEntity {
     public static Field findByCode(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Field> fields = em.createQuery("SELECT a FROM FieldField a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "'", Field.class).getResultList();
@@ -311,8 +308,7 @@ public class Field implements Serializable, BusinessEntity {
     public static Field findActiveByCode(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Field> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", Field.class).getResultList();

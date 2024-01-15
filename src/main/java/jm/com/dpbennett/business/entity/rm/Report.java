@@ -385,11 +385,10 @@ public class Report implements BusinessEntity {
     public static Report findReportByName(EntityManager em, String reportName) {
 
         try {
-            String newReportName = reportName.trim().replaceAll("'", "''");
-
+            
             List<Report> reports = em.createQuery("SELECT r FROM Report r "
                     + "WHERE UPPER(r.name) "
-                    + "= '" + newReportName.toUpperCase() + "'", Report.class).getResultList();
+                    + "= '" + reportName.toUpperCase() + "'", Report.class).getResultList();
             if (!reports.isEmpty()) {
                 return reports.get(0);
             }
@@ -403,11 +402,10 @@ public class Report implements BusinessEntity {
      public static Report findActiveReportByName(EntityManager em, String reportName) {
 
         try {
-            String newReportName = reportName.trim().replaceAll("'", "''");
-
+            
             List<Report> reports = em.createQuery("SELECT r FROM Report r "
                     + "WHERE UPPER(r.name)"
-                    + " = '" + newReportName.toUpperCase() + "'"
+                    + " = '" + reportName.toUpperCase() + "'"
                     + " AND (r.active = 1 OR r.active IS NULL)", Report.class).getResultList();
             if (!reports.isEmpty()) {
                 return reports.get(0);
@@ -422,11 +420,10 @@ public class Report implements BusinessEntity {
     public static List<Report> findReportsByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+           
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
-                            + newName.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+                            + name.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
             return reports;
         } catch (Exception e) {
             System.out.println(e);
@@ -437,12 +434,11 @@ public class Report implements BusinessEntity {
     public static List<Report> findReports(EntityManager em, String query) {
 
         try {
-            String newQuery = query.replaceAll("'", "''");
-
+           
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
-                            + newQuery.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
-                            + newQuery.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+                            + query.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
+                            + query.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
             return reports;
         } catch (Exception e) {
             System.out.println(e);
@@ -453,11 +449,10 @@ public class Report implements BusinessEntity {
     public static List<Report> findActiveReportsByName(EntityManager em, String query) {
 
         try {
-            String newQuery = query.replaceAll("'", "''");
-
+           
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where (r.active = 1 OR r.active IS NULL) AND UPPER(r.name) like '%"
-                            + newQuery.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+                            + query.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
             return reports;
         } catch (Exception e) {
             System.out.println(e);
@@ -465,18 +460,17 @@ public class Report implements BusinessEntity {
         }
     }
 
-    public static List<Report> findActiveReportsByCategoryAndName(EntityManager em, String category, String name) {
+    public static List<Report> findActiveReportsByCategoryAndName(EntityManager em, 
+            String category, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-            String newCategory = category.replaceAll("'", "''");
-
+           
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
-                            + newName.toUpperCase().trim() + "%'"
+                            + name.toUpperCase().trim() + "%'"
                             + " AND (r.active = 1 OR r.active IS NULL)"        
                             + " AND UPPER(r.category) like '%"
-                            + newCategory.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+                            + category.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
             return reports;
         } catch (Exception e) {
             System.out.println(e);
@@ -487,12 +481,11 @@ public class Report implements BusinessEntity {
     public static List<Report> findActiveReports(EntityManager em, String query) {
 
         try {
-            String newQuery = query.replaceAll("'", "''");
-
+            
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where (r.active = 1 OR r.active IS NULL) AND (UPPER(r.name) like '%"
-                            + newQuery.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
-                            + newQuery.toUpperCase().trim() + "%') ORDER BY r.name", Report.class).getResultList();
+                            + query.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
+                            + query.toUpperCase().trim() + "%') ORDER BY r.name", Report.class).getResultList();
             return reports;
         } catch (Exception e) {
             System.out.println(e);

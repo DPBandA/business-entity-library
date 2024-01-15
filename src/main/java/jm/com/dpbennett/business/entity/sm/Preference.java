@@ -181,11 +181,10 @@ public class Preference implements BusinessEntity {
     public static List<Preference> findAllPreferencesByValue(EntityManager em, String value) {
 
         try {
-            String newValue = value.replaceAll("'", "''");
-
+           
             List<Preference> preferences =
                     em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '%"
-                    + newValue.toUpperCase().trim() + "%' ORDER BY p.preferenceValue", Preference.class).getResultList();
+                    + value.toUpperCase().trim() + "%' ORDER BY p.preferenceValue", Preference.class).getResultList();
             return preferences;
         } catch (Exception e) {
             System.out.println(e);
@@ -198,11 +197,10 @@ public class Preference implements BusinessEntity {
         List<String> values = new ArrayList<>();
 
         try {
-            String newValue = value.replaceAll("'", "''");
-
+            
             List<Preference> preferences =
                     em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '"
-                    + newValue.toUpperCase().trim() + "%' ORDER BY p.preferenceValue DESC", Preference.class).getResultList();
+                    + value.toUpperCase().trim() + "%' ORDER BY p.preferenceValue DESC", Preference.class).getResultList();
             
             if (preferences != null) {
                 for (Preference preference : preferences) {
@@ -233,11 +231,10 @@ public class Preference implements BusinessEntity {
     public static Preference findPreferenceByValue(EntityManager em, String value) {
 
         try {
-            String newValue = value.trim().replaceAll("'", "''");
-
+           
             List<Preference> preferences = em.createQuery("SELECT p FROM Preference p "
                     + "WHERE UPPER(p.preferenceValue) "
-                    + "= '" + newValue.toUpperCase() + "'", Preference.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Preference.class).getResultList();
             if (!preferences.isEmpty()) {
                 return preferences.get(0);
             }

@@ -208,7 +208,7 @@ public class DocumentInspection implements Comparable, BusinessEntity {
             User user,
             String dateSearchField,
             String searchType,
-            String originalSearchText,
+            String searchText,
             Date startDate,
             Date endDate) {
 
@@ -216,13 +216,6 @@ public class DocumentInspection implements Comparable, BusinessEntity {
         String searchQuery = null;
         String searchTextAndClause = "";
         String joinClause;
-        String searchText;
-
-        if (originalSearchText != null) {
-            searchText = originalSearchText.replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
 
         joinClause = " JOIN documentInspection.inspector inspector";
 

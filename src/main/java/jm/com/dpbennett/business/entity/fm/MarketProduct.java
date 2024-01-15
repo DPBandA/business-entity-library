@@ -146,11 +146,9 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     public static MarketProduct findActiveMarketProduct(
             EntityManager em, String name) {
 
-        String newName = name.replaceAll("'", "''").trim().toUpperCase();
-
         try {
             List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
-                    + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + newName + "'",
+                    + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + name + "'",
                     MarketProduct.class).getResultList();
             if (!products.isEmpty()) {
                 MarketProduct product = products.get(0);
@@ -168,11 +166,10 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     public static MarketProduct findActiveMarketProductByType(
             EntityManager em, String name, String type) {
 
-        String newName = name.replaceAll("'", "''").trim().toUpperCase();
-
+       
         try {
             List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
-                    + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + newName
+                    + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + name
                     + "' AND m.type = '" + type + "'",
                     MarketProduct.class).getResultList();
             if (!products.isEmpty()) {
@@ -191,8 +188,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     public static List<MarketProduct> findActiveMarketProductsByName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<MarketProduct> marketProducts
                     = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
                             + value.toUpperCase() + "%'"
@@ -211,11 +207,10 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             String name, String type) {
 
         try {
-            String newName = name.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<MarketProduct> marketProducts
                     = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
-                            + newName.toUpperCase() + "%'"
+                            + name.toUpperCase() + "%'"
                             + " AND m.active = 1 AND m.type = '" + type + "'"
                             + " ORDER BY m.name", MarketProduct.class).getResultList();
 
@@ -230,8 +225,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     public static List<MarketProduct> findMarketProductsByName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<MarketProduct> marketProducts
                     = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
                             + value.toUpperCase() + "%'"
@@ -249,8 +243,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             String name, String type) {
 
         try {
-            name = name.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<MarketProduct> marketProducts
                     = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
                             + name.toUpperCase() + "%' AND m.type = '" + type + "'"

@@ -225,11 +225,10 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
     public static DocumentType findDocumentTypeByName(EntityManager em, String documentTypeName) {
 
         try {
-            String newDocumentTypeName = documentTypeName.trim().replaceAll("'", "''");
-
+           
             List<DocumentType> documentTypes = em.createQuery("SELECT d FROM DocumentType d "
                     + "WHERE UPPER(d.name) "
-                    + "= '" + newDocumentTypeName.toUpperCase() + "'", DocumentType.class).getResultList();
+                    + "= '" + documentTypeName.toUpperCase() + "'", DocumentType.class).getResultList();
             if (!documentTypes.isEmpty()) {
                 return documentTypes.get(0);
             }
@@ -243,12 +242,10 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
 
     public static DocumentType findDocumentTypeByCode(EntityManager em, String documentTypeCode) {
 
-        String newDocumentTypeCode = documentTypeCode.replaceAll("'", "''");
-
         try {
             List<DocumentType> documentTypes = em.createQuery("SELECT d FROM DocumentType d "
                     + "WHERE d.code "
-                    + "= '" + newDocumentTypeCode + "'", DocumentType.class).getResultList();
+                    + "= '" + documentTypeCode + "'", DocumentType.class).getResultList();
             if (!documentTypes.isEmpty()) {
                 return documentTypes.get(0);
             }

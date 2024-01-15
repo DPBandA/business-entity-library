@@ -394,8 +394,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         List<DocumentStandard> documentStandards;
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             if (ignoreCase) {
                 documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
                         + "WHERE UPPER(d.name) "
@@ -429,7 +428,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         List<DocumentStandard> foundDocuments;
         String searchQuery = null;
         String searchTextAndClause = "";
-        String searchText = originalSearchText.replaceAll("'", "''");
+        String searchText = originalSearchText;
         switch (searchType) {
             case "General":
                 if (!searchText.equals("")) {
@@ -485,8 +484,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
             int maxResults) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<DocumentStandard> documentStandards
                     = em.createQuery("SELECT d FROM DocumentStandard d WHERE (d.name like '%"
                             + value + "%'"
@@ -505,8 +503,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
             EntityManager em, String value, int maxResults) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<DocumentStandard> documentStandards
                     = em.createQuery("SELECT d FROM DocumentStandard d WHERE d.name like '%"
                             + value + "%'"

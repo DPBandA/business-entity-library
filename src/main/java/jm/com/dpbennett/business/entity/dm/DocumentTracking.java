@@ -498,7 +498,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
         List<DocumentTracking> foundDocuments;
         String searchQuery = null;
         String searchTextAndClause = "";
-        String searchText = originalSearchText.replaceAll("'", "''");
+        String searchText = originalSearchText;
 
         switch (searchType) {
             case "General":

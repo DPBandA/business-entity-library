@@ -136,12 +136,10 @@ public class CostCode implements BusinessEntity, Serializable {
     
     public static CostCode findCostCodeByCode(EntityManager em, String code) {
 
-        String newCode = code.replaceAll("'", "''");
-
         try {
             List<CostCode> codes = em.createQuery("SELECT c FROM CostCode c "
                     + "WHERE c.code "
-                    + "= '" + newCode + "'", CostCode.class).getResultList();
+                    + "= '" + code + "'", CostCode.class).getResultList();
             if (!codes.isEmpty()) {
                 return codes.get(0);
             }

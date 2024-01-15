@@ -348,12 +348,6 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
                 = " JOIN inventoryRequisition.editedBy editedBy"
                 + " JOIN inventoryRequisition.enteredBy enteredBy";
 
-        if (searchText != null) {
-            searchText = searchText.trim().replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
-
         String mainSearchWhereClause = " UPPER(inventoryRequisition.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(inventoryRequisition.code) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(inventoryRequisition.type) LIKE '%" + searchText.toUpperCase() + "%'"

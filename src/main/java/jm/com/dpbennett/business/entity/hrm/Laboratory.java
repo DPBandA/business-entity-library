@@ -170,11 +170,10 @@ public class Laboratory implements BusinessEntity, Company {
     public static List<Laboratory> findLaboratoriesByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+            
             List<Laboratory> laboratories =
                     em.createQuery("SELECT l FROM Laboratory l where UPPER(l.name) like '"
-                    + newName.toUpperCase().trim() + "%' ORDER BY l.name", Laboratory.class).getResultList();
+                    + name.toUpperCase().trim() + "%' ORDER BY l.name", Laboratory.class).getResultList();
             return laboratories;
         } catch (Exception e) {
             System.out.println(e);
@@ -195,11 +194,10 @@ public class Laboratory implements BusinessEntity, Company {
     public static Laboratory findLaboratoryByName(EntityManager em, String name) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
-
+           
             List<Laboratory> laboratories = em.createQuery("SELECT l FROM Laboratory l "
                     + "WHERE UPPER(l.name) "
-                    + "= '" + newName.toUpperCase() + "'", Laboratory.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", Laboratory.class).getResultList();
             if (!laboratories.isEmpty()) {
                 return laboratories.get(0);
             }

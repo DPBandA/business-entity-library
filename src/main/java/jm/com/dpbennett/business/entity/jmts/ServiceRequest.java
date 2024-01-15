@@ -501,39 +501,19 @@ public class ServiceRequest implements BusinessEntity {
         this.name = name;
     }
 
-//    public Service getService() {
-//        if (service == null) {
-//            return new Service("");
-//        }
-//
-//        return service;
-//    }
-//
-//    public void setService(Service service) {
-//        this.service = service;
-//    }
     public static List<ServiceRequest> findServiceRequestsByDateSearchField(
             EntityManager em,
             User user,
             String dateSearchField,
             String searchType,
-            String originalSearchText,
+            String searchText,
             Date startDate,
             Date endDate,
             Boolean includeSampleSearch) {
 
         List<ServiceRequest> requests;
         String searchQuery = null;
-        String searchText;
         String searchTextAndClause = "";
-
-        // get rid of any single quotes from text and ensure
-        // that it is not null
-        if (originalSearchText != null) {
-            searchText = originalSearchText.trim().replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
 
         if (searchType.equals("General")) {
 
@@ -583,11 +563,10 @@ public class ServiceRequest implements BusinessEntity {
     public static ServiceRequest findServiceRequestByServiceRequestNumber(EntityManager em, String number) {
 
         try {
-            String newNumber = number.trim().replaceAll("'", "''");
-
+            
             List<ServiceRequest> requests = em.createQuery("SELECT s FROM ServiceRequest s "
                     + "WHERE UPPER(s.serviceRequestNumber) "
-                    + "= '" + newNumber.toUpperCase() + "'", ServiceRequest.class).getResultList();
+                    + "= '" + number.toUpperCase() + "'", ServiceRequest.class).getResultList();
             if (!requests.isEmpty()) {
                 return requests.get(0);
             }

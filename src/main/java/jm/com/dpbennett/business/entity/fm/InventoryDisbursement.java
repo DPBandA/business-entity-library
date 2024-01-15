@@ -337,12 +337,6 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
                 + " JOIN inventoryDisbursement.enteredBy enteredBy"
                 + " JOIN inventoryDisbursement.editedBy editedBy";
 
-        if (searchText != null) {
-            searchText = searchText.trim().replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
-
         String mainSearchWhereClause = " UPPER(inventoryDisbursement.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(inventoryDisbursement.type) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(inventoryDisbursement.status) LIKE '%" + searchText.toUpperCase() + "%'"

@@ -149,7 +149,7 @@ public class BusinessEntityUtils {
 
         if (name == null) {
             return false;
-        } else if (name.equals("")) {
+        } else if (name.isEmpty()) {
             return false;
         } else if (containsChar(name, '"')) {
             return false;
@@ -163,6 +163,24 @@ public class BusinessEntityUtils {
             return false;
         } else if (name.contains(":")) {
             return false;
+        } else if (name.contains(",")) {
+            return false;  
+        } else if (name.contains("#")) {
+            return false; 
+        } else if (name.contains("@")) {
+            return false;   
+        } else if (name.contains("$")) {
+            return false;    
+        } else if (name.contains("%")) {
+            return false;    
+        } else if (name.contains("^")) {
+            return false;   
+        } else if (name.contains("*")) {
+            return false;  
+        } else if (name.contains("+")) {
+            return false; 
+        } else if (name.contains("=")) {
+            return false;    
         } else if (name.contains("!")) {
             return false;
         }

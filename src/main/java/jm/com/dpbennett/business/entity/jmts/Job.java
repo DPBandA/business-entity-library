@@ -1320,11 +1320,6 @@ public class Job implements BusinessEntity {
             costEstimateSubclause = " AND (jobCostingAndPayment.estimate IS NULL OR jobCostingAndPayment.estimate = 0)";
         }
 
-        if (searchText != null) {
-            searchText = searchText.trim().replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
         String mainSearchWhereClause = " UPPER(businessOffice.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(business.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -1509,7 +1504,7 @@ public class Job implements BusinessEntity {
                         + " ORDER BY job.id DESC";
                 break;
             case "Jobs for my department":
-                searchText = user.getEmployee().getDepartment().getName().replaceAll("'", "''");
+                searchText = user.getEmployee().getDepartment().getName();
                 searchQuery
                         = selectClause
                         + mainJoinClause
@@ -1626,11 +1621,10 @@ public class Job implements BusinessEntity {
     public static Job findJobByJobNumber(EntityManager em, String jobNumber) {
 
         try {
-            String newJobNumber = jobNumber.trim().replaceAll("'", "''");
-
+           
             List<Job> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE UPPER(j.jobNumber) "
-                    + "= '" + newJobNumber.toUpperCase() + "'", Job.class).getResultList();
+                    + "= '" + jobNumber.toUpperCase() + "'", Job.class).getResultList();
 
             if (!jobs.isEmpty()) {
                 return jobs.get(0);
@@ -1769,11 +1763,10 @@ public class Job implements BusinessEntity {
             EntityManager em, String query, int maxResults) {
 
         try {
-            String newName = query.replaceAll("'", "''");
-
+           
             List<Job> numbers
                     = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) LIKE '%"
-                            + newName.toUpperCase().trim() + "%'"
+                            + query.toUpperCase().trim() + "%'"
                             + " ORDER BY j.id DESC", Job.class).setMaxResults(maxResults).getResultList();
             return numbers;
 
@@ -1785,30 +1778,14 @@ public class Job implements BusinessEntity {
 
     public static List<Job> findJobsWithJobCosting(
             EntityManager em,
-            String originalDepartmentName,
-            String originalSearchText) {
+            String departmentName,
+            String searchText) {
 
         List<Job> foundJobs;
         String searchQuery;
         String searchTextAndClause = "";
         String joinClause;
-        String searchText;
-        String departmentName;
-
-        // NB: replace ' with '' to avoid SQL query error
-        if (originalSearchText != null) {
-            searchText = originalSearchText.replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
-
-        // NB: replace ' with '' to avoid SQL query error
-        if (originalDepartmentName != null) {
-            departmentName = originalDepartmentName.replaceAll("'", "''");
-        } else {
-            departmentName = "";
-        }
-
+       
         joinClause
                 = " JOIN job.department department"
                 + " JOIN job.subContractedDepartment subContractedDepartment"

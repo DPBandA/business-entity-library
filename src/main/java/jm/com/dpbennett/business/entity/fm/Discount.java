@@ -196,8 +196,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static List<Discount> findDiscountsByNameAndDescription(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Discount> discounts
                     = em.createQuery("SELECT d FROM Discount d WHERE UPPER(d.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' OR UPPER(d.description) LIKE '%"
@@ -213,8 +212,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static List<Discount> findActiveDiscountsByNameAndDescription(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Discount> discounts
                     = em.createQuery("SELECT d FROM Discount d WHERE (UPPER(d.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' OR UPPER(d.description) LIKE '%"
@@ -326,8 +324,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static Discount findByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", Discount.class).getResultList();

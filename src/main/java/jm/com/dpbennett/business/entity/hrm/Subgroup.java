@@ -222,8 +222,6 @@ public class Subgroup implements BusinessEntity, Comparable {
 
         try {
 
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
             List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
                     + "WHERE s.active = 1 AND UPPER(s.name) "
                     + "= '" + value.toUpperCase() + "'", Subgroup.class).getResultList();
@@ -249,8 +247,7 @@ public class Subgroup implements BusinessEntity, Comparable {
     public static Subgroup findByName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
                     + "WHERE UPPER(s.name) "
                     + "= '" + value.toUpperCase() + "'", Subgroup.class).getResultList();
@@ -308,8 +305,7 @@ public class Subgroup implements BusinessEntity, Comparable {
     public static List<Subgroup> findAllByName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Subgroup> subgroups
                     = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY s.name", Subgroup.class).getResultList();
@@ -323,8 +319,7 @@ public class Subgroup implements BusinessEntity, Comparable {
     public static List<Subgroup> findAllActiveByName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Subgroup> subgroups
                     = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
                             + value.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Subgroup.class).getResultList();

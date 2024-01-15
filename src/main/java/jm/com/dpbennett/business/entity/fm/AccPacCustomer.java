@@ -245,8 +245,7 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public static List<AccPacCustomer> findAllByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<AccPacCustomer> clients;
             clients = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"
@@ -263,8 +262,7 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public static List<AccPacCustomer> findAllByNameAndId(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<AccPacCustomer> clients;
             clients = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"
@@ -281,8 +279,7 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public static AccPacCustomer findByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<AccPacCustomer> customers = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"
                     + " WHERE UPPER(a.customerName)"

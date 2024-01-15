@@ -279,8 +279,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     public static Attachment findAttachmentByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Attachment> attachments = em.createQuery("SELECT a FROM Attachment a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", Attachment.class).getResultList();
@@ -298,8 +297,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     public static List<Attachment> findAttachmentsByName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Attachment> attachments
                     = em.createQuery("SELECT a FROM Attachment a where UPPER(a.name) like '%"
                             + value.toUpperCase().trim() // tk max results to be made system option
@@ -314,8 +312,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     public static List<Attachment> findAttachmentsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Attachment> attachments
                     = em.createQuery("SELECT a FROM Attachment a where UPPER(a.name) like '%"
                             + value.toUpperCase().trim() + "%' AND a.category = " + category + " ORDER BY a.name", Attachment.class).getResultList();

@@ -716,7 +716,7 @@ public class Client implements ClientInterface {
     @Override
     public String toString() {
         if (name != null) {
-            return name.replaceAll("&#38;", "&");
+            return name;
         } else {
             return "";
         }
@@ -745,8 +745,7 @@ public class Client implements ClientInterface {
     public static List<Client> findClientsByTRN(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Client> clients;
             clients = em.createQuery("SELECT c FROM Client c where UPPER(c.taxRegistrationNumber) like '"
                     + value.toUpperCase() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
@@ -760,8 +759,7 @@ public class Client implements ClientInterface {
     public static List<String> findActiveClientNames(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<String> names
                     = em.createQuery("SELECT c FROM Client c WHERE UPPER(c.name) like '"
                             + value.toUpperCase() + "%'"
@@ -777,8 +775,7 @@ public class Client implements ClientInterface {
     public static List<Client> findActiveClientsByFirstPartOfName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '"
                             + value + "%'"
@@ -794,8 +791,7 @@ public class Client implements ClientInterface {
     public static List<Client> findActiveClientsByAnyPartOfName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
                             + value + "%'"
@@ -811,8 +807,7 @@ public class Client implements ClientInterface {
     public static List<Client> findClientsByAnyPartOfName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
                             + value + "%'"
@@ -828,8 +823,7 @@ public class Client implements ClientInterface {
     public static List<String> findClientNames(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<String> names
                     = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
                             + value.toUpperCase()
@@ -844,8 +838,7 @@ public class Client implements ClientInterface {
     public static List<Client> findClientsByFirstPartOfName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
                             + value.toUpperCase()
@@ -874,8 +867,7 @@ public class Client implements ClientInterface {
         List<Client> clients;
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             if (ignoreCase) {
                 clients = em.createQuery("SELECT c FROM Client c "
                         + "WHERE UPPER(c.name) "
@@ -914,8 +906,7 @@ public class Client implements ClientInterface {
         List<Client> clients;
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             if (ignoreCase) {
                 clients = em.createQuery("SELECT c FROM Client c "
                         + "WHERE UPPER(c.name) "

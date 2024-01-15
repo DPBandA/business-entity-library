@@ -426,8 +426,7 @@ public class Notification implements BusinessEntity {
         List<Notification> notifications;
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             if (ignoreCase) {
                 notifications = em.createQuery("SELECT n FROM Notification n"
                         + " WHERE UPPER(n.name)"
@@ -459,8 +458,7 @@ public class Notification implements BusinessEntity {
         List<Notification> notifications;
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             if (ignoreCase) {
                 notifications = em.createQuery("SELECT n FROM Notification n"
                         + " WHERE UPPER(n.name)"

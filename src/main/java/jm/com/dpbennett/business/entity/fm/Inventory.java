@@ -427,11 +427,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             String name) {
 
         try {
-            String newName = name.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Inventory> inventory
                     = em.createQuery("SELECT i FROM Inventory i WHERE UPPER(i.name) like '%"
-                            + newName.toUpperCase() + "%'"
+                            + name.toUpperCase() + "%'"
                             + " ORDER BY i.name", Inventory.class).getResultList();
 
             return inventory;
@@ -445,11 +444,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     public static Inventory findByName(
             EntityManager em, String name) {
 
-        String newName = name.replaceAll("'", "''").trim().toUpperCase();
-
         try {
             List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
-                    + "WHERE UPPER(i.name)" + " = '" + newName + "'",
+                    + "WHERE UPPER(i.name)" + " = '" + name + "'",
                     Inventory.class).getResultList();
             if (!inventory.isEmpty()) {
                 Inventory inventoryItem = inventory.get(0);
@@ -478,12 +475,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
                 + " JOIN inventory.supplier supplier"
                 + " JOIN inventory.product product"
                 + " JOIN inventory.enteredBy enteredBy";
-
-        if (searchText != null) {
-            searchText = searchText.trim().replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
 
         String mainSearchWhereClause = " UPPER(category.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -535,12 +526,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
                 + " JOIN inventory.supplier supplier"
                 + " JOIN inventory.product product"
                 + " JOIN inventory.enteredBy enteredBy";
-
-        if (searchText != null) {
-            searchText = searchText.trim().replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
 
         String mainSearchWhereClause = " UPPER(category.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"

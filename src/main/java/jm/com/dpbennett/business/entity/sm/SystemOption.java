@@ -463,11 +463,10 @@ public class SystemOption implements BusinessEntity {
     public static SystemOption findSystemOptionByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''").trim();
-
+           
             List<SystemOption> options = em.createQuery("SELECT o FROM SystemOption o "
                     + "WHERE UPPER(o.name) "
-                    + "LIKE '" + newName.toUpperCase() + "'", SystemOption.class).getResultList();
+                    + "LIKE '" + name.toUpperCase() + "'", SystemOption.class).getResultList();
 
             if (!options.isEmpty()) {
                 // Make sure this is the current option stored in the database
@@ -511,14 +510,13 @@ public class SystemOption implements BusinessEntity {
     public static List<SystemOption> findSystemOptions(EntityManager em, String queryString) {
 
         try {
-            String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
-
+            
             List<SystemOption> systemOptions
                     = em.createQuery("SELECT o FROM SystemOption o WHERE "
-                            + "UPPER(o.name) LIKE '%" + newQueryString + "%'"
-                            + " OR UPPER(o.optionValue) like '%" + newQueryString + "%'"
-                            + " OR UPPER(o.comments) like '%" + newQueryString + "%'"
-                            + " OR UPPER(o.category) LIKE '%" + newQueryString + "%'"
+                            + "UPPER(o.name) LIKE '%" + queryString + "%'"
+                            + " OR UPPER(o.optionValue) like '%" + queryString + "%'"
+                            + " OR UPPER(o.comments) like '%" + queryString + "%'"
+                            + " OR UPPER(o.category) LIKE '%" + queryString + "%'"
                             + " ORDER BY o.comments", SystemOption.class).getResultList();
             return systemOptions;
         } catch (Exception e) {
@@ -530,13 +528,12 @@ public class SystemOption implements BusinessEntity {
     public static List<SystemOption> findFinancialSystemOptions(EntityManager em, String queryString) {
 
         try {
-            String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
-
+            
             List<SystemOption> systemOptions
                     = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = 'FINANCE' AND ("
-                            + " UPPER(o.name) LIKE '%" + newQueryString + "%'"
-                            + " OR UPPER(o.optionValue) like '%" + newQueryString + "%'"
-                            + " OR UPPER(o.comments) like '%" + newQueryString + "%'"
+                            + " UPPER(o.name) LIKE '%" + queryString + "%'"
+                            + " OR UPPER(o.optionValue) like '%" + queryString + "%'"
+                            + " OR UPPER(o.comments) like '%" + queryString + "%'"
                             + " ) ORDER BY o.comments", SystemOption.class).getResultList();
             return systemOptions;
         } catch (Exception e) {
@@ -549,15 +546,14 @@ public class SystemOption implements BusinessEntity {
             String queryString, String category) {
 
         try {
-            String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
-
+            
             List<SystemOption> systemOptions
                     = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = "
                             + "'" + category.toUpperCase() + "'"
                             + " AND ("
-                            + " UPPER(o.name) LIKE '%" + newQueryString + "%'"
-                            + " OR UPPER(o.optionValue) like '%" + newQueryString + "%'"
-                            + " OR UPPER(o.comments) like '%" + newQueryString + "%'"
+                            + " UPPER(o.name) LIKE '%" + queryString + "%'"
+                            + " OR UPPER(o.optionValue) like '%" + queryString + "%'"
+                            + " OR UPPER(o.comments) like '%" + queryString + "%'"
                             + " ) ORDER BY o.comments", SystemOption.class).getResultList();
             return systemOptions;
         } catch (Exception e) {

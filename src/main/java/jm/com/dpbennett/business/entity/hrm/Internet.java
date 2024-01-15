@@ -247,11 +247,10 @@ public class Internet implements BusinessEntity, Serializable {
     public static Internet findInternetByName(EntityManager em, String name) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
-
+            
             List<Internet> internets = em.createQuery("SELECT i FROM Internet i "
                     + "WHERE UPPER(i.name) "
-                    + "= '" + newName.toUpperCase() + "'", Internet.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", Internet.class).getResultList();
             if (!internets.isEmpty()) {
                 return internets.get(0);
             }

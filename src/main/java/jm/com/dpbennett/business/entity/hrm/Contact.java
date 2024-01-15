@@ -412,12 +412,11 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public static Contact findContactByName(EntityManager em, String firstName, String lastName) {
 
         if (firstName != null && lastName != null) {
-            String newFirstName = firstName.replaceAll("'", "''").trim().toUpperCase();
-            String newLastName = lastName.replaceAll("'", "''").trim().toUpperCase();
+           
             try {
                 List<Contact> contacts = em.createQuery("SELECT c FROM Contact c "
                         + "WHERE UPPER(c.firstName) "
-                        + "= '" + newFirstName + "' AND UPPER(c.lastName) = '" + newLastName + "'",
+                        + "= '" + firstName + "' AND UPPER(c.lastName) = '" + lastName + "'",
                         Contact.class).getResultList();
                 if (!contacts.isEmpty()) {
                     return contacts.get(0);
@@ -443,8 +442,8 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public static Contact findClientContactById(EntityManager em, String query, Long clientId) {
 
         try {
-            String newQuery = query.replaceAll("'", "''");
-            String contacts[] = newQuery.split(", ");
+           
+            String contacts[] = query.split(", ");
             String lastname = contacts[0];
             String firstname = contacts[1];
 
@@ -469,8 +468,8 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public static Contact findClientContact(EntityManager em, String query, Client client) {
 
         try {
-            String newQuery = query.replaceAll("'", "''");
-            String contacts[] = newQuery.split(", ");
+            
+            String contacts[] = query.split(", ");
             String lastname = contacts[0];
             String firstname = contacts[1];
 
@@ -516,8 +515,8 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public static Contact findContact(EntityManager em, String query, List<Contact> contactsList) {
 
         try {
-            String newQuery = query.replaceAll("'", "''");
-            String contacts[] = newQuery.split(", ");
+            
+            String contacts[] = query.split(", ");
             String lastname = contacts[0];
             String firstname = contacts[1];
 

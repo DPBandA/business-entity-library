@@ -249,13 +249,11 @@ public class Sticker implements Product, BusinessEntity, Comparable {
     }
     
     public static List<Sticker> findStickersByNumber(EntityManager em, String number) {
-        
-        String newNumber = number.replaceAll("'", "''");
-        
+       
         try {
             List<Sticker> stickers =
                     em.createQuery("SELECT s FROM Sticker s where UPPER(s.number) like '"
-                    + newNumber.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
+                    + number.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
             return stickers;
         } catch (Exception e) {
             System.out.println(e);
@@ -274,13 +272,11 @@ public class Sticker implements Product, BusinessEntity, Comparable {
     }
     
     public static Sticker findStickerByNumber(EntityManager em, String number) {
-        
-        String newNumber = number.replaceAll("'", "''");
-        
+               
         try {
             List<Sticker> stickers =
                     em.createQuery("SELECT s FROM Sticker s where UPPER(s.number) like '"
-                    + newNumber.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
+                    + number.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
             
             if (!stickers.isEmpty()) {
                 return stickers.get(0);

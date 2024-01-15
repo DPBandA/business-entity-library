@@ -524,7 +524,7 @@ public class Supplier implements BusinessEntity, Comparable {
     @Override
     public String toString() {
         if (name != null) {
-            return name.replaceAll("&#38;", "&");
+            return name;
         } else {
             return "";
         }
@@ -552,8 +552,7 @@ public class Supplier implements BusinessEntity, Comparable {
     public static List<Supplier> findSuppliersByIdentification(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Supplier> suppliers;
             suppliers = em.createQuery("SELECT s FROM Supplier s where UPPER(s.identification) like '"
                     + value.toUpperCase() + "%' ORDER BY s.identification", Supplier.class).getResultList();
@@ -567,8 +566,7 @@ public class Supplier implements BusinessEntity, Comparable {
     public static List<String> findActiveSupplierNames(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<String> names
                     = em.createQuery("SELECT s FROM Supplier s WHERE UPPER(s.name) like '"
                             + value.toUpperCase() + "%'"
@@ -584,8 +582,7 @@ public class Supplier implements BusinessEntity, Comparable {
     public static List<Supplier> findActiveSuppliersByFirstPartOfName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Supplier> suppliers
                     = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '"
                             + value + "%'"
@@ -601,8 +598,7 @@ public class Supplier implements BusinessEntity, Comparable {
     public static List<Supplier> findActiveSuppliersByAnyPartOfName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Supplier> suppliers
                     = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
                             + value + "%'"
@@ -618,8 +614,7 @@ public class Supplier implements BusinessEntity, Comparable {
     public static List<Supplier> findSuppliersByAnyPartOfName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Supplier> suppliers
                     = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
                             + value + "%'"
@@ -634,8 +629,7 @@ public class Supplier implements BusinessEntity, Comparable {
     public static List<String> findSupplierNames(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<String> names
                     = em.createQuery("SELECT s FROM Supplier s where UPPER(s.name) like '"
                             + value.toUpperCase()
@@ -650,8 +644,7 @@ public class Supplier implements BusinessEntity, Comparable {
     public static List<Supplier> findSuppliersByFirstPartOfName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Supplier> suppliers
                     = em.createQuery("SELECT s FROM Supplier s where UPPER(s.name) like '"
                             + value.toUpperCase()
@@ -679,8 +672,7 @@ public class Supplier implements BusinessEntity, Comparable {
         List<Supplier> suppliers;
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             if (ignoreCase) {
                 suppliers = em.createQuery("SELECT s FROM Supplier s "
                         + "WHERE UPPER(s.name) "
@@ -717,8 +709,7 @@ public class Supplier implements BusinessEntity, Comparable {
         List<Supplier> suppliers;
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             if (ignoreCase) {
                 suppliers = em.createQuery("SELECT s FROM Supplier s "
                         + "WHERE UPPER(s.name) "

@@ -442,7 +442,7 @@ public class Complaint implements Comparable, BusinessEntity {
             User user,
             String dateSearchField,
             String searchType,
-            String originalSearchText,
+            String searchText,
             Date startDate,
             Date endDate,
             int maxResults) {
@@ -451,13 +451,6 @@ public class Complaint implements Comparable, BusinessEntity {
         String searchQuery = "";
         String searchTextAndClause = "";
         String joinClause;
-        String searchText;
-
-        if (originalSearchText != null) {
-            searchText = originalSearchText.replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
 
         joinClause = " LEFT JOIN complaint.enteredBy enteredBy"
                 + " LEFT JOIN complaint.receivedBy receivedBy"

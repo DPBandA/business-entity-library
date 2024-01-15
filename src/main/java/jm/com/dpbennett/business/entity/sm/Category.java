@@ -169,8 +169,7 @@ public class Category implements BusinessEntity {
         List<Category> categories;
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             if (ignoreCase) {
                 categories = em.createQuery("SELECT c FROM Category c"
                         + " WHERE UPPER(c.name)"
@@ -196,8 +195,7 @@ public class Category implements BusinessEntity {
     public static List<Category> findActiveCategoriesByAnyPartOfName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Category> categories
                     = em.createQuery("SELECT c FROM Category c WHERE c.name like '%"
                             + value + "%'"
@@ -218,8 +216,7 @@ public class Category implements BusinessEntity {
             EntityManager em, String type, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             List<Category> categories
                     = em.createQuery("SELECT c FROM Category c WHERE c.name like '%"
                             + value + "%'"
@@ -239,8 +236,7 @@ public class Category implements BusinessEntity {
     public static List<Category> findCategoriesByType(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+            
             return em.createQuery("SELECT c FROM Category c "
                     + "WHERE UPPER(c.type) "
                     + "= '" + value.toUpperCase() + "' ORDER BY c.name", Category.class).getResultList();

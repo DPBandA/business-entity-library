@@ -181,8 +181,7 @@ public class Tax implements Serializable, BusinessEntity {
     public static List<Tax> findTaxesByNameAndDescription(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+          
             List<Tax> taxes
                     = em.createQuery("SELECT t FROM Tax t WHERE UPPER(t.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' OR UPPER(t.description) LIKE '%"
@@ -198,8 +197,7 @@ public class Tax implements Serializable, BusinessEntity {
     public static List<Tax> findActiveTaxesByNameAndDescription(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Tax> taxes
                     = em.createQuery("SELECT t FROM Tax t WHERE (UPPER(t.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' OR UPPER(t.description) LIKE '%"
@@ -311,8 +309,7 @@ public class Tax implements Serializable, BusinessEntity {
     public static Tax findByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Tax> taxes = em.createQuery("SELECT t FROM Tax t "
                     + "WHERE UPPER(t.name) "
                     + "= '" + value.toUpperCase() + "'", Tax.class).getResultList();

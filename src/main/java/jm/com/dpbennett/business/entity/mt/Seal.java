@@ -284,12 +284,10 @@ public class Seal implements Product, BusinessEntity, Comparable {
     
      public static List<Seal> findSealsByNumber(EntityManager em, String number) {
 
-        String newNumber = number.replaceAll("'", "''");
-
         try {
             List<Seal> seals =
                     em.createQuery("SELECT s FROM Seal s where UPPER(s.number) like '"
-                    + newNumber.toUpperCase().trim() + "%' ORDER BY s.number", Seal.class).getResultList();
+                    + number.toUpperCase().trim() + "%' ORDER BY s.number", Seal.class).getResultList();
             return seals;
         } catch (Exception e) {
             System.out.println(e);
@@ -300,12 +298,10 @@ public class Seal implements Product, BusinessEntity, Comparable {
    
     public static Seal findSealByNumber(EntityManager em, String number) {
 
-        String newNumber = number.replaceAll("'", "''");
-
         try {
             List<Seal> seals = em.createQuery("SELECT s FROM Seal s "
                     + "WHERE s.number "
-                    + "= '" + newNumber + "'", Seal.class).getResultList();
+                    + "= '" + number + "'", Seal.class).getResultList();
             if (!seals.isEmpty()) {
                 return seals.get(0);
             }

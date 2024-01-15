@@ -254,14 +254,13 @@ public class LdapContext implements BusinessEntity {
     public static List<LdapContext> findActiveLdapContexts(EntityManager em, String queryString) {
 
         try {
-            String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
-
+            
             List<LdapContext> ldapContexts
                     = em.createQuery("SELECT l FROM LdapContext l WHERE "
-                            + "( UPPER(l.name) LIKE '%" + newQueryString + "%'"
-                            + " OR UPPER(l.domainName) like '%" + newQueryString + "%'"
-                            + " OR UPPER(l.initialContextFactory) like '%" + newQueryString + "%'"
-                            + " OR UPPER(l.providerUrl) LIKE '%" + newQueryString + "%'"
+                            + "( UPPER(l.name) LIKE '%" + queryString + "%'"
+                            + " OR UPPER(l.domainName) like '%" + queryString + "%'"
+                            + " OR UPPER(l.initialContextFactory) like '%" + queryString + "%'"
+                            + " OR UPPER(l.providerUrl) LIKE '%" + queryString + "%'"
                             + ") AND l.active = 1 ORDER BY l.name", LdapContext.class).getResultList();
             return ldapContexts;
         } catch (Exception e) {
@@ -273,14 +272,13 @@ public class LdapContext implements BusinessEntity {
     public static List<LdapContext> findLdapContexts(EntityManager em, String queryString) {
 
         try {
-            String newQueryString = queryString.toUpperCase().trim().replaceAll("'", "''");
-
+           
             List<LdapContext> ldapContexts
                     = em.createQuery("SELECT l FROM LdapContext l WHERE "
-                            + "UPPER(l.name) LIKE '%" + newQueryString + "%'"
-                            + " OR UPPER(l.domainName) like '%" + newQueryString + "%'"
-                            + " OR UPPER(l.initialContextFactory) like '%" + newQueryString + "%'"
-                            + " OR UPPER(l.providerUrl) LIKE '%" + newQueryString + "%'"
+                            + "UPPER(l.name) LIKE '%" + queryString + "%'"
+                            + " OR UPPER(l.domainName) like '%" + queryString + "%'"
+                            + " OR UPPER(l.initialContextFactory) like '%" + queryString + "%'"
+                            + " OR UPPER(l.providerUrl) LIKE '%" + queryString + "%'"
                             + " ORDER BY l.name", LdapContext.class).getResultList();
             return ldapContexts;
         } catch (Exception e) {
@@ -333,8 +331,6 @@ public class LdapContext implements BusinessEntity {
     public static LdapContext findActiveLdapContextByName(EntityManager em, String value) {
 
         try {
-
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<LdapContext> ldapContexts = em.createQuery("SELECT l FROM LdapContext l "
                     + "WHERE l.active = 1 AND UPPER(l.name) "

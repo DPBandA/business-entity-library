@@ -1327,7 +1327,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             EntityManager em,
             String dateSearchField,
             String searchType,
-            String originalSearchText,
+            String searchText,
             Date startDate,
             Date endDate,
             Long departmentId) {
@@ -1335,7 +1335,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         List<PurchaseRequisition> foundPRs;
         String searchQuery = "";
         String searchTextAndClause;
-        String searchText = originalSearchText.replaceAll("'", "''");
         String departmentQuery = "";
 
         switch (searchType) {
@@ -1399,11 +1398,10 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public static PurchaseRequisition findByPRNumber(EntityManager em, String prNumber) {
 
         try {
-            String newPRNumber = prNumber.trim().replaceAll("'", "''");
-
+            
             List<PurchaseRequisition> purchaseRequisitions = em.createQuery("SELECT p FROM PurchaseRequisition p "
                     + "WHERE UPPER(p.number) "
-                    + "= '" + newPRNumber.toUpperCase() + "'", PurchaseRequisition.class).getResultList();
+                    + "= '" + prNumber.toUpperCase() + "'", PurchaseRequisition.class).getResultList();
 
             if (!purchaseRequisitions.isEmpty()) {
                 return purchaseRequisitions.get(0);

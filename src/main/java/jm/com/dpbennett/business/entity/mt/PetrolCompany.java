@@ -281,11 +281,10 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     public static List<PetrolCompany> findPetrolCompaniesByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+            
             List<PetrolCompany> companies =
                     em.createQuery("SELECT p FROM PetrolCompany p where UPPER(p.name) like '"
-                    + newName.toUpperCase().trim() + "%' ORDER BY p.name", PetrolCompany.class).getResultList();
+                    + name.toUpperCase().trim() + "%' ORDER BY p.name", PetrolCompany.class).getResultList();
             return companies;
         } catch (Exception e) {
             System.out.println(e);
@@ -296,11 +295,10 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
      public static PetrolCompany findPetrolCompanyByName(EntityManager em, String name) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
-
+            
             List<PetrolCompany> petrolCompanies = em.createQuery("SELECT p FROM PetrolCompany p "
                     + "WHERE UPPER(p.name) "
-                    + "= '" + newName.toUpperCase() + "'", PetrolCompany.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", PetrolCompany.class).getResultList();
             if (!petrolCompanies.isEmpty()) {
                 return petrolCompanies.get(0);
             }

@@ -585,7 +585,6 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         List<LegalDocument> foundDocuments;
         String searchQuery = null;
         String searchTextAndClause;
-        searchText = searchText.replaceAll("'", "''");
 
         switch (searchType) {
             case "Legal Documents":

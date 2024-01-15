@@ -355,8 +355,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     public static Address findAddressByName(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Address> addresses = em.createQuery("SELECT a FROM Address a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", Address.class).getResultList();
@@ -380,7 +379,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     public static Address findClientAddress(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
+            
             String address[] = value.split("; ");
             String addressLine1 = address[0];
             String addressLine2 = address[1];
@@ -504,8 +503,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     public static List<Address> findClientAddresses(EntityManager em, String value) {
 
         try {
-            value = value.trim().replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Address> addresses;
             Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
                     + " WHERE a.addressLine1 LIKE '%" + value + "%'"

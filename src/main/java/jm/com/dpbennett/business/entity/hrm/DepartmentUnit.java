@@ -159,11 +159,10 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
     public static List<DepartmentUnit> findDepartmentUnitsByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+           
             List<DepartmentUnit> departmentUnits =
                     em.createQuery("SELECT d FROM DepartmentUnit d where UPPER(d.name) like '"
-                    + newName.toUpperCase().trim() + "%' ORDER BY d.name", DepartmentUnit.class).getResultList();
+                    + name.toUpperCase().trim() + "%' ORDER BY d.name", DepartmentUnit.class).getResultList();
             return departmentUnits;
         } catch (Exception e) {
             System.out.println(e);
@@ -184,11 +183,10 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
     public static DepartmentUnit findDepartmentUnitByName(EntityManager em, String name) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
-
+           
             List<DepartmentUnit> departmentUnits = em.createQuery("SELECT d FROM DepartmentUnit d "
                     + "WHERE UPPER(d.name) "
-                    + "= '" + newName.toUpperCase() + "'", DepartmentUnit.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", DepartmentUnit.class).getResultList();
             if (!departmentUnits.isEmpty()) {
                 return departmentUnits.get(0);
             }

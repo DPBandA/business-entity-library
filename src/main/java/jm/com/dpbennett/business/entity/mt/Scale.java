@@ -260,23 +260,14 @@ public class Scale implements Product, BusinessEntity, Comparable {
             User user,
             String dateSearchField,
             String searchType,
-            String originalSearchText,
+            String searchText,
             Date startDate,
             Date endDate,
             Boolean includeSampleSearch) {
 
         List<Scale> scales;
         String searchQuery = null;
-        String searchText;
         String searchTextAndClause = "";
-
-        // get rid of any single quotes from text and ensure
-        // that it is not null
-        if (originalSearchText != null) {
-            searchText = originalSearchText.trim().replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
 
         if (searchType.equals("General")) {
 

@@ -332,11 +332,10 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     public static List<PetrolStation> findPetrolStationsByName(EntityManager em, String name) {
 
         try {
-            String newName = name.replaceAll("'", "''");
-
+            
             List<PetrolStation> stations
                     = em.createQuery("SELECT p FROM PetrolStation p where UPPER(p.name) like '"
-                            + newName.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class).getResultList();
+                            + name.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class).getResultList();
             return stations;
         } catch (Exception e) {
             System.out.println(e);
@@ -349,23 +348,14 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
             User user,
             String dateSearchField,
             String searchType,
-            String originalSearchText,
+            String searchText,
             Date startDate,
             Date endDate,
             Boolean includeSampleSearch) {
 
         List<PetrolStation> stations;
         String searchQuery = null;
-        String searchText;
         String searchTextAndClause = "";
-
-        // get rid of any single quotes from text and ensure
-        // that it is not null
-        if (originalSearchText != null) {
-            searchText = originalSearchText.trim().replaceAll("'", "''");
-        } else {
-            searchText = "";
-        }
 
         if (searchType.equals("General")) {
 
@@ -405,11 +395,10 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     public static PetrolStation findPetrolStationByName(EntityManager em, String name) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
-
+           
             List<PetrolStation> companies = em.createQuery("SELECT p FROM PetrolStation p "
                     + "WHERE UPPER(p.name) "
-                    + "= '" + newName.toUpperCase() + "'", PetrolStation.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", PetrolStation.class).getResultList();
             if (!companies.isEmpty()) {
                 return companies.get(0);
             }

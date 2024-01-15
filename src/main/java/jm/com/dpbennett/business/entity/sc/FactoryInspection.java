@@ -191,7 +191,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             EntityManager em,
             String dateSearchField,
             String searchType,
-            String originalSearchText,
+            String searchText,
             Date startDate,
             Date endDate,
             int maxResults) {
@@ -200,14 +200,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         String searchQuery = null;
         String searchTextAndClause = "";
         String joinClause;
-        String searchText;
-
-        if (originalSearchText != null) {
-            searchText = originalSearchText.replaceAll("'", "''").replaceAll("&amp;", "&");
-        } else {
-            searchText = "";
-        }
-
+        
         joinClause
                 = " LEFT JOIN factoryinspection.assignedInspector assignedInspector"
                 + " LEFT JOIN factoryinspection.manufacturer manufacturer";
@@ -267,8 +260,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public static List<FactoryInspection> findFactoryInspectionsByName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<FactoryInspection> factoryInspections
                     = em.createQuery("SELECT f FROM FactoryInspection f WHERE UPPER(f.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' ORDER BY f.name", FactoryInspection.class).getResultList();
@@ -283,8 +275,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public static FactoryInspection findFactoryInspectionByName(EntityManager em, String value) {
 
         try {
-
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
 
             List<FactoryInspection> factoryInspections = em.createQuery("SELECT f FROM FactoryInspection f "
                     + "WHERE UPPER(f.name) "

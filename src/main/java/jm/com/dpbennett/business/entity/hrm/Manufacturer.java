@@ -435,11 +435,10 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static Manufacturer findManufacturerByName(EntityManager em, String name) {
 
         try {
-            String newName = name.trim().replaceAll("'", "''");
-
+            
             List<Manufacturer> manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
                     + "WHERE UPPER(m.name) "
-                    + "= '" + newName.toUpperCase() + "'", Manufacturer.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", Manufacturer.class).getResultList();
             if (!manufacturers.isEmpty()) {
                 return manufacturers.get(0);
             }
@@ -476,8 +475,7 @@ public class Manufacturer implements BusinessEntity, Comparable {
         List<Manufacturer> manufacturers;
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             if (ignoreCase) {
                 manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
                         + "WHERE UPPER(m.name) "
@@ -503,8 +501,7 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static List<Manufacturer> findActiveManufacturersByAnyPartOfName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Manufacturer> manufacturers
                     = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
                             + value + "%'"
@@ -520,8 +517,7 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static List<Manufacturer> findManufacturersByAnyPartOfName(EntityManager em, String value) {
 
         try {
-            value = value.replaceAll("'", "''").replaceAll("&amp;", "&");
-
+           
             List<Manufacturer> manufacturers
                     = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
                             + value + "%'"
