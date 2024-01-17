@@ -156,7 +156,7 @@ public class BusinessEntityUtils {
         } else if (name.contains("`")) {
             return false;
         } else if (name.contains("'")) {
-            return false;    
+            return false;
         } else if (name.contains(";")) {
             return false;
         } else if (name.contains("&")) {
@@ -164,23 +164,23 @@ public class BusinessEntityUtils {
         } else if (name.contains(":")) {
             return false;
         } else if (name.contains(",")) {
-            return false;  
+            return false;
         } else if (name.contains("#")) {
-            return false; 
+            return false;
         } else if (name.contains("@")) {
-            return false;   
+            return false;
         } else if (name.contains("$")) {
-            return false;    
+            return false;
         } else if (name.contains("%")) {
-            return false;    
+            return false;
         } else if (name.contains("^")) {
-            return false;   
+            return false;
         } else if (name.contains("*")) {
-            return false;  
+            return false;
         } else if (name.contains("+")) {
-            return false; 
+            return false;
         } else if (name.contains("=")) {
-            return false;    
+            return false;
         } else if (name.contains("!")) {
             return false;
         }
@@ -188,26 +188,43 @@ public class BusinessEntityUtils {
         return true;
     }
 
-    public static boolean validateText(String name) {
+    public static boolean validateClientName(String name) {
 
-        if (name == null) {
+       return validateIdentifier(name);
+    }
+
+    public static boolean validateAccountingCode(String code) {
+
+       return validateIdentifier(code);
+    }
+    
+    public static boolean validateIdentifier(String identifier) {
+
+        if (identifier == null) {
             return false;
-        } else if (name.isEmpty()) {
+        } else if (identifier.isEmpty()) {
+            return false;
+        } else if (identifier.contains("'")) {
             return false;
         }
 
         return true;
     }
 
-    public static boolean validateAddressLine(String name) {
+    public static boolean validateText(String text) {
 
-        if (name == null) {
+        if (text == null) {
             return false;
-        } else if (name.isEmpty()) {
+        } else if (text.isEmpty()) {
             return false;
         }
 
         return true;
+    }
+
+    public static boolean validateAddressLine(String line) {
+
+        return validateText(line);
     }
 
     public static boolean validateNameOfBusinessEntity(BusinessEntity entity) {
@@ -949,7 +966,6 @@ public class BusinessEntityUtils {
 
     }
 
-
     public static Date getModifiedDate(Date orgDate, int modPeriod, int modAmount) {
         Calendar calendar;
 
@@ -961,7 +977,7 @@ public class BusinessEntityUtils {
     }
 
     public static Boolean areDatesEqual(Date date1, Date date2) {
-        
+
         return removeTimeFromDate(date1).equals(removeTimeFromDate(date2));
     }
 
@@ -977,9 +993,8 @@ public class BusinessEntityUtils {
         return cal.getTime();
     }
 
-    
     public static Connection getConnection(EntityManager em) {
-     
+
         return em.unwrap(java.sql.Connection.class);
     }
 
