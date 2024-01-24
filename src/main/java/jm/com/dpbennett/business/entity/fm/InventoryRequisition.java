@@ -39,6 +39,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
@@ -59,7 +60,11 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     private String name;
     private String code;
     private String type;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Department department;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee contactPerson;
+    @Temporal(javax.persistence.TemporalType.DATE)    
     private Date dateRequisitionApproved;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateInventoryReceived;
@@ -91,6 +96,25 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public InventoryRequisition() {
         actions = new ArrayList<>();
         inventoryDisbursements = new ArrayList<>();
+    }
+
+    public Department getDepartment() {
+        if (department == null) {
+            return new Department("");
+        }
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public Employee getContactPerson() {
+        return contactPerson;
+    }
+
+    public void setContactPerson(Employee contactPerson) {
+        this.contactPerson = contactPerson;
     }
 
     public Date getDateRequisitionApproved() {
