@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -60,11 +60,13 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     private String name;
     private String code;
     private String type;
+    private Boolean prepared;
+    private Boolean approved;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department department;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee contactPerson;
-    @Temporal(javax.persistence.TemporalType.DATE)    
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateRequisitionApproved;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateInventoryReceived;
@@ -74,6 +76,8 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     private Date dateEntered;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateInventoryIssued;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee requisitionApprovedBy;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -84,6 +88,8 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee inventoryIssuedBy;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<InventoryDisbursement> inventoryDisbursements;
     @Transient
@@ -96,6 +102,48 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public InventoryRequisition() {
         actions = new ArrayList<>();
         inventoryDisbursements = new ArrayList<>();
+    }
+
+    public Boolean getPrepared() {
+
+        if (prepared == null) {
+            prepared = false;
+        }
+
+        return prepared;
+    }
+
+    public void setPrepared(Boolean prepared) {
+        this.prepared = prepared;
+    }
+
+    public Boolean getApproved() {
+
+        if (approved == null) {
+            approved = false;
+        }
+        
+        return approved;
+    }
+
+    public void setApproved(Boolean approved) {
+        this.approved = approved;
+    }
+
+    public Employee getInventoryIssuedBy() {
+        return inventoryIssuedBy;
+    }
+
+    public void setInventoryIssuedBy(Employee inventoryIssuedBy) {
+        this.inventoryIssuedBy = inventoryIssuedBy;
+    }
+
+    public Date getDateInventoryIssued() {
+        return dateInventoryIssued;
+    }
+
+    public void setDateInventoryIssued(Date dateInventoryIssued) {
+        this.dateInventoryIssued = dateInventoryIssued;
     }
 
     public Department getDepartment() {
