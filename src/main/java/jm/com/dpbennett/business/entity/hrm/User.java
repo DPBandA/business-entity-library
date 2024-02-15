@@ -88,7 +88,7 @@ public class User implements BusinessEntity {
     @Transient
     private String confirmedNewPassword;
     @Transient
-    private String updateLDAPUser;
+    private Boolean updateLDAPUser;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date loginTime;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -101,11 +101,11 @@ public class User implements BusinessEntity {
         username = "";
     }
 
-    public String getUpdateLDAPUser() {
+    public Boolean getUpdateLDAPUser() {
         return updateLDAPUser;
     }
 
-    public void setUpdateLDAPUser(String updateLDAPUser) {
+    public void setUpdateLDAPUser(Boolean updateLDAPUser) {
         this.updateLDAPUser = updateLDAPUser;
     }
 
@@ -462,6 +462,10 @@ public class User implements BusinessEntity {
 
     @Override
     public String getName() {
+        if (username == null) {
+            username = "";
+        }
+        
         return username;
     }
 
