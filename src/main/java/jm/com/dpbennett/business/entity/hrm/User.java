@@ -87,6 +87,8 @@ public class User implements BusinessEntity {
     private String newPassword;
     @Transient
     private String confirmedNewPassword;
+    @Transient
+    private String updateLDAPUser;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date loginTime;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -97,6 +99,14 @@ public class User implements BusinessEntity {
         employee = new Employee();
         modules = new Modules();
         username = "";
+    }
+
+    public String getUpdateLDAPUser() {
+        return updateLDAPUser;
+    }
+
+    public void setUpdateLDAPUser(String updateLDAPUser) {
+        this.updateLDAPUser = updateLDAPUser;
     }
 
     public Date getLoginTime() {
@@ -301,7 +311,7 @@ public class User implements BusinessEntity {
 
         return privilege;
     }
-    
+
     public Boolean getAuthenticate() {
         if (authenticate == null) {
             authenticate = true;
@@ -347,7 +357,7 @@ public class User implements BusinessEntity {
         this.setActivity(activity);
         this.save(em);
     }
-    
+
     public String getActivity() {
         if (activity == null) {
             activity = "";
@@ -436,12 +446,12 @@ public class User implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-   
+
         if (!(object instanceof User)) {
             return false;
         }
         User other = (User) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -461,7 +471,7 @@ public class User implements BusinessEntity {
     }
 
     public static List<User> findJobManagerUsersByUsername(
-            EntityManager em, 
+            EntityManager em,
             String username,
             int maxResults) {
 
@@ -483,7 +493,6 @@ public class User implements BusinessEntity {
 
     public static User findJobManagerUserByUsername(EntityManager em, String username) {
 
-      
         try {
             List<User> users
                     = em.createNamedQuery("findByJobManagerUsername",
@@ -503,7 +512,6 @@ public class User implements BusinessEntity {
 
     public static User findActiveJobManagerUserByUsername(EntityManager em, String username) {
 
-        
         try {
 
             List<User> users = em.createQuery("SELECT j FROM User j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '"
@@ -538,11 +546,11 @@ public class User implements BusinessEntity {
     }
 
     public static List<User> findJobManagerUsersByName(
-            EntityManager em, 
+            EntityManager em,
             String name,
             int maxResults) {
         try {
-            
+
             List<User> users = em.createQuery("SELECT j FROM User j"
                     + " JOIN j.employee e"
                     + " WHERE UPPER(e.firstName) like '%"
@@ -560,11 +568,11 @@ public class User implements BusinessEntity {
     }
 
     public static List<User> findActiveJobManagerUsersByName(
-            EntityManager em, 
+            EntityManager em,
             String name,
             int maxResults) {
         try {
-            
+
             List<User> users = em.createQuery("SELECT j FROM User j"
                     + " JOIN j.employee e"
                     + " WHERE (j.active = 1 OR j.active IS NULL) AND (UPPER(e.firstName) like '%"
