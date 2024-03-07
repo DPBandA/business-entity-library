@@ -221,7 +221,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public static PurchaseRequisition create(EntityManager em, User user) {
-  
+
         String defaultCurrencyName = SystemOption.getString(em,
                 "defaultCurrency");
         Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
@@ -249,7 +249,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
         // tk the following was done because the PR was not opening
         //selectedPurchaseRequisition.prepareAndSave(em, user);
-
         return selectedPurchaseRequisition;
     }
 
@@ -1338,8 +1337,8 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         String departmentQuery = "";
 
         switch (searchType) {
-            case "Purchase requisitions":
 
+            default:
                 if (departmentId != null) {
                     departmentQuery = " AND (originatingDepartment.id = " + departmentId + ")";
                 }
@@ -1373,8 +1372,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
                         + searchTextAndClause
                         + " ORDER BY pr.id DESC";
                 break;
-            default:
-                break;
         }
 
         try {
@@ -1398,7 +1395,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public static PurchaseRequisition findByPRNumber(EntityManager em, String prNumber) {
 
         try {
-            
+
             List<PurchaseRequisition> purchaseRequisitions = em.createQuery("SELECT p FROM PurchaseRequisition p "
                     + "WHERE UPPER(p.number) "
                     + "= '" + prNumber.toUpperCase() + "'", PurchaseRequisition.class).getResultList();
