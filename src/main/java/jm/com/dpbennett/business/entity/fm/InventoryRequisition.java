@@ -98,10 +98,22 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     private String editStatus;
     @Transient
     private List<BusinessEntity.Action> actions;
+    private String workProgress;
 
     public InventoryRequisition() {
         actions = new ArrayList<>();
         inventoryDisbursements = new ArrayList<>();
+    }
+    
+     public String getWorkProgress() {
+        if (workProgress == null) {
+            workProgress = "";
+        }
+        return workProgress;
+    }
+
+    public void setWorkProgress(String workProgress) {
+        this.workProgress = workProgress;
     }
 
     public Boolean getPrepared() {
@@ -492,7 +504,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+      
         if (!(object instanceof InventoryRequisition)) {
             return false;
         }
