@@ -76,7 +76,7 @@ public class User implements BusinessEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
     @OneToOne(cascade = CascadeType.ALL)
-    private Modules modules; // tk remove if no longer used
+    private Modules modules;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -93,12 +93,42 @@ public class User implements BusinessEntity {
     private Date loginTime;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date logoutTime;
+    @Transient
+    private String email;
 
     public User() {
         privilege = new Privilege();
         employee = new Employee();
         modules = new Modules();
         username = "";
+    }
+
+    public String getEmail() {
+        if (email == null) {
+            email = "";
+        }
+        
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Privilege getPrivilege() {
+        return privilege;
+    }
+
+    public void setPrivilege(Privilege privilege) {
+        this.privilege = privilege;
+    }
+
+    public Modules getModules() {
+        return modules;
+    }
+
+    public void setModules(Modules modules) {
+        this.modules = modules;
     }
 
     public Boolean getUpdateLDAPUser() {
@@ -465,7 +495,7 @@ public class User implements BusinessEntity {
         if (username == null) {
             username = "";
         }
-        
+
         return username;
     }
 
@@ -644,7 +674,7 @@ public class User implements BusinessEntity {
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -656,7 +686,6 @@ public class User implements BusinessEntity {
      * @param em
      * @return
      */
-    // tk del. Move to User and make static method
     public Boolean isUserDepartmentSupervisor(Job job, EntityManager em) {
 
         Job foundJob = Job.findJobById(em, job.getId());
@@ -693,7 +722,7 @@ public class User implements BusinessEntity {
 
     @Override
     public String getType() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
