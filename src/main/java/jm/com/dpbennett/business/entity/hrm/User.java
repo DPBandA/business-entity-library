@@ -703,7 +703,7 @@ public class User implements BusinessEntity {
         try {
 
             if (this.id == null) {
-                User existingUser = User.findJobManagerUserByUsername(em, this.username);
+                User existingUser = User.findActiveJobManagerUserByUsername(em, this.username);
                 if (existingUser != null) {
                     return new ReturnMessage(false, "User exists");
                 } else {
