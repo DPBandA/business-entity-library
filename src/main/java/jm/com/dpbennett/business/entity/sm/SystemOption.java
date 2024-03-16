@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -54,6 +54,7 @@ public class SystemOption implements BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Long ownerId;
     private String name;
     @Column(length = 1024)
     private String optionValue;
@@ -77,6 +78,14 @@ public class SystemOption implements BusinessEntity {
     public SystemOption(String name, String optionValue) {
         this.name = name;
         this.optionValue = optionValue;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     public void updateOptionValue() {
@@ -556,6 +565,21 @@ public class SystemOption implements BusinessEntity {
                             + " OR UPPER(o.comments) like '%" + queryString + "%'"
                             + " ) ORDER BY o.comments", SystemOption.class).getResultList();
             return systemOptions;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<SystemOption> findByOwnerId(EntityManager em, Long ownerId) {
+
+        try {
+            List<SystemOption> systemOptions = em.createQuery("SELECT o FROM SystemOption o"
+                    + " WHERE o.ownerId = " + ownerId
+                    + " ORDER BY o.ownerId DESC", SystemOption.class).getResultList();
+
+            return systemOptions;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
