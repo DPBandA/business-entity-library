@@ -365,7 +365,7 @@ public class User implements BusinessEntity {
     }
 
     public String getPFThemeName() {
-        if (PFThemeName == null) {
+        if (id == null) {
             PFThemeName = "saga";
         }
 
