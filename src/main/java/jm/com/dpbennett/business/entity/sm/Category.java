@@ -202,7 +202,7 @@ public class Category implements BusinessEntity {
                             //+ " OR c.brand like '%"
                             //+ value + "%')"
                             //+ " AND d.active = 1"
-                            + " ORDER BY c.id", Category.class).setMaxResults(500).getResultList();
+                            + " ORDER BY c.name", Category.class).setMaxResults(500).getResultList();
 
             return categories;
 
@@ -223,7 +223,7 @@ public class Category implements BusinessEntity {
                             + " AND c.type = '"
                             + type + "'"
                             //+ " AND d.active = 1"
-                            + " ORDER BY c.id", Category.class).setMaxResults(500).getResultList();
+                            + " ORDER BY c.name", Category.class).setMaxResults(500).getResultList();
 
             return categories;
 
