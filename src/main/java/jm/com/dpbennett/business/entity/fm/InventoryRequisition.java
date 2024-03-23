@@ -104,8 +104,41 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
         actions = new ArrayList<>();
         inventoryDisbursements = new ArrayList<>();
     }
-    
-     public String getWorkProgress() {
+
+    public Double getTotalQuantityOrdered() {
+
+        Double total = 0.0;
+
+        for (InventoryDisbursement inventoryDisbursement : inventoryDisbursements) {
+            total = total + inventoryDisbursement.getQuantityOrdered();
+        }
+
+        return total;
+    }
+
+    public Double getTotalQuantityReceived() {
+
+        Double total = 0.0;
+
+        for (InventoryDisbursement inventoryDisbursement : inventoryDisbursements) {
+            total = total + inventoryDisbursement.getQuantityReceived();
+        }
+
+        return total;
+    }
+
+    public Double getTotalCost() {
+
+        Double total = 0.0;
+
+        for (InventoryDisbursement inventoryDisbursement : inventoryDisbursements) {
+            total = total + inventoryDisbursement.getCost();
+        }
+
+        return total;
+    }
+
+    public String getWorkProgress() {
         if (workProgress == null) {
             workProgress = "";
         }
@@ -134,7 +167,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
         if (approved == null) {
             approved = false;
         }
-        
+
         return approved;
     }
 
@@ -504,7 +537,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
 
     @Override
     public boolean equals(Object object) {
-      
+
         if (!(object instanceof InventoryRequisition)) {
             return false;
         }
