@@ -429,7 +429,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.CostComponent[id=" + id + "]";
+        return "[id=" + id + "]";
     }
 
     @Override
