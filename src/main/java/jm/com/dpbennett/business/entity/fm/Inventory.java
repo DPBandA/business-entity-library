@@ -547,7 +547,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
                 = selectClause
                 + mainJoinClause
                 + searchTextAndClause
-                + " ORDER BY inventory.id DESC";
+                + " ORDER BY inventory.name";
 
         try {
             if (maxResults == 0) {
