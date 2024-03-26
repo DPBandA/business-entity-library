@@ -136,6 +136,17 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
         return false;
     }
+    
+    public Boolean hasEmploymentPosition(String employmentPosition) {
+        
+        for (EmployeePosition position : positions) {
+            if (position.getName().equalsIgnoreCase(employmentPosition)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public List<EmployeePosition> getPositions() {
         if (positions == null) {

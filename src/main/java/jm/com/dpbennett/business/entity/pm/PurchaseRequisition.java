@@ -68,7 +68,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Table(name = "purchaserequisition")
 @NamedQueries({
     @NamedQuery(name = "findAllPurchaseRequisitions",
-            query = "SELECT p FROM PurchaseRequisition p ORDER BY p.number")
+            query = "SELECT p FROM PurchaseRequisition p ORDER BY p.id DESC")
 })
 public class PurchaseRequisition implements Document, Comparable, BusinessEntity {
 
@@ -1387,6 +1387,25 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         return foundPRs;
     }
 
+    public static List<PurchaseRequisition> findAllActive(EntityManager em, int maxResults) {
+
+        List<PurchaseRequisition> foundPRs;
+
+        try {
+
+            foundPRs = em.createQuery(
+                    "SELECT p FROM PurchaseRequisition p "
+                    + "WHERE p.workProgress != 'Completed' AND p.workProgress != 'Cancelled' "
+                    + "ORDER BY p.id DESC", 
+                    PurchaseRequisition.class).setMaxResults(maxResults).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
+        return foundPRs;
+    }
+
     public static PurchaseRequisition findById(EntityManager em, Long Id) {
 
         return em.find(PurchaseRequisition.class, Id);
@@ -1411,10 +1430,11 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         }
     }
 
-    public static List<PurchaseRequisition> findAll(EntityManager em) {
+    public static List<PurchaseRequisition> findAll(EntityManager em, int maxResults) {
 
         try {
-            return em.createNamedQuery("findAllPurchaseRequisitions", PurchaseRequisition.class).getResultList();
+            return em.createNamedQuery("findAllPurchaseRequisitions", PurchaseRequisition.class)
+                    .setMaxResults(maxResults).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return null;
