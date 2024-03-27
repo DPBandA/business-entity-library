@@ -176,6 +176,10 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     }
 
     public Employee getInventoryIssuedBy() {
+        if (inventoryIssuedBy == null) {
+            return new Employee();
+        }
+
         return inventoryIssuedBy;
     }
 
@@ -203,6 +207,11 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     }
 
     public Employee getContactPerson() {
+
+        if (contactPerson == null) {
+            return new Employee();
+        }
+
         return contactPerson;
     }
 
@@ -235,6 +244,10 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     }
 
     public Employee getRequisitionApprovedBy() {
+        if (requisitionApprovedBy == null) {
+            return new Employee();
+        }
+
         return requisitionApprovedBy;
     }
 
@@ -243,6 +256,11 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     }
 
     public Employee getInventoryReceivedBy() {
+
+        if (inventoryReceivedBy == null) {
+            return new Employee();
+        }
+
         return inventoryReceivedBy;
     }
 
@@ -251,6 +269,11 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     }
 
     public Employee getRequisitionBy() {
+
+        if (requisitionBy == null) {
+            return new Employee();
+        }
+
         return requisitionBy;
     }
 
@@ -299,6 +322,11 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
 
     @Override
     public Employee getEditedBy() {
+
+        if (editedBy == null) {
+            return new Employee();
+        }
+
         return editedBy;
     }
 
@@ -495,6 +523,26 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
         return foundInventoryRequisitions;
     }
 
+    public static List<InventoryRequisition> findAllActive(EntityManager em, int maxResults) {
+
+        List<InventoryRequisition> foundIRs;
+
+        try {
+
+            foundIRs = em.createQuery(
+                    "SELECT i FROM InventoryRequisition i "
+                    + "WHERE i.workProgress != 'Completed' AND i.workProgress != 'Cancelled' "
+                    + "ORDER BY i.id DESC",
+                    InventoryRequisition.class).setMaxResults(maxResults).getResultList();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
+        return foundIRs;
+    }
+
     @Override
     public Date getDateEdited() {
         return dateEdited;
@@ -520,6 +568,10 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
 
     @Override
     public Employee getEnteredBy() {
+
+        if (enteredBy == null) {
+            return new Employee();
+        }
 
         return enteredBy;
     }
