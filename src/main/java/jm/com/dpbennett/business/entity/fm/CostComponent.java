@@ -31,7 +31,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
@@ -47,6 +50,9 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "costcomponent")
+@NamedQueries({
+    @NamedQuery(name = "findByOwnerId", query = "SELECT c FROM CostComponent c WHERE c.ownerId = :ownerId")
+})
 public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
@@ -456,6 +462,19 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         }
 
         return foundComponents;
+    }
+    
+    public static CostComponent findByOwnerId(EntityManager em, Long ownerId) {
+        try {
+            Query q = em.createNamedQuery("findByJobId");
+            q.setParameter("jobId", ownerId);
+
+            return (CostComponent) q.getSingleResult();
+            
+        } catch (Exception e) {
+
+            return null;
+        }
     }
 
     @Override
