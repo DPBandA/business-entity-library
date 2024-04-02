@@ -101,7 +101,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         getCostComponent().setDescription(getDescription());
         getCostComponent().setHoursOrQuantity(- getQuantityReceived());
         getCostComponent().setRate(getUnitCost());
-        getCostComponent().setCost(- getQuantityReceived()*getUnitCost());
+        getCostComponent().setCost(getCost());
         
     }
 
@@ -119,8 +119,10 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     }
 
     public void update() {
-
+        
         setCost(quantityReceived * unitCost);
+        
+        updateCostComponent();
     }
 
     @Override
