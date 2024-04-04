@@ -84,7 +84,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private String editStatus;
     @Transient
     private List<BusinessEntity.Action> actions;
-    @Transient
+    @OneToOne(cascade = CascadeType.ALL)
     private CostComponent costComponent;
 
     public InventoryDisbursement() {
@@ -97,12 +97,14 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     }
 
     public void updateCostComponent() {
-        
+
         getCostComponent().setDescription(getDescription());
-        getCostComponent().setHoursOrQuantity(- getQuantityReceived());
+        getCostComponent().setHoursOrQuantity(-getQuantityReceived());
+        getCostComponent().setUnit(getInventory().getMeasurementUnit());
+        getCostComponent().setCostDate(new Date());
         getCostComponent().setRate(getUnitCost());
-        getCostComponent().setCost(getCost());
-        
+        getCostComponent().setCost(-getUnitCost() * getQuantityReceived());
+
     }
 
     public CostComponent getCostComponent() {
@@ -119,9 +121,9 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     }
 
     public void update() {
-        
+
         setCost(quantityReceived * unitCost);
-        
+
         updateCostComponent();
     }
 
@@ -515,9 +517,16 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         try {
 
             em.getTransaction().begin();
+
             BusinessEntityUtils.saveBusinessEntity(em, this);
+
             em.getTransaction().commit();
 
+            if (getCostComponent().getId() == null) {
+                getInventory().getCostComponents().add(getCostComponent());
+                getInventory().save(em);
+            }
+           
             return new ReturnMessage();
         } catch (Exception e) {
             System.out.println(e);
