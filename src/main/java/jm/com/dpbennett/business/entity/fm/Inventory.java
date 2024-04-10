@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -112,6 +113,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String productImageURL;
     private String productURL;
     private Double sellingPrice;
+    private String disbursementMethod;
 
     public Inventory() {
         actions = new ArrayList<>();
@@ -122,6 +124,18 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.name = name;
         actions = new ArrayList<>();
         costComponents = new ArrayList<>();
+    }
+
+    public String getDisbursementMethod() {
+        if (disbursementMethod == null) {
+            disbursementMethod = "FIFO";
+        }
+        
+        return disbursementMethod;
+    }
+
+    public void setDisbursementMethod(String disbursementMethod) {
+        this.disbursementMethod = disbursementMethod;
     }
 
     public Boolean getShowSellingPrice() {
@@ -211,15 +225,36 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         return total;
     }
 
-    /**
-     * Builds and return a list of cost components with the costing to which the
-     * cost component used as a header cost component belong
-     *
-     * @return
-     */
     public List<CostComponent> getAllSortedCostComponents() {
 
         Collections.sort(getCostComponents());
+
+        return costComponents;
+    }
+
+    public List<CostComponent> getAllCostComponentsSortedByCostDate() {
+
+        Comparator<CostComponent> comparator
+                = (CostComponent costComponent1, CostComponent costComponent2) -> {
+
+                    if (costComponent1.getCostDate() == null
+                    || costComponent2.getCostDate() == null) {
+                        return 0;
+                    }
+
+                    if (costComponent1.getCostDate().before(costComponent2.getCostDate())) {
+                        return -1;
+                    }
+
+                    if (costComponent1.getCostDate().after(costComponent2.getCostDate())) {
+                        return 1;
+                    }
+
+                    return 0;
+
+                };
+
+        Collections.sort(getCostComponents(), comparator);
 
         return costComponents;
     }
@@ -427,7 +462,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             String name) {
 
         try {
-           
+
             List<Inventory> inventory
                     = em.createQuery("SELECT i FROM Inventory i WHERE UPPER(i.name) like '%"
                             + name.toUpperCase() + "%'"

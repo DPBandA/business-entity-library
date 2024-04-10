@@ -210,7 +210,6 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         getCost();
     }
 
- 
     @Override
     public String getType() {
         if (type == null) {
@@ -463,14 +462,14 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
         return foundComponents;
     }
-    
+
     public static CostComponent findByOwnerId(EntityManager em, Long ownerId) {
         try {
             Query q = em.createNamedQuery("findByJobId");
             q.setParameter("jobId", ownerId);
 
             return (CostComponent) q.getSingleResult();
-            
+
         } catch (Exception e) {
 
             return null;
