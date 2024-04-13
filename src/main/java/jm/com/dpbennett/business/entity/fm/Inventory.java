@@ -114,6 +114,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String productURL;
     private Double sellingPrice;
     private String disbursementMethod;
+    private String location;
 
     public Inventory() {
         actions = new ArrayList<>();
@@ -124,6 +125,14 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.name = name;
         actions = new ArrayList<>();
         costComponents = new ArrayList<>();
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getDisbursementMethod() {
