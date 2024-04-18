@@ -237,7 +237,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
                 return new ReturnMessage(false,
                         "Undefined Error!",
-                        "An undefined error occurred while saving inventory"
+                        "An undefined error occurred while saving disbursement"
                         + ":\n"
                         + returnMessage.getDetail(),
                         Message.SEVERITY_ERROR_NAME);
@@ -247,7 +247,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
             return new ReturnMessage(false,
                     "Undefined Error!",
-                    "An undefined error occurred while saving inventory"
+                    "An undefined error occurred while saving disbursement"
                     + ":\n"
                     + e,
                     Message.SEVERITY_ERROR_NAME);
@@ -522,7 +522,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
             em.getTransaction().commit();
 
-            if (getCostComponent().getId() == null) {
+            if (getInventory().findCostComponentById(getCostComponent().getId()) == null) {
                 getInventory().getCostComponents().add(getCostComponent());
                 getInventory().save(em);
             }

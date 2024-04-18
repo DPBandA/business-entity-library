@@ -139,7 +139,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         if (disbursementMethod == null) {
             disbursementMethod = "FIFO";
         }
-        
+
         return disbursementMethod;
     }
 
@@ -236,7 +236,27 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public List<CostComponent> getAllSortedCostComponents() {
 
-        Collections.sort(getCostComponents());
+        Comparator<CostComponent> comparator
+                = (CostComponent costComponent1, CostComponent costComponent2) -> {
+
+                    if (costComponent1.getCostDate() == null
+                    || costComponent2.getCostDate() == null) {
+                        return 0;
+                    }
+
+                    if (costComponent1.getCostDate().before(costComponent2.getCostDate())) {
+                        return 1;
+                    }
+
+                    if (costComponent1.getCostDate().after(costComponent2.getCostDate())) {
+                        return -1;
+                    }
+
+                    return 0;
+
+                };
+
+        Collections.sort(getCostComponents(), comparator);
 
         return costComponents;
     }
@@ -263,7 +283,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
                 };
 
-        Collections.sort(getCostComponents(), comparator);
+        Collections.sort(getPositiveCostComponents(), comparator);
 
         return costComponents;
     }
@@ -273,6 +293,19 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             costComponents = new ArrayList<>();
         }
         return costComponents;
+    }
+
+    public List<CostComponent> getPositiveCostComponents() {
+
+        List<CostComponent> pcc = new ArrayList<>();
+
+        for (CostComponent costComponent : getCostComponents()) {
+            if (costComponent.getHoursOrQuantity() > 0) {
+                pcc.add(costComponent);
+            }
+        }
+
+        return pcc;
     }
 
     public void setCostComponents(List<CostComponent> costComponents) {
@@ -460,6 +493,18 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public void setEditStatus(String editStatus) {
         this.editStatus = editStatus;
+    }
+
+    public CostComponent findCostComponentById(Long id) {
+        
+        for (CostComponent costComponent : getCostComponents()) {
+            if (costComponent.getId().equals(id)) {
+                
+                return costComponent;
+            }
+        }
+
+        return null;
     }
 
     public static Inventory findById(EntityManager em, Long Id) {

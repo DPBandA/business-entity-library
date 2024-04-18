@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -90,26 +90,36 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     private Employee originator;
     // Approvers    
     private Integer approvals;
+    // TEAM LEADER
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver1;
+    // DIVISIONAL MANAGER
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver2;
+    // DIVISIONAL DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver3;
+    // FINANCE MANAGER
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver4;
+    // EXECUTIVE DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver5;
     // Recommenders
     private Integer recommendations;
+    // TEAM LEADER
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender1;
+    // DIVISIONAL MANAGER
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender2;
+    // DIVISIONAL DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender3;
+    // FINANCE MANAGER
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender4;
+    // EXECUTIVE DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender5;
     @Transient
