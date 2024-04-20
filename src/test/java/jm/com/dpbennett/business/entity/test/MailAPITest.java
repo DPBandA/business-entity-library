@@ -51,6 +51,7 @@ public class MailAPITest {
         if (MailUtils.postMail(
                 null,
                 "info@dpbennett.com.jm",
+                "DPB&A Information",
                 "desbenn@gmail.com",
                 "Welcome to Postmail",
                 "This is the message",

@@ -64,6 +64,7 @@ public class MailUtils {
                         try {
                             postMail(null,
                                     SystemOption.getString(em, "jobManagerEmailAddress"),
+                                    "Job Manager",
                                     SystemOption.getString(em, "softwareDeveloperEmailAddress"),
                                     subject, message,
                                     "text/plain", em);
@@ -148,6 +149,7 @@ public class MailUtils {
     public static ReturnMessage postMail(
             Session mailSession,
             String from,
+            String fromName,
             String to,
             String subject,
             String message,
@@ -167,7 +169,7 @@ public class MailUtils {
                 msg = new MimeMessage(mailSession);
             }
 
-            addressFrom = new InternetAddress(from, from);
+            addressFrom = new InternetAddress(from, fromName);
             msg.setFrom(addressFrom);
 
             addressTo = new InternetAddress[1];
