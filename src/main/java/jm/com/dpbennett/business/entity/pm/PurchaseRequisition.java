@@ -237,9 +237,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
 
         PurchaseRequisition selectedPurchaseRequisition = new PurchaseRequisition();
-        selectedPurchaseRequisition.setAutoGenerateNumber(SystemOption.getBoolean(em, "enableYearDependentPRSeqNum"));
-        selectedPurchaseRequisition.setPurchasingDepartment(Department.findDefaultDepartment(em,
-                "--"));
+        selectedPurchaseRequisition.setPurchasingDepartment(Department.findDefaultDepartment(em, "--"));
         selectedPurchaseRequisition.setProcurementOfficer(Employee.findDefaultEmployee(em,
                 "--", "--", false));
         selectedPurchaseRequisition.
@@ -883,6 +881,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (purchaseOrderNumber == null) {
             return "--";
         }
+
         return purchaseOrderNumber;
     }
 
@@ -1406,7 +1405,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             foundPRs = em.createQuery(
                     "SELECT p FROM PurchaseRequisition p "
                     + "WHERE p.workProgress != 'Completed' AND p.workProgress != 'Cancelled' "
-                    + "ORDER BY p.id DESC", 
+                    + "ORDER BY p.id DESC",
                     PurchaseRequisition.class).setMaxResults(maxResults).getResultList();
         } catch (Exception e) {
             System.out.println(e);
@@ -1566,10 +1565,11 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
                     setSequenceNumber(nextPurchaseReqNumber.getSequentialNumber());
                     generateNumber();
                     generatePurchaseOrderNumber();
-                } else {
-                    generateNumber();
-                    generatePurchaseOrderNumber();
-                }
+                } 
+//                else {
+//                    generateNumber();
+//                    generatePurchaseOrderNumber();
+//                }
             } else {
                 if (number == null) {
                     nextPurchaseReqSequenceNumber = getNextSequenceNumberFromSystemOption(em);
