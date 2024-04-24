@@ -63,6 +63,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     private Boolean prepared;
     private Boolean approved;
     private Boolean received;
+    private Boolean issued;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department department;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -104,6 +105,19 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public InventoryRequisition() {
         actions = new ArrayList<>();
         inventoryDisbursements = new ArrayList<>();
+    }
+
+    public Boolean getIssued() {
+
+        if (issued == null) {
+            issued = false;
+        }
+        
+        return issued;
+    }
+
+    public void setIssued(Boolean issued) {
+        this.issued = issued;
     }
 
     public Boolean getReceived() {

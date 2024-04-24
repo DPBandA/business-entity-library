@@ -115,6 +115,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private Double sellingPrice;
     private String disbursementMethod;
     private String location;
+    private Integer lowStockThreshold;
 
     public Inventory() {
         actions = new ArrayList<>();
