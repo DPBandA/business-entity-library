@@ -128,6 +128,19 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         costComponents = new ArrayList<>();
     }
 
+    public Integer getLowStockThreshold() {
+
+        if (lowStockThreshold == null) {
+            lowStockThreshold = 0;
+        }
+
+        return lowStockThreshold;
+    }
+
+    public void setLowStockThreshold(Integer lowStockThreshold) {
+        this.lowStockThreshold = lowStockThreshold;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -497,10 +510,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     }
 
     public CostComponent findCostComponentById(Long id) {
-        
+
         for (CostComponent costComponent : getCostComponents()) {
             if (costComponent.getId().equals(id)) {
-                
+
                 return costComponent;
             }
         }
