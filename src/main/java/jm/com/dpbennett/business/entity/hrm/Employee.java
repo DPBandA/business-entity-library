@@ -474,8 +474,9 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         try {
            
             List<Employee> employees
-                    = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '"
-                            + query + "%'" + " OR UPPER(e.lastName) like '"
+                    = em.createQuery("SELECT e FROM Employee e LEFT JOIN e.positions positions WHERE ( UPPER(e.firstName) like '%"
+                            + query + "%'" + " OR UPPER(e.lastName) like '%"
+                            + query + "%'" + " OR UPPER(positions.title) like '%"
                             + query + "%'" + " OR UPPER(e.department.name) like '%"
                             + query + "%')"
                             + " AND e.active = 1 OR e.active IS NULL"
