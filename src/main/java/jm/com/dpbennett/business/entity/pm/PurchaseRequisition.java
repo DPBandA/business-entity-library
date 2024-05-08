@@ -88,7 +88,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     private Employee procurementOfficer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee originator;
-    // Approvers    
+    // # of approvers    
     private Integer approvals;
     // TEAM LEADER
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -105,7 +105,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     // EXECUTIVE DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver5;
-    // Recommenders
+    // # of Recommenders
     private Integer recommendations;
     // TEAM LEADER
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -993,6 +993,33 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         return recommender5 != null;
     }
 
+    public String getApproversAndRecommendersList() {
+
+        int index = 0;
+        String approversAndRecommendersList = "";
+
+        for (ApproverOrRecommender approverOrRecommender : approversAndRecommenders) {
+
+            if (index == 0) {
+                approversAndRecommendersList = approverOrRecommender.getFirstName()
+                        + " " + approverOrRecommender.getLastName();
+            } else {
+                approversAndRecommendersList = approversAndRecommendersList
+                        + ", " + approverOrRecommender.getFirstName()
+                        + " " + approverOrRecommender.getLastName();
+            }
+
+            index++;
+        }
+
+        if (approversAndRecommendersList.isEmpty()) {
+            approversAndRecommendersList = "N/A";
+        }
+
+        return approversAndRecommendersList;
+       
+    }
+
     public ArrayList<ApproverOrRecommender> getApproversAndRecommenders() {
 
         approversAndRecommenders.clear();
@@ -1565,7 +1592,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
                     setSequenceNumber(nextPurchaseReqNumber.getSequentialNumber());
                     generateNumber();
                     generatePurchaseOrderNumber();
-                } 
+                }
 //                else {
 //                    generateNumber();
 //                    generatePurchaseOrderNumber();
