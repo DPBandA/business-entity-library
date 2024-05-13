@@ -190,14 +190,14 @@ public class BusinessEntityUtils {
 
     public static boolean validateClientName(String name) {
 
-       return validateIdentifier(name);
+        return validateIdentifier(name);
     }
 
     public static boolean validateAccountingCode(String code) {
 
-       return validateIdentifier(code);
+        return validateIdentifier(code);
     }
-    
+
     public static boolean validateIdentifier(String identifier) {
 
         if (identifier == null) {
@@ -217,7 +217,11 @@ public class BusinessEntityUtils {
             return false;
         } else if (text.isEmpty()) {
             return false;
-        }
+        } else if (containsChar(text, '"')) {
+            return false;
+        } else if (text.contains("'")) {
+            return false;
+        } 
 
         return true;
     }
