@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -147,6 +147,9 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             EntityManager em, String name) {
 
         try {
+
+            name = name.replaceAll("'", "`");
+
             List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
                     + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + name + "'",
                     MarketProduct.class).getResultList();
@@ -166,8 +169,10 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     public static MarketProduct findActiveMarketProductByType(
             EntityManager em, String name, String type) {
 
-       
         try {
+
+            name = name.replaceAll("'", "`");
+
             List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
                     + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + name
                     + "' AND m.type = '" + type + "'",
@@ -188,7 +193,9 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     public static List<MarketProduct> findActiveMarketProductsByName(EntityManager em, String value) {
 
         try {
-           
+
+            value = value.replaceAll("'", "`");
+
             List<MarketProduct> marketProducts
                     = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
                             + value.toUpperCase() + "%'"
@@ -207,7 +214,9 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             String name, String type) {
 
         try {
-           
+
+            name = name.replaceAll("'", "`");
+
             List<MarketProduct> marketProducts
                     = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
                             + name.toUpperCase() + "%'"
@@ -225,7 +234,9 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     public static List<MarketProduct> findMarketProductsByName(EntityManager em, String value) {
 
         try {
-           
+
+            value = value.replaceAll("'", "`");
+
             List<MarketProduct> marketProducts
                     = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
                             + value.toUpperCase() + "%'"
@@ -243,7 +254,9 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             String name, String type) {
 
         try {
-           
+            
+            name = name.replaceAll("'", "`");
+
             List<MarketProduct> marketProducts
                     = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
                             + name.toUpperCase() + "%' AND m.type = '" + type + "'"
@@ -409,7 +422,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
         if (name == null) {
             name = "";
         }
-        
+
         return name;
     }
 

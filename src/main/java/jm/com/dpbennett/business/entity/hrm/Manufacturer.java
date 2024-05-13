@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -410,6 +410,9 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static List<Manufacturer> findManufacturersBySearchPattern(EntityManager em, String searchPattern) {
 
         try {
+            
+            searchPattern = searchPattern.replaceAll("'", "`");
+            
             List<Manufacturer> manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
                     + "WHERE UPPER(m.name) "
                     + "LIKE '" + searchPattern.toUpperCase() + "%' "
@@ -435,6 +438,8 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static Manufacturer findManufacturerByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("'", "`");
             
             List<Manufacturer> manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
                     + "WHERE UPPER(m.name) "
@@ -475,6 +480,8 @@ public class Manufacturer implements BusinessEntity, Comparable {
         List<Manufacturer> manufacturers;
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             if (ignoreCase) {
                 manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
@@ -501,6 +508,8 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static List<Manufacturer> findActiveManufacturersByAnyPartOfName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             List<Manufacturer> manufacturers
                     = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
@@ -517,6 +526,8 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static List<Manufacturer> findManufacturersByAnyPartOfName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             List<Manufacturer> manufacturers
                     = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"

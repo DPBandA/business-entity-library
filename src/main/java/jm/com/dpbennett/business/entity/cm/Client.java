@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -746,6 +746,8 @@ public class Client implements ClientInterface {
 
         try {
             
+            value = value.replaceAll("'", "`");
+            
             List<Client> clients;
             clients = em.createQuery("SELECT c FROM Client c where UPPER(c.taxRegistrationNumber) like '"
                     + value.toUpperCase() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
@@ -759,6 +761,8 @@ public class Client implements ClientInterface {
     public static List<String> findActiveClientNames(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             List<String> names
                     = em.createQuery("SELECT c FROM Client c WHERE UPPER(c.name) like '"
@@ -775,6 +779,8 @@ public class Client implements ClientInterface {
     public static List<Client> findActiveClientsByFirstPartOfName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '"
@@ -791,6 +797,8 @@ public class Client implements ClientInterface {
     public static List<Client> findActiveClientsByAnyPartOfName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
@@ -808,6 +816,8 @@ public class Client implements ClientInterface {
 
         try {
             
+            value = value.replaceAll("'", "`");
+            
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
                             + value + "%'"
@@ -819,10 +829,11 @@ public class Client implements ClientInterface {
         }
     }
 
-    // tk in client manager
     public static List<String> findClientNames(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             List<String> names
                     = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
@@ -838,6 +849,8 @@ public class Client implements ClientInterface {
     public static List<Client> findClientsByFirstPartOfName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
@@ -867,6 +880,8 @@ public class Client implements ClientInterface {
         List<Client> clients;
 
         try {
+            
+            value = value.replaceAll("'", "`");
             
             if (ignoreCase) {
                 clients = em.createQuery("SELECT c FROM Client c "
@@ -906,6 +921,8 @@ public class Client implements ClientInterface {
         List<Client> clients;
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             if (ignoreCase) {
                 clients = em.createQuery("SELECT c FROM Client c "
@@ -945,6 +962,7 @@ public class Client implements ClientInterface {
             EntityManager em,
             String name,
             Boolean useTransaction) {
+        
         Client client = findActiveClientByName(em, name, false);
 
         if (client == null) {
@@ -968,6 +986,9 @@ public class Client implements ClientInterface {
     public static List<Client> findClientsBySearchPattern(EntityManager em, String searchPattern) {
 
         try {
+            
+            searchPattern = searchPattern.replaceAll("'", "`");
+            
             List<Client> clients = em.createQuery("SELECT c FROM Client c "
                     + "WHERE UPPER(c.name) "
                     + "LIKE '" + searchPattern.toUpperCase() + "%' "

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -414,6 +414,10 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         if (firstName != null && lastName != null) {
            
             try {
+                
+                firstName = firstName.replaceAll("'", "`");
+                lastName = lastName.replaceAll("'", "`");
+                
                 List<Contact> contacts = em.createQuery("SELECT c FROM Contact c "
                         + "WHERE UPPER(c.firstName) "
                         + "= '" + firstName + "' AND UPPER(c.lastName) = '" + lastName + "'",

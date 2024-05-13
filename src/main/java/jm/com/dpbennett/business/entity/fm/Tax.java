@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -59,7 +59,7 @@ public class Tax implements Serializable, BusinessEntity {
     private Boolean exempt;
     private String name;
     private Double taxValue;
-    private String taxValueType;    
+    private String taxValueType;
     @OneToOne(cascade = CascadeType.REFRESH)
     private AccountingCode accountingCode;
     private String type;
@@ -181,7 +181,9 @@ public class Tax implements Serializable, BusinessEntity {
     public static List<Tax> findTaxesByNameAndDescription(EntityManager em, String value) {
 
         try {
-          
+            
+            value = value.replaceAll("'", "`");
+
             List<Tax> taxes
                     = em.createQuery("SELECT t FROM Tax t WHERE UPPER(t.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' OR UPPER(t.description) LIKE '%"
@@ -197,7 +199,9 @@ public class Tax implements Serializable, BusinessEntity {
     public static List<Tax> findActiveTaxesByNameAndDescription(EntityManager em, String value) {
 
         try {
-           
+
+            value = value.replaceAll("'", "`");
+
             List<Tax> taxes
                     = em.createQuery("SELECT t FROM Tax t WHERE (UPPER(t.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' OR UPPER(t.description) LIKE '%"
@@ -254,7 +258,7 @@ public class Tax implements Serializable, BusinessEntity {
             return false;
         }
         Tax other = (Tax) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -309,7 +313,9 @@ public class Tax implements Serializable, BusinessEntity {
     public static Tax findByName(EntityManager em, String value) {
 
         try {
-           
+
+            value = value.replaceAll("'", "`");
+
             List<Tax> taxes = em.createQuery("SELECT t FROM Tax t "
                     + "WHERE UPPER(t.name) "
                     + "= '" + value.toUpperCase() + "'", Tax.class).getResultList();
@@ -322,11 +328,11 @@ public class Tax implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
-     public static Tax findByValue(EntityManager em, Double value) {
+
+    public static Tax findByValue(EntityManager em, Double value) {
 
         try {
-            
+
             List<Tax> taxes = em.createQuery("SELECT t FROM Tax t "
                     + "WHERE t.taxValue = " + value + " AND t.exempt = 0", Tax.class).getResultList();
             if (!taxes.isEmpty()) {

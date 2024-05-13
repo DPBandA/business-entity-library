@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -394,6 +394,8 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         List<DocumentStandard> documentStandards;
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             if (ignoreCase) {
                 documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
@@ -484,6 +486,8 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
             int maxResults) {
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             List<DocumentStandard> documentStandards
                     = em.createQuery("SELECT d FROM DocumentStandard d WHERE (d.name like '%"
@@ -503,6 +507,8 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
             EntityManager em, String value, int maxResults) {
 
         try {
+            
+            value = value.replaceAll("'", "`");
             
             List<DocumentStandard> documentStandards
                     = em.createQuery("SELECT d FROM DocumentStandard d WHERE d.name like '%"

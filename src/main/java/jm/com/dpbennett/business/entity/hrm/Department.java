@@ -289,7 +289,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
             return false;
         }
         Department other = (Department) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -310,7 +310,9 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static List<Department> findDepartmentsByName(EntityManager em, String value) {
 
         try {
-            
+
+            value = value.replaceAll("'", "`");
+
             List<Department> departments
                     = em.createQuery("SELECT d FROM Department d where UPPER(d.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY d.name", Department.class).getResultList();
@@ -324,7 +326,9 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static List<Department> findActiveDepartmentsByName(EntityManager em, String value) {
 
         try {
-            
+
+            value = value.replaceAll("'", "`");
+
             List<Department> departments
                     = em.createQuery("SELECT d FROM Department d WHERE UPPER(d.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Department.class).getResultList();
@@ -348,7 +352,9 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static Department findDepartmentByName(EntityManager em, String value) {
 
         try {
-           
+
+            value = value.replaceAll("'", "`");
+
             List<Department> departments = em.createQuery("SELECT d FROM Department d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", Department.class).getResultList();
@@ -365,6 +371,8 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static Department findActiveDepartmentByName(EntityManager em, String value) {
 
         try {
+
+            value = value.replaceAll("'", "`");
 
             List<Department> departments = em.createQuery("SELECT d FROM Department d "
                     + "WHERE d.active = 1 AND UPPER(d.name) "
@@ -391,8 +399,10 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
         ArrayList<String> names = new ArrayList<>();
 
-        try { // tk try String.class instead of Department.class for better performance
+        try {
+
             List<Department> departments = em.createNamedQuery("findAllDepartments", Department.class).getResultList();
+
             for (Department department : departments) {
                 names.add(department.getName());
             }
@@ -414,6 +424,9 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static Department findDepartmentBySubGroupCode(EntityManager em, String subGroupCode) {
 
         try {
+
+            subGroupCode = subGroupCode.replaceAll("'", "`");
+
             Query query = em.createNamedQuery("findBySubGroupCode");
             query.setParameter("subGroupCode", subGroupCode);
             return (Department) query.getSingleResult();

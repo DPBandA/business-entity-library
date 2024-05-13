@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -355,6 +355,8 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     public static Address findAddressByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             List<Address> addresses = em.createQuery("SELECT a FROM Address a "
                     + "WHERE UPPER(a.name) "
@@ -503,6 +505,8 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     public static List<Address> findClientAddresses(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("'", "`");
            
             List<Address> addresses;
             Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"

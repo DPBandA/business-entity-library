@@ -472,6 +472,8 @@ public class SystemOption implements BusinessEntity {
     public static SystemOption findSystemOptionByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("'", "`");
            
             List<SystemOption> options = em.createQuery("SELECT o FROM SystemOption o "
                     + "WHERE UPPER(o.name) "
@@ -520,6 +522,8 @@ public class SystemOption implements BusinessEntity {
 
         try {
             
+            queryString = queryString.replaceAll("'", "`");
+            
             List<SystemOption> systemOptions
                     = em.createQuery("SELECT o FROM SystemOption o WHERE "
                             + "UPPER(o.name) LIKE '%" + queryString + "%'"
@@ -538,6 +542,8 @@ public class SystemOption implements BusinessEntity {
 
         try {
             
+            queryString = queryString.replaceAll("'", "`");
+            
             List<SystemOption> systemOptions
                     = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = 'FINANCE' AND ("
                             + " UPPER(o.name) LIKE '%" + queryString + "%'"
@@ -555,6 +561,9 @@ public class SystemOption implements BusinessEntity {
             String queryString, String category) {
 
         try {
+            
+            queryString = queryString.replaceAll("'", "`");
+            category = category.replaceAll("'", "`");
             
             List<SystemOption> systemOptions
                     = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = "
