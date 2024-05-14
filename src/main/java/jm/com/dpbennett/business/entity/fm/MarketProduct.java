@@ -148,8 +148,6 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
         try {
 
-            name = name.replaceAll("'", "`");
-
             List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
                     + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + name + "'",
                     MarketProduct.class).getResultList();

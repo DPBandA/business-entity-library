@@ -921,9 +921,7 @@ public class Client implements ClientInterface {
         List<Client> clients;
 
         try {
-            
-            value = value.replaceAll("'", "`");
-           
+                      
             if (ignoreCase) {
                 clients = em.createQuery("SELECT c FROM Client c "
                         + "WHERE UPPER(c.name) "

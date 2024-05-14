@@ -314,8 +314,6 @@ public class Tax implements Serializable, BusinessEntity {
 
         try {
 
-            value = value.replaceAll("'", "`");
-
             List<Tax> taxes = em.createQuery("SELECT t FROM Tax t "
                     + "WHERE UPPER(t.name) "
                     + "= '" + value.toUpperCase() + "'", Tax.class).getResultList();

@@ -394,9 +394,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         List<DocumentStandard> documentStandards;
 
         try {
-            
-            value = value.replaceAll("'", "`");
-           
+          
             if (ignoreCase) {
                 documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
                         + "WHERE UPPER(d.name) "

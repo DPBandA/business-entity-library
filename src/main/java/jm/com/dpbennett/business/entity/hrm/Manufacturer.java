@@ -109,8 +109,8 @@ public class Manufacturer implements BusinessEntity, Comparable {
         this.name = name;
         this.tag = false;
         this.notes = "";
-        this.type = "Manufacturer"; 
-        marketProducts = new ArrayList<>();        
+        this.type = "Manufacturer";
+        marketProducts = new ArrayList<>();
         contacts = new ArrayList<>();
         addresses = new ArrayList<>();
         internet = new Internet();
@@ -386,7 +386,7 @@ public class Manufacturer implements BusinessEntity, Comparable {
             return false;
         }
         Manufacturer other = (Manufacturer) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -394,13 +394,13 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public String toString() {
         return name;
     }
-    
+
     public static List<Manufacturer> findAllActiveManufacturers(EntityManager em) {
 
         try {
-            
+
             return em.createQuery("SELECT m FROM Manufacturer m WHERE m.active = 1 OR m.active IS NULL ORDER BY m.name", Manufacturer.class).getResultList();
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -410,9 +410,9 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static List<Manufacturer> findManufacturersBySearchPattern(EntityManager em, String searchPattern) {
 
         try {
-            
+
             searchPattern = searchPattern.replaceAll("'", "`");
-            
+
             List<Manufacturer> manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
                     + "WHERE UPPER(m.name) "
                     + "LIKE '" + searchPattern.toUpperCase() + "%' "
@@ -438,9 +438,9 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static Manufacturer findManufacturerByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("'", "`");
-            
+
             List<Manufacturer> manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
                     + "WHERE UPPER(m.name) "
                     + "= '" + name.toUpperCase() + "'", Manufacturer.class).getResultList();
@@ -480,9 +480,7 @@ public class Manufacturer implements BusinessEntity, Comparable {
         List<Manufacturer> manufacturers;
 
         try {
-            
-            value = value.replaceAll("'", "`");
-           
+
             if (ignoreCase) {
                 manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
                         + "WHERE UPPER(m.name) "
@@ -508,9 +506,9 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static List<Manufacturer> findActiveManufacturersByAnyPartOfName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "`");
-           
+
             List<Manufacturer> manufacturers
                     = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
                             + value + "%'"
@@ -526,9 +524,9 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static List<Manufacturer> findManufacturersByAnyPartOfName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "`");
-           
+
             List<Manufacturer> manufacturers
                     = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
                             + value + "%'"

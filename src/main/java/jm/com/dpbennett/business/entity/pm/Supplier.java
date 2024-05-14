@@ -722,8 +722,6 @@ public class Supplier implements BusinessEntity, Comparable {
 
         List<Supplier> suppliers;
 
-        value = value.replaceAll("'", "`");
-
         try {
 
             if (ignoreCase) {

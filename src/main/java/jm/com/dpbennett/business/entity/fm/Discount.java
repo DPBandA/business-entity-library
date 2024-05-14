@@ -328,9 +328,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static Discount findByName(EntityManager em, String value) {
 
         try {
-            
-            value = value.replaceAll("'", "`");
-
+          
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", Discount.class).getResultList();

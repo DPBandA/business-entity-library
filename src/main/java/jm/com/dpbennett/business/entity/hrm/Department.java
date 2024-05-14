@@ -372,8 +372,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
         try {
 
-            value = value.replaceAll("'", "`");
-
             List<Department> departments = em.createQuery("SELECT d FROM Department d "
                     + "WHERE d.active = 1 AND UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", Department.class).getResultList();
