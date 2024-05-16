@@ -400,7 +400,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         this.name = name;
     }
 
-    public static List<Employee> findEmployeesByName(EntityManager em, String name) {
+    public static List<Employee> findByAnyPartOfName(EntityManager em, String name) {
 
         try {
             
@@ -416,7 +416,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    public static List<Employee> findEmployees(EntityManager em, String query) {
+    public static List<Employee> find(EntityManager em, String query) {
 
         try {
            
@@ -433,24 +433,26 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    public static List<Employee> findActiveEmployeesByName(EntityManager em, String name) {
+    public static List<Employee> findAllActiveByName(EntityManager em, String query) {
 
         try {
            
             List<Employee> employees
-                    = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '"
-                            + name + "%'" + " OR UPPER(e.lastName) like '"
-                            + name + "%'"
+                    = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '%"
+                            + query + "%'" + " OR UPPER(e.lastName) like '%"
+                            + query + "%'"
                             + ") AND e.active = 1"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
+            
             return employees;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
 
-    public static List<Employee> findActiveEmployeesByPosition(EntityManager em,
+    public static List<Employee> findActiveByPosition(EntityManager em,
             String positionTitle) {
 
         try {
@@ -469,7 +471,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    public static List<Employee> findActiveEmployees(EntityManager em, String query) {
+    public static List<Employee> findActive(EntityManager em, String query) {
 
         try {
            
@@ -496,7 +498,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
      * @param lastName
      * @return
      */
-    public static Employee findEmployeeByName(EntityManager em, 
+    public static Employee findByFirstAndLastName(EntityManager em, 
             String firstName, String lastName) {
 
         if (firstName != null && lastName != null) {
@@ -527,7 +529,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
      * @param lastName
      * @return
      */
-    public static Employee findActiveEmployeeByName(EntityManager em, String firstName, String lastName) {
+    public static Employee findActiveByName(EntityManager em, String firstName, String lastName) {
 
         if (firstName != null && lastName != null) {
            
@@ -549,7 +551,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         return null;
     }
 
-    public static List<Employee> findAllEmployees(EntityManager em) {
+    public static List<Employee> findAll(EntityManager em) {
 
         try {
             return em.createNamedQuery("findAllEmployees", Employee.class).getResultList();
@@ -558,7 +560,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    public static List<Employee> findAllActiveEmployees(EntityManager em) {
+    public static List<Employee> findAllActive(EntityManager em) {
 
         try {
             return em.createQuery("SELECT e FROM Employee e WHERE (e.active = 1 OR e.active IS NULL) ORDER BY e.lastName", Employee.class).getResultList();
@@ -568,7 +570,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    public static List<String> findAllEmployeeNames(EntityManager em) {
+    public static List<String> findAllNames(EntityManager em) {
 
         ArrayList<String> names = new ArrayList<>();
 
@@ -583,23 +585,24 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    public static Employee findEmployeeById(EntityManager em, Long Id) {
+    public static Employee findById(EntityManager em, Long Id) {
         return em.find(Employee.class, Id);
     }
 
-    public static Employee findDefaultEmployee(
+    public static Employee findDefault(
             EntityManager em,
             String firstName,
             String lastName,
             Boolean userTransaction) {
-        Employee employee = Employee.findEmployeeByName(em, firstName, lastName);
+        
+        Employee employee = Employee.findByFirstAndLastName(em, firstName, lastName);
 
         if (employee == null) {
             employee = new Employee();
             employee.setFirstName(firstName);
             employee.setLastName(lastName);
 
-            employee.setDepartment(Department.findDefaultDepartment(em, "--"));
+            employee.setDepartment(Department.findDefault(em, "--"));
 
             if (userTransaction) {
                 em.getTransaction().begin();
@@ -613,11 +616,15 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         return employee;
     }
 
-    public static Employee findEmployeeByName(EntityManager em, String name) {
+    public static Employee findByName(EntityManager em, String name) {
+        
+        // NB: This assumes that the name is given as "lastname, firstname"
         String names[] = name.split(",");
+        
         if (names.length == 2) {
             if (!names[1].trim().equals("") && !names[0].trim().equals("")) {
-                return Employee.findEmployeeByName(em,
+                
+                return Employee.findByFirstAndLastName(em,
                         names[1].trim(),
                         names[0].trim());
             } else {
@@ -628,11 +635,11 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    public static Employee findActiveEmployeeByName(EntityManager em, String name) {
+    public static Employee findActiveByName(EntityManager em, String name) {
         String names[] = name.split(",");
         if (names.length == 2) {
             if (!names[1].trim().equals("") && !names[0].trim().equals("")) {
-                return Employee.findActiveEmployeeByName(em,
+                return Employee.findActiveByName(em,
                         names[1].trim(),
                         names[0].trim());
             } else {
@@ -678,7 +685,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         return new ReturnMessage();
     }
 
-    public static String findEmployeeDefaultEmailAdress(Employee employee, EntityManager em) {
+    public static String findDefaultEmailAdress(Employee employee, EntityManager em) {
         String address = "";
 
         if (!employee.getInternet().getEmail1().trim().equals("")) {
@@ -705,10 +712,10 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public static List<String> getDepartmentSupervisorsEmailAddresses(Department department, EntityManager em) {
         List<String> emails = new ArrayList<>();
 
-        emails.add(Employee.findEmployeeDefaultEmailAdress(department.getHead(), em));
+        emails.add(Employee.findDefaultEmailAdress(department.getHead(), em));
 
         if (department.getActingHeadActive()) {
-            emails.add(Employee.findEmployeeDefaultEmailAdress(department.getActingHead(), em));
+            emails.add(Employee.findDefaultEmailAdress(department.getActingHead(), em));
         }
 
         return emails;

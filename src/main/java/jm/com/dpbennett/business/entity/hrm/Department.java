@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -307,7 +308,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     }
 
-    public static List<Department> findDepartmentsByName(EntityManager em, String value) {
+    public static List<Department> findAllByName(EntityManager em, String value) {
 
         try {
 
@@ -323,7 +324,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static List<Department> findActiveDepartmentsByName(EntityManager em, String value) {
+    public static List<Department> findActive(EntityManager em, String value) {
 
         try {
 
@@ -332,6 +333,17 @@ public class Department implements Serializable, BusinessEntity, Comparable {
             List<Department> departments
                     = em.createQuery("SELECT d FROM Department d WHERE UPPER(d.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Department.class).getResultList();
+            
+             // NB: This is used to remove departments with ' in their names. This may not be
+            // needed in the future.
+            Iterator<Department> iterator = departments.iterator();
+            while (iterator.hasNext()) {
+                Department element = iterator.next();
+                if (element.getName().contains("'")) {
+                    iterator.remove();
+                }
+            }            
+            
             return departments;
         } catch (Exception e) {
             System.out.println(e);
@@ -339,7 +351,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static List<Department> findAllActiveDepartments(EntityManager em) {
+    public static List<Department> findAllActive(EntityManager em) {
 
         try {
             return em.createQuery("SELECT d FROM Department d WHERE d.active = 1 ORDER BY d.name", Department.class).getResultList();
@@ -349,7 +361,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static Department findDepartmentByName(EntityManager em, String value) {
+    public static Department findByName(EntityManager em, String value) {
 
         try {
 
@@ -368,7 +380,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static Department findActiveDepartmentByName(EntityManager em, String value) {
+    public static Department findActiveByName(EntityManager em, String value) {
 
         try {
 
@@ -385,7 +397,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static Department findDepartmentById(EntityManager em, Long Id) {
+    public static Department findById(EntityManager em, Long Id) {
         if (Id != null) {
             return em.find(Department.class, Id);
         } else {
@@ -393,7 +405,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static List<String> findAllDepartmentNames(EntityManager em) {
+    public static List<String> findAllNames(EntityManager em) {
 
         ArrayList<String> names = new ArrayList<>();
 
@@ -410,7 +422,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static List<Department> findAllDepartments(EntityManager em) {
+    public static List<Department> find(EntityManager em) {
 
         try {
             return em.createNamedQuery("findAllDepartments", Department.class).getResultList();
@@ -419,7 +431,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static Department findDepartmentBySubGroupCode(EntityManager em, String subGroupCode) {
+    public static Department findBySubGroupCode(EntityManager em, String subGroupCode) {
 
         try {
 
@@ -438,9 +450,9 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         return Collator.getInstance().compare(this.getName(), ((Department) o).getName());
     }
 
-    public static Department findDefaultDepartment(EntityManager em,
+    public static Department findDefault(EntityManager em,
             String name) {
-        Department department = Department.findDepartmentByName(em, name);
+        Department department = Department.findByName(em, name);
 
         if (department == null) {
             department = new Department(name);
@@ -494,11 +506,11 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         setName(name);
     }
 
-    public static Department findDepartmentBySystemOptionDeptId(String option, EntityManager em) {
+    public static Department findBySystemOptionDeptId(String option, EntityManager em) {
 
         Long id = (Long) SystemOption.getOptionValueObject(em, option);
 
-        Department department = Department.findDepartmentById(em, id);
+        Department department = Department.findById(em, id);
         em.refresh(department);
 
         if (department != null) {
@@ -508,21 +520,21 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static Department findDepartmentAssignedToJob(Job job, EntityManager em) {
+    public static Department findAssignedToJob(Job job, EntityManager em) {
 
         Department dept;
 
         if (job.getSubContractedDepartment().getName().equals("--")
                 || job.getSubContractedDepartment().getName().equals("")) {
             // This is not a subcontracted job see return to parent department            
-            dept = Department.findDepartmentByName(em, job.getDepartment().getName());
+            dept = Department.findByName(em, job.getDepartment().getName());
             if (dept != null) {
                 em.refresh(dept);
             }
 
             return dept;
         } else {
-            dept = Department.findDepartmentByName(em, job.getSubContractedDepartment().getName());
+            dept = Department.findByName(em, job.getSubContractedDepartment().getName());
             em.refresh(dept);
 
             return dept;

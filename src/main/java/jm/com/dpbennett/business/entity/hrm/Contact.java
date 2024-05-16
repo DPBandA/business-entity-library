@@ -451,7 +451,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
             String lastname = contacts[0];
             String firstname = contacts[1];
 
-            Client client = Client.findClientById(em, clientId);
+            Client client = Client.findById(em, clientId);
 
             if (client != null) {
                 for (Contact contact : client.getContacts()) {
@@ -498,7 +498,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
         try {
 
-            Client client = Client.findClientById(em, clientId);
+            Client client = Client.findById(em, clientId);
 
             if (client != null) {
                 for (Contact contact : client.getContacts()) {

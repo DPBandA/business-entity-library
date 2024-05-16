@@ -237,8 +237,8 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
 
         PurchaseRequisition selectedPurchaseRequisition = new PurchaseRequisition();
-        selectedPurchaseRequisition.setPurchasingDepartment(Department.findDefaultDepartment(em, "--"));
-        selectedPurchaseRequisition.setProcurementOfficer(Employee.findDefaultEmployee(em,
+        selectedPurchaseRequisition.setPurchasingDepartment(Department.findDefault(em, "--"));
+        selectedPurchaseRequisition.setProcurementOfficer(Employee.findDefault(em,
                 "--", "--", false));
         selectedPurchaseRequisition.
                 setOriginatingDepartment(user.getEmployee().getDepartment());

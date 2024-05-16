@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -496,7 +496,7 @@ public class Job implements BusinessEntity {
         copy.setBillingAddress(job.getBillingAddress());
         copy.setContact(job.getContact());
         copy.setDepartment(job.getDepartment());
-        copy.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
+        copy.setSubContractedDepartment(Department.findDefault(em, "--"));
         copy.setAssignedTo(job.getAssignedTo());
         copy.setRepresentatives(job.getRepresentatives());
         copy.setEstimatedTurnAroundTimeInDays(job.getEstimatedTurnAroundTimeInDays());
@@ -566,7 +566,7 @@ public class Job implements BusinessEntity {
         job.setContact(job.getClient().getDefaultContact());
         job.setReportNumber("");
         job.setJobDescription("");
-        job.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
+        job.setSubContractedDepartment(Department.findDefault(em, "--"));
         job.setBusiness(User.getUserOrganizationByDepartment(em, user));
         job.setBusinessOffice(BusinessOffice.findDefaultBusinessOffice(em, "Head Office"));
         job.setClassification(new Classification());
@@ -1043,6 +1043,7 @@ public class Job implements BusinessEntity {
         if (client == null) {
             return new Client("");
         }
+        
         return client;
     }
 
@@ -2122,7 +2123,7 @@ public class Job implements BusinessEntity {
         }
 
         // Department        
-        Department dept = Department.findDepartmentByName(em, currentJob.getDepartment().getName());
+        Department dept = Department.findByName(em, currentJob.getDepartment().getName());
         if (dept == null) {
             return new ReturnMessage(false, "This job cannot be saved because a valid department was not entered.");
         } else {
@@ -2130,9 +2131,9 @@ public class Job implements BusinessEntity {
             currentJob.setDepartment(dept);
         }
         // Subcontracted department   
-        Department subContractedDept = Department.findDepartmentByName(em, currentJob.getSubContractedDepartment().getName());
+        Department subContractedDept = Department.findByName(em, currentJob.getSubContractedDepartment().getName());
         if (subContractedDept == null) {
-            currentJob.setSubContractedDepartment(Department.findDefaultDepartment(em, "--"));
+            currentJob.setSubContractedDepartment(Department.findDefault(em, "--"));
         }
 
         // Check for valid subcontracted department
@@ -2160,17 +2161,20 @@ public class Job implements BusinessEntity {
         }
 
         // Assignee       
-        Employee assignee = Employee.findEmployeeByName(em, currentJob.getAssignedTo().getName());
+        Employee assignee = Employee.findByName(em, currentJob.getAssignedTo().getName());
         if (assignee != null) {
             if (assignee.getName().equals("--, --")
                     || assignee.getFirstName().trim().equals("")
                     || assignee.getLastName().trim().equals("")) {
+                
                 return new ReturnMessage(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
             }
+            
             em.refresh(assignee);
+            
             currentJob.setAssignedTo(assignee);
         } else {
-            currentJob.setAssignedTo(Employee.findDefaultEmployee(em, "--", "--", true));
+            currentJob.setAssignedTo(Employee.findDefault(em, "--", "--", true));
 
             return new ReturnMessage(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
         }

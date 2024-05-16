@@ -26,6 +26,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -742,12 +743,12 @@ public class Client implements ClientInterface {
         this.type = type;
     }
 
-    public static List<Client> findClientsByTRN(EntityManager em, String value) {
+    public static List<Client> findByTRN(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "`");
-            
+
             List<Client> clients;
             clients = em.createQuery("SELECT c FROM Client c where UPPER(c.taxRegistrationNumber) like '"
                     + value.toUpperCase() + "%' ORDER BY c.taxRegistrationNumber", Client.class).getResultList();
@@ -758,12 +759,12 @@ public class Client implements ClientInterface {
         }
     }
 
-    public static List<String> findActiveClientNames(EntityManager em, String value) {
+    public static List<String> findActiveNames(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "`");
-           
+
             List<String> names
                     = em.createQuery("SELECT c FROM Client c WHERE UPPER(c.name) like '"
                             + value.toUpperCase() + "%'"
@@ -776,35 +777,28 @@ public class Client implements ClientInterface {
         }
     }
 
-    public static List<Client> findActiveClientsByFirstPartOfName(EntityManager em, String value) {
+    public static List<Client> findActive(EntityManager em, String value) {
 
         try {
-            
-            value = value.replaceAll("'", "`");
-           
-            List<Client> clients
-                    = em.createQuery("SELECT c FROM Client c WHERE c.name like '"
-                            + value + "%'"
-                            + " AND c.active = 1"
-                            + " ORDER BY c.id", Client.class).getResultList();
-            return clients;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
-    public static List<Client> findActiveClientsByAnyPartOfName(EntityManager em, String value) {
-
-        try {
-            
             value = value.replaceAll("'", "`");
-           
+
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
                             + value + "%'"
                             + " AND c.active = 1"
                             + " ORDER BY c.id", Client.class).setMaxResults(10).getResultList();
+
+            // NB: This is used to remove clients with ' in their names. This may not be
+            // needed in the future.
+            Iterator<Client> iterator = clients.iterator();
+            while (iterator.hasNext()) {
+                Client element = iterator.next();
+                if (element.getName().contains("'")) {
+                    iterator.remove();
+                }
+            }
+
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -812,12 +806,12 @@ public class Client implements ClientInterface {
         }
     }
 
-    public static List<Client> findClientsByAnyPartOfName(EntityManager em, String value) {
+    public static List<Client> find(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "`");
-            
+
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
                             + value + "%'"
@@ -829,12 +823,12 @@ public class Client implements ClientInterface {
         }
     }
 
-    public static List<String> findClientNames(EntityManager em, String value) {
+    public static List<String> findNames(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "`");
-           
+
             List<String> names
                     = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
                             + value.toUpperCase()
@@ -846,43 +840,43 @@ public class Client implements ClientInterface {
         }
     }
 
-    public static List<Client> findClientsByFirstPartOfName(EntityManager em, String value) {
-
-        try {
-            
-            value = value.replaceAll("'", "`");
-           
-            List<Client> clients
-                    = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
-                            + value.toUpperCase()
-                            + "%' ORDER BY c.name", Client.class).getResultList();
-            return clients;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
+//    public static List<Client> findClientsByFirstPartOfName(EntityManager em, String value) {
+//
+//        try {
+//
+//            value = value.replaceAll("'", "`");
+//
+//            List<Client> clients
+//                    = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
+//                            + value.toUpperCase()
+//                            + "%' ORDER BY c.name", Client.class).getResultList();
+//            return clients;
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            return new ArrayList<>();
+//        }
+//    }
 
     // is in client manager. remove later
-    public static List<Client> getAllClients(EntityManager em) {
+//    public static List<Client> getAllClients(EntityManager em) {
+//
+//        try {
+//            List<Client> clients = em.createNamedQuery("findAllClients", Client.class).getResultList();
+//            return clients;
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            return null;
+//        }
+//    }
 
-        try {
-            List<Client> clients = em.createNamedQuery("findAllClients", Client.class).getResultList();
-            return clients;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Client findClientByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static Client findByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Client> clients;
 
         try {
-            
+
             value = value.replaceAll("'", "`");
-            
+
             if (ignoreCase) {
                 clients = em.createQuery("SELECT c FROM Client c "
                         + "WHERE UPPER(c.name) "
@@ -903,7 +897,7 @@ public class Client implements ClientInterface {
         }
     }
 
-    public static Client findClientById(EntityManager em, Long id) {
+    public static Client findById(EntityManager em, Long id) {
 
         try {
             Client client = em.find(Client.class, id);
@@ -916,12 +910,12 @@ public class Client implements ClientInterface {
         }
     }
 
-    public static Client findActiveClientByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static Client findActiveByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Client> clients;
 
         try {
-                      
+
             if (ignoreCase) {
                 clients = em.createQuery("SELECT c FROM Client c "
                         + "WHERE UPPER(c.name) "
@@ -956,18 +950,18 @@ public class Client implements ClientInterface {
         }
     }
 
-    public static Client findActiveDefaultClient(
+    public static Client findActiveDefault(
             EntityManager em,
             String name,
             Boolean useTransaction) {
-        
-        Client client = findActiveClientByName(em, name, false);
+
+        Client client = findActiveByName(em, name, false);
 
         if (client == null) {
             client = new Client(name);
             client.setActive(true);
             client.setInternet(Internet.findDefaultInternet(em, "--", useTransaction));
-            client.setEnteredBy(Employee.findDefaultEmployee(em, "--", "--", useTransaction));
+            client.setEnteredBy(Employee.findDefault(em, "--", "--", useTransaction));
 
             if (useTransaction) {
                 em.getTransaction().begin();
@@ -981,12 +975,12 @@ public class Client implements ClientInterface {
         return client;
     }
 
-    public static List<Client> findClientsBySearchPattern(EntityManager em, String searchPattern) {
+    public static List<Client> findBySearchPattern(EntityManager em, String searchPattern) {
 
         try {
-            
+
             searchPattern = searchPattern.replaceAll("'", "`");
-            
+
             List<Client> clients = em.createQuery("SELECT c FROM Client c "
                     + "WHERE UPPER(c.name) "
                     + "LIKE '" + searchPattern.toUpperCase() + "%' "

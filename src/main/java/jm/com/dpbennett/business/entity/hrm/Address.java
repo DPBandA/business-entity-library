@@ -428,7 +428,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
             String city = address[2];
             String stateOrProvince = address[3];
 
-            Client client = Client.findClientById(em, clientId);
+            Client client = Client.findById(em, clientId);
 
             if (client != null) {
                 for (Address addr : client.getAddresses()) {

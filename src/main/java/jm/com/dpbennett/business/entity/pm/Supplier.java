@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -27,6 +27,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -547,7 +548,7 @@ public class Supplier implements BusinessEntity, Comparable {
         this.type = type;
     }
 
-    public static List<Supplier> findSuppliersByIdentification(EntityManager em, String value) {
+    public static List<Supplier> findByIdentification(EntityManager em, String value) {
 
         try {
 
@@ -563,7 +564,7 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static List<String> findActiveSupplierNames(EntityManager em, String value) {
+    public static List<String> findActiveNames(EntityManager em, String value) {
 
         try {
 
@@ -581,35 +582,28 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static List<Supplier> findActiveSuppliersByFirstPartOfName(EntityManager em, String value) {
+    public static List<Supplier> findActive(EntityManager em, String query) {
 
         try {
 
-            value = value.replaceAll("'", "`");
-
-            List<Supplier> suppliers
-                    = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '"
-                            + value + "%'"
-                            + " AND s.active = 1"
-                            + " ORDER BY s.id", Supplier.class).getResultList();
-            return suppliers;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Supplier> findActiveSuppliersByAnyPartOfName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("'", "`");
+            query = query.replaceAll("'", "`");
 
             List<Supplier> suppliers
                     = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
-                            + value + "%'"
+                            + query + "%'"
                             + " AND s.active = 1"
                             + " ORDER BY s.id", Supplier.class).getResultList();
+            
+            // NB: This is used to remove supplier with ' in their names. This may not be
+            // needed in the future.
+            Iterator<Supplier> iterator = suppliers.iterator();
+            while (iterator.hasNext()) {
+                Supplier element = iterator.next();
+                if (element.getName().contains("'")) {
+                    iterator.remove();
+                }
+            }
+            
             return suppliers;
         } catch (Exception e) {
             System.out.println(e);
@@ -617,24 +611,26 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static List<Supplier> findSuppliersByAnyPartOfName(EntityManager em, String value) {
+    public static List<Supplier> find(EntityManager em, String query) {
 
         try {
 
-            value = value.replaceAll("'", "`");
+            query = query.replaceAll("'", "`");
 
             List<Supplier> suppliers
                     = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
-                            + value + "%'"
+                            + query + "%'"
                             + " ORDER BY s.id", Supplier.class).getResultList();
+            
             return suppliers;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
 
-    public static List<String> findSupplierNames(EntityManager em, String value) {
+    public static List<String> findNames(EntityManager em, String value) {
 
         try {
 
@@ -645,23 +641,6 @@ public class Supplier implements BusinessEntity, Comparable {
                             + value.toUpperCase()
                             + "%' ORDER BY s.name", String.class).getResultList();
             return names;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Supplier> findSuppliersByFirstPartOfName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("'", "`");
-
-            List<Supplier> suppliers
-                    = em.createQuery("SELECT s FROM Supplier s where UPPER(s.name) like '"
-                            + value.toUpperCase()
-                            + "%' ORDER BY s.name", Supplier.class).getResultList();
-            return suppliers;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -679,7 +658,7 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static Supplier findSupplierByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static Supplier findByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Supplier> suppliers;
 
@@ -707,7 +686,7 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static Supplier findSupplierById(EntityManager em, Long id) {
+    public static Supplier findById(EntityManager em, Long id) {
 
         try {
             return em.find(Supplier.class, id);
@@ -718,7 +697,7 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static Supplier findActiveSupplierByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static Supplier findActiveByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Supplier> suppliers;
 
@@ -746,18 +725,18 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static Supplier findActiveDefaultSupplier(
+    public static Supplier findActiveDefault(
             EntityManager em,
             String name,
             Boolean useTransaction) {
 
-        Supplier supplier = findActiveSupplierByName(em, name, false);
+        Supplier supplier = findActiveByName(em, name, false);
 
         if (supplier == null) {
             supplier = new Supplier(name);
             supplier.setActive(true);
             supplier.setInternet(Internet.findDefaultInternet(em, "--", useTransaction));
-            supplier.setEnteredBy(Employee.findDefaultEmployee(em, "--", "--", useTransaction));
+            supplier.setEnteredBy(Employee.findDefault(em, "--", "--", useTransaction));
 
             if (useTransaction) {
                 em.getTransaction().begin();
@@ -771,7 +750,7 @@ public class Supplier implements BusinessEntity, Comparable {
         return supplier;
     }
 
-    public static List<Supplier> findSuppliersBySearchPattern(EntityManager em, String searchPattern) {
+    public static List<Supplier> findBySearchPattern(EntityManager em, String searchPattern) {
 
         try {
 

@@ -326,11 +326,11 @@ public class User implements BusinessEntity {
 
         Job foundJob = Job.findJobById(em, job.getId());
 
-        if (Department.findDepartmentAssignedToJob(foundJob, em).getHead().getId().longValue() == user.getEmployee().getId().longValue()) {
+        if (Department.findAssignedToJob(foundJob, em).getHead().getId().longValue() == user.getEmployee().getId().longValue()) {
             return true;
         } else {
-            return (Department.findDepartmentAssignedToJob(foundJob, em).getActingHead().getId().longValue() == user.getEmployee().getId().longValue())
-                    && Department.findDepartmentAssignedToJob(foundJob, em).getActingHeadActive();
+            return (Department.findAssignedToJob(foundJob, em).getActingHead().getId().longValue() == user.getEmployee().getId().longValue())
+                    && Department.findAssignedToJob(foundJob, em).getActingHeadActive();
         }
     }
 
@@ -690,11 +690,11 @@ public class User implements BusinessEntity {
 
         Job foundJob = Job.findJobById(em, job.getId());
 
-        if (Department.findDepartmentAssignedToJob(foundJob, em).getHead().getId().longValue() == this.getEmployee().getId().longValue()) {
+        if (Department.findAssignedToJob(foundJob, em).getHead().getId().longValue() == this.getEmployee().getId().longValue()) {
             return true;
         } else {
-            return (Department.findDepartmentAssignedToJob(foundJob, em).getActingHead().getId().longValue() == this.getEmployee().getId().longValue())
-                    && Department.findDepartmentAssignedToJob(foundJob, em).getActingHeadActive();
+            return (Department.findAssignedToJob(foundJob, em).getActingHead().getId().longValue() == this.getEmployee().getId().longValue())
+                    && Department.findAssignedToJob(foundJob, em).getActingHeadActive();
         }
     }
 
