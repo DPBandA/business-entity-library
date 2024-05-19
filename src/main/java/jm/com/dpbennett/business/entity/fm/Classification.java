@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -320,7 +320,7 @@ public class Classification implements BusinessEntity, Serializable {
             return new ArrayList<>();
         }
     }
-
+    
     public static List<Classification> findActiveClassificationsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
@@ -328,6 +328,20 @@ public class Classification implements BusinessEntity, Serializable {
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
                             + value.toUpperCase().trim() + "%' AND c.active = 1 AND c.category = '" + category + "' ORDER BY c.name", Classification.class).getResultList();
+            return classifications;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<Classification> findActiveClassificationsByCategory(EntityManager em, String category) {
+
+        try {
+           
+            List<Classification> classifications
+                    = em.createQuery("SELECT c FROM Classification c WHERE "
+                            +  "c.active = 1 AND c.category = '" + category + "' ORDER BY c.name", Classification.class).getResultList();
             return classifications;
         } catch (Exception e) {
             System.out.println(e);

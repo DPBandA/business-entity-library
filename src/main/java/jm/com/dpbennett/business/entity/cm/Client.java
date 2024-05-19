@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -786,8 +787,42 @@ public class Client implements ClientInterface {
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
                             + value + "%'"
+                            + " AND c.active = 1" // tk set max results should be system option
+                            + " ORDER BY c.name", Client.class).getResultList();
+
+            // NB: This is used to remove clients with ' in their names. This may not be
+            // needed in the future.
+            Iterator<Client> iterator = clients.iterator();
+            while (iterator.hasNext()) {
+                Client element = iterator.next();
+                if (element.getName().contains("'")) {
+                    iterator.remove();
+                }
+            }
+
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Client> findActive(
+            EntityManager em,
+            int firstResult,
+            int maxResults,
+            String query) {
+
+        try {
+
+            query = query.replaceAll("'", "`");
+
+            List<Client> clients
+                    = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
+                            + query + "%'"
                             + " AND c.active = 1"
-                            + " ORDER BY c.id", Client.class).setMaxResults(10).getResultList();
+                            + " ORDER BY c.name", Client.class).setFirstResult(firstResult).
+                            setMaxResults(maxResults).getResultList();
 
             // NB: This is used to remove clients with ' in their names. This may not be
             // needed in the future.
@@ -815,7 +850,7 @@ public class Client implements ClientInterface {
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
                             + value + "%'"
-                            + " ORDER BY c.id", Client.class).getResultList();
+                            + " ORDER BY c.name", Client.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -856,7 +891,6 @@ public class Client implements ClientInterface {
 //            return new ArrayList<>();
 //        }
 //    }
-
     // is in client manager. remove later
 //    public static List<Client> getAllClients(EntityManager em) {
 //
@@ -868,7 +902,6 @@ public class Client implements ClientInterface {
 //            return null;
 //        }
 //    }
-
     public static Client findByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Client> clients;

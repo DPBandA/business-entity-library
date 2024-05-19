@@ -46,7 +46,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "businessoffice")
 @NamedQueries({
-    @NamedQuery(name = "findAllBusinessOffices", query = "SELECT e FROM BusinessOffice e ORDER BY e.name")
+    @NamedQuery(name = "findAllBusinessOffices", query = "SELECT b FROM BusinessOffice b ORDER BY b.name"),
+    @NamedQuery(name = "findAllActiveBusinessOffices", query = "SELECT b FROM BusinessOffice b WHERE b.active = 1 ORDER BY b.name")
 })
 public class BusinessOffice implements Serializable, BusinessEntity {
 
@@ -196,7 +197,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
             return false;
         }
         BusinessOffice other = (BusinessOffice) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -212,7 +213,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     public static List<BusinessOffice> findBusinessOfficesByName(EntityManager em, String value) {
 
         try {
-            
+
             List<BusinessOffice> businessOffices
                     = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '"
                             + value.toUpperCase().trim() + "%' ORDER BY b.name", BusinessOffice.class).getResultList();
@@ -226,7 +227,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     public static List<BusinessOffice> findActiveBusinessOfficesByName(EntityManager em, String value) {
 
         try {
-            
+
             List<BusinessOffice> businessOffices
                     = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '"
                             + value.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", BusinessOffice.class).getResultList();
@@ -241,6 +242,20 @@ public class BusinessOffice implements Serializable, BusinessEntity {
 
         try {
             List<BusinessOffice> offices = em.createNamedQuery("findAllBusinessOffices", BusinessOffice.class).getResultList();
+
+            return offices;
+        } catch (Exception e) {
+
+            return null;
+        }
+
+    }
+
+    public static List<BusinessOffice> findAllActiveBusinessOffices(EntityManager em) {
+
+        try {
+            List<BusinessOffice> offices = em.createNamedQuery("findAllActiveBusinessOffices",
+                    BusinessOffice.class).getResultList();
 
             return offices;
         } catch (Exception e) {
@@ -271,7 +286,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     public static BusinessOffice findBusinessOfficeByName(EntityManager em, String value) {
 
         try {
-            
+
             List<BusinessOffice> offices = em.createQuery("SELECT b FROM BusinessOffice b "
                     + "WHERE UPPER(b.name) "
                     + "= '" + value.toUpperCase() + "'", BusinessOffice.class).getResultList();
