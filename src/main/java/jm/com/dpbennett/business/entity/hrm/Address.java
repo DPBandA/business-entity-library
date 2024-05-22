@@ -560,7 +560,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     public static Boolean validate(Address address) {
 
         if (address != null) {
-            if (!BusinessEntityUtils.validateName(address.getAddressLine1().trim())) {
+            if (!BusinessEntityUtils.validateText(address.getAddressLine1().trim())) {
                 return false;
             }
         } else {
