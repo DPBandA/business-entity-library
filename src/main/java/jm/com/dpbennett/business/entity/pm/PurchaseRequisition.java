@@ -218,6 +218,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
     private String procurementMethod;
+    private Double currencyExchangeRate;
 
     /**
      * Default constructor.
@@ -228,6 +229,19 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         attachments = new ArrayList<>();
         actions = new ArrayList<>();
         description = "";
+    }
+
+    public Double getCurrencyExchangeRate() {
+
+        if (currencyExchangeRate == null) {
+            currencyExchangeRate = 1.0;
+        }
+
+        return currencyExchangeRate;
+    }
+
+    public void setCurrencyExchangeRate(Double currencyExchangeRate) {
+        this.currencyExchangeRate = currencyExchangeRate;
     }
 
     public static PurchaseRequisition create(EntityManager em, User user) {
@@ -1017,7 +1031,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         }
 
         return approversAndRecommendersList;
-       
+
     }
 
     public ArrayList<ApproverOrRecommender> getApproversAndRecommenders() {

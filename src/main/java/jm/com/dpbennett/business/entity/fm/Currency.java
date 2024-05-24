@@ -153,6 +153,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
             if (!currencies.isEmpty()) {
                 return currencies.get(0);
             }
+            
             return null;
         } catch (Exception e) {
             System.out.println(e);
