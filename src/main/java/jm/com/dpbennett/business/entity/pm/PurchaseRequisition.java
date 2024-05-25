@@ -242,7 +242,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public void setCurrencyExchangeRate(Double currencyExchangeRate) {
         this.currencyExchangeRate = currencyExchangeRate;
-        
+
         for (CostComponent costComponent : costComponents) {
             costComponent.setCurrencyExchangeRate(currencyExchangeRate);
             costComponent.setIsDirty(true);
@@ -840,6 +840,17 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
         return total;
     }
+    
+    
+    public Double getConvertedTotalCostComponentCosts() {
+        Double total = 0.0;
+
+        for (CostComponent component : costComponents) {
+            total = total + component.getConvertedCost();
+        }
+
+        return total;
+    }
 
     private Double getTotalCostWithDiscount() {
         Double totalCostWithDiscount;
@@ -854,9 +865,27 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         return totalCostWithDiscount;
     }
 
+    private Double getConvertedTotalCostWithDiscount() {
+        Double convertedTotalCostWithDiscount;
+
+        if (getDiscount().getDiscountValueType().equals("Percentage")) {
+            convertedTotalCostWithDiscount = getConvertedTotalCostComponentCosts()
+                    - getConvertedTotalCostComponentCosts() * getDiscount().getValue();
+        } else {
+            convertedTotalCostWithDiscount = getConvertedTotalCostComponentCosts() - getDiscount().getValue();
+        }
+
+        return convertedTotalCostWithDiscount;
+    }
+
     public Double getTotalCost() {
 
         return getTotalCostWithDiscount() + getTotalTax();
+    }
+    
+     public Double getConvertedTotalCost() {
+
+        return getConvertedTotalCostWithDiscount() + getTotalTax();
     }
 
     /**

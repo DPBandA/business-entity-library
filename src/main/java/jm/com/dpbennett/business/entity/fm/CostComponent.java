@@ -153,6 +153,16 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         description = "";
         unit = "";
     }
+    
+    public Double getConvertedRate() {
+        
+        return getRate() * getCurrencyExchangeRate();
+    }
+    
+    public Double getConvertedCost() {
+        
+        return getCost() * getCurrencyExchangeRate();
+    }
 
     public Double getCurrencyExchangeRate() {
 
@@ -395,7 +405,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
             cost = getRate() * getHoursOrQuantity();
         }
 
-        return cost * getCurrencyExchangeRate();
+        return cost;
     }
 
     public void setCost(Double cost) {
@@ -431,7 +441,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
             rate = 0.0;
         }
         
-        return rate * getCurrencyExchangeRate();
+        return rate;
     }
 
     public void setRate(Double rate) {
