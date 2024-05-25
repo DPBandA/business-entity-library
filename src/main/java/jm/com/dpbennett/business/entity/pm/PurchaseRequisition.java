@@ -854,6 +854,11 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         return getTotalCostWithDiscount() + getTotalTax();
     }
 
+    public Double getTotalCostExchangeRated() {
+       
+       return getTotalCostComponentCosts() * getCurrencyExchangeRate();
+    }
+
     /**
      * Builds and return a list of cost components with the costing to which the
      * cost component used as a header cost component belong
