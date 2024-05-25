@@ -242,6 +242,11 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public void setCurrencyExchangeRate(Double currencyExchangeRate) {
         this.currencyExchangeRate = currencyExchangeRate;
+        
+        for (CostComponent costComponent : costComponents) {
+            costComponent.setCurrencyExchangeRate(currencyExchangeRate);
+            costComponent.setIsDirty(true);
+        }
     }
 
     public static PurchaseRequisition create(EntityManager em, User user) {
@@ -852,11 +857,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public Double getTotalCost() {
 
         return getTotalCostWithDiscount() + getTotalTax();
-    }
-
-    public Double getTotalCostExchangeRated() {
-       
-       return getTotalCostComponentCosts() * getCurrencyExchangeRate();
     }
 
     /**
@@ -1542,7 +1542,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
                 }
             }
 
-            // Save new attachements
+            // Save new attachments
             if (!getAttachments().isEmpty()) {
                 for (Attachment attachment : getAttachments()) {
                     if ((attachment.getId() == null || attachment.getIsDirty())

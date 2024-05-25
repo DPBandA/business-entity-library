@@ -81,6 +81,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private Currency currency;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date costDate;
+    private Double currencyExchangeRate;
 
     public CostComponent() {
         name = "";
@@ -151,6 +152,19 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         rate = 0.0;
         description = "";
         unit = "";
+    }
+
+    public Double getCurrencyExchangeRate() {
+
+        if (currencyExchangeRate == null) {
+            currencyExchangeRate = 1.0;
+        }
+
+        return currencyExchangeRate;
+    }
+
+    public void setCurrencyExchangeRate(Double currencyExchangeRate) {
+        this.currencyExchangeRate = currencyExchangeRate;
     }
 
     public Long getOwnerId() {
@@ -381,7 +395,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
             cost = getRate() * getHoursOrQuantity();
         }
 
-        return cost;
+        return cost * getCurrencyExchangeRate();
     }
 
     public void setCost(Double cost) {
@@ -416,7 +430,8 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         if (rate == null) {
             rate = 0.0;
         }
-        return rate;
+        
+        return rate * getCurrencyExchangeRate();
     }
 
     public void setRate(Double rate) {
