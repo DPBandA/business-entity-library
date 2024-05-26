@@ -245,6 +245,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
         for (CostComponent costComponent : costComponents) {
             costComponent.setCurrencyExchangeRate(currencyExchangeRate);
+            costComponent.setCurrency(currency);
             costComponent.setIsDirty(true);
         }
     }
