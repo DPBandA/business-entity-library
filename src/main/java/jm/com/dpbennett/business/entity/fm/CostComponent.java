@@ -67,7 +67,9 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private Double hours;
     private Double hoursOrQuantity;
     private Double rate;
+    private Double convertedRate;
     private Double cost;
+    private Double convertedCost;
     private String comments;
     private Boolean isHeading;
     private Boolean isFixedCost;
@@ -88,7 +90,10 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         code = "";
         type = "Fixed";
         category = "";
+        rate = 1.0;
+        convertedRate = 1.0;
         cost = 0.0;
+        convertedCost = 0.0;
         comments = "";
         isHeading = false;
         isFixedCost = true;
@@ -106,7 +111,10 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         code = "";
         type = "Fixed";
         category = "";
+        rate = 1.0;
+        convertedRate = 1.0;
         cost = 0.0;
+        convertedCost = 0.0;
         comments = "";
         isHeading = false;
         isFixedCost = true;
@@ -121,7 +129,10 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         code = "";
         type = "Fixed";
         category = "";
+        rate = 1.0;
+        convertedRate = 1.0;
         cost = 0.0;
+        convertedCost = 0.0;
         comments = "";
         isHeading = false;
         isFixedCost = true;
@@ -133,7 +144,10 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     public CostComponent(String name, Boolean isHeading) {
         this.isHeading = isHeading;
         this.name = name;
+        rate = 1.0;
+        convertedRate = 1.0;
         cost = 0.0;
+        convertedCost = 0.0;
         type = "Fixed";
         isFixedCost = false;
         isEditable = true;
@@ -149,19 +163,25 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         type = "Fixed";
         hours = 0.0;
         hoursOrQuantity = 0.0;
-        rate = 0.0;
+        rate = 1.0;
+        convertedRate = 0.0;
+        convertedCost = cost;
         description = "";
         unit = "";
     }
-    
+
     public Double getConvertedRate() {
-        
-        return getRate() * getCurrencyExchangeRate();
+
+        convertedRate = getRate() * getCurrencyExchangeRate();
+
+        return convertedRate;
     }
-    
+
     public Double getConvertedCost() {
-        
-        return getCost() * getCurrencyExchangeRate();
+
+        convertedCost = getCost() * getCurrencyExchangeRate();
+
+        return convertedCost;
     }
 
     public Double getCurrencyExchangeRate() {
@@ -300,7 +320,9 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.hours = src.hours;
         this.hoursOrQuantity = src.hoursOrQuantity;
         this.rate = src.rate;
+        this.convertedRate = src.convertedRate;
         this.cost = src.cost;
+        this.convertedCost = src.convertedCost;
         this.comments = src.comments;
         this.isHeading = src.isHeading;
         this.isFixedCost = src.isFixedCost;
@@ -440,7 +462,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         if (rate == null) {
             rate = 0.0;
         }
-        
+
         return rate;
     }
 

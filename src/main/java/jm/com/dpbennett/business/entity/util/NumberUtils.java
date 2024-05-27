@@ -25,12 +25,12 @@ import java.text.ParseException;
 /**
  * This encapsulates various utilities for dealing with numbers.
  *
- * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
+ * @author Desmond Bennett <info@dpbennett.com.jm at https//dpbennett.com.jm>
  */
 public class NumberUtils {
     
     public static String formatAsCurrency(Double number, String symbol) {
-        DecimalFormat formatter = new DecimalFormat("#,##0.00");
+        DecimalFormat formatter = new DecimalFormat("#,###.##;(#,###.##)");
 
         try {
 
