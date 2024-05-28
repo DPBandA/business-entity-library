@@ -99,7 +99,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     // DIVISIONAL DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver3;
-    // FINANCE MANAGER
+    // FINANCE DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver4;
     // EXECUTIVE DIRECTOR
@@ -116,7 +116,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     // DIVISIONAL DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender3;
-    // FINANCE MANAGER
+    // FINANCE DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender4;
     // EXECUTIVE DIRECTOR
