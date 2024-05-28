@@ -1047,7 +1047,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         int index = 0;
         String approversAndRecommendersList = "";
 
-        for (ApproverOrRecommender approverOrRecommender : approversAndRecommenders) {
+        for (ApproverOrRecommender approverOrRecommender : getApproversAndRecommenders()) {
 
             if (index == 0) {
                 approversAndRecommendersList = approverOrRecommender.getFirstName()
