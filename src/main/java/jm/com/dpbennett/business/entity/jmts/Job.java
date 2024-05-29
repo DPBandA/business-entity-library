@@ -183,18 +183,38 @@ public class Job implements BusinessEntity {
         this.jobSamples = new ArrayList<>();
         this.actions = new ArrayList<>();
     }
-    
-    public String getJobNumberLabel () {
-        switch(getType()) {
+
+    public Employee getRepresentative() {
+
+        if (!getRepresentatives().isEmpty()) {
+            return getRepresentatives().get(0);
+        } else {
+            
+            getRepresentatives().add(0, new Employee());
+            
+            return getRepresentatives().get(0);
+        }
+    }
+
+    public void setRepresentative(Employee employee) {
+
+        if (!getRepresentatives().isEmpty()) {
+            getRepresentatives().set(0, employee);
+        }
+        
+    }
+
+    public String getJobNumberLabel() {
+        switch (getType()) {
             case "Proforma Invoice":
                 return "Proforma #";
             default:
                 return "Job number";
         }
     }
-    
-    public String getCostingAndPaymentTabLabel () {
-        switch(getType()) {
+
+    public String getCostingAndPaymentTabLabel() {
+        switch (getType()) {
             case "Proforma Invoice":
                 return "Costing";
             default:
@@ -207,7 +227,7 @@ public class Job implements BusinessEntity {
         if (type == null) {
             type = "Job";
         }
-        
+
         return type;
     }
 
@@ -1043,7 +1063,7 @@ public class Job implements BusinessEntity {
         if (client == null) {
             return new Client("");
         }
-        
+
         return client;
     }
 
@@ -1464,7 +1484,7 @@ public class Job implements BusinessEntity {
                         + " ORDER BY job.id DESC";
                 break;
             case "My department's jobs":
-            case "My dept's proforma invoices":    
+            case "My dept's proforma invoices":
                 searchTextAndClause
                         = " AND ("
                         + mainSearchWhereClause
@@ -1622,7 +1642,7 @@ public class Job implements BusinessEntity {
     public static Job findJobByJobNumber(EntityManager em, String jobNumber) {
 
         try {
-           
+
             List<Job> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE UPPER(j.jobNumber) "
                     + "= '" + jobNumber.toUpperCase() + "'", Job.class).getResultList();
@@ -1764,7 +1784,7 @@ public class Job implements BusinessEntity {
             EntityManager em, String query, int maxResults) {
 
         try {
-           
+
             List<Job> numbers
                     = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) LIKE '%"
                             + query.toUpperCase().trim() + "%'"
@@ -1786,7 +1806,7 @@ public class Job implements BusinessEntity {
         String searchQuery;
         String searchTextAndClause = "";
         String joinClause;
-       
+
         joinClause
                 = " JOIN job.department department"
                 + " JOIN job.subContractedDepartment subContractedDepartment"
@@ -2166,12 +2186,12 @@ public class Job implements BusinessEntity {
             if (assignee.getName().equals("--, --")
                     || assignee.getFirstName().trim().equals("")
                     || assignee.getLastName().trim().equals("")) {
-                
+
                 return new ReturnMessage(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
             }
-            
+
             em.refresh(assignee);
-            
+
             currentJob.setAssignedTo(assignee);
         } else {
             currentJob.setAssignedTo(Employee.findDefault(em, "--", "--", true));
@@ -2325,7 +2345,7 @@ public class Job implements BusinessEntity {
 
     @Override
     public void setActive(Boolean active) {
-        
+
     }
 
     @Override
@@ -2335,7 +2355,7 @@ public class Job implements BusinessEntity {
 
     @Override
     public void setCategory(String category) {
-        
+
     }
 
     @Override

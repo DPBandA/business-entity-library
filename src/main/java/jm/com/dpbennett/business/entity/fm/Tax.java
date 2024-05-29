@@ -47,7 +47,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "tax")
 @NamedQueries({
-    @NamedQuery(name = "findAllTaxes", query = "SELECT t FROM Tax t ORDER BY t.name")
+    @NamedQuery(name = "findAllTaxes", query = "SELECT t FROM Tax t ORDER BY t.name"),
+    @NamedQuery(name = "findAllActiveTaxes", query = "SELECT t FROM Tax t WHERE t.active = 1 ORDER BY t.name")
 })
 public class Tax implements Serializable, BusinessEntity {
 
@@ -169,6 +170,19 @@ public class Tax implements Serializable, BusinessEntity {
 
         try {
             List<Tax> taxes = em.createNamedQuery("findAllTaxes", Tax.class).getResultList();
+
+            return taxes;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static List<Tax> findAllActiveTaxes(EntityManager em) {
+
+        try {
+            List<Tax> taxes = em.createNamedQuery("findAllActiveTaxes", Tax.class).getResultList();
 
             return taxes;
 

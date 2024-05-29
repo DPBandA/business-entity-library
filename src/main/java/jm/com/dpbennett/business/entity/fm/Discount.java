@@ -47,7 +47,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "discount")
 @NamedQueries({
-    @NamedQuery(name = "findAllDiscounts", query = "SELECT d FROM Discount d ORDER BY d.name")
+    @NamedQuery(name = "findAllDiscounts", query = "SELECT d FROM Discount d ORDER BY d.name"),
+    @NamedQuery(name = "findAllActiveDiscounts", query = "SELECT d FROM Discount d WHERE d.active = 1 ORDER BY d.name")
 })
 public class Discount implements Serializable, BusinessEntity {
 
@@ -184,6 +185,19 @@ public class Discount implements Serializable, BusinessEntity {
 
         try {
             List<Discount> discounts = em.createNamedQuery("findAllDiscounts", Discount.class).getResultList();
+
+            return discounts;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static List<Discount> findAllActiveDiscounts(EntityManager em) {
+
+        try {
+            List<Discount> discounts = em.createNamedQuery("findAllActiveDiscounts", Discount.class).getResultList();
 
             return discounts;
 
