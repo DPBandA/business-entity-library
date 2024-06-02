@@ -778,7 +778,10 @@ public class Client implements ClientInterface {
         }
     }
 
-    public static List<Client> findActive(EntityManager em, String value) {
+    public static List<Client> findActive(
+            EntityManager em,
+            String value,
+            int maxSearchResults) {
 
         try {
 
@@ -788,7 +791,8 @@ public class Client implements ClientInterface {
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
                             + value + "%'"
                             + " AND c.active = 1" // tk set max results should be system option
-                            + " ORDER BY c.name", Client.class).getResultList();
+                            + " ORDER BY c.name", Client.class).
+                            setMaxResults(maxSearchResults).getResultList();
 
             // NB: This is used to remove clients with ' in their names. This may not be
             // needed in the future.
@@ -841,7 +845,8 @@ public class Client implements ClientInterface {
         }
     }
 
-    public static List<Client> find(EntityManager em, String value) {
+    public static List<Client> find(EntityManager em, 
+            String value, int maxSearchResults) {
 
         try {
 
@@ -850,7 +855,9 @@ public class Client implements ClientInterface {
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"
                             + value + "%'"
-                            + " ORDER BY c.name", Client.class).getResultList();
+                            + " ORDER BY c.name", Client.class)
+                            .setMaxResults(maxSearchResults)
+                            .getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);

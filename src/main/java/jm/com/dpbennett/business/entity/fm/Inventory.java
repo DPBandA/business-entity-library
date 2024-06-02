@@ -563,6 +563,27 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
         return null;
     }
+    
+    public static Inventory findActiveByName(
+            EntityManager em, String name) {
+
+        try {
+            List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
+                    + "WHERE UPPER(i.name)" + " = '" + name + "'"
+                    + " AND i.active = 1",
+                    Inventory.class).getResultList();
+            if (!inventory.isEmpty()) {
+                Inventory inventoryItem = inventory.get(0);
+
+                return inventoryItem;
+            }
+        } catch (Exception e) {
+            System.out.println("Error finding inventory: " + e);
+            return null;
+        }
+
+        return null;
+    }
 
     public static List<Inventory> find(
             EntityManager em,
