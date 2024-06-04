@@ -66,10 +66,6 @@ public class ComplianceSurvey implements BusinessEntity {
     private String typeOfEstablishment;
     @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice businessOffice;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Client retailOutlet;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Contact retailRepresentative;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfSurvey;
     @Temporal(javax.persistence.TemporalType.TIME)
@@ -98,15 +94,23 @@ public class ComplianceSurvey implements BusinessEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private Address inspectionAddress;
     @OneToOne(cascade = CascadeType.REFRESH)
+    private Client consignee;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Contact consigneeRepresentative;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Address consigneeAddress;
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client broker;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact brokerRepresentative;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Address brokerAddress;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Client consignee;
+    private Client retailOutlet;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Contact consigneeRepresentative;
+    private Contact retailRepresentative;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Address retailOutletAddress;
     private String referenceNumber;
     @Column(length = 1024)
     private String reasonForDetention;
@@ -195,6 +199,30 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public ComplianceSurvey() {
         this.surveyType = "";
+    }
+
+    public Address getRetailOutletAddress() {
+        if (retailOutletAddress == null) {
+            return new Address();
+        }
+        
+        return retailOutletAddress;
+    }
+
+    public void setRetailOutletAddress(Address retailOutletAddress) {
+        this.retailOutletAddress = retailOutletAddress;
+    }
+
+    public Address getConsigneeAddress() {
+        if (consigneeAddress == null) {
+            return new Address();
+        }
+
+        return consigneeAddress;
+    }
+
+    public void setConsigneeAddress(Address consigneeAddress) {
+        this.consigneeAddress = consigneeAddress;
     }
 
     @Override
@@ -1302,9 +1330,8 @@ public class ComplianceSurvey implements BusinessEntity {
         try {
             if (maxResults == 0) {
                 foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).getResultList();
-            }
-            else {
-               foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).setMaxResults(maxResults).getResultList(); 
+            } else {
+                foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).setMaxResults(maxResults).getResultList();
             }
             if (foundComplianceSurveys == null) {
                 foundComplianceSurveys = new ArrayList<>();
@@ -1356,7 +1383,7 @@ public class ComplianceSurvey implements BusinessEntity {
     public static ComplianceSurvey findComplianceSurveyByName(EntityManager em, String name) {
 
         try {
-           
+
             List<ComplianceSurvey> complianceSurveys = em.createQuery("SELECT c FROM  ComplianceSurvey c "
                     + "WHERE UPPER(c.name) "
                     + "= '" + name.toUpperCase() + "'", ComplianceSurvey.class).getResultList();
