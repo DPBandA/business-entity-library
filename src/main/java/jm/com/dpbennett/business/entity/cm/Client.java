@@ -208,9 +208,7 @@ public class Client implements ClientInterface {
         if (billingAddress == null) {
             if (!getBillingAddresses().isEmpty()) {
                 billingAddress = getBillingAddresses().get(0);
-            } else {
-                return new Address();
-            }
+            }            
         }
 
         return billingAddress;
