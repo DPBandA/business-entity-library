@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -61,7 +61,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     private String containerSize = "";
     private String containerNumber = "";
     private String entryDocumentNumber;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Category productCategory;
     private String productGroupPackageType = "";
     private Integer numGroupPackages;
@@ -71,11 +71,11 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     private String quantityUnit;
     private Boolean hasQuantityDescription = false;
     private String quantityDescription;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Manufacturer manufacturer;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Client distributor;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private MarketProduct marketProduct;
     private String brand;
     @Temporal(javax.persistence.TemporalType.DATE)
