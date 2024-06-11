@@ -137,7 +137,7 @@ public class ComplianceSurvey implements BusinessEntity {
     private String portOfEntryDetentionNumber;
     private String domesticMarketDetentionNumber;
     // Signatures, dates and names
-    // Detention Request - Port of Entry
+    // Port of Entry/POE Detention Request
     @OneToOne(cascade = CascadeType.REFRESH)
     private Signature authSigForDetentionRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)

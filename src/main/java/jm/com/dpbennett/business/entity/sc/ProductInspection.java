@@ -50,7 +50,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "productinspection")
 public class ProductInspection implements Comparable, BusinessEntity, Product {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -120,33 +120,33 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     private String enforcementAction;
     @Transient
     private Boolean isDirty;
-    
+
     @Override
     public Long getId() {
         return id;
     }
-    
+
     @Override
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public String getEnforcementAction() {
         return enforcementAction;
     }
-    
+
     public void setEnforcementAction(String enforcementAction) {
         this.enforcementAction = enforcementAction;
     }
-    
+
     public String getEntryDocumentNumber() {
         return entryDocumentNumber;
     }
-    
+
     public void setEntryDocumentNumber(String entryDocumentNumber) {
         this.entryDocumentNumber = entryDocumentNumber;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -154,197 +154,197 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         }
         return isDirty;
     }
-    
+
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
-    
+
     public String getHeatNumber() {
         return heatNumber;
     }
-    
+
     public void setHeatNumber(String heatNumber) {
         this.heatNumber = heatNumber;
     }
-    
+
     public String getCoilNumber() {
         return coilNumber;
     }
-    
+
     public void setCoilNumber(String coilNumber) {
         this.coilNumber = coilNumber;
     }
-    
+
     public MarketProduct getMarketProduct() {
         if (marketProduct == null) {
             return new MarketProduct();
         }
-        
+
         return marketProduct;
     }
-    
+
     public void setMarketProduct(MarketProduct marketProduct) {
         this.marketProduct = marketProduct;
     }
-    
+
     public String getTariffCode() {
         if (tariffCode == null) {
             tariffCode = "";
         }
         return tariffCode;
     }
-    
+
     public void setTariffCode(String tariffCode) {
         this.tariffCode = tariffCode;
     }
-    
+
     public Employee getInspector() {
         if (inspector == null) {
             return new Employee();
         }
         return inspector;
     }
-    
+
     public void setInspector(Employee inspector) {
         this.inspector = inspector;
     }
-    
+
     public Category getProductCategory() {
         if (productCategory == null) {
             return new Category();
         }
         return productCategory;
     }
-    
+
     public void setProductCategory(Category productCategory) {
         this.productCategory = productCategory;
     }
-    
+
     public Client getDistributor() {
         if (distributor == null) {
             return new Client();
         }
         return distributor;
     }
-    
+
     public void setDistributor(Client distributor) {
         this.distributor = distributor;
     }
-    
+
     public Boolean getSampledForInvestigation() {
         return sampledForInvestigation;
     }
-    
+
     public void setSampledForInvestigation(Boolean sampledForInvestigation) {
         this.sampledForInvestigation = sampledForInvestigation;
     }
-    
+
     public Integer getNumProductsSampled() {
         return numProductsSampled;
     }
-    
+
     public void setNumProductsSampled(Integer numProductsSampled) {
         this.numProductsSampled = numProductsSampled;
     }
-    
+
     public String getProductGroupPackageType() {
         return productGroupPackageType;
     }
-    
+
     public void setProductGroupPackageType(String productGroupPackageType) {
         this.productGroupPackageType = productGroupPackageType;
     }
-    
+
     public Integer getNumGroupPackages() {
         return numGroupPackages;
     }
-    
+
     public void setNumGroupPackages(Integer numGroupPackages) {
         this.numGroupPackages = numGroupPackages;
     }
-    
+
     public Integer getNumProductsPerGroupPackage() {
         return numProductsPerGroupPackage;
     }
-    
+
     public void setNumProductsPerGroupPackage(Integer numProductsPerGroupPackage) {
         this.numProductsPerGroupPackage = numProductsPerGroupPackage;
     }
-    
+
     public String getProductPackageType() {
         return productPackageType;
     }
-    
+
     public void setProductPackageType(String productPackageType) {
         this.productPackageType = productPackageType;
     }
-    
+
     public String getContainerNumber() {
         if (containerNumber == null) {
             containerNumber = "";
         }
         return containerNumber;
     }
-    
+
     public void setContainerNumber(String containerNumber) {
         this.containerNumber = containerNumber;
     }
-    
+
     public Boolean getSampledForLabelAssessment() {
         if (sampledForLabelAssessment == null) {
             sampledForLabelAssessment = false;
         }
         return sampledForLabelAssessment;
     }
-    
+
     public void setSampledForLabelAssessment(Boolean sampledForLabelAssessment) {
         this.sampledForLabelAssessment = sampledForLabelAssessment;
     }
-    
+
     public Boolean getSampledForTesting() {
         if (sampledForTesting == null) {
             sampledForTesting = false;
         }
         return sampledForTesting;
     }
-    
+
     public void setSampledForTesting(Boolean sampledForTesting) {
         this.sampledForTesting = sampledForTesting;
     }
-    
+
     public String getSampleSizeUnits() {
         return sampleSizeUnits;
     }
-    
+
     public void setSampleSizeUnits(String sampleSizeUnits) {
         this.sampleSizeUnits = sampleSizeUnits;
     }
-    
+
     public String getContainerSize() {
         if (containerSize == null) {
             containerSize = "";
         }
         return containerSize;
     }
-    
+
     public void setContainerSize(String containerSize) {
         this.containerSize = containerSize;
     }
-    
+
     public String getQuantityUnit() {
         if (quantityUnit == null) {
             quantityUnit = "";
         }
         return quantityUnit;
     }
-    
+
     public void setQuantityUnit(String quantityUnit) {
         this.quantityUnit = quantityUnit;
     }
-    
+
     public String getQuantityText() {
-        
+
         try {
             if (quantity != null) {
                 return quantity.toString();
@@ -356,19 +356,19 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
             return "0";
         }
     }
-    
+
     public void setQuantityText(String text) {
         try {
             setQuantity(Integer.valueOf(text));
-            
+
         } catch (NumberFormatException e) {
             System.out.println(e);
             setQuantity(0);
         }
     }
-    
+
     public String getNumProductsSampledText() {
-        
+
         try {
             if (numProductsSampled != null) {
                 return numProductsSampled.toString();
@@ -380,19 +380,19 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
             return "0";
         }
     }
-    
+
     public void setNumProductsSampledText(String text) {
         try {
             setNumProductsSampled(Integer.valueOf(text));
-            
+
         } catch (NumberFormatException e) {
             System.out.println(e);
             setQuantity(0);
         }
     }
-    
+
     public String getSampleSizeText() {
-        
+
         try {
             if (sampleSize != null) {
                 return sampleSize.toString();
@@ -404,104 +404,104 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
             return "0";
         }
     }
-    
+
     public void setSampleSizeText(String text) {
         try {
             setSampleSize(Integer.valueOf(text));
-            
+
         } catch (NumberFormatException e) {
             System.out.println(e);
             setSampleSize(0);
         }
     }
-    
+
     public String getModel() {
         return model;
     }
-    
+
     public void setModel(String model) {
         this.model = model;
     }
-    
+
     public String getSerialNumber() {
         return serialNumber;
     }
-    
+
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
-    
+
     public String getStatus() {
         return status;
     }
-    
+
     public Integer getSampleSize() {
         return sampleSize;
     }
-    
+
     public void setSampleSize(Integer sampleSize) {
         this.sampleSize = sampleSize;
     }
-    
+
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
     public Boolean getHasBusinessSource() {
         return hasBusinessSource;
     }
-    
+
     public void setHasBusinessSource(Boolean hasBusinessSource) {
         this.hasBusinessSource = hasBusinessSource;
     }
-    
+
     public Boolean getHasCountryOfOrigin() {
         return hasCountryOfOrigin;
     }
-    
+
     public void setHasCountryOfOrigin(Boolean hasCountryOfOrigin) {
         this.hasCountryOfOrigin = hasCountryOfOrigin;
     }
-    
+
     public Boolean getHasIngredients() {
         return hasIngredients;
     }
-    
+
     public void setHasIngredients(Boolean hasIngredients) {
         this.hasIngredients = hasIngredients;
     }
-    
+
     public Boolean getHasInstructions() {
         return hasInstructions;
     }
-    
+
     public void setHasInstructions(Boolean hasInstructions) {
         this.hasInstructions = hasInstructions;
     }
-    
+
     public Boolean getHasPictorialRepresentation() {
         return hasPictorialRepresentation;
     }
-    
+
     public void setHasPictorialRepresentation(Boolean hasPictorialRepresentation) {
         this.hasPictorialRepresentation = hasPictorialRepresentation;
     }
-    
+
     public Boolean getHasQuantityDescription() {
         return hasQuantityDescription;
     }
-    
+
     public void setHasQuantityDescription(Boolean hasQuantityDescription) {
         this.hasQuantityDescription = hasQuantityDescription;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -509,15 +509,15 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
             return false;
         }
         ProductInspection other = (ProductInspection) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
-    
+
     @Override
     public String toString() {
         return getName();
     }
-    
+
     @Override
     public String getName() {
         if (name == null) {
@@ -525,12 +525,12 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         }
         return name;
     }
-    
+
     @Override
     public void setName(String name) {
         this.name = name;
     }
-    
+
     @Override
     public String getType() {
         if (type == null) {
@@ -538,168 +538,168 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         }
         return type;
     }
-    
+
     @Override
     public void setType(String type) {
         this.type = type;
     }
-    
+
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
             return new Manufacturer();
         }
-        
+
         return manufacturer;
     }
-    
+
     @Override
     public void setManufacturer(Manufacturer manufacturer) {
         this.manufacturer = manufacturer;
     }
-    
+
     public String getBatchCode() {
         return batchCode;
     }
-    
+
     public void setBatchCode(String batchCode) {
         this.batchCode = batchCode;
     }
-    
+
     public String getBrand() {
         if (brand == null) {
             brand = "";
         }
         return brand;
     }
-    
+
     public void setBrand(String brand) {
         this.brand = brand;
     }
-    
+
     public Client getBusinessSource() {
         if (businessSource == null) {
             return new Client();
         }
         return businessSource;
     }
-    
+
     public void setBusinessSource(Client businessSource) {
         this.businessSource = businessSource;
     }
-    
+
     public Client getClient() {
         if (client == null) {
             return new Client("");
         }
         return client;
     }
-    
+
     public void setClient(Client client) {
         this.client = client;
     }
-    
+
     @Override
     public String getComments() {
         return comments;
     }
-    
+
     @Override
     public void setComments(String comments) {
         this.comments = comments;
     }
-    
+
     public String getCountryOfOrigin() {
         return countryOfOrigin;
     }
-    
+
     public void setCountryOfOrigin(String countryOfOrigin) {
         this.countryOfOrigin = countryOfOrigin;
     }
-    
+
     public Date getDateChecked() {
         return dateChecked;
     }
-    
+
     public void setDateChecked(Date dateChecked) {
         this.dateChecked = dateChecked;
     }
-    
+
     public String getDateMark() {
         return dateMark;
     }
-    
+
     public void setDateMark(String dateMark) {
         this.dateMark = dateMark;
     }
-    
+
     public String getImageURL() {
         if (imageURL == null) {
             imageURL = "";
         }
         return imageURL;
     }
-    
+
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
     }
-    
+
     public String getIngredients() {
         return ingredients;
     }
-    
+
     public void setIngredients(String ingredients) {
         this.ingredients = ingredients;
     }
-    
+
     public String getInstructions() {
         return instructions;
     }
-    
+
     public void setInstructions(String instructions) {
         this.instructions = instructions;
     }
-    
+
     public String getPrecautionStatement() {
         return precautionStatement;
     }
-    
+
     public void setPrecautionStatement(String precautionStatement) {
         this.precautionStatement = precautionStatement;
     }
-    
+
     public Integer getQuantity() {
         return quantity;
     }
-    
+
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
-    
+
     public String getQuantityDescription() {
         return quantityDescription;
     }
-    
+
     public void setQuantityDescription(String quantityDescription) {
         this.quantityDescription = quantityDescription;
     }
-    
+
     public String getSpecificationSummary() {
         return specificationSummary;
     }
-    
+
     public void setSpecificationSummary(String specificationSummary) {
         this.specificationSummary = specificationSummary;
     }
-    
+
     public Date getTimeChecked() {
         return timeChecked;
     }
-    
+
     public void setTimeChecked(Date timeChecked) {
         this.timeChecked = timeChecked;
     }
-    
+
     @Override
     public int compareTo(Object o) {
         String thisIdStr = (this.getId() == null ? "" + Integer.MAX_VALUE : this.getId().toString());
@@ -708,136 +708,116 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         //return Collator.getInstance().compare(this.getId().toString(), ((ProductInspection) o).getId().toString());
         return Collator.getInstance().compare(thisIdStr, oIdStr);
     }
-    
+
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            if (getProductCategory().getId() != null) {
-                getProductCategory().save(em);
-            }
-            
-            if (getManufacturer().getId() != null) {
-                getManufacturer().save(em);
-            }
-            
-            if (getDistributor().getId() != null) {
-                getDistributor().save(em);
-            }
-            
-            if (getMarketProduct().getId() != null) {
-                getMarketProduct().save(em);
-            }
-            
-            if (getClient().getId() != null) {
-                getClient().save(em);
-            }
-            
-            if (getBusinessSource().getId() != null) {
-                getBusinessSource().save(em);
-            }
-            
-            if (getInspector().getId() != null) {
-                getInspector().save(em);
-            }
-            
-            em.getTransaction().begin();            
-            BusinessEntityUtils.saveBusinessEntity(em, this);            
+
+            getProductCategory().save(em);
+            getManufacturer().save(em);
+            getDistributor().save(em);
+            getMarketProduct().save(em);
+            getClient().save(em);
+            getBusinessSource().save(em);
+            getInspector().save(em);
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
-            
+
             return new ReturnMessage();
         } catch (Exception e) {
             System.out.println(e);
         }
-        
+
         return new ReturnMessage(false, "Product Inspection not saved");
     }
-    
+
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
     }
-    
+
     @Override
     public Boolean getActive() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setActive(Boolean active) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public String getCategory() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setCategory(String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public Date getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setDateEntered(Date dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public Date getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setDateEdited(Date dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public ReturnMessage delete(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public String getDescription() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setDescription(String description) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public String getNotes() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setNotes(String notes) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public Person getEditedBy() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setEditedBy(Person person) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public Person getEnteredBy() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setEnteredBy(Person person) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody

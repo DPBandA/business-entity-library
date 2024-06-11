@@ -73,11 +73,13 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
 
     public MarketProduct() {
         this.active = true;
+        this.type = "Market";
         this.categories = new ArrayList<>();
     }
 
     public MarketProduct(String name) {
         this.active = true;
+        this.type = "Market";
         this.name = name;
         this.categories = new ArrayList<>();
     }
@@ -436,7 +438,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     @Override
     public String getType() {
         if (type == null) {
-            type = "";
+            type = "Market";
         }
 
         return type;
