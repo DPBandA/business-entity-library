@@ -146,6 +146,8 @@ public class ComplianceSurvey implements BusinessEntity {
     private Employee authEmployeeForDetentionRequestPOE;
     // Sample Request - Port of Entry
     @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee inspectorForSampleRequestPOE;
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Signature inspectorSigForSampleRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date inspectorSigDateForSampleRequestPOE;
@@ -201,11 +203,24 @@ public class ComplianceSurvey implements BusinessEntity {
         this.surveyType = "";
     }
 
+    public Employee getInspectorForSampleRequestPOE() {
+
+        if (inspectorForSampleRequestPOE == null) {
+            return new Employee();
+        }
+
+        return inspectorForSampleRequestPOE;
+    }
+
+    public void setInspectorForSampleRequestPOE(Employee inspectorForSampleRequestPOE) {
+        this.inspectorForSampleRequestPOE = inspectorForSampleRequestPOE;
+    }
+
     public Address getRetailOutletAddress() {
         if (retailOutletAddress == null) {
             return new Address();
         }
-        
+
         return retailOutletAddress;
     }
 
