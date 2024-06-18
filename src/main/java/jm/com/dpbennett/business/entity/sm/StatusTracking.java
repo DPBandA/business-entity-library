@@ -54,7 +54,7 @@ public class StatusTracking implements BusinessEntity {
     private Boolean isDirty;
     @Column(length = 1024)
     private String previousValueTracked;
-     @Column(length = 1024)
+    @Column(length = 1024)
     private String valueTracked;
     private String valueTrackedType;
     @OneToOne(cascade = CascadeType.ALL)
@@ -147,7 +147,7 @@ public class StatusTracking implements BusinessEntity {
             return false;
         }
         StatusTracking other = (StatusTracking) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 

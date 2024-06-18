@@ -19,17 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.test;
 
-import javax.naming.directory.DirContext;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.fm.Inventory;
-import jm.com.dpbennett.business.entity.hrm.Employee;
-import jm.com.dpbennett.business.entity.hrm.User;
-import jm.com.dpbennett.business.entity.sm.LdapContext;
-import jm.com.dpbennett.business.entity.util.Security;
-import org.junit.Test;
-
 /**
  *
  * @author Desmond Bennett

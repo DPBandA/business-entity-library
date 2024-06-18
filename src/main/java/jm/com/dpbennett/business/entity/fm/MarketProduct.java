@@ -99,7 +99,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            manufacturer = new Manufacturer();
+            return new Manufacturer();
         }
         return manufacturer;
     }
@@ -254,7 +254,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             String name, String type) {
 
         try {
-            
+
             name = name.replaceAll("'", "`");
 
             List<MarketProduct> marketProducts
@@ -452,6 +452,14 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            if (getManufacturer().getId() != null) {
+                getManufacturer().save(em);
+            }
+
+            for (Category category : categories) {
+                category.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

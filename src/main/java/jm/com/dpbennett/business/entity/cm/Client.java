@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -208,7 +207,7 @@ public class Client implements ClientInterface {
         if (billingAddress == null) {
             if (!getBillingAddresses().isEmpty()) {
                 billingAddress = getBillingAddresses().get(0);
-            }            
+            }
         }
 
         return billingAddress;
@@ -843,7 +842,7 @@ public class Client implements ClientInterface {
         }
     }
 
-    public static List<Client> find(EntityManager em, 
+    public static List<Client> find(EntityManager em,
             String value, int maxSearchResults) {
 
         try {
@@ -1032,6 +1031,10 @@ public class Client implements ClientInterface {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
+            getDiscount().save(em);
+            getDefaultTax().save(em);
+            
             // Save contacts and addresses
             for (Contact contact : getContacts()) {
                 if (contact.getId() == null) {

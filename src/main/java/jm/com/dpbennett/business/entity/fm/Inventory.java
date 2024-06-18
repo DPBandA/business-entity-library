@@ -41,7 +41,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
-import jm.com.dpbennett.business.entity.hrm.User;
+import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.pm.Supplier;
 import jm.com.dpbennett.business.entity.sm.Category;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -907,6 +907,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
+            getInventoryCategory().save(em);
+            getEnteredBy().save(em);
+            getEditedBy().save(em);
 
             // Save new/edited cost components
             if (!getCostComponents().isEmpty()) {

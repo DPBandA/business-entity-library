@@ -38,7 +38,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
-import jm.com.dpbennett.business.entity.hrm.User;
+import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -515,18 +515,16 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            em.getTransaction().begin();
-
-            BusinessEntityUtils.saveBusinessEntity(em, this);
-
-            em.getTransaction().commit();
-
+           
             if (getInventory().findCostComponentById(getCostComponent().getId()) == null) {
                 getInventory().getCostComponents().add(getCostComponent());
                 getInventory().save(em);
             }
-           
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
             return new ReturnMessage();
         } catch (Exception e) {
             System.out.println(e);

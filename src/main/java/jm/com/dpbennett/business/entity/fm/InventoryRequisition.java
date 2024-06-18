@@ -40,7 +40,7 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Department;
-import jm.com.dpbennett.business.entity.hrm.User;
+import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -668,7 +668,16 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
+            
+            getDepartment().save(em);
+            getContactPerson().save(em);
+            getRequisitionBy().save(em);
+            getEnteredBy().save(em);
+            getEditedBy().save(em);
+            getInventoryIssuedBy().save(em);
+            getRequisitionApprovedBy().save(em);
+            getInventoryReceivedBy().save(em);
+            
             // Save new/edited cost components
             if (!getInventoryDisbursements().isEmpty()) {
                 for (InventoryDisbursement inventoryDisbursement : getInventoryDisbursements()) {

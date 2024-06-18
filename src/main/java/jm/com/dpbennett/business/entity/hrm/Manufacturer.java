@@ -513,7 +513,7 @@ public class Manufacturer implements BusinessEntity, Comparable {
                     = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
                             + value + "%'"
                             + " AND m.active = 1"
-                            + " ORDER BY m.id", Manufacturer.class).getResultList();
+                            + " ORDER BY m.name", Manufacturer.class).getResultList();
             return manufacturers;
         } catch (Exception e) {
             System.out.println(e);
@@ -542,7 +542,13 @@ public class Manufacturer implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            // Save contacts and addresses
+
+            for (MarketProduct marketProduct : getMarketProducts()) {
+                if (marketProduct.getId() == null) {
+                    marketProduct.save(em);
+                }
+            }
+
             for (Contact contact : getContacts()) {
                 if (contact.getId() == null) {
                     contact.save(em);

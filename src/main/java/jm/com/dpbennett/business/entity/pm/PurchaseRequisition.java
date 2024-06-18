@@ -54,8 +54,8 @@ import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.Discount;
 import jm.com.dpbennett.business.entity.fm.Tax;
 import jm.com.dpbennett.business.entity.hrm.ApproverOrRecommender;
-import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
+import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -1556,7 +1556,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public ReturnMessage save(EntityManager em) {
 
         try {
-
+            
             // Save new/edited cost components
             if (!getCostComponents().isEmpty()) {
                 for (CostComponent costComponent : getCostComponents()) {

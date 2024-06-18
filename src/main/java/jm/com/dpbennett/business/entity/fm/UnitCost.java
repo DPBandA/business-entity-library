@@ -300,6 +300,7 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
+        // tk Save child entities that belong to other entity managers first. 
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
