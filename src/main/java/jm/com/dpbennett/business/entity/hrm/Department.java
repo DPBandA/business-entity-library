@@ -333,8 +333,8 @@ public class Department implements Serializable, BusinessEntity, Comparable {
             List<Department> departments
                     = em.createQuery("SELECT d FROM Department d WHERE UPPER(d.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Department.class).getResultList();
-            
-             // NB: This is used to remove departments with ' in their names. This may not be
+
+            // NB: This is used to remove departments with ' in their names. This may not be
             // needed in the future.
             Iterator<Department> iterator = departments.iterator();
             while (iterator.hasNext()) {
@@ -342,8 +342,8 @@ public class Department implements Serializable, BusinessEntity, Comparable {
                 if (element.getName().contains("'")) {
                     iterator.remove();
                 }
-            }            
-            
+            }
+
             return departments;
         } catch (Exception e) {
             System.out.println(e);
@@ -468,6 +468,16 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            for (JobCategory jobCategory : jobCategories) {
+                if (jobCategory.getId() != null) {
+                    jobCategory.save(em);
+                }
+            }
+
+            if (getPrivilege().getId() != null) {
+                getPrivilege().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

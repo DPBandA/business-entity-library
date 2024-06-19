@@ -526,12 +526,15 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            em.getTransaction().begin();
+            
             isDirty = false;
+            
+            em.getTransaction().begin();            
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
+            
         } catch (Exception e) {
             return new ReturnMessage(false,
                     "Cost component not saved",

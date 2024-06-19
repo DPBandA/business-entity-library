@@ -50,10 +50,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "jobsubcategory")
 @NamedQueries({
-    @NamedQuery(name = "findAllJobSubCategories", query = "SELECT e FROM JobSubCategory e ORDER BY e.subCategory")
-    ,
-    @NamedQuery(name = "findAllActiveJobSubCategories", query = "SELECT e FROM JobSubCategory e WHERE e.active = 1 ORDER BY e.subCategory")
-    ,
+    @NamedQuery(name = "findAllJobSubCategories", query = "SELECT e FROM JobSubCategory e ORDER BY e.subCategory"),
+    @NamedQuery(name = "findAllActiveJobSubCategories", query = "SELECT e FROM JobSubCategory e WHERE e.active = 1 ORDER BY e.subCategory"),
     @NamedQuery(name = "findByCategoryId", query = "SELECT e FROM JobSubCategory e WHERE e.categoryId = :categoryId")
 })
 public class JobSubCategory implements Serializable, BusinessEntity, Comparable {
@@ -203,7 +201,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
             return false;
         }
         JobSubCategory other = (JobSubCategory) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -240,7 +238,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     public static JobSubCategory findJobSubCategoryByName(EntityManager em, String name) {
 
         try {
-           
+
             List<JobSubCategory> jobSubCategories
                     = em.createQuery("SELECT c FROM JobSubCategory c "
                             + "WHERE UPPER(c.subCategory) "
@@ -288,7 +286,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     public static List<JobSubCategory> findJobSubcategoriesByName(EntityManager em, String name) {
 
         try {
-            
+
             List<JobSubCategory> jobSubcategories
                     = em.createQuery("SELECT j FROM JobSubCategory j where UPPER(j.subCategory) like '%"
                             + name.toUpperCase().trim() + "%' ORDER BY j.subCategory", JobSubCategory.class).getResultList();
@@ -302,7 +300,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     public static List<JobSubCategory> findActiveJobSubcategoriesByName(EntityManager em, String name) {
 
         try {
-           
+
             List<JobSubCategory> jobSubcategories
                     = em.createQuery("SELECT j FROM JobSubCategory j where UPPER(j.subCategory) like '%"
                             + name.toUpperCase().trim() + "%' AND j.active = 1 ORDER BY j.subCategory", JobSubCategory.class).getResultList();
@@ -425,6 +423,13 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            for (Department department : departments) {
+                if (department.getId() != null) {
+                    department.save(em);
+                }
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

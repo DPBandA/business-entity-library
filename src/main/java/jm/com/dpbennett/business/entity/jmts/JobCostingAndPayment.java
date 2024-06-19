@@ -347,7 +347,7 @@ public class JobCostingAndPayment implements BusinessEntity {
         jobCostingAndPayment.setTax(Tax.findDefault(em, "0.0"));
         jobCostingAndPayment.setDiscount(Discount.findDefault(em, "0.0"));
         jobCostingAndPayment.setCurrency(defaultCurrency);
-        
+
         return jobCostingAndPayment;
     }
 
@@ -794,7 +794,7 @@ public class JobCostingAndPayment implements BusinessEntity {
         List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
 
         try {
-           
+
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
                             + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
@@ -830,7 +830,7 @@ public class JobCostingAndPayment implements BusinessEntity {
         List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
 
         try {
-            
+
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
                             + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
@@ -865,7 +865,7 @@ public class JobCostingAndPayment implements BusinessEntity {
             String jobCostingAndPaymentName) {
 
         try {
-            
+
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
                             + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
@@ -894,7 +894,7 @@ public class JobCostingAndPayment implements BusinessEntity {
             String jobCostingAndPaymentName) {
 
         try {
-           
+
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
                             + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
@@ -1051,6 +1051,19 @@ public class JobCostingAndPayment implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
+
+            if (getTax().getId() != null) {
+                getTax().save(em);
+            }
+
+            if (getDiscount().getId() != null) {
+                getDiscount().save(em);
+            }
+
+            if (getCurrency().getId() != null) {
+                getCurrency().save(em);
+            }
+
             // Save new payments 
             if (!getCashPayments().isEmpty()) {
                 for (CashPayment payment : getCashPayments()) {
@@ -1081,7 +1094,11 @@ public class JobCostingAndPayment implements BusinessEntity {
 
             // Save   
             if (isDirty || id == null) {
-                doSave(em);
+                //doSave(em);
+                isDirty = false;
+                em.getTransaction().begin();                
+                BusinessEntityUtils.saveBusinessEntity(em, this);
+                em.getTransaction().commit();
 
                 return new ReturnMessage();
             } else {
@@ -1092,6 +1109,9 @@ public class JobCostingAndPayment implements BusinessEntity {
             }
 
         } catch (Exception e) {
+            // tk
+            System.out.println("From JCP save(): " + e);
+
             return new ReturnMessage(false,
                     "Costing and payment save error occurred!",
                     "An error occurred while saving the job costing and payment: " + e,
@@ -1100,6 +1120,7 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     }
 
+    // tk retire
     public void doSave(EntityManager em) {
         em.getTransaction().begin();
         isDirty = false;
@@ -1154,7 +1175,7 @@ public class JobCostingAndPayment implements BusinessEntity {
             String jobCostingAndPaymentName) {
 
         try {
-           
+
             List<JobCostingAndPayment> jobCostingAndPayments
                     = em.createQuery("SELECT jobCostingAndPayment FROM JobCostingAndPayment jobCostingAndPayment"
                             + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"

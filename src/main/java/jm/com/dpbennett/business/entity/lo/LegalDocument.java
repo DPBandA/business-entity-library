@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -701,6 +701,15 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            if (getDocumentType().getId() != null) {
+                getDocumentType().save(em);
+            }
+
+            if (getClassification().getId() != null) {
+                getClassification().save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

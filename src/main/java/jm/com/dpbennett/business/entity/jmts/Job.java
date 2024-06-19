@@ -189,9 +189,9 @@ public class Job implements BusinessEntity {
         if (!getRepresentatives().isEmpty()) {
             return getRepresentatives().get(0);
         } else {
-            
+
             getRepresentatives().add(0, new Employee());
-            
+
             return getRepresentatives().get(0);
         }
     }
@@ -201,7 +201,7 @@ public class Job implements BusinessEntity {
         if (!getRepresentatives().isEmpty()) {
             getRepresentatives().set(0, employee);
         }
-        
+
     }
 
     public String getJobNumberLabel() {
@@ -478,6 +478,9 @@ public class Job implements BusinessEntity {
             }
 
         } catch (Exception e) {
+            
+            // tk
+            System.out.println("From prepareAndSave(): " + e);
 
             return new ReturnMessage(false,
                     "Undefined Error!",
@@ -2048,6 +2051,26 @@ public class Job implements BusinessEntity {
         ReturnMessage returnMessage;
 
         try {
+
+            if (getClassification().getId() != null) {
+                getClassification().save(em);
+            }
+            if (getSector().getId() != null) {
+                getSector().save(em);
+            }
+            if (getJobCategory().getId() != null) {
+                getJobCategory().save(em);
+            }
+            if (getJobSubCategory().getId() != null) {
+                getJobSubCategory().save(em);
+            }
+
+            for (Service service : services) {
+                if (service.getId() != null) {
+                    service.save(em);
+                }
+            }
+
             // Save samples
             if (!this.getJobSamples().isEmpty()) {
                 for (JobSample jobSample : this.getJobSamples()) {
@@ -2072,6 +2095,7 @@ public class Job implements BusinessEntity {
 
             // Save job costing and payment
             returnMessage = jobCostingAndPayment.save(em);
+            
             if (!returnMessage.isSuccess()) {
                 return returnMessage;
             }
@@ -2084,6 +2108,10 @@ public class Job implements BusinessEntity {
             return new ReturnMessage();
 
         } catch (Exception e) {
+            
+            // tk
+            System.out.println("From save(): " + e);
+            
             return new ReturnMessage(false,
                     "Job save error occurred!",
                     "An error occurred while saving job " + this.getJobNumber()

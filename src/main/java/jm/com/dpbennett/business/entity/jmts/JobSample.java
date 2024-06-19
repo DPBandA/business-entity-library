@@ -618,6 +618,9 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
             return new ReturnMessage();
         } catch (Exception e) {
+            
+            System.out.println("From save(): " + e);
+            
             return new ReturnMessage(false,
                     "Job sample save error occurred",
                     "An error occurred while saving job sample (Null/OL ID): " + e + ": " + this.getReference(),
