@@ -49,6 +49,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Boolean active;
     private String name;
     private String type;
     private String code;
@@ -147,7 +148,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
             return false;
         }
         DocumentType other = (DocumentType) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -179,6 +180,19 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
         try {
             List<DocumentType> types
                     = em.createQuery("SELECT d FROM DocumentType d where UPPER(d.name) like '"
+                            + name.toUpperCase().trim() + "%' ORDER BY d.name", DocumentType.class).getResultList();
+            return types;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static List<DocumentType> findActiveDocumentTypesByName(EntityManager em, String name) {
+
+        try {
+            List<DocumentType> types
+                    = em.createQuery("SELECT d FROM DocumentType d where (d.active = 1 OR d.active IS NULL) AND UPPER(d.name) like '"
                             + name.toUpperCase().trim() + "%' ORDER BY d.name", DocumentType.class).getResultList();
             return types;
         } catch (Exception e) {
@@ -225,14 +239,14 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
     public static DocumentType findDocumentTypeByName(EntityManager em, String documentTypeName) {
 
         try {
-           
+
             List<DocumentType> documentTypes = em.createQuery("SELECT d FROM DocumentType d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + documentTypeName.toUpperCase() + "'", DocumentType.class).getResultList();
             if (!documentTypes.isEmpty()) {
                 return documentTypes.get(0);
             }
-            
+
             return null;
         } catch (Exception e) {
             return null;
@@ -305,12 +319,16 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
 
     @Override
     public Boolean getActive() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (active == null) {
+            active = true;
+        }
+
+        return active;
     }
 
     @Override
     public void setActive(Boolean active) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.active = active;
     }
 
     @Override

@@ -283,6 +283,7 @@ public class User implements BusinessEntity {
         if (active == null) {
             active = true;
         }
+        
         return active;
     }
 
