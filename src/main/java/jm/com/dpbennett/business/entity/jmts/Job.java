@@ -107,7 +107,7 @@ public class Job implements BusinessEntity {
     private List<JobSample> jobSamples;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedTo;
-    @OneToOne(cascade = CascadeType.ALL) // tk previously REFRESH
+    @OneToOne(cascade = CascadeType.ALL)
     private JobCostingAndPayment jobCostingAndPayment;
     @OneToOne(cascade = CascadeType.ALL)
     private ServiceContract serviceContract;
@@ -478,9 +478,6 @@ public class Job implements BusinessEntity {
             }
 
         } catch (Exception e) {
-            
-            // tk
-            System.out.println("From prepareAndSave(): " + e);
 
             return new ReturnMessage(false,
                     "Undefined Error!",
@@ -2095,7 +2092,7 @@ public class Job implements BusinessEntity {
 
             // Save job costing and payment
             returnMessage = jobCostingAndPayment.save(em);
-            
+
             if (!returnMessage.isSuccess()) {
                 return returnMessage;
             }
@@ -2108,10 +2105,7 @@ public class Job implements BusinessEntity {
             return new ReturnMessage();
 
         } catch (Exception e) {
-            
-            // tk
-            System.out.println("From save(): " + e);
-            
+
             return new ReturnMessage(false,
                     "Job save error occurred!",
                     "An error occurred while saving job " + this.getJobNumber()

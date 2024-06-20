@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -136,7 +136,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Currency getCurrency() {
-        return currency;
+        return (currency == null ? new Currency() : currency);       
     }
 
     public void setCurrency(Currency currency) {
@@ -1094,7 +1094,7 @@ public class JobCostingAndPayment implements BusinessEntity {
 
             // Save   
             if (isDirty || id == null) {
-                //doSave(em);
+                
                 isDirty = false;
                 em.getTransaction().begin();                
                 BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -1109,7 +1109,7 @@ public class JobCostingAndPayment implements BusinessEntity {
             }
 
         } catch (Exception e) {
-            // tk
+            
             System.out.println("From JCP save(): " + e);
 
             return new ReturnMessage(false,
@@ -1118,14 +1118,6 @@ public class JobCostingAndPayment implements BusinessEntity {
                     Message.SEVERITY_ERROR_NAME);
         }
 
-    }
-
-    // tk retire
-    public void doSave(EntityManager em) {
-        em.getTransaction().begin();
-        isDirty = false;
-        BusinessEntityUtils.saveBusinessEntity(em, this);
-        em.getTransaction().commit();
     }
 
     public Boolean isCostComponentDirty() {
