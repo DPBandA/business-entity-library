@@ -572,6 +572,10 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public String getPleaseSupplyNote() {
+        if (pleaseSupplyNote == null) {
+            pleaseSupplyNote = "";
+        }
+
         return pleaseSupplyNote;
     }
 
@@ -841,8 +845,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
         return total;
     }
-    
-    
+
     public Double getConvertedTotalCostComponentCosts() {
         Double total = 0.0;
 
@@ -883,8 +886,8 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
         return getTotalCostWithDiscount() + getTotalTax();
     }
-    
-     public Double getConvertedTotalCost() {
+
+    public Double getConvertedTotalCost() {
 
         return getConvertedTotalCostWithDiscount() + getTotalTax();
     }
@@ -1556,7 +1559,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public ReturnMessage save(EntityManager em) {
 
         try {
-            
+
             // Save new/edited cost components
             if (!getCostComponents().isEmpty()) {
                 for (CostComponent costComponent : getCostComponents()) {
