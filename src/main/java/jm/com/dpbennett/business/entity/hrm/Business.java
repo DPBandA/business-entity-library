@@ -396,6 +396,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public ReturnMessage save(EntityManager em) {
+        
         try {
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -407,6 +408,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
 
         return new ReturnMessage(false, "Business not saved");
+        
     }
 
     @Override

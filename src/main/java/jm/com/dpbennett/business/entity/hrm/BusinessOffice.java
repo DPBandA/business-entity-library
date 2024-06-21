@@ -215,7 +215,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
         try {
 
             List<BusinessOffice> businessOffices
-                    = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '"
+                    = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY b.name", BusinessOffice.class).getResultList();
             return businessOffices;
         } catch (Exception e) {
@@ -330,7 +330,19 @@ public class BusinessOffice implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        try {
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Business not saved");
+
     }
 
     @Override
