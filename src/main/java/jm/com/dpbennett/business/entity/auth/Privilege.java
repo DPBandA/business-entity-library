@@ -57,18 +57,6 @@ public class Privilege implements PrivilegeInterface {
     private String category;
     private String roles;
     private String description;
-    // Job privileges
-    private Boolean canEnterJob;
-    private Boolean canEditJob;
-    private Boolean canEditDisabledJobField;
-    // Client privileges 
-    private Boolean canAddClient;
-    private Boolean canDeleteClient;
-    // Financial privileges
-    private Boolean canEditInvoicingAndPayment;
-    private Boolean canApplyTaxesToJobCosting;
-    private Boolean canApplyDiscountsToJobCosting;
-
     @Transient
     private Boolean isDirty;
 
@@ -85,6 +73,23 @@ public class Privilege implements PrivilegeInterface {
             
             List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p"
                     + " WHERE (p.active = 1) AND (UPPER(p.name) like '%"
+                    + query + "%'" + " OR UPPER(p.category) like '%"
+                    + query + "%'" + " OR UPPER(p.description) like '%"
+                    + query + "%') ORDER BY p.name", Privilege.class).getResultList();
+
+            return privileges;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static List<Privilege> findPrivileges(EntityManager em, String query) {
+        try {
+            
+            List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p"
+                    + " WHERE (UPPER(p.name) like '%"
                     + query + "%'" + " OR UPPER(p.category) like '%"
                     + query + "%'" + " OR UPPER(p.description) like '%"
                     + query + "%') ORDER BY p.name", Privilege.class).getResultList();
@@ -135,95 +140,6 @@ public class Privilege implements PrivilegeInterface {
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Boolean getCanApplyTaxesToJobCosting() {
-        if (canApplyTaxesToJobCosting == null) {
-            canApplyTaxesToJobCosting = true;
-        }
-        return canApplyTaxesToJobCosting;
-    }
-
-    public void setCanApplyTaxesToJobCosting(Boolean canApplyTaxesToJobCosting) {
-        this.canApplyTaxesToJobCosting = canApplyTaxesToJobCosting;
-    }
-
-    public Boolean getCanApplyDiscountsToJobCosting() {
-        if (canApplyDiscountsToJobCosting == null) {
-            canApplyDiscountsToJobCosting = false;
-        }
-
-        return canApplyDiscountsToJobCosting;
-    }
-
-    public void setCanApplyDiscountsToJobCosting(Boolean canApplyDiscountsToJobCosting) {
-        this.canApplyDiscountsToJobCosting = canApplyDiscountsToJobCosting;
-    }
-
-    public Boolean getCanEditInvoicingAndPayment() {
-        if (canEditInvoicingAndPayment == null) {
-            canEditInvoicingAndPayment = false;
-        }
-        return canEditInvoicingAndPayment;
-    }
-
-    public void setCanEditInvoicingAndPayment(Boolean canEditInvoicingAndPayment) {
-        this.canEditInvoicingAndPayment = canEditInvoicingAndPayment;
-    }
-
-    public Boolean getCanEditDisabledJobField() {
-        if (canEditDisabledJobField == null) {
-            canEditDisabledJobField = false;
-        }
-        return canEditDisabledJobField;
-    }
-
-    public void setCanEditDisabledJobField(Boolean canEditDisabledJobField) {
-        this.canEditDisabledJobField = canEditDisabledJobField;
-    }
-
-    public Boolean getCanAddClient() {
-        if (canAddClient == null) {
-            canAddClient = false;
-        }
-        return canAddClient;
-    }
-
-    public void setCanAddClient(Boolean canAddClient) {
-        this.canAddClient = canAddClient;
-    }
-
-    public Boolean getCanDeleteClient() {
-        if (canDeleteClient == null) {
-            canDeleteClient = false;
-        }
-        return canDeleteClient;
-    }
-
-    public void setCanDeleteClient(Boolean canDeleteClient) {
-        this.canDeleteClient = canDeleteClient;
-    }
-
-    public Boolean getCanEditJob() {
-        if (canEditJob == null) {
-            canEditJob = false;
-        }
-        return canEditJob;
-    }
-
-    public void setCanEditJob(Boolean canEditJob) {
-        this.canEditJob = canEditJob;
-    }
-
-    public Boolean getCanEnterJob() {
-        if (canEnterJob == null) {
-            canEnterJob = false;
-        }
-        return canEnterJob;
-    }
-
-    public void setCanEnterJob(Boolean canEnterJob) {
-        this.canEnterJob = canEnterJob;
     }
 
     @Override

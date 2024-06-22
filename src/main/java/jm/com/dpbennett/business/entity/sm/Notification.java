@@ -341,12 +341,16 @@ public class Notification implements BusinessEntity {
         }
     }
 
-    public static List<Notification> findNotificationsByName(EntityManager em, String name) {
+    public static List<Notification> findNotificationsByName(
+            EntityManager em, 
+            String name,
+            int maxResults) {
 
         try {
             List<Notification> notifications
                     = em.createQuery("SELECT n FROM Notification n WHERE UPPER(n.name) LIKE '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY n.issueTime DESC", Notification.class).getResultList();
+                            + name.toUpperCase().trim() + "%' ORDER BY n.issueTime DESC", 
+                            Notification.class).setMaxResults(maxResults).getResultList();
 
             return notifications;
 

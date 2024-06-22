@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -47,6 +47,7 @@ public class Category implements BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Boolean active;
     private String name;
     private String type;
     @Column(length = 1024)
@@ -169,7 +170,7 @@ public class Category implements BusinessEntity {
         List<Category> categories;
 
         try {
-           
+
             if (ignoreCase) {
                 categories = em.createQuery("SELECT c FROM Category c"
                         + " WHERE UPPER(c.name)"
@@ -192,17 +193,15 @@ public class Category implements BusinessEntity {
         }
     }
 
-    public static List<Category> findActiveCategoriesByAnyPartOfName(EntityManager em, String value) {
+    public static List<Category> findActiveCategoriesByName(EntityManager em, String value) {
 
         try {
-           
+
             List<Category> categories
-                    = em.createQuery("SELECT c FROM Category c WHERE c.name like '%"
-                            + value + "%'"
-                            //+ " OR c.brand like '%"
-                            //+ value + "%')"
-                            //+ " AND d.active = 1"
-                            + " ORDER BY c.name", Category.class).setMaxResults(500).getResultList();
+                    = em.createQuery("SELECT c FROM Category c WHERE UPPER(c.name) like '%"
+                            + value.toUpperCase().trim() + "%'"
+                            + " AND (c.active = 1 OR c.active IS NULL)"
+                            + " ORDER BY c.name", Category.class).getResultList();
 
             return categories;
 
@@ -216,7 +215,7 @@ public class Category implements BusinessEntity {
             EntityManager em, String type, String value) {
 
         try {
-            
+
             List<Category> categories
                     = em.createQuery("SELECT c FROM Category c WHERE c.name like '%"
                             + value + "%'"
@@ -236,7 +235,7 @@ public class Category implements BusinessEntity {
     public static List<Category> findCategoriesByType(EntityManager em, String value) {
 
         try {
-            
+
             return em.createQuery("SELECT c FROM Category c "
                     + "WHERE UPPER(c.type) "
                     + "= '" + value.toUpperCase() + "' ORDER BY c.name", Category.class).getResultList();
@@ -288,12 +287,18 @@ public class Category implements BusinessEntity {
 
     @Override
     public Boolean getActive() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        if (active == null) {
+            active = true;
+        }
+
+        return active;
     }
 
     @Override
     public void setActive(Boolean active) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        this.active = active;
     }
 
     @Override

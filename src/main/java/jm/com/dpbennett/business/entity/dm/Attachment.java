@@ -58,13 +58,13 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Boolean active;
     private String name;
     private String type;
     private String sourceURL;
     private String destinationURL;
     private String contentType;
-    private String documentType;
-    private Boolean active;
+    private String documentType;    
     @Column(length = 1024)
     private String description;
     private String category;
@@ -83,6 +83,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         this.type = "";
         this.isDirty = false;
         this.documentType = "Other";
+        
     }
 
     public Attachment(String name,
@@ -294,14 +295,17 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
 
     }
 
-    public static List<Attachment> findAttachmentsByName(EntityManager em, String value) {
+    public static List<Attachment> findAttachmentsByName(
+            EntityManager em, 
+            String value,
+            int maxResults) {
 
         try {
            
             List<Attachment> attachments
                     = em.createQuery("SELECT a FROM Attachment a where UPPER(a.name) like '%"
-                            + value.toUpperCase().trim() // tk max results to be made system option
-                            + "%' ORDER BY a.name", Attachment.class).setMaxResults(100).getResultList();
+                            + value.toUpperCase().trim()
+                            + "%' ORDER BY a.name", Attachment.class).setMaxResults(maxResults).getResultList();
             return attachments;
         } catch (Exception e) {
             System.out.println(e);

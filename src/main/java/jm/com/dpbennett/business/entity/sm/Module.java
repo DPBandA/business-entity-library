@@ -58,20 +58,20 @@ public class Module implements BusinessEntity {
     private String mainViewTitle;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
-    private Boolean legalMetrologyModule;
-    private Boolean jobManagementAndTrackingModule;
-    private Boolean complianceModule;
-    private Boolean foodsModule;
-    private Boolean standardsModule;
-    private Boolean certificationModule;
-    private Boolean serviceRequestModule;
-    private Boolean adminModule;
-    private Boolean financialAdminModule;
-    private Boolean purchaseManagementModule;
-    private Boolean legalOfficeModule;
-    private Boolean crmModule;
-    private Boolean hrmModule;
-    private Boolean reportModule;
+//    private Boolean legalMetrologyModule;
+//    private Boolean jobManagementAndTrackingModule;
+//    private Boolean complianceModule;
+//    private Boolean foodsModule;
+//    private Boolean standardsModule;
+//    private Boolean certificationModule;
+//    private Boolean serviceRequestModule;
+//    private Boolean adminModule;
+//    private Boolean financialAdminModule;
+//    private Boolean purchaseManagementModule;
+//    private Boolean legalOfficeModule;
+//    private Boolean crmModule;
+//    private Boolean hrmModule;
+//    private Boolean reportModule;
     @Transient
     private Boolean isDirty;
 
@@ -186,159 +186,159 @@ public class Module implements BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public Boolean getLegalMetrologyModule() {
-        if (legalMetrologyModule == null) {
-            legalMetrologyModule = false;
-        }
-        return legalMetrologyModule;
-    }
-
-    public void setLegalMetrologyModule(Boolean legalMetrologyModule) {
-        this.legalMetrologyModule = legalMetrologyModule;
-    }
-
-    public Boolean getJobManagementAndTrackingModule() {
-        if (jobManagementAndTrackingModule == null) {
-            jobManagementAndTrackingModule = true;
-        }
-        return jobManagementAndTrackingModule;
-    }
-
-    public void setJobManagementAndTrackingModule(Boolean jobManagementAndTrackingModule) {
-        this.jobManagementAndTrackingModule = jobManagementAndTrackingModule;
-    }
-
-    public Boolean getComplianceModule() {
-        if (complianceModule == null) {
-            complianceModule = false;
-        }
-        return complianceModule;
-    }
-
-    public void setComplianceModule(Boolean complianceModule) {
-        this.complianceModule = complianceModule;
-    }
-
-    public Boolean getFoodsModule() {
-        if (foodsModule == null) {
-            foodsModule = false;
-        }
-        return foodsModule;
-    }
-
-    public void setFoodsModule(Boolean foodsModule) {
-        this.foodsModule = foodsModule;
-    }
-
-    public Boolean getStandardsModule() {
-        if (standardsModule == null) {
-            standardsModule = false;
-        }
-        return standardsModule;
-    }
-
-    public void setStandardsModule(Boolean standardsModule) {
-        this.standardsModule = standardsModule;
-    }
-
-    public Boolean getCertificationModule() {
-        if (certificationModule == null) {
-            certificationModule = false;
-        }
-        return certificationModule;
-    }
-
-    public void setCertificationModule(Boolean certificationModule) {
-        this.certificationModule = certificationModule;
-    }
-
-    public Boolean getServiceRequestModule() {
-        if (serviceRequestModule == null) {
-            serviceRequestModule = false;
-        }
-        return serviceRequestModule;
-    }
-
-    public void setServiceRequestModule(Boolean serviceRequestModule) {
-        this.serviceRequestModule = serviceRequestModule;
-    }
-
-    public Boolean getHrmModule() {
-        if (hrmModule == null) {
-            hrmModule = getAdminModule();
-        }
-        return hrmModule;
-    }
-
-    public void setHrmModule(Boolean hrmModule) {
-        this.hrmModule = hrmModule;
-    }
-
-    public Boolean getReportModule() {
-        if (reportModule == null) {
-            reportModule = false;
-        }
-        return reportModule;
-    }
-
-    public void setReportModule(Boolean reportModule) {
-        this.reportModule = reportModule;
-    }
-
-    public Boolean getAdminModule() {
-        if (adminModule == null) {
-            adminModule = false;
-        }
-        return adminModule;
-    }
-
-    public void setAdminModule(Boolean adminModule) {
-        this.adminModule = adminModule;
-    }
-
-    public Boolean getFinancialAdminModule() {
-        if (financialAdminModule == null) {
-            financialAdminModule = false;
-        }
-        return financialAdminModule;
-    }
-
-    public void setFinancialAdminModule(Boolean financialAdminModule) {
-        this.financialAdminModule = financialAdminModule;
-    }
-
-    public Boolean getPurchaseManagementModule() {
-        if (purchaseManagementModule == null) {
-            purchaseManagementModule = false;
-        }
-        return purchaseManagementModule;
-    }
-
-    public void setPurchaseManagementModule(Boolean purchaseManagementModule) {
-        this.purchaseManagementModule = purchaseManagementModule;
-    }
-
-    public Boolean getLegalOfficeModule() {
-        if (legalOfficeModule == null) {
-            legalOfficeModule = false;
-        }
-        return legalOfficeModule;
-    }
-
-    public void setLegalOfficeModule(Boolean legalOfficeModule) {
-        this.legalOfficeModule = legalOfficeModule;
-    }
-
-    public Boolean getCrmModule() {
-        if (crmModule == null) {
-            crmModule = false;
-        }
-        return crmModule;
-    }
-
-    public void setCrmModule(Boolean crmModule) {
-        this.crmModule = crmModule;
-    }
+//    public Boolean getLegalMetrologyModule() {
+//        if (legalMetrologyModule == null) {
+//            legalMetrologyModule = false;
+//        }
+//        return legalMetrologyModule;
+//    }
+//
+//    public void setLegalMetrologyModule(Boolean legalMetrologyModule) {
+//        this.legalMetrologyModule = legalMetrologyModule;
+//    }
+//
+//    public Boolean getJobManagementAndTrackingModule() {
+//        if (jobManagementAndTrackingModule == null) {
+//            jobManagementAndTrackingModule = true;
+//        }
+//        return jobManagementAndTrackingModule;
+//    }
+//
+//    public void setJobManagementAndTrackingModule(Boolean jobManagementAndTrackingModule) {
+//        this.jobManagementAndTrackingModule = jobManagementAndTrackingModule;
+//    }
+//
+//    public Boolean getComplianceModule() {
+//        if (complianceModule == null) {
+//            complianceModule = false;
+//        }
+//        return complianceModule;
+//    }
+//
+//    public void setComplianceModule(Boolean complianceModule) {
+//        this.complianceModule = complianceModule;
+//    }
+//
+//    public Boolean getFoodsModule() {
+//        if (foodsModule == null) {
+//            foodsModule = false;
+//        }
+//        return foodsModule;
+//    }
+//
+//    public void setFoodsModule(Boolean foodsModule) {
+//        this.foodsModule = foodsModule;
+//    }
+//
+//    public Boolean getStandardsModule() {
+//        if (standardsModule == null) {
+//            standardsModule = false;
+//        }
+//        return standardsModule;
+//    }
+//
+//    public void setStandardsModule(Boolean standardsModule) {
+//        this.standardsModule = standardsModule;
+//    }
+//
+//    public Boolean getCertificationModule() {
+//        if (certificationModule == null) {
+//            certificationModule = false;
+//        }
+//        return certificationModule;
+//    }
+//
+//    public void setCertificationModule(Boolean certificationModule) {
+//        this.certificationModule = certificationModule;
+//    }
+//
+//    public Boolean getServiceRequestModule() {
+//        if (serviceRequestModule == null) {
+//            serviceRequestModule = false;
+//        }
+//        return serviceRequestModule;
+//    }
+//
+//    public void setServiceRequestModule(Boolean serviceRequestModule) {
+//        this.serviceRequestModule = serviceRequestModule;
+//    }
+//
+//    public Boolean getHrmModule() {
+//        if (hrmModule == null) {
+//            hrmModule = getAdminModule();
+//        }
+//        return hrmModule;
+//    }
+//
+//    public void setHrmModule(Boolean hrmModule) {
+//        this.hrmModule = hrmModule;
+//    }
+//
+//    public Boolean getReportModule() {
+//        if (reportModule == null) {
+//            reportModule = false;
+//        }
+//        return reportModule;
+//    }
+//
+//    public void setReportModule(Boolean reportModule) {
+//        this.reportModule = reportModule;
+//    }
+//
+//    public Boolean getAdminModule() {
+//        if (adminModule == null) {
+//            adminModule = false;
+//        }
+//        return adminModule;
+//    }
+//
+//    public void setAdminModule(Boolean adminModule) {
+//        this.adminModule = adminModule;
+//    }
+//
+//    public Boolean getFinancialAdminModule() {
+//        if (financialAdminModule == null) {
+//            financialAdminModule = false;
+//        }
+//        return financialAdminModule;
+//    }
+//
+//    public void setFinancialAdminModule(Boolean financialAdminModule) {
+//        this.financialAdminModule = financialAdminModule;
+//    }
+//
+//    public Boolean getPurchaseManagementModule() {
+//        if (purchaseManagementModule == null) {
+//            purchaseManagementModule = false;
+//        }
+//        return purchaseManagementModule;
+//    }
+//
+//    public void setPurchaseManagementModule(Boolean purchaseManagementModule) {
+//        this.purchaseManagementModule = purchaseManagementModule;
+//    }
+//
+//    public Boolean getLegalOfficeModule() {
+//        if (legalOfficeModule == null) {
+//            legalOfficeModule = false;
+//        }
+//        return legalOfficeModule;
+//    }
+//
+//    public void setLegalOfficeModule(Boolean legalOfficeModule) {
+//        this.legalOfficeModule = legalOfficeModule;
+//    }
+//
+//    public Boolean getCrmModule() {
+//        if (crmModule == null) {
+//            crmModule = false;
+//        }
+//        return crmModule;
+//    }
+//
+//    public void setCrmModule(Boolean crmModule) {
+//        this.crmModule = crmModule;
+//    }
 
     @Override
     public int hashCode() {

@@ -75,10 +75,8 @@ public class User implements BusinessEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Privilege privilege;
 //    @OneToOne(cascade = CascadeType.ALL)
-//    private Module module;
+//    private Privilege privilege;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -99,9 +97,8 @@ public class User implements BusinessEntity {
     private String email;
 
     public User() {
-        privilege = new Privilege();
+        //privilege = new Privilege();
         employee = new Employee();
-        //module = new Module();
         username = "";
     }
 
@@ -116,22 +113,6 @@ public class User implements BusinessEntity {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public Privilege getPrivilege() {
-        return privilege;
-    }
-
-    public void setPrivilege(Privilege privilege) {
-        this.privilege = privilege;
-    }
-
-//    public Module getModule() {
-//        return module;
-//    }
-//
-//    public void setModule(Module module) {
-//        this.module = module;
-//    }
 
     public Boolean getUpdateLDAPUser() {
         return updateLDAPUser;
@@ -251,14 +232,6 @@ public class User implements BusinessEntity {
         return false;
     }
 
-    /**
-     * Returns the business/organization to which the user's department belong.
-     * The user's department is obtained through it's employee reference.
-     *
-     * @param em
-     * @param user
-     * @return
-     */
     public static Business getUserOrganizationByDepartment(EntityManager em, User user) {
 
         try {
@@ -306,14 +279,6 @@ public class User implements BusinessEntity {
         this.isDirty = isDirty;
     }
 
-//    public Module getActiveModule() {
-//        if (module == null) {
-//            return new Module();
-//        }
-//        
-//        return module;
-//    }
-
     public Boolean getIsJobsPreferredJobTableView() {
         return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Jobs");
     }
@@ -336,14 +301,6 @@ public class User implements BusinessEntity {
             return (Department.findAssignedToJob(foundJob, em).getActingHead().getId().longValue() == user.getEmployee().getId().longValue())
                     && Department.findAssignedToJob(foundJob, em).getActingHeadActive();
         }
-    }
-
-    public Privilege getActivePrivilege() {
-        if (privilege == null) {
-            privilege = new Privilege(username);
-        }
-
-        return privilege;
     }
 
     public Boolean getAuthenticate() {
@@ -380,13 +337,6 @@ public class User implements BusinessEntity {
         this.PFThemeName = PFThemeName;
     }
 
-    /**
-     * Logs the poll time and activity of a user. The user is saved after the
-     * activity is logged.
-     *
-     * @param activity
-     * @param em
-     */
     public void logActivity(String activity, EntityManager em) {
         this.setActivity(activity);
         this.save(em);
