@@ -104,7 +104,6 @@
     <class>jm.com.dpbennett.business.entity.sm.Category</class>
     <class>jm.com.dpbennett.business.entity.sm.Country</class>
     <class>jm.com.dpbennett.business.entity.sm.LdapContext</class>
-    <class>jm.com.dpbennett.business.entity.sm.Modules</class>
     <class>jm.com.dpbennett.business.entity.sm.Preference</class>
     <class>jm.com.dpbennett.business.entity.sm.SequenceNumber</class>
     <class>jm.com.dpbennett.business.entity.sm.StatusTracking</class>
@@ -117,6 +116,7 @@
     <class>jm.com.dpbennett.business.entity.fm.InventoryDisbursement</class>
     <class>jm.com.dpbennett.business.entity.fm.InventoryRequisition</class>
     <class>jm.com.dpbennett.business.entity.sm.User</class>
+    <class>jm.com.dpbennett.business.entity.sm.Module</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jmts"/>
       <property name="javax.persistence.jdbc.password" value=""/>

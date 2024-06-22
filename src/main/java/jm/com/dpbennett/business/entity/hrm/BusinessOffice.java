@@ -229,7 +229,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
         try {
 
             List<BusinessOffice> businessOffices
-                    = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '"
+                    = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '%"
                             + value.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", BusinessOffice.class).getResultList();
             return businessOffices;
         } catch (Exception e) {

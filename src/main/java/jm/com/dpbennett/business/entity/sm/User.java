@@ -77,12 +77,12 @@ public class User implements BusinessEntity {
     private Employee employee;
     @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Modules modules;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    private Module module;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
     @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Modules> activeModules;
+    private List<Module> activeModules;
     @Transient
     private Boolean isDirty;
     @Transient
@@ -101,7 +101,7 @@ public class User implements BusinessEntity {
     public User() {
         privilege = new Privilege();
         employee = new Employee();
-        modules = new Modules();
+        //module = new Module();
         username = "";
     }
 
@@ -125,13 +125,13 @@ public class User implements BusinessEntity {
         this.privilege = privilege;
     }
 
-    public Modules getModules() {
-        return modules;
-    }
-
-    public void setModules(Modules modules) {
-        this.modules = modules;
-    }
+//    public Module getModule() {
+//        return module;
+//    }
+//
+//    public void setModule(Module module) {
+//        this.module = module;
+//    }
 
     public Boolean getUpdateLDAPUser() {
         return updateLDAPUser;
@@ -180,7 +180,7 @@ public class User implements BusinessEntity {
     }
 
     public Boolean hasModule(String moduleName) {
-        for (Modules mod : getActiveModules()) {
+        for (Module mod : getActiveModules()) {
             if (mod.getName().equals(moduleName)) {
                 return true;
             }
@@ -189,8 +189,8 @@ public class User implements BusinessEntity {
         return false;
     }
 
-    public Modules getActiveModule(String moduleName) {
-        for (Modules mod : getActiveModules()) {
+    public Module getActiveModule(String moduleName) {
+        for (Module mod : getActiveModules()) {
             if (mod.getName().equals(moduleName)) {
                 return mod;
             }
@@ -220,14 +220,14 @@ public class User implements BusinessEntity {
         this.privileges = privileges;
     }
 
-    public List<Modules> getActiveModules() {
+    public List<Module> getActiveModules() {
         if (activeModules == null) {
             activeModules = new ArrayList<>();
         }
         return activeModules;
     }
 
-    public void setActiveModules(List<Modules> activeModules) {
+    public void setActiveModules(List<Module> activeModules) {
         this.activeModules = activeModules;
     }
 
@@ -306,12 +306,13 @@ public class User implements BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public Modules getActiveModule() {
-        if (modules == null) {
-            modules = new Modules();
-        }
-        return modules;
-    }
+//    public Module getActiveModule() {
+//        if (module == null) {
+//            return new Module();
+//        }
+//        
+//        return module;
+//    }
 
     public Boolean getIsJobsPreferredJobTableView() {
         return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Jobs");

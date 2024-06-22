@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "modules")
-public class Modules implements BusinessEntity {
+public class Module implements BusinessEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -75,7 +75,7 @@ public class Modules implements BusinessEntity {
     @Transient
     private Boolean isDirty;
 
-    public Modules() {
+    public Module() {
         this.active = false;
         this.name = "";
         this.type = "";
@@ -85,7 +85,7 @@ public class Modules implements BusinessEntity {
         this.mainViewTitle = "";
     }   
     
-     public Modules(String name) {
+     public Module(String name) {
         this.active = false;
         this.name = name;
         this.type = "";
@@ -350,10 +350,10 @@ public class Modules implements BusinessEntity {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Modules)) {
+        if (!(object instanceof Module)) {
             return false;
         }
-        Modules other = (Modules) object;
+        Module other = (Module) object;
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
@@ -385,7 +385,7 @@ public class Modules implements BusinessEntity {
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Modules not saved");
+        return new ReturnMessage(false, "Module not saved");
     }
 
     @Override
@@ -393,13 +393,13 @@ public class Modules implements BusinessEntity {
         return new ReturnMessage();
     }
     
-    public static Modules findActiveModuleByName(EntityManager em, String value) {
+    public static Module findActiveModuleByName(EntityManager em, String value) {
 
         try {
           
-            List<Modules> modules = em.createQuery("SELECT m FROM Modules m "
+            List<Module> modules = em.createQuery("SELECT m FROM Module m "
                     + "WHERE m.active = 1 AND UPPER(m.name) "
-                    + "= '" + value.toUpperCase() + "'", Modules.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Module.class).getResultList();
             if (!modules.isEmpty()) {
                 return modules.get(0);
             }
@@ -410,17 +410,17 @@ public class Modules implements BusinessEntity {
         }
     }
     
-    public static List<Modules> findActiveModules(
+    public static List<Module> findActiveModules(
             EntityManager em, 
             String query,
             int maxResults) {
         try {
             
-            List<Modules> modules = em.createQuery("SELECT m FROM Modules m"
+            List<Module> modules = em.createQuery("SELECT m FROM Module m"
                     + " WHERE (m.active = 1) AND (UPPER(m.name) like '%"
                     + query + "%'" + " OR UPPER(m.category) like '%"
                     + query + "%'" + " OR UPPER(m.description) like '%"
-                    + query + "%') ORDER BY m.name", Modules.class).
+                    + query + "%') ORDER BY m.name", Module.class).
                     setMaxResults(maxResults).getResultList();
 
             return modules;
@@ -431,14 +431,35 @@ public class Modules implements BusinessEntity {
         }
     }
     
-    public static List<Modules> findAllActiveModules(
+     public static List<Module> findModules(
+            EntityManager em, 
+            String query,
+            int maxResults) {
+        try {
+            
+            List<Module> modules = em.createQuery("SELECT m FROM Module m"
+                    + " WHERE (UPPER(m.name) like '%"
+                    + query + "%'" + " OR UPPER(m.category) like '%"
+                    + query + "%'" + " OR UPPER(m.description) like '%"
+                    + query + "%') ORDER BY m.name", Module.class).
+                    setMaxResults(maxResults).getResultList();
+
+            return modules;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static List<Module> findAllActiveModules(
             EntityManager em,
             int maxResults) {
         try {
            
 
-            List<Modules> modules = em.createQuery("SELECT m FROM Modules m"
-                    + " WHERE m.active = 1 ORDER BY m.name", Modules.class).
+            List<Module> modules = em.createQuery("SELECT m FROM Module m"
+                    + " WHERE m.active = 1 ORDER BY m.name", Module.class).
                     setMaxResults(maxResults).getResultList();
 
             return modules;
