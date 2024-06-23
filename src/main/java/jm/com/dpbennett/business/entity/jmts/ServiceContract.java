@@ -57,7 +57,10 @@ public class ServiceContract implements BusinessEntity {
     private Long jobId;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Service selectedService;
-    // Requested services    
+    // Requested services   
+    // tk test commenting these out cause they may no longer be used
+    // may have to look back at how the service contract is generated
+    // because they may be used.
     private Boolean serviceRequestedTesting;
     private Boolean serviceRequestedCalibration;
     private Boolean serviceRequestedLabelEvaluation;
