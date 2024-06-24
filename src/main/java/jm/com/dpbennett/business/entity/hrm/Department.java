@@ -64,7 +64,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    // tk to be rename to code in here and in the database
     @Column(name = "subGroupCode")
     private String code;
     private String jobCostingType;
@@ -297,7 +296,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     @Override
     public String toString() {
         if (code != null) {
-            return name; // tk + " (" + code + ")";
+            return name;
         } else {
             if (name != null) {
                 return name;
