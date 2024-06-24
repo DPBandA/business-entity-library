@@ -1041,7 +1041,6 @@ public class JobCostingAndPayment implements BusinessEntity {
      */
     public static Boolean getCanApplyTax(Job job) {
         return job.getClassification().getIsEarning()
-                /*&& job.getDepartment().getPrivilege().getCanApplyTaxesToJobCosting()*/ // tk re-add using can().
                 && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option?
                 <= BusinessEntityUtils.getMediumDateStringAsLong(
                         BusinessEntityUtils.getDateInMediumDateFormat(job.getJobStatusAndTracking().getDateSubmitted())));
