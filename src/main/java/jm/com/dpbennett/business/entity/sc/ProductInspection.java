@@ -23,7 +23,9 @@ import jm.com.dpbennett.business.entity.fm.MarketProduct;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.cm.Client;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,6 +39,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.dm.DocumentStandard;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.sm.Category;
 import jm.com.dpbennett.business.entity.sm.Product;
@@ -118,8 +121,12 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     private String heatNumber;
     private String coilNumber;
     private String enforcementAction;
+    @Column(length = 1024)
+    private String standardsBreached;
     @Transient
     private Boolean isDirty;
+    @Transient
+    private List<DocumentStandard> documentStandards;
 
     @Override
     public Long getId() {
@@ -129,6 +136,32 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<DocumentStandard> getDocumentStandards() {
+
+        if (documentStandards == null) {
+            documentStandards = new ArrayList<>();
+        }
+
+        return documentStandards;
+    }
+
+    public void setDocumentStandards(List<DocumentStandard> documentStandards) {
+        this.documentStandards = documentStandards;
+    }
+
+    public String getStandardsBreached() {
+
+        if (standardsBreached == null) {
+            standardsBreached = "";
+        }
+
+        return standardsBreached;
+    }
+
+    public void setStandardsBreached(String standardsBreached) {
+        this.standardsBreached = standardsBreached;
     }
 
     public String getEnforcementAction() {
@@ -716,7 +749,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
             if (getProductCategory().getId() != null) {
                 getProductCategory().save(em);
             }
-            
+
             if (getMarketProduct().getId() != null) {
                 getMarketProduct().save(em);
             }
