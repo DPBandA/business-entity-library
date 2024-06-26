@@ -123,6 +123,9 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     private String enforcementAction;
     @Column(length = 1024)
     private String standardsBreached;
+    @Column(length = 1024)
+    private String reasonForDetention;
+    private String commodityCode;
     @Transient
     private Boolean isDirty;
     @Transient
@@ -136,6 +139,33 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getReasonForDetention() {
+
+        if (reasonForDetention == null) {
+            reasonForDetention = "";
+        }
+
+        return reasonForDetention;
+    }
+
+    public void setReasonForDetention(String reasonForDetention) {
+        this.reasonForDetention = reasonForDetention;
+    }
+
+    public String getCommodityCode() {
+
+        if (commodityCode == null) {
+            commodityCode = "";
+        }
+
+        return commodityCode;
+
+    }
+
+    public void setCommodityCode(String commodityCode) {
+        this.commodityCode = commodityCode;
     }
 
     public List<DocumentStandard> getDocumentStandards() {
