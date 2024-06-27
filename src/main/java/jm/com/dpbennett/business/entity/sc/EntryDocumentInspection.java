@@ -56,12 +56,13 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date entryDocumentReportDate;
     private String containerNumbers;
+    private String containerSizes;
     @OneToMany(cascade = CascadeType.ALL)
     private List<ShippingContainer> shippingContainers;
     private Double CIF;
     private Double SCF;
     private String documentStamped;
-    private String profileFlagged; 
+    private String profileFlagged;
     private String countryOfConsignment;
     private String vessel;
     private String waybill;
@@ -86,6 +87,19 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getContainerSizes() {
+
+        if (containerSizes == null) {
+            containerSizes = "";
+        }
+
+        return containerSizes;
+    }
+
+    public void setContainerSizes(String containerSizes) {
+        this.containerSizes = containerSizes;
     }
 
     @Override
@@ -259,7 +273,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
             return false;
         }
         EntryDocumentInspection other = (EntryDocumentInspection) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
