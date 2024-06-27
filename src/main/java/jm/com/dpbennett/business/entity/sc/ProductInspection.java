@@ -126,6 +126,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     @Column(length = 1024)
     private String reasonForDetention;
     private String commodityCode;
+    private String size;
     @Transient
     private Boolean isDirty;
     @Transient
@@ -139,6 +140,19 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getSize() {
+
+        if (size == null) {
+            size = "";
+        }
+
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 
     public String getReasonForDetention() {
