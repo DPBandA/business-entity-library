@@ -136,7 +136,6 @@ public class ComplianceSurvey implements BusinessEntity {
     private Boolean compliant;
     private String portOfEntryDetentionNumber;
     private String domesticMarketDetentionNumber;
-    // Signatures, dates and names
     // Port of Entry/POE Detention Request
     @OneToOne(cascade = CascadeType.REFRESH)
     private Signature authSigForDetentionRequestPOE;
@@ -144,6 +143,7 @@ public class ComplianceSurvey implements BusinessEntity {
     private Date authSigDateForDetentionRequestPOE;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee authEmployeeForDetentionRequestPOE;
+    private String consignmentSizeDetained;
     // Sample Request - Port of Entry
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspectorForSampleRequestPOE;
@@ -201,6 +201,19 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public ComplianceSurvey() {
         this.surveyType = "";
+    }
+
+    public String getConsignmentSizeDetained() {
+
+        if (consignmentSizeDetained == null) {
+            consignmentSizeDetained = "";
+        }
+
+        return consignmentSizeDetained;
+    }
+
+    public void setConsignmentSizeDetained(String consignmentSizeDetained) {
+        this.consignmentSizeDetained = consignmentSizeDetained;
     }
 
     public Employee getInspectorForSampleRequestPOE() {
