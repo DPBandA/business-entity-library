@@ -474,15 +474,14 @@ public class SystemOption implements BusinessEntity {
         try {
             
             name = name.replaceAll("'", "`");
-           
+                      
             List<SystemOption> options = em.createQuery("SELECT o FROM SystemOption o "
                     + "WHERE UPPER(o.name) "
-                    + "LIKE '" + name.toUpperCase() + "'", SystemOption.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", SystemOption.class).getResultList();
 
             if (!options.isEmpty()) {
                 // Make sure this is the current option stored in the database
                 SystemOption option = options.get(0);
-                em.refresh(option);
 
                 return option;
             }
