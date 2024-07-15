@@ -51,6 +51,10 @@ public class ReturnMessage extends Message {
     public boolean isSuccess() {
         return success;
     }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
     
     public String getDetail() {
         String detail;

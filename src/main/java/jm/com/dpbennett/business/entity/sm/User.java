@@ -45,6 +45,7 @@ import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.jmts.Job;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -106,7 +107,7 @@ public class User implements BusinessEntity {
         if (email == null) {
             email = "";
         }
-        
+
         return email;
     }
 
@@ -256,7 +257,7 @@ public class User implements BusinessEntity {
         if (active == null) {
             active = true;
         }
-        
+
         return active;
     }
 
@@ -612,8 +613,10 @@ public class User implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
 
+        ReturnMessage rm = new ReturnMessage();
+
         try {
-            
+
             getEmployee().save(em);
 
             em.getTransaction().begin();
@@ -621,11 +624,19 @@ public class User implements BusinessEntity {
             em.getTransaction().commit();
 
             return new ReturnMessage();
+
         } catch (Exception e) {
+
+            rm.setHeader("User Not Saved!");
+            rm.setMessage("An error occured while saving this user. Check for duplicate privileges.");
+            rm.setSeverity(Message.SEVERITY_ERROR_NAME);
+            rm.setSuccess(false);
+
             System.out.println(e);
+
         }
 
-        return new ReturnMessage(false, "User not saved");
+        return rm;
     }
 
     @Override
