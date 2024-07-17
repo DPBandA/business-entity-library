@@ -225,6 +225,11 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     }
 
     public List<JobCategory> getJobCategories() {
+
+        if (jobCategories == null) {
+            jobCategories = new ArrayList<>();
+        }
+
         return jobCategories;
     }
 
@@ -468,7 +473,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            for (JobCategory jobCategory : jobCategories) {
+            for (JobCategory jobCategory : getJobCategories()) {
                 if (jobCategory.getId() != null) {
                     jobCategory.save(em);
                 }
