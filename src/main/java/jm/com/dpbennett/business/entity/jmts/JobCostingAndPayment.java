@@ -505,6 +505,16 @@ public class JobCostingAndPayment implements BusinessEntity {
 
         return total;
     }
+    
+    public Double getTotalJobCostingsHoursOrQuantity() {
+        Double total = 0.0;
+
+        for (CostComponent component : costComponents) {
+            total = total + component.getHoursOrQuantity();
+        }
+
+        return total;
+    }
 
     public Employee getCostingApprovedBy() {
         return costingApprovedBy;
