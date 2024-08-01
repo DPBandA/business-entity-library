@@ -279,6 +279,38 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         //selectedPurchaseRequisition.prepareAndSave(em, user);
         return selectedPurchaseRequisition;
     }
+    
+    public static PurchaseRequisition create(
+            EntityManager em, 
+            EntityManager hrmem,
+            EntityManager smem,
+            User user) {
+
+        String defaultCurrencyName = SystemOption.getString(em,
+                "defaultCurrency");
+        Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
+
+        PurchaseRequisition selectedPurchaseRequisition = new PurchaseRequisition();
+        selectedPurchaseRequisition.setPurchasingDepartment(Department.findDefault(hrmem, "--"));
+        selectedPurchaseRequisition.setProcurementOfficer(Employee.findDefault(hrmem,
+                "--", "--", false));
+        selectedPurchaseRequisition.
+                setOriginatingDepartment(user.getEmployee().getDepartment());
+        selectedPurchaseRequisition.setProcurementMethod(SystemOption.getString(smem,
+                "defaultProcurementMethod"));
+        selectedPurchaseRequisition.setOriginator(user.getEmployee());
+        selectedPurchaseRequisition.setRequisitionDate(new Date());
+        if (selectedPurchaseRequisition.getAutoGenerateNumber()) {
+            selectedPurchaseRequisition.generateNumber();
+        }
+        selectedPurchaseRequisition.addAction(BusinessEntity.Action.CREATE);
+        selectedPurchaseRequisition.setTax(Tax.findDefault(em, "0.0"));
+        selectedPurchaseRequisition.setDiscount(Discount.findDefault(em, "0.0"));
+        selectedPurchaseRequisition.setCurrency(defaultCurrency);
+        selectedPurchaseRequisition.setIsDirty(true);
+
+        return selectedPurchaseRequisition;
+    }
 
     public String getProcurementMethod() {
         return procurementMethod;
