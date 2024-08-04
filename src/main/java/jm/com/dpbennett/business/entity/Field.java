@@ -139,6 +139,8 @@ public class Field implements Serializable, BusinessEntity {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Field> fields
                     = em.createQuery("SELECT a FROM Field a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
@@ -148,7 +150,9 @@ public class Field implements Serializable, BusinessEntity {
                             + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
                             + "%' ORDER BY a.name",
                             Field.class).getResultList();
+            
             return fields;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -158,6 +162,8 @@ public class Field implements Serializable, BusinessEntity {
     public static List<Field> findActiveFields(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<Field> fields
                     = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim() 
@@ -275,6 +281,8 @@ public class Field implements Serializable, BusinessEntity {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Field> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", Field.class).getResultList();
@@ -292,6 +300,8 @@ public class Field implements Serializable, BusinessEntity {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Field> fields = em.createQuery("SELECT a FROM FieldField a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "'", Field.class).getResultList();
@@ -308,6 +318,8 @@ public class Field implements Serializable, BusinessEntity {
     public static Field findActiveByCode(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Field> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.code) "

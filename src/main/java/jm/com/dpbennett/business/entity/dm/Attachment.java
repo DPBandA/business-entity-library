@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -280,6 +280,8 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     public static Attachment findAttachmentByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Attachment> attachments = em.createQuery("SELECT a FROM Attachment a "
                     + "WHERE UPPER(a.name) "
@@ -301,6 +303,8 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
             int maxResults) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Attachment> attachments
                     = em.createQuery("SELECT a FROM Attachment a where UPPER(a.name) like '%"

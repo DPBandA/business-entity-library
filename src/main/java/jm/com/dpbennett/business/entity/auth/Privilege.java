@@ -71,6 +71,8 @@ public class Privilege implements PrivilegeInterface {
     public static List<Privilege> findActivePrivileges(EntityManager em, String query) {
         try {
             
+            query = query.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p"
                     + " WHERE (p.active = 1) AND (UPPER(p.name) like '%"
                     + query + "%'" + " OR UPPER(p.category) like '%"
@@ -87,6 +89,8 @@ public class Privilege implements PrivilegeInterface {
     
     public static List<Privilege> findPrivileges(EntityManager em, String query) {
         try {
+            
+            query = query.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p"
                     + " WHERE (UPPER(p.name) like '%"
@@ -218,6 +222,8 @@ public class Privilege implements PrivilegeInterface {
     public static Privilege findActivePrivilegeByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p "
                     + "WHERE p.active = 1 AND UPPER(p.name) "
@@ -235,6 +241,8 @@ public class Privilege implements PrivilegeInterface {
     public static Privilege findPrivilegeByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p "
                     + "WHERE UPPER(p.name) "

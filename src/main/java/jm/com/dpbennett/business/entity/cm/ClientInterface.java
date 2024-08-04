@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -59,6 +59,7 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
 
     String getAccountingId();
 
+    @Override
     Boolean getActive();
 
     @Override
@@ -75,8 +76,10 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
 
     Double getCreditLimit();
 
+    @Override
     Date getDateEdited();
 
+    @Override
     Date getDateEntered();
 
     @Override
@@ -107,8 +110,10 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
 
     Discount getDiscount();
 
+    @Override
     Employee getEditedBy();
 
+    @Override
     Employee getEnteredBy();
 
     AccPacCustomer getFinancialAccount();
@@ -180,6 +185,7 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
 
     void setAccountingId(String accountingId);
 
+    @Override
     void setActive(Boolean active);
 
     @Override
@@ -194,8 +200,10 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
 
     void setCreditLimit(Double creditLimit);
 
+    @Override
     void setDateEdited(Date dateEdited);
 
+    @Override
     void setDateEntered(Date dateEntered);
 
     @Override

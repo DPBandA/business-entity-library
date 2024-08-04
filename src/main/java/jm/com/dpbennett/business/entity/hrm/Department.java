@@ -369,7 +369,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
         try {
 
-            value = value.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&");
 
             List<Department> departments = em.createQuery("SELECT d FROM Department d "
                     + "WHERE UPPER(d.name) "
@@ -387,6 +387,8 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static Department findActiveByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Department> departments = em.createQuery("SELECT d FROM Department d "
                     + "WHERE d.active = 1 AND UPPER(d.name) "
@@ -394,6 +396,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
             if (!departments.isEmpty()) {
                 return departments.get(0);
             }
+                       
             return null;
         } catch (Exception e) {
             System.out.println(e);

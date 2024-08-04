@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -139,6 +139,8 @@ public class AccountingCode implements Serializable, BusinessEntity {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<AccountingCode> accountingCodes
                     = em.createQuery(
                             "SELECT a FROM AccountingCode a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
@@ -159,6 +161,8 @@ public class AccountingCode implements Serializable, BusinessEntity {
     public static List<AccountingCode> findActiveAccountingCodes(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<AccountingCode> accountingCodes
                     = em.createQuery("SELECT a FROM AccountingCode a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim() 
@@ -275,6 +279,8 @@ public class AccountingCode implements Serializable, BusinessEntity {
     public static AccountingCode findByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
                     + "WHERE UPPER(a.name) "
@@ -294,6 +300,8 @@ public class AccountingCode implements Serializable, BusinessEntity {
     public static AccountingCode findByCode(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
                     + "WHERE UPPER(a.code) "
@@ -313,6 +321,8 @@ public class AccountingCode implements Serializable, BusinessEntity {
     public static AccountingCode findActiveByCode(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
                     + "WHERE UPPER(a.code) "

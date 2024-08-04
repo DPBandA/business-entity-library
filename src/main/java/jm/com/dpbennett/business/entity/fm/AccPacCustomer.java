@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -246,6 +246,8 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<AccPacCustomer> clients;
             clients = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"
@@ -263,6 +265,8 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<AccPacCustomer> clients;
             clients = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"
@@ -279,6 +283,8 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public static AccPacCustomer findByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<AccPacCustomer> customers = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"

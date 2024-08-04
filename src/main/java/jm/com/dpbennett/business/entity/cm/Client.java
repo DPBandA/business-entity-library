@@ -847,7 +847,7 @@ public class Client implements ClientInterface {
 
         try {
 
-            value = value.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Client> clients
                     = em.createQuery("SELECT c FROM Client c WHERE c.name like '%"

@@ -44,8 +44,10 @@ public interface PrivilegeInterface extends BusinessEntity {
     @Override
     public void setDescription(String description);
 
+    @Override
     public String getCategory();
 
+    @Override
     public void setCategory(String category);
 
 }

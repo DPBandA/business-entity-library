@@ -394,6 +394,8 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         List<DocumentStandard> documentStandards;
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
           
             if (ignoreCase) {
                 documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
@@ -410,7 +412,9 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
             if (!documentStandards.isEmpty()) {
                 return documentStandards.get(0);
             }
+            
             return null;
+            
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -485,7 +489,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
 
         try {
             
-            value = value.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<DocumentStandard> documentStandards
                     = em.createQuery("SELECT d FROM DocumentStandard d WHERE (d.name like '%"
@@ -506,7 +510,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
 
         try {
             
-            value = value.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<DocumentStandard> documentStandards
                     = em.createQuery("SELECT d FROM DocumentStandard d WHERE d.name like '%"

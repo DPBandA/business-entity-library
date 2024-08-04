@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -41,6 +41,7 @@ public interface CertificationInterface extends BusinessEntity, Comparable, Seri
     @Override
     boolean equals(Object object);
 
+    @Override
     Boolean getActive();
 
     Client getApplicant();
@@ -64,10 +65,12 @@ public interface CertificationInterface extends BusinessEntity, Comparable, Seri
     @Override
     String getName();
 
+    @Override
     String getNotes();
 
     String getNumber();
 
+    @Override
     String getType();
 
     @Override
@@ -76,6 +79,7 @@ public interface CertificationInterface extends BusinessEntity, Comparable, Seri
     @Override
     ReturnMessage save(EntityManager em);
 
+    @Override
     void setActive(Boolean active);
 
     void setApplicant(Client applicant);
@@ -90,20 +94,27 @@ public interface CertificationInterface extends BusinessEntity, Comparable, Seri
 
     void setGrantedTo(Business grantedTo);
 
+    @Override
     void setId(Long id);
 
+    @Override
     void setIsDirty(Boolean isDirty);
 
+    @Override
     void setName(String name);
 
+    @Override
     void setNotes(String notes);
 
     void setNumber(String number);
 
+    @Override
     void setType(String type);
 
+    @Override
     String toString();
 
+    @Override
     ReturnMessage validate(EntityManager em);
     
 }
