@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -207,7 +207,8 @@ public class Sector implements BusinessEntity, Serializable {
         }
     }
 
-    public static List<Sector> findAllSectorsByDeparment(EntityManager em, Department department) {
+    public static List<Sector> findAllSectorsByDeparment(
+            EntityManager em, Department department) {
         try {
             List<Sector> sectors
                     = em.createQuery(
@@ -221,13 +222,15 @@ public class Sector implements BusinessEntity, Serializable {
         }
     }
 
-    public static Sector findSectorByName(EntityManager em, String sectorName) {
+    public static Sector findSectorByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Sector> sectors = em.createQuery("SELECT s FROM Sector s "
                     + "WHERE UPPER(s.name) "
-                    + "= '" + sectorName.toUpperCase() + "'", Sector.class).getResultList();
+                    + "= '" + name.toUpperCase() + "'", Sector.class).getResultList();
             if (!sectors.isEmpty()) {
                 return sectors.get(0);
             }
@@ -242,6 +245,8 @@ public class Sector implements BusinessEntity, Serializable {
     public static List<Sector> findSectorsByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Sector> sectors
                     = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"
@@ -256,6 +261,8 @@ public class Sector implements BusinessEntity, Serializable {
     public static List<Sector> findActiveSectorsByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Sector> sectors
                     = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"

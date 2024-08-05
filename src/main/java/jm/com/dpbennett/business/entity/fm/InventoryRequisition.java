@@ -512,6 +512,8 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
             EntityManager em,
             String searchText,
             Integer maxResults) {
+        
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         List<InventoryRequisition> foundInventoryRequisitions = new ArrayList<>();
         String searchQuery;

@@ -355,6 +355,8 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
             EntityManager em,
             String searchText,
             Integer maxResults) {
+        
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         List<InventoryDisbursement> foundInventoryDisbursements;
         String searchQuery;

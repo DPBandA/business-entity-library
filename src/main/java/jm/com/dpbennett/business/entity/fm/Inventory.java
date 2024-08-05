@@ -530,6 +530,8 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Inventory> inventory
                     = em.createQuery("SELECT i FROM Inventory i WHERE UPPER(i.name) like '%"
@@ -548,6 +550,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
                     + "WHERE UPPER(i.name)" + " = '" + name + "'",
                     Inventory.class).getResultList();
@@ -568,6 +573,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
                     + "WHERE UPPER(i.name)" + " = '" + name + "'"
                     + " AND i.active = 1",
@@ -589,6 +597,8 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             EntityManager em,
             String searchText,
             Integer maxResults) {
+        
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         List<Inventory> foundInventory = new ArrayList<>();
         String searchQuery;
@@ -641,6 +651,8 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             String searchText,
             Integer maxResults) {
 
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        
         List<Inventory> foundInventory = new ArrayList<>();
         String searchQuery;
         String searchTextAndClause;

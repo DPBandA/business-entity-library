@@ -255,6 +255,7 @@ public class JobCategory implements Serializable, BusinessEntity {
     public static List<JobCategory> findAllJobCategories(EntityManager em) {
 
         try {
+            
             List<JobCategory> categories = em.createNamedQuery("findAllJobCategories", JobCategory.class).getResultList();
 
             return categories;
@@ -267,6 +268,7 @@ public class JobCategory implements Serializable, BusinessEntity {
     public static List<JobCategory> findAllActiveJobCategories(EntityManager em) {
 
         try {
+            
             List<JobCategory> categories = em.createNamedQuery("findAllActiveJobCategories", JobCategory.class).getResultList();
 
             return categories;
@@ -295,7 +297,9 @@ public class JobCategory implements Serializable, BusinessEntity {
 
     public static JobCategory findJobCategoryById(EntityManager em, Long Id) {
         try {
+            
             return em.find(JobCategory.class, Id);
+            
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -305,6 +309,8 @@ public class JobCategory implements Serializable, BusinessEntity {
     public static JobCategory findJobCategoryByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<JobCategory> jobCategories = em.createQuery("SELECT c FROM JobCategory c "
                     + "WHERE UPPER(c.category) "
@@ -324,6 +330,8 @@ public class JobCategory implements Serializable, BusinessEntity {
     public static List<JobCategory> findJobCategoriesByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<JobCategory> jobCategories
                     = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"
@@ -335,9 +343,12 @@ public class JobCategory implements Serializable, BusinessEntity {
         }
     }
     
-    public static List<JobCategory> findActiveJobCategoriesByName(EntityManager em, String name) {
+    public static List<JobCategory> findActiveJobCategoriesByName(
+            EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<JobCategory> jobCategories
                     = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"

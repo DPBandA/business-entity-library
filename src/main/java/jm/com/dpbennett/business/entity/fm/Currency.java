@@ -147,6 +147,8 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
                     + "WHERE UPPER(c.name) "
                     + "= '" + value.toUpperCase() + "'", Currency.class).getResultList();
@@ -165,6 +167,9 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
     public static Currency findByCode(EntityManager em, String code) {
 
         try {
+            
+            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
                     + "WHERE c.code "
                     + "= '" + code + "'", Currency.class).getResultList();
@@ -182,6 +187,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
     public static List<Currency> findAll(EntityManager em) {
 
         try {
+            
             List<Currency> codes = em.createQuery("SELECT c FROM Currency c ORDER BY c.code", Currency.class).getResultList();
 
             return codes;
@@ -211,6 +217,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
     public static Currency findById(EntityManager em, Long id) {
 
         try {
+            
             Currency code = em.find(Currency.class, id);
 
             return code;

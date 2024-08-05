@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -204,6 +204,7 @@ public class FinancialAccount implements
     public static List<FinancialAccount> findAllFields(EntityManager em) {
 
         try {
+            
             List<FinancialAccount> codes = em.createNamedQuery("findAllFields", FinancialAccount.class).getResultList();
 
             return codes;
@@ -217,6 +218,8 @@ public class FinancialAccount implements
     public static List<FinancialAccount> findFields(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<FinancialAccount> fields
                     = em.createQuery("SELECT a FROM Field a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
@@ -237,6 +240,8 @@ public class FinancialAccount implements
     public static List<FinancialAccount> findActiveFields(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<FinancialAccount> fields
                     = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
@@ -355,6 +360,8 @@ public class FinancialAccount implements
     public static FinancialAccount findByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<FinancialAccount> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.name) "
@@ -372,6 +379,8 @@ public class FinancialAccount implements
     public static FinancialAccount findByCode(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<FinancialAccount> fields = em.createQuery("SELECT a FROM FieldField a "
                     + "WHERE UPPER(a.code) "
@@ -389,6 +398,8 @@ public class FinancialAccount implements
     public static FinancialAccount findActiveByCode(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<FinancialAccount> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.code) "

@@ -40,7 +40,7 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
-import jm.com.dpbennett.business.entity.sm.Product;
+import jm.com.dpbennett.business.entity.fm.Product;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**

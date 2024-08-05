@@ -39,7 +39,6 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
-import jm.com.dpbennett.business.entity.sm.Product;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -149,6 +148,8 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
             EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
                     + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + name + "'",

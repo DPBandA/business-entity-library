@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -111,6 +111,8 @@ public class Discount implements Serializable, BusinessEntity {
 
     public static Discount findDefault(EntityManager em, String name) {
         Discount discount = Discount.findByName(em, name);
+        
+        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         if (discount == null) {
             discount = new Discount(name);
@@ -126,6 +128,9 @@ public class Discount implements Serializable, BusinessEntity {
     public static Discount findDefault(EntityManager em,
             String name, Double value, String type) {
         Discount discount = Discount.findByName(em, name);
+        
+        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+        type = type.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         if (discount == null) {
             discount = new Discount(name, value, type);
@@ -184,6 +189,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static List<Discount> findAllDiscounts(EntityManager em) {
 
         try {
+            
             List<Discount> discounts = em.createNamedQuery("findAllDiscounts", Discount.class).getResultList();
 
             return discounts;
@@ -197,6 +203,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static List<Discount> findAllActiveDiscounts(EntityManager em) {
 
         try {
+            
             List<Discount> discounts = em.createNamedQuery("findAllActiveDiscounts", Discount.class).getResultList();
 
             return discounts;
@@ -229,7 +236,7 @@ public class Discount implements Serializable, BusinessEntity {
 
         try {
 
-            value = value.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Discount> discounts
                     = em.createQuery("SELECT d FROM Discount d WHERE (UPPER(d.name) LIKE '%"
@@ -342,6 +349,8 @@ public class Discount implements Serializable, BusinessEntity {
     public static Discount findByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
           
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
                     + "WHERE UPPER(d.name) "
@@ -378,7 +387,7 @@ public class Discount implements Serializable, BusinessEntity {
 
         try {
             
-            valueType = valueType.replaceAll("'", "`");
+            valueType = valueType.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d"
                     + " WHERE d.discountValue = " + value
