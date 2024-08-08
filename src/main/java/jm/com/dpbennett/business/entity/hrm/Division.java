@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -324,13 +324,15 @@ public class Division implements BusinessEntity, Comparable {
         }
     }
 
-    public static List<Division> findAllByName(EntityManager em, String name) {
+    public static List<Division> findAllByName(EntityManager em, String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Division> divisions
                     = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY d.name", Division.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY d.name", Division.class).getResultList();
             return divisions;
         } catch (Exception e) {
             System.out.println(e);
@@ -338,13 +340,15 @@ public class Division implements BusinessEntity, Comparable {
         }
     }
     
-    public static List<Division> findAllActiveByName(EntityManager em, String name) {
+    public static List<Division> findAllActiveByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
           
             List<Division> divisions
                     = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
-                            + name.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Division.class).getResultList();
+                            + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Division.class).getResultList();
             return divisions;
         } catch (Exception e) {
             System.out.println(e);

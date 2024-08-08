@@ -409,15 +409,16 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
      * @param lastName
      * @return
      */
-    public static Contact findContactByName(EntityManager em, String firstName, String lastName) {
+    public static Contact findContactByName(EntityManager em, 
+            String firstName, String lastName) {
 
         if (firstName != null && lastName != null) {
            
             try {
                 
-                firstName = firstName.replaceAll("'", "`");
-                lastName = lastName.replaceAll("'", "`");
-                
+                firstName = firstName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                lastName = lastName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                              
                 List<Contact> contacts = em.createQuery("SELECT c FROM Contact c "
                         + "WHERE UPPER(c.firstName) "
                         + "= '" + firstName + "' AND UPPER(c.lastName) = '" + lastName + "'",
@@ -443,7 +444,8 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
      * @param clientId
      * @return
      */
-    public static Contact findClientContactById(EntityManager em, String query, Long clientId) {
+    public static Contact findClientContactById(EntityManager em, 
+            String query, Long clientId) {
 
         try {
            
@@ -516,7 +518,8 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         }
     }
 
-    public static Contact findContact(EntityManager em, String query, List<Contact> contactsList) {
+    public static Contact findContact(EntityManager em, 
+            String query, List<Contact> contactsList) {
 
         try {
             
@@ -543,6 +546,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
             String firstName,
             String lastName,
             Boolean useTransaction) {
+        
         Contact contact = Contact.findContactByName(em, firstName, lastName);
 
         // create employee if it does not exist

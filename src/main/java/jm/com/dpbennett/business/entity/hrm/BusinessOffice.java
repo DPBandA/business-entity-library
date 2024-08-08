@@ -210,9 +210,12 @@ public class BusinessOffice implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<BusinessOffice> findBusinessOfficesByName(EntityManager em, String value) {
+    public static List<BusinessOffice> findBusinessOfficesByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<BusinessOffice> businessOffices
                     = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '%"
@@ -224,9 +227,12 @@ public class BusinessOffice implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<BusinessOffice> findActiveBusinessOfficesByName(EntityManager em, String value) {
+    public static List<BusinessOffice> findActiveBusinessOfficesByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<BusinessOffice> businessOffices
                     = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '%"
@@ -286,6 +292,8 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     public static BusinessOffice findBusinessOfficeByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<BusinessOffice> offices = em.createQuery("SELECT b FROM BusinessOffice b "
                     + "WHERE UPPER(b.name) "

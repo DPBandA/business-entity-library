@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -156,13 +156,16 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
         return Collator.getInstance().compare(this.name, ((DepartmentUnit) o).name);
     }
     
-    public static List<DepartmentUnit> findDepartmentUnitsByName(EntityManager em, String name) {
+    public static List<DepartmentUnit> findDepartmentUnitsByName(EntityManager em, 
+            String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<DepartmentUnit> departmentUnits =
                     em.createQuery("SELECT d FROM DepartmentUnit d where UPPER(d.name) like '"
-                    + name.toUpperCase().trim() + "%' ORDER BY d.name", DepartmentUnit.class).getResultList();
+                    + value.toUpperCase().trim() + "%' ORDER BY d.name", DepartmentUnit.class).getResultList();
             return departmentUnits;
         } catch (Exception e) {
             System.out.println(e);
@@ -180,13 +183,15 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
         }
     }
 
-    public static DepartmentUnit findDepartmentUnitByName(EntityManager em, String name) {
+    public static DepartmentUnit findDepartmentUnitByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<DepartmentUnit> departmentUnits = em.createQuery("SELECT d FROM DepartmentUnit d "
                     + "WHERE UPPER(d.name) "
-                    + "= '" + name.toUpperCase() + "'", DepartmentUnit.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", DepartmentUnit.class).getResultList();
             if (!departmentUnits.isEmpty()) {
                 return departmentUnits.get(0);
             }

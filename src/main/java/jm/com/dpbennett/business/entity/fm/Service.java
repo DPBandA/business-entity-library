@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -241,6 +241,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static Service findById(EntityManager em, Long id) {
 
         try {
+            
             Service service = em.find(Service.class, id);
 
             return service;
@@ -251,14 +252,16 @@ public class Service implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static Service findByName(EntityManager em, String serviceName) {
+    public static Service findByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "LIKE '%" + serviceName.toUpperCase() + "%'", 
+                    + "LIKE '%" + name.toUpperCase() + "%'", 
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -270,14 +273,16 @@ public class Service implements Serializable, BusinessEntity, Comparable {
         }
     }
     
-     public static Service findByExactName(EntityManager em, String serviceName) {
+     public static Service findByExactName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "= '" + serviceName.toUpperCase() + "'", 
+                    + "= '" + name.toUpperCase() + "'", 
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -289,14 +294,16 @@ public class Service implements Serializable, BusinessEntity, Comparable {
         }
     }
     
-    public static Service findActiveByName(EntityManager em, String serviceName) {
+    public static Service findActiveByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "LIKE '%" + serviceName.toUpperCase() + "%' AND s.active = 1", 
+                    + "LIKE '%" + name.toUpperCase() + "%' AND s.active = 1", 
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -308,14 +315,16 @@ public class Service implements Serializable, BusinessEntity, Comparable {
         }
     }
     
-    public static Service findActiveByExactName(EntityManager em, String serviceName) {
+    public static Service findActiveByExactName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "= '" + serviceName.toUpperCase() + "' AND s.active = 1", 
+                    + "= '" + name.toUpperCase() + "' AND s.active = 1", 
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -329,16 +338,19 @@ public class Service implements Serializable, BusinessEntity, Comparable {
 
     public static Service findByNameAndAccountingCode(
             EntityManager em,
-            String serviceName,
+            String name,
             String code) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s"
                     + " JOIN s.accountingCode accountingCode"
                     + " WHERE UPPER(s.name)"
-                    + " LIKE '%" + serviceName.toUpperCase() + "%'"
+                    + " LIKE '%" + name.toUpperCase() + "%'"
                     + " AND accountingCode.code LIKE '%" + code + "%'",
                     Service.class).getResultList();
 
@@ -358,6 +370,9 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             String code) {
 
         try {
+            
+            serviceName = serviceName.replaceAll("&amp;", "&").replaceAll("'", "`");
+            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s"
@@ -380,6 +395,8 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static List<Service> findAllByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Service> services
                     = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
@@ -394,6 +411,8 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static List<Service> findAllActiveByName(EntityManager em, String name) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<Service> services
                     = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
@@ -411,6 +430,9 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             String code) {
 
         try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Service> services
                     = em.createQuery("SELECT s FROM Service s"

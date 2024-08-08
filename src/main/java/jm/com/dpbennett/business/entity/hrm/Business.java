@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -321,6 +321,8 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public static Business findBusinessByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Business> businesses = em.createQuery("SELECT b FROM Business b "
                     + "WHERE UPPER(b.name) "
@@ -369,6 +371,8 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public static List<Business> findBusinessesByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Business> businesses
                     = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
@@ -383,6 +387,8 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public static List<Business> findActiveBusinessesByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Business> businesses
                     = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"

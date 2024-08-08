@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -244,6 +244,9 @@ public class UnitCost implements Serializable, BusinessEntity {
         String searchQuery;
         String searchTextAndClause = "";
         String joinClause;
+        
+        departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         joinClause =
                 " JOIN unitCost.department department"

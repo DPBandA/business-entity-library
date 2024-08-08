@@ -356,7 +356,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
 
         try {
             
-            value = value.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Address> addresses = em.createQuery("SELECT a FROM Address a "
                     + "WHERE UPPER(a.name) "

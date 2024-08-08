@@ -316,7 +316,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
         try {
 
-            value = value.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Department> departments
                     = em.createQuery("SELECT d FROM Department d where UPPER(d.name) like '%"
@@ -332,7 +332,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
         try {
 
-            value = value.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Department> departments
                     = em.createQuery("SELECT d FROM Department d WHERE UPPER(d.name) LIKE '%"
@@ -358,7 +358,9 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static List<Department> findAllActive(EntityManager em) {
 
         try {
+            
             return em.createQuery("SELECT d FROM Department d WHERE d.active = 1 ORDER BY d.name", Department.class).getResultList();
+      
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -369,7 +371,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
         try {
 
-            value = value.replaceAll("&amp;", "&");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Department> departments = em.createQuery("SELECT d FROM Department d "
                     + "WHERE UPPER(d.name) "
@@ -438,14 +440,14 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static Department findBySubGroupCode(EntityManager em, String subGroupCode) {
+    public static Department findBySubGroupCode(EntityManager em, String value) {
 
         try {
 
-            subGroupCode = subGroupCode.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             Query query = em.createNamedQuery("findBySubGroupCode");
-            query.setParameter("subGroupCode", subGroupCode);
+            query.setParameter("subGroupCode", value);
             return (Department) query.getSingleResult();
         } catch (Exception e) {
             return null;
