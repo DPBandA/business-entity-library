@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -221,6 +221,8 @@ public class Subgroup implements BusinessEntity, Comparable {
     public static Subgroup findActiveSubgroupByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
                     + "WHERE s.active = 1 AND UPPER(s.name) "
@@ -247,6 +249,8 @@ public class Subgroup implements BusinessEntity, Comparable {
     public static Subgroup findByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
                     + "WHERE UPPER(s.name) "
@@ -305,6 +309,8 @@ public class Subgroup implements BusinessEntity, Comparable {
     public static List<Subgroup> findAllByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Subgroup> subgroups
                     = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
@@ -319,6 +325,8 @@ public class Subgroup implements BusinessEntity, Comparable {
     public static List<Subgroup> findAllActiveByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<Subgroup> subgroups
                     = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"

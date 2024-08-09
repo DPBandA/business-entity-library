@@ -401,14 +401,16 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         this.name = name;
     }
 
-    public static List<Employee> findByAnyPartOfName(EntityManager em, String name) {
+    public static List<Employee> findByAnyPartOfName(EntityManager em, String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Employee> employees
                     = em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
-                            + name + "%'" + " OR UPPER(e.lastName) like '%"
-                            + name + "%'"
+                            + value + "%'" + " OR UPPER(e.lastName) like '%"
+                            + value + "%'"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
         } catch (Exception e) {
@@ -417,15 +419,17 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    public static List<Employee> find(EntityManager em, String query) {
+    public static List<Employee> find(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Employee> employees
                     = em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
-                            + query + "%'" + " OR UPPER(e.lastName) like '%"
-                            + query + "%'" + " OR UPPER(e.department.name) like '%"
-                            + query + "%'"
+                            + value + "%'" + " OR UPPER(e.lastName) like '%"
+                            + value + "%'" + " OR UPPER(e.department.name) like '%"
+                            + value + "%'"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
         } catch (Exception e) {
@@ -434,14 +438,16 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    public static List<Employee> findAllActiveByName(EntityManager em, String query) {
+    public static List<Employee> findAllActiveByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Employee> employees
                     = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '%"
-                            + query + "%'" + " OR UPPER(e.lastName) like '%"
-                            + query + "%'"
+                            + value + "%'" + " OR UPPER(e.lastName) like '%"
+                            + value + "%'"
                             + ") AND e.active = 1"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
             
@@ -454,14 +460,16 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     }
 
     public static List<Employee> findActiveByPosition(EntityManager em,
-            String positionTitle) {
+            String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<Employee> employees
                     = em.createQuery("SELECT e FROM Employee e"
                             + " JOIN e.positions positions"
-                            + " WHERE positions.title = '" + positionTitle + "'"
+                            + " WHERE positions.title = '" + value + "'"
                             + " AND e.active = 1",
                             Employee.class).getResultList();
 
@@ -472,16 +480,18 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    public static List<Employee> findActive(EntityManager em, String query) {
+    public static List<Employee> findActive(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Employee> employees 
                     = em.createQuery("SELECT DISTINCT e FROM Employee e LEFT JOIN e.positions positions WHERE ( UPPER(e.firstName) like '%"
-                            + query + "%'" + " OR UPPER(e.lastName) like '%"
-                            + query + "%'" + " OR UPPER(positions.title) like '%"
-                            + query + "%'" + " OR UPPER(e.department.name) like '%"
-                            + query + "%')"
+                            + value + "%'" + " OR UPPER(e.lastName) like '%"
+                            + value + "%'" + " OR UPPER(positions.title) like '%"
+                            + value + "%'" + " OR UPPER(e.department.name) like '%"
+                            + value + "%')"
                             + " AND e.active = 1 OR e.active IS NULL"
                             + " ORDER BY e.lastName", Employee.class).getResultList();
             return employees;
@@ -505,6 +515,10 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         if (firstName != null && lastName != null) {
            
             try {
+                
+                firstName = firstName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                lastName = lastName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                
                 List<Employee> employees = em.createQuery("SELECT e FROM Employee e "
                         + "WHERE UPPER(e.firstName) "
                         + "= '" + firstName + "' AND UPPER(e.lastName) = '" 
@@ -530,11 +544,17 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
      * @param lastName
      * @return
      */
-    public static Employee findActiveByName(EntityManager em, String firstName, String lastName) {
+    public static Employee findActiveByName(EntityManager em, 
+            String firstName, 
+            String lastName) {
 
         if (firstName != null && lastName != null) {
            
             try {
+                
+                firstName = firstName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                lastName = lastName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                
                 List<Employee> employees = em.createQuery("SELECT e FROM Employee e "
                         + "WHERE e.active = 1 AND UPPER(e.firstName) "
                         + "= '" + firstName + "' AND UPPER(e.lastName) = '" 
@@ -619,6 +639,8 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
     public static Employee findByName(EntityManager em, String name) {
         
+        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+        
         // NB: This assumes that the name is given as "lastname, firstname"
         String names[] = name.split(",");
         
@@ -637,7 +659,10 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     }
 
     public static Employee findActiveByName(EntityManager em, String name) {
+        
+        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
         String names[] = name.split(",");
+        
         if (names.length == 2) {
             if (!names[1].trim().equals("") && !names[0].trim().equals("")) {
                 return Employee.findActiveByName(em,

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -167,13 +167,16 @@ public class Laboratory implements BusinessEntity, Company {
         this.businessOffices = businessOffices;
     }
 
-    public static List<Laboratory> findLaboratoriesByName(EntityManager em, String name) {
+    public static List<Laboratory> findLaboratoriesByName(EntityManager em, 
+            String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Laboratory> laboratories =
                     em.createQuery("SELECT l FROM Laboratory l where UPPER(l.name) like '"
-                    + name.toUpperCase().trim() + "%' ORDER BY l.name", Laboratory.class).getResultList();
+                    + value.toUpperCase().trim() + "%' ORDER BY l.name", Laboratory.class).getResultList();
             return laboratories;
         } catch (Exception e) {
             System.out.println(e);
@@ -191,13 +194,15 @@ public class Laboratory implements BusinessEntity, Company {
         }
     }
 
-    public static Laboratory findLaboratoryByName(EntityManager em, String name) {
+    public static Laboratory findLaboratoryByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Laboratory> laboratories = em.createQuery("SELECT l FROM Laboratory l "
                     + "WHERE UPPER(l.name) "
-                    + "= '" + name.toUpperCase() + "'", Laboratory.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Laboratory.class).getResultList();
             if (!laboratories.isEmpty()) {
                 return laboratories.get(0);
             }

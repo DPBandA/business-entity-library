@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -244,13 +244,15 @@ public class Internet implements BusinessEntity, Serializable {
         return internet;
     }
     
-    public static Internet findInternetByName(EntityManager em, String name) {
+    public static Internet findInternetByName(EntityManager em, String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Internet> internets = em.createQuery("SELECT i FROM Internet i "
                     + "WHERE UPPER(i.name) "
-                    + "= '" + name.toUpperCase() + "'", Internet.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Internet.class).getResultList();
             if (!internets.isEmpty()) {
                 return internets.get(0);
             }

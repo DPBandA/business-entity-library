@@ -98,7 +98,8 @@ public class Division implements BusinessEntity, Comparable {
         this.id = id;
     }
     
-    public static Employee findHeadOfActiveDivistionByDepartment (EntityManager em,
+    public static Employee findHeadOfActiveDivistionByDepartment (
+            EntityManager em,
             Department department) {
         
         List<Division> activeDivistions = Division.findAllActive(em);
@@ -268,20 +269,15 @@ public class Division implements BusinessEntity, Comparable {
         }
     }
 
-    /**
-     * Get the first division that matches the given name
-     *
-     * @param em
-     * @param name
-     * @return
-     */
-    public static Division findByName(EntityManager em, String name) {
+    public static Division findByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Division> divisions = em.createQuery("SELECT d FROM Division d "
                     + "WHERE UPPER(d.name) "
-                    + "= '" + name.toUpperCase() + "'", Division.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Division.class).getResultList();
 
             if (!divisions.isEmpty()) {
                 return divisions.get(0);

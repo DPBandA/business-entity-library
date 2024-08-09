@@ -407,15 +407,16 @@ public class Manufacturer implements BusinessEntity, Comparable {
         }
     }
 
-    public static List<Manufacturer> findManufacturersBySearchPattern(EntityManager em, String searchPattern) {
+    public static List<Manufacturer> findManufacturersBySearchPattern(
+            EntityManager em, String value) {
 
         try {
 
-            searchPattern = searchPattern.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Manufacturer> manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
                     + "WHERE UPPER(m.name) "
-                    + "LIKE '" + searchPattern.toUpperCase() + "%' "
+                    + "LIKE '" + value.toUpperCase() + "%' "
                     + "ORDER BY m.name", Manufacturer.class).getResultList();
             return manufacturers;
         } catch (Exception e) {
@@ -435,15 +436,15 @@ public class Manufacturer implements BusinessEntity, Comparable {
     }
 
     // Get the first manufacturer that matches the given name
-    public static Manufacturer findManufacturerByName(EntityManager em, String name) {
+    public static Manufacturer findManufacturerByName(EntityManager em, String value) {
 
         try {
 
-            name = name.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Manufacturer> manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
                     + "WHERE UPPER(m.name) "
-                    + "= '" + name.toUpperCase() + "'", Manufacturer.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Manufacturer.class).getResultList();
             if (!manufacturers.isEmpty()) {
                 return manufacturers.get(0);
             }
@@ -457,6 +458,7 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static Manufacturer findDefaultManufacturer(EntityManager em,
             String name,
             Boolean useTransaction) {
+        
         Manufacturer manufacturer = Manufacturer.findManufacturerByName(em, name);
 
         if (manufacturer == null) {
@@ -475,11 +477,15 @@ public class Manufacturer implements BusinessEntity, Comparable {
         return manufacturer;
     }
 
-    public static Manufacturer findActiveManufacturerByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static Manufacturer findActiveManufacturerByName(EntityManager em, 
+            String value, 
+            Boolean ignoreCase) {
 
         List<Manufacturer> manufacturers;
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             if (ignoreCase) {
                 manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
@@ -503,11 +509,12 @@ public class Manufacturer implements BusinessEntity, Comparable {
         }
     }
 
-    public static List<Manufacturer> findActiveManufacturersByAnyPartOfName(EntityManager em, String value) {
+    public static List<Manufacturer> findActiveManufacturersByAnyPartOfName(
+            EntityManager em, String value) {
 
         try {
 
-            value = value.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Manufacturer> manufacturers
                     = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
@@ -521,11 +528,12 @@ public class Manufacturer implements BusinessEntity, Comparable {
         }
     }
 
-    public static List<Manufacturer> findManufacturersByAnyPartOfName(EntityManager em, String value) {
+    public static List<Manufacturer> findManufacturersByAnyPartOfName(
+            EntityManager em, String value) {
 
         try {
 
-            value = value.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Manufacturer> manufacturers
                     = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"

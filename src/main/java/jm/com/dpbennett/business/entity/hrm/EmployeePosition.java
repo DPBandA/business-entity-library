@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -274,7 +274,8 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static List<EmployeePosition> findAllActiveEmployeePositions(EntityManager em) {
+    public static List<EmployeePosition> findAllActiveEmployeePositions(
+            EntityManager em) {
 
         try {
             List<EmployeePosition> employeePositions = em.createNamedQuery("findAllActiveEmployeePositions", EmployeePosition.class).getResultList();
@@ -314,13 +315,16 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static EmployeePosition findEmployeePositionByTitle(EntityManager em, String title) {
+    public static EmployeePosition findEmployeePositionByTitle(EntityManager em, 
+            String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
                     + "WHERE UPPER(e.title) "
-                    + "= '" + title.toUpperCase() + "'", EmployeePosition.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", EmployeePosition.class).getResultList();
 
             if (!employeePositions.isEmpty()) {
                 return employeePositions.get(0);
@@ -333,13 +337,16 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static List<EmployeePosition> findEmployeePositionsByTitle(EntityManager em, String title) {
+    public static List<EmployeePosition> findEmployeePositionsByTitle(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<EmployeePosition> employeePositions
                     = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
-                            + title.toUpperCase().trim() + "%' ORDER BY e.title", EmployeePosition.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY e.title", EmployeePosition.class).getResultList();
             return employeePositions;
         } catch (Exception e) {
             System.out.println(e);
@@ -347,13 +354,17 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static List<EmployeePosition> findActiveEmployeePositionsByTitle(EntityManager em, String title) {
+    public static List<EmployeePosition> findActiveEmployeePositionsByTitle(
+            EntityManager em, 
+            String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<EmployeePosition> employeePositions
                     = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
-                            + title.toUpperCase().trim() + "%' AND e.active = 1 ORDER BY e.title", EmployeePosition.class).getResultList();
+                            + value.toUpperCase().trim() + "%' AND e.active = 1 ORDER BY e.title", EmployeePosition.class).getResultList();
             return employeePositions;
         } catch (Exception e) {
             System.out.println(e);
@@ -361,13 +372,17 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static EmployeePosition findActiveEmployeePositionByTitle(EntityManager em,
-            String title) {
+    public static EmployeePosition findActiveEmployeePositionByTitle(
+            EntityManager em,
+            String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
                     + "WHERE e.active = 1 AND UPPER(e.title) "
-                    + "= '" + title + "'",
+                    + "= '" + value + "'",
                     EmployeePosition.class).getResultList();
             if (!employeePositions.isEmpty()) {
                 EmployeePosition employeePosition = employeePositions.get(0);
