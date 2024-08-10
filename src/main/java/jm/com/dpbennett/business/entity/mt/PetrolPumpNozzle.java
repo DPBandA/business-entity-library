@@ -335,13 +335,16 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
         this.name = name;
     }
     
-    public static List<PetrolPumpNozzle> findPetrolPumpNozzlesByCalibrationJobNumber(EntityManager em, String jobNumber) {
+    public static List<PetrolPumpNozzle> findPetrolPumpNozzlesByCalibrationJobNumber(
+            EntityManager em, String value) {
+        
         List<PetrolPumpNozzle> foundPetrolPumpNozzles;
+        value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         String searchQuery =
                 "SELECT PetrolPumpNozzle FROM PetrolPumpNozzle petrolPumpNozzle"
                 + " JOIN petrolPumpNozzle.lastCalibration lastCalibration"
-                + " WHERE lastCalibration.job.jobNumber = '" + jobNumber + "'"
+                + " WHERE lastCalibration.job.jobNumber = '" + value + "'"
                 + " ORDER BY lastCalibration.id DESC";
         try {
             foundPetrolPumpNozzles = em.createQuery(searchQuery, PetrolPumpNozzle.class).getResultList();

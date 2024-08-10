@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -278,27 +278,35 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     
     
 
-    public static List<PetrolCompany> findPetrolCompaniesByName(EntityManager em, String name) {
+    public static List<PetrolCompany> findPetrolCompaniesByName(
+            EntityManager em, String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<PetrolCompany> companies =
                     em.createQuery("SELECT p FROM PetrolCompany p where UPPER(p.name) like '"
-                    + name.toUpperCase().trim() + "%' ORDER BY p.name", PetrolCompany.class).getResultList();
+                    + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolCompany.class).getResultList();
+            
             return companies;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<PetrolCompany>();
         }
     }
     
-     public static PetrolCompany findPetrolCompanyByName(EntityManager em, String name) {
+     public static PetrolCompany findPetrolCompanyByName(
+             EntityManager em, String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<PetrolCompany> petrolCompanies = em.createQuery("SELECT p FROM PetrolCompany p "
                     + "WHERE UPPER(p.name) "
-                    + "= '" + name.toUpperCase() + "'", PetrolCompany.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", PetrolCompany.class).getResultList();
             if (!petrolCompanies.isEmpty()) {
                 return petrolCompanies.get(0);
             }

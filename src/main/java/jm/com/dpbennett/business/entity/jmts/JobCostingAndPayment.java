@@ -804,6 +804,9 @@ public class JobCostingAndPayment implements BusinessEntity {
         List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
 
         try {
+            
+            departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
+            jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
@@ -840,6 +843,9 @@ public class JobCostingAndPayment implements BusinessEntity {
         List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
 
         try {
+            
+            departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
+            jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
@@ -875,6 +881,9 @@ public class JobCostingAndPayment implements BusinessEntity {
             String jobCostingAndPaymentName) {
 
         try {
+            
+            departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
+            jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
@@ -901,9 +910,11 @@ public class JobCostingAndPayment implements BusinessEntity {
     public static JobCostingAndPayment findActiveJobCostingAndPaymentByDepartmentAndName(
             EntityManager em,
             String departmentName,
-            String jobCostingAndPaymentName) {
+            String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Job> jobs
                     = em.createQuery("SELECT job FROM Job job"
@@ -911,7 +922,7 @@ public class JobCostingAndPayment implements BusinessEntity {
                             + " JOIN job.department department"
                             + " JOIN job.subContractedDepartment subContractedDepartment"
                             + " WHERE UPPER(jobCostingAndPayment.name) = '"
-                            + jobCostingAndPaymentName.toUpperCase().trim() + "'"
+                            + value.toUpperCase().trim() + "'"
                             + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
                             + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
                             + " )"
@@ -928,8 +939,9 @@ public class JobCostingAndPayment implements BusinessEntity {
         return null;
     }
 
-    public static JobCostingAndPayment findJobCostingAndPaymentById(EntityManager em, Long Id) {
-        // tk testing 
+    public static JobCostingAndPayment findJobCostingAndPaymentById(
+            EntityManager em, Long Id) {
+         
         if (Id != null) {
             return em.find(JobCostingAndPayment.class, Id);
         } else {
@@ -1173,14 +1185,16 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     public static List<JobCostingAndPayment> findAllEstimateJobCostingAndPayments(
             EntityManager em,
-            String jobCostingAndPaymentName) {
+            String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<JobCostingAndPayment> jobCostingAndPayments
                     = em.createQuery("SELECT jobCostingAndPayment FROM JobCostingAndPayment jobCostingAndPayment"
                             + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
-                            + jobCostingAndPaymentName.toUpperCase().trim() + "%'"
+                            + value.toUpperCase().trim() + "%'"
                             + " AND (jobCostingAndPayment.estimate = 1)"
                             + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
                             JobCostingAndPayment.class).setMaxResults(500).getResultList(); // tk use max result setting

@@ -1314,6 +1314,7 @@ public class Job implements BusinessEntity {
             Boolean estimate) {
 
         List<Job> foundJobs;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause;
         String costEstimateSubclause;
@@ -1616,7 +1617,8 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public static List<Job> findJobsByBusinessOfficeId(EntityManager em, Long businessOfficeId) {
+    public static List<Job> findJobsByBusinessOfficeId(
+            EntityManager em, Long businessOfficeId) {
 
         try {
 
@@ -1632,20 +1634,15 @@ public class Job implements BusinessEntity {
         }
     }
 
-    /**
-     * Return the first job found with the matching job number.
-     *
-     * @param em
-     * @param jobNumber
-     * @return
-     */
-    public static Job findJobByJobNumber(EntityManager em, String jobNumber) {
+    public static Job findJobByJobNumber(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Job> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE UPPER(j.jobNumber) "
-                    + "= '" + jobNumber.toUpperCase() + "'", Job.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Job.class).getResultList();
 
             if (!jobs.isEmpty()) {
                 return jobs.get(0);
@@ -1658,11 +1655,13 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public static Job findParentJob(EntityManager em, Integer yearReceived, Long jobSequenceNumber) {
+    public static Job findParentJob(EntityManager em, 
+            Integer yearReceived, Long jobSequenceNumber) {
         return null;
     }
 
-    public static Job findJobByYearReceivedAndJobSequence(EntityManager em, Integer yearReceived, Long jobSequenceNumber) {
+    public static Job findJobByYearReceivedAndJobSequence(
+            EntityManager em, Integer yearReceived, Long jobSequenceNumber) {
 
         try {
 
@@ -1746,11 +1745,6 @@ public class Job implements BusinessEntity {
         }
     }
 
-    /**
-     *
-     * @param em
-     * @return
-     */
     public List<Job> findPossibleSubcontracts(EntityManager em) {
         List<Job> possibleSubcontracts = new ArrayList<>();
 
@@ -1781,13 +1775,15 @@ public class Job implements BusinessEntity {
     }
 
     public static List<Job> findAllByJobNumber(
-            EntityManager em, String query, int maxResults) {
+            EntityManager em, String value, int maxResults) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Job> numbers
                     = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) LIKE '%"
-                            + query.toUpperCase().trim() + "%'"
+                            + value.toUpperCase().trim() + "%'"
                             + " ORDER BY j.id DESC", Job.class).setMaxResults(maxResults).getResultList();
             return numbers;
 
@@ -1803,6 +1799,7 @@ public class Job implements BusinessEntity {
             String searchText) {
 
         List<Job> foundJobs;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery;
         String searchTextAndClause = "";
         String joinClause;

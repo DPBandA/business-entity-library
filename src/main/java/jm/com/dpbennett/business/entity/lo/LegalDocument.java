@@ -583,6 +583,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
             String searchText) {
 
         List<LegalDocument> foundDocuments;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause;
 

@@ -266,6 +266,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
             Boolean includeSampleSearch) {
 
         List<Scale> scales;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause = "";
 

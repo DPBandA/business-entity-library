@@ -512,6 +512,7 @@ public class ServiceRequest implements BusinessEntity {
             Boolean includeSampleSearch) {
 
         List<ServiceRequest> requests;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause = "";
 
@@ -560,13 +561,16 @@ public class ServiceRequest implements BusinessEntity {
         return requests;
     }
 
-    public static ServiceRequest findServiceRequestByServiceRequestNumber(EntityManager em, String number) {
+    public static ServiceRequest findServiceRequestByServiceRequestNumber(
+            EntityManager em, String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<ServiceRequest> requests = em.createQuery("SELECT s FROM ServiceRequest s "
                     + "WHERE UPPER(s.serviceRequestNumber) "
-                    + "= '" + number.toUpperCase() + "'", ServiceRequest.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", ServiceRequest.class).getResultList();
             if (!requests.isEmpty()) {
                 return requests.get(0);
             }

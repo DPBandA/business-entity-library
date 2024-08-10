@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -440,12 +440,6 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         }
     }
 
-    /**
-     * Find and return all EnergyConsumptionAndEfficiency objects.
-     *
-     * @param em
-     * @return
-     */
     public static List<EnergyConsumptionAndEfficiency> findAll(EntityManager em) {
 
         try {
@@ -460,18 +454,11 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         }
     }
 
-    /**
-     * Find and return all EnergyConsumptionAndEfficiency objects based on
-     * product type. The objects are returned as BusinessEntity interface
-     * objects.
-     *
-     * @param em
-     * @param value
-     * @return
-     */
     public static List<BusinessEntity> findAllByProductType(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
           
             List<BusinessEntity> list
                     = em.createQuery("SELECT e FROM EnergyConsumptionAndEfficiency e where UPPER(e.productType) like '%"

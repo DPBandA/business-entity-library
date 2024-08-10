@@ -248,13 +248,18 @@ public class Sticker implements Product, BusinessEntity, Comparable {
         this.type = type;
     }
     
-    public static List<Sticker> findStickersByNumber(EntityManager em, String number) {
+    public static List<Sticker> findStickersByNumber(EntityManager em, String value) {
        
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Sticker> stickers =
                     em.createQuery("SELECT s FROM Sticker s where UPPER(s.number) like '"
-                    + number.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
+                    + value.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
+            
             return stickers;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<Sticker>();
@@ -271,12 +276,15 @@ public class Sticker implements Product, BusinessEntity, Comparable {
         return null;
     }
     
-    public static Sticker findStickerByNumber(EntityManager em, String number) {
+    public static Sticker findStickerByNumber(EntityManager em, String value) {
                
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Sticker> stickers =
                     em.createQuery("SELECT s FROM Sticker s where UPPER(s.number) like '"
-                    + number.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
+                    + value.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
             
             if (!stickers.isEmpty()) {
                 return stickers.get(0);

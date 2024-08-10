@@ -329,13 +329,16 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         this.taxRegistrationNumber = taxRegistrationNumber;
     }
 
-    public static List<PetrolStation> findPetrolStationsByName(EntityManager em, String name) {
+    public static List<PetrolStation> findPetrolStationsByName(
+            EntityManager em, String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<PetrolStation> stations
                     = em.createQuery("SELECT p FROM PetrolStation p where UPPER(p.name) like '"
-                            + name.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class).getResultList();
             return stations;
         } catch (Exception e) {
             System.out.println(e);
@@ -354,6 +357,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
             Boolean includeSampleSearch) {
 
         List<PetrolStation> stations;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause = "";
 
@@ -392,13 +396,15 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         return stations;
     }
 
-    public static PetrolStation findPetrolStationByName(EntityManager em, String name) {
+    public static PetrolStation findPetrolStationByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<PetrolStation> companies = em.createQuery("SELECT p FROM PetrolStation p "
                     + "WHERE UPPER(p.name) "
-                    + "= '" + name.toUpperCase() + "'", PetrolStation.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", PetrolStation.class).getResultList();
             if (!companies.isEmpty()) {
                 return companies.get(0);
             }
