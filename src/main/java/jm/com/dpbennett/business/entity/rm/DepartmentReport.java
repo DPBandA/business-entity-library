@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -119,13 +119,18 @@ public class DepartmentReport implements Serializable {
         return em.find(DepartmentReport.class, Id);
     }
 
-    public static DepartmentReport findDepartmentReport(EntityManager em, String name,
+    public static DepartmentReport findDepartmentReport(
+            EntityManager em, 
+            String value,
             Integer reportPeriod,
             Integer reportYear) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             String searchQuery =
-                    "SELECT r FROM DepartmentReport r JOIN r.department d WHERE d.name = '" + name + "'"
+                    "SELECT r FROM DepartmentReport r JOIN r.department d WHERE d.name = '" + value + "'"
                     + " AND r.reportPeriod = " + reportPeriod
                     + " AND r.reportYear = " + reportYear;
 

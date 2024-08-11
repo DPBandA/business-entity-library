@@ -212,6 +212,7 @@ public class SampleRequest implements BusinessEntity, Form {
             Date endDate) {
 
         List<SampleRequest> foundSampleRequests;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause = "";
        

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -129,27 +129,31 @@ public class SequenceNumber implements BusinessEntity {
         this.name = name;
     }
 
-    public static Long findNextSequentialNumberByNameAndByYear(EntityManager em, String name, int year) {
+    public static Long findNextSequentialNumberByNameAndByYear(
+            EntityManager em, String value, int year) {
         Long last;
         SequenceNumber sequenceNumber = new SequenceNumber();
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             last = em.createNamedQuery("getLastSequenceNumberByNameAndYear",
-                    Long.class).setParameter("name", name).setParameter("yearReceived", year).getSingleResult();
+                    Long.class).setParameter("name", value).setParameter("yearReceived", year).getSingleResult();
         } catch (Exception e) {
             System.out.println(e);
             last = null;
         }
 
         if (last == null) {
-            sequenceNumber.setName(name);
+            sequenceNumber.setName(value);
             sequenceNumber.setSequentialNumber(1L);
             sequenceNumber.setYearReceived(year);
 //            em.getTransaction().begin();
             em.persist(sequenceNumber);
 //            em.getTransaction().commit();
         } else {
-            sequenceNumber.setName(name);
+            sequenceNumber.setName(value);
             sequenceNumber.setSequentialNumber(last + 1);
             sequenceNumber.setYearReceived(year);
 //            em.getTransaction().begin();

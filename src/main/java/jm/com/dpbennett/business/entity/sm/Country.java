@@ -140,13 +140,16 @@ public class Country implements BusinessEntity {
         }
     }
     
-    public static List<Country> findCountriesByName(EntityManager em, String name) {
+    public static List<Country> findCountriesByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Country> countries =
                     em.createQuery("SELECT c FROM Country c where UPPER(c.name) like '%"
-                    + name.toUpperCase().trim() + "%' ORDER BY c.name", Country.class).getResultList();
+                    + value.toUpperCase().trim() + "%' ORDER BY c.name", Country.class).getResultList();
             return countries;
         } catch (Exception e) {
             System.out.println(e);
@@ -154,13 +157,15 @@ public class Country implements BusinessEntity {
         }
     }
     
-    public static Country findCountryByName(EntityManager em, String countryName) {
+    public static Country findCountryByName(EntityManager em, String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Country> countries = em.createQuery("SELECT c FROM Sector c "
                     + "WHERE UPPER(c.name) "
-                    + "= '" + countryName.toUpperCase() + "'", Country.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Country.class).getResultList();
             if (!countries.isEmpty()) {
                 return countries.get(0);
             }

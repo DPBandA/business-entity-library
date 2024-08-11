@@ -396,6 +396,8 @@ public class Module implements BusinessEntity {
     public static Module findActiveModuleByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
           
             List<Module> modules = em.createQuery("SELECT m FROM Module m "
                     + "WHERE m.active = 1 AND UPPER(m.name) "
@@ -412,15 +414,17 @@ public class Module implements BusinessEntity {
     
     public static List<Module> findActiveModules(
             EntityManager em, 
-            String query,
+            String value,
             int maxResults) {
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Module> modules = em.createQuery("SELECT m FROM Module m"
                     + " WHERE (m.active = 1) AND (UPPER(m.name) like '%"
-                    + query + "%'" + " OR UPPER(m.category) like '%"
-                    + query + "%'" + " OR UPPER(m.description) like '%"
-                    + query + "%') ORDER BY m.name", Module.class).
+                    + value + "%'" + " OR UPPER(m.category) like '%"
+                    + value + "%'" + " OR UPPER(m.description) like '%"
+                    + value + "%') ORDER BY m.name", Module.class).
                     setMaxResults(maxResults).getResultList();
 
             return modules;
@@ -433,15 +437,18 @@ public class Module implements BusinessEntity {
     
      public static List<Module> findModules(
             EntityManager em, 
-            String query,
+            String value,
             int maxResults) {
+         
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<Module> modules = em.createQuery("SELECT m FROM Module m"
                     + " WHERE (UPPER(m.name) like '%"
-                    + query + "%'" + " OR UPPER(m.category) like '%"
-                    + query + "%'" + " OR UPPER(m.description) like '%"
-                    + query + "%') ORDER BY m.name", Module.class).
+                    + value + "%'" + " OR UPPER(m.category) like '%"
+                    + value + "%'" + " OR UPPER(m.description) like '%"
+                    + value + "%') ORDER BY m.name", Module.class).
                     setMaxResults(maxResults).getResultList();
 
             return modules;
@@ -457,7 +464,6 @@ public class Module implements BusinessEntity {
             int maxResults) {
         try {
            
-
             List<Module> modules = em.createQuery("SELECT m FROM Module m"
                     + " WHERE m.active = 1 ORDER BY m.name", Module.class).
                     setMaxResults(maxResults).getResultList();

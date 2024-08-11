@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -183,14 +183,20 @@ public class Distributor implements BusinessEntity {
         return name;
     }
 
-    public static List<Distributor> findDistributorsBySearchPattern(EntityManager em, String searchPattern) {
+    public static List<Distributor> findDistributorsBySearchPattern(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
                     + "WHERE UPPER(d.name) "
-                    + "LIKE '" + searchPattern.toUpperCase() + "%' "
+                    + "LIKE '" + value.toUpperCase() + "%' "
                     + "ORDER BY d.name", Distributor.class).getResultList();
+            
             return distributors;
+            
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -198,17 +204,21 @@ public class Distributor implements BusinessEntity {
     }
 
     // Get the first distributor that matches the given name
-    public static Distributor findDistributorByName(EntityManager em, String name) {
+    public static Distributor findDistributorByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
                     + "WHERE UPPER(d.name) "
-                    + "= '" + name.toUpperCase() + "'", Distributor.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Distributor.class).getResultList();
             if (!distributors.isEmpty()) {
                 return distributors.get(0);
             }
+            
             return null;
+            
         } catch (Exception e) {
             System.out.println(e);
             return null;

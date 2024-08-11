@@ -1452,7 +1452,8 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             Long departmentId) {
 
         List<PurchaseRequisition> foundPRs;
-        String searchQuery = "";
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        String searchQuery;
         String searchTextAndClause;
         String departmentQuery = "";
 
@@ -1531,13 +1532,16 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         return em.find(PurchaseRequisition.class, Id);
     }
 
-    public static PurchaseRequisition findByPRNumber(EntityManager em, String prNumber) {
+    public static PurchaseRequisition findByPRNumber(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<PurchaseRequisition> purchaseRequisitions = em.createQuery("SELECT p FROM PurchaseRequisition p "
                     + "WHERE UPPER(p.number) "
-                    + "= '" + prNumber.toUpperCase() + "'", PurchaseRequisition.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", PurchaseRequisition.class).getResultList();
 
             if (!purchaseRequisitions.isEmpty()) {
                 return purchaseRequisitions.get(0);

@@ -213,6 +213,7 @@ public class DocumentInspection implements Comparable, BusinessEntity {
             Date endDate) {
 
         List<DocumentInspection> foundDocumentInspections;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause = "";
         String joinClause;

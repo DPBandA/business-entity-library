@@ -1201,6 +1201,7 @@ public class ComplianceSurvey implements BusinessEntity {
             int maxResult) {
 
         List<ComplianceSurveySearchResult> foundComplianceSurveys;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause = "";
         String joinClause;
@@ -1290,6 +1291,7 @@ public class ComplianceSurvey implements BusinessEntity {
             int maxResults) {
 
         List<ComplianceSurvey> foundComplianceSurveys;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause = "";
         String joinClause;
@@ -1372,7 +1374,8 @@ public class ComplianceSurvey implements BusinessEntity {
         return foundComplianceSurveys;
     }
 
-    public static ComplianceSurvey findComplianceSurveyById(EntityManager em, Long Id) {
+    public static ComplianceSurvey findComplianceSurveyById(
+            EntityManager em, Long Id) {
 
         try {
 
@@ -1408,17 +1411,22 @@ public class ComplianceSurvey implements BusinessEntity {
         return complianceSurvey;
     }
 
-    public static ComplianceSurvey findComplianceSurveyByName(EntityManager em, String name) {
+    public static ComplianceSurvey findComplianceSurveyByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<ComplianceSurvey> complianceSurveys = em.createQuery("SELECT c FROM  ComplianceSurvey c "
                     + "WHERE UPPER(c.name) "
-                    + "= '" + name.toUpperCase() + "'", ComplianceSurvey.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", ComplianceSurvey.class).getResultList();
             if (!complianceSurveys.isEmpty()) {
                 return complianceSurveys.get(0);
             }
+            
             return null;
+            
         } catch (Exception e) {
             System.out.println(e);
             return null;

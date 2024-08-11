@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -178,9 +178,12 @@ public class Preference implements BusinessEntity {
         this.name = name;
     }
 
-    public static List<Preference> findAllPreferencesByValue(EntityManager em, String value) {
+    public static List<Preference> findAllPreferencesByValue(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Preference> preferences =
                     em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '%"
@@ -192,11 +195,14 @@ public class Preference implements BusinessEntity {
         }
     }
 
-    public static List<String> findAllPreferenceValues(EntityManager em, String value) {
+    public static List<String> findAllPreferenceValues(
+            EntityManager em, String value) {
 
         List<String> values = new ArrayList<>();
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<Preference> preferences =
                     em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '"
@@ -216,11 +222,14 @@ public class Preference implements BusinessEntity {
         return values;
     }
 
-    public static List<Preference> findAllPreferencesByName(EntityManager em, String name) {
+    public static List<Preference> findAllPreferencesByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             Query query = em.createNamedQuery("findAllPreferencesByName");
-            query.setParameter("name", name);
+            query.setParameter("name", value);
             return query.getResultList();
         } catch (Exception e) {
             System.out.println(e);
@@ -231,6 +240,8 @@ public class Preference implements BusinessEntity {
     public static Preference findPreferenceByValue(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Preference> preferences = em.createQuery("SELECT p FROM Preference p "
                     + "WHERE UPPER(p.preferenceValue) "

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -142,7 +142,9 @@ public class PurchaseReqNumber implements BusinessEntity {
         }
     }
     
-    public static Long findNextPurchaseReqSequentialNumber(EntityManager em, Integer year) {
+    public static Long findNextPurchaseReqSequentialNumber(
+            EntityManager em, Integer year) {
+        
         Long last;
 
         PurchaseReqNumber purchaseReqNumber = new PurchaseReqNumber();
@@ -172,7 +174,9 @@ public class PurchaseReqNumber implements BusinessEntity {
         return purchaseReqNumber.getSequentialNumber();
     }
    
-    public static PurchaseReqNumber findNextPurchaseReqNumber(EntityManager em, Integer year) {
+    public static PurchaseReqNumber findNextPurchaseReqNumber(
+            EntityManager em, Integer year) {
+        
         Long last;
 
         PurchaseReqNumber purchaseReqNumber = new PurchaseReqNumber();

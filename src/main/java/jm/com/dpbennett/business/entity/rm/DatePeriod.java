@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -109,7 +109,9 @@ public class DatePeriod implements BusinessEntity, Comparable {
     }
 
     public static DatePeriod findById(EntityManager em, Long id) {
+        
         return em.find(DatePeriod.class, id);
+        
     }
 
     public String getLabel() {

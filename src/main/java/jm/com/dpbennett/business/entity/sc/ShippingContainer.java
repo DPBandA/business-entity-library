@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -228,13 +228,15 @@ public class ShippingContainer implements BusinessEntity {
     }
 
     public static ShippingContainer findShippingContainerByNumber(EntityManager em, 
-            String shippingContainerByNumber) {
+            String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<ShippingContainer> containers = em.createQuery("SELECT s FROM ShippingContainer s "
                     + "WHERE UPPER(s.number) "
-                    + "= '" + shippingContainerByNumber.toUpperCase() + "'", ShippingContainer.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", ShippingContainer.class).getResultList();
             if (!containers.isEmpty()) {
                 return containers.get(0);
             }

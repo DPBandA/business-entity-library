@@ -213,11 +213,14 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
 
     }
 
-    public static TestMeasure findTestMeasureByName(EntityManager em, String name) {
+    public static TestMeasure findTestMeasureByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<TestMeasure> measures = em.createQuery("SELECT t FROM TestMeasure t "
-                    + "WHERE t.name = '" + name + "'", TestMeasure.class).getResultList();
+                    + "WHERE t.name = '" + value + "'", TestMeasure.class).getResultList();
             if (!measures.isEmpty()) {
                 return measures.get(0);
             }
@@ -235,7 +238,10 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
      * @param list
      * @return
      */
-    public static ArrayList<TestMeasure> findTestMeasuresFromCapicityList(EntityManager em, String list) {
+    public static ArrayList<TestMeasure> findTestMeasuresFromCapicityList(
+            
+            EntityManager em, String list) {
+        
         ArrayList<TestMeasure> measures = new ArrayList<TestMeasure>();
 
         String[] capacityList = list.split(",");

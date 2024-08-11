@@ -469,18 +469,18 @@ public class SystemOption implements BusinessEntity {
      * @param name
      * @return
      */
-    public static SystemOption findSystemOptionByName(EntityManager em, String name) {
+    public static SystemOption findSystemOptionByName(EntityManager em, String value) {
 
         try {
             
-            name = name.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
                       
             List<SystemOption> options = em.createQuery("SELECT o FROM SystemOption o "
                     + "WHERE UPPER(o.name) "
-                    + "= '" + name.toUpperCase() + "'", SystemOption.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", SystemOption.class).getResultList();
 
             if (!options.isEmpty()) {
-                // Make sure this is the current option stored in the database
+                
                 SystemOption option = options.get(0);
 
                 return option;
@@ -517,18 +517,19 @@ public class SystemOption implements BusinessEntity {
         }
     }
 
-    public static List<SystemOption> findSystemOptions(EntityManager em, String queryString) {
+    public static List<SystemOption> findSystemOptions(
+            EntityManager em, String value) {
 
         try {
             
-            queryString = queryString.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<SystemOption> systemOptions
                     = em.createQuery("SELECT o FROM SystemOption o WHERE "
-                            + "UPPER(o.name) LIKE '%" + queryString + "%'"
-                            + " OR UPPER(o.optionValue) like '%" + queryString + "%'"
-                            + " OR UPPER(o.comments) like '%" + queryString + "%'"
-                            + " OR UPPER(o.category) LIKE '%" + queryString + "%'"
+                            + "UPPER(o.name) LIKE '%" + value + "%'"
+                            + " OR UPPER(o.optionValue) like '%" + value + "%'"
+                            + " OR UPPER(o.comments) like '%" + value + "%'"
+                            + " OR UPPER(o.category) LIKE '%" + value + "%'"
                             + " ORDER BY o.comments", SystemOption.class).getResultList();
             return systemOptions;
         } catch (Exception e) {
@@ -537,17 +538,18 @@ public class SystemOption implements BusinessEntity {
         }
     }
 
-    public static List<SystemOption> findFinancialSystemOptions(EntityManager em, String queryString) {
+    public static List<SystemOption> findFinancialSystemOptions(
+            EntityManager em, String value) {
 
         try {
             
-            queryString = queryString.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             List<SystemOption> systemOptions
                     = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = 'FINANCE' AND ("
-                            + " UPPER(o.name) LIKE '%" + queryString + "%'"
-                            + " OR UPPER(o.optionValue) like '%" + queryString + "%'"
-                            + " OR UPPER(o.comments) like '%" + queryString + "%'"
+                            + " UPPER(o.name) LIKE '%" + value + "%'"
+                            + " OR UPPER(o.optionValue) like '%" + value + "%'"
+                            + " OR UPPER(o.comments) like '%" + value + "%'"
                             + " ) ORDER BY o.comments", SystemOption.class).getResultList();
             return systemOptions;
         } catch (Exception e) {

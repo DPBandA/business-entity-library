@@ -1,19 +1,32 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+Business Entity Library (BEL) - A foundational library for JSF web applications 
+Copyright (C) 2024  D P Bennett & Associates Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.su;
 
 import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 /**
  *
- * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
+ * @author Desmond Bennett <info@dpbennett.com.jm at https://dpbennett.com.jm>
  */
 public class BusinessEntityCellRenderer extends DefaultListCellRenderer {
 

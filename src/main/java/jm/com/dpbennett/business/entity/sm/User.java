@@ -461,15 +461,20 @@ public class User implements BusinessEntity {
 
     public static List<User> findJobManagerUsersByUsername(
             EntityManager em,
-            String username,
+            String value,
             int maxResults) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<User> users
                     = em.createQuery("SELECT j FROM User j where UPPER(j.username) like '%"
-                            + username.toUpperCase().trim() + "%' ORDER BY j.username", User.class)
+                            + value.toUpperCase().trim() + "%' ORDER BY j.username", User.class)
                             .setMaxResults(maxResults).getResultList();
+            
             return users;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -480,13 +485,17 @@ public class User implements BusinessEntity {
         return em.find(User.class, Id);
     }
 
-    public static User findJobManagerUserByUsername(EntityManager em, String username) {
+    public static User findJobManagerUserByUsername(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<User> users
                     = em.createNamedQuery("findByJobManagerUsername",
                             User.class).
-                            setParameter("username", username.toUpperCase()).getResultList();
+                            setParameter("username", value.toUpperCase()).getResultList();
 
             if (!users.isEmpty()) {
                 return users.get(0);
@@ -499,12 +508,15 @@ public class User implements BusinessEntity {
 
     }
 
-    public static User findActiveJobManagerUserByUsername(EntityManager em, String username) {
+    public static User findActiveJobManagerUserByUsername(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<User> users = em.createQuery("SELECT j FROM User j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '"
-                    + username + "'", User.class).getResultList();
+                    + value + "'", User.class).getResultList();
 
             if (!users.isEmpty()) {
                 return users.get(0);
@@ -517,7 +529,8 @@ public class User implements BusinessEntity {
 
     }
 
-    public static User findActiveJobManagerUserByEmployeeId(EntityManager em, Long employeeId) {
+    public static User findActiveJobManagerUserByEmployeeId(
+            EntityManager em, Long employeeId) {
         try {
             List<User> users = em.createQuery("SELECT j FROM User j"
                     + " JOIN j.employee employee"
@@ -536,16 +549,18 @@ public class User implements BusinessEntity {
 
     public static List<User> findJobManagerUsersByName(
             EntityManager em,
-            String name,
+            String value,
             int maxResults) {
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<User> users = em.createQuery("SELECT j FROM User j"
                     + " JOIN j.employee e"
                     + " WHERE UPPER(e.firstName) like '%"
-                    + name + "%'" + " OR UPPER(e.lastName) like '%"
-                    + name + "%'" + " OR UPPER(j.username) like '%"
-                    + name + "%' ORDER BY j.username", User.class)
+                    + value + "%'" + " OR UPPER(e.lastName) like '%"
+                    + value + "%'" + " OR UPPER(j.username) like '%"
+                    + value + "%' ORDER BY j.username", User.class)
                     .setMaxResults(maxResults).getResultList();
 
             return users;
@@ -558,16 +573,18 @@ public class User implements BusinessEntity {
 
     public static List<User> findActiveJobManagerUsersByName(
             EntityManager em,
-            String name,
+            String value,
             int maxResults) {
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<User> users = em.createQuery("SELECT j FROM User j"
                     + " JOIN j.employee e"
                     + " WHERE (j.active = 1 OR j.active IS NULL) AND (UPPER(e.firstName) like '%"
-                    + name + "%'" + " OR UPPER(e.lastName) like '%"
-                    + name + "%'" + " OR UPPER(j.username) like '%"
-                    + name + "%') ORDER BY j.username", User.class).
+                    + value + "%'" + " OR UPPER(e.lastName) like '%"
+                    + value + "%'" + " OR UPPER(j.username) like '%"
+                    + value + "%') ORDER BY j.username", User.class).
                     setMaxResults(maxResults).getResultList();
 
             return users;

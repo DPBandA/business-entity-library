@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2022  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -343,13 +343,16 @@ public class Notification implements BusinessEntity {
 
     public static List<Notification> findNotificationsByName(
             EntityManager em, 
-            String name,
+            String value,
             int maxResults) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Notification> notifications
                     = em.createQuery("SELECT n FROM Notification n WHERE UPPER(n.name) LIKE '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY n.issueTime DESC", 
+                            + value.toUpperCase().trim() + "%' ORDER BY n.issueTime DESC", 
                             Notification.class).setMaxResults(maxResults).getResultList();
 
             return notifications;
@@ -361,7 +364,8 @@ public class Notification implements BusinessEntity {
         }
     }
 
-    public static Notification findFirstNotificationByOwnerId(EntityManager em, Long ownerId) {
+    public static Notification findFirstNotificationByOwnerId(
+            EntityManager em, Long ownerId) {
 
         try {
             List<Notification> notifications = em.createQuery("SELECT n FROM Notification n "
@@ -393,7 +397,8 @@ public class Notification implements BusinessEntity {
         }
     }
 
-    public static List<Notification> findActiveNotificationsByOwnerId(EntityManager em, Long ownerId) {
+    public static List<Notification> findActiveNotificationsByOwnerId(
+            EntityManager em, Long ownerId) {
 
         try {
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
@@ -408,11 +413,13 @@ public class Notification implements BusinessEntity {
         }
     }
 
-    public static List<Notification> findNotificationsByOwnerId(EntityManager em, Long ownerId) {
+    public static List<Notification> findNotificationsByOwnerId(
+            EntityManager em, Long ownerId) {
 
         int maxResults = SystemOption.getInteger(em, "maxNotificationsSearchResults");
 
         try {
+            
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n"
                     + " WHERE n.ownerId = " + ownerId
                     + " ORDER BY n.issueTime DESC", Notification.class)
@@ -425,11 +432,14 @@ public class Notification implements BusinessEntity {
         }
     }
 
-    public static Notification findNotificationByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static Notification findNotificationByName(
+            EntityManager em, String value, Boolean ignoreCase) {
 
         List<Notification> notifications;
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             if (ignoreCase) {
                 notifications = em.createQuery("SELECT n FROM Notification n"
@@ -462,6 +472,8 @@ public class Notification implements BusinessEntity {
         List<Notification> notifications;
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
             if (ignoreCase) {
                 notifications = em.createQuery("SELECT n FROM Notification n"

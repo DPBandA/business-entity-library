@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -356,13 +356,16 @@ public class DocumentReport implements BusinessEntity {
     }
     
     
-    public static DocumentReport findDocumentReportByName(EntityManager em, String documentReportName) {
+    public static DocumentReport findDocumentReportByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<DocumentReport> reports = em.createQuery("SELECT d FROM DocumentReport d "
                     + "WHERE UPPER(d.name) "
-                    + "= '" + documentReportName.toUpperCase() + "'", DocumentReport.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", DocumentReport.class).getResultList();
             if (!reports.isEmpty()) {
                 return reports.get(0);
             }

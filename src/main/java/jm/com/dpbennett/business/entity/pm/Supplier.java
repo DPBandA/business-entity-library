@@ -582,15 +582,15 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static List<Supplier> findActive(EntityManager em, String query) {
+    public static List<Supplier> findActive(EntityManager em, String value) {
 
         try {
 
-            query = query.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Supplier> suppliers
                     = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
-                            + query + "%'"
+                            + value + "%'"
                             + " AND s.active = 1"
                             + " ORDER BY s.id", Supplier.class).getResultList();
             
@@ -611,15 +611,15 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static List<Supplier> find(EntityManager em, String query) {
+    public static List<Supplier> find(EntityManager em, String value) {
 
         try {
 
-            query = query.replaceAll("'", "`");
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Supplier> suppliers
                     = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
-                            + query + "%'"
+                            + value + "%'"
                             + " ORDER BY s.id", Supplier.class).getResultList();
             
             return suppliers;
@@ -697,11 +697,14 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static Supplier findActiveByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static Supplier findActiveByName(
+            EntityManager em, String value, Boolean ignoreCase) {
 
         List<Supplier> suppliers;
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             if (ignoreCase) {
                 suppliers = em.createQuery("SELECT s FROM Supplier s "

@@ -448,6 +448,7 @@ public class Complaint implements Comparable, BusinessEntity {
             int maxResults) {
 
         List<Complaint> foundComplaints;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = "";
         String searchTextAndClause = "";
         String joinClause;
@@ -518,6 +519,7 @@ public class Complaint implements Comparable, BusinessEntity {
         try {
 
             return em.find(Complaint.class, Id);
+            
         } catch (Exception e) {
             System.out.println(e);
 

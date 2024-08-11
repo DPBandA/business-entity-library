@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -41,7 +41,7 @@ public class DatePeriodJobReportColumnData extends Job implements Comparable {
         super.setJobCostingAndPayment(new JobCostingAndPayment());
         super.getJobCostingAndPayment().setFinalCost(totalFinalCost);
         if (numberOfTestsOrCalibrations != null) {
-            super.setNoOfTestsOrCalibrations(new Integer(numberOfTestsOrCalibrations.intValue()));
+            super.setNoOfTestsOrCalibrations(numberOfTestsOrCalibrations.intValue());
         }
     }
 
@@ -51,7 +51,7 @@ public class DatePeriodJobReportColumnData extends Job implements Comparable {
 
         super.setSector(sector);
         if (numberOfTestsOrCalibrations != null) {
-            super.setNoOfTestsOrCalibrations(new Integer(numberOfTestsOrCalibrations.intValue()));
+            super.setNoOfTestsOrCalibrations(numberOfTestsOrCalibrations.intValue());
         }
     }
 

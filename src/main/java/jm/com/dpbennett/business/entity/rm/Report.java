@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -382,13 +382,15 @@ public class Report implements BusinessEntity {
         }
     }
 
-    public static Report findReportByName(EntityManager em, String reportName) {
+    public static Report findReportByName(EntityManager em, String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Report> reports = em.createQuery("SELECT r FROM Report r "
                     + "WHERE UPPER(r.name) "
-                    + "= '" + reportName.toUpperCase() + "'", Report.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", Report.class).getResultList();
             if (!reports.isEmpty()) {
                 return reports.get(0);
             }
@@ -399,13 +401,16 @@ public class Report implements BusinessEntity {
         }
     }
     
-     public static Report findActiveReportByName(EntityManager em, String reportName) {
+     public static Report findActiveReportByName(
+             EntityManager em, String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Report> reports = em.createQuery("SELECT r FROM Report r "
                     + "WHERE UPPER(r.name)"
-                    + " = '" + reportName.toUpperCase() + "'"
+                    + " = '" + value.toUpperCase() + "'"
                     + " AND (r.active = 1 OR r.active IS NULL)", Report.class).getResultList();
             if (!reports.isEmpty()) {
                 return reports.get(0);
@@ -417,42 +422,53 @@ public class Report implements BusinessEntity {
         }
     }
 
-    public static List<Report> findReportsByName(EntityManager em, String name) {
+    public static List<Report> findReportsByName(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+            
             return reports;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
 
-    public static List<Report> findReports(EntityManager em, String query) {
+    public static List<Report> findReports(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
-                            + query.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
-                            + query.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+                            + value.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+            
             return reports;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
 
-    public static List<Report> findActiveReportsByName(EntityManager em, String query) {
+    public static List<Report> findActiveReportsByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where (r.active = 1 OR r.active IS NULL) AND UPPER(r.name) like '%"
-                            + query.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
             return reports;
         } catch (Exception e) {
             System.out.println(e);
@@ -460,10 +476,14 @@ public class Report implements BusinessEntity {
         }
     }
 
-    public static List<Report> findActiveReportsByCategoryAndName(EntityManager em, 
+    public static List<Report> findActiveReportsByCategoryAndName(
+            EntityManager em, 
             String category, String name) {
 
         try {
+            
+            category = category.replaceAll("&amp;", "&").replaceAll("'", "`");
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
@@ -478,14 +498,17 @@ public class Report implements BusinessEntity {
         }
     }
 
-    public static List<Report> findActiveReports(EntityManager em, String query) {
+    public static List<Report> findActiveReports(
+            EntityManager em, String value) {
 
         try {
             
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where (r.active = 1 OR r.active IS NULL) AND (UPPER(r.name) like '%"
-                            + query.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
-                            + query.toUpperCase().trim() + "%') ORDER BY r.name", Report.class).getResultList();
+                            + value.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
+                            + value.toUpperCase().trim() + "%') ORDER BY r.name", Report.class).getResultList();
             return reports;
         } catch (Exception e) {
             System.out.println(e);

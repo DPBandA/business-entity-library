@@ -310,28 +310,38 @@ public class ProcurementMethod implements BusinessEntity {
         }
     }
 
-    public static List<ProcurementMethod> findAllByName(EntityManager em, String name) {
+    public static List<ProcurementMethod> findAllByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<ProcurementMethod> procurementMethods
                     = em.createQuery("SELECT p FROM ProcurementMethod p WHERE UPPER(p.procurementMethod) LIKE '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY p.procurementMethod", ProcurementMethod.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY p.procurementMethod", ProcurementMethod.class).getResultList();
+            
             return procurementMethods;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
     
-    public static List<ProcurementMethod> findAllActiveByName(EntityManager em, String name) {
+    public static List<ProcurementMethod> findAllActiveByName(
+            EntityManager em, String value) {
 
-        try {
+        try {            
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<ProcurementMethod> procurementMethods
                     = em.createQuery("SELECT p FROM ProcurementMethod p WHERE (p.active = 1) AND UPPER(p.procurementMethod) LIKE '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY p.procurementMethod", ProcurementMethod.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY p.procurementMethod", ProcurementMethod.class).getResultList();
+            
             return procurementMethods;
+            
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();

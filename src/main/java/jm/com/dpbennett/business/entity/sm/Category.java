@@ -149,12 +149,16 @@ public class Category implements BusinessEntity {
         }
     }
 
-    public static List<Category> findCategoriesByName(EntityManager em, String name) {
+    public static List<Category> findCategoriesByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
             List<Category> categories
                     = em.createQuery("SELECT c FROM Category c where UPPER(c.name) like '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY c.name", Category.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY c.name", Category.class).getResultList();
 
             return categories;
 
@@ -165,20 +169,27 @@ public class Category implements BusinessEntity {
         }
     }
 
-    public static Category findActiveCategoryByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static Category findActiveCategoryByName(
+            EntityManager em, String value, Boolean ignoreCase) {
 
         List<Category> categories;
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             if (ignoreCase) {
                 categories = em.createQuery("SELECT c FROM Category c"
                         + " WHERE UPPER(c.name)"
-                        + " = '" + value.toUpperCase() + "'", Category.class).getResultList();
+                        + " = '" + value.toUpperCase() + "'"
+                        + " AND (c.active = 1 OR c.active IS NULL)",
+                        Category.class).getResultList();
             } else {
                 categories = em.createQuery("SELECT c FROM Category c"
                         + " WHERE c.name "
-                        + "= '" + value + "'", Category.class).getResultList();
+                        + "= '" + value + "'"
+                        + " AND (c.active = 1 OR c.active IS NULL)", 
+                        Category.class).getResultList();
             }
 
             if (!categories.isEmpty()) {
@@ -193,9 +204,12 @@ public class Category implements BusinessEntity {
         }
     }
 
-    public static List<Category> findActiveCategoriesByName(EntityManager em, String value) {
+    public static List<Category> findActiveCategoriesByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Category> categories
                     = em.createQuery("SELECT c FROM Category c WHERE UPPER(c.name) like '%"
@@ -216,12 +230,15 @@ public class Category implements BusinessEntity {
 
         try {
 
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            type = type.replaceAll("&amp;", "&").replaceAll("'", "`");
+
             List<Category> categories
                     = em.createQuery("SELECT c FROM Category c WHERE c.name like '%"
                             + value + "%'"
                             + " AND c.type = '"
                             + type + "'"
-                            //+ " AND d.active = 1"
+                            + " AND (c.active = 1 OR c.active IS NULL)"
                             + " ORDER BY c.name", Category.class).setMaxResults(500).getResultList();
 
             return categories;
@@ -235,6 +252,8 @@ public class Category implements BusinessEntity {
     public static List<Category> findCategoriesByType(EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             return em.createQuery("SELECT c FROM Category c "
                     + "WHERE UPPER(c.type) "
@@ -297,7 +316,7 @@ public class Category implements BusinessEntity {
 
     @Override
     public void setActive(Boolean active) {
-        
+
         this.active = active;
     }
 

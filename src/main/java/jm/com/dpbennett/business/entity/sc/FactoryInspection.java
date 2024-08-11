@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2024  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -197,6 +197,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             int maxResults) {
 
         List<FactoryInspection> foundFactoryInspections;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause = "";
         String joinClause;
@@ -257,9 +258,12 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         return foundFactoryInspections;
     }
 
-    public static List<FactoryInspection> findFactoryInspectionsByName(EntityManager em, String value) {
+    public static List<FactoryInspection> findFactoryInspectionsByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
            
             List<FactoryInspection> factoryInspections
                     = em.createQuery("SELECT f FROM FactoryInspection f WHERE UPPER(f.name) LIKE '%"
@@ -272,9 +276,12 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         }
     }
 
-    public static FactoryInspection findFactoryInspectionByName(EntityManager em, String value) {
+    public static FactoryInspection findFactoryInspectionByName(
+            EntityManager em, String value) {
 
         try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<FactoryInspection> factoryInspections = em.createQuery("SELECT f FROM FactoryInspection f "
                     + "WHERE UPPER(f.name) "
