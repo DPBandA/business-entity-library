@@ -388,6 +388,9 @@ public class BusinessEntityUtils {
     public static Long saveBusinessEntity(EntityManager em, BusinessEntity businessEntity) {
 
         try {
+            
+            businessEntity.setName(sanitize(businessEntity.getName()));
+            
             if (businessEntity.getId() != null) {
                 em.merge(businessEntity);
             } else {
@@ -395,7 +398,9 @@ public class BusinessEntityUtils {
             }
 
             return businessEntity.getId();
+            
         } catch (Exception e) {
+            
             System.out.println(e);
 
             return null;
