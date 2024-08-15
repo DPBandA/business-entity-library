@@ -58,11 +58,15 @@ public class BusinessEntityUtils {
         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
         "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
-    
+
     public static String sanitize(String value) {
         
-        return value.replaceAll("&amp;", "&").replaceAll("'", "`");
-        
+        if (value != null) {
+            return value.replaceAll("&amp;", "&").replaceAll("'", "`");
+        }
+
+        return "";
+
     }
 
     public static Date getNow() {
@@ -227,7 +231,7 @@ public class BusinessEntityUtils {
             return false;
         } else if (text.contains("'")) {
             return false;
-        } 
+        }
 
         return true;
     }
@@ -388,9 +392,9 @@ public class BusinessEntityUtils {
     public static Long saveBusinessEntity(EntityManager em, BusinessEntity businessEntity) {
 
         try {
-            
+
             businessEntity.setName(sanitize(businessEntity.getName()));
-            
+
             if (businessEntity.getId() != null) {
                 em.merge(businessEntity);
             } else {
@@ -398,9 +402,9 @@ public class BusinessEntityUtils {
             }
 
             return businessEntity.getId();
-            
+
         } catch (Exception e) {
-            
+
             System.out.println(e);
 
             return null;
