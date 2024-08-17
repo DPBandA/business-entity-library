@@ -60,7 +60,7 @@ public class BusinessEntityUtils {
     };
 
     public static String sanitize(String value) {
-        
+
         if (value != null) {
             return value.replaceAll("&amp;", "&").replaceAll("'", "`");
         }
@@ -227,6 +227,17 @@ public class BusinessEntityUtils {
             return false;
         } else if (text.isEmpty()) {
             return false;
+        }
+
+        return true;
+    }
+
+    public static boolean validateAddressText(String text) {
+
+        if (text == null) {
+            return false;
+        } else if (text.isEmpty()) {
+            return false;
         } else if (containsChar(text, '"')) {
             return false;
         } else if (text.contains("'")) {
@@ -238,7 +249,7 @@ public class BusinessEntityUtils {
 
     public static boolean validateAddressLine(String line) {
 
-        return validateText(line);
+        return validateAddressText(line);
     }
 
     public static boolean validateNameOfBusinessEntity(BusinessEntity entity) {
