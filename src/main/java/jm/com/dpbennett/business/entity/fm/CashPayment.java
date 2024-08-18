@@ -328,12 +328,12 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "";
     }
 
     @Override
     public void setName(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
 
     @Override

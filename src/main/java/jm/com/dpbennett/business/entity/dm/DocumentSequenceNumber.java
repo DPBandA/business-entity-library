@@ -152,12 +152,12 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "";
     }
 
     @Override
     public void setName(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
     
     
