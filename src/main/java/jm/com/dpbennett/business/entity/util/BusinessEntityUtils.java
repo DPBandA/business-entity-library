@@ -216,6 +216,8 @@ public class BusinessEntityUtils {
             return false;
         } else if (identifier.contains("'")) {
             return false;
+        } else if (containsChar(identifier, '"')) {
+            return false;
         }
 
         return true;
@@ -238,11 +240,9 @@ public class BusinessEntityUtils {
             return false;
         } else if (text.isEmpty()) {
             return false;
-        } else if (containsChar(text, '"')) {
+        } else if (containsChar(text, ';')) {
             return false;
-        } else if (text.contains("'")) {
-            return false;
-        }
+        } 
 
         return true;
     }
