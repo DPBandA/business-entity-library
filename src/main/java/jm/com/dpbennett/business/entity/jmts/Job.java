@@ -2059,11 +2059,11 @@ public class Job implements BusinessEntity {
                 getJobSubCategory().save(em);
             }
 
-//            for (Service service : services) {
-//                if (service.getId() != null) {
-//                    service.save(em);
-//                }
-//            }
+            for (Service service : getServices()) {
+                if (service.getId() != null) {
+                    service.save(em);
+                }
+            }
 
             // Save samples
             if (!this.getJobSamples().isEmpty()) {
