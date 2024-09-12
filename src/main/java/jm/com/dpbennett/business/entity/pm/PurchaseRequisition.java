@@ -279,9 +279,9 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         //selectedPurchaseRequisition.prepareAndSave(em, user);
         return selectedPurchaseRequisition;
     }
-    
+
     public static PurchaseRequisition create(
-            EntityManager em, 
+            EntityManager em,
             EntityManager hrmem,
             EntityManager smem,
             User user) {
@@ -1476,6 +1476,10 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
                         + " OR UPPER(pr.description) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(pr.comments) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(pr.notes) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.status) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.workProgress) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.quotationNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(pr.terms) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(pr.priorityCode) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(pr.url) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -1536,7 +1540,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<PurchaseRequisition> purchaseRequisitions = em.createQuery("SELECT p FROM PurchaseRequisition p "
