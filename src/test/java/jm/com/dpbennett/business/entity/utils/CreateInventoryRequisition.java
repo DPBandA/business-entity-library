@@ -23,9 +23,9 @@ import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.fm.Inventory;
-import jm.com.dpbennett.business.entity.fm.InventoryDisbursement;
-import jm.com.dpbennett.business.entity.fm.InventoryRequisition;
+import jm.com.dpbennett.business.entity.im.Inventory;
+import jm.com.dpbennett.business.entity.im.InventoryDisbursement;
+import jm.com.dpbennett.business.entity.im.InventoryRequisition;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import org.junit.Test;
 

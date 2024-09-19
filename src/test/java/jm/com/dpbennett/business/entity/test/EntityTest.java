@@ -23,7 +23,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.fm.Inventory;
+import jm.com.dpbennett.business.entity.im.Inventory;
 import jm.com.dpbennett.business.entity.fm.MarketProduct;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.hrm.Employee;

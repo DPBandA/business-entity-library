@@ -110,13 +110,13 @@
     <class>jm.com.dpbennett.business.entity.sm.StrategicPriority</class>
     <class>jm.com.dpbennett.business.entity.sm.SystemOption</class>
     <class>jm.com.dpbennett.business.entity.sm.Notification</class>
-    <class>jm.com.dpbennett.business.entity.fm.Inventory</class>
     <class>jm.com.dpbennett.business.entity.fm.MarketProduct</class>
     <class>jm.com.dpbennett.business.entity.fm.FinancialAccount</class>
-    <class>jm.com.dpbennett.business.entity.fm.InventoryDisbursement</class>
-    <class>jm.com.dpbennett.business.entity.fm.InventoryRequisition</class>
     <class>jm.com.dpbennett.business.entity.sm.User</class>
     <class>jm.com.dpbennett.business.entity.sm.Module</class>
+    <class>jm.com.dpbennett.business.entity.im.InventoryDisbursement</class>
+    <class>jm.com.dpbennett.business.entity.im.InventoryRequisition</class>
+    <class>jm.com.dpbennett.business.entity.im.Inventory</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jmts"/>
       <property name="javax.persistence.jdbc.password" value=""/>

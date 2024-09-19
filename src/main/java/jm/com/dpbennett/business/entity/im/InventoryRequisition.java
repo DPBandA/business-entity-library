@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity.fm;
+package jm.com.dpbennett.business.entity.im;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
@@ -39,6 +39,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.fm.Asset;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;

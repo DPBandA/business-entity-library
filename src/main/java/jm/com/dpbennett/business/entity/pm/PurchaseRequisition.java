@@ -142,6 +142,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Column(length = 1024)
     private String comments;
     private Long sequenceNumber;
+    private Long purchaseOrderSequenceNumber;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Supplier supplier;
     @Column(length = 1024)
@@ -275,8 +276,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         selectedPurchaseRequisition.setCurrency(defaultCurrency);
         selectedPurchaseRequisition.setIsDirty(true);
 
-        // tk the following was done because the PR was not opening
-        //selectedPurchaseRequisition.prepareAndSave(em, user);
         return selectedPurchaseRequisition;
     }
 
@@ -836,7 +835,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
         Calendar c = Calendar.getInstance();
         String year;
-        String sequenceNumberStr;
+        String purchaseOrderSequenceNumberStr;
 
         // Use the date entered to get the year if it is valid
         if (getRequisitionDate() != null) {
@@ -846,13 +845,13 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             year = "" + BusinessEntityUtils.getCurrentYear();
         }
         // include the sequence number if it is valid
-        if (getSequenceNumber() != null) {
-            sequenceNumberStr = BusinessEntityUtils.getFourDigitString(getSequenceNumber());
+        if (getPurchaseOrderSequenceNumber() != null) {
+            purchaseOrderSequenceNumberStr = BusinessEntityUtils.getFourDigitString(getPurchaseOrderSequenceNumber());
         } else {
-            sequenceNumberStr = "?";
+            purchaseOrderSequenceNumberStr = "?";
         }
-        // Build the PR number
-        purchaseOrderNumber = "PO/" + year + "/" + sequenceNumberStr;
+        // Build the PO number
+        purchaseOrderNumber = "PO/" + year + "/" + purchaseOrderSequenceNumberStr;
 
         return purchaseOrderNumber;
 
@@ -1249,6 +1248,14 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public void setSequenceNumber(Long sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
+    }
+
+    public Long getPurchaseOrderSequenceNumber() {
+        return purchaseOrderSequenceNumber;
+    }
+
+    public void setPurchaseOrderSequenceNumber(Long purchaseOrderSequenceNumber) {
+        this.purchaseOrderSequenceNumber = purchaseOrderSequenceNumber;
     }
 
     public Department getPurchasingDepartment() {
@@ -1650,7 +1657,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public ReturnMessage prepareAndSave(EntityManager em, User user) {
         Date now = new Date();
         PurchaseReqNumber nextPurchaseReqNumber = null;
-        SystemOption nextPurchaseReqSequenceNumber = null;
+        PurchaseOrderNumber nextPurchaseOrderNumber = null;
 
         try {
             // Get employee for later use
@@ -1675,57 +1682,38 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
                 setEditedBy(employee);
             }
 
-            if (getAutoGenerateNumber()) {
-                if (sequenceNumber == null) {
-                    nextPurchaseReqNumber = PurchaseReqNumber.
-                            findNextPurchaseReqNumber(em,
-                                    BusinessEntityUtils.getYearFromDate(getRequisitionDate()));
+            if (sequenceNumber == null) {
+                nextPurchaseReqNumber = PurchaseReqNumber.
+                        findNextPurchaseReqNumber(em,
+                                BusinessEntityUtils.getYearFromDate(getRequisitionDate()));
 
-                    setSequenceNumber(nextPurchaseReqNumber.getSequentialNumber());
-                    generateNumber();
-                    generatePurchaseOrderNumber();
-                }
-//                else {
-//                    generateNumber();
-//                    generatePurchaseOrderNumber();
-//                }
-            } else {
-                if (number == null) {
-                    nextPurchaseReqSequenceNumber = getNextSequenceNumberFromSystemOption(em);
-                    setNumber(nextPurchaseReqSequenceNumber.getOptionValue());
-                    setPurchaseOrderNumber(number);
-                } else {
-                    setPurchaseOrderNumber(number);
-                }
+                setSequenceNumber(nextPurchaseReqNumber.getSequentialNumber());
+                generateNumber();
+            }
+
+            if (purchaseOrderSequenceNumber == null) {
+                nextPurchaseOrderNumber = PurchaseOrderNumber.
+                        findNextPurchaseOrderNumber(em,
+                                BusinessEntityUtils.getYearFromDate(getRequisitionDate()));
+
+                setPurchaseOrderSequenceNumber(nextPurchaseOrderNumber.getSequentialNumber());
+                generatePurchaseOrderNumber();
             }
 
             ReturnMessage returnMessage = save(em);
 
             if (returnMessage.isSuccess()) {
-                // Save PR sequence number since it was used by this PR
-                if (getAutoGenerateNumber()) {
-                    if (nextPurchaseReqNumber != null) {
-                        nextPurchaseReqNumber.save(em);
-                    }
-                } else {
-                    // Save sequence number in system option
-                    if (nextPurchaseReqSequenceNumber != null) {
-                        nextPurchaseReqSequenceNumber.save(em);
-                    }
+
+                if (nextPurchaseReqNumber != null) {
+                    nextPurchaseReqNumber.save(em);
+                }
+
+                if (nextPurchaseOrderNumber != null) {
+                    nextPurchaseOrderNumber.save(em);
                 }
 
                 clean();
             } else {
-
-                // Reset number if number is set to auto-generate
-                if (getAutoGenerateNumber()) {
-                    setSequenceNumber(null);
-                    generateNumber();
-                    setPurchaseOrderNumber(null);
-                } else {
-                    setNumber(null);
-                    setPurchaseOrderNumber(null);
-                }
 
                 return new ReturnMessage(false,
                         "Undefined Error!",
@@ -1736,16 +1724,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             }
 
         } catch (Exception e) {
-
-            // Reset number if number is set to auto-generate
-            if (getAutoGenerateNumber()) {
-                setSequenceNumber(null);
-                generateNumber();
-                setPurchaseOrderNumber(null);
-            } else {
-                setNumber(null);
-                setPurchaseOrderNumber(null);
-            }
 
             return new ReturnMessage(false,
                     "Undefined Error!",
@@ -1758,17 +1736,17 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         return new ReturnMessage();
     }
 
-    public SystemOption getNextSequenceNumberFromSystemOption(EntityManager em) {
-        SystemOption sequenceNumberSystemOption = SystemOption.findSystemOptionByName(em, "PRSequenceNumber");
-
-        Long currentSequenceNumber = SystemOption.getLong(em, "PRSequenceNumber");
-        Long nextSequenceNumber = currentSequenceNumber + 1;
-
-        sequenceNumberSystemOption.setOptionValue(Long.toString(nextSequenceNumber));
-
-        return sequenceNumberSystemOption;
-    }
-
+//    public SystemOption getNextSequenceNumberFromSystemOption(EntityManager em) {
+//        SystemOption sequenceNumberSystemOption = 
+//                SystemOption.findSystemOptionByName(em, "PRSequenceNumber");
+//
+//        Long currentSequenceNumber = SystemOption.getLong(em, "PRSequenceNumber");
+//        Long nextSequenceNumber = currentSequenceNumber + 1;
+//
+//        sequenceNumberSystemOption.setOptionValue(Long.toString(nextSequenceNumber));
+//
+//        return sequenceNumberSystemOption;
+//    }
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
