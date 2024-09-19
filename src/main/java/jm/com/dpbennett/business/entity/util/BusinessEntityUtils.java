@@ -242,7 +242,7 @@ public class BusinessEntityUtils {
             return false;
         } else if (containsChar(text, ';')) {
             return false;
-        } 
+        }
 
         return true;
     }
@@ -629,29 +629,11 @@ public class BusinessEntityUtils {
         }
     }
 
-    /**
-     * getFourDigitNumberString Pad number with leading zeros if the number is
-     * less than four digits
-     *
-     * @param number
-     * @return
-     */
-    public static String getFourDigitString(long number) {
-        String fourDigitString = "";
+    public static String getIntegerString(long number, int digits) {
 
-        if ((number >= 0L) && (number <= 9L)) {
-            fourDigitString = "000" + number;
-        }
-        if ((number >= 10L) && (number <= 99L)) {
-            fourDigitString = "00" + number;
-        }
-        if ((number >= 100L) && (number <= 999L)) {
-            fourDigitString = "0" + number;
-        }
-        if (number >= 1000L) {
-            fourDigitString = "" + number;
-        }
-        return fourDigitString;
+        String string = String.format("%0" + digits + "d", number);
+
+        return string;
     }
 
     public static String getDateString(Date d, String delim, String format, String sep) {
@@ -710,7 +692,7 @@ public class BusinessEntityUtils {
 
         if (c != null) {
             String str;
-            String year = getFourDigitString(c.get(Calendar.YEAR));
+            String year = getIntegerString(c.get(Calendar.YEAR), 4);
             int month = c.get(Calendar.MONTH) + 1;
             int day = c.get(Calendar.DAY_OF_MONTH);
             switch (format) {

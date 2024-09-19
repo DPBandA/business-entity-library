@@ -636,7 +636,7 @@ public class Job implements BusinessEntity {
         }
         // include the sequence number if it is valid
         if (job.getJobSequenceNumber() != null) {
-            sequenceNumber = BusinessEntityUtils.getFourDigitString(job.getJobSequenceNumber());
+            sequenceNumber = BusinessEntityUtils.getIntegerString(job.getJobSequenceNumber(), 4);
         } else {
             sequenceNumber = "?";
         }

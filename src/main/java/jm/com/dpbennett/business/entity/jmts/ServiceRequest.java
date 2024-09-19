@@ -186,7 +186,7 @@ public class ServiceRequest implements BusinessEntity {
             // include the sequence number if it is valid
             if (serviceRequestSequenceNumber != null) {
                 //sequenceNumber = job.getJobSequenceNumber().toString();
-                sequenceNumber = BusinessEntityUtils.getFourDigitString(serviceRequestSequenceNumber);
+                sequenceNumber = BusinessEntityUtils.getIntegerString(serviceRequestSequenceNumber, 4);
             } else {
                 sequenceNumber = "?";
             }

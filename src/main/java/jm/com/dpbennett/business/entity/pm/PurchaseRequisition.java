@@ -221,9 +221,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     private String procurementMethod;
     private Double currencyExchangeRate;
 
-    /**
-     * Default constructor.
-     */
     public PurchaseRequisition() {
         costComponents = new ArrayList<>();
         approversAndRecommenders = new ArrayList<>();
@@ -820,12 +817,13 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         }
         // include the sequence number if it is valid
         if (getSequenceNumber() != null) {
-            sequenceNumberStr = BusinessEntityUtils.getFourDigitString(getSequenceNumber());
+            sequenceNumberStr = BusinessEntityUtils.getIntegerString(getSequenceNumber(), 6);
         } else {
             sequenceNumberStr = "?";
         }
         // Build the PR number
-        number = "PR/" + year + "/" + sequenceNumberStr;
+        number = "P" + sequenceNumberStr + "/"
+                + year.substring(year.length() - 2, year.length());
 
         return number;
 
@@ -833,25 +831,17 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public String generatePurchaseOrderNumber() {
 
-        Calendar c = Calendar.getInstance();
-        String year;
         String purchaseOrderSequenceNumberStr;
 
-        // Use the date entered to get the year if it is valid
-        if (getRequisitionDate() != null) {
-            c.setTime(getRequisitionDate());
-            year = "" + c.get(Calendar.YEAR);
-        } else {
-            year = "" + BusinessEntityUtils.getCurrentYear();
-        }
         // include the sequence number if it is valid
         if (getPurchaseOrderSequenceNumber() != null) {
-            purchaseOrderSequenceNumberStr = BusinessEntityUtils.getFourDigitString(getPurchaseOrderSequenceNumber());
+            purchaseOrderSequenceNumberStr = BusinessEntityUtils.getIntegerString(getPurchaseOrderSequenceNumber(), 6);
         } else {
             purchaseOrderSequenceNumberStr = "?";
         }
+        
         // Build the PO number
-        purchaseOrderNumber = "PO/" + year + "/" + purchaseOrderSequenceNumberStr;
+        purchaseOrderNumber = purchaseOrderSequenceNumberStr;
 
         return purchaseOrderNumber;
 
