@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.pm;
 
 import java.util.Date;
@@ -36,21 +35,22 @@ import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
-
 /**
  *
  * @author Desmond Bennett
  */
 @Entity
 @Table(name = "purchaseordernumber")
-@NamedQueries({   
+@NamedQueries({
     @NamedQuery(name = "findAllPurchaseOrderNumbers", query = "SELECT e FROM PurchaseOrderNumber e ORDER BY e.yearReceived"),
-    @NamedQuery(name = "getLastPurchaseOrderNumber", query = "SELECT MAX(e.sequentialNumber) FROM PurchaseOrderNumber e WHERE e.yearReceived = :yearReceived")
+    @NamedQuery(name = "getLastPurchaseOrderNumberByYear", query = "SELECT MAX(e.sequentialNumber) FROM PurchaseOrderNumber e WHERE e.yearReceived = :yearReceived"),
+    @NamedQuery(name = "getLastPurchaseOrderNumber", query = "SELECT MAX(e.sequentialNumber) FROM PurchaseOrderNumber e")
 })
 public class PurchaseOrderNumber implements BusinessEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;   
+    private Long id;
     private Integer yearReceived;
     private Long sequentialNumber;
     @Transient
@@ -65,7 +65,7 @@ public class PurchaseOrderNumber implements BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -104,12 +104,12 @@ public class PurchaseOrderNumber implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof PurchaseOrderNumber)) {
             return false;
         }
         PurchaseOrderNumber other = (PurchaseOrderNumber) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -126,62 +126,37 @@ public class PurchaseOrderNumber implements BusinessEntity {
     @Override
     public void setName(String name) {
     }
-    
+
     public static List<PurchaseOrderNumber> findAllPurchaseOrderNumbers(EntityManager em) {
 
         try {
             List<PurchaseOrderNumber> purchaseOrderNumber = em.createNamedQuery("findAllPurchaseOrderNumbers", PurchaseOrderNumber.class).getResultList();
 
             return purchaseOrderNumber;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
-    
-    public static Long findNextPurchaseOrderSequentialNumber(
-            EntityManager em, Integer year) {
-        
-        Long last;
 
-        PurchaseOrderNumber purchaseOrderNumber = new PurchaseOrderNumber();
-
-        try {
-            last = em.createNamedQuery("getLastPurchaseOrderNumber",
-                    Long.class).setParameter("yearReceived", year).getSingleResult();
-        } catch (Exception e) {
-            System.out.println(e);
-            last = null;
-        }
-
-        if (last == null) {
-            purchaseOrderNumber.setYear(year);
-            purchaseOrderNumber.setSequentialNumber(1L);
-            em.getTransaction().begin();
-            em.persist(purchaseOrderNumber);
-            em.getTransaction().commit();
-        } else {
-            purchaseOrderNumber.setYear(year);
-            purchaseOrderNumber.setSequentialNumber(last + 1);
-            em.getTransaction().begin();
-            em.persist(purchaseOrderNumber);
-            em.getTransaction().commit();
-        }
-
-        return purchaseOrderNumber.getSequentialNumber();
-    }
-   
     public static PurchaseOrderNumber findNextPurchaseOrderNumber(
-            EntityManager em, Integer year) {
-        
+            EntityManager em,
+            boolean resetPOSequenceNumberYearly,
+            Integer year) {
+
         Long last;
 
         PurchaseOrderNumber purchaseOrderNumber = new PurchaseOrderNumber();
 
         try {
-            last = em.createNamedQuery("getLastPurchaseOrderNumber",
-                    Long.class).setParameter("yearReceived", year).getSingleResult();
+            if (resetPOSequenceNumberYearly) {
+                last = em.createNamedQuery("getLastPurchaseOrderNumberByYear",
+                        Long.class).setParameter("yearReceived", year).getSingleResult();
+            } else {
+                last = em.createNamedQuery("getLastPurchaseOrderNumber",
+                        Long.class).getSingleResult();
+            }
         } catch (Exception e) {
             System.out.println(e);
             last = null;
@@ -200,7 +175,7 @@ public class PurchaseOrderNumber implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-         try {
+        try {
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

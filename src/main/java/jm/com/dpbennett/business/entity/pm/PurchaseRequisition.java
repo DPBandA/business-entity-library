@@ -839,7 +839,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         } else {
             purchaseOrderSequenceNumberStr = "?";
         }
-        
+
         // Build the PO number
         purchaseOrderNumber = purchaseOrderSequenceNumberStr;
 
@@ -1645,13 +1645,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public ReturnMessage prepareAndSave(
-            EntityManager em, 
-            EntityManager smem,             
+            EntityManager em,
+            EntityManager smem,
             User user) {
         Date now = new Date();
         PurchaseReqNumber nextPurchaseReqNumber = null;
         PurchaseOrderNumber nextPurchaseOrderNumber = null;
-        
 
         try {
             // Get employee for later use
@@ -1677,8 +1676,13 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             }
 
             if (sequenceNumber == null) {
+
+                boolean resetPRSequenceNumberYearly = SystemOption.getBoolean(
+                        smem, "resetPRSequenceNumberYearly");
+
                 nextPurchaseReqNumber = PurchaseReqNumber.
                         findNextPurchaseReqNumber(em,
+                                resetPRSequenceNumberYearly,
                                 BusinessEntityUtils.getYearFromDate(getRequisitionDate()));
 
                 setSequenceNumber(nextPurchaseReqNumber.getSequentialNumber());
@@ -1686,8 +1690,13 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             }
 
             if (purchaseOrderSequenceNumber == null) {
+
+                boolean resetPOSequenceNumberYearly = SystemOption.getBoolean(
+                        smem, "resetPOSequenceNumberYearly");
+
                 nextPurchaseOrderNumber = PurchaseOrderNumber.
                         findNextPurchaseOrderNumber(em,
+                                resetPOSequenceNumberYearly,
                                 BusinessEntityUtils.getYearFromDate(getRequisitionDate()));
 
                 setPurchaseOrderSequenceNumber(nextPurchaseOrderNumber.getSequentialNumber());
@@ -1730,17 +1739,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         return new ReturnMessage();
     }
 
-//    public SystemOption getNextSequenceNumberFromSystemOption(EntityManager em) {
-//        SystemOption sequenceNumberSystemOption = 
-//                SystemOption.findSystemOptionByName(em, "PRSequenceNumber");
-//
-//        Long currentSequenceNumber = SystemOption.getLong(em, "PRSequenceNumber");
-//        Long nextSequenceNumber = currentSequenceNumber + 1;
-//
-//        sequenceNumberSystemOption.setOptionValue(Long.toString(nextSequenceNumber));
-//
-//        return sequenceNumberSystemOption;
-//    }
     @Override
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
