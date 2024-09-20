@@ -1644,10 +1644,14 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     }
 
-    public ReturnMessage prepareAndSave(EntityManager em, User user) {
+    public ReturnMessage prepareAndSave(
+            EntityManager em, 
+            EntityManager smem,             
+            User user) {
         Date now = new Date();
         PurchaseReqNumber nextPurchaseReqNumber = null;
         PurchaseOrderNumber nextPurchaseOrderNumber = null;
+        
 
         try {
             // Get employee for later use
