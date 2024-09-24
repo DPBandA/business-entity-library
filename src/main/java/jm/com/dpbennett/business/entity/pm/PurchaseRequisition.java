@@ -193,6 +193,8 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     private String pleaseSupplyNote;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Currency paymentCurrency;
     // Shipping instructions
     private Boolean airFreight;
     private Boolean surface;
@@ -303,6 +305,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         selectedPurchaseRequisition.setTax(Tax.findDefault(em, "0.0"));
         selectedPurchaseRequisition.setDiscount(Discount.findDefault(em, "0.0"));
         selectedPurchaseRequisition.setCurrency(defaultCurrency);
+        selectedPurchaseRequisition.setPaymentCurrency(defaultCurrency);
         selectedPurchaseRequisition.setIsDirty(true);
 
         return selectedPurchaseRequisition;
@@ -599,6 +602,14 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         this.currency = currency;
     }
 
+    public Currency getPaymentCurrency() {
+        return (paymentCurrency == null ? new Currency() : paymentCurrency);
+    }
+
+    public void setPaymentCurrency(Currency paymentCurrency) {
+        this.paymentCurrency = paymentCurrency;
+    }
+    
     public String getPleaseSupplyNote() {
         if (pleaseSupplyNote == null) {
             pleaseSupplyNote = "";
