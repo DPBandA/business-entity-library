@@ -1457,7 +1457,8 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             String searchText,
             Date startDate,
             Date endDate,
-            Long departmentId) {
+            Long departmentId,
+            int maxSearchResults) {
 
         List<PurchaseRequisition> foundPRs;
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
@@ -1508,7 +1509,8 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         }
 
         try {
-            foundPRs = em.createQuery(searchQuery, PurchaseRequisition.class).getResultList();
+            foundPRs = em.createQuery(searchQuery, PurchaseRequisition.class)
+                    .setMaxResults(maxSearchResults).getResultList();
             if (foundPRs == null) {
                 foundPRs = new ArrayList<>();
             }
@@ -1520,7 +1522,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         return foundPRs;
     }
 
-    public static List<PurchaseRequisition> findAllActive(EntityManager em, int maxResults) {
+    public static List<PurchaseRequisition> findAllActive(EntityManager em, int maxSearchResults) {
 
         List<PurchaseRequisition> foundPRs;
 
@@ -1530,7 +1532,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
                     "SELECT p FROM PurchaseRequisition p "
                     + "WHERE p.workProgress != 'Completed' AND p.workProgress != 'Cancelled' "
                     + "ORDER BY p.id DESC",
-                    PurchaseRequisition.class).setMaxResults(maxResults).getResultList();
+                    PurchaseRequisition.class).setMaxResults(maxSearchResults).getResultList();
         } catch (Exception e) {
             System.out.println(e);
             return null;

@@ -582,7 +582,10 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static List<Supplier> findActive(EntityManager em, String value) {
+    public static List<Supplier> findActive(
+            EntityManager em,
+            String value,
+            int maxSearchResults) {
 
         try {
 
@@ -592,8 +595,9 @@ public class Supplier implements BusinessEntity, Comparable {
                     = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
                             + value + "%'"
                             + " AND s.active = 1"
-                            + " ORDER BY s.id", Supplier.class).getResultList();
-            
+                            + " ORDER BY s.id", Supplier.class).
+                            setMaxResults(maxSearchResults).getResultList();
+
             // NB: This is used to remove supplier with ' in their names. This may not be
             // needed in the future.
             Iterator<Supplier> iterator = suppliers.iterator();
@@ -603,7 +607,7 @@ public class Supplier implements BusinessEntity, Comparable {
                     iterator.remove();
                 }
             }
-            
+
             return suppliers;
         } catch (Exception e) {
             System.out.println(e);
@@ -611,7 +615,9 @@ public class Supplier implements BusinessEntity, Comparable {
         }
     }
 
-    public static List<Supplier> find(EntityManager em, String value) {
+    public static List<Supplier> find(EntityManager em,
+            String value,
+            int maxSearchResults) {
 
         try {
 
@@ -620,10 +626,11 @@ public class Supplier implements BusinessEntity, Comparable {
             List<Supplier> suppliers
                     = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
                             + value + "%'"
-                            + " ORDER BY s.id", Supplier.class).getResultList();
-            
+                            + " ORDER BY s.id", Supplier.class).
+                            setMaxResults(maxSearchResults).getResultList();
+
             return suppliers;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -703,7 +710,7 @@ public class Supplier implements BusinessEntity, Comparable {
         List<Supplier> suppliers;
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             if (ignoreCase) {
