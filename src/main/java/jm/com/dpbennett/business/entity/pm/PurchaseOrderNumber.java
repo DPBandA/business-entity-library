@@ -139,6 +139,35 @@ public class PurchaseOrderNumber implements BusinessEntity {
             return null;
         }
     }
+    
+    public static PurchaseOrderNumber findLastPurchaseOrderNumber(
+            EntityManager em,
+            Integer year) {
+
+        Long last;
+
+        PurchaseOrderNumber purchaseOrderNumber = new PurchaseOrderNumber();
+
+        try {
+
+            last = em.createNamedQuery("getLastPurchaseOrderNumber",
+                    Long.class).getSingleResult();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            last = null;
+        }
+
+        if (last == null) {
+            purchaseOrderNumber.setYear(year);
+            purchaseOrderNumber.setSequentialNumber(1L);
+        } else {
+            purchaseOrderNumber.setYear(year);
+            purchaseOrderNumber.setSequentialNumber(last);
+        }
+        
+        return purchaseOrderNumber;
+    }
 
     public static PurchaseOrderNumber findNextPurchaseOrderNumber(
             EntityManager em,

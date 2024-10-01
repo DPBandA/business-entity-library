@@ -174,6 +174,35 @@ public class PurchaseReqNumber implements BusinessEntity {
         return purchaseReqNumber;
     }
 
+    public static PurchaseReqNumber findLastPurchaseReqNumber(
+            EntityManager em,
+            Integer year) {
+
+        Long last;
+
+        PurchaseReqNumber purchaseReqNumber = new PurchaseReqNumber();
+
+        try {
+
+            last = em.createNamedQuery("getLastPurchaseReqNumber",
+                    Long.class).getSingleResult();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            last = null;
+        }
+
+        if (last == null) {
+            purchaseReqNumber.setYear(year);
+            purchaseReqNumber.setSequentialNumber(1L);
+        } else {
+            purchaseReqNumber.setYear(year);
+            purchaseReqNumber.setSequentialNumber(last);
+        }
+        
+        return purchaseReqNumber;
+    }
+
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
