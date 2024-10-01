@@ -130,11 +130,10 @@ public class SystemOption implements BusinessEntity {
             case "Double":
             case "List<String>":
                 return optionValue;
-            case "Boolean":    
+            case "Boolean":
                 if (optionValue.equals("true")) {
                     return "Yes";
-                }
-                else {
+                } else {
                     return "No";
                 }
             default:
@@ -252,10 +251,10 @@ public class SystemOption implements BusinessEntity {
 
         if (option != null) {
             try {
-                
+
                 return Long.valueOf(option.getOptionValue());
             } catch (NumberFormatException e) {
-                
+
                 return 0L;
             }
         }
@@ -269,10 +268,10 @@ public class SystemOption implements BusinessEntity {
 
         if (option != null) {
             try {
-                
+
                 return Integer.valueOf(option.getOptionValue());
             } catch (NumberFormatException e) {
-                
+
                 return 0;
             }
         }
@@ -286,10 +285,10 @@ public class SystemOption implements BusinessEntity {
 
         if (option != null) {
             try {
-                
+
                 return Double.valueOf(option.getOptionValue());
             } catch (NumberFormatException e) {
-                
+
                 return 0.0;
             }
         }
@@ -303,16 +302,40 @@ public class SystemOption implements BusinessEntity {
 
         if (option != null) {
             try {
-                
+
                 return Boolean.valueOf(option.getOptionValue());
             } catch (NumberFormatException e) {
-                
+
                 return false;
             }
         }
 
         return false;
 
+    }
+
+    public Boolean getBoolean() {
+
+        try {
+
+            return Boolean.valueOf(optionValue);
+        } catch (NumberFormatException e) {
+
+            return false;
+        }
+
+    }
+    
+    public void setBoolean(Boolean optionValue) {
+         try {
+
+            this.optionValue = optionValue.toString();
+            
+        } catch (NumberFormatException e) {
+            
+            this.optionValue = "false";
+        }
+         
     }
 
     public static List<String> getStringList(EntityManager em, String name) {
@@ -463,24 +486,18 @@ public class SystemOption implements BusinessEntity {
         this.name = name;
     }
 
-    /**
-     *
-     * @param em
-     * @param name
-     * @return
-     */
     public static SystemOption findSystemOptionByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-                      
+
             List<SystemOption> options = em.createQuery("SELECT o FROM SystemOption o "
                     + "WHERE UPPER(o.name) "
                     + "= '" + value.toUpperCase() + "'", SystemOption.class).getResultList();
 
             if (!options.isEmpty()) {
-                
+
                 SystemOption option = options.get(0);
 
                 return option;
@@ -521,9 +538,9 @@ public class SystemOption implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<SystemOption> systemOptions
                     = em.createQuery("SELECT o FROM SystemOption o WHERE "
                             + "UPPER(o.name) LIKE '%" + value + "%'"
@@ -542,9 +559,9 @@ public class SystemOption implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<SystemOption> systemOptions
                     = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = 'FINANCE' AND ("
                             + " UPPER(o.name) LIKE '%" + value + "%'"
@@ -562,10 +579,10 @@ public class SystemOption implements BusinessEntity {
             String queryString, String category) {
 
         try {
-            
+
             queryString = queryString.replaceAll("'", "`");
             category = category.replaceAll("'", "`");
-            
+
             List<SystemOption> systemOptions
                     = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = "
                             + "'" + category.toUpperCase() + "'"
@@ -580,7 +597,7 @@ public class SystemOption implements BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<SystemOption> findByOwnerId(EntityManager em, Long ownerId) {
 
         try {
@@ -589,7 +606,7 @@ public class SystemOption implements BusinessEntity {
                     + " ORDER BY o.ownerId DESC", SystemOption.class).getResultList();
 
             return systemOptions;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
