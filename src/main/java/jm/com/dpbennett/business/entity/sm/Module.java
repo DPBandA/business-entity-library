@@ -122,6 +122,17 @@ public class Module implements BusinessEntity {
     public void setPrivileges(List<Privilege> privileges) {
         this.privileges = privileges;
     }
+    
+    public List<String> getPrivilegeNames() {
+        
+        ArrayList<String> privilegeNames = new ArrayList<>();
+        
+        for (Privilege privilege : getPrivileges()) {
+            privilegeNames.add(privilege.getName());
+        }
+        
+        return privilegeNames;
+    }
 
     @Override
     public Long getId() {
