@@ -2058,6 +2058,36 @@ public class Job implements BusinessEntity {
             if (getJobSubCategory().getId() != null) {
                 getJobSubCategory().save(em);
             }
+            if (getDepartment().getId() != null) {
+                getDepartment().save(em);
+            }
+            if (getSubContractedDepartment().getId() != null) {
+                getSubContractedDepartment().save(em);
+            }
+            if (getClient().getId() != null) {
+                getClient().save(em);
+            }
+            if (getAssignedTo().getId() != null) {
+                getAssignedTo().save(em);
+            }
+            if (getBusiness().getId() != null) {
+                getBusiness().save(em);
+            }
+            if (getBusinessOffice().getId() != null) {
+                getBusinessOffice().save(em);
+            }
+            if (getBillingAddress().getId() != null) {
+                getBillingAddress().save(em);
+            }
+            if (getContact().getId() != null) {
+                getContact().save(em);
+            }
+            
+            for (Employee representative : getRepresentatives()) {
+                if (representative.getId() != null) {
+                    representative.save(em);
+                }
+            }
 
             for (Service service : getServices()) {
                 if (service.getId() != null) {
@@ -2068,6 +2098,7 @@ public class Job implements BusinessEntity {
             // Save samples
             if (!this.getJobSamples().isEmpty()) {
                 for (JobSample jobSample : this.getJobSamples()) {
+                    
                     // Save newly entered samples 
                     returnMessage = jobSample.save(em);
 
@@ -2082,6 +2113,7 @@ public class Job implements BusinessEntity {
                                 Message.SEVERITY_ERROR_NAME);
 
                     }
+                    
                     // "Clean" sample
                     jobSample.setIsDirty(false);
                 }
