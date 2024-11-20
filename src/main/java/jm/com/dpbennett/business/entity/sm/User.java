@@ -208,6 +208,20 @@ public class User implements BusinessEntity {
         }
         return activeModules;
     }
+    
+    public String getAllActiveModules() {
+        String allActiveModules = "";
+
+        for (int i = 0; i < getActiveModules().size(); i++) {
+            if (i == 0) {
+                allActiveModules = getActiveModules().get(i).getDescription();
+            } else {
+                allActiveModules = allActiveModules + ", " + getActiveModules().get(i).getDescription();
+            }
+        }
+
+        return allActiveModules;
+    }
 
     public void setActiveModules(List<Module> activeModules) {
         this.activeModules = activeModules;
