@@ -410,7 +410,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Business save exception: " + e);
         }
 
         return new ReturnMessage(false, "Business not saved");

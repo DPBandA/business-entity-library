@@ -205,7 +205,7 @@ public class JobSequenceNumber implements BusinessEntity {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+             System.out.println("Job sequence save exception: " + e);
         }
 
         return new ReturnMessage(false, "Job sequence number not saved");

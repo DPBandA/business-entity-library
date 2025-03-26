@@ -464,6 +464,8 @@ public class Job implements BusinessEntity {
                 this.clean();
             } else {
 
+                System.out.println("Job was not saved in prepareAndSave()"); //tk
+
                 // Reset the sequence number here if the job is new.
                 if (this.getId() == null) {
                     this.setJobSequenceNumber(null);
@@ -479,6 +481,8 @@ public class Job implements BusinessEntity {
 
         } catch (Exception e) {
 
+            System.out.println("Job was not saved: " + e); //tk
+
             return new ReturnMessage(false,
                     "Undefined Error!",
                     "An undefined error occurred while saving "
@@ -488,7 +492,6 @@ public class Job implements BusinessEntity {
         }
 
         return new ReturnMessage();
-
     }
 
     public void clean() {
@@ -587,7 +590,18 @@ public class Job implements BusinessEntity {
         job.setReportNumber("");
         job.setJobDescription("");
         job.setSubContractedDepartment(Department.findDefault(em, "--"));
-        job.setBusiness(User.getUserOrganizationByDepartment(em, user));
+
+        // tk the way the user's org. is obtained could be changed
+        Business business = User.getUserOrganizationByDepartment(em, user);
+        if (business != null) {
+            job.setBusiness(business);
+        }
+        else { // tk the "default org." may be changed in each deployment
+            String businessName = SystemOption.getString(em, "organizationName");
+            business = Business.findBusinessByName(em, businessName);
+            job.setBusiness(business);
+        }
+
         job.setBusinessOffice(BusinessOffice.findDefaultBusinessOffice(em, "Head Office"));
         job.setClassification(new Classification());
         job.setSector(Sector.findSectorByName(em, "--"));
@@ -1637,7 +1651,7 @@ public class Job implements BusinessEntity {
     public static Job findJobByJobNumber(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Job> jobs = em.createQuery("SELECT j FROM Job j "
@@ -1655,7 +1669,7 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public static Job findParentJob(EntityManager em, 
+    public static Job findParentJob(EntityManager em,
             Integer yearReceived, Long jobSequenceNumber) {
         return null;
     }
@@ -1778,7 +1792,7 @@ public class Job implements BusinessEntity {
             EntityManager em, String value, int maxResults) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Job> numbers
@@ -2046,59 +2060,28 @@ public class Job implements BusinessEntity {
 
         try {
 
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
-            }
-            if (getSector().getId() != null) {
-                getSector().save(em);
-            }
-            if (getJobCategory().getId() != null) {
-                getJobCategory().save(em);
-            }
-            if (getJobSubCategory().getId() != null) {
-                getJobSubCategory().save(em);
-            }
-            if (getDepartment().getId() != null) {
-                getDepartment().save(em);
-            }
-            if (getSubContractedDepartment().getId() != null) {
-                getSubContractedDepartment().save(em);
-            }
-            if (getClient().getId() != null) {
-                getClient().save(em);
-            }
-            if (getAssignedTo().getId() != null) {
-                getAssignedTo().save(em);
-            }
-            if (getBusiness().getId() != null) {
-                getBusiness().save(em);
-            }
-            if (getBusinessOffice().getId() != null) {
-                getBusinessOffice().save(em);
-            }
-            if (getBillingAddress().getId() != null) {
-                getBillingAddress().save(em);
-            }
-            if (getContact().getId() != null) {
-                getContact().save(em);
-            }
-            
+            getClassification().save(em);
+            getSector().save(em);
+            getJobCategory().save(em);
+            getJobSubCategory().save(em);
+            getDepartment().save(em);
+            getSubContractedDepartment().save(em);
+            getClient().save(em);
+            getAssignedTo().save(em);
+            getBusiness().save(em);
+            getBusinessOffice().save(em);
+            getBillingAddress().save(em);
+            getContact().save(em);
+
             for (Employee representative : getRepresentatives()) {
-                if (representative.getId() != null) {
-                    representative.save(em);
-                }
+                representative.save(em);
             }
-
             for (Service service : getServices()) {
-                if (service.getId() != null) {
-                    service.save(em);
-                }
+                service.save(em);
             }
-
-            // Save samples
             if (!this.getJobSamples().isEmpty()) {
                 for (JobSample jobSample : this.getJobSamples()) {
-                    
+
                     // Save newly entered samples 
                     returnMessage = jobSample.save(em);
 
@@ -2113,13 +2096,12 @@ public class Job implements BusinessEntity {
                                 Message.SEVERITY_ERROR_NAME);
 
                     }
-                    
+
                     // "Clean" sample
                     jobSample.setIsDirty(false);
                 }
             }
 
-            // Save job costing and payment
             returnMessage = jobCostingAndPayment.save(em);
 
             if (!returnMessage.isSuccess()) {
@@ -2134,6 +2116,8 @@ public class Job implements BusinessEntity {
             return new ReturnMessage();
 
         } catch (Exception e) {
+
+            System.out.println("Job save exception: " + e);
 
             return new ReturnMessage(false,
                     "Job save error occurred!",

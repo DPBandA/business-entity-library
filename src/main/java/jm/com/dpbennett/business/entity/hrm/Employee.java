@@ -700,7 +700,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Employee save exception: " + e);
         }
 
         return new ReturnMessage(false, "Employee not saved");

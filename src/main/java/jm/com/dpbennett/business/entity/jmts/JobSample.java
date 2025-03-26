@@ -619,7 +619,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
             return new ReturnMessage();
         } catch (Exception e) {
             
-            System.out.println("From save(): " + e);
+            System.out.println("Job Sample save exception: " + e);
             
             return new ReturnMessage(false,
                     "Job sample save error occurred",

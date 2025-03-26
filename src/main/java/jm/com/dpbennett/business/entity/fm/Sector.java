@@ -299,7 +299,7 @@ public class Sector implements BusinessEntity, Serializable {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+           System.out.println("Sector save exception: " + e);
         }
 
         return new ReturnMessage(false, "Sector not saved");

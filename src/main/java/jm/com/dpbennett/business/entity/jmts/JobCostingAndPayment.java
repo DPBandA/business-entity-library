@@ -1131,7 +1131,7 @@ public class JobCostingAndPayment implements BusinessEntity {
 
         } catch (Exception e) {
             
-            System.out.println("From JCP save(): " + e);
+            System.out.println("Job Costing and Payment save exception: " + e);
 
             return new ReturnMessage(false,
                     "Costing and payment save error occurred!",

@@ -376,7 +376,7 @@ public class JobCategory implements Serializable, BusinessEntity {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Job Category save exception: " + e);
         }
 
         return new ReturnMessage(false, "Job Category not saved");

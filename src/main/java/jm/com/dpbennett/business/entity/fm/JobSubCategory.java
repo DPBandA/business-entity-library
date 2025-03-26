@@ -457,7 +457,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Job Subcategory save exception: " + e);
         }
 
         return new ReturnMessage(false, "Job Subcategory not saved");

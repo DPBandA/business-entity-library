@@ -457,7 +457,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Service save exception: " + e);
         }
 
         return new ReturnMessage(false, "Service not saved");

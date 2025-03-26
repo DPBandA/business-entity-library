@@ -346,6 +346,9 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
             return new ReturnMessage();
         } catch (Exception e) {
+            
+            System.out.println("Cash Payment save exception: " + e);
+            
             return new ReturnMessage(false,
                     "Cash payment not saved",
                     "An error occurred while saving a cash payment: " + e,

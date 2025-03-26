@@ -1053,7 +1053,7 @@ public class Client implements ClientInterface {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Client save exception: " + e);
         }
 
         return new ReturnMessage(false, "Client not saved");

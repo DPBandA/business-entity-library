@@ -590,7 +590,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Contact save exception: " + e);
         }
 
         return new ReturnMessage(false, "Contact not saved");

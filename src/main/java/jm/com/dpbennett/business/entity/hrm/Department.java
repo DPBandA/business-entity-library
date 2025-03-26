@@ -494,7 +494,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Department save exception: " + e);
         }
 
         return new ReturnMessage(false, "Department not saved");

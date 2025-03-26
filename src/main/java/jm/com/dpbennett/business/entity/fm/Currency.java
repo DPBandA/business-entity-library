@@ -236,7 +236,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Currency save exception: " + e);
         }
 
         return new ReturnMessage(false, "Currency not saved");

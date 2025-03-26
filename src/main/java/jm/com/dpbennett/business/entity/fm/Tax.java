@@ -300,7 +300,7 @@ public class Tax implements Serializable, BusinessEntity {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Tax save exception: " + e);
         }
 
         return new ReturnMessage(false, "Tax not saved");

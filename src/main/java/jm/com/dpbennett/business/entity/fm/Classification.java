@@ -372,7 +372,7 @@ public class Classification implements BusinessEntity, Serializable {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Classification save exception: " + e);
         }
 
         return new ReturnMessage(false, "Classification not saved");

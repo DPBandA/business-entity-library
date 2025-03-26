@@ -536,6 +536,9 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
             return new ReturnMessage();
             
         } catch (Exception e) {
+            
+            System.out.println("Cost Component save exception: " + e);
+            
             return new ReturnMessage(false,
                     "Cost component not saved",
                     "An error occurred while saving a cost component: " + e,

@@ -546,7 +546,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Address save exception: " + e);
         }
 
         return new ReturnMessage(false, "Address not saved");
