@@ -41,7 +41,7 @@
     </build>
     
     <dependencies>  
-        
+            
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -53,8 +53,7 @@
             <artifactId>junit</artifactId>
             <version>4.13.1</version>
         </dependency>  
-        
-                    
+                            
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
@@ -67,22 +66,18 @@
             <version>2.13.3</version>
             <type>jar</type>
         </dependency>
-        
-        <!--
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>8.0</version>
-            <type>jar</type>
-        </dependency>
-        -->     
-        
+             
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
             <version>${jakartaee}</version>
-            <scope>provided</scope>
-        </dependency>       
+        </dependency>   
+        
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>jakarta.persistence</artifactId>
+            <version>2.2.3</version>
+        </dependency>        
         
         <dependency>
             <groupId>com.google.zxing</groupId>
