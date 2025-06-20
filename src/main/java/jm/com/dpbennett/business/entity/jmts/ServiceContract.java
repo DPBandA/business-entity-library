@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -61,24 +61,24 @@ public class ServiceContract implements BusinessEntity {
     // tk test commenting these out cause they may no longer be used
     // may have to look back at how the service contract is generated
     // because they may be used.
-    private Boolean serviceRequestedTesting;
-    private Boolean serviceRequestedCalibration;
-    private Boolean serviceRequestedLabelEvaluation;
-    private Boolean serviceRequestedInspection;
-    private Boolean serviceRequestedConsultancy;
-    private Boolean serviceRequestedTraining;
-    private Boolean serviceRequestedFoodInspectorate;
-    private Boolean serviceRequestedLegalMetrology;
-    private Boolean serviceRequestedSaleOfPublication;
-    private Boolean serviceRequestedStationeryOrPhotocopy;
-    private Boolean serviceRequestedCertification;
-    private Boolean serviceRequestedCertificationStandards;
-    private Boolean serviceRequestedDetentionRehabInspection;
-    private Boolean serviceRequestedFacilitiesManagement;
-    private Boolean serviceRequestedCementTesting;
-    private Boolean serviceRequestedPetrolSampling;
-    private Boolean serviceRequestedOther;
-    private String serviceRequestedOtherText;
+//    private Boolean serviceRequestedTesting;
+//    private Boolean serviceRequestedCalibration;
+//    private Boolean serviceRequestedLabelEvaluation;
+//    private Boolean serviceRequestedInspection;
+//    private Boolean serviceRequestedConsultancy;
+//    private Boolean serviceRequestedTraining;
+//    private Boolean serviceRequestedFoodInspectorate;
+//    private Boolean serviceRequestedLegalMetrology;
+//    private Boolean serviceRequestedSaleOfPublication;
+//    private Boolean serviceRequestedStationeryOrPhotocopy;
+//    private Boolean serviceRequestedCertification;
+//    private Boolean serviceRequestedCertificationStandards;
+//    private Boolean serviceRequestedDetentionRehabInspection;
+//    private Boolean serviceRequestedFacilitiesManagement;
+//    private Boolean serviceRequestedCementTesting;
+//    private Boolean serviceRequestedPetrolSampling;
+//    private Boolean serviceRequestedOther;
+//    private String serviceRequestedOtherText;
     private String serviceRequestedDetails;
     // Additional services    
     private Boolean additionalServiceUrgent;
@@ -110,25 +110,25 @@ public class ServiceContract implements BusinessEntity {
     public ServiceContract() {
         selectedService = new Service();
         // Requested services
-        serviceRequestedTesting = false;
-        serviceRequestedCalibration = false;
-        serviceRequestedLabelEvaluation = false;
-        serviceRequestedInspection = false;
-        serviceRequestedConsultancy = false;
-        serviceRequestedTraining = false;
-        serviceRequestedFoodInspectorate = false;
-        serviceRequestedLegalMetrology = false;
-        serviceRequestedSaleOfPublication = false;
-        serviceRequestedStationeryOrPhotocopy = false;
-        serviceRequestedCertification = false;
-        serviceRequestedCertificationStandards = false;
-        serviceRequestedDetentionRehabInspection = false;
-        serviceRequestedFacilitiesManagement = false;
-        serviceRequestedCementTesting = false;
-        serviceRequestedPetrolSampling = false;
-        serviceRequestedOther = false;
-        serviceRequestedOtherText = "";
-        serviceRequestedDetails = "";
+//        serviceRequestedTesting = false;
+//        serviceRequestedCalibration = false;
+//        serviceRequestedLabelEvaluation = false;
+//        serviceRequestedInspection = false;
+//        serviceRequestedConsultancy = false;
+//        serviceRequestedTraining = false;
+//        serviceRequestedFoodInspectorate = false;
+//        serviceRequestedLegalMetrology = false;
+//        serviceRequestedSaleOfPublication = false;
+//        serviceRequestedStationeryOrPhotocopy = false;
+//        serviceRequestedCertification = false;
+//        serviceRequestedCertificationStandards = false;
+//        serviceRequestedDetentionRehabInspection = false;
+//        serviceRequestedFacilitiesManagement = false;
+//        serviceRequestedCementTesting = false;
+//        serviceRequestedPetrolSampling = false;
+//        serviceRequestedOther = false;
+//        serviceRequestedOtherText = "";
+//        serviceRequestedDetails = "";
         // Additional services
         additionalServiceUrgent = false;
         additionalServiceFaxResults = false;
@@ -149,25 +149,25 @@ public class ServiceContract implements BusinessEntity {
     public ServiceContract(ServiceContract src) {
         selectedService = new Service();
         // Requested services
-        serviceRequestedTesting = src.serviceRequestedTesting;
-        serviceRequestedCalibration = src.serviceRequestedCalibration;
-        serviceRequestedLabelEvaluation = src.serviceRequestedLabelEvaluation;
-        serviceRequestedInspection = src.serviceRequestedInspection;
-        serviceRequestedConsultancy = src.serviceRequestedConsultancy;
-        serviceRequestedTraining = src.serviceRequestedTraining;
-        serviceRequestedFoodInspectorate = src.serviceRequestedFoodInspectorate;
-        serviceRequestedLegalMetrology = src.serviceRequestedLegalMetrology;
-        serviceRequestedSaleOfPublication = src.serviceRequestedSaleOfPublication;
-        serviceRequestedStationeryOrPhotocopy = src.serviceRequestedStationeryOrPhotocopy;
-        serviceRequestedCertification = src.serviceRequestedCertification;
-        serviceRequestedCertificationStandards = src.serviceRequestedCertificationStandards;
-        serviceRequestedDetentionRehabInspection = src.serviceRequestedDetentionRehabInspection;
-        serviceRequestedFacilitiesManagement = src.serviceRequestedFacilitiesManagement;
-        serviceRequestedCementTesting = src.serviceRequestedCementTesting;
-        serviceRequestedPetrolSampling = src.serviceRequestedPetrolSampling;
-        serviceRequestedOther = src.serviceRequestedOther;
-        serviceRequestedOtherText = src.serviceRequestedOtherText;
-        serviceRequestedDetails = src.serviceRequestedDetails;
+//        serviceRequestedTesting = src.serviceRequestedTesting;
+//        serviceRequestedCalibration = src.serviceRequestedCalibration;
+//        serviceRequestedLabelEvaluation = src.serviceRequestedLabelEvaluation;
+//        serviceRequestedInspection = src.serviceRequestedInspection;
+//        serviceRequestedConsultancy = src.serviceRequestedConsultancy;
+//        serviceRequestedTraining = src.serviceRequestedTraining;
+//        serviceRequestedFoodInspectorate = src.serviceRequestedFoodInspectorate;
+//        serviceRequestedLegalMetrology = src.serviceRequestedLegalMetrology;
+//        serviceRequestedSaleOfPublication = src.serviceRequestedSaleOfPublication;
+//        serviceRequestedStationeryOrPhotocopy = src.serviceRequestedStationeryOrPhotocopy;
+//        serviceRequestedCertification = src.serviceRequestedCertification;
+//        serviceRequestedCertificationStandards = src.serviceRequestedCertificationStandards;
+//        serviceRequestedDetentionRehabInspection = src.serviceRequestedDetentionRehabInspection;
+//        serviceRequestedFacilitiesManagement = src.serviceRequestedFacilitiesManagement;
+//        serviceRequestedCementTesting = src.serviceRequestedCementTesting;
+//        serviceRequestedPetrolSampling = src.serviceRequestedPetrolSampling;
+//        serviceRequestedOther = src.serviceRequestedOther;
+//        serviceRequestedOtherText = src.serviceRequestedOtherText;
+//        serviceRequestedDetails = src.serviceRequestedDetails;
         // Additional services
         additionalServiceUrgent = src.additionalServiceUrgent;
         additionalServiceFaxResults = src.additionalServiceFaxResults;
@@ -222,115 +222,115 @@ public class ServiceContract implements BusinessEntity {
 
     }
 
-    public Boolean getServiceRequestedPetrolSampling() {
-        if (serviceRequestedPetrolSampling == null) {
-            serviceRequestedPetrolSampling = false;
-        }
-        return serviceRequestedPetrolSampling;
-    }
+//    public Boolean getServiceRequestedPetrolSampling() {
+//        if (serviceRequestedPetrolSampling == null) {
+//            serviceRequestedPetrolSampling = false;
+//        }
+//        return serviceRequestedPetrolSampling;
+//    }
 
-    public void setServiceRequestedPetrolSampling(Boolean serviceRequestedPetrolSampling) {
-        this.serviceRequestedPetrolSampling = serviceRequestedPetrolSampling;
-    }
+//    public void setServiceRequestedPetrolSampling(Boolean serviceRequestedPetrolSampling) {
+//        this.serviceRequestedPetrolSampling = serviceRequestedPetrolSampling;
+//    }
+//
+//    public Boolean getServiceRequestedCementTesting() {
+//        if (serviceRequestedCementTesting == null) {
+//            serviceRequestedCementTesting = false;
+//        }
+//        return serviceRequestedCementTesting;
+//    }
 
-    public Boolean getServiceRequestedCementTesting() {
-        if (serviceRequestedCementTesting == null) {
-            serviceRequestedCementTesting = false;
-        }
-        return serviceRequestedCementTesting;
-    }
+//    public void setServiceRequestedCementTesting(Boolean serviceRequestedCementTesting) {
+//        this.serviceRequestedCementTesting = serviceRequestedCementTesting;
+//    }
+//
+//    public Boolean getServiceRequestedFacilitiesManagement() {
+//        if (serviceRequestedFacilitiesManagement == null) {
+//            serviceRequestedFacilitiesManagement = false;
+//        }
+//        return serviceRequestedFacilitiesManagement;
+//    }
 
-    public void setServiceRequestedCementTesting(Boolean serviceRequestedCementTesting) {
-        this.serviceRequestedCementTesting = serviceRequestedCementTesting;
-    }
+//    public void setServiceRequestedFacilitiesManagement(Boolean serviceRequestedFacilitiesManagement) {
+//        this.serviceRequestedFacilitiesManagement = serviceRequestedFacilitiesManagement;
+//    }
+//
+//    public Boolean getServiceRequestedDetentionRehabInspection() {
+//        if (serviceRequestedDetentionRehabInspection == null) {
+//            serviceRequestedDetentionRehabInspection = false;
+//        }
+//        return serviceRequestedDetentionRehabInspection;
+//    }
 
-    public Boolean getServiceRequestedFacilitiesManagement() {
-        if (serviceRequestedFacilitiesManagement == null) {
-            serviceRequestedFacilitiesManagement = false;
-        }
-        return serviceRequestedFacilitiesManagement;
-    }
+//    public void setServiceRequestedDetentionRehabInspection(Boolean serviceRequestedDetentionRehabInspection) {
+//        this.serviceRequestedDetentionRehabInspection = serviceRequestedDetentionRehabInspection;
+//    }
+//
+//    public Boolean getServiceRequestedCertification() {
+//        if (serviceRequestedCertification == null) {
+//            serviceRequestedCertification = false;
+//        }
+//        return serviceRequestedCertification;
+//    }
 
-    public void setServiceRequestedFacilitiesManagement(Boolean serviceRequestedFacilitiesManagement) {
-        this.serviceRequestedFacilitiesManagement = serviceRequestedFacilitiesManagement;
-    }
+//    public void setServiceRequestedCertification(Boolean serviceRequestedCertification) {
+//        this.serviceRequestedCertification = serviceRequestedCertification;
+//    }
+//
+//    public Boolean getServiceRequestedCertificationStandards() {
+//        if (serviceRequestedCertificationStandards == null) {
+//            serviceRequestedCertificationStandards = false;
+//        }
+//        return serviceRequestedCertificationStandards;
+//    }
 
-    public Boolean getServiceRequestedDetentionRehabInspection() {
-        if (serviceRequestedDetentionRehabInspection == null) {
-            serviceRequestedDetentionRehabInspection = false;
-        }
-        return serviceRequestedDetentionRehabInspection;
-    }
+//    public void setServiceRequestedCertificationStandards(Boolean serviceRequestedCertificationStandards) {
+//        this.serviceRequestedCertificationStandards = serviceRequestedCertificationStandards;
+//    }
+//
+//    public Boolean getServiceRequestedStationeryOrPhotocopy() {
+//        if (serviceRequestedStationeryOrPhotocopy == null) {
+//            serviceRequestedStationeryOrPhotocopy = false;
+//        }
+//        return serviceRequestedStationeryOrPhotocopy;
+//    }
 
-    public void setServiceRequestedDetentionRehabInspection(Boolean serviceRequestedDetentionRehabInspection) {
-        this.serviceRequestedDetentionRehabInspection = serviceRequestedDetentionRehabInspection;
-    }
+//    public void setServiceRequestedStationeryOrPhotocopy(Boolean serviceRequestedStationeryOrPhotocopy) {
+//        this.serviceRequestedStationeryOrPhotocopy = serviceRequestedStationeryOrPhotocopy;
+//    }
+//
+//    public Boolean getServiceRequestedSaleOfPublication() {
+//        if (serviceRequestedSaleOfPublication == null) {
+//            serviceRequestedSaleOfPublication = false;
+//        }
+//        return serviceRequestedSaleOfPublication;
+//    }
 
-    public Boolean getServiceRequestedCertification() {
-        if (serviceRequestedCertification == null) {
-            serviceRequestedCertification = false;
-        }
-        return serviceRequestedCertification;
-    }
+//    public void setServiceRequestedSaleOfPublication(Boolean serviceRequestedSaleOfPublication) {
+//        this.serviceRequestedSaleOfPublication = serviceRequestedSaleOfPublication;
+//    }
+//
+//    public Boolean getServiceRequestedLegalMetrology() {
+//        if (serviceRequestedLegalMetrology == null) {
+//            serviceRequestedLegalMetrology = false;
+//        }
+//        return serviceRequestedLegalMetrology;
+//    }
 
-    public void setServiceRequestedCertification(Boolean serviceRequestedCertification) {
-        this.serviceRequestedCertification = serviceRequestedCertification;
-    }
+//    public void setServiceRequestedLegalMetrology(Boolean serviceRequestedLegalMetrology) {
+//        this.serviceRequestedLegalMetrology = serviceRequestedLegalMetrology;
+//    }
+//
+//    public Boolean getServiceRequestedFoodInspectorate() {
+//        if (serviceRequestedFoodInspectorate == null) {
+//            serviceRequestedFoodInspectorate = false;
+//        }
+//        return serviceRequestedFoodInspectorate;
+//    }
 
-    public Boolean getServiceRequestedCertificationStandards() {
-        if (serviceRequestedCertificationStandards == null) {
-            serviceRequestedCertificationStandards = false;
-        }
-        return serviceRequestedCertificationStandards;
-    }
-
-    public void setServiceRequestedCertificationStandards(Boolean serviceRequestedCertificationStandards) {
-        this.serviceRequestedCertificationStandards = serviceRequestedCertificationStandards;
-    }
-
-    public Boolean getServiceRequestedStationeryOrPhotocopy() {
-        if (serviceRequestedStationeryOrPhotocopy == null) {
-            serviceRequestedStationeryOrPhotocopy = false;
-        }
-        return serviceRequestedStationeryOrPhotocopy;
-    }
-
-    public void setServiceRequestedStationeryOrPhotocopy(Boolean serviceRequestedStationeryOrPhotocopy) {
-        this.serviceRequestedStationeryOrPhotocopy = serviceRequestedStationeryOrPhotocopy;
-    }
-
-    public Boolean getServiceRequestedSaleOfPublication() {
-        if (serviceRequestedSaleOfPublication == null) {
-            serviceRequestedSaleOfPublication = false;
-        }
-        return serviceRequestedSaleOfPublication;
-    }
-
-    public void setServiceRequestedSaleOfPublication(Boolean serviceRequestedSaleOfPublication) {
-        this.serviceRequestedSaleOfPublication = serviceRequestedSaleOfPublication;
-    }
-
-    public Boolean getServiceRequestedLegalMetrology() {
-        if (serviceRequestedLegalMetrology == null) {
-            serviceRequestedLegalMetrology = false;
-        }
-        return serviceRequestedLegalMetrology;
-    }
-
-    public void setServiceRequestedLegalMetrology(Boolean serviceRequestedLegalMetrology) {
-        this.serviceRequestedLegalMetrology = serviceRequestedLegalMetrology;
-    }
-
-    public Boolean getServiceRequestedFoodInspectorate() {
-        if (serviceRequestedFoodInspectorate == null) {
-            serviceRequestedFoodInspectorate = false;
-        }
-        return serviceRequestedFoodInspectorate;
-    }
-
-    public void setServiceRequestedFoodInspectorate(Boolean serviceRequestedFoodInspectorate) {
-        this.serviceRequestedFoodInspectorate = serviceRequestedFoodInspectorate;
-    }
+//    public void setServiceRequestedFoodInspectorate(Boolean serviceRequestedFoodInspectorate) {
+//        this.serviceRequestedFoodInspectorate = serviceRequestedFoodInspectorate;
+//    }
 
     @Override
     public Boolean getIsDirty() {
@@ -366,13 +366,13 @@ public class ServiceContract implements BusinessEntity {
         this.autoAddSampleInformation = autoAddSampleInformation;
     }
 
-    public String getServiceRequestedOtherText() {
-        return serviceRequestedOtherText;
-    }
-
-    public void setServiceRequestedOtherText(String serviceRequestedOtherText) {
-        this.serviceRequestedOtherText = serviceRequestedOtherText;
-    }
+//    public String getServiceRequestedOtherText() {
+//        return serviceRequestedOtherText;
+//    }
+//
+//    public void setServiceRequestedOtherText(String serviceRequestedOtherText) {
+//        this.serviceRequestedOtherText = serviceRequestedOtherText;
+//    }
 
     public String getAdditionalServiceOtherText() {
         return additionalServiceOtherText;
@@ -390,27 +390,27 @@ public class ServiceContract implements BusinessEntity {
         this.intendedMarketOtherText = intendedMarketOtherText;
     }
 
-    public Boolean getServiceRequestedCalibration() {
-        if (serviceRequestedCalibration == null) {
-            serviceRequestedCalibration = false;
-        }
-        return serviceRequestedCalibration;
-    }
+//    public Boolean getServiceRequestedCalibration() {
+//        if (serviceRequestedCalibration == null) {
+//            serviceRequestedCalibration = false;
+//        }
+//        return serviceRequestedCalibration;
+//    }
+//
+//    public void setServiceRequestedCalibration(Boolean serviceRequestedCalibration) {
+//        this.serviceRequestedCalibration = serviceRequestedCalibration;
+//    }
 
-    public void setServiceRequestedCalibration(Boolean serviceRequestedCalibration) {
-        this.serviceRequestedCalibration = serviceRequestedCalibration;
-    }
-
-    public Boolean getServiceRequestedConsultancy() {
-        if (serviceRequestedConsultancy == null) {
-            serviceRequestedConsultancy = false;
-        }
-        return serviceRequestedConsultancy;
-    }
-
-    public void setServiceRequestedConsultancy(Boolean serviceRequestedConsultancy) {
-        this.serviceRequestedConsultancy = serviceRequestedConsultancy;
-    }
+//    public Boolean getServiceRequestedConsultancy() {
+//        if (serviceRequestedConsultancy == null) {
+//            serviceRequestedConsultancy = false;
+//        }
+//        return serviceRequestedConsultancy;
+//    }
+//
+//    public void setServiceRequestedConsultancy(Boolean serviceRequestedConsultancy) {
+//        this.serviceRequestedConsultancy = serviceRequestedConsultancy;
+//    }
 
     public String getServiceRequestedDetails() {
         return serviceRequestedDetails;
@@ -420,60 +420,60 @@ public class ServiceContract implements BusinessEntity {
         this.serviceRequestedDetails = serviceRequestedDetails;
     }
 
-    public Boolean getServiceRequestedInspection() {
-        if (serviceRequestedInspection == null) {
-            serviceRequestedInspection = false;
-        }
-        return serviceRequestedInspection;
-    }
+//    public Boolean getServiceRequestedInspection() {
+//        if (serviceRequestedInspection == null) {
+//            serviceRequestedInspection = false;
+//        }
+//        return serviceRequestedInspection;
+//    }
+//
+//    public void setServiceRequestedInspection(Boolean serviceRequestedInspection) {
+//        this.serviceRequestedInspection = serviceRequestedInspection;
+//    }
 
-    public void setServiceRequestedInspection(Boolean serviceRequestedInspection) {
-        this.serviceRequestedInspection = serviceRequestedInspection;
-    }
+//    public Boolean getServiceRequestedLabelEvaluation() {
+//        if (serviceRequestedLabelEvaluation == null) {
+//            serviceRequestedLabelEvaluation = false;
+//        }
+//        return serviceRequestedLabelEvaluation;
+//    }
+//
+//    public void setServiceRequestedLabelEvaluation(Boolean serviceRequestedLabelEvaluation) {
+//        this.serviceRequestedLabelEvaluation = serviceRequestedLabelEvaluation;
+//    }
 
-    public Boolean getServiceRequestedLabelEvaluation() {
-        if (serviceRequestedLabelEvaluation == null) {
-            serviceRequestedLabelEvaluation = false;
-        }
-        return serviceRequestedLabelEvaluation;
-    }
+//    public Boolean getServiceRequestedOther() {
+//        if (serviceRequestedOther == null) {
+//            serviceRequestedOther = false;
+//        }
+//        return serviceRequestedOther;
+//    }
+//
+//    public void setServiceRequestedOther(Boolean serviceRequestedOther) {
+//        this.serviceRequestedOther = serviceRequestedOther;
+//    }
 
-    public void setServiceRequestedLabelEvaluation(Boolean serviceRequestedLabelEvaluation) {
-        this.serviceRequestedLabelEvaluation = serviceRequestedLabelEvaluation;
-    }
+//    public Boolean getServiceRequestedTesting() {
+//        if (serviceRequestedTesting == null) {
+//            serviceRequestedTesting = false;
+//        }
+//        return serviceRequestedTesting;
+//    }
+//
+//    public void setServiceRequestedTesting(Boolean serviceRequestedTesting) {
+//        this.serviceRequestedTesting = serviceRequestedTesting;
+//    }
 
-    public Boolean getServiceRequestedOther() {
-        if (serviceRequestedOther == null) {
-            serviceRequestedOther = false;
-        }
-        return serviceRequestedOther;
-    }
-
-    public void setServiceRequestedOther(Boolean serviceRequestedOther) {
-        this.serviceRequestedOther = serviceRequestedOther;
-    }
-
-    public Boolean getServiceRequestedTesting() {
-        if (serviceRequestedTesting == null) {
-            serviceRequestedTesting = false;
-        }
-        return serviceRequestedTesting;
-    }
-
-    public void setServiceRequestedTesting(Boolean serviceRequestedTesting) {
-        this.serviceRequestedTesting = serviceRequestedTesting;
-    }
-
-    public Boolean getServiceRequestedTraining() {
-        if (serviceRequestedTraining == null) {
-            serviceRequestedTraining = false;
-        }
-        return serviceRequestedTraining;
-    }
-
-    public void setServiceRequestedTraining(Boolean serviceRequestedTraining) {
-        this.serviceRequestedTraining = serviceRequestedTraining;
-    }
+//    public Boolean getServiceRequestedTraining() {
+//        if (serviceRequestedTraining == null) {
+//            serviceRequestedTraining = false;
+//        }
+//        return serviceRequestedTraining;
+//    }
+//
+//    public void setServiceRequestedTraining(Boolean serviceRequestedTraining) {
+//        this.serviceRequestedTraining = serviceRequestedTraining;
+//    }
 
     public Boolean getAdditionalServiceFaxResults() {
         if (additionalServiceFaxResults == null) {
