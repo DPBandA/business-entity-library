@@ -342,17 +342,17 @@ public class Notification implements BusinessEntity {
     }
 
     public static List<Notification> findNotificationsByName(
-            EntityManager em, 
+            EntityManager em,
             String value,
             int maxResults) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Notification> notifications
                     = em.createQuery("SELECT n FROM Notification n WHERE UPPER(n.name) LIKE '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY n.issueTime DESC", 
+                            + value.toUpperCase().trim() + "%' ORDER BY n.issueTime DESC",
                             Notification.class).setMaxResults(maxResults).getResultList();
 
             return notifications;
@@ -386,7 +386,7 @@ public class Notification implements BusinessEntity {
 
         try {
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
-                    + "WHERE n.active = 1 ORDER BY n.issueTime DESC", 
+                    + "WHERE n.active = 1 ORDER BY n.issueTime DESC",
                     // tk max results to be made system option
                     Notification.class).setMaxResults(100).getResultList();
 
@@ -394,6 +394,27 @@ public class Notification implements BusinessEntity {
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
+        }
+    }
+
+    public static String findLastActiveSystemNotificationMessage(EntityManager em) {
+
+        try {
+            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
+                    + "WHERE n.active = 1 AND n.type = 'System' ORDER BY n.id DESC",
+                    Notification.class).setMaxResults(1).getResultList();
+
+            if (!alerts.isEmpty()) {
+                return alerts.get(0).message;
+            }
+            
+            return "";
+            
+        } catch (Exception e) {
+
+            System.out.println(e);
+
+            return "";
         }
     }
 
@@ -419,7 +440,7 @@ public class Notification implements BusinessEntity {
         int maxResults = SystemOption.getInteger(em, "maxNotificationsSearchResults");
 
         try {
-            
+
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n"
                     + " WHERE n.ownerId = " + ownerId
                     + " ORDER BY n.issueTime DESC", Notification.class)
@@ -438,9 +459,9 @@ public class Notification implements BusinessEntity {
         List<Notification> notifications;
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             if (ignoreCase) {
                 notifications = em.createQuery("SELECT n FROM Notification n"
                         + " WHERE UPPER(n.name)"
@@ -472,9 +493,9 @@ public class Notification implements BusinessEntity {
         List<Notification> notifications;
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             if (ignoreCase) {
                 notifications = em.createQuery("SELECT n FROM Notification n"
                         + " WHERE UPPER(n.name)"
