@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sc;
 
 import jm.com.dpbennett.business.entity.mt.Test;
@@ -36,6 +35,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -44,7 +44,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "producttest")
-public class ProductTest implements Test, Comparable, BusinessEntity  {
+public class ProductTest implements Test, Comparable, BusinessEntity {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,7 +72,7 @@ public class ProductTest implements Test, Comparable, BusinessEntity  {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -99,7 +100,7 @@ public class ProductTest implements Test, Comparable, BusinessEntity  {
             return false;
         }
         ProductTest other = (ProductTest) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -170,12 +171,12 @@ public class ProductTest implements Test, Comparable, BusinessEntity  {
 
     @Override
     public int compareTo(Object o) {
-       return Collator.getInstance().compare(this.toString(), o.toString());
+        return Collator.getInstance().compare(this.toString(), o.toString());
     }
 
     @Override
     public String getCateogy() {
-       return category;
+        return category;
     }
 
     @Override
@@ -185,7 +186,20 @@ public class ProductTest implements Test, Comparable, BusinessEntity  {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            getTestDoneBy().save(em);
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Product Test not saved");
     }
 
     @Override

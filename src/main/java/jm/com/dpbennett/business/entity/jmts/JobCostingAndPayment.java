@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -136,7 +136,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Currency getCurrency() {
-        return (currency == null ? new Currency() : currency);       
+        return (currency == null ? new Currency() : currency);
     }
 
     public void setCurrency(Currency currency) {
@@ -505,7 +505,7 @@ public class JobCostingAndPayment implements BusinessEntity {
 
         return total;
     }
-    
+
     public Double getTotalJobCostingsHoursOrQuantity() {
         Double total = 0.0;
 
@@ -804,7 +804,7 @@ public class JobCostingAndPayment implements BusinessEntity {
         List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
 
         try {
-            
+
             departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
             jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
 
@@ -843,7 +843,7 @@ public class JobCostingAndPayment implements BusinessEntity {
         List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
 
         try {
-            
+
             departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
             jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
 
@@ -881,7 +881,7 @@ public class JobCostingAndPayment implements BusinessEntity {
             String jobCostingAndPaymentName) {
 
         try {
-            
+
             departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
             jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
 
@@ -913,7 +913,7 @@ public class JobCostingAndPayment implements BusinessEntity {
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Job> jobs
@@ -941,7 +941,7 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     public static JobCostingAndPayment findJobCostingAndPaymentById(
             EntityManager em, Long Id) {
-         
+
         if (Id != null) {
             return em.find(JobCostingAndPayment.class, Id);
         } else {
@@ -1073,19 +1073,6 @@ public class JobCostingAndPayment implements BusinessEntity {
 
         try {
 
-            if (getTax().getId() != null) {
-                getTax().save(em);
-            }
-
-            if (getDiscount().getId() != null) {
-                getDiscount().save(em);
-            }
-
-            if (getCurrency().getId() != null) {
-                getCurrency().save(em);
-            }
-
-            // Save new payments 
             if (!getCashPayments().isEmpty()) {
                 for (CashPayment payment : getCashPayments()) {
                     if ((payment.getIsDirty() || payment.getId() == null)
@@ -1113,11 +1100,39 @@ public class JobCostingAndPayment implements BusinessEntity {
                 }
             }
 
+            if (getCostingPreparedBy() != null) {
+                getCostingPreparedBy().save(em);
+            }
+
+            if (getCostingApprovedBy() != null) {
+                getCostingApprovedBy().save(em);
+            }
+
+            if (getCostingInvoicedBy() != null) {
+                getCostingInvoicedBy().save(em);
+            }
+
+            if (getLastPaymentEnteredBy().getId() != null) {
+                getLastPaymentEnteredBy().save(em);
+            }
+
+            if (getTax().getId() != null) {
+                getTax().save(em);
+            }
+
+            if (getDiscount().getId() != null) {
+                getDiscount().save(em);
+            }
+
+            if (getCurrency().getId() != null) {
+                getCurrency().save(em);
+            }
+
             // Save   
             if (isDirty || id == null) {
-                
+
                 isDirty = false;
-                em.getTransaction().begin();                
+                em.getTransaction().begin();
                 BusinessEntityUtils.saveBusinessEntity(em, this);
                 em.getTransaction().commit();
 
@@ -1130,7 +1145,7 @@ public class JobCostingAndPayment implements BusinessEntity {
             }
 
         } catch (Exception e) {
-            
+
             System.out.println("Job Costing and Payment save exception: " + e);
 
             return new ReturnMessage(false,
@@ -1188,7 +1203,7 @@ public class JobCostingAndPayment implements BusinessEntity {
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<JobCostingAndPayment> jobCostingAndPayments
@@ -1273,7 +1288,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     @Override
-    public Person getEditedBy() {
+    public Employee getEditedBy() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

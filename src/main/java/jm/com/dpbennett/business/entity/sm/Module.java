@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sm;
 
 import java.util.ArrayList;
@@ -58,20 +57,20 @@ public class Module implements BusinessEntity {
     private String mainViewTitle;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
-//    private Boolean legalMetrologyModule;
-//    private Boolean jobManagementAndTrackingModule;
-//    private Boolean complianceModule;
-//    private Boolean foodsModule;
-//    private Boolean standardsModule;
-//    private Boolean certificationModule;
-//    private Boolean serviceRequestModule;
-//    private Boolean adminModule;
-//    private Boolean financialAdminModule;
-//    private Boolean purchaseManagementModule;
-//    private Boolean legalOfficeModule;
-//    private Boolean crmModule;
-//    private Boolean hrmModule;
-//    private Boolean reportModule;
+    private Boolean legalMetrologyModule;
+    private Boolean jobManagementAndTrackingModule;
+    private Boolean complianceModule;
+    private Boolean foodsModule;
+    private Boolean standardsModule;
+    private Boolean certificationModule;
+    private Boolean serviceRequestModule;
+    private Boolean adminModule;
+    private Boolean financialAdminModule;
+    private Boolean purchaseManagementModule;
+    private Boolean legalOfficeModule;
+    private Boolean crmModule;
+    private Boolean hrmModule;
+    private Boolean reportModule;
     @Transient
     private Boolean isDirty;
 
@@ -83,9 +82,9 @@ public class Module implements BusinessEntity {
         this.description = "";
         this.dashboardTitle = "";
         this.mainViewTitle = "";
-    }   
-    
-     public Module(String name) {
+    }
+
+    public Module(String name) {
         this.active = false;
         this.name = name;
         this.type = "";
@@ -93,8 +92,8 @@ public class Module implements BusinessEntity {
         this.description = "";
         this.dashboardTitle = "";
         this.mainViewTitle = "";
-    } 
-    
+    }
+
     public String getDashboardTitle() {
         return dashboardTitle;
     }
@@ -115,22 +114,22 @@ public class Module implements BusinessEntity {
         if (privileges == null) {
             privileges = new ArrayList<>();
         }
-        
+
         return privileges;
     }
 
     public void setPrivileges(List<Privilege> privileges) {
         this.privileges = privileges;
     }
-    
+
     public List<String> getPrivilegeNames() {
-        
+
         ArrayList<String> privilegeNames = new ArrayList<>();
-        
+
         for (Privilege privilege : getPrivileges()) {
             privilegeNames.add(privilege.getName());
         }
-        
+
         return privilegeNames;
     }
 
@@ -197,159 +196,159 @@ public class Module implements BusinessEntity {
         this.isDirty = isDirty;
     }
 
-//    public Boolean getLegalMetrologyModule() {
-//        if (legalMetrologyModule == null) {
-//            legalMetrologyModule = false;
-//        }
-//        return legalMetrologyModule;
-//    }
-//
-//    public void setLegalMetrologyModule(Boolean legalMetrologyModule) {
-//        this.legalMetrologyModule = legalMetrologyModule;
-//    }
-//
-//    public Boolean getJobManagementAndTrackingModule() {
-//        if (jobManagementAndTrackingModule == null) {
-//            jobManagementAndTrackingModule = true;
-//        }
-//        return jobManagementAndTrackingModule;
-//    }
-//
-//    public void setJobManagementAndTrackingModule(Boolean jobManagementAndTrackingModule) {
-//        this.jobManagementAndTrackingModule = jobManagementAndTrackingModule;
-//    }
-//
-//    public Boolean getComplianceModule() {
-//        if (complianceModule == null) {
-//            complianceModule = false;
-//        }
-//        return complianceModule;
-//    }
-//
-//    public void setComplianceModule(Boolean complianceModule) {
-//        this.complianceModule = complianceModule;
-//    }
-//
-//    public Boolean getFoodsModule() {
-//        if (foodsModule == null) {
-//            foodsModule = false;
-//        }
-//        return foodsModule;
-//    }
-//
-//    public void setFoodsModule(Boolean foodsModule) {
-//        this.foodsModule = foodsModule;
-//    }
-//
-//    public Boolean getStandardsModule() {
-//        if (standardsModule == null) {
-//            standardsModule = false;
-//        }
-//        return standardsModule;
-//    }
-//
-//    public void setStandardsModule(Boolean standardsModule) {
-//        this.standardsModule = standardsModule;
-//    }
-//
-//    public Boolean getCertificationModule() {
-//        if (certificationModule == null) {
-//            certificationModule = false;
-//        }
-//        return certificationModule;
-//    }
-//
-//    public void setCertificationModule(Boolean certificationModule) {
-//        this.certificationModule = certificationModule;
-//    }
-//
-//    public Boolean getServiceRequestModule() {
-//        if (serviceRequestModule == null) {
-//            serviceRequestModule = false;
-//        }
-//        return serviceRequestModule;
-//    }
-//
-//    public void setServiceRequestModule(Boolean serviceRequestModule) {
-//        this.serviceRequestModule = serviceRequestModule;
-//    }
-//
-//    public Boolean getHrmModule() {
-//        if (hrmModule == null) {
-//            hrmModule = getAdminModule();
-//        }
-//        return hrmModule;
-//    }
-//
-//    public void setHrmModule(Boolean hrmModule) {
-//        this.hrmModule = hrmModule;
-//    }
-//
-//    public Boolean getReportModule() {
-//        if (reportModule == null) {
-//            reportModule = false;
-//        }
-//        return reportModule;
-//    }
-//
-//    public void setReportModule(Boolean reportModule) {
-//        this.reportModule = reportModule;
-//    }
-//
-//    public Boolean getAdminModule() {
-//        if (adminModule == null) {
-//            adminModule = false;
-//        }
-//        return adminModule;
-//    }
-//
-//    public void setAdminModule(Boolean adminModule) {
-//        this.adminModule = adminModule;
-//    }
-//
-//    public Boolean getFinancialAdminModule() {
-//        if (financialAdminModule == null) {
-//            financialAdminModule = false;
-//        }
-//        return financialAdminModule;
-//    }
-//
-//    public void setFinancialAdminModule(Boolean financialAdminModule) {
-//        this.financialAdminModule = financialAdminModule;
-//    }
-//
-//    public Boolean getPurchaseManagementModule() {
-//        if (purchaseManagementModule == null) {
-//            purchaseManagementModule = false;
-//        }
-//        return purchaseManagementModule;
-//    }
-//
-//    public void setPurchaseManagementModule(Boolean purchaseManagementModule) {
-//        this.purchaseManagementModule = purchaseManagementModule;
-//    }
-//
-//    public Boolean getLegalOfficeModule() {
-//        if (legalOfficeModule == null) {
-//            legalOfficeModule = false;
-//        }
-//        return legalOfficeModule;
-//    }
-//
-//    public void setLegalOfficeModule(Boolean legalOfficeModule) {
-//        this.legalOfficeModule = legalOfficeModule;
-//    }
-//
-//    public Boolean getCrmModule() {
-//        if (crmModule == null) {
-//            crmModule = false;
-//        }
-//        return crmModule;
-//    }
-//
-//    public void setCrmModule(Boolean crmModule) {
-//        this.crmModule = crmModule;
-//    }
+    public Boolean getLegalMetrologyModule() {
+        if (legalMetrologyModule == null) {
+            legalMetrologyModule = false;
+        }
+        return legalMetrologyModule;
+    }
+
+    public void setLegalMetrologyModule(Boolean legalMetrologyModule) {
+        this.legalMetrologyModule = legalMetrologyModule;
+    }
+
+    public Boolean getJobManagementAndTrackingModule() {
+        if (jobManagementAndTrackingModule == null) {
+            jobManagementAndTrackingModule = true;
+        }
+        return jobManagementAndTrackingModule;
+    }
+
+    public void setJobManagementAndTrackingModule(Boolean jobManagementAndTrackingModule) {
+        this.jobManagementAndTrackingModule = jobManagementAndTrackingModule;
+    }
+
+    public Boolean getComplianceModule() {
+        if (complianceModule == null) {
+            complianceModule = false;
+        }
+        return complianceModule;
+    }
+
+    public void setComplianceModule(Boolean complianceModule) {
+        this.complianceModule = complianceModule;
+    }
+
+    public Boolean getFoodsModule() {
+        if (foodsModule == null) {
+            foodsModule = false;
+        }
+        return foodsModule;
+    }
+
+    public void setFoodsModule(Boolean foodsModule) {
+        this.foodsModule = foodsModule;
+    }
+
+    public Boolean getStandardsModule() {
+        if (standardsModule == null) {
+            standardsModule = false;
+        }
+        return standardsModule;
+    }
+
+    public void setStandardsModule(Boolean standardsModule) {
+        this.standardsModule = standardsModule;
+    }
+
+    public Boolean getCertificationModule() {
+        if (certificationModule == null) {
+            certificationModule = false;
+        }
+        return certificationModule;
+    }
+
+    public void setCertificationModule(Boolean certificationModule) {
+        this.certificationModule = certificationModule;
+    }
+
+    public Boolean getServiceRequestModule() {
+        if (serviceRequestModule == null) {
+            serviceRequestModule = false;
+        }
+        return serviceRequestModule;
+    }
+
+    public void setServiceRequestModule(Boolean serviceRequestModule) {
+        this.serviceRequestModule = serviceRequestModule;
+    }
+
+    public Boolean getHrmModule() {
+        if (hrmModule == null) {
+            hrmModule = getAdminModule();
+        }
+        return hrmModule;
+    }
+
+    public void setHrmModule(Boolean hrmModule) {
+        this.hrmModule = hrmModule;
+    }
+
+    public Boolean getReportModule() {
+        if (reportModule == null) {
+            reportModule = false;
+        }
+        return reportModule;
+    }
+
+    public void setReportModule(Boolean reportModule) {
+        this.reportModule = reportModule;
+    }
+
+    public Boolean getAdminModule() {
+        if (adminModule == null) {
+            adminModule = false;
+        }
+        return adminModule;
+    }
+
+    public void setAdminModule(Boolean adminModule) {
+        this.adminModule = adminModule;
+    }
+
+    public Boolean getFinancialAdminModule() {
+        if (financialAdminModule == null) {
+            financialAdminModule = false;
+        }
+        return financialAdminModule;
+    }
+
+    public void setFinancialAdminModule(Boolean financialAdminModule) {
+        this.financialAdminModule = financialAdminModule;
+    }
+
+    public Boolean getPurchaseManagementModule() {
+        if (purchaseManagementModule == null) {
+            purchaseManagementModule = false;
+        }
+        return purchaseManagementModule;
+    }
+
+    public void setPurchaseManagementModule(Boolean purchaseManagementModule) {
+        this.purchaseManagementModule = purchaseManagementModule;
+    }
+
+    public Boolean getLegalOfficeModule() {
+        if (legalOfficeModule == null) {
+            legalOfficeModule = false;
+        }
+        return legalOfficeModule;
+    }
+
+    public void setLegalOfficeModule(Boolean legalOfficeModule) {
+        this.legalOfficeModule = legalOfficeModule;
+    }
+
+    public Boolean getCrmModule() {
+        if (crmModule == null) {
+            crmModule = false;
+        }
+        return crmModule;
+    }
+
+    public void setCrmModule(Boolean crmModule) {
+        this.crmModule = crmModule;
+    }
 
     @Override
     public int hashCode() {
@@ -387,6 +386,11 @@ public class Module implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            for (Privilege privilege : privileges) {
+                privilege.save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -403,13 +407,13 @@ public class Module implements BusinessEntity {
     public ReturnMessage validate(EntityManager em) {
         return new ReturnMessage();
     }
-    
+
     public static Module findActiveModuleByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-          
+
             List<Module> modules = em.createQuery("SELECT m FROM Module m "
                     + "WHERE m.active = 1 AND UPPER(m.name) "
                     + "= '" + value.toUpperCase() + "'", Module.class).getResultList();
@@ -422,15 +426,15 @@ public class Module implements BusinessEntity {
             return null;
         }
     }
-    
+
     public static List<Module> findActiveModules(
-            EntityManager em, 
+            EntityManager em,
             String value,
             int maxResults) {
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Module> modules = em.createQuery("SELECT m FROM Module m"
                     + " WHERE (m.active = 1) AND (UPPER(m.name) like '%"
                     + value + "%'" + " OR UPPER(m.category) like '%"
@@ -445,16 +449,16 @@ public class Module implements BusinessEntity {
             return null;
         }
     }
-    
-     public static List<Module> findModules(
-            EntityManager em, 
+
+    public static List<Module> findModules(
+            EntityManager em,
             String value,
             int maxResults) {
-         
+
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Module> modules = em.createQuery("SELECT m FROM Module m"
                     + " WHERE (UPPER(m.name) like '%"
                     + value + "%'" + " OR UPPER(m.category) like '%"
@@ -469,12 +473,12 @@ public class Module implements BusinessEntity {
             return null;
         }
     }
-    
+
     public static List<Module> findAllActiveModules(
             EntityManager em,
             int maxResults) {
         try {
-           
+
             List<Module> modules = em.createQuery("SELECT m FROM Module m"
                     + " WHERE m.active = 1 ORDER BY m.name", Module.class).
                     setMaxResults(maxResults).getResultList();

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL)
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -112,7 +112,7 @@ public class Complaint implements Comparable, BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Boolean getIsJobNumberValid() {
         return !getJobNumber().isEmpty();
     }
@@ -395,7 +395,7 @@ public class Complaint implements Comparable, BusinessEntity {
             return false;
         }
         Complaint other = (Complaint) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -519,7 +519,7 @@ public class Complaint implements Comparable, BusinessEntity {
         try {
 
             return em.find(Complaint.class, Id);
-            
+
         } catch (Exception e) {
             System.out.println(e);
 
@@ -530,6 +530,13 @@ public class Complaint implements Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            // Save entities from other modules
+            getBusinessOffice().save(em);
+            getEnteredBy().save(em);
+            getReceivedBy().save(em);
+            getReceivedVia().save(em);
+            getComplainant().save(em);
 
             // Save product inspections
             if (!getProductInspections().isEmpty()) {
@@ -543,6 +550,14 @@ public class Complaint implements Comparable, BusinessEntity {
                                 Message.SEVERITY_ERROR_NAME);
                     }
                 }
+            }
+
+            for (Employee employee : referredTo) {
+                employee.save(em);
+            }
+
+            for (Department department : referredToDepartment) {
+                department.save(em);
             }
 
             em.getTransaction().begin();

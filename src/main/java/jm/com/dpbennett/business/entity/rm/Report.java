@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -252,7 +252,6 @@ public class Report implements BusinessEntity {
         this.description = description;
     }
 
-
     @Override
     public Boolean getActive() {
         if (active == null) {
@@ -342,7 +341,7 @@ public class Report implements BusinessEntity {
             return false;
         }
         Report other = (Report) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -385,9 +384,9 @@ public class Report implements BusinessEntity {
     public static Report findReportByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Report> reports = em.createQuery("SELECT r FROM Report r "
                     + "WHERE UPPER(r.name) "
                     + "= '" + value.toUpperCase() + "'", Report.class).getResultList();
@@ -400,14 +399,14 @@ public class Report implements BusinessEntity {
             return null;
         }
     }
-    
-     public static Report findActiveReportByName(
-             EntityManager em, String value) {
+
+    public static Report findActiveReportByName(
+            EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Report> reports = em.createQuery("SELECT r FROM Report r "
                     + "WHERE UPPER(r.name)"
                     + " = '" + value.toUpperCase() + "'"
@@ -425,15 +424,15 @@ public class Report implements BusinessEntity {
     public static List<Report> findReportsByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
-            
+
             return reports;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -443,16 +442,16 @@ public class Report implements BusinessEntity {
     public static List<Report> findReports(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
                             + value.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
-            
+
             return reports;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -463,9 +462,9 @@ public class Report implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where (r.active = 1 OR r.active IS NULL) AND UPPER(r.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
@@ -477,18 +476,18 @@ public class Report implements BusinessEntity {
     }
 
     public static List<Report> findActiveReportsByCategoryAndName(
-            EntityManager em, 
+            EntityManager em,
             String category, String name) {
 
         try {
-            
+
             category = category.replaceAll("&amp;", "&").replaceAll("'", "`");
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where UPPER(r.name) like '%"
                             + name.toUpperCase().trim() + "%'"
-                            + " AND (r.active = 1 OR r.active IS NULL)"        
+                            + " AND (r.active = 1 OR r.active IS NULL)"
                             + " AND UPPER(r.category) like '%"
                             + category.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
             return reports;
@@ -502,9 +501,9 @@ public class Report implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where (r.active = 1 OR r.active IS NULL) AND (UPPER(r.name) like '%"
                             + value.toUpperCase().trim() + "%' OR UPPER(r.description) like '%"
@@ -533,7 +532,23 @@ public class Report implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            // Save new/edited date periods 
+
+            for (ReportTableColumn reportColumn : reportColumns) {
+                reportColumn.save(em);
+            }
+
+            for (Department department : departments) {
+                department.save(em);
+            }
+
+            for (Employee employee : employees) {
+                employee.save(em);
+            }
+            
+            for (Client client : clients) {
+                client.save(em);
+            }
+
             if (!getDatePeriods().isEmpty()) {
                 for (DatePeriod datePeriod : getDatePeriods()) {
                     if ((datePeriod.getIsDirty() || datePeriod.getId() == null)

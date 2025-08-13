@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -40,7 +40,7 @@ import jm.com.dpbennett.business.entity.cm.Client;
 
 /**
  *
- * @author DBennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "currency")
@@ -119,7 +119,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+
         if (!(object instanceof Currency)) {
             return false;
         }

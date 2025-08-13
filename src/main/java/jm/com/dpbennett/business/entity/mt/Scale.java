@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.mt;
 
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -83,7 +82,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
     public Scale() {
         stickers = new ArrayList<>();
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -208,7 +207,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
             return false;
         }
         Scale other = (Scale) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -254,7 +253,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
-    
+
     public static List<Scale> findScalesByDateSearchField(
             EntityManager em,
             User user,
@@ -273,16 +272,16 @@ public class Scale implements Product, BusinessEntity, Comparable {
         if (searchType.equals("General")) {
 
             if (!searchText.equals("")) {
-                searchTextAndClause =
-                        " AND ("
+                searchTextAndClause
+                        = " AND ("
                         + " UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(scale.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(manufacturer.name) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
             }
 
-            searchQuery =
-                    "SELECT scale FROM Scale scale"
+            searchQuery
+                    = "SELECT scale FROM Scale scale"
                     + " JOIN scale.client client"
                     + " JOIN scale.certification certification"
                     + " JOIN scale.manufacturer manufacturer"
@@ -306,7 +305,27 @@ public class Scale implements Product, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            
+            getManufacturer().save(em);
+            getCertification().save(em);
+            
+            for (Sticker sticker : stickers) {
+                sticker.save(em);
+            }
+            
+            getClient().save(em);
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Scale not saved");
     }
 
     @Override

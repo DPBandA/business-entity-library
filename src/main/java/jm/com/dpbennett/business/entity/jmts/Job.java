@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -2062,23 +2062,28 @@ public class Job implements BusinessEntity {
 
             getClassification().save(em);
             getSector().save(em);
-            getJobCategory().save(em);
-            getJobSubCategory().save(em);
             getDepartment().save(em);
             getSubContractedDepartment().save(em);
-            getClient().save(em);
-            getAssignedTo().save(em);
+            getClient().save(em);            
+            getJobCategory().save(em);
+            getJobSubCategory().save(em);  
+            getAssignedTo().save(em);            
+            getJobCostingAndPayment().save(em);            
+            getServiceContract().save(em);
+            getJobStatusAndTracking().save(em);            
             getBusiness().save(em);
             getBusinessOffice().save(em);
             getBillingAddress().save(em);
             getContact().save(em);
-
+            
             for (Employee representative : getRepresentatives()) {
                 representative.save(em);
             }
+            
             for (Service service : getServices()) {
                 service.save(em);
             }
+            
             if (!this.getJobSamples().isEmpty()) {
                 for (JobSample jobSample : this.getJobSamples()) {
 

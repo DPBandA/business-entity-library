@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -609,7 +609,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public void setPaymentCurrency(Currency paymentCurrency) {
         this.paymentCurrency = paymentCurrency;
     }
-    
+
     public String getPleaseSupplyNote() {
         if (pleaseSupplyNote == null) {
             pleaseSupplyNote = "";
@@ -1351,6 +1351,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (procurementOfficer == null) {
             return new Employee();
         }
+
         return procurementOfficer;
     }
 
@@ -1610,6 +1611,53 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
         try {
 
+            getDocumentType().save(em);
+            getOriginatingDepartment().save(em);
+            getPurchasingDepartment().save(em);
+
+            if (getProcurementOfficer().getId() != null) {
+                getProcurementOfficer().save(em);
+            }
+
+            getOriginator().save(em);
+
+            if (getApprover1() != null) {
+                getApprover1().save(em);
+            }
+            if (getApprover2() != null) {
+                getApprover2().save(em);
+            }
+            if (getApprover3() != null) {
+                getApprover3().save(em);
+            }
+            if (getApprover4() != null) {
+                getApprover4().save(em);
+            }
+            if (getApprover5() != null) {
+                getApprover5().save(em);
+            }
+            if (getRecommender1() != null) {
+                getRecommender1().save(em);
+            }
+            if (getRecommender2() != null) {
+                getRecommender2().save(em);
+            }
+            if (getRecommender3() != null) {
+                getRecommender3().save(em);
+            }
+            if (getRecommender4() != null) {
+                getRecommender4().save(em);
+            }
+            if (getRecommender5() != null) {
+                getRecommender5().save(em);
+            }
+            if (getClassification().getId() != null) {
+                getClassification().save(em);
+            }
+            if (getEditedBy().getId() != null) {
+                getEditedBy().save(em);
+            }
+
             // Save new/edited cost components
             if (!getCostComponents().isEmpty()) {
                 for (CostComponent costComponent : getCostComponents()) {
@@ -1640,7 +1688,9 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
                 }
             }
 
-            // Save    
+            getTax().save(em);
+            getDiscount().save(em);
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

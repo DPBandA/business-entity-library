@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -110,7 +110,7 @@ public class CostCode implements BusinessEntity, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+
         if (!(object instanceof CostCode)) {
             return false;
         }
@@ -162,7 +162,7 @@ public class CostCode implements BusinessEntity, Serializable {
             return codes;
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<CostCode>();
+            return new ArrayList<>();
         }
     }
 

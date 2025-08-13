@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -256,6 +256,7 @@ public class ShippingContainer implements BusinessEntity {
             em.getTransaction().commit();
 
             return new ReturnMessage();
+            
         } catch (Exception e) {
             System.out.println(e);
         }

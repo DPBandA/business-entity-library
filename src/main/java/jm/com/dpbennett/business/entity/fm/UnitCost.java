@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.fm;
 
 import jm.com.dpbennett.business.entity.hrm.DepartmentUnit;
@@ -40,6 +39,7 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Laboratory;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -81,7 +81,7 @@ public class UnitCost implements Serializable, BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -216,7 +216,7 @@ public class UnitCost implements Serializable, BusinessEntity {
             return false;
         }
         UnitCost other = (UnitCost) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -244,18 +244,18 @@ public class UnitCost implements Serializable, BusinessEntity {
         String searchQuery;
         String searchTextAndClause = "";
         String joinClause;
-        
+
         departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-        joinClause =
-                " JOIN unitCost.department department"
+        joinClause
+                = " JOIN unitCost.department department"
                 + " JOIN unitCost.laboratory laboratory"
                 + " JOIN unitCost.departmentUnit departmentUnit";
 
         if (!searchText.equals("") && !departmentName.equals("")) {
-            searchTextAndClause =
-                    " AND ("
+            searchTextAndClause
+                    = " AND ("
                     + " UPPER(unitCost.name) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(unitCost.service) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(unitCost.description) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -265,13 +265,13 @@ public class UnitCost implements Serializable, BusinessEntity {
                     + " OR UPPER(departmentUnit.name) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " )";
         } else if (searchText.equals("") && !departmentName.equals("")) {
-            searchTextAndClause =
-                    " AND ("
+            searchTextAndClause
+                    = " AND ("
                     + " UPPER(department.name) LIKE '%" + departmentName.toUpperCase() + "%'"
                     + " )";
         } else if (!searchText.equals("") && departmentName.equals("")) {
-            searchTextAndClause =
-                    " AND ("
+            searchTextAndClause
+                    = " AND ("
                     + " UPPER(unitCost.name) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(unitCost.service) LIKE '%" + searchText.toUpperCase() + "%'"
                     + " OR UPPER(unitCost.description) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -282,8 +282,8 @@ public class UnitCost implements Serializable, BusinessEntity {
                     + " )";
         }
 
-        searchQuery =
-                "SELECT unitCost FROM UnitCost unitCost"
+        searchQuery
+                = "SELECT unitCost FROM UnitCost unitCost"
                 + joinClause
                 + " WHERE (0 = 0)" // used as place holder
                 + searchTextAndClause
@@ -303,8 +303,22 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        // tk Save child entities that belong to other entity managers first. 
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            
+            getDepartment().save(em);
+            getLaboratory().save(em);
+            getDepartmentUnit().save(em);
+            
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println("Unit Cost save exception: " + e);
+        }
+
+        return new ReturnMessage(false, "Unit Cost not saved");
     }
 
     @Override

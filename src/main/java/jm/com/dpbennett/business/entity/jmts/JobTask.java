@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.jmts;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -35,6 +34,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -44,6 +44,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "jobtask")
 public class JobTask implements BusinessEntity {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -55,9 +56,9 @@ public class JobTask implements BusinessEntity {
     private Date endDate;
     private String notes;
     private Boolean completed;
-    @OneToOne(cascade=CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Department departmentResponsible;
-    @OneToOne(cascade=CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employeeResponsible;
     @Transient
     private Boolean isDirty;
@@ -71,7 +72,7 @@ public class JobTask implements BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -159,7 +160,7 @@ public class JobTask implements BusinessEntity {
             return false;
         }
         JobTask other = (JobTask) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -170,12 +171,31 @@ public class JobTask implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            if (getDepartmentResponsible() != null) {
+                getDepartmentResponsible().save(em);
+            }
+
+            if (getEmployeeResponsible() != null) {
+                getEmployeeResponsible().save(em);
+            }
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println("Job Task exception: " + e);
+        }
+
+        return new ReturnMessage(false, "Job Task not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ReturnMessage();
     }
 
     @Override

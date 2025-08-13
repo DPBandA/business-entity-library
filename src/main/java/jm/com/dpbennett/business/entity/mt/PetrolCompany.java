@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.mt;
 
 import jm.com.dpbennett.business.entity.hrm.Internet;
@@ -45,6 +44,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -89,8 +89,8 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
         contacts = new ArrayList<>();
     }
 
-     public PetrolCompany(String name) {
-         this.name = name;
+    public PetrolCompany(String name) {
+        this.name = name;
         petrolStations = new ArrayList<>();
         businessOffices = new ArrayList<>();
         addresses = new ArrayList<>();
@@ -106,7 +106,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -156,7 +156,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
             return false;
         }
         PetrolCompany other = (PetrolCompany) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -274,36 +274,33 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     public void setTaxRegistrationNumber(String taxRegistrationNumber) {
         this.taxRegistrationNumber = taxRegistrationNumber;
     }
-    
-    
-    
 
     public static List<PetrolCompany> findPetrolCompaniesByName(
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
-            List<PetrolCompany> companies =
-                    em.createQuery("SELECT p FROM PetrolCompany p where UPPER(p.name) like '"
-                    + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolCompany.class).getResultList();
-            
+
+            List<PetrolCompany> companies
+                    = em.createQuery("SELECT p FROM PetrolCompany p where UPPER(p.name) like '"
+                            + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolCompany.class).getResultList();
+
             return companies;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<PetrolCompany>();
         }
     }
-    
-     public static PetrolCompany findPetrolCompanyByName(
-             EntityManager em, String value) {
+
+    public static PetrolCompany findPetrolCompanyByName(
+            EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<PetrolCompany> petrolCompanies = em.createQuery("SELECT p FROM PetrolCompany p "
                     + "WHERE UPPER(p.name) "
                     + "= '" + value.toUpperCase() + "'", PetrolCompany.class).getResultList();
@@ -316,8 +313,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
             return null;
         }
     }
-     
-     
+
     public static PetrolCompany findPetrolCompanyById(EntityManager em, Long id) {
 
         try {
@@ -333,7 +329,6 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
         }
     }
 
-   
     public static List<PetrolCompany> findAllPetrolCompanies(EntityManager em) {
 
         try {
@@ -348,7 +343,38 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            for (Contact contact : contacts) {
+                contact.save(em);
+            }
+
+            for (Address address : addresses) {
+                address.save(em);
+            }
+
+            for (PetrolStation petrolStation : petrolStations) {
+                petrolStation.save(em);
+            }
+
+            for (BusinessOffice businessOffice : businessOffices) {
+                businessOffice.save(em);
+            }
+
+            if (getInternet() != null) {
+                getInternet().save(em);
+            }
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Petrol Company not saved");
     }
 
     @Override

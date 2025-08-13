@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.mt;
 
 import jm.com.dpbennett.business.entity.cert.Certification;
@@ -41,6 +40,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.fm.Product;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -103,7 +103,7 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -116,7 +116,7 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
-    
+
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
@@ -155,9 +155,7 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     }
 
     public Certification getCertification() {
-        if (certification == null) {
-            certification = new Certification();
-        }
+
         return certification;
     }
 
@@ -234,7 +232,7 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
             return false;
         }
         PetrolPump other = (PetrolPump) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -271,8 +269,7 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     public void setName(String name) {
         this.name = name;
     }
-    
-    
+
     public static PetrolPump findPetrolPumpById(EntityManager em, Long id) {
 
         try {
@@ -287,7 +284,32 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            getManufacturer().save(em);
+
+            if (getCertification() != null) {
+                getCertification().save(em);
+            }
+
+            for (PetrolPumpNozzle nozzle : nozzles) {
+                nozzle.save(em);
+            }
+
+            for (Sticker sticker : stickers) {
+                sticker.save(em);
+            }
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Petrol Company not saved");
     }
 
     @Override

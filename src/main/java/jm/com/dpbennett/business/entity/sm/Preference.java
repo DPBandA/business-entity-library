@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sm;
 
 import java.util.ArrayList;
@@ -35,6 +34,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -79,7 +80,7 @@ public class Preference implements BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -156,7 +157,7 @@ public class Preference implements BusinessEntity {
             return false;
         }
         Preference other = (Preference) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -182,12 +183,12 @@ public class Preference implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
-            List<Preference> preferences =
-                    em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '%"
-                    + value.toUpperCase().trim() + "%' ORDER BY p.preferenceValue", Preference.class).getResultList();
+
+            List<Preference> preferences
+                    = em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY p.preferenceValue", Preference.class).getResultList();
             return preferences;
         } catch (Exception e) {
             System.out.println(e);
@@ -201,13 +202,13 @@ public class Preference implements BusinessEntity {
         List<String> values = new ArrayList<>();
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
-            List<Preference> preferences =
-                    em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '"
-                    + value.toUpperCase().trim() + "%' ORDER BY p.preferenceValue DESC", Preference.class).getResultList();
-            
+
+            List<Preference> preferences
+                    = em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '"
+                            + value.toUpperCase().trim() + "%' ORDER BY p.preferenceValue DESC", Preference.class).getResultList();
+
             if (preferences != null) {
                 for (Preference preference : preferences) {
                     values.add(preference.preferenceValue);
@@ -226,7 +227,7 @@ public class Preference implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             Query query = em.createNamedQuery("findAllPreferencesByName");
             query.setParameter("name", value);
@@ -240,9 +241,9 @@ public class Preference implements BusinessEntity {
     public static Preference findPreferenceByValue(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Preference> preferences = em.createQuery("SELECT p FROM Preference p "
                     + "WHERE UPPER(p.preferenceValue) "
                     + "= '" + value.toUpperCase() + "'", Preference.class).getResultList();
@@ -268,7 +269,21 @@ public class Preference implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+
+        } catch (Exception e) {
+            return new ReturnMessage(false,
+                    "Preference Save Error Occurred!",
+                    "An error occurred while saving Preference"
+                    + "\n" + e,
+                    Message.SEVERITY_ERROR_NAME);
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -113,7 +113,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
         if (issued == null) {
             issued = false;
         }
-        
+
         return issued;
     }
 
@@ -513,7 +513,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
             EntityManager em,
             String searchText,
             Integer maxResults) {
-        
+
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         List<InventoryRequisition> foundInventoryRequisitions = new ArrayList<>();
@@ -671,16 +671,24 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             getDepartment().save(em);
             getContactPerson().save(em);
-            getRequisitionBy().save(em);
+            if (getRequisitionApprovedBy().getId() != null) {
+                getRequisitionApprovedBy().save(em);
+            }
+            if (getInventoryReceivedBy().getId() != null) {
+                getInventoryReceivedBy().save(em);
+            }
+            if (getRequisitionBy().getId() != null) {
+                getRequisitionBy().save(em);
+            }
             getEnteredBy().save(em);
             getEditedBy().save(em);
-            getInventoryIssuedBy().save(em);
-            getRequisitionApprovedBy().save(em);
-            getInventoryReceivedBy().save(em);
-            
+            if (getInventoryIssuedBy().getId() != null) {
+                getInventoryIssuedBy().save(em);
+            }
+
             // Save new/edited cost components
             if (!getInventoryDisbursements().isEmpty()) {
                 for (InventoryDisbursement inventoryDisbursement : getInventoryDisbursements()) {

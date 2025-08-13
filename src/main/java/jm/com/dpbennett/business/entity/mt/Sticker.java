@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.mt;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -49,7 +48,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "sticker")
 public class Sticker implements Product, BusinessEntity, Comparable {
-    
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,10 +70,10 @@ public class Sticker implements Product, BusinessEntity, Comparable {
     private Date dateAssigned;
     @Transient
     private Boolean isDirty;
-    
+
     public Sticker() {
     }
-    
+
     public Sticker(Sticker original) {
         this.name = original.name;
         this.number = original.number;
@@ -87,22 +86,22 @@ public class Sticker implements Product, BusinessEntity, Comparable {
         this.assignee = original.assignee;
         this.dateAssigned = original.dateAssigned;
     }
-    
+
     public Sticker(String number, Date dateAssigned) {
         this.number = number;
         this.dateAssigned = dateAssigned;
     }
-    
+
     @Override
     public Long getId() {
         return id;
     }
-    
+
     @Override
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -115,83 +114,83 @@ public class Sticker implements Product, BusinessEntity, Comparable {
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
-    
+
     public Boolean getUsed() {
         return used;
     }
-    
+
     public void setUsed(Boolean used) {
         this.used = used;
     }
-    
+
     public Employee getAssignee() {
         if (assignee == null) {
             assignee = new Employee();
         }
         return assignee;
     }
-    
+
     public void setAssignee(Employee assignee) {
         this.assignee = assignee;
     }
-    
+
     public Date getDateAssigned() {
         return dateAssigned;
     }
-    
+
     public void setDateAssigned(Date dateAssigned) {
         this.dateAssigned = dateAssigned;
     }
-    
+
     @Override
     public Manufacturer getManufacturer() {
         return manufacturer;
     }
-    
+
     @Override
     public void setManufacturer(Manufacturer manufacturer) {
         this.manufacturer = manufacturer;
     }
-    
+
     public Date getDateExpired() {
         return dateExpired;
     }
-    
+
     public void setDateExpired(Date dateExpired) {
         this.dateExpired = dateExpired;
     }
-    
+
     public Date getDateIssued() {
         return dateIssued;
     }
-    
+
     public void setDateIssued(Date dateIssued) {
         this.dateIssued = dateIssued;
     }
-    
+
     public String getNumber() {
         return number;
     }
-    
+
     public void setNumber(String number) {
         this.number = number;
     }
-    
+
     public Boolean getValid() {
         return valid;
     }
-    
+
     public void setValid(Boolean valid) {
         this.valid = valid;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -199,15 +198,15 @@ public class Sticker implements Product, BusinessEntity, Comparable {
             return false;
         }
         Sticker other = (Sticker) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
-    
+
     @Override
     public String toString() {
         return "jm.org.bsj.entity.Sticker[id=" + id + "]";
     }
-    
+
     @Override
     public int compareTo(Object o) {
         Long oTime, thisTime;
@@ -224,68 +223,68 @@ public class Sticker implements Product, BusinessEntity, Comparable {
         } else {
             thisTime = 0L;
         }
-        
+
         return Collator.getInstance().compare(thisTime.toString(), oTime.toString());
     }
-    
+
     @Override
     public String getName() {
         return name;
     }
-    
+
     @Override
     public void setName(String name) {
         this.name = name;
     }
-    
+
     @Override
     public String getType() {
         return type;
     }
-    
+
     @Override
     public void setType(String type) {
         this.type = type;
     }
-    
+
     public static List<Sticker> findStickersByNumber(EntityManager em, String value) {
-       
+
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
-            List<Sticker> stickers =
-                    em.createQuery("SELECT s FROM Sticker s where UPPER(s.number) like '"
-                    + value.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
-            
+
+            List<Sticker> stickers
+                    = em.createQuery("SELECT s FROM Sticker s where UPPER(s.number) like '"
+                            + value.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
+
             return stickers;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<Sticker>();
         }
     }
-    
+
     public static Sticker findStickerByNumber(List<Sticker> stickers, String number) {
         for (Sticker sticker : stickers) {
             if (sticker.getNumber().equals(number)) {
                 return sticker;
             }
         }
-        
+
         return null;
     }
-    
+
     public static Sticker findStickerByNumber(EntityManager em, String value) {
-               
+
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
-            List<Sticker> stickers =
-                    em.createQuery("SELECT s FROM Sticker s where UPPER(s.number) like '"
-                    + value.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
-            
+
+            List<Sticker> stickers
+                    = em.createQuery("SELECT s FROM Sticker s where UPPER(s.number) like '"
+                            + value.toUpperCase().trim() + "%' ORDER BY s.number", Sticker.class).getResultList();
+
             if (!stickers.isEmpty()) {
                 return stickers.get(0);
             }
@@ -293,10 +292,10 @@ public class Sticker implements Product, BusinessEntity, Comparable {
             System.out.println(e);
             return null;
         }
-        
+
         return null;
     }
-    
+
     public static Sticker getDefaultSticker(EntityManager em, String number) {
         Sticker sticker = Sticker.findStickerByNumber(em, number);
 
@@ -314,7 +313,21 @@ public class Sticker implements Product, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            getManufacturer().save(em);
+            getAssignee().save(em);
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Sticker not saved");
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -90,9 +90,7 @@ public class Client implements ClientInterface {
     private Boolean tag;
     private String taxRegistrationNumber;
     private Boolean active;
-    private Boolean international;
-    @Transient
-    private Boolean isDirty;
+    private Boolean international;    
     // Billing  
     @Transient
     private AccPacCustomer financialAccount;
@@ -110,6 +108,8 @@ public class Client implements ClientInterface {
     private String typeOfBusiness;
     private String identification;
     private String identificationType;
+    @Transient
+    private Boolean isDirty;
 
     public Client() {
         this.taxRegistrationNumber = "";
@@ -1032,6 +1032,8 @@ public class Client implements ClientInterface {
     public ReturnMessage save(EntityManager em) {
         try {
             
+            getEnteredBy().save(em);
+            getEditedBy().save(em);
             getDiscount().save(em);
             getDefaultTax().save(em);
             

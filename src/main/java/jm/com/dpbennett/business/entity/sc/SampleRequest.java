@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024 D P Bennett & Associates Limited
+Copyright (C) 2025 D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sc;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -76,7 +75,7 @@ public class SampleRequest implements BusinessEntity, Form {
     public SampleRequest() {
         products = new ArrayList<>();
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -183,7 +182,7 @@ public class SampleRequest implements BusinessEntity, Form {
             return false;
         }
         SampleRequest other = (SampleRequest) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -201,7 +200,7 @@ public class SampleRequest implements BusinessEntity, Form {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public static List<SampleRequest> findSampleRequestsByDateSearchField(
             EntityManager em,
             User user,
@@ -215,11 +214,11 @@ public class SampleRequest implements BusinessEntity, Form {
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause = "";
-       
+
         if (searchType.equals("General")) {
             if (!searchText.equals("")) {
-                searchTextAndClause =
-                        " AND ("
+                searchTextAndClause
+                        = " AND ("
                         + " UPPER(sampleRequest.type) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(inspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(inspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -228,16 +227,16 @@ public class SampleRequest implements BusinessEntity, Form {
                         + " )";
             }
             if ((startDate == null) || (endDate == null)) {
-                searchQuery =
-                        "SELECT sampleRequest FROM SampleRequest sampleRequest"
+                searchQuery
+                        = "SELECT sampleRequest FROM SampleRequest sampleRequest"
                         + " JOIN sampleRequest.inspector inspector"
                         + " JOIN sampleRequest.receivedFrom receivedFrom"
                         + " WHERE (0 = 0)" // used as place holder
                         + searchTextAndClause
                         + " ORDER BY sampleRequest.id DESC";
             } else {
-                searchQuery =
-                        "SELECT sampleRequest FROM SampleRequest sampleRequest"
+                searchQuery
+                        = "SELECT sampleRequest FROM SampleRequest sampleRequest"
                         + " JOIN sampleRequest.inspector inspector"
                         + " JOIN sampleRequest.receivedFrom receivedFrom"
                         + " WHERE (sampleRequest." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
@@ -263,7 +262,26 @@ public class SampleRequest implements BusinessEntity, Form {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            getReceivedFrom().save(em);
+            getRepresentative().save(em);
+            getInspector().save(em);
+            
+            for (ProductInspection product : products) {
+                product.save(em);
+            }
+            
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Sample Request not saved");
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -523,7 +523,11 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
+            
+            getAssignedInspector().save(em);
+            getAddress().save(em);
+            getFactoryRepresentative().save(em);
+            
             // Save inspection components
             if (!getInspectionComponents().isEmpty()) {
                 for (FactoryInspectionComponent inspectionComponent : getInspectionComponents()) {
@@ -551,6 +555,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                     }
                 }
             }
+            
+            getManufacturer().save(em);
+            getBusinessOffice().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

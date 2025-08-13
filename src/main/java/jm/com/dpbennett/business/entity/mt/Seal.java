@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.mt;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -101,7 +100,7 @@ public class Seal implements Product, BusinessEntity, Comparable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -232,7 +231,7 @@ public class Seal implements Product, BusinessEntity, Comparable {
             return false;
         }
         Seal other = (Seal) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -270,8 +269,7 @@ public class Seal implements Product, BusinessEntity, Comparable {
     public void setName(String name) {
         this.name = name;
     }
-    
-    
+
     public static Seal findSealByNumber(List<Seal> seals, String number) {
         for (Seal seal : seals) {
             if (seal.getNumber().equals(number)) {
@@ -281,32 +279,31 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
         return null;
     }
-    
-     public static List<Seal> findSealsByNumber(EntityManager em, String value) {
+
+    public static List<Seal> findSealsByNumber(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
-            List<Seal> seals =
-                    em.createQuery("SELECT s FROM Seal s where UPPER(s.number) like '"
-                    + value.toUpperCase().trim() + "%' ORDER BY s.number", Seal.class).getResultList();
-            
+
+            List<Seal> seals
+                    = em.createQuery("SELECT s FROM Seal s where UPPER(s.number) like '"
+                            + value.toUpperCase().trim() + "%' ORDER BY s.number", Seal.class).getResultList();
+
             return seals;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<Seal>();
         }
     }
 
-   
     public static Seal findSealByNumber(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Seal> seals = em.createQuery("SELECT s FROM Seal s "
                     + "WHERE s.number "
                     + "= '" + value + "'", Seal.class).getResultList();
@@ -318,8 +315,8 @@ public class Seal implements Product, BusinessEntity, Comparable {
             return null;
         }
     }
-    
-     public static Seal getDefaultSeal(EntityManager em, String number) {
+
+    public static Seal getDefaultSeal(EntityManager em, String number) {
         Seal seal = Seal.findSealByNumber(em, number);
 
         if (seal == null) {
@@ -336,7 +333,21 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            
+            getManufacturer().save(em);
+            getAssignee().save(em);
+            
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Seal not saved");
     }
 
     @Override
@@ -439,5 +450,4 @@ public class Seal implements Product, BusinessEntity, Comparable {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    
 }

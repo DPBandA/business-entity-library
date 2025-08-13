@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -30,8 +30,8 @@ import java.io.FileInputStream;
  */
 public class PropertiesFile {
 
-    private String filePath;
-    private Properties props;
+    private final String filePath;
+    private final Properties props;
 
     /**
      * Constructs the PropertiesFile with a new file path.
@@ -68,7 +68,7 @@ public class PropertiesFile {
     public Double getDoubleProperty(String name) {
         try {
             
-            return Double.parseDouble(props.getProperty(name));            
+            return Double.valueOf(props.getProperty(name));            
             
         } catch (NumberFormatException e) {
             System.out.println("Invalid double value");
@@ -86,7 +86,7 @@ public class PropertiesFile {
     public Long getLongProperty(String name) {
         try {
             
-            return Long.parseLong(props.getProperty(name));            
+            return Long.valueOf(props.getProperty(name));            
             
         } catch (NumberFormatException e) {
             System.out.println("Invalid long value");
@@ -104,7 +104,7 @@ public class PropertiesFile {
     public Boolean getBooleanProperty(String name) {
         try {
             
-            return Boolean.parseBoolean(props.getProperty(name));            
+            return Boolean.valueOf(props.getProperty(name));            
             
         } catch (NumberFormatException e) {
             System.out.println("Invalid boolean value");

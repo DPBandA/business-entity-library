@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sm;
 
 import java.util.Date;
@@ -32,6 +31,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -66,7 +67,7 @@ public class SequenceNumber implements BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -105,12 +106,12 @@ public class SequenceNumber implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof SequenceNumber)) {
             return false;
         }
         SequenceNumber other = (SequenceNumber) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -135,9 +136,9 @@ public class SequenceNumber implements BusinessEntity {
         SequenceNumber sequenceNumber = new SequenceNumber();
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             last = em.createNamedQuery("getLastSequenceNumberByNameAndYear",
                     Long.class).setParameter("name", value).setParameter("yearReceived", year).getSingleResult();
         } catch (Exception e) {
@@ -166,7 +167,21 @@ public class SequenceNumber implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+
+        } catch (Exception e) {
+            return new ReturnMessage(false,
+                    "Sequence Number Save Error Occurred!",
+                    "An error occurred while saving Sequence Number"
+                    + "\n" + e,
+                    Message.SEVERITY_ERROR_NAME);
+        }
     }
 
     @Override

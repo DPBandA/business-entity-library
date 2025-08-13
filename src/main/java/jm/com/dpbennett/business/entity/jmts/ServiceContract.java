@@ -704,7 +704,7 @@ public class ServiceContract implements BusinessEntity {
             if (getSelectedService().getId() != null) {
                 getSelectedService().save(em);
             }
-
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

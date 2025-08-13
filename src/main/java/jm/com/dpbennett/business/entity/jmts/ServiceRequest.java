@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -241,7 +241,7 @@ public class ServiceRequest implements BusinessEntity {
     }
 
     @Override
-    public Person getEditedBy() {
+    public Employee getEditedBy() {
         if (editedBy == null) {
             return new Employee();
         }
@@ -473,7 +473,7 @@ public class ServiceRequest implements BusinessEntity {
             return false;
         }
         ServiceRequest other = (ServiceRequest) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -565,9 +565,9 @@ public class ServiceRequest implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<ServiceRequest> requests = em.createQuery("SELECT s FROM ServiceRequest s "
                     + "WHERE UPPER(s.serviceRequestNumber) "
                     + "= '" + value.toUpperCase() + "'", ServiceRequest.class).getResultList();
@@ -583,7 +583,31 @@ public class ServiceRequest implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            
+            getClassification().save(em);
+            getSector().save(em);
+            getDepartment().save(em);
+            getClient().save(em);
+            getJobCategory().save(em);
+            getJobSubCategory().save(em);
+            getAssignedTo().save(em);
+            getServiceContract().save(em);
+            getBusinessOffice().save(em);
+            getContact().save(em);
+            getEnteredBy().save(em);
+            getEditedBy().save(em);
+            
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Service Request not saved");
     }
 
     @Override

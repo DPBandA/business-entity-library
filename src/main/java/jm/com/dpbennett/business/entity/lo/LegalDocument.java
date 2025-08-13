@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -194,7 +194,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     }
 
     @Override
-    public Person getEditedBy() {
+    public Employee getEditedBy() {
         if (editedBy == null) {
             return new Employee();
         }
@@ -534,7 +534,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     @Override
     public void setName(String name) {
-        
+
     }
 
     public static List<LegalDocument> findGroupedLegalDocumentsByDateSearchField(
@@ -702,37 +702,37 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            if (getRequestingDepartment().getId() != null) {
-                getRequestingDepartment().save(em);
-            }
-            
-            if (getResponsibleDepartment().getId() != null) {
-                getResponsibleDepartment().save(em);
-            }
-            
-            if (getResponsibleOfficer().getId() != null) {
-                getResponsibleOfficer().save(em);
-            }
-            
-            if (getSubmittedBy().getId() != null) {
-                getSubmittedBy().save(em);
-            }
-            
-            if (getExternalClient().getId() != null) {
-                getExternalClient().save(em);
-            }
-            
-            if (((Employee)getEditedBy()).getId() != null) {
-                ((Employee)getEditedBy()).save(em);
-            }
 
             if (getDocumentType().getId() != null) {
                 getDocumentType().save(em);
             }
 
+            if (getRequestingDepartment().getId() != null) {
+                getRequestingDepartment().save(em);
+            }
+
+            if (getResponsibleDepartment().getId() != null) {
+                getResponsibleDepartment().save(em);
+            }
+
+            if (getResponsibleOfficer().getId() != null) {
+                getResponsibleOfficer().save(em);
+            }
+
+            if (getSubmittedBy().getId() != null) {
+                getSubmittedBy().save(em);
+            }
+
             if (getClassification().getId() != null) {
                 getClassification().save(em);
+            }
+
+            if (getExternalClient().getId() != null) {
+                getExternalClient().save(em);
+            }
+
+            if (getEditedBy().getId() != null) {
+                getEditedBy().save(em);
             }
 
             em.getTransaction().begin();

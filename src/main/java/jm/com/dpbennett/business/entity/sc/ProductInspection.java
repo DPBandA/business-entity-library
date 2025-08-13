@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -291,6 +291,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         if (productCategory == null) {
             return new Category();
         }
+
         return productCategory;
     }
 
@@ -790,14 +791,14 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getProductCategory().getId() != null) {
-                getProductCategory().save(em);
-            }
-
-            if (getMarketProduct().getId() != null) {
-                getMarketProduct().save(em);
-            }
-
+            getProductCategory().save(em);
+            getManufacturer().save(em);
+            getDistributor().save(em);
+            getMarketProduct().save(em);
+            getClient().save(em);
+            getBusinessSource().save(em);
+            getInspector().save(em);
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

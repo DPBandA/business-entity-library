@@ -1,6 +1,6 @@
 /*
-LabelPrint - A general purpose energy label printing application
-Copyright (C) 2024  D P Bennett & Associates Limited
+Business Entity Library (BEL)
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -37,7 +37,8 @@ import org.apache.batik.util.Base64EncoderStream;
 public class QRCodeGenerator {
 
     public static void main(String[] args) throws WriterException, IOException {
-        System.out.println(QRCodeGenerator.getQRCodeImageData("getQRCodeData()", 125));
+        System.out.println(QRCodeGenerator.getQRCodeImageData("getQRCodeData()", 
+                125)); // tk make system option
     }
     
     public static String getQRCodeImageData(String qrCodeText, int size) throws WriterException, IOException {

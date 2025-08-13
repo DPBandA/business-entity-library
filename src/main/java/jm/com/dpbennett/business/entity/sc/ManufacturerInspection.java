@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -40,6 +40,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -71,7 +72,7 @@ public class ManufacturerInspection implements BusinessEntity {
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<InspectionComponent> inspectionComponents;
     @OneToMany(cascade = CascadeType.REFRESH)
-    private List<ProductInspection> productInspections;    
+    private List<ProductInspection> productInspections;
     @Transient
     private Boolean isDirty;
 
@@ -88,7 +89,7 @@ public class ManufacturerInspection implements BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public List<ProductInspection> getProductInspections() {
         if (productInspections != null) {
             Collections.sort(productInspections);
@@ -225,7 +226,7 @@ public class ManufacturerInspection implements BusinessEntity {
             return false;
         }
         ManufacturerInspection other = (ManufacturerInspection) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -246,7 +247,32 @@ public class ManufacturerInspection implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        try {
+            
+            getManufacturer().save(em);
+            getAddress().save(em);
+            getRepresentative().save(em);
+            getAssignedInspector().save(em);
+            
+            for (InspectionComponent inspectionComponent : inspectionComponents) {
+                inspectionComponent.save(em);
+            }
+            
+            for (ProductInspection productInspection : productInspections) {
+                productInspection.save(em);
+            }
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Manufacturer Inspection not saved");
     }
 
     @Override

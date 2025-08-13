@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -56,6 +56,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "compliancesurvey")
 public class ComplianceSurvey implements BusinessEntity {
+    
+    // tk signatures are to be replaced by fullnames.
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -170,7 +172,7 @@ public class ComplianceSurvey implements BusinessEntity {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date authSigDateForNoticeOfDentionDM;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee authEmployeeForNoticeOfDentionDM;
+    private Employee authEmployeeForNoticeOfDentionDM; // tk replace with *Detention*
     // Notice of Release from Detention - Domestic Market
     @OneToOne(cascade = CascadeType.REFRESH)
     private Signature authSigForNoticeOfReleaseFromDentionDM;
@@ -515,7 +517,7 @@ public class ComplianceSurvey implements BusinessEntity {
     }
 
     @Override
-    public Person getEditedBy() {
+    public Employee getEditedBy() {
         if (editedBy == null) {
             return new Employee();
         }
@@ -1415,7 +1417,7 @@ public class ComplianceSurvey implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<ComplianceSurvey> complianceSurveys = em.createQuery("SELECT c FROM  ComplianceSurvey c "
@@ -1424,9 +1426,9 @@ public class ComplianceSurvey implements BusinessEntity {
             if (!complianceSurveys.isEmpty()) {
                 return complianceSurveys.get(0);
             }
-            
+
             return null;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -1437,9 +1439,89 @@ public class ComplianceSurvey implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
+            getBusinessOffice().save(em);
+            getInspector().save(em);
+            getInspectionAddress().save(em);
+            getConsignee().save(em);
+            getConsigneeRepresentative().save(em);
+            getConsigneeAddress().save(em);
+            getBroker().save(em);
+            getBrokerRepresentative().save(em);
+            getBrokerAddress().save(em);
+            getRetailOutlet().save(em);
+            getRetailRepresentative().save(em);
+            getRetailOutletAddress().save(em);
+            getSpecifiedReleaseLocation().save(em);
+            getSpecifiedReleaseLocationDomesticMarket().save(em);
+            getLocationOfDetainedProductDomesticMarket().save(em);
+
+            if (getAuthSigForDetentionRequestPOE().getId() != null) {
+                getAuthSigForDetentionRequestPOE().save(em);
+            }
+
+            if (getAuthEmployeeForDetentionRequestPOE().getId() != null) {
+                getAuthEmployeeForDetentionRequestPOE().save(em);
+            }
+
+            if (getInspectorForSampleRequestPOE().getId() != null) {
+                getInspectorForSampleRequestPOE().save(em);
+            }
+
+            if (getInspectorSigForSampleRequestPOE().getId() != null) {
+                getInspectorSigForSampleRequestPOE().save(em);
+            }
+
+            if (getPreparedBySigForReleaseRequestPOE().getId() != null) {
+                getPreparedBySigForReleaseRequestPOE().save(em);
+            }
+
+            if (getPreparedByEmployeeForReleaseRequestPOE().getId() != null) {
+                getPreparedByEmployeeForReleaseRequestPOE().save(em);
+            }
+
+            if (getPreparedBySigForReleaseRequestPOE().getId() != null) {
+                getPreparedBySigForReleaseRequestPOE().save(em);
+            }
+
+            if (getApprovedBySigForReleaseRequestPOE().getId() != null) {
+                getApprovedBySigForReleaseRequestPOE().save(em);
+            }
+
+            if (getApprovedByEmployeeForReleaseRequestPOE().getId() != null) {
+                getApprovedByEmployeeForReleaseRequestPOE().save(em);
+            }
+
+            if (getAuthSigForNoticeOfDentionDM().getId() != null) {
+                getAuthSigForNoticeOfDentionDM().save(em);
+            }
+
+            if (getAuthEmployeeForNoticeOfDentionDM().getId() != null) {
+                getAuthEmployeeForNoticeOfDentionDM().save(em);
+            }
+
+            if (getAuthSigForNoticeOfReleaseFromDentionDM().getId() != null) {
+                getAuthSigForNoticeOfReleaseFromDentionDM().save(em);
+            }
+
+            if (getAuthEmpForNoticeOfReleaseFromDentionDM().getId() != null) {
+                getAuthEmpForNoticeOfReleaseFromDentionDM().save(em);
+            }
+
+            for (Employee inspector1 : inspectors) {
+                inspector1.save(em);
+            }
+
+            getEditedBy().save(em);
             getEntryDocumentInspection().save(em);
 
-            // Save product inspections
+            for (DocumentStandard documentStandard : standardsBreached) {
+                documentStandard.save(em);
+            }
+
+            for (Employee inspector1 : inspectors) {
+                inspector1.save(em);
+            }
+
             if (!getProductInspections().isEmpty()) {
                 for (ProductInspection productInspection : getProductInspections()) {
                     if ((productInspection.getIsDirty() || productInspection.getId() == null)

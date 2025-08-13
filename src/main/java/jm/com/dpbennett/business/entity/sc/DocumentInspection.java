@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sc;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -79,7 +78,7 @@ public class DocumentInspection implements Comparable, BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -175,7 +174,7 @@ public class DocumentInspection implements Comparable, BusinessEntity {
             return false;
         }
         DocumentInspection other = (DocumentInspection) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -222,8 +221,8 @@ public class DocumentInspection implements Comparable, BusinessEntity {
 
         if (searchType.equals("General")) {
             if (!searchText.equals("")) {
-                searchTextAndClause =
-                        " AND ("
+                searchTextAndClause
+                        = " AND ("
                         + " UPPER(documentInspection.portOfEntry) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(inspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(inspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -234,16 +233,16 @@ public class DocumentInspection implements Comparable, BusinessEntity {
                         + " )";
             }
             if ((startDate == null) || (endDate == null)) {
-                searchQuery =
-                        "SELECT documentInspection FROM DocumentInspection documentInspection"
+                searchQuery
+                        = "SELECT documentInspection FROM DocumentInspection documentInspection"
                         + joinClause
                         + " WHERE (0 = 0)" // used as place holder
                         + searchTextAndClause
                         //                        + " GROUP BY documentInspection.id"
                         + " ORDER BY documentInspection.id DESC";
             } else {
-                searchQuery =
-                        "SELECT documentInspection FROM DocumentInspection documentInspection"
+                searchQuery
+                        = "SELECT documentInspection FROM DocumentInspection documentInspection"
                         + joinClause
                         + " WHERE (documentInspection." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                         + " AND documentInspection." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
@@ -266,8 +265,6 @@ public class DocumentInspection implements Comparable, BusinessEntity {
 
         return foundDocumentInspections;
     }
-    
-    
 
     public static DocumentInspection findDocumentInspectionById(EntityManager em, Long Id) {
 
@@ -281,7 +278,21 @@ public class DocumentInspection implements Comparable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            
+            getInspector().save(em);
+            getConsignee().save(em);
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Document Inspection not saved");
     }
 
     @Override

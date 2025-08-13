@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -65,7 +65,7 @@ public class Laboratory implements BusinessEntity, Company {
     private Boolean isDirty;
 
     public Laboratory() {
-        businessOffices = new ArrayList<BusinessOffice>();
+        businessOffices = new ArrayList<>();
     }
 
     @Override
@@ -174,13 +174,13 @@ public class Laboratory implements BusinessEntity, Company {
             
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
-            List<Laboratory> laboratories =
-                    em.createQuery("SELECT l FROM Laboratory l where UPPER(l.name) like '"
+            List<Laboratory> laboratories;
+            laboratories = em.createQuery("SELECT l FROM Laboratory l where UPPER(l.name) like '"
                     + value.toUpperCase().trim() + "%' ORDER BY l.name", Laboratory.class).getResultList();
             return laboratories;
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<Laboratory>();
+            return new ArrayList<>();
         }
     }
 
@@ -219,7 +219,7 @@ public class Laboratory implements BusinessEntity, Company {
 
     public static List<String> findAllLaboratoryNames(EntityManager em) {
 
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
 
         try { // tk try String.class instead of Laboratory.class for better performance
             List<Laboratory> laboratories = em.createNamedQuery("findAllLaboratories", Laboratory.class).getResultList();

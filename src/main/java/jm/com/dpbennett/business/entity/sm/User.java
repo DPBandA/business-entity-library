@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -649,6 +649,14 @@ public class User implements BusinessEntity {
         try {
 
             getEmployee().save(em);
+            
+            for (Privilege privilege : privileges) {
+                privilege.save(em);
+            }
+            
+            for (Module activeModule : activeModules) {
+                activeModule.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

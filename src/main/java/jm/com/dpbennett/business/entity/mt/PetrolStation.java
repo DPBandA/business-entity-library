@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -231,7 +231,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
             return false;
         }
         PetrolStation other = (PetrolStation) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -333,9 +333,9 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<PetrolStation> stations
                     = em.createQuery("SELECT p FROM PetrolStation p where UPPER(p.name) like '"
                             + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class).getResultList();
@@ -399,9 +399,9 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     public static PetrolStation findPetrolStationByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<PetrolStation> companies = em.createQuery("SELECT p FROM PetrolStation p "
                     + "WHERE UPPER(p.name) "
                     + "= '" + value.toUpperCase() + "'", PetrolStation.class).getResultList();
@@ -430,7 +430,35 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            getClient().save(em);
+
+            for (Contact contact : contacts) {
+                contact.save(em);
+            }
+
+            for (Address address : addresses) {
+                address.save(em);
+            }
+            
+            for (PetrolPump petrolPump : petrolPumps) {
+                petrolPump.save(em);
+            }
+            
+            getLastAssignee().save(em);
+            getCertification().save(em);            
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Petrol Station not saved");
     }
 
     @Override

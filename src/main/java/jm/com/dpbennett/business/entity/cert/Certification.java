@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2023  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.cert;
 
 import jm.com.dpbennett.business.entity.hrm.Business;
@@ -36,11 +35,12 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.hrm.Employee;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "certification")
@@ -70,7 +70,7 @@ public class Certification implements CertificationInterface {
 
     public Certification() {
     }
-    
+
     public Certification(Certification org) {
         this.number = org.number;
         this.type = org.type;
@@ -139,7 +139,7 @@ public class Certification implements CertificationInterface {
 
     @Override
     public Employee getCertificateSignedBy() {
-        
+
         return certificateSignedBy;
     }
 
@@ -224,9 +224,9 @@ public class Certification implements CertificationInterface {
         if (!(object instanceof Certification)) {
             return false;
         }
-        
+
         Certification other = (Certification) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -255,19 +255,37 @@ public class Certification implements CertificationInterface {
 
     @Override
     public void setName(String name) {
-        
+
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        try {
+
+            // Save entities from other modules
+            getCertificateSignedBy().save(em);
+            getGrantedTo().save(em);
+            getApplicant().save(em);
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Certification not saved");
+
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {

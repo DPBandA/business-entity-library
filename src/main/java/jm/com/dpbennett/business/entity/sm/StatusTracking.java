@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -168,7 +168,7 @@ public class StatusTracking implements BusinessEntity {
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Status tracking not saved");
+        return new ReturnMessage(false, "Status Tracking not saved");
     }
 
     @Override

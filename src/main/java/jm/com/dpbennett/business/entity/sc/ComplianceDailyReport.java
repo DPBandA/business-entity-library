@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sc;
 
 import java.util.Date;
@@ -31,10 +30,15 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.hrm.Department;
+import jm.com.dpbennett.business.entity.hrm.Employee;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  * tk may no longer be needed and should be deleted
+ *
  * @author dbennett
  */
 @Entity
@@ -70,9 +74,9 @@ public class ComplianceDailyReport implements BusinessEntity {
         this.teamMembers = "";
     }
 
-    public ComplianceDailyReport(String reportName, 
-            Date startOfPeriod, 
-            String location, 
+    public ComplianceDailyReport(String reportName,
+            Date startOfPeriod,
+            String location,
             String teamMembers) {
         this.name = reportName;
         this.reportName = reportName;
@@ -91,9 +95,9 @@ public class ComplianceDailyReport implements BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Integer getNumOfInspectorsOnVisit() {
-        
+
         return teamMembers.split("[,;:|/]").length;
     }
 
@@ -111,7 +115,7 @@ public class ComplianceDailyReport implements BusinessEntity {
             return false;
         }
         ComplianceDailyReport other = (ComplianceDailyReport) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -204,14 +208,25 @@ public class ComplianceDailyReport implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Complaint not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {

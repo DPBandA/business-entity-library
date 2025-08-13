@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -465,7 +465,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Override
     public String toString() {
-        
+
         return "jm.org.bsj.entity.JobSample[id=" + id + "]";
     }
 
@@ -581,7 +581,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
         }
 
         detail = detail + ", Sample Qty: " + getSampleQuantity();
-        
+
         detail = detail + ", Product Qty: " + getQuantity();
 
         return detail;
@@ -612,15 +612,40 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            if (getClient() != null) {
+                getClient().save(em);
+            }
+
+            for (ProductTest test : tests) {
+                test.save(em);
+            }
+            
+            if (getManufacturer() != null) {
+                getManufacturer().save(em);
+            }
+            
+            if (getRegulatoryOffice()!= null) {
+                getRegulatoryOffice().save(em);
+            }
+            
+            if (getSampledBy()!= null) {
+                getSampledBy().save(em);
+            }
+            
+            if (getReceivedBy()!= null) {
+                getReceivedBy().save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
         } catch (Exception e) {
-            
+
             System.out.println("Job Sample save exception: " + e);
-            
+
             return new ReturnMessage(false,
                     "Job sample save error occurred",
                     "An error occurred while saving job sample (Null/OL ID): " + e + ": " + this.getReference(),

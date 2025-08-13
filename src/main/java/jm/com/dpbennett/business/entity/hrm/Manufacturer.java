@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -88,7 +88,6 @@ public class Manufacturer implements BusinessEntity, Comparable {
     private Boolean tag;
     private Boolean active;
     private Boolean international;
-
     @Transient
     private Boolean isDirty;
 
@@ -458,7 +457,7 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public static Manufacturer findDefaultManufacturer(EntityManager em,
             String name,
             Boolean useTransaction) {
-        
+
         Manufacturer manufacturer = Manufacturer.findManufacturerByName(em, name);
 
         if (manufacturer == null) {
@@ -477,14 +476,14 @@ public class Manufacturer implements BusinessEntity, Comparable {
         return manufacturer;
     }
 
-    public static Manufacturer findActiveManufacturerByName(EntityManager em, 
-            String value, 
+    public static Manufacturer findActiveManufacturerByName(EntityManager em,
+            String value,
             Boolean ignoreCase) {
 
         List<Manufacturer> manufacturers;
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             if (ignoreCase) {
@@ -552,20 +551,19 @@ public class Manufacturer implements BusinessEntity, Comparable {
         try {
 
             for (MarketProduct marketProduct : getMarketProducts()) {
-                if (marketProduct.getId() == null) {
-                    marketProduct.save(em);
-                }
+                marketProduct.save(em);
             }
 
             for (Contact contact : getContacts()) {
-                if (contact.getId() == null) {
-                    contact.save(em);
-                }
+                contact.save(em);
             }
+
             for (Address address : getAddresses()) {
-                if (address.getId() == null) {
-                    address.save(em);
-                }
+                address.save(em);
+            }
+
+            if (getProductLastSampledBy() != null) {
+                getProductLastSampledBy().save(em);
             }
 
             em.getTransaction().begin();
