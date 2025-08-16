@@ -76,8 +76,9 @@ public class User implements BusinessEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-//    @OneToOne(cascade = CascadeType.ALL)
-//    private Privilege privilege;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Privilege privilege;
+    @OneToOne(cascade = CascadeType.ALL)
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -98,9 +99,21 @@ public class User implements BusinessEntity {
     private String email;
 
     public User() {
-        //privilege = new Privilege();
         employee = new Employee();
         username = "";
+    }
+
+    public Privilege getPrivilege() {
+
+        if (privilege == null) {
+            return new Privilege();
+        }
+
+        return privilege;
+    }
+
+    public void setPrivilege(Privilege privilege) {
+        this.privilege = privilege;
     }
 
     public String getEmail() {
@@ -208,7 +221,7 @@ public class User implements BusinessEntity {
         }
         return activeModules;
     }
-    
+
     public String getAllActiveModules() {
         String allActiveModules = "";
 
@@ -479,16 +492,16 @@ public class User implements BusinessEntity {
             int maxResults) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<User> users
                     = em.createQuery("SELECT j FROM User j where UPPER(j.username) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY j.username", User.class)
                             .setMaxResults(maxResults).getResultList();
-            
+
             return users;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -503,9 +516,9 @@ public class User implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<User> users
                     = em.createNamedQuery("findByJobManagerUsername",
                             User.class).
@@ -526,7 +539,7 @@ public class User implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<User> users = em.createQuery("SELECT j FROM User j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '"
@@ -566,7 +579,7 @@ public class User implements BusinessEntity {
             String value,
             int maxResults) {
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<User> users = em.createQuery("SELECT j FROM User j"
@@ -590,7 +603,7 @@ public class User implements BusinessEntity {
             String value,
             int maxResults) {
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<User> users = em.createQuery("SELECT j FROM User j"
@@ -649,11 +662,11 @@ public class User implements BusinessEntity {
         try {
 
             getEmployee().save(em);
-            
+
             for (Privilege privilege : privileges) {
                 privilege.save(em);
             }
-            
+
             for (Module activeModule : activeModules) {
                 activeModule.save(em);
             }
