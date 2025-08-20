@@ -306,7 +306,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
 
-    public static Business findBusinessById(EntityManager em, Long id) {
+    public static Business findById(EntityManager em, Long id) {
 
         try {
             Business business = em.find(Business.class, id);
@@ -318,7 +318,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     // Get the first business that matches the given name
-    public static Business findBusinessByName(EntityManager em, String value) {
+    public static Business findByName(EntityManager em, String value) {
 
         try {
             
@@ -337,10 +337,10 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
     }
 
-    public static Business findDefaultBusiness(EntityManager em,
+    public static Business findDefault(EntityManager em,
             String name,
             Boolean useTransaction) {
-        Business business = Business.findBusinessByName(em, name);
+        Business business = Business.findByName(em, name);
 
         if (business == null) {
             business = new Business();
@@ -358,7 +358,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         return business;
     }
 
-    public static List<Business> findAllBusinesses(EntityManager em) {
+    public static List<Business> findAll(EntityManager em) {
 
         try {
             return em.createQuery("SELECT b FROM Business b ORDER BY b.name", Business.class).getResultList();
@@ -368,7 +368,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
     }
 
-    public static List<Business> findBusinessesByName(EntityManager em, String value) {
+    public static List<Business> findAllByName(EntityManager em, String value) {
 
         try {
             
@@ -384,7 +384,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
     }
     
-    public static List<Business> findActiveBusinessesByName(EntityManager em, String value) {
+    public static List<Business> findAllActiveByName(EntityManager em, String value) {
 
         try {
             

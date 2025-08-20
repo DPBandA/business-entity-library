@@ -264,7 +264,7 @@ public class User implements BusinessEntity {
 
         try {
             Department department = user.getEmployee().getDepartment();
-            for (Business business : Business.findAllBusinesses(em)) {
+            for (Business business : Business.findAll(em)) {
                 for (Department dept : business.getDepartments()) {
                     if (Objects.equals(department.getId(), dept.getId())) {
                         return business;

@@ -183,6 +183,11 @@ public class Job implements BusinessEntity {
         this.jobSamples = new ArrayList<>();
         this.actions = new ArrayList<>();
     }
+    
+    public Boolean getIsNew() {
+        
+        return id == null;
+    }
 
     public Employee getRepresentative() {
 
@@ -596,11 +601,11 @@ public class Job implements BusinessEntity {
         if (business != null) {
             job.setBusiness(business);
         }
-        else { // tk the "default org." may be changed in each deployment
-            String businessName = SystemOption.getString(em, "organizationName");
-            business = Business.findBusinessByName(em, businessName);
-            job.setBusiness(business);
-        }
+//        else { // tk the "default org." may be changed in each deployment
+//            String businessName = SystemOption.getString(em, "organizationName");
+//            business = Business.findByName(em, businessName);
+//            job.setBusiness(business);
+//        }
 
         job.setBusinessOffice(BusinessOffice.findDefaultBusinessOffice(em, "Head Office"));
         job.setClassification(new Classification());
