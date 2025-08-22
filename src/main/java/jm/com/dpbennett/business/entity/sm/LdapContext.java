@@ -419,6 +419,7 @@ public class LdapContext implements BusinessEntity {
                 connection.createSubcontext(
                         "uid=" + user.getUsername() + "," + context.domainName,
                         attributes);
+                
                 return true;
             }
 

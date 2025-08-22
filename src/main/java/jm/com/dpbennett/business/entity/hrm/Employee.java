@@ -111,6 +111,26 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         positions = new ArrayList<>();
         active = true;
     }
+    
+    public static Business getEmployeeOrganizationByDepartment(EntityManager em, 
+            Employee employee) {
+
+        try {
+            Department department = employee.getDepartment();
+            for (Business business : Business.findAll(em)) {
+                for (Department dept : business.getDepartments()) {
+                    if (Objects.equals(department.getId(), dept.getId())) {
+                        return business;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error occurred while getting the organization of a user: " + e);
+        }
+
+        return null;
+    }
 
     public String getEmploymentPositions() {
         String eps = "";
