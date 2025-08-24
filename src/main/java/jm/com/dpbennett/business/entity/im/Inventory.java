@@ -1035,4 +1035,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     public void setComments(String comments) {
         this.comments = comments;
     }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

@@ -745,7 +745,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
             String listAsString = (String) SystemOption.getOptionValueObject(em, "domainNames");
             String domainNames[] = listAsString.split(";");
 
-            User user = User.findActiveJobManagerUserByEmployeeId(em, employee.getId());
+            User user = User.findActiveByEmployeeId(em, employee.getId());
 
             if (user != null) {
                 address = user.getUsername();
@@ -855,6 +855,11 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
     @Override
     public void setComments(String comments) {
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

@@ -23,6 +23,7 @@ import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -72,6 +73,36 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public static FoodTest findByName(EntityManager em, String value,
+            Boolean ignoreCase) {
+
+        List<FoodTest> foodTests;
+
+        try {
+
+            if (ignoreCase) {
+                foodTests = em.createQuery("SELECT t FROM FoodTest t "
+                        + "WHERE UPPER(t.name) "
+                        + "= '" + value.toUpperCase() + "'",
+                        FoodTest.class).getResultList();
+            } else {
+                foodTests = em.createQuery("SELECT t FROM FoodTest t "
+                        + "WHERE t.name "
+                        + "= '" + value + "'",
+                         FoodTest.class).getResultList();
+            }
+
+            if (!foodTests.isEmpty()) {
+                return foodTests.get(0);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
 
     @Override
@@ -297,6 +328,28 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     @Override
     public void setComments(String comments) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+       try {
+
+            if (this.id == null) {
+                FoodTest existing = FoodTest.findByName(em, this.name, false);
+                if (existing != null) {
+                    return new ReturnMessage(false, "Food Test exists");
+                } else {
+                    return save(em);
+                }
+            } else {
+                return save(em);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Food Test not saved");
     }
 
 }

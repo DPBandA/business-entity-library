@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
@@ -139,9 +138,9 @@ public class Field implements Serializable, BusinessEntity {
     public static List<Field> findFields(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Field> fields
                     = em.createQuery("SELECT a FROM Field a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
@@ -151,9 +150,9 @@ public class Field implements Serializable, BusinessEntity {
                             + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
                             + "%' ORDER BY a.name",
                             Field.class).getResultList();
-            
+
             return fields;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -163,12 +162,12 @@ public class Field implements Serializable, BusinessEntity {
     public static List<Field> findActiveFields(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Field> fields
-                    = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim() 
-                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim() 
+                    = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
@@ -221,12 +220,12 @@ public class Field implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof Field)) {
             return false;
         }
         Field other = (Field) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -248,9 +247,7 @@ public class Field implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -284,9 +281,9 @@ public class Field implements Serializable, BusinessEntity {
     public static Field findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Field> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", Field.class).getResultList();
@@ -303,9 +300,9 @@ public class Field implements Serializable, BusinessEntity {
     public static Field findByCode(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Field> fields = em.createQuery("SELECT a FROM FieldField a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "'", Field.class).getResultList();
@@ -322,9 +319,9 @@ public class Field implements Serializable, BusinessEntity {
     public static Field findActiveByCode(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Field> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", Field.class).getResultList();
@@ -401,5 +398,29 @@ public class Field implements Serializable, BusinessEntity {
     @Override
     public void setComments(String comments) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        
+        try {
+
+            if (this.id == null) {
+                Field existing = Field.findByName(em, this.name);
+                if (existing != null) {
+                    return new ReturnMessage(false, "Field exists");
+                } else {
+                    return save(em);
+                }
+            } else {
+                return save(em);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Field not saved");
+        
     }
 }

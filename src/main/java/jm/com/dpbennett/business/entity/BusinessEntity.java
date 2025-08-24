@@ -59,6 +59,8 @@ public interface BusinessEntity extends Serializable {
     public void setDateEdited(Date dateEdited);
 
     public ReturnMessage save(EntityManager em);
+    
+    public ReturnMessage saveUnique(EntityManager em);
 
     public ReturnMessage delete(EntityManager em);
 

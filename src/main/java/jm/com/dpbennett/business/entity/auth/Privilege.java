@@ -428,7 +428,7 @@ public class Privilege implements Serializable, PrivilegeInterface {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof Privilege)) {
             return false;
         }
@@ -452,7 +452,7 @@ public class Privilege implements Serializable, PrivilegeInterface {
         this.name = name;
     }
 
-    public static Privilege findActivePrivilegeByName(EntityManager em, String value) {
+    public static Privilege findActiveByName(EntityManager em, String value) {
 
         try {
 
@@ -471,7 +471,7 @@ public class Privilege implements Serializable, PrivilegeInterface {
         }
     }
 
-    public static List<Privilege> findActivePrivileges(EntityManager em, String query) {
+    public static List<Privilege> findAllActive(EntityManager em, String query) {
         try {
 
             query = query.replaceAll("&amp;", "&").replaceAll("'", "`");
@@ -490,7 +490,7 @@ public class Privilege implements Serializable, PrivilegeInterface {
         }
     }
 
-    public static Privilege findPrivilegeByName(EntityManager em, String name) {
+    public static Privilege findByName(EntityManager em, String name) {
 
         try {
 
@@ -645,5 +645,27 @@ public class Privilege implements Serializable, PrivilegeInterface {
     @Override
     public void setEnteredBy(Person person) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        try {
+
+            if (this.id == null) {
+                Privilege existing = Privilege.findByName(em, this.name);
+                if (existing != null) {
+                    return new ReturnMessage(false, "Privilege exists");
+                } else {
+                    return save(em);
+                }
+            } else {
+                return save(em);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Privilege not saved");
     }
 }

@@ -389,14 +389,15 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         this.status = status;
     }
 
-    public static DocumentStandard findActiveDocumentStandardByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static DocumentStandard findActiveByName(EntityManager em, String value,
+            Boolean ignoreCase) {
 
         List<DocumentStandard> documentStandards;
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-          
+
             if (ignoreCase) {
                 documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
                         + "WHERE UPPER(d.name) "
@@ -412,9 +413,42 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
             if (!documentStandards.isEmpty()) {
                 return documentStandards.get(0);
             }
-            
+
             return null;
-            
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static DocumentStandard findByName(EntityManager em, String value,
+            Boolean ignoreCase) {
+
+        List<DocumentStandard> documentStandards;
+
+        try {
+
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            if (ignoreCase) {
+                documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
+                        + "WHERE UPPER(d.name) "
+                        + "= '" + value.toUpperCase() + "'",
+                        DocumentStandard.class).getResultList();
+            } else {
+                documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
+                        + "WHERE d.name "
+                        + "= '" + value + "'", 
+                        DocumentStandard.class).getResultList();
+            }
+
+            if (!documentStandards.isEmpty()) {
+                return documentStandards.get(0);
+            }
+
+            return null;
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -483,14 +517,14 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
     }
 
     public static List<DocumentStandard> findActive(
-            EntityManager em, 
+            EntityManager em,
             String value,
             int maxResults) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<DocumentStandard> documentStandards
                     = em.createQuery("SELECT d FROM DocumentStandard d WHERE (d.name like '%"
                             + value + "%'"
@@ -504,14 +538,14 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-  
+
     public static List<DocumentStandard> find(
             EntityManager em, String value, int maxResults) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<DocumentStandard> documentStandards
                     = em.createQuery("SELECT d FROM DocumentStandard d WHERE d.name like '%"
                             + value + "%'"
@@ -520,7 +554,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
                             + " ORDER BY d.id", DocumentStandard.class).
                             setMaxResults(maxResults).
                             getResultList();
-            
+
             return documentStandards;
         } catch (Exception e) {
             System.out.println(e);
@@ -554,14 +588,14 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<DocumentStandard> findAllActive(
             EntityManager em, int maxResults) {
 
         try {
 
             return em.createQuery("SELECT d FROM DocumentStandard d "
-                    + "WHERE d.active = 1", 
+                    + "WHERE d.active = 1",
                     DocumentStandard.class).setMaxResults(maxResults).getResultList();
 
         } catch (Exception e) {
@@ -589,9 +623,9 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             getDocumentType().save(em);
-            getClassification().save(em);   
+            getClassification().save(em);
             getEditedBy().save(em);
 
             em.getTransaction().begin();
@@ -675,5 +709,27 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
     @Override
     public void setCategory(String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        try {
+
+            if (this.id == null) {
+                DocumentStandard existing = DocumentStandard.findByName(em, this.name, false);
+                if (existing != null) {
+                    return new ReturnMessage(false, "Document Standard exists");
+                } else {
+                    return save(em);
+                }
+            } else {
+                return save(em);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Document Standard not saved");
     }
 }

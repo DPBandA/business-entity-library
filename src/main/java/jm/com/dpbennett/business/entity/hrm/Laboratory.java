@@ -343,4 +343,9 @@ public class Laboratory implements BusinessEntity, Company {
     public void setEnteredBy(Person person) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

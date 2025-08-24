@@ -266,7 +266,7 @@ public class Post implements Document, Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-       
+
         if (!(object instanceof Post)) {
             return false;
         }
@@ -389,12 +389,13 @@ public class Post implements Document, Comparable, BusinessEntity {
         this.status = status;
     }
 
-    public static Post findActiveByName(EntityManager em, String value, Boolean ignoreCase) {
+    public static Post findActiveByName(EntityManager em, String value,
+            Boolean ignoreCase) {
 
         List<Post> posts;
 
         try {
-           
+
             if (ignoreCase) {
                 posts = em.createQuery("SELECT p FROM Post p "
                         + "WHERE UPPER(p.name) "
@@ -405,6 +406,35 @@ public class Post implements Document, Comparable, BusinessEntity {
                         + "WHERE p.name "
                         + "= '" + value + "'"
                         + " AND p.active = 1", Post.class).getResultList();
+            }
+
+            if (!posts.isEmpty()) {
+                return posts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static Post findByName(EntityManager em, String value,
+            Boolean ignoreCase) {
+
+        List<Post> posts;
+
+        try {
+
+            if (ignoreCase) {
+                posts = em.createQuery("SELECT p FROM Post p "
+                        + "WHERE UPPER(p.name) "
+                        + "= '" + value.toUpperCase() + "'",
+                        Post.class).getResultList();
+            } else {
+                posts = em.createQuery("SELECT p FROM Post p "
+                        + "WHERE p.name "
+                        + "= '" + value + "'",
+                         Post.class).getResultList();
             }
 
             if (!posts.isEmpty()) {
@@ -479,12 +509,12 @@ public class Post implements Document, Comparable, BusinessEntity {
     }
 
     public static List<Post> findActive(
-            EntityManager em, 
+            EntityManager em,
             String value,
             int maxResults) {
 
         try {
-           
+
             List<Post> posts
                     = em.createQuery("SELECT p FROM Post p WHERE (p.name like '%"
                             + value + "%'"
@@ -498,12 +528,12 @@ public class Post implements Document, Comparable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-  
+
     public static List<Post> find(
             EntityManager em, String value, int maxResults) {
 
         try {
-            
+
             List<Post> posts
                     = em.createQuery("SELECT p FROM Post p WHERE p.name like '%"
                             + value + "%'"
@@ -512,9 +542,9 @@ public class Post implements Document, Comparable, BusinessEntity {
                             + " ORDER BY p.id", Post.class).
                             setMaxResults(maxResults).
                             getResultList();
-            
+
             return posts;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -547,14 +577,14 @@ public class Post implements Document, Comparable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Post> findAllActive(
             EntityManager em, int maxResults) {
 
         try {
 
             return em.createQuery("SELECT p FROM Post p "
-                    + "WHERE p.active = 1", 
+                    + "WHERE p.active = 1",
                     Post.class).setMaxResults(maxResults).getResultList();
 
         } catch (Exception e) {
@@ -582,7 +612,7 @@ public class Post implements Document, Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             getClassification().save(em);
             getEditedBy().save(em);
 
@@ -667,5 +697,27 @@ public class Post implements Document, Comparable, BusinessEntity {
     @Override
     public void setCategory(String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        try {
+
+            if (this.id == null) {
+                Post existing = Post.findByName(em, this.name, true);
+                if (existing != null) {
+                    return new ReturnMessage(false, "Post exists");
+                } else {
+                    return save(em);
+                }
+            } else {
+                return save(em);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Post not saved");
     }
 }

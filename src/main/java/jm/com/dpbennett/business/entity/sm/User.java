@@ -486,7 +486,7 @@ public class User implements BusinessEntity {
         username = name;
     }
 
-    public static List<User> findJobManagerUsersByUsername(
+    public static List<User> findAllByUsername(
             EntityManager em,
             String value,
             int maxResults) {
@@ -508,11 +508,11 @@ public class User implements BusinessEntity {
         }
     }
 
-    public static User findJobManagerUserById(EntityManager em, Long Id) {
+    public static User findById(EntityManager em, Long Id) {
         return em.find(User.class, Id);
     }
 
-    public static User findJobManagerUserByUsername(
+    public static User findByUsername(
             EntityManager em, String value) {
 
         try {
@@ -535,7 +535,7 @@ public class User implements BusinessEntity {
 
     }
 
-    public static User findActiveJobManagerUserByUsername(
+    public static User findActiveByUsername(
             EntityManager em, String value) {
 
         try {
@@ -556,7 +556,7 @@ public class User implements BusinessEntity {
 
     }
 
-    public static User findActiveJobManagerUserByEmployeeId(
+    public static User findActiveByEmployeeId(
             EntityManager em, Long employeeId) {
         try {
             List<User> users = em.createQuery("SELECT j FROM User j"
@@ -574,7 +574,7 @@ public class User implements BusinessEntity {
         }
     }
 
-    public static List<User> findJobManagerUsersByName(
+    public static List<User> findAllByName(
             EntityManager em,
             String value,
             int maxResults) {
@@ -598,7 +598,7 @@ public class User implements BusinessEntity {
         }
     }
 
-    public static List<User> findActiveJobManagerUsersByName(
+    public static List<User> findAllActiveByName(
             EntityManager em,
             String value,
             int maxResults) {
@@ -622,7 +622,7 @@ public class User implements BusinessEntity {
         }
     }
 
-    public static List<User> findAllActiveJobManagerUsers(
+    public static List<User> findAllActive(
             EntityManager em,
             int maxResults) {
 
@@ -638,7 +638,7 @@ public class User implements BusinessEntity {
         }
     }
 
-    public static List<User> findAllJobManagerUsers(
+    public static List<User> findAll(
             EntityManager em,
             int maxResults) {
 
@@ -717,12 +717,13 @@ public class User implements BusinessEntity {
         }
     }
 
+    @Override
     public ReturnMessage saveUnique(EntityManager em) {
 
         try {
 
             if (this.id == null) {
-                User existingUser = User.findActiveJobManagerUserByUsername(em, this.username);
+                User existingUser = User.findActiveByUsername(em, this.username);
                 if (existingUser != null) {
                     return new ReturnMessage(false, "User exists");
                 } else {

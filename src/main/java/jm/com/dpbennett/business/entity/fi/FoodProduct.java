@@ -91,6 +91,35 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     public void setId(Long id) {
         this.id = id;
     }
+    
+    public static FoodProduct findByName(EntityManager em, String value,
+            Boolean ignoreCase) {
+
+        List<FoodProduct> foodProducts;
+
+        try {
+
+            if (ignoreCase) {
+                foodProducts = em.createQuery("SELECT p FROM FoodProduct p "
+                        + "WHERE UPPER(p.name) "
+                        + "= '" + value.toUpperCase() + "'",
+                        FoodProduct.class).getResultList();
+            } else {
+                foodProducts = em.createQuery("SELECT p FROM FoodProduct p "
+                        + "WHERE p.name "
+                        + "= '" + value + "'",
+                         FoodProduct.class).getResultList();
+            }
+
+            if (!foodProducts.isEmpty()) {
+                return foodProducts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     @Override
     public Boolean getIsDirty() {
@@ -343,4 +372,25 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     public void setComments(String comments) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+         try {
+
+            if (this.id == null) {
+                FoodProduct existing = FoodProduct.findByName(em, this.name, false);
+                if (existing != null) {
+                    return new ReturnMessage(false, "Food Product exists");
+                } else {
+                    return save(em);
+                }
+            } else {
+                return save(em);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Food Product not saved"); }
 }

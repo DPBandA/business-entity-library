@@ -162,7 +162,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
 
-    public static List<DocumentType> findDocumentTypesByCode(EntityManager em, String code) {
+    public static List<DocumentType> findAllByCode(EntityManager em, String code) {
 
         try {
             List<DocumentType> types
@@ -175,7 +175,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
         }
     }
 
-    public static List<DocumentType> findDocumentTypesByName(EntityManager em, String name) {
+    public static List<DocumentType> findAllByName(EntityManager em, String name) {
 
         try {
             List<DocumentType> types
@@ -187,8 +187,8 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
             return new ArrayList<>();
         }
     }
-    
-    public static List<DocumentType> findActiveDocumentTypesByName(EntityManager em, String name) {
+
+    public static List<DocumentType> findAllActiveByName(EntityManager em, String name) {
 
         try {
             List<DocumentType> types
@@ -201,7 +201,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
         }
     }
 
-    public static DocumentType findDocumentTypeByNameAndCode(EntityManager em, String name, String code) {
+    public static DocumentType findByNameAndCode(EntityManager em, String name, String code) {
         String trimmedName = name.trim();
         String trimmedCode = code.trim();
 
@@ -226,7 +226,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
         }
     }
 
-    public static DocumentType findDocumentTypeById(EntityManager em, Long id) {
+    public static DocumentType findById(EntityManager em, Long id) {
 
         try {
             DocumentType type = em.find(DocumentType.class, id);
@@ -236,7 +236,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
         }
     }
 
-    public static DocumentType findDocumentTypeByName(EntityManager em, String documentTypeName) {
+    public static DocumentType findByName(EntityManager em, String documentTypeName) {
 
         try {
 
@@ -254,7 +254,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
 
     }
 
-    public static DocumentType findDocumentTypeByCode(EntityManager em, String documentTypeCode) {
+    public static DocumentType findByCode(EntityManager em, String documentTypeCode) {
 
         try {
             List<DocumentType> documentTypes = em.createQuery("SELECT d FROM DocumentType d "
@@ -270,9 +270,9 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
 
     }
 
-    public static DocumentType findDefaultDocumentType(EntityManager em,
+    public static DocumentType findDefault(EntityManager em,
             String name) {
-        DocumentType documentType = DocumentType.findDocumentTypeByName(em, name);
+        DocumentType documentType = DocumentType.findByName(em, name);
 
         if (documentType == null) {
             documentType = new DocumentType(name);
@@ -285,7 +285,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
         return documentType;
     }
 
-    public static List<DocumentType> findAllDocumentTypes(EntityManager em) {
+    public static List<DocumentType> findAll(EntityManager em) {
 
         try {
             List<DocumentType> types = em.createQuery("SELECT t FROM DocumentType t ORDER BY t.name", DocumentType.class).getResultList();
@@ -404,5 +404,27 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
     @Override
     public void setComments(String comments) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        try {
+
+            if (this.id == null) {
+                DocumentType existing = DocumentType.findByName(em, this.name);
+                if (existing != null) {
+                    return new ReturnMessage(false, "Document Type exists");
+                } else {
+                    return save(em);
+                }
+            } else {
+                return save(em);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Document Type not saved");
     }
 }

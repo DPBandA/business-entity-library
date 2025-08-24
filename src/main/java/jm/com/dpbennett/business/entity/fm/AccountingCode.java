@@ -122,7 +122,7 @@ public class AccountingCode implements Serializable, BusinessEntity {
         this.code = code;
     }
 
-    public static List<AccountingCode> findAllAccountingCodes(EntityManager em) {
+    public static List<AccountingCode> findAll(EntityManager em) {
 
         try {
             List<AccountingCode> codes = em.createNamedQuery("findAllAccountingCodes", AccountingCode.class).getResultList();
@@ -135,12 +135,12 @@ public class AccountingCode implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<AccountingCode> findAccountingCodes(EntityManager em, String value) {
+    public static List<AccountingCode> findAll(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<AccountingCode> accountingCodes
                     = em.createQuery(
                             "SELECT a FROM AccountingCode a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
@@ -158,15 +158,15 @@ public class AccountingCode implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<AccountingCode> findActiveAccountingCodes(EntityManager em, String value) {
+    public static List<AccountingCode> findAllActive(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<AccountingCode> accountingCodes
-                    = em.createQuery("SELECT a FROM AccountingCode a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim() 
-                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim() 
+                    = em.createQuery("SELECT a FROM AccountingCode a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
@@ -224,7 +224,7 @@ public class AccountingCode implements Serializable, BusinessEntity {
             return false;
         }
         AccountingCode other = (AccountingCode) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -279,17 +279,17 @@ public class AccountingCode implements Serializable, BusinessEntity {
     public static AccountingCode findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", AccountingCode.class).getResultList();
-          
+
             if (!accountingCodes.isEmpty()) {
                 return accountingCodes.get(0);
             }
-            
+
             return null;
         } catch (Exception e) {
             System.out.println(e);
@@ -300,20 +300,20 @@ public class AccountingCode implements Serializable, BusinessEntity {
     public static AccountingCode findByCode(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "'", AccountingCode.class).getResultList();
             if (!accountingCodes.isEmpty()) {
                 return accountingCodes.get(0);
             }
-            
+
             return null;
         } catch (Exception e) {
             System.out.println(e);
-            
+
             return null;
         }
     }
@@ -321,9 +321,9 @@ public class AccountingCode implements Serializable, BusinessEntity {
     public static AccountingCode findActiveByCode(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<AccountingCode> accountingCodes = em.createQuery("SELECT a FROM AccountingCode a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", AccountingCode.class).getResultList();
@@ -410,5 +410,27 @@ public class AccountingCode implements Serializable, BusinessEntity {
     @Override
     public void setComments(String comments) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        try {
+
+            if (this.id == null) {
+                AccountingCode existing = AccountingCode.findByName(em, this.name);
+                if (existing != null) {
+                    return new ReturnMessage(false, "Accounting Code exists");
+                } else {
+                    return save(em);
+                }
+            } else {
+                return save(em);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Accounting Code not saved");
     }
 }

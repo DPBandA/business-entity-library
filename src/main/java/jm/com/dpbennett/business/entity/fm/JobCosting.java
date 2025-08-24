@@ -57,23 +57,23 @@ public class JobCosting implements Serializable, BusinessEntity {
     private Boolean isDirty;
 
     public JobCosting() {
-        costComponents = new ArrayList<CostComponent>();
+        costComponents = new ArrayList<>();
     }
 
     public JobCosting(JobCosting orgJobCosting) {
        this.name =  orgJobCosting.name;
-       costComponents = new ArrayList<CostComponent>();
+       costComponents = new ArrayList<>();
     }
 
     public JobCosting(String name) {
         this.name = name;
-        costComponents = new ArrayList<CostComponent>();
+        costComponents = new ArrayList<>();
     }
 
     public JobCosting(Long id, String name) {
         this.id = id;
         this.name = name;
-        costComponents = new ArrayList<CostComponent>();
+        costComponents = new ArrayList<>();
     }
     
     @Override
@@ -265,6 +265,11 @@ public class JobCosting implements Serializable, BusinessEntity {
 
     @Override
     public void setComments(String comments) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

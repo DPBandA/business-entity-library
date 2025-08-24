@@ -90,7 +90,7 @@ public class Client implements ClientInterface {
     private Boolean tag;
     private String taxRegistrationNumber;
     private Boolean active;
-    private Boolean international;    
+    private Boolean international;
     // Billing  
     @Transient
     private AccPacCustomer financialAccount;
@@ -1031,12 +1031,12 @@ public class Client implements ClientInterface {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             getEnteredBy().save(em);
             getEditedBy().save(em);
             getDiscount().save(em);
             getDefaultTax().save(em);
-            
+
             // Save contacts and addresses
             for (Contact contact : getContacts()) {
                 if (contact.getId() == null) {
@@ -1114,5 +1114,27 @@ public class Client implements ClientInterface {
     @Override
     public void setComments(String comments) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        try {
+
+            if (this.id == null) {
+                Client existing = Client.findByName(em, this.name, false);
+                if (existing != null) {
+                    return new ReturnMessage(false, "Client exists");
+                } else {
+                    return save(em);
+                }
+            } else {
+                return save(em);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Client not saved");
     }
 }

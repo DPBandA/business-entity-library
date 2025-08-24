@@ -37,7 +37,6 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
-import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -315,6 +314,11 @@ public class JobReportItem implements BusinessEntity, Comparable {
 
     @Override
     public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

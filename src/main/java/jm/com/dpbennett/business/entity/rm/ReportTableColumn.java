@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2024  D P Bennett & Associates Limited
+Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,6 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
-import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -265,6 +264,11 @@ public class ReportTableColumn implements BusinessEntity {
 
     @Override
     public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
