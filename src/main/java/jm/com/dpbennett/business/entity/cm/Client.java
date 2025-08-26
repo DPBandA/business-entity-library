@@ -1032,8 +1032,14 @@ public class Client implements ClientInterface {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
+            if (getEnteredBy() != null) {
+                getEnteredBy().save(em);
+            }
+
+            if (getEditedBy() != null) {
+                getEditedBy().save(em);
+            }
+            
             getDiscount().save(em);
             getDefaultTax().save(em);
 
@@ -1121,13 +1127,17 @@ public class Client implements ClientInterface {
         try {
 
             if (this.id == null) {
+
                 Client existing = Client.findByName(em, this.name, false);
                 if (existing != null) {
+
                     return new ReturnMessage(false, "Client exists");
                 } else {
+
                     return save(em);
                 }
             } else {
+
                 return save(em);
             }
 
