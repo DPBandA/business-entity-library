@@ -319,6 +319,7 @@ public class SystemOption implements BusinessEntity {
         try {
 
             return Boolean.valueOf(optionValue);
+            
         } catch (NumberFormatException e) {
 
             return false;
@@ -681,12 +682,14 @@ public class SystemOption implements BusinessEntity {
 
     @Override
     public String getDescription() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        return comments;
     }
 
     @Override
     public void setDescription(String description) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        comments = description;
     }
 
     @Override

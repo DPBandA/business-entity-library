@@ -97,10 +97,71 @@ public class User implements BusinessEntity {
     private Date logoutTime;
     @Transient
     private String email;
+    @Transient
+    private boolean jobAssigned;
 
     public User() {
         employee = new Employee();
         username = "";
+    }
+
+    public SystemOption getNotificationSetting(EntityManager em, String setting) {
+        List<SystemOption> notificationSettings = SystemOption.findByOwnerId(em, id);
+
+        for (SystemOption ns : notificationSettings) {
+            if (ns.getName().equals(setting)) {
+
+                return ns;
+            }
+        }
+
+        // Setting not found so create and save it.
+        SystemOption so = new SystemOption(setting, "Boolean");
+        so.setOwnerId(id);
+        so.setOptionValue("false");
+        so.setCategory("Notification");
+        so.setDescription("Notiifcation setting for user " + username);
+        so.save(em);
+
+        return so;
+    }
+
+    public void loadNotificationSettings(EntityManager em) {
+
+        setJobAssigned(getNotificationSetting(em, "jobAssigned").getBoolean());
+    }
+
+    public ReturnMessage saveNotificationSettings(EntityManager em) {
+
+        ReturnMessage rm = new ReturnMessage();
+
+        SystemOption so = getNotificationSetting(em, "jobAssigned");
+        so.setOptionValue(Boolean.toString(isJobAssigned()));
+        // tk set others
+
+        try {
+
+            so.save(em);
+
+        } catch (Exception e) {
+            rm.setHeader("User Notifications Not Saved!");
+            rm.setMessage("An error occured while saving this user's notifications.");
+            rm.setSeverity(Message.SEVERITY_ERROR_NAME);
+            rm.setSuccess(false);
+
+            System.out.println(e);
+        }
+
+        return rm;
+    }
+
+    public boolean isJobAssigned() {
+
+        return jobAssigned;
+    }
+
+    public void setJobAssigned(boolean jobAssigned) {
+        this.jobAssigned = jobAssigned;
     }
 
     public Privilege getPrivilege() {
@@ -663,8 +724,8 @@ public class User implements BusinessEntity {
 
             getEmployee().save(em);
 
-            for (Privilege privilege : privileges) {
-                privilege.save(em);
+            for (Privilege priv : privileges) {
+                priv.save(em);
             }
 
             for (Module activeModule : activeModules) {
@@ -674,8 +735,6 @@ public class User implements BusinessEntity {
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
-
-            return new ReturnMessage();
 
         } catch (Exception e) {
 
