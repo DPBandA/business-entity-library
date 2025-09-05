@@ -105,6 +105,16 @@ public class User implements BusinessEntity {
         username = "";
     }
 
+    public static boolean isNotificationActive(User user,
+            EntityManager em,
+            String notificationSetting) {
+        
+        SystemOption ns = user.getNotificationSetting(em, notificationSetting);
+        
+        return ns.getBoolean();
+        
+    }
+
     public SystemOption getNotificationSetting(EntityManager em, String setting) {
         List<SystemOption> notificationSettings = SystemOption.findByOwnerId(em, id);
 
@@ -129,6 +139,7 @@ public class User implements BusinessEntity {
     public void loadNotificationSettings(EntityManager em) {
 
         setJobAssigned(getNotificationSetting(em, "jobAssigned").getBoolean());
+        // tk set others
     }
 
     public ReturnMessage saveNotificationSettings(EntityManager em) {
