@@ -99,33 +99,46 @@ public class User implements BusinessEntity {
     private String email;
     @Transient
     private boolean jobAssigned;
+    @Transient
+    private boolean jobCostingPrepared;
+    @Transient
+    private boolean jobCostingApproved;
+    @Transient
+    private boolean cashPaymentMade;
+    final static String[] SETTINGS
+            = {
+                "jobAssigned",
+                "jobCostingPrepared",
+                "jobCostingApproved",
+                "cashPaymentMade"
+            };
 
     public User() {
         employee = new Employee();
         username = "";
     }
 
-    public static boolean isNotificationActive(User user,
+    public static boolean isNotificationActive(
+            User user,
             EntityManager em,
             String notificationSetting) {
-        
-        SystemOption ns = user.getNotificationSetting(em, notificationSetting);
-        
+
+        SystemOption ns = user.getSetting(em, notificationSetting);
+
         return ns.getBoolean();
-        
+
     }
 
-    public SystemOption getNotificationSetting(EntityManager em, String setting) {
-        List<SystemOption> notificationSettings = SystemOption.findByOwnerId(em, id);
+    public SystemOption getSetting(EntityManager em, String setting) {
+        List<SystemOption> settings = SystemOption.findByOwnerId(em, id);
 
-        for (SystemOption ns : notificationSettings) {
+        for (SystemOption ns : settings) {
             if (ns.getName().equals(setting)) {
 
                 return ns;
             }
         }
 
-        // Setting not found so create and save it.
         SystemOption so = new SystemOption(setting, "Boolean");
         so.setOwnerId(id);
         so.setOptionValue("false");
@@ -136,31 +149,69 @@ public class User implements BusinessEntity {
         return so;
     }
 
-    public void loadNotificationSettings(EntityManager em) {
+    public void loadSettings(EntityManager em) {
 
-        setJobAssigned(getNotificationSetting(em, "jobAssigned").getBoolean());
-        // tk set others
+        for (String setting : SETTINGS) {
+            switch (setting) {
+                case "jobAssigned":
+                    setJobAssigned(getSetting(em, "jobAssigned")
+                            .getBoolean());
+                    break;
+                case "jobCostingPrepared":
+                    setJobCostingPrepared(getSetting(em, "jobCostingPrepared")
+                            .getBoolean());
+                    break;
+                case "jobCostingApproved":
+                    setJobCostingApproved(getSetting(em, "jobCostingApproved")
+                            .getBoolean());
+                    break;
+                case "cashPaymentMade":
+                    setCashPaymentMade(getSetting(em, "cashPaymentMade")
+                            .getBoolean());
+                    break;
+                default:
+                    return;
+            }
+        }
+
     }
 
     public ReturnMessage saveNotificationSettings(EntityManager em) {
 
         ReturnMessage rm = new ReturnMessage();
+        SystemOption so;
 
-        SystemOption so = getNotificationSetting(em, "jobAssigned");
-        so.setOptionValue(Boolean.toString(isJobAssigned()));
-        // tk set others
-
-        try {
-
-            so.save(em);
-
-        } catch (Exception e) {
-            rm.setHeader("User Notifications Not Saved!");
-            rm.setMessage("An error occured while saving this user's notifications.");
-            rm.setSeverity(Message.SEVERITY_ERROR_NAME);
-            rm.setSuccess(false);
-
-            System.out.println(e);
+        for (String setting : SETTINGS) {
+            switch (setting) {
+                case "jobAssigned":
+                    so = getSetting(em, "jobAssigned");
+                    if (so != null) {
+                        so.setOptionValue(Boolean.toString(isJobAssigned()));
+                        so.save(em);
+                    }
+                    break;
+                case "jobCostingPrepared":
+                    so = getSetting(em, "jobCostingPrepared");
+                    if (so != null) {
+                        so.setOptionValue(Boolean.toString(isJobCostingPrepared()));
+                        so.save(em);
+                    }
+                    break;
+                case "jobCostingApproved":
+                    so = getSetting(em, "jobCostingApproved");
+                    if (so != null) {
+                        so.setOptionValue(Boolean.toString(isJobCostingApproved()));
+                        so.save(em);
+                    }
+                    break;
+                case "cashPaymentMade":
+                    so = getSetting(em, "cashPaymentMade");
+                    if (so != null) {
+                        so.setOptionValue(Boolean.toString(isCashPaymentMade()));
+                        so.save(em);
+                    }
+                    break;
+            }
         }
 
         return rm;
@@ -173,6 +224,30 @@ public class User implements BusinessEntity {
 
     public void setJobAssigned(boolean jobAssigned) {
         this.jobAssigned = jobAssigned;
+    }
+
+    public boolean isJobCostingPrepared() {
+        return jobCostingPrepared;
+    }
+
+    public void setJobCostingPrepared(boolean jobCostingPrepared) {
+        this.jobCostingPrepared = jobCostingPrepared;
+    }
+
+    public boolean isJobCostingApproved() {
+        return jobCostingApproved;
+    }
+
+    public void setJobCostingApproved(boolean jobCostingApproved) {
+        this.jobCostingApproved = jobCostingApproved;
+    }
+
+    public boolean isCashPaymentMade() {
+        return cashPaymentMade;
+    }
+
+    public void setCashPaymentMade(boolean cashPaymentMade) {
+        this.cashPaymentMade = cashPaymentMade;
     }
 
     public Privilege getPrivilege() {
