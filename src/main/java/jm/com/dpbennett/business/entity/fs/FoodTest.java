@@ -17,12 +17,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity.fi;
+package jm.com.dpbennett.business.entity.fs;
 
-import jm.com.dpbennett.business.entity.sm.Category;
+import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -31,15 +30,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
-import jm.com.dpbennett.business.entity.hrm.Manufacturer;
-import jm.com.dpbennett.business.entity.fm.Product;
+import jm.com.dpbennett.business.entity.mt.Test;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -48,39 +45,25 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
-@Table(name = "foodproduct")
-public class FoodProduct implements Product, BusinessEntity, Comparable, Serializable {
+@Table(name = "foodtest")
+public class FoodTest implements Test, Serializable, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private String brand;
+    private Double hourlyRate;
     private String type;
-    private String code;
-    private Boolean active;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastSampled;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastManufactured;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastTested;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Category> categories;
+    private Date testDate;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Manufacturer manufacturer;
+    private Employee testDoneBy;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date reTestDate;
+    private String category;
     @Transient
     private Boolean isDirty;
-
-    public FoodProduct() {
-        categories = new ArrayList<>();
-    }
-
-    public FoodProduct(String name) {
-        this.name = name;
-        categories = new ArrayList<>();
-    }
 
     @Override
     public Long getId() {
@@ -92,28 +75,29 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
         this.id = id;
     }
     
-    public static FoodProduct findByName(EntityManager em, String value,
+    public static FoodTest findByName(EntityManager em, String value,
             Boolean ignoreCase) {
 
-        List<FoodProduct> foodProducts;
+        List<FoodTest> foodTests;
 
         try {
 
             if (ignoreCase) {
-                foodProducts = em.createQuery("SELECT p FROM FoodProduct p "
-                        + "WHERE UPPER(p.name) "
+                foodTests = em.createQuery("SELECT t FROM FoodTest t "
+                        + "WHERE UPPER(t.name) "
                         + "= '" + value.toUpperCase() + "'",
-                        FoodProduct.class).getResultList();
+                        FoodTest.class).getResultList();
             } else {
-                foodProducts = em.createQuery("SELECT p FROM FoodProduct p "
-                        + "WHERE p.name "
+                foodTests = em.createQuery("SELECT t FROM FoodTest t "
+                        + "WHERE t.name "
                         + "= '" + value + "'",
-                         FoodProduct.class).getResultList();
+                         FoodTest.class).getResultList();
             }
 
-            if (!foodProducts.isEmpty()) {
-                return foodProducts.get(0);
+            if (!foodTests.isEmpty()) {
+                return foodTests.get(0);
             }
+            
             return null;
         } catch (Exception e) {
             System.out.println(e);
@@ -135,64 +119,6 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
         this.isDirty = isDirty;
     }
 
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Date getDateLastManufactured() {
-        return dateLastManufactured;
-    }
-
-    public void setDateLastManufactured(Date dateLastManufactured) {
-        this.dateLastManufactured = dateLastManufactured;
-    }
-
-    public Date getDateLastSampled() {
-        return dateLastSampled;
-    }
-
-    public void setDateLastSampled(Date dateLastSampled) {
-        this.dateLastSampled = dateLastSampled;
-    }
-
-    public Date getDateLastTested() {
-        return dateLastTested;
-    }
-
-    public void setDateLastTested(Date dateLastTested) {
-        this.dateLastTested = dateLastTested;
-    }
-
-    @Override
-    public Boolean getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -202,29 +128,18 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof FoodProduct)) {
+
+        if (!(object instanceof FoodTest)) {
             return false;
         }
-        FoodProduct other = (FoodProduct) object;
+        FoodTest other = (FoodTest) object;
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FoodProduct[id=" + id + "]";
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        if ((((FoodProduct) o).id != null) && (this.id != null)) {
-            return Collator.getInstance().compare(
-                    ((FoodProduct) o).id.toString(),
-                    this.id.toString());
-        } else {
-            return 0;
-        }
+        return "jm.org.bsj.entity.FoodTest[id=" + id + "]";
     }
 
     @Override
@@ -248,29 +163,66 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     }
 
     @Override
-    public Manufacturer getManufacturer() {
-        if (manufacturer == null) {
-            return new Manufacturer("");
-        }
-        return manufacturer;
+    public Double getHourlyRate() {
+        return hourlyRate;
     }
 
     @Override
-    public void setManufacturer(Manufacturer manufacturer) {
-        this.manufacturer = manufacturer;
+    public void setHourlyRate(Double hourlyRate) {
+        this.hourlyRate = hourlyRate;
+    }
+
+    @Override
+    public Date getTestDate() {
+        return testDate;
+    }
+
+    @Override
+    public void setTestDate(Date testDate) {
+        this.testDate = testDate;
+    }
+
+    @Override
+    public Employee getTestDoneBy() {
+        return testDoneBy;
+    }
+
+    @Override
+    public void setTestDoneBy(Employee testDoneBy) {
+        this.testDoneBy = testDoneBy;
+    }
+
+    @Override
+    public Date getReTestDate() {
+        return reTestDate;
+    }
+
+    @Override
+    public void setReCalibrationDate(Date reTestDate) {
+        this.reTestDate = reTestDate;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Collator.getInstance().compare(this.toString(), o.toString());
+    }
+
+    @Override
+    public String getCateogy() {
+        return category;
+    }
+
+    @Override
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
 
-            // Save external entities
-            for (Category category : categories) {
-                category.save(em);
-            }
+            getTestDoneBy().save(em);
             
-            getManufacturer().save(em);
-
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -280,12 +232,22 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Food Product not saved");
+        return new ReturnMessage(false, "Food Test not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Boolean getActive() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setActive(Boolean active) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
@@ -349,11 +311,6 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     }
 
     @Override
-    public void setCategory(String category) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
     public String getNotes() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
@@ -375,12 +332,12 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
-         try {
+       try {
 
             if (this.id == null) {
-                FoodProduct existing = FoodProduct.findByName(em, this.name, false);
+                FoodTest existing = FoodTest.findByName(em, this.name, false);
                 if (existing != null) {
-                    return new ReturnMessage(false, "Food Product exists");
+                    return new ReturnMessage(false, "Food Test exists");
                 } else {
                     return save(em);
                 }
@@ -392,5 +349,7 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Food Product not saved"); }
+        return new ReturnMessage(false, "Food Test not saved");
+    }
+
 }

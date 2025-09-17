@@ -14,9 +14,6 @@
     <class>jm.com.dpbennett.business.entity.dm.DocumentTracking</class>
     <class>jm.com.dpbennett.business.entity.dm.DocumentType</class>
     <class>jm.com.dpbennett.business.entity.fa.FinancialAccount</class>
-    <class>jm.com.dpbennett.business.entity.fi.FoodProduct</class>
-    <class>jm.com.dpbennett.business.entity.fi.FoodSample</class>
-    <class>jm.com.dpbennett.business.entity.fi.FoodTest</class>
     <class>jm.com.dpbennett.business.entity.fm.AccountingCode</class>
     <class>jm.com.dpbennett.business.entity.fm.CashPayment</class>
     <class>jm.com.dpbennett.business.entity.fm.Classification</class>
@@ -117,6 +114,9 @@
     <class>jm.com.dpbennett.business.entity.im.InventoryDisbursement</class>
     <class>jm.com.dpbennett.business.entity.im.InventoryRequisition</class>
     <class>jm.com.dpbennett.business.entity.im.Inventory</class>
+    <class>jm.com.dpbennett.business.entity.fs.FoodProduct</class>
+    <class>jm.com.dpbennett.business.entity.fs.FoodTest</class>
+    <class>jm.com.dpbennett.business.entity.fs.FoodSample</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jmts"/>
       <property name="javax.persistence.jdbc.password" value=""/>

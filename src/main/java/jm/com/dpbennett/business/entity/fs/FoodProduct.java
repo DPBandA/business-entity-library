@@ -17,12 +17,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity.fi;
+package jm.com.dpbennett.business.entity.fs;
 
-import jm.com.dpbennett.business.entity.hrm.Employee;
-import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
+import jm.com.dpbennett.business.entity.sm.Category;
 import java.io.Serializable;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -38,10 +38,8 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
-import jm.com.dpbennett.business.entity.hrm.Laboratory;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.fm.Product;
-import jm.com.dpbennett.business.entity.mt.Sample;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -50,44 +48,39 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
-@Table(name = "foodsample")
-public class FoodSample implements Product, Sample, Serializable, Comparable, BusinessEntity {
+@Table(name = "foodproduct")
+public class FoodProduct implements Product, BusinessEntity, Comparable, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long jobId;
     private String name;
-    private String code;
-    private String reference;
-    private Long referenceIndex;
-    private Long sampleQuantity;
-    private Long quantity;
-    private String unitOfMeasure;
-    private String description;
+    private String brand;
     private String type;
+    private String code;
+    private Boolean active;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateReceived;
+    private Date dateLastSampled;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateSampled;
+    private Date dateLastManufactured;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateReturned;
-    private Integer methodOfDisposal;
+    private Date dateLastTested;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Category> categories;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private BusinessOffice regulatoryOffice;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee sampledBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee receivedBy;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<FoodTest> tests;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Laboratory assignedLab;
     @Transient
     private Boolean isDirty;
+
+    public FoodProduct() {
+        categories = new ArrayList<>();
+    }
+
+    public FoodProduct(String name) {
+        this.name = name;
+        categories = new ArrayList<>();
+    }
 
     @Override
     public Long getId() {
@@ -99,27 +92,27 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
         this.id = id;
     }
     
-    public static FoodSample findByName(EntityManager em, String value,
+    public static FoodProduct findByName(EntityManager em, String value,
             Boolean ignoreCase) {
 
-        List<FoodSample> foodSamples;
+        List<FoodProduct> foodProducts;
 
         try {
 
             if (ignoreCase) {
-                foodSamples = em.createQuery("SELECT s FROM FoodSample s "
-                        + "WHERE UPPER(s.name) "
+                foodProducts = em.createQuery("SELECT p FROM FoodProduct p "
+                        + "WHERE UPPER(p.name) "
                         + "= '" + value.toUpperCase() + "'",
-                        FoodSample.class).getResultList();
+                        FoodProduct.class).getResultList();
             } else {
-                foodSamples = em.createQuery("SELECT s FROM FoodSample s "
-                        + "WHERE s.name "
+                foodProducts = em.createQuery("SELECT p FROM FoodProduct p "
+                        + "WHERE p.name "
                         + "= '" + value + "'",
-                         FoodSample.class).getResultList();
+                         FoodProduct.class).getResultList();
             }
 
-            if (!foodSamples.isEmpty()) {
-                return foodSamples.get(0);
+            if (!foodProducts.isEmpty()) {
+                return foodProducts.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -142,20 +135,62 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
         this.isDirty = isDirty;
     }
 
-    public Laboratory getAssignedLab() {
-        return assignedLab;
+    public String getBrand() {
+        return brand;
     }
 
-    public void setAssignedLab(Laboratory assignedLab) {
-        this.assignedLab = assignedLab;
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
-    public List<FoodTest> getTests() {
-        return tests;
+    public String getCode() {
+        return code;
     }
 
-    public void setTests(List<FoodTest> tests) {
-        this.tests = tests;
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Date getDateLastManufactured() {
+        return dateLastManufactured;
+    }
+
+    public void setDateLastManufactured(Date dateLastManufactured) {
+        this.dateLastManufactured = dateLastManufactured;
+    }
+
+    public Date getDateLastSampled() {
+        return dateLastSampled;
+    }
+
+    public void setDateLastSampled(Date dateLastSampled) {
+        this.dateLastSampled = dateLastSampled;
+    }
+
+    public Date getDateLastTested() {
+        return dateLastTested;
+    }
+
+    public void setDateLastTested(Date dateLastTested) {
+        this.dateLastTested = dateLastTested;
+    }
+
+    @Override
+    public Boolean getActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 
     @Override
@@ -168,174 +203,28 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof FoodSample)) {
+        if (!(object instanceof FoodProduct)) {
             return false;
         }
-        FoodSample other = (FoodSample) object;
+        FoodProduct other = (FoodProduct) object;
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FoodSample[id=" + id + "]";
-    }
-
-    public Long getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(Long jobId) {
-        this.jobId = jobId;
-    }
-
-    @Override
-    public Employee getReceivedBy() {
-        return receivedBy;
-    }
-
-    @Override
-    public void setReceivedBy(Employee receivedBy) {
-        this.receivedBy = receivedBy;
-    }
-
-    @Override
-    public Employee getSampledBy() {
-        return sampledBy;
-    }
-
-    @Override
-    public void setSampledBy(Employee sampledBy) {
-        this.sampledBy = sampledBy;
-    }
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    @Override
-    public Date getDateReturned() {
-        return dateReturned;
-    }
-
-    @Override
-    public void setDateReturned(Date dateReturned) {
-        this.dateReturned = dateReturned;
-    }
-
-    @Override
-    public Date getDateSampled() {
-        return dateSampled;
-    }
-
-    @Override
-    public void setDateSampled(Date dateSampled) {
-        this.dateSampled = dateSampled;
-    }
-
-    @Override
-    public BusinessOffice getRegulatoryOffice() {
-        return regulatoryOffice;
-    }
-
-    @Override
-    public void setRegulatoryOffice(BusinessOffice regulatoryOffice) {
-        this.regulatoryOffice = regulatoryOffice;
-    }
-
-    @Override
-    public Long getSampleQuantity() {
-        if (sampleQuantity == null) {
-            return 1L;
-        }
-
-        return sampleQuantity;
-    }
-
-    @Override
-    public void setSampleQuantity(Long sampleQuantity) {
-        this.sampleQuantity = sampleQuantity;
-    }
-
-    @Override
-    public Integer getMethodOfDisposal() {
-        return methodOfDisposal;
-    }
-
-    @Override
-    public void setMethodOfDisposal(Integer methodOfDisposal) {
-        this.methodOfDisposal = methodOfDisposal;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-
-    @Override
-    public Long getReferenceIndex() {
-        return referenceIndex;
-    }
-
-    @Override
-    public void setReferenceIndex(Long referenceIndex) {
-        this.referenceIndex = referenceIndex;
-    }
-
-    @Override
-    public Date getDateReceived() {
-        return dateReceived;
-    }
-
-    @Override
-    public void setDateReceived(Date dateReceived) {
-        this.dateReceived = dateReceived;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public Long getQuantity() {
-        return quantity;
-    }
-
-    @Override
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
-    }
-
-    @Override
-    public String getUnitOfMeasure() {
-        return unitOfMeasure;
-    }
-
-    @Override
-    public void setUnitOfMeasure(String unitOfMeasure) {
-        this.unitOfMeasure = unitOfMeasure;
+        return "jm.org.bsj.entity.FoodProduct[id=" + id + "]";
     }
 
     @Override
     public int compareTo(Object o) {
-        return Collator.getInstance().compare(this.toString(), o.toString());
+        if ((((FoodProduct) o).id != null) && (this.id != null)) {
+            return Collator.getInstance().compare(
+                    ((FoodProduct) o).id.toString(),
+                    this.id.toString());
+        } else {
+            return 0;
+        }
     }
 
     @Override
@@ -349,16 +238,6 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     }
 
     @Override
-    public Manufacturer getManufacturer() {
-        return manufacturer;
-    }
-
-    @Override
-    public void setManufacturer(Manufacturer manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    @Override
     public String getType() {
         return type;
     }
@@ -369,19 +248,28 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     }
 
     @Override
+    public Manufacturer getManufacturer() {
+        if (manufacturer == null) {
+            return new Manufacturer("");
+        }
+        return manufacturer;
+    }
+
+    @Override
+    public void setManufacturer(Manufacturer manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    @Override
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getManufacturer().save(em);
-            getRegulatoryOffice().save(em);
-            getSampledBy().save(em);
-            getReceivedBy().save(em);
-
-            for (FoodTest test : tests) {
-                test.save(em);
+            // Save external entities
+            for (Category category : categories) {
+                category.save(em);
             }
-
-            getAssignedLab().save(em);
+            
+            getManufacturer().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -392,22 +280,12 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Food Sample not saved");
+        return new ReturnMessage(false, "Food Product not saved");
     }
 
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Boolean getActive() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void setActive(Boolean active) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
@@ -432,6 +310,16 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDescription(String description) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -487,12 +375,12 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
-        try {
+         try {
 
             if (this.id == null) {
-                FoodSample existing = FoodSample.findByName(em, this.name, false);
+                FoodProduct existing = FoodProduct.findByName(em, this.name, false);
                 if (existing != null) {
-                    return new ReturnMessage(false, "Food Sample exists");
+                    return new ReturnMessage(false, "Food Product exists");
                 } else {
                     return save(em);
                 }
@@ -504,7 +392,5 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Food Sample not saved");
-    }
-
+        return new ReturnMessage(false, "Food Product not saved"); }
 }
