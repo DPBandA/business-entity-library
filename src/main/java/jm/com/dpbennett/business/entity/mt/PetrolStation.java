@@ -473,12 +473,16 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     @Override
     public Boolean getActive() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        // tk
+        System.out.println("Petrol station getActive() to be implemented");       
+        
+        return true;
     }
 
     @Override
     public void setActive(Boolean active) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        // tk
+        System.out.println("Petrol station setActive() to be implemented"); 
     }
 
     @Override
