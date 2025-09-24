@@ -64,10 +64,6 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     private String type;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client client;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Contact> contacts;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Address> addresses;
     private String notes;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateFirstReceived;
@@ -82,17 +78,16 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     private Certification certification;
     @Transient
     private Boolean isDirty;
+    @Transient
+    private String editStatus;
 
     public PetrolStation() {
-        contacts = new ArrayList<>();
-        addresses = new ArrayList<>();
+        
         petrolPumps = new ArrayList<>();
     }
 
     public PetrolStation(String name) {
         this.name = name;
-        contacts = new ArrayList<>();
-        addresses = new ArrayList<>();
         petrolPumps = new ArrayList<>();
     }
 
@@ -107,6 +102,20 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+
+        if (isDirty) {
+            setEditStatus("(edited)");
+        } else {
+            setEditStatus("        ");
+        }
+    }
+
+    public String getEditStatus() {
+        return editStatus;
+    }
+
+    public void setEditStatus(String editStatus) {
+        this.editStatus = editStatus;
     }
 
     public Certification getCertification() {
@@ -188,26 +197,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     public void setName(String name) {
         this.name = name;
     }
-
-//    @Override
-//    public Address getDefaultAddress() {
-//        return billingAddress;
-//    }
-//
-//    @Override
-//    public void setMainBillingAddress(Address billingAddress) {
-//        this.billingAddress = billingAddress;
-//    }
-    @Override
-    public Address getDefaultAddress() {
-        if (!addresses.isEmpty()) {
-            return addresses.get(0);
-        } else {
-            addresses.add(new Address());
-            return addresses.get(0);
-        }
-    }
-
+ 
     public List<PetrolPump> getPetrolPumps() {
         Collections.sort(petrolPumps);
         return petrolPumps;
@@ -226,7 +216,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+      
         if (!(object instanceof PetrolStation)) {
             return false;
         }
@@ -247,26 +237,6 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     @Override
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.toString(), o.toString());
-    }
-
-    @Override
-    public List<Address> getAddresses() {
-        return addresses;
-    }
-
-    @Override
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
-    }
-
-    @Override
-    public List<Contact> getContacts() {
-        return contacts;
-    }
-
-    @Override
-    public void setContacts(List<Contact> contacts) {
-        this.contacts = contacts;
     }
 
     @Override
@@ -434,26 +404,19 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
             getClient().save(em);
 
-            for (Contact contact : contacts) {
-                contact.save(em);
-            }
-
-            for (Address address : addresses) {
-                address.save(em);
-            }
-            
             for (PetrolPump petrolPump : petrolPumps) {
                 petrolPump.save(em);
             }
-            
+
             getLastAssignee().save(em);
-            getCertification().save(em);            
+            getCertification().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
+            
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -474,15 +437,15 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     @Override
     public Boolean getActive() {
         // tk
-        System.out.println("Petrol station getActive() to be implemented");       
-        
+        System.out.println("Petrol station getActive() to be implemented");
+
         return true;
     }
 
     @Override
     public void setActive(Boolean active) {
         // tk
-        System.out.println("Petrol station setActive() to be implemented"); 
+        System.out.println("Petrol station setActive() to be implemented");
     }
 
     @Override
@@ -562,6 +525,31 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Address getDefaultAddress() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<Address> getAddresses() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setAddresses(List<Address> addresses) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<Contact> getContacts() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setContacts(List<Contact> contacts) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
