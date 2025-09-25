@@ -21,7 +21,9 @@ package jm.com.dpbennett.business.entity.cert;
 
 import jm.com.dpbennett.business.entity.hrm.Business;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -49,39 +51,63 @@ public class Certification implements CertificationInterface {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id = null;
-    private String number = "";
-    private String type = "";
-    private String notes = "";
-    private Boolean active = false;
-    private String certificateNumber = "";
+    private Long id;
+    private Long ownerId;
+    private String number;
+    private String type;
+    private String notes;
+    private Boolean active;
+    private String certificateNumber;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee certificateSignedBy = null;
+    private Employee certificateSignedBy;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Business grantedTo = null;
+    private Business grantedTo;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateIssued = null;
+    private Date dateIssued;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date expiryDate = null;
+    private Date expiryDate;
     @OneToOne(cascade = CascadeType.ALL)
-    private Client applicant = null;
+    private Client applicant;
     @Transient
     private Boolean isDirty;
 
     public Certification() {
     }
 
-    public Certification(Certification org) {
-        this.number = org.number;
-        this.type = org.type;
-        this.notes = org.notes;
-        this.active = org.active;
-        this.certificateNumber = org.certificateNumber;
-        this.certificateSignedBy = org.certificateSignedBy;
-        this.grantedTo = org.grantedTo;
-        this.dateIssued = org.dateIssued;
-        this.expiryDate = org.expiryDate;
-        this.applicant = org.applicant;
+    public Certification(Certification certification) {
+        this.number = certification.number;
+        this.type = certification.type;
+        this.notes = certification.notes;
+        this.active = certification.active;
+        this.certificateNumber = certification.certificateNumber;
+        this.certificateSignedBy = certification.certificateSignedBy;
+        this.grantedTo = certification.grantedTo;
+        this.dateIssued = certification.dateIssued;
+        this.expiryDate = certification.expiryDate;
+        this.applicant = certification.applicant;
+    }
+    
+     public static List<Certification> findAllByOwnerId(EntityManager em, Long ownerId) {
+
+        try {
+            List<Certification> certifications = em.createQuery("SELECT c FROM Certification c"
+                    + " WHERE c.ownerId = " + ownerId
+                    + " ORDER BY c.ownerId DESC", Certification.class).getResultList();
+
+            return certifications;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     @Override

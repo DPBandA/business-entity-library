@@ -43,6 +43,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.StatusNote;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -85,10 +86,15 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         
         petrolPumps = new ArrayList<>();
     }
-
+    
     public PetrolStation(String name) {
         this.name = name;
         petrolPumps = new ArrayList<>();
+    }
+    
+    public List<Certification> getCertifications(EntityManager em) {
+
+        return Certification.findAllByOwnerId(em, id);
     }
 
     @Override
