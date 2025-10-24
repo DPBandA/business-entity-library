@@ -29,6 +29,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -43,7 +44,6 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
-import jm.com.dpbennett.business.entity.StatusNote;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -61,6 +61,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private Boolean active;
     private String number;
     private String type;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -305,8 +306,10 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         this.taxRegistrationNumber = taxRegistrationNumber;
     }
 
-    public static List<PetrolStation> findPetrolStationsByName(
-            EntityManager em, String value) {
+    public static List<PetrolStation> find(
+            EntityManager em, 
+            String value,
+            int maxSearchResults) {
 
         try {
 
@@ -314,15 +317,50 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
             List<PetrolStation> stations
                     = em.createQuery("SELECT p FROM PetrolStation p where UPPER(p.name) like '"
-                            + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class).getResultList();
+                            + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class)
+                            .setMaxResults(maxSearchResults)
+                            .getResultList();
+            
             return stations;
+            
         } catch (Exception e) {
+            
             System.out.println(e);
-            return new ArrayList<PetrolStation>();
+            return new ArrayList<>();
+            
         }
     }
+        
+    
+     public static List<PetrolStation> findActive(
+            EntityManager em,
+            String value,
+            int maxSearchResults) {
 
-    public static List<PetrolStation> findPetrolStationsByDateSearchField(
+        try {
+
+            value = value.replaceAll("'", "`");
+
+            List<PetrolStation> stations
+                    = em.createQuery("SELECT p FROM PetrolStation p WHERE p.name like '%"
+                            + value + "%'"
+                            + " AND p.active = 1"
+                            + " ORDER BY p.name", PetrolStation.class)
+                            .setMaxResults(maxSearchResults)
+                            .getResultList();
+
+            return stations;
+            
+        } catch (Exception e) {
+            
+            System.out.println(e);
+            return new ArrayList<>();
+            
+        }
+    }
+    
+
+    public static List<PetrolStation> findByDateSearchField(
             EntityManager em,
             User user,
             String dateSearchField,
@@ -365,14 +403,16 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         try {
             stations = em.createQuery(searchQuery, PetrolStation.class).getResultList();
         } catch (Exception e) {
+            
             System.out.println(e);
             return null;
+            
         }
 
         return stations;
     }
 
-    public static PetrolStation findPetrolStationByName(EntityManager em, String value) {
+    public static PetrolStation findByName(EntityManager em, String value) {
 
         try {
 
@@ -392,7 +432,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     }
 
-    public static PetrolStation findPetrolStationById(EntityManager em, Long id) {
+    public static PetrolStation findById(EntityManager em, Long id) {
 
         try {
             PetrolStation station = em.find(PetrolStation.class, id);
@@ -442,16 +482,14 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     @Override
     public Boolean getActive() {
-        // tk
-        System.out.println("Petrol station getActive() to be implemented");
-
-        return true;
+       
+        return active;
     }
 
     @Override
     public void setActive(Boolean active) {
-        // tk
-        System.out.println("Petrol station setActive() to be implemented");
+        
+       this.active = active;
     }
 
     @Override
