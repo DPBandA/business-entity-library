@@ -53,6 +53,7 @@ public class Sticker implements Product, BusinessEntity, Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Long ownerId;
     private String name;
     private String number;
     private Boolean valid;
@@ -100,6 +101,14 @@ public class Sticker implements Product, BusinessEntity, Comparable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     @Override

@@ -53,6 +53,7 @@ public class Seal implements Product, BusinessEntity, Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Long ownerId;
     private String name;
     private String number;
     private String type;
@@ -99,6 +100,14 @@ public class Seal implements Product, BusinessEntity, Comparable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     @Override
@@ -334,10 +343,10 @@ public class Seal implements Product, BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             getManufacturer().save(em);
             getAssignee().save(em);
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

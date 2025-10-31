@@ -27,9 +27,7 @@ import jm.com.dpbennett.business.entity.cert.Certification;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -37,7 +35,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -71,28 +68,22 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     private Date dateFirstReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastAccessed;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<PetrolPump> petrolPumps;
     private String taxRegistrationNumber;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee lastAssignee;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Certification certification;
     @Transient
     private Boolean isDirty;
     @Transient
     private String editStatus;
 
     public PetrolStation() {
-        
-        petrolPumps = new ArrayList<>();
+
     }
-    
+
     public PetrolStation(String name) {
         this.name = name;
-        petrolPumps = new ArrayList<>();
     }
-    
+
     public List<Certification> getCertifications(EntityManager em) {
 
         return Certification.findAllByOwnerId(em, id);
@@ -125,21 +116,10 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         this.editStatus = editStatus;
     }
 
-    public Certification getCertification() {
-        if (certification == null) {
-            certification = new Certification();
-        }
-        return certification;
-    }
-
-    public void setCertification(Certification certification) {
-        this.certification = certification;
-    }
-
     public Integer getNumberOfPetrolPumpNozzles() {
         Integer numOfNozzles = 0;
 
-        for (PetrolPump pump : petrolPumps) {
+        for (PetrolPump pump : getPetrolPumps()) {
             numOfNozzles = numOfNozzles + pump.getNozzles().size();
         }
 
@@ -204,14 +184,15 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     public void setName(String name) {
         this.name = name;
     }
- 
-    public List<PetrolPump> getPetrolPumps() {
-        Collections.sort(petrolPumps);
-        return petrolPumps;
-    }
 
-    public void setPetrolPumps(List<PetrolPump> petrolPumps) {
-        this.petrolPumps = petrolPumps;
+    public List<PetrolPump> getPetrolPumps() {
+
+        List<PetrolPump> petrolPumps = new ArrayList<>();
+
+        // tk
+        // Get pumps here based on ownerId;
+        return petrolPumps;
+
     }
 
     @Override
@@ -223,7 +204,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-      
+
         if (!(object instanceof PetrolStation)) {
             return false;
         }
@@ -307,7 +288,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     }
 
     public static List<PetrolStation> find(
-            EntityManager em, 
+            EntityManager em,
             String value,
             int maxSearchResults) {
 
@@ -320,19 +301,18 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
                             + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class)
                             .setMaxResults(maxSearchResults)
                             .getResultList();
-            
+
             return stations;
-            
+
         } catch (Exception e) {
-            
+
             System.out.println(e);
             return new ArrayList<>();
-            
+
         }
     }
-        
-    
-     public static List<PetrolStation> findActive(
+
+    public static List<PetrolStation> findActive(
             EntityManager em,
             String value,
             int maxSearchResults) {
@@ -350,15 +330,14 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
                             .getResultList();
 
             return stations;
-            
+
         } catch (Exception e) {
-            
+
             System.out.println(e);
             return new ArrayList<>();
-            
+
         }
     }
-    
 
     public static List<PetrolStation> findByDateSearchField(
             EntityManager em,
@@ -403,10 +382,10 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         try {
             stations = em.createQuery(searchQuery, PetrolStation.class).getResultList();
         } catch (Exception e) {
-            
+
             System.out.println(e);
             return null;
-            
+
         }
 
         return stations;
@@ -450,19 +429,14 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
             getClient().save(em);
 
-            for (PetrolPump petrolPump : petrolPumps) {
-                petrolPump.save(em);
-            }
-
             getLastAssignee().save(em);
-            getCertification().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -482,14 +456,18 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     @Override
     public Boolean getActive() {
-       
+
+        if (active == null) {
+            active = true;
+        }
+
         return active;
     }
 
     @Override
     public void setActive(Boolean active) {
-        
-       this.active = active;
+
+        this.active = active;
     }
 
     @Override

@@ -17,10 +17,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.mt;
 
-import jm.com.dpbennett.business.entity.cert.Certification;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,39 +53,31 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Long ownerId;
     private String name;
     private String type;
     private String serialNumber;
     private String model;
     private String number;
     @Column(length = 1024)
-    private String status; 
-    /**
-     * The test measure is specified in litres
-     */
+    private String status;
     private String testMeasures;
     private String comments;
     @OneToMany(cascade = CascadeType.ALL)
     private List<PetrolPumpNozzleCalibration> calibrations;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Seal> seals;
     @OneToOne(cascade = CascadeType.ALL)
     private Seal lastSealIssued;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Sticker> stickers;
     @OneToOne(cascade = CascadeType.ALL)
     private Sticker lastStickerIssued;
     @OneToOne(cascade = CascadeType.ALL)
     private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.ALL)
     private PetrolPumpNozzleCalibration lastCalibration;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Certification> certifications;
     @Transient
     private Boolean isDirty;
 
-     public PetrolPumpNozzle(PetrolPumpNozzle src, Long id) {
-        this.id = id; 
+    public PetrolPumpNozzle(PetrolPumpNozzle src, Long id) {
+        this.id = id;
         this.name = src.name;
         this.type = src.type;
         this.serialNumber = src.serialNumber;
@@ -96,37 +86,39 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
         this.status = src.status;
         this.testMeasures = src.testMeasures;
         this.comments = src.comments;
-         
-        calibrations = new ArrayList<PetrolPumpNozzleCalibration>();
-        seals = new ArrayList<Seal>();
-        stickers = new ArrayList<Sticker>();
-        certifications = new ArrayList<Certification>();
+
+        calibrations = new ArrayList<>();
+
     }
-    
+
     public PetrolPumpNozzle() {
-        calibrations = new ArrayList<PetrolPumpNozzleCalibration>();
-        seals = new ArrayList<Seal>();
-        stickers = new ArrayList<Sticker>();
-        certifications = new ArrayList<Certification>();
+        calibrations = new ArrayList<>();
     }
 
     public PetrolPumpNozzle(ArrayList<TestMeasure> measures,
             Seal lastSealIssued,
             Sticker lastStickerIssued) {
-        calibrations = new ArrayList<PetrolPumpNozzleCalibration>();
-        seals = new ArrayList<Seal>();
-        stickers = new ArrayList<Sticker>();
+
+        calibrations = new ArrayList<>();
 
         this.lastSealIssued = lastSealIssued;
         this.lastStickerIssued = lastStickerIssued;
-        
+
         // build measure string
         testMeasures = "" + measures.get(0).getCapacity().toString();
         testMeasures = testMeasures + "," + measures.get(1).getCapacity().toString();
-        
+
         lastCalibration = new PetrolPumpNozzleCalibration(measures);
     }
-    
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -138,16 +130,6 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
-    }
-
-    public List<Certification> getCertifications() {
-        Collections.sort(certifications);
-        
-        return certifications;
-    }
-
-    public void setCertifications(List<Certification> certifications) {
-        this.certifications = certifications;
     }
 
     public String getStatus() {
@@ -198,7 +180,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-           return new Manufacturer();
+            return new Manufacturer();
         }
         return manufacturer;
     }
@@ -217,11 +199,11 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     }
 
     public List<Sticker> getStickers() {
-        return stickers;
-    }
+        List<Sticker> stickers = new ArrayList<>();
 
-    public void setStickers(List<Sticker> stickers) {
-        this.stickers = stickers;
+        // tk
+        // Get Stickers here based on ownerId;
+        return stickers;
     }
 
     @Override
@@ -243,7 +225,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
     public List<PetrolPumpNozzleCalibration> getCalibrations() {
         Collections.sort(calibrations);
-        
+
         return calibrations;
     }
 
@@ -278,11 +260,11 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     }
 
     public List<Seal> getSeals() {
-        return seals;
-    }
+        List<Seal> seals = new ArrayList<>();
 
-    public void setSeals(List<Seal> seals) {
-        this.seals = seals;
+        // tk
+        // Get Stickers here based on ownerId;
+        return seals;
     }
 
     public String getSerialNumber() {
@@ -310,7 +292,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
             return false;
         }
         PetrolPumpNozzle other = (PetrolPumpNozzle) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -334,15 +316,15 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public static List<PetrolPumpNozzle> findPetrolPumpNozzlesByCalibrationJobNumber(
             EntityManager em, String value) {
-        
+
         List<PetrolPumpNozzle> foundPetrolPumpNozzles;
         value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-        String searchQuery =
-                "SELECT PetrolPumpNozzle FROM PetrolPumpNozzle petrolPumpNozzle"
+        String searchQuery
+                = "SELECT PetrolPumpNozzle FROM PetrolPumpNozzle petrolPumpNozzle"
                 + " JOIN petrolPumpNozzle.lastCalibration lastCalibration"
                 + " WHERE lastCalibration.job.jobNumber = '" + value + "'"
                 + " ORDER BY lastCalibration.id DESC";
@@ -355,8 +337,6 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
         return foundPetrolPumpNozzles;
     }
-    
-    
 
     public static PetrolPumpNozzle findPetrolPumpNozzleById(EntityManager em, Long id) {
 
@@ -368,7 +348,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
             System.out.println(e);
             return null;
         }
-    }       
+    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -469,6 +449,5 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     public ReturnMessage saveUnique(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
 
 }

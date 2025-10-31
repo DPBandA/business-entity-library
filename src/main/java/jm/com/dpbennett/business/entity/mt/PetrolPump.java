@@ -19,10 +19,8 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.mt;
 
-import jm.com.dpbennett.business.entity.cert.Certification;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -31,7 +29,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -55,6 +52,7 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Long ownerId;
     private String number;
     private String type;
     private String serialNumber;
@@ -66,12 +64,6 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     private String name;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Certification certification;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<PetrolPumpNozzle> nozzles;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Sticker> stickers;
     @Transient
     private Boolean isDirty;
 
@@ -85,13 +77,9 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
         this.rate = src.rate;
         this.dateScheduledForTest = src.dateScheduledForTest;
         this.name = src.name;
-        this.nozzles = new ArrayList<>();
-        this.stickers = new ArrayList<>();
     }
 
     public PetrolPump() {
-        nozzles = new ArrayList<>();
-        stickers = new ArrayList<>();
     }
 
     @Override
@@ -102,6 +90,14 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     @Override
@@ -154,15 +150,6 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
         this.status = status;
     }
 
-    public Certification getCertification() {
-
-        return certification;
-    }
-
-    public void setCertification(Certification certification) {
-        this.certification = certification;
-    }
-
     public String getModel() {
         return model;
     }
@@ -172,16 +159,16 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     }
 
     public List<PetrolPumpNozzle> getNozzles() {
-        Collections.sort(nozzles);
-        return nozzles;
+
+        List<PetrolPumpNozzle> petrolPumpNozzles = new ArrayList<>();
+
+        // tk
+        // Get petrolPumpNozzles here based on ownerId;
+        return petrolPumpNozzles;
     }
 
     public Integer getNumberOfNozzles() {
         return getNozzles().size();
-    }
-
-    public void setNozzles(List<PetrolPumpNozzle> nozzles) {
-        this.nozzles = nozzles;
     }
 
     public String getNumber() {
@@ -201,11 +188,11 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     }
 
     public List<Sticker> getStickers() {
-        return stickers;
-    }
+        List<Sticker> stickers = new ArrayList<>();
 
-    public void setStickers(List<Sticker> stickers) {
-        this.stickers = stickers;
+        // tk
+        // Get petrolPumpNozzles here based on ownerId;
+        return stickers;
     }
 
     @Override
@@ -287,18 +274,6 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
         try {
 
             getManufacturer().save(em);
-
-            if (getCertification() != null) {
-                getCertification().save(em);
-            }
-
-            for (PetrolPumpNozzle nozzle : nozzles) {
-                nozzle.save(em);
-            }
-
-            for (Sticker sticker : stickers) {
-                sticker.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
