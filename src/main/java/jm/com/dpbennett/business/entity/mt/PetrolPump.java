@@ -66,6 +66,8 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     private Manufacturer manufacturer;
     @Transient
     private Boolean isDirty;
+    @Transient
+    List<PetrolPumpNozzle> petrolPumpNozzles;
 
     public PetrolPump(PetrolPump src, Long id) {
         this.id = id;
@@ -80,6 +82,9 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     }
 
     public PetrolPump() {
+        
+        petrolPumpNozzles = new ArrayList<>();
+        
     }
 
     @Override
@@ -160,7 +165,8 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
 
     public List<PetrolPumpNozzle> getNozzles() {
 
-        List<PetrolPumpNozzle> petrolPumpNozzles = new ArrayList<>();
+        // tk for now
+        petrolPumpNozzles = new ArrayList<>();
 
         // tk
         // Get petrolPumpNozzles here based on ownerId;

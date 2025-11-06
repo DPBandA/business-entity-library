@@ -75,9 +75,13 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     private Boolean isDirty;
     @Transient
     private String editStatus;
+    @Transient
+    List<PetrolPump> petrolPumps;
 
     public PetrolStation() {
 
+        petrolPumps = new ArrayList<>();
+        
     }
 
     public PetrolStation(String name) {
@@ -187,7 +191,8 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     public List<PetrolPump> getPetrolPumps() {
 
-        List<PetrolPump> petrolPumps = new ArrayList<>();
+        // tk for now
+        petrolPumps = new ArrayList<>();
 
         // tk
         // Get pumps here based on ownerId;
