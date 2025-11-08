@@ -28,6 +28,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,6 +40,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.fm.Product;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -63,7 +65,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     private String status;
     private String testMeasures;
     private String comments;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     private List<PetrolPumpNozzleCalibration> calibrations;
     @OneToOne(cascade = CascadeType.ALL)
     private Seal lastSealIssued;
@@ -352,7 +354,29 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        try {
+
+            getManufacturer().save(em);
+
+            em.getTransaction().begin();
+            Long savedId = BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            if (savedId != null) {
+                for (PetrolPumpNozzleCalibration calibration : calibrations) {
+                    calibration.setId(savedId);
+                    calibration.save(em);
+                }
+            }
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Petrol Pump Nozzle not saved");
+
     }
 
     @Override

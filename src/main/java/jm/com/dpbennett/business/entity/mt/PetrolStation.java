@@ -32,9 +32,11 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -75,13 +77,10 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     private Boolean isDirty;
     @Transient
     private String editStatus;
-    @Transient
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     List<PetrolPump> petrolPumps;
 
     public PetrolStation() {
-
-        petrolPumps = new ArrayList<>();
-        
     }
 
     public PetrolStation(String name) {
@@ -95,9 +94,11 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     @Override
     public Boolean getIsDirty() {
+        
         if (isDirty == null) {
             isDirty = false;
         }
+        
         return isDirty;
     }
 
@@ -124,7 +125,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         Integer numOfNozzles = 0;
 
         for (PetrolPump pump : getPetrolPumps()) {
-            numOfNozzles = numOfNozzles + pump.getNozzles().size();
+            numOfNozzles = numOfNozzles + pump.getPetrolPumpNozzles().size();
         }
 
         return numOfNozzles;
@@ -134,7 +135,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         Integer numOfNozzles = 0;
 
         for (PetrolPump pump : getPetrolPumps()) {
-            for (PetrolPumpNozzle nozzle : pump.getNozzles()) {
+            for (PetrolPumpNozzle nozzle : pump.getPetrolPumpNozzles()) {
                 if (nozzle.getStatus() != null) {
                     if (nozzle.getStatus().toUpperCase().trim().equals("NOT WORKING")
                             || nozzle.getStatus().toUpperCase().trim().equals("REJECTED")) {
@@ -191,13 +192,19 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     public List<PetrolPump> getPetrolPumps() {
 
-        // tk for now
-        petrolPumps = new ArrayList<>();
+        if (petrolPumps == null) {
 
-        // tk
-        // Get pumps here based on ownerId;
+            // tk
+            // Get pumps here based on ownerId;
+            petrolPumps = new ArrayList<>();
+        }
+
         return petrolPumps;
 
+    }
+
+    public void setPetrolPumps(List<PetrolPump> petrolPumps) {
+        this.petrolPumps = petrolPumps;
     }
 
     @Override
@@ -437,8 +444,15 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
             getLastAssignee().save(em);
 
             em.getTransaction().begin();
-            BusinessEntityUtils.saveBusinessEntity(em, this);
+            Long savedId = BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
+
+            if (savedId != null) {
+                for (PetrolPump petrolPump : petrolPumps) {
+                    petrolPump.setId(savedId);
+                    petrolPump.save(em);
+                }
+            }
 
             return new ReturnMessage();
 

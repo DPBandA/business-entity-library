@@ -20,7 +20,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.mt;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
-import jm.com.dpbennett.business.entity.jmts.Job;
+//import jm.com.dpbennett.business.entity.jmts.Job;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -31,6 +31,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -57,8 +58,8 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Job job;
+    //@OneToOne(cascade = CascadeType.REFRESH)
+    //private Job job;
     private String name;
     private String type;
     private Double hourlyRate = 0.0;
@@ -69,7 +70,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     private Double setPetrolUsage = 0.0;
     private Double actualPetrolUsage = 0.0;
     private Double petrolCost = 0.0;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     private List<PetrolPumpNozzleCalibrationPoint> calibrationPoints;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date calibrationDate;
@@ -132,7 +133,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     public PetrolPumpNozzleCalibration(PetrolPumpNozzleCalibration original) {
         this.calibrationPoints = new ArrayList<>();
 
-        this.job = original.job;
+        //this.job = original.job;
         this.name = original.name;
         this.type = original.type;
         this.hourlyRate = original.hourlyRate;
@@ -212,17 +213,24 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     public ReturnMessage save(EntityManager em) {
         try {
             
-            getJob().save(em);
+            //getJob().save(em);
+            
+            getCalibrationDoneBy().save(em);
             
             for (PetrolPumpNozzleCalibrationPoint calibrationPoint : calibrationPoints) {
                 calibrationPoint.save(em);
             }
-            
-            getCalibrationDoneBy().save(em);
 
             em.getTransaction().begin();
-            BusinessEntityUtils.saveBusinessEntity(em, this);
+            Long savedId = BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
+            
+            if (savedId != null) {
+                for (PetrolPumpNozzleCalibrationPoint calibrationPoint : calibrationPoints) {
+                    calibrationPoint.setId(savedId);
+                    calibrationPoint.save(em);
+                }
+            }
 
             return new ReturnMessage();
         } catch (Exception e) {
@@ -585,18 +593,18 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         this.productDispensed = productDispensed;
     }
 
-    public Job getJob() {
-        if (job == null) {
-            job = new Job();
-            job.setJobNumber("");
-            return job;
-        }
-        return job;
-    }
+//    public Job getJob() {
+//        if (job == null) {
+//            job = new Job();
+//            job.setJobNumber("");
+//            return job;
+//        }
+//        return job;
+//    }
 
-    public void setJob(Job job) {
-        this.job = job;
-    }
+//    public void setJob(Job job) {
+//        this.job = job;
+//    }
 
     public Double getTotalizerEnd() {
         return totalizerEnd;
