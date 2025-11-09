@@ -31,7 +31,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -58,6 +57,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Long ownerId;
     //@OneToOne(cascade = CascadeType.REFRESH)
     //private Job job;
     private String name;
@@ -70,7 +70,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     private Double setPetrolUsage = 0.0;
     private Double actualPetrolUsage = 0.0;
     private Double petrolCost = 0.0;
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<PetrolPumpNozzleCalibrationPoint> calibrationPoints;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date calibrationDate;
@@ -112,6 +112,14 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
             this.calibrationPoints.add(new PetrolPumpNozzleCalibrationPoint((long) i,
                     testMeasures.get(1)));
         }
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     public void setTestCalibrationPointsTestMeasures(ArrayList<TestMeasure> testMeasures) {
@@ -218,21 +226,16 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
             getCalibrationDoneBy().save(em);
             
             for (PetrolPumpNozzleCalibrationPoint calibrationPoint : calibrationPoints) {
+                calibrationPoint.setOwnerId(id);
                 calibrationPoint.save(em);
             }
 
             em.getTransaction().begin();
-            Long savedId = BusinessEntityUtils.saveBusinessEntity(em, this);
+            BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
-            
-            if (savedId != null) {
-                for (PetrolPumpNozzleCalibrationPoint calibrationPoint : calibrationPoints) {
-                    calibrationPoint.setId(savedId);
-                    calibrationPoint.save(em);
-                }
-            }
-
+          
             return new ReturnMessage();
+            
         } catch (Exception e) {
             System.out.println(e);
         }

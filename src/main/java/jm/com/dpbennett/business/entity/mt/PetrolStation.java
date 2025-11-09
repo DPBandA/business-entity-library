@@ -32,7 +32,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -77,7 +76,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     private Boolean isDirty;
     @Transient
     private String editStatus;
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REFRESH)
     List<PetrolPump> petrolPumps;
 
     public PetrolStation() {
@@ -94,11 +93,11 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     @Override
     public Boolean getIsDirty() {
-        
+
         if (isDirty == null) {
             isDirty = false;
         }
-        
+
         return isDirty;
     }
 
@@ -125,7 +124,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         Integer numOfNozzles = 0;
 
         for (PetrolPump pump : getPetrolPumps()) {
-            numOfNozzles = numOfNozzles + pump.getPetrolPumpNozzles().size();
+            numOfNozzles = numOfNozzles + pump.getNozzles().size();
         }
 
         return numOfNozzles;
@@ -135,7 +134,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         Integer numOfNozzles = 0;
 
         for (PetrolPump pump : getPetrolPumps()) {
-            for (PetrolPumpNozzle nozzle : pump.getPetrolPumpNozzles()) {
+            for (PetrolPumpNozzle nozzle : pump.getNozzles()) {
                 if (nozzle.getStatus() != null) {
                     if (nozzle.getStatus().toUpperCase().trim().equals("NOT WORKING")
                             || nozzle.getStatus().toUpperCase().trim().equals("REJECTED")) {
@@ -443,16 +442,14 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
             getLastAssignee().save(em);
 
-            em.getTransaction().begin();
-            Long savedId = BusinessEntityUtils.saveBusinessEntity(em, this);
-            em.getTransaction().commit();
-
-            if (savedId != null) {
-                for (PetrolPump petrolPump : petrolPumps) {
-                    petrolPump.setId(savedId);
-                    petrolPump.save(em);
-                }
+            for (PetrolPump petrolPump : petrolPumps) {
+                petrolPump.setOwnerId(id);
+                petrolPump.save(em);
             }
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
 
             return new ReturnMessage();
 

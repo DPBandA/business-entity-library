@@ -26,7 +26,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -68,8 +67,8 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     private Manufacturer manufacturer;
     @Transient
     private Boolean isDirty;
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    List<PetrolPumpNozzle> petrolPumpNozzles;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    List<PetrolPumpNozzle> nozzles;
 
     public PetrolPump(PetrolPump src, Long id) {
         this.id = id;
@@ -85,21 +84,21 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
 
     public PetrolPump() {
 
-        petrolPumpNozzles = new ArrayList<>();
+        nozzles = new ArrayList<>();
 
     }
 
-    public List<PetrolPumpNozzle> getPetrolPumpNozzles() {
+    public List<PetrolPumpNozzle> getNozzles() {
 
-        if (petrolPumpNozzles == null) {
-            petrolPumpNozzles = new ArrayList<>();
+        if (nozzles == null) {
+            nozzles = new ArrayList<>();
         }
-        
-        return petrolPumpNozzles;
+
+        return nozzles;
     }
 
-    public void setPetrolPumpNozzles(List<PetrolPumpNozzle> petrolPumpNozzles) {
-        this.petrolPumpNozzles = petrolPumpNozzles;
+    public void setNozzles(List<PetrolPumpNozzle> nozzles) {
+        this.nozzles = nozzles;
     }
 
     @Override
@@ -179,8 +178,8 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     }
 
     public Integer getNumberOfNozzles() {
-        
-        return getPetrolPumpNozzles().size();
+
+        return getNozzles().size();
     }
 
     public String getNumber() {
@@ -287,16 +286,14 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
 
             getManufacturer().save(em);
 
-            em.getTransaction().begin();
-            Long savedId = BusinessEntityUtils.saveBusinessEntity(em, this);
-            em.getTransaction().commit();
-
-            if (savedId != null) {
-                for (PetrolPumpNozzle petrolPumpNozzle : petrolPumpNozzles) {
-                    petrolPumpNozzle.setId(savedId);
-                    petrolPumpNozzle.save(em);
-                }
+            for (PetrolPumpNozzle petrolPumpNozzle : nozzles) {
+                petrolPumpNozzle.setOwnerId(id);
+                petrolPumpNozzle.save(em);
             }
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
 
             return new ReturnMessage();
         } catch (Exception e) {

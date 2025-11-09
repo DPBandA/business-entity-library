@@ -48,6 +48,7 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Long ownerId;
     private Long number;
     @OneToOne(cascade = CascadeType.REFRESH)
     private TestMeasure testMeasure;
@@ -60,6 +61,14 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
 
     public PetrolPumpNozzleCalibrationPoint(Long number) {
         this.number = number;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     public PetrolPumpNozzleCalibrationPoint(Long number,

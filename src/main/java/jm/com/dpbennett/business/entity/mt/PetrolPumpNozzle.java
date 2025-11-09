@@ -28,7 +28,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -65,7 +64,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     private String status;
     private String testMeasures;
     private String comments;
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<PetrolPumpNozzleCalibration> calibrations;
     @OneToOne(cascade = CascadeType.ALL)
     private Seal lastSealIssued;
@@ -359,18 +358,17 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
             getManufacturer().save(em);
 
-            em.getTransaction().begin();
-            Long savedId = BusinessEntityUtils.saveBusinessEntity(em, this);
-            em.getTransaction().commit();
-
-            if (savedId != null) {
-                for (PetrolPumpNozzleCalibration calibration : calibrations) {
-                    calibration.setId(savedId);
-                    calibration.save(em);
-                }
+            for (PetrolPumpNozzleCalibration calibration : calibrations) {
+                calibration.setOwnerId(id);
+                calibration.save(em);
             }
 
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
             return new ReturnMessage();
+
         } catch (Exception e) {
             System.out.println(e);
         }
