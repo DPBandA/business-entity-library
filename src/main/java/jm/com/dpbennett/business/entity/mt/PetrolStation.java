@@ -193,8 +193,6 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
         if (petrolPumps == null) {
 
-            // tk
-            // Get pumps here based on ownerId;
             petrolPumps = new ArrayList<>();
         }
 

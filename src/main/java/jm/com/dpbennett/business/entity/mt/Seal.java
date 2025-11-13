@@ -344,8 +344,8 @@ public class Seal implements Product, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getManufacturer().save(em);
-            getAssignee().save(em);
+            //getManufacturer().save(em);
+            //getAssignee().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

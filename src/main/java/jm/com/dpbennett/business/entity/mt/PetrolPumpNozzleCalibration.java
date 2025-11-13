@@ -160,7 +160,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
 
         this.calibrationDate = original.calibrationDate;
         this.reCalibrationDate = original.reCalibrationDate;
-        this.calibrationDoneBy = original.calibrationDoneBy;
+        //this.calibrationDoneBy = original.calibrationDoneBy;
         this.results = original.results;
         this.dateAndTimeRecorded = original.dateAndTimeRecorded;
     }
@@ -223,7 +223,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
             
             //getJob().save(em);
             
-            getCalibrationDoneBy().save(em);
+            //getCalibrationDoneBy().save(em);
             
             for (PetrolPumpNozzleCalibrationPoint calibrationPoint : calibrationPoints) {
                 calibrationPoint.setOwnerId(id);

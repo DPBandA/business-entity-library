@@ -94,10 +94,12 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
         this.tolerance = point.tolerance;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -151,15 +153,13 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+
         if (!(object instanceof PetrolPumpNozzleCalibrationPoint)) {
             return false;
         }
         PetrolPumpNozzleCalibrationPoint other = (PetrolPumpNozzleCalibrationPoint) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -174,42 +174,44 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
 
     @Override
     public Boolean getActive() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        return true;
     }
 
     @Override
     public void setActive(Boolean active) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return "";
     }
 
     @Override
     public void setName(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
     }
 
     @Override
     public String getType() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        return "";
     }
 
     @Override
     public void setType(String type) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
     }
 
     @Override
     public String getCategory() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        return "";
     }
 
     @Override
     public void setCategory(String category) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
@@ -235,6 +237,8 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
+            //getTestMeasure().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

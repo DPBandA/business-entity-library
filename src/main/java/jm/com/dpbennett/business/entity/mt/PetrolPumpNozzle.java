@@ -66,13 +66,13 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     private String comments;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<PetrolPumpNozzleCalibration> calibrations;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Seal lastSealIssued;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Sticker lastStickerIssued;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private PetrolPumpNozzleCalibration lastCalibration;
     @Transient
     private Boolean isDirty;
@@ -153,12 +153,13 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     }
 
     public Sticker getLastStickerIssued() {
+
         if (lastStickerIssued == null) {
             lastStickerIssued = new Sticker();
-            return lastStickerIssued;
-        } else {
-            return lastStickerIssued;
         }
+
+        return lastStickerIssued;
+
     }
 
     public void setLastStickerIssued(Sticker lastStickerIssued) {
@@ -168,10 +169,10 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     public Seal getLastSealIssued() {
         if (lastSealIssued == null) {
             lastSealIssued = new Seal();
-            return lastSealIssued;
-        } else {
-            return lastSealIssued;
         }
+
+        return lastSealIssued;
+
     }
 
     public void setLastSealIssued(Seal lastSealIssued) {
@@ -356,7 +357,10 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
         try {
 
+            getLastSealIssued().save(em);
+            getLastStickerIssued().save(em);            
             getManufacturer().save(em);
+            getLastCalibration().save(em);
 
             for (PetrolPumpNozzleCalibration calibration : calibrations) {
                 calibration.setOwnerId(id);
