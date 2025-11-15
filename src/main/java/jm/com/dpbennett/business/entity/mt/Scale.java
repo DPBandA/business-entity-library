@@ -69,12 +69,12 @@ public class Scale implements Product, BusinessEntity, Comparable {
     private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Certification certification;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Sticker> stickers;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateScheduledForTest;
     private String name;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client client;
     @Transient
     private Boolean isDirty;
@@ -308,14 +308,13 @@ public class Scale implements Product, BusinessEntity, Comparable {
         try {
             
             getManufacturer().save(em);
-            getCertification().save(em);
+            //getCertification().save(em);
+            getClient().save(em);
             
             for (Sticker sticker : stickers) {
                 sticker.save(em);
             }
             
-            getClient().save(em);
-
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
