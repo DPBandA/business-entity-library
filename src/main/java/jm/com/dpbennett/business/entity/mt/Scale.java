@@ -57,6 +57,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Boolean active;
     private String number;
     private String type;
     private String serialNumber;
@@ -254,6 +255,63 @@ public class Scale implements Product, BusinessEntity, Comparable {
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
 
+    public static List<Scale> findActive(
+            EntityManager em,
+            String searchText,
+            int maxSearchResults) {
+
+        try {
+
+            searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Scale> scales
+                    = em.createQuery("SELECT s FROM Scale s WHERE s.name like '%"
+                            + searchText + "%'"
+                            + " AND s.active = 1"
+                            + " ORDER BY s.name", Scale.class)
+                            .setMaxResults(maxSearchResults)
+                            .getResultList();
+
+            return scales;
+
+        } catch (Exception e) {
+
+            System.out.println(e);
+
+            return new ArrayList<>();
+
+        }
+
+    }
+
+    public static List<Scale> find(
+            EntityManager em,
+            String searchText,
+            int maxSearchResults) {
+
+        try {
+
+            searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Scale> scales
+                    = em.createQuery("SELECT s FROM Scale s WHERE s.name like '%"
+                            + searchText + "%'"
+                            + " ORDER BY s.name", Scale.class)
+                            .setMaxResults(maxSearchResults)
+                            .getResultList();
+
+            return scales;
+
+        } catch (Exception e) {
+
+            System.out.println(e);
+
+            return new ArrayList<>();
+
+        }
+
+    }
+
     public static List<Scale> findScalesByDateSearchField(
             EntityManager em,
             User user,
@@ -306,15 +364,15 @@ public class Scale implements Product, BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             getManufacturer().save(em);
             //getCertification().save(em);
             getClient().save(em);
-            
+
             for (Sticker sticker : stickers) {
                 sticker.save(em);
             }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -334,12 +392,18 @@ public class Scale implements Product, BusinessEntity, Comparable {
 
     @Override
     public Boolean getActive() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        if (active == null) {
+            active = true;
+        }
+
+        return active;
     }
 
     @Override
     public void setActive(Boolean active) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        this.active = active;
     }
 
     @Override
