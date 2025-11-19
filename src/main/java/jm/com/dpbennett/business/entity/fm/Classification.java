@@ -366,6 +366,7 @@ public class Classification implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

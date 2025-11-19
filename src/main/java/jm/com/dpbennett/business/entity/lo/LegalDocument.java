@@ -703,37 +703,16 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getDocumentType().getId() != null) {
-                getDocumentType().save(em);
-            }
-
-            if (getRequestingDepartment().getId() != null) {
-                getRequestingDepartment().save(em);
-            }
-
-            if (getResponsibleDepartment().getId() != null) {
-                getResponsibleDepartment().save(em);
-            }
-
-            if (getResponsibleOfficer().getId() != null) {
-                getResponsibleOfficer().save(em);
-            }
-
-            if (getSubmittedBy().getId() != null) {
-                getSubmittedBy().save(em);
-            }
-
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
-            }
-
+            getDocumentType().save(em);
+            getRequestingDepartment().save(em);
+            getResponsibleDepartment().save(em);
+            getResponsibleOfficer().save(em);
+            getSubmittedBy().save(em);
+            getClassification().save(em);
             if (getExternalClient().getId() != null) {
                 getExternalClient().save(em);
             }
-
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
-            }
+            getEditedBy().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
