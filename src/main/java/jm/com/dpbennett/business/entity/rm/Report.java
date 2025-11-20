@@ -30,7 +30,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -76,13 +75,13 @@ public class Report implements BusinessEntity {
     @Transient
     private Boolean isDirty;
     // Report parameters
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> employees;
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Client> clients;
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<DatePeriod> datePeriods;
     private Boolean departmentRequired;
     private Boolean employeeRequired;
@@ -544,7 +543,7 @@ public class Report implements BusinessEntity {
             for (Employee employee : employees) {
                 employee.save(em);
             }
-            
+
             for (Client client : clients) {
                 client.save(em);
             }
@@ -572,7 +571,7 @@ public class Report implements BusinessEntity {
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Report not saved");
+        return new ReturnMessage(false, "Report template not saved");
     }
 
     @Override

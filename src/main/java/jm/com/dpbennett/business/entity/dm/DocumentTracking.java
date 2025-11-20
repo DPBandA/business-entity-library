@@ -230,10 +230,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     public void setRequestingDepartment(Department requestingDepartment) {
         this.requestingDepartment = requestingDepartment;
     }
-    
-    public void saveDocument() {
-    }
-    
+  
     public Integer getMonthReceived() {
         Calendar c = Calendar.getInstance();
         
@@ -553,7 +550,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
         try {
             foundDocuments = em.createQuery(searchQuery, DocumentTracking.class).getResultList();
             if (foundDocuments == null) {
-                foundDocuments = new ArrayList<DocumentTracking>();
+                foundDocuments = new ArrayList<>();
             }
         } catch (Exception e) {
             System.out.println(e);
