@@ -573,18 +573,24 @@ public class Job implements BusinessEntity {
         return copy;
     }
 
-    public static Job create(EntityManager em,
+    public static Job create(
+            EntityManager em,
+            EntityManager hrem,
+            EntityManager fmem,
             String name,
             User user,
             Boolean autoGenerateJobNumber) {
 
-        Job job = Job.create(em, user, autoGenerateJobNumber);
+        Job job = Job.create(em, hrem, fmem, user, autoGenerateJobNumber);
         job.name = name;
 
         return job;
     }
 
-    public static Job create(EntityManager em,
+    public static Job create(
+            EntityManager em,
+            EntityManager hrem,
+            EntityManager fmem,
             User user,
             Boolean autoGenerateJobNumber) {
 
@@ -594,24 +600,18 @@ public class Job implements BusinessEntity {
         job.setContact(job.getClient().getDefaultContact());
         job.setReportNumber("");
         job.setJobDescription("");
-        job.setSubContractedDepartment(Department.findDefault(em, "--"));
+        job.setSubContractedDepartment(Department.findDefault(hrem, "--"));
 
-        // tk the way the user's org. is obtained could be changed
-        Business business = User.getUserOrganizationByDepartment(em, user);
+        Business business = User.getUserOrganizationByDepartment(hrem, user);
         if (business != null) {
             job.setBusiness(business);
         }
-//        else { // tk the "default org." may be changed in each deployment
-//            String businessName = SystemOption.getString(em, "organizationName");
-//            business = Business.findByName(em, businessName);
-//            job.setBusiness(business);
-//        }
 
-        job.setBusinessOffice(BusinessOffice.findDefaultBusinessOffice(em, "Head Office"));
+        job.setBusinessOffice(BusinessOffice.findDefaultBusinessOffice(hrem, "Head Office"));
         job.setClassification(new Classification());
-        job.setSector(Sector.findSectorByName(em, "--"));
-        job.setJobCategory(JobCategory.findJobCategoryByName(em, "--"));
-        job.setJobSubCategory(JobSubCategory.findJobSubCategoryByName(em, "--"));
+        job.setSector(Sector.findSectorByName(fmem, "--"));
+        job.setJobCategory(JobCategory.findJobCategoryByName(fmem, "--"));
+        job.setJobSubCategory(JobSubCategory.findJobSubCategoryByName(fmem, "--"));
         // service contract
         job.setServiceContract(new ServiceContract());
         // set default values
