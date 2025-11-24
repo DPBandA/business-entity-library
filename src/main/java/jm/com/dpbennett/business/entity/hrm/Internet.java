@@ -265,7 +265,19 @@ public class Internet implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+            
+        } catch (Exception e) {
+            System.out.println("Internet save exception: " + e);
+        }
+
+        return new ReturnMessage(false, "Internet not saved");
     }
 
     @Override

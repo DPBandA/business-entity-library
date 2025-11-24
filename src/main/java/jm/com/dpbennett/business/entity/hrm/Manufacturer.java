@@ -75,13 +75,13 @@ public class Manufacturer implements BusinessEntity, Comparable {
     private Date dateLastVisited;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<MarketProduct> marketProducts;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Contact> contacts;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Address> addresses;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee productLastSampledBy;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Internet internet;
     @Column(length = 1024)
     private String notes;

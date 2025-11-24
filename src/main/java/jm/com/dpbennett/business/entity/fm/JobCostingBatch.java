@@ -53,9 +53,9 @@ public class JobCostingBatch implements Serializable, BusinessEntity {
     private Long id;
     private String batchNumber;
     private String jobNumber;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client client;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Job> jobs;
 
     public JobCostingBatch() {

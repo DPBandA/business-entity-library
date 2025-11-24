@@ -65,11 +65,11 @@ public class Supplier implements BusinessEntity, Comparable {
     private String name;
     private String number;
     private String type;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Contact> contacts;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Address> addresses;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Internet internet;
     @Column(length = 1024)
     private String notes;

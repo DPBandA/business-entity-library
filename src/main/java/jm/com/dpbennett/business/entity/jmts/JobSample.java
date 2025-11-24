@@ -63,7 +63,6 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    // general
     private Long id;
     private Long jobId;
     private String name;
@@ -86,16 +85,6 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     private String sampleSize;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client client;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<ProductTest> tests;
-    // end new
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateReceived;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateSampled;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateReturned;
-    private Integer methodOfDisposal;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -104,7 +93,16 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     private Employee sampledBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee receivedBy;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<ProductTest> tests;
     private String countryOfOrigin;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateReceived;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateSampled;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateReturned;
+    private Integer methodOfDisposal;
     @Transient
     private Boolean isToBeAdded;
     @Transient
@@ -263,6 +261,10 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     }
 
     public List<ProductTest> getTests() {
+        if (tests == null) {
+            tests = new ArrayList<>();
+        }
+
         return tests;
     }
 
@@ -280,7 +282,6 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Override
     public Employee getReceivedBy() {
-
         return receivedBy;
     }
 
@@ -294,6 +295,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
         if (sampledBy == null) {
             return new Employee();
         }
+        
         return sampledBy;
     }
 
@@ -617,24 +619,24 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
                 getClient().save(em);
             }
 
-            for (ProductTest test : tests) {
-                test.save(em);
-            }
-            
             if (getManufacturer() != null) {
                 getManufacturer().save(em);
             }
-            
-            if (getRegulatoryOffice()!= null) {
+
+            if (getRegulatoryOffice() != null) {
                 getRegulatoryOffice().save(em);
             }
-            
-            if (getSampledBy()!= null) {
+
+            if (getSampledBy() != null) {
                 getSampledBy().save(em);
             }
-            
-            if (getReceivedBy()!= null) {
+
+            if (getReceivedBy() != null) {
                 getReceivedBy().save(em);
+            }
+
+            for (ProductTest test : getTests()) {
+                test.save(em);
             }
 
             em.getTransaction().begin();

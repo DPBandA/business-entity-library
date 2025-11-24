@@ -98,7 +98,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     private Integer yearReceived;
     private Integer turnAroundTime;
     private Long numberOfDocuments;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client externalClient;
     @Column(length = 1024)
     private String goal;

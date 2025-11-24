@@ -63,18 +63,18 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     private String name;
     private String number;
     private String type;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Contact> contacts;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Address> addresses;
     private String notes;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateFirstReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastAccessed;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<PetrolStation> petrolStations;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<BusinessOffice> businessOffices;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Internet internet;

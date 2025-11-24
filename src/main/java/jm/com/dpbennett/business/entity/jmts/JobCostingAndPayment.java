@@ -68,10 +68,6 @@ public class JobCostingAndPayment implements BusinessEntity {
     private String purchaseOrderNumber;
     private String receiptNumber;
     private String paymentTerms;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<CashPayment> cashPayments;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<CostComponent> costComponents;
     private Double estimatedCost;
     private String estimatedCostDoneBy;
     private Double finalCost;
@@ -88,16 +84,22 @@ public class JobCostingAndPayment implements BusinessEntity {
     private Employee costingApprovedBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee costingInvoicedBy;
-    private Double minDeposit;
-    private Double totalTax;
-    private Double totalCost;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee lastPaymentEnteredBy;
-    private String percentageGCT;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Tax tax;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Currency currency;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<CashPayment> cashPayments;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<CostComponent> costComponents;
+    private Double minDeposit;
+    private Double totalTax;
+    private Double totalCost;
+    private String percentageGCT;
     private String discountType;
     @Column(name = "DISCOUNT")
     private Double discountValue;
@@ -107,8 +109,6 @@ public class JobCostingAndPayment implements BusinessEntity {
     @Column(length = 1024)
     private String description;
     private Boolean estimate;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Currency currency;
 
     public JobCostingAndPayment() {
         this.totalCost = 0.0;
@@ -357,10 +357,6 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Employee getLastPaymentEnteredBy() {
-
-        if (lastPaymentEnteredBy == null) {
-            return new Employee();
-        }
 
         return lastPaymentEnteredBy;
     }
@@ -1073,33 +1069,6 @@ public class JobCostingAndPayment implements BusinessEntity {
 
         try {
 
-            if (!getCashPayments().isEmpty()) {
-                for (CashPayment payment : getCashPayments()) {
-                    if ((payment.getIsDirty() || payment.getId() == null)
-                            && !payment.save(em).isSuccess()) {
-                        return new ReturnMessage(false,
-                                "Payment save error occurred",
-                                "An error occurred while saving a payment",
-                                Message.SEVERITY_ERROR_NAME);
-                    }
-                }
-            }
-
-            // Save new/edited cost components
-            if (!getCostComponents().isEmpty()) {
-                for (CostComponent costComponent : getCostComponents()) {
-                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
-                            && !costComponent.save(em).isSuccess()) {
-
-                        return new ReturnMessage(false,
-                                "Cost component save error occurred",
-                                "An error occurred while saving a cost component",
-                                Message.SEVERITY_ERROR_NAME);
-
-                    }
-                }
-            }
-
             if (getCostingPreparedBy() != null) {
                 getCostingPreparedBy().save(em);
             }
@@ -1112,37 +1081,41 @@ public class JobCostingAndPayment implements BusinessEntity {
                 getCostingInvoicedBy().save(em);
             }
 
-            if (getLastPaymentEnteredBy().getId() != null) {
+            if (getLastPaymentEnteredBy() != null) {
                 getLastPaymentEnteredBy().save(em);
             }
 
-            if (getTax().getId() != null) {
-                getTax().save(em);
+            getTax().save(em);
+            getDiscount().save(em);
+            getCurrency().save(em);
+
+            for (CashPayment payment : getCashPayments()) {
+                if (!payment.save(em).isSuccess()) {
+
+                    return new ReturnMessage(false,
+                            "Payment save error occurred",
+                            "An error occurred while saving a payment",
+                            Message.SEVERITY_ERROR_NAME);
+
+                }
             }
 
-            if (getDiscount().getId() != null) {
-                getDiscount().save(em);
+            for (CostComponent costComponent : getCostComponents()) {
+                if (!costComponent.save(em).isSuccess()) {
+
+                    return new ReturnMessage(false,
+                            "Cost component save error occurred",
+                            "An error occurred while saving a cost component",
+                            Message.SEVERITY_ERROR_NAME);
+
+                }
             }
 
-            if (getCurrency().getId() != null) {
-                getCurrency().save(em);
-            }
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
 
-            // Save   
-            if (isDirty || id == null) {
-
-                isDirty = false;
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, this);
-                em.getTransaction().commit();
-
-                return new ReturnMessage();
-            } else {
-                return new ReturnMessage(true,
-                        "Costing and payment NOT saved",
-                        "Not saved because it was not edited",
-                        Message.SEVERITY_INFO_NAME);
-            }
+            isDirty = false;
 
         } catch (Exception e) {
 
@@ -1153,6 +1126,8 @@ public class JobCostingAndPayment implements BusinessEntity {
                     "An error occurred while saving the job costing and payment: " + e,
                     Message.SEVERITY_ERROR_NAME);
         }
+
+        return new ReturnMessage();
 
     }
 

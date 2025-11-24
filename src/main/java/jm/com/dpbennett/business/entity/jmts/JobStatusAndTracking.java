@@ -58,15 +58,15 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     private String jobTransferedTo; // to be removed
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee transferredTo;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateTransfered; // tk change name dateTransferred   
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee completedBy;
-    private String productOrSampleReceivedBy;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateTransfered; // tk change name to dateTransferred    
+    private String productOrSampleReceivedBy; // tk change to Employee entity
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateProductOrSampleReceived;
     @Column(length = 1024)
@@ -459,7 +459,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
             return false;
         }
         JobStatusAndTracking other = (JobStatusAndTracking) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -485,7 +485,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
 
     @Override
     public void setName(String name) {
-        
+
     }
 
     @Override
@@ -535,19 +535,19 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
             if (getTransferredTo() != null) {
                 getTransferredTo().save(em);
             }
-            
+
             if (getEnteredBy() != null) {
                 getEnteredBy().save(em);
             }
-            
+
             if (getEditedBy() != null) {
                 getEditedBy().save(em);
             }
-            
+
             if (getCompletedBy() != null) {
                 getCompletedBy().save(em);
             }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

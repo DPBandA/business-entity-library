@@ -56,7 +56,7 @@ public class JobReportItem implements BusinessEntity, Comparable {
     private Long id;
     private String name;
     private Double itemValue;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
     @Transient
     private Boolean isDirty;

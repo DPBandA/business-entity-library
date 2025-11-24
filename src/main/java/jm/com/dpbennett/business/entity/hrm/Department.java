@@ -64,14 +64,20 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Boolean active;
+    private String name;
     @Column(name = "subGroupCode")
     private String code;
     private String jobCostingType;
-    private String name;
+    private Boolean actingHeadActive;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee head;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee actingHead;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Internet internet;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Privilege privilege;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<JobCategory> jobCategories;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -80,12 +86,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     private List<Laboratory> laboratories;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<DepartmentUnit> departmentUnits;
-    private Boolean active;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Internet internet;
-    private Boolean actingHeadActive;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Privilege privilege;
+
     @Transient
     private Boolean isDirty;
 
@@ -175,6 +176,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         if (laboratories == null) {
             laboratories = new ArrayList<>();
         }
+        
         return laboratories;
     }
 
@@ -358,9 +360,9 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static List<Department> findAllActive(EntityManager em) {
 
         try {
-            
+
             return em.createQuery("SELECT d FROM Department d WHERE d.active = 1 ORDER BY d.name", Department.class).getResultList();
-      
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -389,7 +391,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public static Department findActiveByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Department> departments = em.createQuery("SELECT d FROM Department d "
@@ -398,7 +400,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
             if (!departments.isEmpty()) {
                 return departments.get(0);
             }
-                       
+
             return null;
         } catch (Exception e) {
             System.out.println(e);
@@ -478,14 +480,25 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            for (JobCategory jobCategory : getJobCategories()) {
-                if (jobCategory.getId() != null) {
-                    jobCategory.save(em);
-                }
-            }
+            getHead().save(em);
+            getActingHead().save(em);
+            getInternet().save(em);
+            getPrivilege().save(em);
 
-            if (getPrivilege().getId() != null) {
-                getPrivilege().save(em);
+            for (JobCategory jobCategory : getJobCategories()) {
+                jobCategory.save(em);
+            }
+            
+            for (Employee employee : getStaff()) {
+                employee.save(em);
+            }
+            
+            for (Laboratory laboratory : getLaboratories()) {
+                laboratory.save(em);
+            }
+            
+            for (DepartmentUnit departmentUnit : getDepartmentUnits()) {
+                departmentUnit.save(em);
             }
 
             em.getTransaction().begin();
@@ -493,6 +506,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
             em.getTransaction().commit();
 
             return new ReturnMessage();
+            
         } catch (Exception e) {
             System.out.println("Department save exception: " + e);
         }

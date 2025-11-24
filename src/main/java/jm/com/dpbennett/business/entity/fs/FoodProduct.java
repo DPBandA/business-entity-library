@@ -66,7 +66,7 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     private Date dateLastManufactured;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastTested;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Category> categories;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;

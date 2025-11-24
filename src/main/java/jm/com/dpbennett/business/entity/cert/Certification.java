@@ -66,7 +66,7 @@ public class Certification implements CertificationInterface {
     private Date dateIssued;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date expiryDate;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client applicant;
     @Transient
     private Boolean isDirty;

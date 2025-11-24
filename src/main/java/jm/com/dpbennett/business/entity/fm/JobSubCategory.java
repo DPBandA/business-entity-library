@@ -59,14 +59,11 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    //@Column(name = "SubCategory")
     private String subCategory;
-    //@Column(name = "IsEarning")
     private Boolean isEarning;
     private Boolean isTaxable;
-    //@Column(name = "CategoryId")
     private Long categoryId;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
     private Boolean active;
     @Column(length = 1024)
@@ -228,9 +225,9 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     public static JobSubCategory findJobSubCategoryById(EntityManager em, Long Id) {
 
         try {
-            
+
             return em.find(JobSubCategory.class, Id);
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -240,7 +237,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     public static JobSubCategory findJobSubCategoryByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<JobSubCategory> jobSubCategories
@@ -291,7 +288,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     public static List<JobSubCategory> findJobSubcategoriesByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<JobSubCategory> jobSubcategories
@@ -308,14 +305,14 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
             EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<JobSubCategory> jobSubcategories
                     = em.createQuery("SELECT j FROM JobSubCategory j where UPPER(j.subCategory) like '%"
                             + name.toUpperCase().trim() + "%' AND j.active = 1 ORDER BY j.subCategory", JobSubCategory.class).getResultList();
             return jobSubcategories;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -325,14 +322,14 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     public static List<JobSubCategory> findAllJobSubCategoriesByDepartment(
             EntityManager em, Department department) {
         try {
-            
+
             List<JobSubCategory> jobSubCategories
                     = em.createQuery(
                             "SELECT j FROM JobSubCategory j JOIN j.departments department"
                             + " WHERE department.name = '" + department.getName().trim() + "'"
                             + " ORDER BY j.subCategory", JobSubCategory.class).getResultList();
             return jobSubCategories;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -341,9 +338,9 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
 
     public static List<JobSubCategory> findAllJobSubCategoriesGroupedByEarningsByDepartment(
             EntityManager em, Department department) {
-        
+
         try {
-            
+
             List<JobSubCategory> earningJobSubCategories = new ArrayList<>();
             List<JobSubCategory> nonEarningJobSubCategories = new ArrayList<>();
             List<JobSubCategory> jobSubCategories
@@ -392,17 +389,17 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     }
 
     public static List<String> findAllJobSubCategoryNames(EntityManager em) {
-        
+
         ArrayList<String> names = new ArrayList<>();
 
         try {  // use String.class
-            
+
             List<JobSubCategory> jobSubCategories = em.createNamedQuery("findAllJobSubCategories", JobSubCategory.class).getResultList();
             for (JobSubCategory jobSubCategory : jobSubCategories) {
                 names.add(jobSubCategory.getSubCategory());
             }
             return names;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -445,10 +442,8 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     public ReturnMessage save(EntityManager em) {
         try {
 
-            for (Department department : departments) {
-                if (department.getId() != null) {
-                    department.save(em);
-                }
+            for (Department department : getDepartments()) {
+                department.save(em);
             }
 
             em.getTransaction().begin();

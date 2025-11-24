@@ -58,7 +58,7 @@ public class Laboratory implements BusinessEntity, Company {
     private String name;
     private String type;
     private String number;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<BusinessOffice> businessOffices;
     private Boolean active;
     @Transient
@@ -251,7 +251,22 @@ public class Laboratory implements BusinessEntity, Company {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         try {
+
+            for (BusinessOffice office : getBusinessOffices()) {
+                office.save(em);
+            }
+        
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println("Laboratory save exception: " + e);
+        }
+
+        return new ReturnMessage(false, "Laboratory not saved");
     }
 
     @Override

@@ -30,7 +30,6 @@ import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -71,24 +70,24 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private String username;
     private String title;
     private String name;
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    private List<EmployeePosition> positions;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Internet internet;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Address> addresses;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<PhoneNumber> phoneNumbers;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Signature signature;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department department;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<EmployeePosition> positions;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Address> addresses;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<PhoneNumber> phoneNumbers;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date birthDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateHired;
     private String notes;
     private Boolean active;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Signature signature;
     @Transient
     private Boolean isDirty;
 
@@ -173,6 +172,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         if (positions == null) {
             positions = new ArrayList<>();
         }
+
         return positions;
     }
 
@@ -230,6 +230,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         if (internet == null) {
             internet = new Internet();
         }
+
         return internet;
     }
 
@@ -242,6 +243,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         if (department == null) {
             department = new Department();
         }
+
         return department;
     }
 
@@ -250,6 +252,11 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     }
 
     public List<Address> getAddresses() {
+
+        if (addresses == null) {
+            addresses = new ArrayList<>();
+        }
+
         return addresses;
     }
 
@@ -714,8 +721,22 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public ReturnMessage save(EntityManager em) {
         try {
 
+            getInternet().save(em);
+
             if (getSignature() != null) {
                 getSignature().save(em);
+            }
+
+            for (EmployeePosition position : getPositions()) {
+                position.save(em);
+            }
+
+            for (Address address : getAddresses()) {
+                address.save(em);
+            }
+            
+            for (PhoneNumber phoneNumber : getPhoneNumbers()) {
+                phoneNumber.save(em);
             }
 
             em.getTransaction().begin();

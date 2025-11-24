@@ -95,7 +95,7 @@ public class ServiceRequest implements BusinessEntity {
     // tk Add list of services instead. Delete field from database table.
 //    @OneToOne(cascade = CascadeType.REFRESH)
 //    private Service service;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Contact contact;
     // tracking
     @Temporal(javax.persistence.TemporalType.DATE)

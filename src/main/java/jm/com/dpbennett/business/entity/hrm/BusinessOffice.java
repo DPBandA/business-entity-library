@@ -55,9 +55,9 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Internet internet;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Address address;
     private String code;
     private Boolean active;
@@ -144,6 +144,10 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     }
 
     public Internet getInternet() {
+        if (internet == null) {
+            internet = new Internet();
+        }
+
         return internet;
     }
 
@@ -155,6 +159,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
         if (address == null) {
             address = new Address();
         }
+        
         return address;
     }
 
@@ -214,7 +219,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<BusinessOffice> businessOffices
@@ -231,7 +236,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<BusinessOffice> businessOffices
@@ -292,7 +297,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     public static BusinessOffice findBusinessOfficeByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<BusinessOffice> offices = em.createQuery("SELECT b FROM BusinessOffice b "
@@ -340,6 +345,10 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
+
+            getInternet().save(em);
+            getAddress().save(em);
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -349,7 +358,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Business not saved");
+        return new ReturnMessage(false, "Business Office not saved");
 
     }
 

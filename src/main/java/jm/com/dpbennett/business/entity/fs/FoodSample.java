@@ -82,7 +82,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     private Employee sampledBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee receivedBy;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<FoodTest> tests;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Laboratory assignedLab;

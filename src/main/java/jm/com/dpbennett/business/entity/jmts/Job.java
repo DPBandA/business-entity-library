@@ -76,6 +76,8 @@ public class Job implements BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String name;
+    private String type;
     private String jobNumber;
     private Boolean autoGenerateJobNumber;
     private Long jobSequenceNumber;
@@ -88,6 +90,8 @@ public class Job implements BusinessEntity {
     private Boolean locked;
     private Boolean isEarningJob;
     private Boolean newClient;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Job parent;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Classification classification;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -103,25 +107,32 @@ public class Job implements BusinessEntity {
     private JobCategory jobCategory;
     @OneToOne(cascade = CascadeType.REFRESH)
     private JobSubCategory jobSubCategory;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<JobSample> jobSamples;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedTo;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private JobCostingAndPayment jobCostingAndPayment;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private ServiceContract serviceContract;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private JobStatusAndTracking jobStatusAndTracking;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Business business;
     @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice businessOffice;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Address billingAddress;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Contact contact;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<JobSample> jobSamples;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Employee> representatives;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Service> services;
     @Column(length = 1024)
     private String jobDescription;
     @Column(length = 1024)
     private String instructions;
-    // Service quantities
     private Integer noOfTests;
     private Integer noOfCalibrations;
     private Integer noOfTestsOrCalibrations;
@@ -131,30 +142,17 @@ public class Job implements BusinessEntity {
     private Integer noOfCertifications;
     private Integer noOfConsultations;
     private Integer noOfOtherAssessments;
+    private String serviceLocation;
+    @Transient
+    private List<BusinessEntity.Action> actions;
     @Transient
     private Boolean isToBeSubcontracted;
     @Transient
     private Boolean isToBeCopied;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Address billingAddress;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Contact contact;
     @Transient
     private Boolean isDirty;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Job parent;
-    @Transient
-    private String name;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Employee> representatives;
     @Transient
     private Boolean visited;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Service> services;
-    private String serviceLocation;
-    @Transient
-    private List<BusinessEntity.Action> actions;
-    private String type;
 
     public Job() {
         this.name = "";
@@ -183,9 +181,9 @@ public class Job implements BusinessEntity {
         this.jobSamples = new ArrayList<>();
         this.actions = new ArrayList<>();
     }
-    
+
     public Boolean getIsNew() {
-        
+
         return id == null;
     }
 
@@ -412,6 +410,10 @@ public class Job implements BusinessEntity {
     }
 
     public Job getParent() {
+        if (parent == null) {
+            return new Job();
+        }
+
         return parent;
     }
 
@@ -1031,8 +1033,6 @@ public class Job implements BusinessEntity {
 
     public List<JobSample> getJobSamples() {
         if (jobSamples == null) {
-            //    Collections.sort(jobSamples);
-            //} else {
             jobSamples = new ArrayList<>();
         }
 
@@ -2065,60 +2065,60 @@ public class Job implements BusinessEntity {
 
         try {
 
+            if (getParent().getId() != null) {
+                getParent().save(em);
+            }
             getClassification().save(em);
             getSector().save(em);
             getDepartment().save(em);
             getSubContractedDepartment().save(em);
-            getClient().save(em);            
+            getClient().save(em);
             getJobCategory().save(em);
-            getJobSubCategory().save(em);  
-            getAssignedTo().save(em);            
-            getJobCostingAndPayment().save(em);            
+            getJobSubCategory().save(em);
+            getAssignedTo().save(em);
+
+            returnMessage = getJobCostingAndPayment().save(em);
+            if (!returnMessage.isSuccess()) {
+
+                return new ReturnMessage(false,
+                        "Job Costing and Payment save error occurred",
+                        "An error occurred while saving the job costing and payment"
+                        + "\nDetails: " + returnMessage.getDetail(),
+                        Message.SEVERITY_ERROR_NAME);
+            }
+
             getServiceContract().save(em);
-            getJobStatusAndTracking().save(em);            
+            getJobStatusAndTracking().save(em);
             getBusiness().save(em);
             getBusinessOffice().save(em);
             getBillingAddress().save(em);
             getContact().save(em);
-            
+
+            for (JobSample jobSample : getJobSamples()) {
+
+                returnMessage = jobSample.save(em);
+
+                if (!returnMessage.isSuccess()) {
+
+                    return new ReturnMessage(false,
+                            "Job sample save error occurred",
+                            "An error occurred while saving job sample"
+                            + jobSample.getReference()
+                            + "\nDetails: " + returnMessage.getDetail(),
+                            Message.SEVERITY_ERROR_NAME);
+
+                }
+
+            }
+
             for (Employee representative : getRepresentatives()) {
                 representative.save(em);
             }
-            
+
             for (Service service : getServices()) {
                 service.save(em);
             }
-            
-            if (!this.getJobSamples().isEmpty()) {
-                for (JobSample jobSample : this.getJobSamples()) {
 
-                    // Save newly entered samples 
-                    returnMessage = jobSample.save(em);
-
-                    if ((jobSample.getIsDirty() || jobSample.getId() == null)
-                            && !returnMessage.isSuccess()) {
-
-                        return new ReturnMessage(false,
-                                "Job sample save error occurred",
-                                "An error occurred while saving job sample"
-                                + jobSample.getReference()
-                                + "\nDetails: " + returnMessage.getDetail(),
-                                Message.SEVERITY_ERROR_NAME);
-
-                    }
-
-                    // "Clean" sample
-                    jobSample.setIsDirty(false);
-                }
-            }
-
-            returnMessage = jobCostingAndPayment.save(em);
-
-            if (!returnMessage.isSuccess()) {
-                return returnMessage;
-            }
-
-            // Save job
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

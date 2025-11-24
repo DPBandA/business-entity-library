@@ -57,7 +57,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     private Date entryDocumentReportDate;
     private String containerNumbers;
     private String containerSizes;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<ShippingContainer> shippingContainers;
     private Double CIF;
     private Double SCF;

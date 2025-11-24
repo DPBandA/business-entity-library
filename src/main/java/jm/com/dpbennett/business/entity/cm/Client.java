@@ -66,15 +66,28 @@ public class Client implements ClientInterface {
     private String name;
     private String number;
     private String type;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Contact> contacts;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Address> addresses;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee enteredBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee editedBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Internet internet;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Address billingAddress;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Contact billingContact;    
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Discount discount;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Tax defaultTax;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Contact> contacts;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Address> addresses;
     @Column(length = 1024)
     private String notes;
     private Boolean internal;
+    private Double creditLimit;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateFirstReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -83,33 +96,19 @@ public class Client implements ClientInterface {
     private Date dateEntered;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee enteredBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee editedBy;
     private Boolean tag;
     private String taxRegistrationNumber;
     private Boolean active;
     private Boolean international;
-    // Billing  
-    @Transient
-    private AccPacCustomer financialAccount;
     private String accountingId;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Address billingAddress;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Contact billingContact;
-    private Double creditLimit;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Discount discount;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Tax defaultTax;
     private Boolean taxExempt;
     private String typeOfBusiness;
     private String identification;
     private String identificationType;
     @Transient
     private Boolean isDirty;
+    @Transient
+    private AccPacCustomer financialAccount;
 
     public Client() {
         this.taxRegistrationNumber = "";
@@ -225,6 +224,7 @@ public class Client implements ClientInterface {
                 billingContact = getContacts().get(0);
             }
         }
+        
         return billingContact;
     }
 
@@ -462,6 +462,7 @@ public class Client implements ClientInterface {
         if (internet == null) {
             internet = new Internet();
         }
+        
         return internet;
     }
 
@@ -1039,20 +1040,19 @@ public class Client implements ClientInterface {
             if (getEditedBy() != null) {
                 getEditedBy().save(em);
             }
-            
+
+            getInternet().save(em);
+            getBillingAddress().save(em);
+            getBillingContact().save(em);
             getDiscount().save(em);
             getDefaultTax().save(em);
 
-            // Save contacts and addresses
-            for (Contact contact : getContacts()) {
-                if (contact.getId() == null) {
-                    contact.save(em);
-                }
+            for (Contact contact : getContacts()) {               
+                    contact.save(em);                
             }
-            for (Address address : getAddresses()) {
-                if (address.getId() == null) {
-                    address.save(em);
-                }
+            
+            for (Address address : getAddresses()) {               
+                    address.save(em);                
             }
 
             em.getTransaction().begin();

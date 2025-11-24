@@ -62,7 +62,7 @@ public class PetrolPumpCalibration implements Calibration, Comparable,
     private Date reCalibrationDate;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee calibrationDoneBy;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<PetrolPumpCalibrationValue> calibrationValues;
     
     public PetrolPumpCalibration() {

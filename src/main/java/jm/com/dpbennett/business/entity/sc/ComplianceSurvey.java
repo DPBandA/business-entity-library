@@ -93,7 +93,7 @@ public class ComplianceSurvey implements BusinessEntity {
     private String typeOfPortOfEntry;
     private String portOfEntry;
     private String inspectionPoint;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Address inspectionAddress;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client consignee;
@@ -116,12 +116,12 @@ public class ComplianceSurvey implements BusinessEntity {
     private String referenceNumber;
     @Column(length = 1024)
     private String reasonForDetention;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Address specifiedReleaseLocation;
     // Notice of refease from detention
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Address specifiedReleaseLocationDomesticMarket;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Address locationOfDetainedProductDomesticMarket;
     private Boolean retailer;
     private Boolean distributor;
@@ -185,7 +185,7 @@ public class ComplianceSurvey implements BusinessEntity {
     private Employee editedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private EntryDocumentInspection entryDocumentInspection;
     private String jobNumber;
     @OneToMany(cascade = CascadeType.REFRESH)

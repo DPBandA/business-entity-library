@@ -66,7 +66,7 @@ public class FinancialAccount implements
     private FinancialAccount parent;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<FinancialAccount> children;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private AccountingCode code;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;

@@ -399,11 +399,13 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
+            
         } catch (Exception e) {
             System.out.println(e);
         }

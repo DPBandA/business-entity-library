@@ -59,9 +59,11 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private String type;
     private String notes;
     private String taxRegistrationNumber;
+    private String departmentLabel;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee head;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
-    private String departmentLabel;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Address> addresses;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -71,8 +73,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateFirstReceived;
     private Boolean active;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee head;
     private String domainName;
     @Transient
     private Boolean isDirty;
@@ -140,7 +140,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     public Employee getHead() {
-        
+
         return head;
     }
 
@@ -209,7 +209,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
             return false;
         }
         Business other = (Business) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -321,9 +321,9 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public static Business findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Business> businesses = em.createQuery("SELECT b FROM Business b "
                     + "WHERE UPPER(b.name) "
                     + "= '" + value.toUpperCase() + "'", Business.class).getResultList();
@@ -371,9 +371,9 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public static List<Business> findAllByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Business> businesses
                     = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY b.name", Business.class).getResultList();
@@ -383,13 +383,13 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Business> findAllActiveByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Business> businesses
                     = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
                             + value.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", Business.class).getResultList();
@@ -402,8 +402,23 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        
+
         try {
+            
+            getHead().save(em);
+            
+            for (Department department : getDepartments()) {
+                department.save(em);
+            }
+            
+            for (Address address : getAddresses()) {
+               address.save(em);
+            }
+            
+            for (Contact contact : getContacts()) {
+                contact.save(em);
+            }
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -414,7 +429,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
 
         return new ReturnMessage(false, "Business not saved");
-        
+
     }
 
     @Override

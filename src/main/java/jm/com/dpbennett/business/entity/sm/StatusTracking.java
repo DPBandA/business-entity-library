@@ -57,7 +57,7 @@ public class StatusTracking implements BusinessEntity {
     @Column(length = 1024)
     private String valueTracked;
     private String valueTrackedType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private StatusNote statusNote;
 
     @Override

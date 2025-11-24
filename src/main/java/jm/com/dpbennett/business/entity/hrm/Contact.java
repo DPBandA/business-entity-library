@@ -63,11 +63,11 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     private String lastName;
     private String middleName;
     private String notes;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Internet internet;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<PhoneNumber> phoneNumbers;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Address> addresses;
     @Transient
     private Boolean isDirty;
@@ -128,7 +128,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     }
 
     public List getContactTypes() {
-        
+
         return new ArrayList();
         //throw new UnsupportedOperationException("Not supported yet: getContactTypes() to be put in Contact class");
         //return Application.getStringListAsSortableSelectItems(getEntityManager(), "personalContactTypes");
@@ -194,6 +194,11 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     }
 
     public List<Address> getAddresses() {
+
+        if (addresses == null) {
+            addresses = new ArrayList<>();
+        }
+
         return addresses;
     }
 
@@ -205,6 +210,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         if (internet == null) {
             internet = new Internet();
         }
+
         return internet;
     }
 
@@ -275,7 +281,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
             return false;
         }
         Contact other = (Contact) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -409,16 +415,16 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
      * @param lastName
      * @return
      */
-    public static Contact findContactByName(EntityManager em, 
+    public static Contact findContactByName(EntityManager em,
             String firstName, String lastName) {
 
         if (firstName != null && lastName != null) {
-           
+
             try {
-                
+
                 firstName = firstName.replaceAll("&amp;", "&").replaceAll("'", "`");
                 lastName = lastName.replaceAll("&amp;", "&").replaceAll("'", "`");
-                              
+
                 List<Contact> contacts = em.createQuery("SELECT c FROM Contact c "
                         + "WHERE UPPER(c.firstName) "
                         + "= '" + firstName + "' AND UPPER(c.lastName) = '" + lastName + "'",
@@ -444,11 +450,11 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
      * @param clientId
      * @return
      */
-    public static Contact findClientContactById(EntityManager em, 
+    public static Contact findClientContactById(EntityManager em,
             String query, Long clientId) {
 
         try {
-           
+
             String contacts[] = query.split(", ");
             String lastname = contacts[0];
             String firstname = contacts[1];
@@ -474,7 +480,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public static Contact findClientContact(EntityManager em, String query, Client client) {
 
         try {
-            
+
             String contacts[] = query.split(", ");
             String lastname = contacts[0];
             String firstname = contacts[1];
@@ -518,11 +524,11 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         }
     }
 
-    public static Contact findContact(EntityManager em, 
+    public static Contact findContact(EntityManager em,
             String query, List<Contact> contactsList) {
 
         try {
-            
+
             String contacts[] = query.split(", ");
             String lastname = contacts[0];
             String firstname = contacts[1];
@@ -546,7 +552,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
             String firstName,
             String lastName,
             Boolean useTransaction) {
-        
+
         Contact contact = Contact.findContactByName(em, firstName, lastName);
 
         // create employee if it does not exist
@@ -571,25 +577,23 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            em.getTransaction().begin();
 
-            // Save phone numbers and addresses
+            getInternet().save(em);
+
             for (PhoneNumber phoneNumber : getPhoneNumbers()) {
-                if (phoneNumber.getId() == null) {
-                    BusinessEntityUtils.saveBusinessEntity(em, phoneNumber);
-                }
-            }
-            
-            for (Address address : getAddresses()) {
-                if (address.getId() == null) {
-                    BusinessEntityUtils.saveBusinessEntity(em, address);
-                }
+                BusinessEntityUtils.saveBusinessEntity(em, phoneNumber);
             }
 
+            for (Address address : getAddresses()) {
+                BusinessEntityUtils.saveBusinessEntity(em, address);
+            }
+
+            em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
+
         } catch (Exception e) {
             System.out.println("Contact save exception: " + e);
         }
@@ -601,7 +605,7 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     public static Boolean validate(Contact contact) {
 
         if (contact != null) {

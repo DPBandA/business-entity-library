@@ -57,15 +57,15 @@ public class SampleRequest implements BusinessEntity, Form {
     private Long id;
     private String name;
     private String type;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client receivedFrom;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Contact representative;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspector;
     @Column(length = 1024)
     private String comments;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<ProductInspection> products;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfRequest;

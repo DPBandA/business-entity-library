@@ -451,6 +451,9 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
+            getAccountingCode().save(em);
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

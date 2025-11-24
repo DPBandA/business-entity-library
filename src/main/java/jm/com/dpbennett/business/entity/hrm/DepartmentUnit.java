@@ -250,7 +250,18 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         try {
+        
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println("Department Unit save exception: " + e);
+        }
+
+        return new ReturnMessage(false, "Department Unit not saved");
     }
 
     @Override

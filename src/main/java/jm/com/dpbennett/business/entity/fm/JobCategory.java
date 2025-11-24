@@ -48,10 +48,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "jobcategory")
 @NamedQueries({
-    @NamedQuery(name = "findAllJobCategories", query = "SELECT e FROM JobCategory e ORDER BY e.category")
-    ,
-    @NamedQuery(name = "findAllActiveJobCategories", query = "SELECT e FROM JobCategory e WHERE e.active = 1 ORDER BY e.category")
-    ,
+    @NamedQuery(name = "findAllJobCategories", query = "SELECT e FROM JobCategory e ORDER BY e.category"),
+    @NamedQuery(name = "findAllActiveJobCategories", query = "SELECT e FROM JobCategory e WHERE e.active = 1 ORDER BY e.category"),
     @NamedQuery(name = "findByCategory", query = "SELECT e FROM JobCategory e WHERE e.category = :category ORDER BY e.category")
 })
 public class JobCategory implements Serializable, BusinessEntity {
@@ -63,7 +61,7 @@ public class JobCategory implements Serializable, BusinessEntity {
     private String category;
     private Boolean isEarning;
     private Boolean isTaxable;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
     private Boolean active;
     @Column(length = 1024)
@@ -98,7 +96,7 @@ public class JobCategory implements Serializable, BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Boolean getIsTaxable() {
         if (isTaxable == null) {
             isTaxable = getIsEarning();
@@ -109,7 +107,7 @@ public class JobCategory implements Serializable, BusinessEntity {
     public void setIsTaxable(Boolean isTaxable) {
         this.isTaxable = isTaxable;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -163,14 +161,14 @@ public class JobCategory implements Serializable, BusinessEntity {
         this.active = active;
     }
 
-    public List<Department> getDeparments() {
+    public List<Department> getDepartments() {
         if (departments == null) {
             departments = new ArrayList<>();
         }
         return departments;
     }
 
-    public void setDeparments(List<Department> departments) {
+    public void setDepartments(List<Department> departments) {
         this.departments = departments;
     }
 
@@ -233,7 +231,7 @@ public class JobCategory implements Serializable, BusinessEntity {
             return false;
         }
         JobCategory other = (JobCategory) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -255,7 +253,7 @@ public class JobCategory implements Serializable, BusinessEntity {
     public static List<JobCategory> findAllJobCategories(EntityManager em) {
 
         try {
-            
+
             List<JobCategory> categories = em.createNamedQuery("findAllJobCategories", JobCategory.class).getResultList();
 
             return categories;
@@ -268,7 +266,7 @@ public class JobCategory implements Serializable, BusinessEntity {
     public static List<JobCategory> findAllActiveJobCategories(EntityManager em) {
 
         try {
-            
+
             List<JobCategory> categories = em.createNamedQuery("findAllActiveJobCategories", JobCategory.class).getResultList();
 
             return categories;
@@ -297,9 +295,9 @@ public class JobCategory implements Serializable, BusinessEntity {
 
     public static JobCategory findJobCategoryById(EntityManager em, Long Id) {
         try {
-            
+
             return em.find(JobCategory.class, Id);
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -309,9 +307,9 @@ public class JobCategory implements Serializable, BusinessEntity {
     public static JobCategory findJobCategoryByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<JobCategory> jobCategories = em.createQuery("SELECT c FROM JobCategory c "
                     + "WHERE UPPER(c.category) "
                     + "= '" + name.toUpperCase() + "'", JobCategory.class).getResultList();
@@ -326,13 +324,13 @@ public class JobCategory implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static List<JobCategory> findJobCategoriesByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<JobCategory> jobCategories
                     = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"
                             + name.toUpperCase().trim() + "%' ORDER BY j.category", JobCategory.class).getResultList();
@@ -342,14 +340,14 @@ public class JobCategory implements Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<JobCategory> findActiveJobCategoriesByName(
             EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<JobCategory> jobCategories
                     = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"
                             + name.toUpperCase().trim() + "%' AND j.active = 1 ORDER BY j.category", JobCategory.class).getResultList();
@@ -363,13 +361,11 @@ public class JobCategory implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            for (Department department : departments) {
-                if (department.getId() != null) {
-                    department.save(em);
-                }
+
+            for (Department department : getDepartments()) {
+                department.save(em);
             }
-                       
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

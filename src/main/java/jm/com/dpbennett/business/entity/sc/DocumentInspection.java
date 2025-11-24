@@ -64,7 +64,7 @@ public class DocumentInspection implements Comparable, BusinessEntity {
     private String actionTaken;
     @Column(length = 1024)
     private String comments;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client consignee;
     @Transient
     private Boolean isDirty;

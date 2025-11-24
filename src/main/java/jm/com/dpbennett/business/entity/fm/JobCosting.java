@@ -51,7 +51,7 @@ public class JobCosting implements Serializable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<CostComponent> costComponents;
     @Transient
     private Boolean isDirty;

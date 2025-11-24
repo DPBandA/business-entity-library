@@ -86,7 +86,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private String editStatus;
     @Transient
     private List<BusinessEntity.Action> actions;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private CostComponent costComponent;
 
     public InventoryDisbursement() {

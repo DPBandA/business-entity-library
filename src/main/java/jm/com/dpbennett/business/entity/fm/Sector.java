@@ -59,7 +59,7 @@ public class Sector implements BusinessEntity, Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
     private Boolean active;
     @Column(length = 1024)
