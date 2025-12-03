@@ -703,7 +703,9 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getDocumentType().save(em);
+            if (getDocumentType().getId() != null) {
+                getDocumentType().save(em);
+            }
             getRequestingDepartment().save(em);
             getResponsibleDepartment().save(em);
             getResponsibleOfficer().save(em);

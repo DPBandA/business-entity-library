@@ -71,6 +71,10 @@ public class Supplier implements BusinessEntity, Comparable {
     private List<Address> addresses;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Internet internet;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee enteredBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee editedBy;
     @Column(length = 1024)
     private String notes;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -79,10 +83,6 @@ public class Supplier implements BusinessEntity, Comparable {
     private Date dateEntered;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee enteredBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee editedBy;
     private Boolean tag;
     private String identification;
     private String identificationType;
@@ -309,6 +309,7 @@ public class Supplier implements BusinessEntity, Comparable {
         if (internet == null) {
             internet = new Internet();
         }
+        
         return internet;
     }
 
@@ -779,19 +780,17 @@ public class Supplier implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-       
+
             for (Contact contact : getContacts()) {
-                if (contact.getId() == null) {
-                    contact.save(em);
-                }
+                contact.save(em);
             }
-            
+
             for (Address address : getAddresses()) {
-                if (address.getId() == null) {
-                    address.save(em);
-                }
+                address.save(em);
             }
             
+            getInternet().save(em);
+
             getEnteredBy().save(em);
             getEditedBy().save(em);
 

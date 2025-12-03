@@ -78,8 +78,8 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     private Long id;
     @OneToOne(cascade = CascadeType.REFRESH)
     private DocumentType documentType;
-    private String number;
-    private Boolean autoGenerateNumber;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Classification classification;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department originatingDepartment;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -88,42 +88,42 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     private Employee procurementOfficer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee originator;
-    // # of approvers    
-    private Integer approvals;
-    // TEAM LEADER
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Tax tax;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Discount discount;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver1;
-    // DIVISIONAL MANAGER
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver2;
-    // DIVISIONAL DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver3;
-    // FINANCE DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver4;
-    // EXECUTIVE DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver5;
-    // # of Recommenders
-    private Integer recommendations;
-    // TEAM LEADER
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender1;
-    // DIVISIONAL MANAGER
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender2;
-    // DIVISIONAL DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender3;
-    // FINANCE DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender4;
-    // EXECUTIVE DIRECTOR
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender5;
-    @Transient
-    private ArrayList<ApproverOrRecommender> approversAndRecommenders;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Currency currency;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Currency paymentCurrency;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Supplier supplier;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee editedBy;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<Attachment> attachments;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<CostComponent> costComponents;
     @Column(length = 1024)
     private String description;
     @Column(length = 1024)
@@ -137,34 +137,17 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateRequired;
     private String url;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Classification classification;
     @Column(length = 1024)
     private String comments;
     private Long sequenceNumber;
     private Long purchaseOrderSequenceNumber;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Supplier supplier;
     @Column(length = 1024)
     private String status;
     private String workProgress;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee editedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
     private String priorityCode;
     private Boolean onHandNow;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<CostComponent> costComponents;
-    @Transient
-    private Boolean isDirty;
-    @Transient
-    private Boolean visited;
-    @Transient
-    private List<BusinessEntity.Action> actions;
-    @Transient
-    private String editStatus;
-    // Approval dates
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date approvalOrRecommendationDate1;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -175,7 +158,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     private Date approvalOrRecommendationDate4;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date approvalOrRecommendationDate5;
-    // Purchase order detail    
     private String quotationNumber;
     private String purchaseOrderNumber;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -187,41 +169,39 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     private String importLicenceNum;
     @Column(length = 1024)
     private String terms;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Attachment> attachments;
     @Column(length = 1024)
     private String pleaseSupplyNote;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Currency currency;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Currency paymentCurrency;
-    // Shipping instructions
     private Boolean airFreight;
     private Boolean surface;
     private Boolean airParcelPost;
-    // To be used as special instructions
     @Column(length = 1024)
     private String shippingInstructions;
-    // Budget information
     private Boolean budgeted;
-    // Recurrent
     private Double budgetedRecurrent;
     private Double yearToDateRecurrent;
     private Double balanceRecurrent;
-    // Capital
     private Double budgetedCapital;
     private Double yearToDateCapital;
     private Double balanceCapital;
-    // Recoverable
     private Double budgetedRecoverable;
     private Double yearToDateRecoverable;
     private Double balanceRecoverable;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Tax tax;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Discount discount;
     private String procurementMethod;
     private Double currencyExchangeRate;
+    private String number;
+    private Boolean autoGenerateNumber;
+    private Integer approvals;
+    private Integer recommendations;
+    @Transient
+    private Boolean isDirty;
+    @Transient
+    private Boolean visited;
+    @Transient
+    private List<BusinessEntity.Action> actions;
+    @Transient
+    private String editStatus;
+    @Transient
+    private ArrayList<ApproverOrRecommender> approversAndRecommenders;
 
     public PurchaseRequisition() {
         costComponents = new ArrayList<>();
@@ -1263,6 +1243,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (purchasingDepartment == null) {
             return new Department();
         }
+
         return purchasingDepartment;
     }
 
@@ -1363,6 +1344,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (originator == null) {
             return new Employee();
         }
+
         return originator;
     }
 
@@ -1375,6 +1357,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (documentType == null) {
             return new DocumentType();
         }
+
         return documentType;
     }
 
@@ -1424,8 +1407,9 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Override
     public Classification getClassification() {
         if (classification == null) {
-            return new Classification();
+            classification = new Classification();
         }
+
         return classification;
     }
 
@@ -1611,15 +1595,26 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
         try {
 
-            getDocumentType().save(em);
+            if (getDocumentType().getId() != null) {
+                getDocumentType().save(em);
+            }
+            if (getClassification().getId() != null) {
+                getClassification().save(em);
+            }
             getOriginatingDepartment().save(em);
-            getPurchasingDepartment().save(em);
-
+            if (getPurchasingDepartment().getId() != null) {
+                getPurchasingDepartment().save(em);
+            }
             if (getProcurementOfficer().getId() != null) {
                 getProcurementOfficer().save(em);
             }
-
             getOriginator().save(em);
+            if (getTax().getId() != null) {
+                getTax().save(em);
+            }
+            if (getDiscount().getId() != null) {
+                getDiscount().save(em);
+            }
 
             if (getApprover1() != null) {
                 getApprover1().save(em);
@@ -1651,29 +1646,21 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             if (getRecommender5() != null) {
                 getRecommender5().save(em);
             }
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
+
+            if (getCurrency().getId() != null) {
+                getCurrency().save(em);
             }
+
+            if (getPaymentCurrency().getId() != null) {
+                getPaymentCurrency().save(em);
+            }
+
+            getSupplier().save(em);
+
             if (getEditedBy().getId() != null) {
                 getEditedBy().save(em);
             }
 
-            // Save new/edited cost components
-            if (!getCostComponents().isEmpty()) {
-                for (CostComponent costComponent : getCostComponents()) {
-                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
-                            && !costComponent.save(em).isSuccess()) {
-
-                        return new ReturnMessage(false,
-                                "Cost component save error occurred",
-                                "An error occurred while saving a cost component",
-                                Message.SEVERITY_ERROR_NAME);
-
-                    }
-                }
-            }
-
-            // Save new attachments
             if (!getAttachments().isEmpty()) {
                 for (Attachment attachment : getAttachments()) {
                     if ((attachment.getId() == null || attachment.getIsDirty())
@@ -1688,8 +1675,19 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
                 }
             }
 
-            getTax().save(em);
-            getDiscount().save(em);
+            if (!getCostComponents().isEmpty()) {
+                for (CostComponent costComponent : getCostComponents()) {
+                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
+                            && !costComponent.save(em).isSuccess()) {
+
+                        return new ReturnMessage(false,
+                                "Cost component save error occurred",
+                                "An error occurred while saving a cost component",
+                                Message.SEVERITY_ERROR_NAME);
+
+                    }
+                }
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

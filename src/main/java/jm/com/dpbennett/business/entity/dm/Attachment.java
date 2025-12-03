@@ -107,6 +107,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         if (documentType == null) {
             documentType = "";
         }
+        
         return documentType;
     }
 

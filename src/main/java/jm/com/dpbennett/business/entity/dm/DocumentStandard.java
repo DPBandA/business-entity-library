@@ -439,7 +439,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
             } else {
                 documentStandards = em.createQuery("SELECT d FROM DocumentStandard d "
                         + "WHERE d.name "
-                        + "= '" + value + "'", 
+                        + "= '" + value + "'",
                         DocumentStandard.class).getResultList();
             }
 
@@ -624,7 +624,9 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getDocumentType().save(em);
+            if (getDocumentType().getId() != null) {
+                getDocumentType().save(em);
+            }
             getClassification().save(em);
             getEditedBy().save(em);
 
