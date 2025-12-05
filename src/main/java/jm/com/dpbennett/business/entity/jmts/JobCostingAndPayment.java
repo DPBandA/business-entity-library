@@ -256,6 +256,11 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Employee getCostingInvoicedBy() {
+
+        if (costingInvoicedBy == null) {
+            return new Employee();
+        }
+
         return costingInvoicedBy;
     }
 
@@ -264,6 +269,11 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Employee getCostingPreparedBy() {
+
+        if (costingPreparedBy == null) {
+            return new Employee();
+        }
+
         return costingPreparedBy;
     }
 
@@ -357,6 +367,10 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Employee getLastPaymentEnteredBy() {
+
+        if (lastPaymentEnteredBy == null) {
+            return new Employee();
+        }
 
         return lastPaymentEnteredBy;
     }
@@ -513,6 +527,11 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Employee getCostingApprovedBy() {
+
+        if (costingApprovedBy == null) {
+            return new Employee();
+        }
+
         return costingApprovedBy;
     }
 
@@ -1069,19 +1088,19 @@ public class JobCostingAndPayment implements BusinessEntity {
 
         try {
 
-            if (getCostingPreparedBy() != null) {
+            if (getCostingPreparedBy().getId() != null) {
                 getCostingPreparedBy().save(em);
             }
 
-            if (getCostingApprovedBy() != null) {
+            if (getCostingApprovedBy().getId() != null) {
                 getCostingApprovedBy().save(em);
             }
 
-            if (getCostingInvoicedBy() != null) {
+            if (getCostingInvoicedBy().getId() != null) {
                 getCostingInvoicedBy().save(em);
             }
 
-            if (getLastPaymentEnteredBy() != null) {
+            if (getLastPaymentEnteredBy().getId() != null) {
                 getLastPaymentEnteredBy().save(em);
             }
 
