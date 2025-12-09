@@ -78,7 +78,6 @@ public class User implements BusinessEntity {
     private Employee employee;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Privilege privilege;
-    @OneToOne(cascade = CascadeType.REFRESH)
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -142,6 +141,7 @@ public class User implements BusinessEntity {
         SystemOption so = new SystemOption(setting, "Boolean");
         so.setOwnerId(id);
         so.setOptionValue("false");
+        so.setOptionValueType("Boolean");
         so.setCategory("Notification");
         so.setDescription("Notiifcation setting for user " + username);
         so.save(em);
@@ -809,6 +809,9 @@ public class User implements BusinessEntity {
         try {
 
             getEmployee().save(em);
+            if (getPrivilege().getId() != null) {
+                getPrivilege().save(em);
+            }
 
             for (Privilege priv : privileges) {
                 priv.save(em);

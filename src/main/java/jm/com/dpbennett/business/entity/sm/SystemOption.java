@@ -89,7 +89,7 @@ public class SystemOption implements BusinessEntity {
     }
 
     public void updateOptionValue() {
-        switch (optionValueType) {
+        switch (getOptionValueType()) {
             case "String":
             case "Long":
             case "Integer":
@@ -123,26 +123,26 @@ public class SystemOption implements BusinessEntity {
     }
 
     public String getOptionValueDisplay() {
-        switch (optionValueType) {
+        switch (getOptionValueType()) {
             case "String":
             case "Long":
             case "Integer":
             case "Double":
             case "List<String>":
-                return optionValue;
+                return getOptionValue();
             case "Boolean":
-                if (optionValue.equals("true")) {
+                if (getOptionValue().equals("true")) {
                     return "Yes";
                 } else {
                     return "No";
                 }
             default:
-                return optionValue;
+                return getOptionValue();
         }
     }
 
     public void updateOptionValueType() {
-        switch (optionValueType) {
+        switch (getOptionValueType()) {
             case "String":
                 break;
             case "Long":
