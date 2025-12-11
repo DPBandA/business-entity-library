@@ -50,12 +50,12 @@ import jm.com.dpbennett.business.entity.Person;
 public class BusinessEntityUtils {
 
     private static EntityManagerFactory EMF;
-    
+
     public static String MONTH_NAMES[] = {
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     };
-    
+
     public static String ALPHABET[] = {
         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
         "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
@@ -64,7 +64,8 @@ public class BusinessEntityUtils {
     public static String sanitize(String value) {
 
         if (value != null) {
-            return value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            return value.replaceAll("'", "`").
+                    replaceAll("&#x2F;", "/");
         }
 
         return "";
