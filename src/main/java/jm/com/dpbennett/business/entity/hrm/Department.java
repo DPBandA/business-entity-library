@@ -176,7 +176,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         if (laboratories == null) {
             laboratories = new ArrayList<>();
         }
-        
+
         return laboratories;
     }
 
@@ -210,6 +210,10 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     public Employee getHead() {
 
+        if (head == null) {
+            return new Employee();
+        }
+
         return head;
     }
 
@@ -218,6 +222,9 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     }
 
     public Employee getActingHead() {
+        if (actingHead == null) {
+            return new Employee();
+        }
 
         return actingHead;
     }
@@ -480,23 +487,27 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getHead().save(em);
-            getActingHead().save(em);
+            if (getHead().getId() != null) {
+                getHead().save(em);
+            }
+            if (getActingHead().getId() != null) {
+                getActingHead().save(em);
+            }
             getInternet().save(em);
             getPrivilege().save(em);
 
             for (JobCategory jobCategory : getJobCategories()) {
                 jobCategory.save(em);
             }
-            
+
             for (Employee employee : getStaff()) {
                 employee.save(em);
             }
-            
+
             for (Laboratory laboratory : getLaboratories()) {
                 laboratory.save(em);
             }
-            
+
             for (DepartmentUnit departmentUnit : getDepartmentUnits()) {
                 departmentUnit.save(em);
             }
@@ -506,7 +517,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println("Department save exception: " + e);
         }
