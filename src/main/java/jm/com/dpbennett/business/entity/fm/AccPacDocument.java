@@ -42,7 +42,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "AROBL")
