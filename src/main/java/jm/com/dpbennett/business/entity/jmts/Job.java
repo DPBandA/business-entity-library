@@ -2075,7 +2075,9 @@ public class Job implements BusinessEntity {
             getClient().save(em);
             getJobCategory().save(em);
             getJobSubCategory().save(em);
-            getAssignedTo().save(em);
+            if (getAssignedTo().getId() != null) {
+                getAssignedTo().save(em);
+            }
 
             returnMessage = getJobCostingAndPayment().save(em);
             if (!returnMessage.isSuccess()) {
