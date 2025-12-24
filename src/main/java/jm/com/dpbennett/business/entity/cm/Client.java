@@ -75,7 +75,7 @@ public class Client implements ClientInterface {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Address billingAddress;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Contact billingContact;    
+    private Contact billingContact;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -224,7 +224,7 @@ public class Client implements ClientInterface {
                 billingContact = getContacts().get(0);
             }
         }
-        
+
         return billingContact;
     }
 
@@ -462,7 +462,7 @@ public class Client implements ClientInterface {
         if (internet == null) {
             internet = new Internet();
         }
-        
+
         return internet;
     }
 
@@ -1041,18 +1041,32 @@ public class Client implements ClientInterface {
                 getEditedBy().save(em);
             }
 
-            getInternet().save(em);
-            getBillingAddress().save(em);
-            getBillingContact().save(em);
-            getDiscount().save(em);
-            getDefaultTax().save(em);
-
-            for (Contact contact : getContacts()) {               
-                    contact.save(em);                
+            if (getInternet().getId() != null) {
+                getInternet().save(em);
             }
-            
-            for (Address address : getAddresses()) {               
-                    address.save(em);                
+
+            if (getBillingAddress() != null) {
+                getBillingAddress().save(em);
+            }
+
+            if (getBillingContact() != null) {
+                getBillingContact().save(em);
+            }
+
+            if (getDiscount().getId() != null) {
+                getDiscount().save(em);
+            }
+
+            if (getDefaultTax().getId() != null) {
+                getDefaultTax().save(em);
+            }
+
+            for (Contact contact : getContacts()) {
+                contact.save(em);
+            }
+
+            for (Address address : getAddresses()) {
+                address.save(em);
             }
 
             em.getTransaction().begin();
