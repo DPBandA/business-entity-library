@@ -408,7 +408,7 @@ public class Module implements BusinessEntity {
         return new ReturnMessage();
     }
 
-    public static Module findActiveModuleByName(EntityManager em, String value) {
+    public static Module findActiveByName(EntityManager em, String value) {
 
         try {
 
@@ -427,7 +427,7 @@ public class Module implements BusinessEntity {
         }
     }
 
-    public static List<Module> findActiveModules(
+    public static List<Module> findActive(
             EntityManager em,
             String value,
             int maxResults) {
@@ -450,7 +450,7 @@ public class Module implements BusinessEntity {
         }
     }
 
-    public static List<Module> findModules(
+    public static List<Module> findAll(
             EntityManager em,
             String value,
             int maxResults) {
@@ -474,7 +474,7 @@ public class Module implements BusinessEntity {
         }
     }
 
-    public static List<Module> findAllActiveModules(
+    public static List<Module> findAllActive(
             EntityManager em,
             int maxResults) {
         try {
@@ -560,5 +560,5 @@ public class Module implements BusinessEntity {
     public ReturnMessage saveUnique(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
 }
