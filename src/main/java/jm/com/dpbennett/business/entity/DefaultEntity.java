@@ -1,5 +1,5 @@
 /*
-Job Management & Tracking System (JMTS) 
+Business Entity Library (BEL) - A foundational library for JSF web applications 
 Copyright (C) 2025  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
@@ -17,131 +17,28 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-package jm.com.dpbennett.business.entity.sm;
+package jm.com.dpbennett.business.entity;
 
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.Person;
-import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *
  * @author Desmond Bennett
  */
-@Entity
-@Table(name = "strategicpriority")
-public class StrategicPriority implements BusinessEntity, Comparable {
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    private String name;
-    @Column(length = 1024)
-    private String description;
+public class DefaultEntity implements BusinessEntity {
 
     @Override
     public Long getId() {
-        return id;
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public String getDescription() {
-        if (description == null) {
-            description = "";
-        }
-
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-
-        if (!(object instanceof StrategicPriority)) {
-            return false;
-        }
-        StrategicPriority other = (StrategicPriority) object;
-        
-        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    @Override
-    public String getName() {
-        if (name == null) {
-            name = "";
-        }
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public ReturnMessage save(EntityManager em) {
-         try {
-            em.getTransaction().begin();
-            BusinessEntityUtils.saveBusinessEntity(em, this);
-            em.getTransaction().commit();
-
-            return new ReturnMessage();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        return new ReturnMessage(false, "Strategic Priority not saved");
-    }
-
-    @Override
-    public ReturnMessage validate(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Boolean getIsDirty() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setIsDirty(Boolean isDirty) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int compareTo(Object t) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
@@ -151,6 +48,16 @@ public class StrategicPriority implements BusinessEntity, Comparable {
 
     @Override
     public void setActive(Boolean active) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getName() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setName(String name) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -195,7 +102,42 @@ public class StrategicPriority implements BusinessEntity, Comparable {
     }
 
     @Override
+    public ReturnMessage save(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
     public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage validate(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDescription(String description) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -240,11 +182,6 @@ public class StrategicPriority implements BusinessEntity, Comparable {
     }
 
     @Override
-    public ReturnMessage saveUnique(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
     public List<SystemOption> getSettings() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
@@ -255,13 +192,54 @@ public class StrategicPriority implements BusinessEntity, Comparable {
     }
 
     @Override
-    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public SystemOption getSetting(
+            String setting,
+            String settingValue,
+            String type,
+            String category) {
+
+        for (SystemOption so : getSettings()) {
+            if (so.getName().equals(setting)) {
+
+                return so;
+            }
+        }
+
+        SystemOption so = new SystemOption(setting, type);
+        so.setOptionValue(settingValue);
+        so.setOptionValueType(type);
+        so.setCategory(category);
+        so.setDescription("Setting: " + setting);
+
+        getSettings().add(so);
+
+        return so;
     }
 
     @Override
-    public void setSetting(String setting, String settingValue, String type, String category) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setSetting(
+            String setting,
+            String settingValue,
+            String type,
+            String category) {
+
+        for (SystemOption so : getSettings()) {
+            if (so.getName().equals(setting)) {
+
+                so.setOptionValue(settingValue);
+
+                return;
+            }
+        }
+
+        SystemOption so = new SystemOption(setting, type);
+        so.setOptionValue(settingValue);
+        so.setOptionValueType(type);
+        so.setCategory(category);
+        so.setDescription("Setting: " + setting);
+
+        getSettings().add(so);
+
     }
 
 }

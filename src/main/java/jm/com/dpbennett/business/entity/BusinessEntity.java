@@ -21,7 +21,9 @@ package jm.com.dpbennett.business.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.EntityManager;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -89,6 +91,22 @@ public interface BusinessEntity extends Serializable {
     public Person getEnteredBy();
 
     public void setEnteredBy(Person person);
+    
+    public List<SystemOption> getSettings();
+    
+    public void setSettings(List<SystemOption> settings);
+    
+    public SystemOption getSetting(
+            String setting,
+            String settingValue,
+            String type,
+            String category);
+    
+     public void setSetting(
+            String setting,
+            String settingValue,
+            String type,
+            String category);
 
     /**
      * The actions that can be performed with respect to an entity.
