@@ -1034,11 +1034,11 @@ public class Client implements ClientInterface {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getEnteredBy() != null) {
+            if (getEnteredBy().getId() != null) {
                 getEnteredBy().save(em);
             }
 
-            if (getEditedBy() != null) {
+            if (getEditedBy().getId() != null) {
                 getEditedBy().save(em);
             }
 

@@ -87,8 +87,8 @@ public class Certification implements CertificationInterface {
         this.expiryDate = certification.expiryDate;
         this.applicant = certification.applicant;
     }
-    
-     public static List<Certification> findAllByOwnerId(EntityManager em, Long ownerId) {
+
+    public static List<Certification> findAllByOwnerId(EntityManager em, Long ownerId) {
 
         try {
             List<Certification> certifications = em.createQuery("SELECT c FROM Certification c"
@@ -290,8 +290,9 @@ public class Certification implements CertificationInterface {
 
         try {
 
-            // Save entities from other modules
-            getCertificateSignedBy().save(em);
+            if (getCertificateSignedBy().getId() != null) {
+                getCertificateSignedBy().save(em);
+            }
             getGrantedTo().save(em);
             getApplicant().save(em);
 

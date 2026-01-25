@@ -565,6 +565,10 @@ public class User extends DefaultEntity {
 
     public Employee getEmployee() {
 
+        if (employee == null) {
+            return new Employee();
+        }
+
         return employee;
     }
 
@@ -795,7 +799,10 @@ public class User extends DefaultEntity {
 
         try {
 
-            getEmployee().save(em);
+            if (getEmployee().getId() != null) {
+                getEmployee().save(em);
+            }
+
             if (getPrivilege().getId() != null) {
                 getPrivilege().save(em);
             }

@@ -283,6 +283,11 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Override
     public Employee getReceivedBy() {
+        
+        if (receivedBy == null) {
+            return new Employee();
+        }
+        
         return receivedBy;
     }
 
@@ -628,11 +633,11 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
                 getRegulatoryOffice().save(em);
             }
 
-            if (getSampledBy() != null) {
+            if (getSampledBy().getId() != null) {
                 getSampledBy().save(em);
             }
 
-            if (getReceivedBy() != null) {
+            if (getReceivedBy().getId() != null) {
                 getReceivedBy().save(em);
             }
 

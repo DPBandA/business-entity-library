@@ -144,6 +144,11 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     }
 
     public Employee getCompletedBy() {
+        
+        if (completedBy == null) {
+            return new Employee();
+        }
+        
         return completedBy;
     }
 
@@ -258,6 +263,11 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     }
 
     public Employee getTransferredTo() {
+
+        if (transferredTo == null) {
+            return new Employee();
+        }
+
         return transferredTo;
     }
 
@@ -534,19 +544,19 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getTransferredTo() != null) {
+            if (getTransferredTo().getId() != null) {
                 getTransferredTo().save(em);
             }
 
-            if (getEnteredBy() != null) {
+            if (getEnteredBy().getId() != null) {
                 getEnteredBy().save(em);
             }
 
-            if (getEditedBy() != null) {
+            if (getEditedBy().getId() != null) {
                 getEditedBy().save(em);
             }
 
-            if (getCompletedBy() != null) {
+            if (getCompletedBy().getId() != null) {
                 getCompletedBy().save(em);
             }
 

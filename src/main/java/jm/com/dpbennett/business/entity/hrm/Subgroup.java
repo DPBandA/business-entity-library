@@ -93,7 +93,11 @@ public class Subgroup implements BusinessEntity, Comparable {
         this.active = active;
     }
 
-    public Employee getHead() {
+   public Employee getHead() {
+
+        if (head == null) {
+            return new Employee();
+        }
         
         return head;
     }
@@ -373,6 +377,9 @@ public class Subgroup implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            if (getHead().getId() != null) {
+                getHead().save(em);
+            }
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

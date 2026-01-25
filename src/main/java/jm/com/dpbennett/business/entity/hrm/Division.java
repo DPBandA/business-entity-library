@@ -98,13 +98,13 @@ public class Division implements BusinessEntity, Comparable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    public static Employee findHeadOfActiveDivistionByDepartment (
+
+    public static Employee findHeadOfActiveDivistionByDepartment(
             EntityManager em,
             Department department) {
-        
+
         List<Division> activeDivistions = Division.findAllActive(em);
-        
+
         for (Division activeDivistion : activeDivistions) {
             List<Department> departments = activeDivistion.getDepartments();
             for (Department department1 : departments) {
@@ -113,7 +113,7 @@ public class Division implements BusinessEntity, Comparable {
                 }
             }
         }
-       
+
         return null;
     }
 
@@ -146,10 +146,10 @@ public class Division implements BusinessEntity, Comparable {
     }
 
     public List<Subgroup> getSubgroups() {
-         if (subgroups == null) {
+        if (subgroups == null) {
             subgroups = new ArrayList<>();
         }
-        
+
         return subgroups;
     }
 
@@ -172,7 +172,11 @@ public class Division implements BusinessEntity, Comparable {
     }
 
     public Employee getHead() {
-       
+
+        if (head == null) {
+            return new Employee();
+        }
+        
         return head;
     }
 
@@ -249,7 +253,7 @@ public class Division implements BusinessEntity, Comparable {
             return false;
         }
         Division other = (Division) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -273,9 +277,9 @@ public class Division implements BusinessEntity, Comparable {
     public static Division findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Division> divisions = em.createQuery("SELECT d FROM Division d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", Division.class).getResultList();
@@ -324,9 +328,9 @@ public class Division implements BusinessEntity, Comparable {
     public static List<Division> findAllByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Division> divisions
                     = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY d.name", Division.class).getResultList();
@@ -336,13 +340,13 @@ public class Division implements BusinessEntity, Comparable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Division> findAllActiveByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-          
+
             List<Division> divisions
                     = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
                             + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Division.class).getResultList();
@@ -362,13 +366,13 @@ public class Division implements BusinessEntity, Comparable {
             return new ArrayList<>();
         }
     }
-    
-     /**
+
+    /**
      * Finds the first division that contains the specified subgroup.
-     * 
+     *
      * @param em
      * @param subgroup
-     * @return 
+     * @return
      */
     public static Division findBySubgroup(EntityManager em, Subgroup subgroup) {
 
@@ -378,11 +382,11 @@ public class Division implements BusinessEntity, Comparable {
                     = em.createQuery(
                             "SELECT d FROM Division d"
                             + " JOIN d.subgroups subgroups"
-                            + " WHERE subgroups.id = " + subgroup.getId(), 
+                            + " WHERE subgroups.id = " + subgroup.getId(),
                             Division.class).getResultList();
 
             if (!divisions.isEmpty()) {
-                
+
                 return divisions.get(0);
             } else {
                 return null;
@@ -398,6 +402,9 @@ public class Division implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            if (getHead().getId() != null) {
+                getHead().save(em);
+            }
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

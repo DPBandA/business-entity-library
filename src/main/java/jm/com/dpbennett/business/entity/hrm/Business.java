@@ -142,6 +142,10 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     public Employee getHead() {
 
+        if (head == null) {
+            return new Employee();
+        }
+
         return head;
     }
 
@@ -388,9 +392,9 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public static List<Business> findAllActiveByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Business> businesses
                     = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
                             + value.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", Business.class).getResultList();
@@ -405,21 +409,23 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public ReturnMessage save(EntityManager em) {
 
         try {
-            
-            getHead().save(em);
-            
+
+            if (getHead().getId() != null) {
+                getHead().save(em);
+            }
+
             for (Department department : getDepartments()) {
                 department.save(em);
             }
-            
+
             for (Address address : getAddresses()) {
-               address.save(em);
+                address.save(em);
             }
-            
+
             for (Contact contact : getContacts()) {
                 contact.save(em);
             }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
