@@ -283,6 +283,7 @@ public class Complaint implements Comparable, BusinessEntity {
         if (receivedBy == null) {
             return new Employee();
         }
+
         return receivedBy;
     }
 
@@ -536,8 +537,12 @@ public class Complaint implements Comparable, BusinessEntity {
             getBusinessOffice().save(em);
             getEnteredBy().save(em);
             getReceivedBy().save(em);
-            getReceivedVia().save(em);
-            getComplainant().save(em);
+            if (getReceivedVia().getId() != null) {
+                getReceivedVia().save(em);
+            }
+            if (getComplainant().getId() != null) {
+                getComplainant().save(em);
+            }
 
             // Save product inspections
             if (!getProductInspections().isEmpty()) {

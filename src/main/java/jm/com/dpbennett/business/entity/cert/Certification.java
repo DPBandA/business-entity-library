@@ -126,6 +126,7 @@ public class Certification implements CertificationInterface {
         if (applicant == null) {
             return new Client("");
         }
+
         return applicant;
     }
 
@@ -293,8 +294,12 @@ public class Certification implements CertificationInterface {
             if (getCertificateSignedBy().getId() != null) {
                 getCertificateSignedBy().save(em);
             }
-            getGrantedTo().save(em);
-            getApplicant().save(em);
+            if (getGrantedTo().getId() != null) {
+                getGrantedTo().save(em);
+            }
+            if (getApplicant().getId() != null) {
+                getApplicant().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

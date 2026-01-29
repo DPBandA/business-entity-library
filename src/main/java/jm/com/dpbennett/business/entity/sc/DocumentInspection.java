@@ -280,9 +280,11 @@ public class DocumentInspection implements Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             getInspector().save(em);
-            getConsignee().save(em);
+            if (getConsignee().getId() != null) {
+                getConsignee().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

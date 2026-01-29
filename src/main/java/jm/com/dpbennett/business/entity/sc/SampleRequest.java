@@ -265,14 +265,16 @@ public class SampleRequest implements BusinessEntity, Form {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getReceivedFrom().save(em);
+            if (getReceivedFrom().getId() != null) {
+                getReceivedFrom().save(em);
+            }
             getRepresentative().save(em);
             getInspector().save(em);
-            
+
             for (ProductInspection product : products) {
                 product.save(em);
             }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

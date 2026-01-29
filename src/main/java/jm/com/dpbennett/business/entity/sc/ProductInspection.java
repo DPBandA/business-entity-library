@@ -794,12 +794,18 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
             getProductCategory().save(em);
             getManufacturer().save(em);
-            getDistributor().save(em);
+            if (getDistributor().getId() != null) {
+                getDistributor().save(em);
+            }
             getMarketProduct().save(em);
-            getClient().save(em);
-            getBusinessSource().save(em);
+            if (getClient().getId() != null) {
+                getClient().save(em);
+            }
+            if (getBusinessSource().getId() != null) {
+                getBusinessSource().save(em);
+            }
             getInspector().save(em);
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

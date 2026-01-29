@@ -57,9 +57,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "compliancesurvey")
 public class ComplianceSurvey implements BusinessEntity {
-    
-    // tk signatures are to be replaced by fullnames.
 
+    // tk signatures are to be replaced by fullnames.
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -1443,13 +1442,19 @@ public class ComplianceSurvey implements BusinessEntity {
             getBusinessOffice().save(em);
             getInspector().save(em);
             getInspectionAddress().save(em);
-            getConsignee().save(em);
+            if (getConsignee().getId() != null) {
+                getConsignee().save(em);
+            }
             getConsigneeRepresentative().save(em);
             getConsigneeAddress().save(em);
-            getBroker().save(em);
+            if (getBroker().getId() != null) {
+                getBroker().save(em);
+            }
             getBrokerRepresentative().save(em);
             getBrokerAddress().save(em);
-            getRetailOutlet().save(em);
+            if (getRetailOutlet().getId() != null) {
+                getRetailOutlet().save(em);
+            }
             getRetailRepresentative().save(em);
             getRetailOutletAddress().save(em);
             getSpecifiedReleaseLocation().save(em);

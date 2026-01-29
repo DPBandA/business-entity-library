@@ -181,6 +181,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
         if (externalClient == null) {
             return new Client("");
         }
+
         return externalClient;
     }
 
@@ -625,7 +626,9 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
             }
             getSubmittedBy().save(em);
             getClassification().save(em);
-            getExternalClient().save(em);
+            if (getExternalClient().getId() != null) {
+                getExternalClient().save(em);
+            }
             getEditedBy().save(em);
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

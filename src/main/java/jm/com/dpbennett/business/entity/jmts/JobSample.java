@@ -201,6 +201,10 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     }
 
     public Client getClient() {
+        if (client == null) {
+            return new Client("");
+        }
+
         return client;
     }
 
@@ -283,11 +287,11 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Override
     public Employee getReceivedBy() {
-        
+
         if (receivedBy == null) {
             return new Employee();
         }
-        
+
         return receivedBy;
     }
 
@@ -301,7 +305,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
         if (sampledBy == null) {
             return new Employee();
         }
-        
+
         return sampledBy;
     }
 
@@ -621,10 +625,9 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getClient() != null) {
+            if (getClient().getId() != null) {
                 getClient().save(em);
             }
-
             if (getManufacturer() != null) {
                 getManufacturer().save(em);
             }

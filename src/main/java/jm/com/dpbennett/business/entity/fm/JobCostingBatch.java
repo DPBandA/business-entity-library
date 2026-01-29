@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.fm;
 
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -48,6 +47,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "jobcostingbatch")
 public class JobCostingBatch implements Serializable, BusinessEntity {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,13 +60,15 @@ public class JobCostingBatch implements Serializable, BusinessEntity {
     private List<Job> jobs;
 
     public JobCostingBatch() {
-        jobs = new ArrayList<Job>();
+        jobs = new ArrayList<>();
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -80,6 +82,11 @@ public class JobCostingBatch implements Serializable, BusinessEntity {
     }
 
     public Client getClient() {
+
+        if (client == null) {
+            return new Client();
+        }
+
         return client;
     }
 
@@ -117,10 +124,8 @@ public class JobCostingBatch implements Serializable, BusinessEntity {
             return false;
         }
         JobCostingBatch other = (JobCostingBatch) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -191,13 +196,15 @@ public class JobCostingBatch implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getClient().save(em);
-            
+
+            if (getClient().getId() != null) {
+                getClient().save(em);
+            }
+
             for (Job job : jobs) {
                 job.save(em);
             }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

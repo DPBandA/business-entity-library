@@ -385,6 +385,7 @@ public class ServiceRequest implements BusinessEntity {
         if (client == null) {
             return new Client("");
         }
+        
         return client;
     }
 

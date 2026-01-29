@@ -102,6 +102,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
         if (client == null) {
             return new Client();
         }
+
         return client;
     }
 
@@ -368,7 +369,9 @@ public class Scale implements Product, BusinessEntity, Comparable {
 
             getManufacturer().save(em);
             //getCertification().save(em);
-            getClient().save(em);
+            if (getClient().getId() != null) {
+                getClient().save(em);
+            }
 
             for (Sticker sticker : stickers) {
                 sticker.save(em);

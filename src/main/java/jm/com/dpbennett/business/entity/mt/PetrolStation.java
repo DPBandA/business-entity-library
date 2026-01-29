@@ -152,6 +152,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         if (lastAssignee == null) {
             return new Employee();
         }
+        
         return lastAssignee;
     }
 
@@ -163,6 +164,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         if (client == null) {
             return new Client("");
         }
+
         return client;
     }
 
@@ -437,7 +439,9 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getClient().save(em);
+            if (getClient().getId() != null) {
+                getClient().save(em);
+            }
 
             getLastAssignee().save(em);
 
