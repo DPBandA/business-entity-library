@@ -60,6 +60,7 @@ public class ServiceContract implements BusinessEntity {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Service selectedService;
     private String serviceRequestedDetails;
+    private String serviceRequestedOtherText;
     // Additional services    
     private Boolean additionalServiceUrgent;
     private Boolean additionalServiceFaxResults;
@@ -222,6 +223,14 @@ public class ServiceContract implements BusinessEntity {
 
     public void setServiceRequestedDetails(String serviceRequestedDetails) {
         this.serviceRequestedDetails = serviceRequestedDetails;
+    }
+
+    public String getServiceRequestedOtherText() {
+        return serviceRequestedOtherText;
+    }
+
+    public void setServiceRequestedOtherText(String serviceRequestedOtherText) {
+        this.serviceRequestedOtherText = serviceRequestedOtherText;
     }
 
     public Boolean getAdditionalServiceFaxResults() {
