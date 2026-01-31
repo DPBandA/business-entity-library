@@ -787,6 +787,7 @@ public class Job implements BusinessEntity {
                 return new Contact();
             }
         }
+
         return contact;
     }
 
@@ -954,6 +955,11 @@ public class Job implements BusinessEntity {
     }
 
     public Classification getClassification() {
+
+        if (classification == null) {
+            return new Classification();
+        }
+
         return classification;
     }
 
@@ -962,6 +968,10 @@ public class Job implements BusinessEntity {
     }
 
     public Sector getSector() {
+        if (sector == null) {
+            return new Sector();
+        }
+
         return sector;
     }
 
@@ -1044,6 +1054,10 @@ public class Job implements BusinessEntity {
     }
 
     public Business getBusiness() {
+        if (business == null) {
+            return new Business();
+        }
+
         return business;
     }
 
@@ -1052,6 +1066,10 @@ public class Job implements BusinessEntity {
     }
 
     public BusinessOffice getBusinessOffice() {
+        if (businessOffice == null) {
+            return new BusinessOffice();
+        }
+
         return businessOffice;
     }
 
@@ -1080,7 +1098,7 @@ public class Job implements BusinessEntity {
 
     public Client getClient() {
         if (client == null) {
-            return new Client("");
+            return new Client();
         }
 
         return client;
@@ -1092,8 +1110,9 @@ public class Job implements BusinessEntity {
 
     public Department getDepartment() {
         if (department == null) {
-            return new Department("");
+            return new Department();
         }
+
         return department;
     }
 
@@ -1125,6 +1144,10 @@ public class Job implements BusinessEntity {
     }
 
     public JobCategory getJobCategory() {
+        if (jobCategory == null) {
+            return new JobCategory();
+        }
+
         return jobCategory;
     }
 
@@ -1133,6 +1156,10 @@ public class Job implements BusinessEntity {
     }
 
     public JobSubCategory getJobSubCategory() {
+        if (jobSubCategory == null) {
+            return new JobSubCategory();
+        }
+
         return jobSubCategory;
     }
 
@@ -1142,7 +1169,7 @@ public class Job implements BusinessEntity {
 
     public Department getSubContractedDepartment() {
         if (subContractedDepartment == null) {
-            return new Department("");
+            return new Department();
         }
         return subContractedDepartment;
     }
@@ -2072,15 +2099,27 @@ public class Job implements BusinessEntity {
             if (getParent().getId() != null) {
                 getParent().save(em);
             }
-            getClassification().save(em);
-            getSector().save(em);
-            getDepartment().save(em);
-            getSubContractedDepartment().save(em);
+            if (getClassification().getId() != null) {
+                getClassification().save(em);
+            }
+            if (getSector().getId() != null) {
+                getSector().save(em);
+            }
+            if (getDepartment().getId() != null) {
+                getDepartment().save(em);
+            }
+            if (getSubContractedDepartment().getId() != null) {
+                getSubContractedDepartment().save(em);
+            }
             if (getClient().getId() != null) {
                 getClient().save(em);
             }
-            getJobCategory().save(em);
-            getJobSubCategory().save(em);
+            if (getJobCategory().getId() != null) {
+                getJobCategory().save(em);
+            }
+            if (getJobSubCategory().getId() != null) {
+                getJobSubCategory().save(em);
+            }
             if (getAssignedTo().getId() != null) {
                 getAssignedTo().save(em);
             }
@@ -2094,14 +2133,20 @@ public class Job implements BusinessEntity {
                         + "\nDetails: " + returnMessage.getDetail(),
                         Message.SEVERITY_ERROR_NAME);
             }
-
             getServiceContract().save(em);
             getJobStatusAndTracking().save(em);
-            getBusiness().save(em);
-            getBusinessOffice().save(em);
-            getBillingAddress().save(em);
-            getContact().save(em);
-
+            if (getBusiness().getId() != null) {
+                getBusiness().save(em);
+            }
+            if (getBusinessOffice().getId() != null) {
+                getBusinessOffice().save(em);
+            }
+            if (getBillingAddress().getId() != null) {
+                getBillingAddress().save(em);
+            }
+            if (getContact().getId() != null) {
+                getContact().save(em);
+            }
             for (JobSample jobSample : getJobSamples()) {
 
                 returnMessage = jobSample.save(em);
@@ -2118,15 +2163,12 @@ public class Job implements BusinessEntity {
                 }
 
             }
-
             for (Employee representative : getRepresentatives()) {
                 representative.save(em);
             }
-
             for (Service service : getServices()) {
                 service.save(em);
             }
-
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
