@@ -295,6 +295,11 @@ public class Client implements ClientInterface {
 
     @Override
     public Employee getEditedBy() {
+
+        if (editedBy == null) {
+            return new Employee();
+        }
+
         return editedBy;
     }
 
@@ -361,6 +366,10 @@ public class Client implements ClientInterface {
 
     @Override
     public Employee getEnteredBy() {
+
+        if (enteredBy == null) {
+            return new Employee();
+        }
 
         return enteredBy;
     }
@@ -1042,9 +1051,7 @@ public class Client implements ClientInterface {
                 getEditedBy().save(em);
             }
 
-            if (getInternet().getId() != null) {
-                getInternet().save(em);
-            }
+            getInternet().save(em);
 
             if (getBillingAddress() != null) {
                 getBillingAddress().save(em);
