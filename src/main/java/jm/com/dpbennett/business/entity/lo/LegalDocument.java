@@ -199,6 +199,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         if (editedBy == null) {
             return new Employee();
         }
+
         return editedBy;
     }
 
@@ -249,7 +250,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         if (externalClient == null) {
             return new Client("");
         }
-        
+
         return externalClient;
     }
 
@@ -301,7 +302,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Department getRequestingDepartment() {
         if (requestingDepartment == null) {
-            requestingDepartment = new Department();
+            return new Department();
         }
 
         return requestingDepartment;
@@ -345,6 +346,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         if (responsibleDepartment == null) {
             return new Department();
         }
+
         return responsibleDepartment;
     }
 
@@ -438,6 +440,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         if (responsibleOfficer == null) {
             return new Employee();
         }
+
         return responsibleOfficer;
     }
 
@@ -449,6 +452,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         if (submittedBy == null) {
             return new Employee();
         }
+
         return submittedBy;
     }
 
@@ -513,6 +517,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         if (classification == null) {
             return new Classification();
         }
+
         return classification;
     }
 
@@ -708,15 +713,27 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
             if (getDocumentType().getId() != null) {
                 getDocumentType().save(em);
             }
-            getRequestingDepartment().save(em);
-            getResponsibleDepartment().save(em);
-            getResponsibleOfficer().save(em);
-            getSubmittedBy().save(em);
-            getClassification().save(em);
+            if (getRequestingDepartment().getId() != null) {
+                getRequestingDepartment().save(em);
+            }
+            if (getResponsibleDepartment().getId() != null) {
+                getResponsibleDepartment().save(em);
+            }
+            if (getResponsibleOfficer().getId() != null) {
+                getResponsibleOfficer().save(em);
+            }
+            if (getSubmittedBy().getId() != null) {
+                getSubmittedBy().save(em);
+            }
+            if (getClassification().getId() != null) {
+                getClassification().save(em);
+            }
             if (getExternalClient().getId() != null) {
                 getExternalClient().save(em);
             }
-            getEditedBy().save(em);
+            if (getEditedBy().getId() != null) {
+                getEditedBy().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

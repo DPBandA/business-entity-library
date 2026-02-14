@@ -1104,9 +1104,15 @@ public class JobCostingAndPayment implements BusinessEntity {
                 getLastPaymentEnteredBy().save(em);
             }
 
-            getTax().save(em);
-            getDiscount().save(em);
-            getCurrency().save(em);
+            if (getTax().getId() != null) {
+                getTax().save(em);
+            }
+            if (getDiscount().getId() != null) {
+                getDiscount().save(em);
+            }
+            if (getCurrency().getId() != null) {
+                getCurrency().save(em);
+            }
 
             for (CashPayment payment : getCashPayments()) {
                 if (!payment.save(em).isSuccess()) {

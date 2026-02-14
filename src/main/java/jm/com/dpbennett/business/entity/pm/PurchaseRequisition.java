@@ -1023,6 +1023,11 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public Supplier getSupplier() {
+
+        if (supplier == null) {
+            return new Supplier();
+        }
+
         return supplier;
     }
 
@@ -1185,6 +1190,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (editedBy == null) {
             return new Employee();
         }
+        
         return editedBy;
     }
 
@@ -1213,7 +1219,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public Department getOriginatingDepartment() {
         if (originatingDepartment == null) {
-            originatingDepartment = new Department();
+            return new Department();
         }
 
         return originatingDepartment;
@@ -1407,7 +1413,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Override
     public Classification getClassification() {
         if (classification == null) {
-            classification = new Classification();
+            return new Classification();
         }
 
         return classification;
@@ -1601,21 +1607,24 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             if (getClassification().getId() != null) {
                 getClassification().save(em);
             }
-            getOriginatingDepartment().save(em);
+            if (getOriginatingDepartment().getId() != null) {
+                getOriginatingDepartment().save(em);
+            }
             if (getPurchasingDepartment().getId() != null) {
                 getPurchasingDepartment().save(em);
             }
             if (getProcurementOfficer().getId() != null) {
                 getProcurementOfficer().save(em);
             }
-            getOriginator().save(em);
+            if (getOriginator().getId() != null) {
+                getOriginator().save(em);
+            }
             if (getTax().getId() != null) {
                 getTax().save(em);
             }
             if (getDiscount().getId() != null) {
                 getDiscount().save(em);
             }
-
             if (getApprover1() != null) {
                 getApprover1().save(em);
             }
@@ -1646,21 +1655,18 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             if (getRecommender5() != null) {
                 getRecommender5().save(em);
             }
-
             if (getCurrency().getId() != null) {
                 getCurrency().save(em);
             }
-
             if (getPaymentCurrency().getId() != null) {
                 getPaymentCurrency().save(em);
             }
-
-            getSupplier().save(em);
-
+            if (getSupplier().getId() != null) {
+                getSupplier().save(em);
+            }
             if (getEditedBy().getId() != null) {
                 getEditedBy().save(em);
             }
-
             if (!getAttachments().isEmpty()) {
                 for (Attachment attachment : getAttachments()) {
                     if ((attachment.getId() == null || attachment.getIsDirty())

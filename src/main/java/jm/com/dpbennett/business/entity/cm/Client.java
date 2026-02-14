@@ -1046,33 +1046,27 @@ public class Client implements ClientInterface {
             if (getEnteredBy().getId() != null) {
                 getEnteredBy().save(em);
             }
-
             if (getEditedBy().getId() != null) {
                 getEditedBy().save(em);
             }
-
+            
             getInternet().save(em);
 
             if (getBillingAddress() != null) {
                 getBillingAddress().save(em);
             }
-
             if (getBillingContact() != null) {
                 getBillingContact().save(em);
             }
-
             if (getDiscount().getId() != null) {
                 getDiscount().save(em);
             }
-
             if (getDefaultTax().getId() != null) {
                 getDefaultTax().save(em);
             }
-
             for (Contact contact : getContacts()) {
                 contact.save(em);
             }
-
             for (Address address : getAddresses()) {
                 address.save(em);
             }
