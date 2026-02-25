@@ -281,6 +281,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         if (inspector == null) {
             return new Employee();
         }
+
         return inspector;
     }
 
@@ -304,6 +305,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         if (distributor == null) {
             return new Client();
         }
+
         return distributor;
     }
 
@@ -660,6 +662,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         if (businessSource == null) {
             return new Client();
         }
+
         return businessSource;
     }
 
@@ -669,8 +672,9 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Client getClient() {
         if (client == null) {
-            return new Client("");
+            return new Client();
         }
+
         return client;
     }
 
@@ -792,19 +796,27 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getProductCategory().save(em);
-            getManufacturer().save(em);
+            if (getProductCategory().getId() != null) {
+                getProductCategory().save(em);
+            }
+            if (getManufacturer().getId() != null) {
+                getManufacturer().save(em);
+            }
             if (getDistributor().getId() != null) {
                 getDistributor().save(em);
             }
-            getMarketProduct().save(em);
+            if (getMarketProduct().getId() != null) {
+                getMarketProduct().save(em);
+            }
             if (getClient().getId() != null) {
                 getClient().save(em);
             }
             if (getBusinessSource().getId() != null) {
                 getBusinessSource().save(em);
             }
-            getInspector().save(em);
+            if (getInspector().getId() != null) {
+                getInspector().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

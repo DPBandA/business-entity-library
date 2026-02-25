@@ -804,6 +804,7 @@ public class JobCostingAndPayment implements BusinessEntity {
         if (costComponents == null) {
             costComponents = new ArrayList<>();
         }
+        
         return costComponents;
     }
 

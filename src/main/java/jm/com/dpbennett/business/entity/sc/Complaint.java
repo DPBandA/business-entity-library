@@ -157,6 +157,10 @@ public class Complaint implements Comparable, BusinessEntity {
     }
 
     public BusinessOffice getBusinessOffice() {
+        if (businessOffice == null) {
+            return new BusinessOffice();
+        }
+
         return businessOffice;
     }
 
@@ -323,6 +327,7 @@ public class Complaint implements Comparable, BusinessEntity {
         if (complainant == null) {
             return new Client();
         }
+
         return complainant;
     }
 
@@ -533,36 +538,35 @@ public class Complaint implements Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            // Save entities from other modules
-            getBusinessOffice().save(em);
-            getEnteredBy().save(em);
-            getReceivedBy().save(em);
+            if (getBusinessOffice().getId() != null) {
+                getBusinessOffice().save(em);
+            }
+            if (getEnteredBy().getId() != null) {
+                getEnteredBy().save(em);
+            }
+            if (getReceivedBy().getId() != null) {
+                getReceivedBy().save(em);
+            }
             if (getReceivedVia().getId() != null) {
                 getReceivedVia().save(em);
             }
             if (getComplainant().getId() != null) {
                 getComplainant().save(em);
             }
+            for (ProductInspection productInspection : getProductInspections()) {
+                if ((productInspection.getIsDirty() || productInspection.getId() == null)
+                        && !productInspection.save(em).isSuccess()) {
 
-            // Save product inspections
-            if (!getProductInspections().isEmpty()) {
-                for (ProductInspection productInspection : getProductInspections()) {
-                    if ((productInspection.getIsDirty() || productInspection.getId() == null)
-                            && !productInspection.save(em).isSuccess()) {
-
-                        return new ReturnMessage(false,
-                                "Product save error occurred",
-                                "An error occurred while saving a product",
-                                Message.SEVERITY_ERROR_NAME);
-                    }
+                    return new ReturnMessage(false,
+                            "Product save error occurred",
+                            "An error occurred while saving a product",
+                            Message.SEVERITY_ERROR_NAME);
                 }
             }
-
-            for (Employee employee : referredTo) {
+            for (Employee employee : getReferredTo()) {
                 employee.save(em);
             }
-
-            for (Department department : referredToDepartment) {
+            for (Department department : getReferredToDepartment()) {
                 department.save(em);
             }
 

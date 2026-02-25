@@ -346,6 +346,11 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Override
     public BusinessOffice getRegulatoryOffice() {
+
+        if (regulatoryOffice == null) {
+            return new BusinessOffice();
+        }
+
         return regulatoryOffice;
     }
 
@@ -504,6 +509,11 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Override
     public Manufacturer getManufacturer() {
+
+        if (manufacturer == null) {
+            return new Manufacturer();
+        }
+
         return manufacturer;
     }
 
@@ -628,22 +638,18 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
             if (getClient().getId() != null) {
                 getClient().save(em);
             }
-            if (getManufacturer() != null) {
+            if (getManufacturer().getId() != null) {
                 getManufacturer().save(em);
             }
-
-            if (getRegulatoryOffice() != null) {
+            if (getRegulatoryOffice().getId() != null) {
                 getRegulatoryOffice().save(em);
             }
-
             if (getSampledBy().getId() != null) {
                 getSampledBy().save(em);
             }
-
             if (getReceivedBy().getId() != null) {
                 getReceivedBy().save(em);
             }
-
             for (ProductTest test : getTests()) {
                 test.save(em);
             }

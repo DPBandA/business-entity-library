@@ -130,6 +130,9 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     @Override
     public Employee getEditedBy() {
+        if (editedBy == null) {
+            return new Employee();
+        }
 
         return editedBy;
     }
@@ -179,7 +182,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     public Client getExternalClient() {
         if (externalClient == null) {
-            return new Client("");
+            return new Client();
         }
 
         return externalClient;
@@ -223,7 +226,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     public Department getRequestingDepartment() {
         if (requestingDepartment == null) {
-            requestingDepartment = new Department();
+            return new Department();
         }
 
         return requestingDepartment;
@@ -267,6 +270,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
         if (responsibleDepartment == null) {
             return new Department();
         }
+
         return responsibleDepartment;
     }
 
@@ -366,6 +370,10 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     public Employee getSubmittedBy() {
 
+        if (submittedBy == null) {
+            return new Employee();
+        }
+
         return submittedBy;
     }
 
@@ -416,6 +424,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
         if (classification == null) {
             return new Classification();
         }
+
         return classification;
     }
 
@@ -619,17 +628,31 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getRequestingDepartment().save(em);
-            getResponsibleDepartment().save(em);
+            if (getDocumentType().getId() != null) {
+                getDocumentType().save(em);
+            }
+            if (getRequestingDepartment().getId() != null) {
+                getRequestingDepartment().save(em);
+            }
+            if (getResponsibleDepartment().getId() != null) {
+                getResponsibleDepartment().save(em);
+            }
             if (getResponsibleOfficer().getId() != null) {
                 getResponsibleOfficer().save(em);
             }
-            getSubmittedBy().save(em);
-            getClassification().save(em);
+            if (getSubmittedBy().getId() != null) {
+                getSubmittedBy().save(em);
+            }
+            if (getClassification().getId() != null) {
+                getClassification().save(em);
+            }
             if (getExternalClient().getId() != null) {
                 getExternalClient().save(em);
             }
-            getEditedBy().save(em);
+            if (getEditedBy().getId() != null) {
+                getEditedBy().save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -654,6 +677,11 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     @Override
     public DocumentType getDocumentType() {
+
+        if (documentType == null) {
+            return new DocumentType();
+        }
+
         return documentType;
     }
 

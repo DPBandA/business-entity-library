@@ -135,8 +135,9 @@ public class Sticker implements Product, BusinessEntity, Comparable {
 
     public Employee getAssignee() {
         if (assignee == null) {
-            assignee = new Employee();
+            return new Employee();
         }
+
         return assignee;
     }
 
@@ -154,6 +155,11 @@ public class Sticker implements Product, BusinessEntity, Comparable {
 
     @Override
     public Manufacturer getManufacturer() {
+
+        if (manufacturer == null) {
+            return new Manufacturer();
+        }
+
         return manufacturer;
     }
 
@@ -325,8 +331,12 @@ public class Sticker implements Product, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            //getManufacturer().save(em);
-            //getAssignee().save(em);
+            if (getManufacturer().getId() != null) {
+                getManufacturer().save(em);
+            }
+            if (getAssignee().getId() != null) {
+                getAssignee().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

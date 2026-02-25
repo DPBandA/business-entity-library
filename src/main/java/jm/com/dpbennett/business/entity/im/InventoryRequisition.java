@@ -227,8 +227,9 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
 
     public Department getDepartment() {
         if (department == null) {
-            return new Department("");
+            return new Department();
         }
+
         return department;
     }
 
@@ -673,8 +674,12 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getDepartment().save(em);
-            getContactPerson().save(em);
+            if (getDepartment().getId() != null) {
+                getDepartment().save(em);
+            }
+            if (getContactPerson().getId() != null) {
+                getContactPerson().save(em);
+            }
             if (getRequisitionApprovedBy().getId() != null) {
                 getRequisitionApprovedBy().save(em);
             }
@@ -684,26 +689,30 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
             if (getRequisitionBy().getId() != null) {
                 getRequisitionBy().save(em);
             }
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
+            if (getEnteredBy().getId() != null) {
+                getEnteredBy().save(em);
+            }
+            if (getEditedBy().getId() != null) {
+                getEditedBy().save(em);
+            }
             if (getInventoryIssuedBy().getId() != null) {
                 getInventoryIssuedBy().save(em);
             }
 
-            // Save new/edited cost components
-            if (!getInventoryDisbursements().isEmpty()) {
-                for (InventoryDisbursement inventoryDisbursement : getInventoryDisbursements()) {
-                    if ((inventoryDisbursement.getIsDirty() || inventoryDisbursement.getId() == null)
-                            && !inventoryDisbursement.save(em).isSuccess()) {
+            // tk
+            //if (!getInventoryDisbursements().isEmpty()) {
+            for (InventoryDisbursement inventoryDisbursement : getInventoryDisbursements()) {
+                if (/*(inventoryDisbursement.getIsDirty() || inventoryDisbursement.getId() == null)
+                            &&*/!inventoryDisbursement.save(em).isSuccess()) {
 
-                        return new ReturnMessage(false,
-                                "Inventory disbursement save error occurred",
-                                "An error occurred while saving an inventory disbursement",
-                                Message.SEVERITY_ERROR_NAME);
+                    return new ReturnMessage(false,
+                            "Inventory disbursement save error occurred",
+                            "An error occurred while saving an inventory disbursement",
+                            Message.SEVERITY_ERROR_NAME);
 
-                    }
                 }
             }
+            //}
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

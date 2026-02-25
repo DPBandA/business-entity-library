@@ -209,6 +209,11 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     }
 
     public Signature getSignature() {
+
+        if (signature == null) {
+            return new Signature();
+        }
+
         return signature;
     }
 
@@ -241,7 +246,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     @JsonbTransient
     public Department getDepartment() {
         if (department == null) {
-            department = new Department();
+            return new Department();
         }
 
         return department;
@@ -723,10 +728,15 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
             getInternet().save(em);
 
-            if (getSignature() != null) {
+            if (getSignature().getId() != null) {
                 getSignature().save(em);
             }
-
+            
+            // NB: This results in stack overflow. To be investigated.
+            //if (getDepartment().getId() != null) {
+            //    getDepartment().save(em);
+            //}
+            
             for (EmployeePosition position : getPositions()) {
                 position.save(em);
             }
@@ -734,7 +744,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
             for (Address address : getAddresses()) {
                 address.save(em);
             }
-            
+
             for (PhoneNumber phoneNumber : getPhoneNumbers()) {
                 phoneNumber.save(em);
             }

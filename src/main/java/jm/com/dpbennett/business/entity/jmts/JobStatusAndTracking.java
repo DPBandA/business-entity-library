@@ -57,7 +57,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     private Date dateSubmitted;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateAndTimeEntered;
-    private String jobTransferedTo; // to be removed
+    private String jobTransferedTo;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee transferredTo;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -241,6 +241,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
         if (editedBy == null) {
             return new Employee();
         }
+        
         return editedBy;
     }
 
@@ -547,15 +548,12 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
             if (getTransferredTo().getId() != null) {
                 getTransferredTo().save(em);
             }
-
             if (getEnteredBy().getId() != null) {
                 getEnteredBy().save(em);
             }
-
             if (getEditedBy().getId() != null) {
                 getEditedBy().save(em);
             }
-
             if (getCompletedBy().getId() != null) {
                 getCompletedBy().save(em);
             }

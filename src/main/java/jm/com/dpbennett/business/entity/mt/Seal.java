@@ -144,6 +144,7 @@ public class Seal implements Product, BusinessEntity, Comparable {
         if (assignee == null) {
             return new Employee();
         }
+        
         return assignee;
     }
 
@@ -193,6 +194,11 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
     @Override
     public Manufacturer getManufacturer() {
+
+        if (manufacturer == null) {
+            return new Manufacturer();
+        }
+
         return manufacturer;
     }
 
@@ -345,8 +351,12 @@ public class Seal implements Product, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            //getManufacturer().save(em);
-            //getAssignee().save(em);
+            if (getManufacturer().getId() != null) {
+                getManufacturer().save(em);
+            }
+            if (getAssignee().getId() != null) {
+                getAssignee().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

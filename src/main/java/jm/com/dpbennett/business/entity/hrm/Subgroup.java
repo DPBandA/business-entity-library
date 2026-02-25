@@ -110,6 +110,7 @@ public class Subgroup implements BusinessEntity, Comparable {
         if (departments == null) {
             departments = new ArrayList<>();
         }
+        
         return departments;
     }
 
@@ -380,6 +381,10 @@ public class Subgroup implements BusinessEntity, Comparable {
             if (getHead().getId() != null) {
                 getHead().save(em);
             }
+            for (Department department : getDepartments()) {
+                department.save(em);
+            }
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

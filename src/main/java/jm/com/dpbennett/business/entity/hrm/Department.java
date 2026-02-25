@@ -165,6 +165,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         if (internet == null) {
             internet = new Internet();
         }
+
         return internet;
     }
 
@@ -188,6 +189,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         if (departmentUnits == null) {
             departmentUnits = new ArrayList<>();
         }
+
         return departmentUnits;
     }
 
@@ -247,6 +249,10 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     }
 
     public List<Employee> getStaff() {
+        if (staff == null) {
+            staff = new ArrayList<>();
+        }
+
         return staff;
     }
 
@@ -493,21 +499,19 @@ public class Department implements Serializable, BusinessEntity, Comparable {
             if (getActingHead().getId() != null) {
                 getActingHead().save(em);
             }
+
             getInternet().save(em);
             getPrivilege().save(em);
 
             for (JobCategory jobCategory : getJobCategories()) {
                 jobCategory.save(em);
             }
-
             for (Employee employee : getStaff()) {
                 employee.save(em);
             }
-
             for (Laboratory laboratory : getLaboratories()) {
                 laboratory.save(em);
             }
-
             for (DepartmentUnit departmentUnit : getDepartmentUnits()) {
                 departmentUnit.save(em);
             }

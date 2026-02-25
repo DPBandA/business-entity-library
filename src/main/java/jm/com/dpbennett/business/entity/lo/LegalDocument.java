@@ -248,7 +248,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Client getExternalClient() {
         if (externalClient == null) {
-            return new Client("");
+            return new Client();
         }
 
         return externalClient;

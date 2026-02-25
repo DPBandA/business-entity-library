@@ -413,15 +413,12 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
             if (getHead().getId() != null) {
                 getHead().save(em);
             }
-
             for (Department department : getDepartments()) {
                 department.save(em);
             }
-
             for (Address address : getAddresses()) {
                 address.save(em);
             }
-
             for (Contact contact : getContacts()) {
                 contact.save(em);
             }

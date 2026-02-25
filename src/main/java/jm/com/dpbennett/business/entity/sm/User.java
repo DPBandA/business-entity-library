@@ -98,16 +98,6 @@ public class User extends DefaultEntity {
     private Date logoutTime;
     @Transient
     private String email;
-//    @Transient
-//    private boolean jobAssigned;
-//    @Transient
-//    private boolean jobCostingPrepared;
-//    @Transient
-//    private boolean jobCostingApproved;
-//    @Transient
-//    private boolean cashPaymentMade;
-//    @Transient
-//    private boolean renderMobileUI;
 
     public User() {
         employee = new Employee();
@@ -342,6 +332,7 @@ public class User extends DefaultEntity {
         if (privileges == null) {
             privileges = new ArrayList<>();
         }
+        
         return privileges;
     }
 
@@ -353,6 +344,7 @@ public class User extends DefaultEntity {
         if (activeModules == null) {
             activeModules = new ArrayList<>();
         }
+        
         return activeModules;
     }
 
@@ -802,20 +794,16 @@ public class User extends DefaultEntity {
             if (getEmployee().getId() != null) {
                 getEmployee().save(em);
             }
-
             if (getPrivilege().getId() != null) {
                 getPrivilege().save(em);
             }
-
-            for (Privilege priv : privileges) {
+            for (Privilege priv : getPrivileges()) {
                 priv.save(em);
             }
-
-            for (Module activeModule : activeModules) {
+            for (Module activeModule : getActiveModules()) {
                 activeModule.save(em);
             }
-
-            for (SystemOption setting : settings) {
+            for (SystemOption setting : getSettings()) {
                 setting.save(em);
             }
 

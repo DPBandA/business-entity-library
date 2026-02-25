@@ -405,6 +405,12 @@ public class Division implements BusinessEntity, Comparable {
             if (getHead().getId() != null) {
                 getHead().save(em);
             }
+            for (Department department : getDepartments()) {
+                department.save(em);
+            }
+            for (Subgroup subgroup : getSubgroups()) {
+                subgroup.save(em);
+            }
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

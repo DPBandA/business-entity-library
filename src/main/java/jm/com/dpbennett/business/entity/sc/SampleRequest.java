@@ -19,6 +19,7 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sc;
 
+import java.util.AbstractList;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -99,6 +100,11 @@ public class SampleRequest implements BusinessEntity, Form {
     }
 
     public List<ProductInspection> getProducts() {
+
+        if (products == null) {
+            return new ArrayList<>();
+        }
+
         return products;
     }
 
@@ -130,6 +136,7 @@ public class SampleRequest implements BusinessEntity, Form {
         if (inspector == null) {
             return new Employee();
         }
+
         return inspector;
     }
 
@@ -139,8 +146,9 @@ public class SampleRequest implements BusinessEntity, Form {
 
     public Client getReceivedFrom() {
         if (receivedFrom == null) {
-            receivedFrom = new Client("");
+            receivedFrom = new Client();
         }
+
         return receivedFrom;
     }
 
@@ -152,6 +160,7 @@ public class SampleRequest implements BusinessEntity, Form {
         if (representative == null) {
             representative = new Contact();
         }
+
         return representative;
     }
 
@@ -268,10 +277,14 @@ public class SampleRequest implements BusinessEntity, Form {
             if (getReceivedFrom().getId() != null) {
                 getReceivedFrom().save(em);
             }
-            getRepresentative().save(em);
-            getInspector().save(em);
 
-            for (ProductInspection product : products) {
+            getRepresentative().save(em);
+
+            if (getInspector().getId() != null) {
+                getInspector().save(em);
+            }
+
+            for (ProductInspection product : getProducts()) {
                 product.save(em);
             }
 

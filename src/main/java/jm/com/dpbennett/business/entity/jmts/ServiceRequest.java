@@ -46,6 +46,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.fm.Service;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -93,12 +94,10 @@ public class ServiceRequest implements BusinessEntity {
     private BusinessOffice businessOffice;
     @Column(length = 1024)
     private String jobDescription;
-    // tk Add list of services instead. Delete field from database table.
-//    @OneToOne(cascade = CascadeType.REFRESH)
-//    private Service service;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Service service;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact contact;
-    // tracking
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateSubmitted;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -125,6 +124,19 @@ public class ServiceRequest implements BusinessEntity {
 
     public ServiceRequest(String serviceRequestNumber) {
         this.serviceRequestNumber = serviceRequestNumber;
+    }
+
+    public Service getService() {
+
+        if (service == null) {
+            return new Service();
+        }
+
+        return service;
+    }
+
+    public void setService(Service service) {
+        this.service = service;
     }
 
     @Override
@@ -246,6 +258,7 @@ public class ServiceRequest implements BusinessEntity {
         if (editedBy == null) {
             return new Employee();
         }
+
         return editedBy;
     }
 
@@ -294,6 +307,11 @@ public class ServiceRequest implements BusinessEntity {
     }
 
     public Contact getContact() {
+
+        if (contact == null) {
+            return new Contact();
+        }
+
         return contact;
     }
 
@@ -333,6 +351,7 @@ public class ServiceRequest implements BusinessEntity {
         if (classification == null) {
             return new Classification();
         }
+
         return classification;
     }
 
@@ -344,6 +363,7 @@ public class ServiceRequest implements BusinessEntity {
         if (sector == null) {
             return new Sector();
         }
+
         return sector;
     }
 
@@ -355,6 +375,7 @@ public class ServiceRequest implements BusinessEntity {
         if (businessOffice == null) {
             return new BusinessOffice();
         }
+
         return businessOffice;
     }
 
@@ -366,6 +387,7 @@ public class ServiceRequest implements BusinessEntity {
         if (serviceContract == null) {
             return new ServiceContract();
         }
+
         return serviceContract;
     }
 
@@ -385,7 +407,7 @@ public class ServiceRequest implements BusinessEntity {
         if (client == null) {
             return new Client("");
         }
-        
+
         return client;
     }
 
@@ -395,8 +417,9 @@ public class ServiceRequest implements BusinessEntity {
 
     public Department getDepartment() {
         if (department == null) {
-            return new Department("");
+            return new Department();
         }
+
         return department;
     }
 
@@ -408,6 +431,7 @@ public class ServiceRequest implements BusinessEntity {
         if (assignedTo == null) {
             return new Employee();
         }
+
         return assignedTo;
     }
 
@@ -419,6 +443,7 @@ public class ServiceRequest implements BusinessEntity {
         if (jobCategory == null) {
             return new JobCategory();
         }
+
         return jobCategory;
     }
 
@@ -430,6 +455,7 @@ public class ServiceRequest implements BusinessEntity {
         if (jobSubCategory == null) {
             return new JobSubCategory();
         }
+
         return jobSubCategory;
     }
 
@@ -586,20 +612,47 @@ public class ServiceRequest implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getClassification().save(em);
-            getSector().save(em);
-            getDepartment().save(em);
-            getClient().save(em);
-            getJobCategory().save(em);
-            getJobSubCategory().save(em);
-            getAssignedTo().save(em);
+
+            if (getClassification().getId() != null) {
+                getClassification().save(em);
+            }
+            if (getSector().getId() != null) {
+                getSector().save(em);
+            }
+            if (getDepartment().getId() != null) {
+                getDepartment().save(em);
+            }
+            if (getClient().getId() != null) {
+                getClient().save(em);
+            }
+            if (getJobCategory().getId() != null) {
+                getJobCategory().save(em);
+            }
+            if (getJobSubCategory().getId() != null) {
+                getJobSubCategory().save(em);
+            }
+            if (getAssignedTo().getId() != null) {
+                getAssignedTo().save(em);
+            }
+
             getServiceContract().save(em);
-            getBusinessOffice().save(em);
-            getContact().save(em);
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
-            
+
+            if (getBusinessOffice().getId() != null) {
+                getBusinessOffice().save(em);
+            }
+            if (getService().getId() != null) {
+                getService().save(em);
+            }
+            if (getContact().getId() != null) {
+                getContact().save(em);
+            }
+            if (getEnteredBy().getId() != null) {
+                getEnteredBy().save(em);
+            }
+            if (getEditedBy().getId() != null) {
+                getEditedBy().save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

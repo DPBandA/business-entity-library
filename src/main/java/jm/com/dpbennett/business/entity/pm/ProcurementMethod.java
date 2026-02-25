@@ -86,7 +86,7 @@ public class ProcurementMethod implements BusinessEntity {
         requiredSignatoryPositions = new ArrayList<>();
         description = "";
     }
-    
+
     public String getUsable() {
         if (getActive()) {
             return "Yes";
@@ -236,6 +236,7 @@ public class ProcurementMethod implements BusinessEntity {
         if (editedBy == null) {
             return new Employee();
         }
+
         return editedBy;
     }
 
@@ -315,34 +316,34 @@ public class ProcurementMethod implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<ProcurementMethod> procurementMethods
                     = em.createQuery("SELECT p FROM ProcurementMethod p WHERE UPPER(p.procurementMethod) LIKE '%"
                             + value.toUpperCase().trim() + "%' ORDER BY p.procurementMethod", ProcurementMethod.class).getResultList();
-            
+
             return procurementMethods;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
-    
+
     public static List<ProcurementMethod> findAllActiveByName(
             EntityManager em, String value) {
 
-        try {            
-            
+        try {
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<ProcurementMethod> procurementMethods
                     = em.createQuery("SELECT p FROM ProcurementMethod p WHERE (p.active = 1) AND UPPER(p.procurementMethod) LIKE '%"
                             + value.toUpperCase().trim() + "%' ORDER BY p.procurementMethod", ProcurementMethod.class).getResultList();
-            
+
             return procurementMethods;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -353,13 +354,15 @@ public class ProcurementMethod implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
-            
-            getEditedBy().save(em);
-            
-            for (EmployeePosition requiredSignatoryPosition : requiredSignatoryPositions) {
+
+            if (getEditedBy().getId() != null) {
+                getEditedBy().save(em);
+            }
+
+            for (EmployeePosition requiredSignatoryPosition : getRequiredSignatoryPositions()) {
                 requiredSignatoryPosition.save(em);
             }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

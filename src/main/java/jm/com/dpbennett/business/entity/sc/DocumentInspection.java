@@ -98,6 +98,7 @@ public class DocumentInspection implements Comparable, BusinessEntity {
         if (consignee == null) {
             consignee = new Client("", false);
         }
+        
         return consignee;
     }
 
@@ -281,7 +282,9 @@ public class DocumentInspection implements Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getInspector().save(em);
+            if (getInspector().getId() != null) {
+                getInspector().save(em);
+            }
             if (getConsignee().getId() != null) {
                 getConsignee().save(em);
             }

@@ -383,6 +383,7 @@ public class Job implements BusinessEntity {
         if (representatives == null) {
             representatives = new ArrayList<>();
         }
+        
         return representatives;
     }
 
@@ -394,6 +395,7 @@ public class Job implements BusinessEntity {
         if (services == null) {
             services = new ArrayList<>();
         }
+        
         return services;
     }
 
@@ -803,6 +805,7 @@ public class Job implements BusinessEntity {
                 return new Address();
             }
         }
+        
         return billingAddress;
     }
 
@@ -1171,6 +1174,7 @@ public class Job implements BusinessEntity {
         if (subContractedDepartment == null) {
             return new Department();
         }
+        
         return subContractedDepartment;
     }
 
@@ -2125,6 +2129,7 @@ public class Job implements BusinessEntity {
             }
 
             returnMessage = getJobCostingAndPayment().save(em);
+            
             if (!returnMessage.isSuccess()) {
 
                 return new ReturnMessage(false,
@@ -2133,8 +2138,11 @@ public class Job implements BusinessEntity {
                         + "\nDetails: " + returnMessage.getDetail(),
                         Message.SEVERITY_ERROR_NAME);
             }
+            
             getServiceContract().save(em);
+            
             getJobStatusAndTracking().save(em);
+            
             if (getBusiness().getId() != null) {
                 getBusiness().save(em);
             }
@@ -2169,6 +2177,7 @@ public class Job implements BusinessEntity {
             for (Service service : getServices()) {
                 service.save(em);
             }
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

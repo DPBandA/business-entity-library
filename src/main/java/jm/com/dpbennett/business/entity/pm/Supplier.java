@@ -189,6 +189,10 @@ public class Supplier implements BusinessEntity, Comparable {
 
     @Override
     public Employee getEditedBy() {
+        if (editedBy == null) {
+            return new Employee();
+        }
+
         return editedBy;
     }
 
@@ -227,6 +231,7 @@ public class Supplier implements BusinessEntity, Comparable {
         if (enteredBy == null) {
             return new Employee();
         }
+
         return enteredBy;
     }
 
@@ -310,7 +315,7 @@ public class Supplier implements BusinessEntity, Comparable {
         if (internet == null) {
             internet = new Internet();
         }
-        
+
         return internet;
     }
 
@@ -785,15 +790,18 @@ public class Supplier implements BusinessEntity, Comparable {
             for (Contact contact : getContacts()) {
                 contact.save(em);
             }
-
             for (Address address : getAddresses()) {
                 address.save(em);
             }
-            
+
             getInternet().save(em);
 
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
+            if (getEnteredBy().getId() != null) {
+                getEnteredBy().save(em);
+            }
+            if (getEditedBy().getId() != null) {
+                getEditedBy().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

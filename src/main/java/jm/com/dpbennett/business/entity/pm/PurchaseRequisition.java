@@ -1190,7 +1190,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (editedBy == null) {
             return new Employee();
         }
-        
+
         return editedBy;
     }
 
@@ -1667,31 +1667,28 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             if (getEditedBy().getId() != null) {
                 getEditedBy().save(em);
             }
-            if (!getAttachments().isEmpty()) {
-                for (Attachment attachment : getAttachments()) {
-                    if ((attachment.getId() == null || attachment.getIsDirty())
-                            && !attachment.save(em).isSuccess()) {
 
-                        return new ReturnMessage(false,
-                                "Attachment save error occurred",
-                                "An error occurred while saving an attachment",
-                                Message.SEVERITY_ERROR_NAME);
+            for (Attachment attachment : getAttachments()) {
+                if ((attachment.getId() == null || attachment.getIsDirty())
+                        && !attachment.save(em).isSuccess()) {
 
-                    }
+                    return new ReturnMessage(false,
+                            "Attachment save error occurred",
+                            "An error occurred while saving an attachment",
+                            Message.SEVERITY_ERROR_NAME);
+
                 }
             }
 
-            if (!getCostComponents().isEmpty()) {
-                for (CostComponent costComponent : getCostComponents()) {
-                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
-                            && !costComponent.save(em).isSuccess()) {
+            for (CostComponent costComponent : getCostComponents()) {
+                if ((costComponent.getIsDirty() || costComponent.getId() == null)
+                        && !costComponent.save(em).isSuccess()) {
 
-                        return new ReturnMessage(false,
-                                "Cost component save error occurred",
-                                "An error occurred while saving a cost component",
-                                Message.SEVERITY_ERROR_NAME);
+                    return new ReturnMessage(false,
+                            "Cost component save error occurred",
+                            "An error occurred while saving a cost component",
+                            Message.SEVERITY_ERROR_NAME);
 
-                    }
                 }
             }
 
