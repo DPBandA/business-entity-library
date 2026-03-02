@@ -361,6 +361,20 @@ public class User extends DefaultEntity {
 
         return allActiveModules;
     }
+    
+    public String getAllPrivileges() {
+        String allPrivileges = "";
+
+        for (int i = 0; i < getPrivileges().size(); i++) {
+            if (i == 0) {
+                allPrivileges = getPrivileges().get(i).getDescription();
+            } else {
+                allPrivileges = allPrivileges + ", " + getPrivileges().get(i).getDescription();
+            }
+        }
+
+        return allPrivileges;
+    }
 
     public void setActiveModules(List<Module> activeModules) {
         this.activeModules = activeModules;
