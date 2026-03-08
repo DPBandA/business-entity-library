@@ -90,7 +90,7 @@ public class Job implements BusinessEntity {
     private Boolean locked;
     private Boolean isEarningJob;
     private Boolean newClient;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Job parent;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Classification classification;
@@ -109,11 +109,11 @@ public class Job implements BusinessEntity {
     private JobSubCategory jobSubCategory;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedTo;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private JobCostingAndPayment jobCostingAndPayment;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private ServiceContract serviceContract;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private JobStatusAndTracking jobStatusAndTracking;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Business business;
@@ -123,7 +123,7 @@ public class Job implements BusinessEntity {
     private Address billingAddress;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact contact;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<JobSample> jobSamples;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> representatives;
@@ -2096,87 +2096,87 @@ public class Job implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        ReturnMessage returnMessage;
+//        ReturnMessage returnMessage;
 
         try {
 
-            if (getParent().getId() != null) {
-                getParent().save(em);
-            }
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
-            }
-            if (getSector().getId() != null) {
-                getSector().save(em);
-            }
-            if (getDepartment().getId() != null) {
-                getDepartment().save(em);
-            }
-            if (getSubContractedDepartment().getId() != null) {
-                getSubContractedDepartment().save(em);
-            }
-            if (getClient().getId() != null) {
-                getClient().save(em);
-            }
-            if (getJobCategory().getId() != null) {
-                getJobCategory().save(em);
-            }
-            if (getJobSubCategory().getId() != null) {
-                getJobSubCategory().save(em);
-            }
-            if (getAssignedTo().getId() != null) {
-                getAssignedTo().save(em);
-            }
+//            if (getParent().getId() != null) {
+//                getParent().save(em);
+//            }
+//            if (getClassification().getId() != null) {
+//                getClassification().save(em);
+//            }
+//            if (getSector().getId() != null) {
+//                getSector().save(em);
+//            }
+//            if (getDepartment().getId() != null) {
+//                getDepartment().save(em);
+//            }
+//            if (getSubContractedDepartment().getId() != null) {
+//                getSubContractedDepartment().save(em);
+//            }
+//            if (getClient().getId() != null) {
+//                getClient().save(em);
+//            }
+//            if (getJobCategory().getId() != null) {
+//                getJobCategory().save(em);
+//            }
+//            if (getJobSubCategory().getId() != null) {
+//                getJobSubCategory().save(em);
+//            }
+//            if (getAssignedTo().getId() != null) {
+//                getAssignedTo().save(em);
+//            }
 
-            returnMessage = getJobCostingAndPayment().save(em);
+//            returnMessage = getJobCostingAndPayment().save(em);
+//            
+//            if (!returnMessage.isSuccess()) {
+//
+//                return new ReturnMessage(false,
+//                        "Job Costing and Payment save error occurred",
+//                        "An error occurred while saving the job costing and payment"
+//                        + "\nDetails: " + returnMessage.getDetail(),
+//                        Message.SEVERITY_ERROR_NAME);
+//            }
             
-            if (!returnMessage.isSuccess()) {
-
-                return new ReturnMessage(false,
-                        "Job Costing and Payment save error occurred",
-                        "An error occurred while saving the job costing and payment"
-                        + "\nDetails: " + returnMessage.getDetail(),
-                        Message.SEVERITY_ERROR_NAME);
-            }
+//            getServiceContract().save(em);
+//            
+//            getJobStatusAndTracking().save(em);
             
-            getServiceContract().save(em);
-            
-            getJobStatusAndTracking().save(em);
-            
-            if (getBusiness().getId() != null) {
-                getBusiness().save(em);
-            }
-            if (getBusinessOffice().getId() != null) {
-                getBusinessOffice().save(em);
-            }
-            if (getBillingAddress().getId() != null) {
-                getBillingAddress().save(em);
-            }
-            if (getContact().getId() != null) {
-                getContact().save(em);
-            }
-            for (JobSample jobSample : getJobSamples()) {
-
-                returnMessage = jobSample.save(em);
-
-                if (!returnMessage.isSuccess()) {
-
-                    return new ReturnMessage(false,
-                            "Job sample save error occurred",
-                            "An error occurred while saving job sample"
-                            + jobSample.getReference()
-                            + "\nDetails: " + returnMessage.getDetail(),
-                            Message.SEVERITY_ERROR_NAME);
-
-                }
-
-            }
-            for (Employee representative : getRepresentatives()) {
-                representative.save(em);
-            }
-            for (Service service : getServices()) {
-                service.save(em);
-            }
+//            if (getBusiness().getId() != null) {
+//                getBusiness().save(em);
+//            }
+//            if (getBusinessOffice().getId() != null) {
+//                getBusinessOffice().save(em);
+//            }
+//            if (getBillingAddress().getId() != null) {
+//                getBillingAddress().save(em);
+//            }
+//            if (getContact().getId() != null) {
+//                getContact().save(em);
+//            }
+//            for (JobSample jobSample : getJobSamples()) {
+//
+//                returnMessage = jobSample.save(em);
+//
+//                if (!returnMessage.isSuccess()) {
+//
+//                    return new ReturnMessage(false,
+//                            "Job sample save error occurred",
+//                            "An error occurred while saving job sample"
+//                            + jobSample.getReference()
+//                            + "\nDetails: " + returnMessage.getDetail(),
+//                            Message.SEVERITY_ERROR_NAME);
+//
+//                }
+//
+//            }
+//            for (Employee representative : getRepresentatives()) {
+//                representative.save(em);
+//            }
+//            for (Service service : getServices()) {
+//                service.save(em);
+//            }
             
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
