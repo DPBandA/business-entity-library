@@ -413,7 +413,7 @@ public class Job implements BusinessEntity {
 
     public Job getParent() {
         if (parent == null) {
-            return new Job();
+            parent = new Job();
         }
 
         return parent;
@@ -786,7 +786,7 @@ public class Job implements BusinessEntity {
             if (client != null) {
                 setContact(client.getMainContact());
             } else {
-                return new Contact();
+                contact = new Contact();
             }
         }
 
@@ -802,7 +802,7 @@ public class Job implements BusinessEntity {
             if (client != null) {
                 setBillingAddress(client.getDefaultAddress());
             } else {
-                return new Address();
+                billingAddress = new Address();
             }
         }
         
@@ -960,7 +960,7 @@ public class Job implements BusinessEntity {
     public Classification getClassification() {
 
         if (classification == null) {
-            return new Classification();
+            classification = new Classification();
         }
 
         return classification;
@@ -972,7 +972,7 @@ public class Job implements BusinessEntity {
 
     public Sector getSector() {
         if (sector == null) {
-            return new Sector();
+            sector = new Sector();
         }
 
         return sector;
@@ -1058,7 +1058,7 @@ public class Job implements BusinessEntity {
 
     public Business getBusiness() {
         if (business == null) {
-            return new Business();
+            business = new Business();
         }
 
         return business;
@@ -1070,7 +1070,7 @@ public class Job implements BusinessEntity {
 
     public BusinessOffice getBusinessOffice() {
         if (businessOffice == null) {
-            return new BusinessOffice();
+            businessOffice = new BusinessOffice();
         }
 
         return businessOffice;
@@ -1101,7 +1101,7 @@ public class Job implements BusinessEntity {
 
     public Client getClient() {
         if (client == null) {
-            return new Client();
+            client = new Client();
         }
 
         return client;
@@ -1113,7 +1113,7 @@ public class Job implements BusinessEntity {
 
     public Department getDepartment() {
         if (department == null) {
-            return new Department();
+            department = new Department();
         }
 
         return department;
@@ -1136,7 +1136,7 @@ public class Job implements BusinessEntity {
     public Employee getAssignedTo() {
 
         if (assignedTo == null) {
-            return new Employee();
+            assignedTo = new Employee();
         }
 
         return assignedTo;
@@ -1148,7 +1148,7 @@ public class Job implements BusinessEntity {
 
     public JobCategory getJobCategory() {
         if (jobCategory == null) {
-            return new JobCategory();
+            jobCategory = new JobCategory();
         }
 
         return jobCategory;
@@ -1160,7 +1160,7 @@ public class Job implements BusinessEntity {
 
     public JobSubCategory getJobSubCategory() {
         if (jobSubCategory == null) {
-            return new JobSubCategory();
+            jobSubCategory = new JobSubCategory();
         }
 
         return jobSubCategory;
@@ -1172,7 +1172,7 @@ public class Job implements BusinessEntity {
 
     public Department getSubContractedDepartment() {
         if (subContractedDepartment == null) {
-            return new Department();
+            subContractedDepartment = new Department();
         }
         
         return subContractedDepartment;

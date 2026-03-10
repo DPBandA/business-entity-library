@@ -574,15 +574,17 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
         if (job.getSubContractedDepartment().getName().equals("--")
                 || job.getSubContractedDepartment().getName().equals("")) {
-            // This is not a subcontracted job see return to parent department            
-            dept = Department.findByName(em, job.getDepartment().getName());
+
+//            dept = Department.findByName(em, job.getDepartment().getName());
+            dept = Department.findById(em, job.getDepartment().getId());
             if (dept != null) {
                 em.refresh(dept);
             }
 
             return dept;
         } else {
-            dept = Department.findByName(em, job.getSubContractedDepartment().getName());
+//            dept = Department.findByName(em, job.getSubContractedDepartment().getName());
+            dept = Department.findById(em, job.getSubContractedDepartment().getId());
             em.refresh(dept);
 
             return dept;
