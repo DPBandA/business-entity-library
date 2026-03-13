@@ -41,7 +41,6 @@ import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
- *
  * @author Desmond Bennett
  */
 @Entity
@@ -102,6 +101,7 @@ public class JobReportItem implements BusinessEntity, Comparable {
         if (departments == null) {
             departments = new ArrayList<>();
         }
+        
         return departments;
     }
 
@@ -118,7 +118,6 @@ public class JobReportItem implements BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof JobReportItem)) {
             return false;
         }
@@ -191,10 +190,6 @@ public class JobReportItem implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            for (Department department : departments) {
-                department.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

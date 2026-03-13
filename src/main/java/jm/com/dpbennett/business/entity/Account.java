@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 /**
@@ -36,6 +35,6 @@ public interface Account extends BusinessEntity {
     public String getType();
 
     @Override
-    public void setType(String type);   
-    
+    public void setType(String type);
+
 }

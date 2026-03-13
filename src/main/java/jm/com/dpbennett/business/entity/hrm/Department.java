@@ -70,21 +70,21 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     private String code;
     private String jobCostingType;
     private Boolean actingHeadActive;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee head;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee actingHead;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Internet internet;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Privilege privilege;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<JobCategory> jobCategories;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Employee> staff;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Laboratory> laboratories;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<DepartmentUnit> departmentUnits;
 
     @Transient
@@ -213,7 +213,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public Employee getHead() {
 
         if (head == null) {
-            return new Employee();
+            head = new Employee();
         }
 
         return head;
@@ -225,7 +225,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     public Employee getActingHead() {
         if (actingHead == null) {
-            return new Employee();
+            actingHead = new Employee();
         }
 
         return actingHead;
@@ -492,29 +492,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getHead().getId() != null) {
-                getHead().save(em);
-            }
-            if (getActingHead().getId() != null) {
-                getActingHead().save(em);
-            }
-
-            getInternet().save(em);
-            getPrivilege().save(em);
-
-            for (JobCategory jobCategory : getJobCategories()) {
-                jobCategory.save(em);
-            }
-            for (Employee employee : getStaff()) {
-                employee.save(em);
-            }
-            for (Laboratory laboratory : getLaboratories()) {
-                laboratory.save(em);
-            }
-            for (DepartmentUnit departmentUnit : getDepartmentUnits()) {
-                departmentUnit.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

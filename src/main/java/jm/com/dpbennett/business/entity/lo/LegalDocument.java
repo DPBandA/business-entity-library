@@ -118,9 +118,6 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Transient
     private Boolean visited;
 
-    /**
-     * Default constructor.
-     */
     public LegalDocument() {
     }
 
@@ -197,7 +194,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            return new Employee();
+            editedBy = new Employee();
         }
 
         return editedBy;
@@ -248,7 +245,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Client getExternalClient() {
         if (externalClient == null) {
-            return new Client();
+            externalClient = new Client();
         }
 
         return externalClient;
@@ -302,7 +299,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Department getRequestingDepartment() {
         if (requestingDepartment == null) {
-            return new Department();
+            requestingDepartment = new Department();
         }
 
         return requestingDepartment;
@@ -344,7 +341,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Department getResponsibleDepartment() {
         if (responsibleDepartment == null) {
-            return new Department();
+            responsibleDepartment = new Department();
         }
 
         return responsibleDepartment;
@@ -438,7 +435,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Employee getResponsibleOfficer() {
         if (responsibleOfficer == null) {
-            return new Employee();
+            responsibleOfficer = new Employee();
         }
 
         return responsibleOfficer;
@@ -450,7 +447,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Employee getSubmittedBy() {
         if (submittedBy == null) {
-            return new Employee();
+            submittedBy = new Employee();
         }
 
         return submittedBy;
@@ -463,7 +460,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Override
     public DocumentType getDocumentType() {
         if (documentType == null) {
-            return new DocumentType();
+            documentType = new DocumentType();
         }
 
         return documentType;
@@ -493,7 +490,6 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof LegalDocument)) {
             return false;
         }
@@ -504,7 +500,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.Document[id=" + id + "]";
+        return "jm.com.dpbennett.entity.Document[id=" + id + "]";
     }
 
     @Override
@@ -515,7 +511,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Override
     public Classification getClassification() {
         if (classification == null) {
-            return new Classification();
+            classification = new Classification();
         }
 
         return classification;
@@ -596,7 +592,6 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
         switch (searchType) {
             case "Legal Documents":
-                //if (!searchText.equals("")) {
                 searchTextAndClause
                         = " AND ("
                         + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -615,7 +610,6 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
                         + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
-                //}
                 searchQuery
                         = "SELECT doc FROM LegalDocument doc"
                         + " JOIN doc.responsibleDepartment responsibleDepartment"
@@ -675,21 +669,17 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     public static String getLegalDocumentNumber(LegalDocument legalDocument, String prefix) {
         String number = prefix;
 
-        // append department code
         if (legalDocument.getResponsibleDepartment().getCode() != null) {
             number = number + legalDocument.getResponsibleDepartment().getCode();
         } else {
             number = number + "?";
         }
-        // append doc type
         if (legalDocument.getDocumentType() != null) {
             number = number + "_" + legalDocument.getDocumentType().getCode();
         }
-        // append doc form
         if (legalDocument.getDocumentForm() != null) {
             number = number + "/" + legalDocument.getDocumentForm();
         }
-        // append doc seq
         if (legalDocument.getSequenceNumber() != null) {
             NumberFormat formatter = DecimalFormat.getIntegerInstance();
             formatter.setMinimumIntegerDigits(2);
@@ -697,7 +687,6 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         } else {
             number = number + "_?";
         }
-        // append month in the form (MMM) and year in the form (YY).
         if (legalDocument.getDateReceived() != null) {
             number = number + "/" + BusinessEntityUtils.getMonthShortFormat(legalDocument.getDateReceived())
                     + BusinessEntityUtils.getYearShortFormat(legalDocument.getDateReceived(), 2);
@@ -709,31 +698,6 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getDocumentType().getId() != null) {
-                getDocumentType().save(em);
-            }
-            if (getRequestingDepartment().getId() != null) {
-                getRequestingDepartment().save(em);
-            }
-            if (getResponsibleDepartment().getId() != null) {
-                getResponsibleDepartment().save(em);
-            }
-            if (getResponsibleOfficer().getId() != null) {
-                getResponsibleOfficer().save(em);
-            }
-            if (getSubmittedBy().getId() != null) {
-                getSubmittedBy().save(em);
-            }
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
-            }
-            if (getExternalClient().getId() != null) {
-                getExternalClient().save(em);
-            }
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

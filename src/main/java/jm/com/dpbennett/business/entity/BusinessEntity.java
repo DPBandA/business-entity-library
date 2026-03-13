@@ -61,7 +61,7 @@ public interface BusinessEntity extends Serializable {
     public void setDateEdited(Date dateEdited);
 
     public ReturnMessage save(EntityManager em);
-    
+
     public ReturnMessage saveUnique(EntityManager em);
 
     public ReturnMessage delete(EntityManager em);
@@ -91,26 +91,23 @@ public interface BusinessEntity extends Serializable {
     public Person getEnteredBy();
 
     public void setEnteredBy(Person person);
-    
+
     public List<SystemOption> getSettings();
-    
+
     public void setSettings(List<SystemOption> settings);
-    
+
     public SystemOption getSetting(
             String setting,
             String settingValue,
             String type,
             String category);
-    
-     public void setSetting(
+
+    public void setSetting(
             String setting,
             String settingValue,
             String type,
             String category);
 
-    /**
-     * The actions that can be performed with respect to an entity.
-     */
     public enum Action {
         CREATE, COMPLETE, EDIT, APPROVE, DELETE, CANCEL, PREPARE, INVOICE,
         COSTING, REQUEST, PAYMENT, RECOMMEND

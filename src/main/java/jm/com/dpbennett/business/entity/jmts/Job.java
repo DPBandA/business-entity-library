@@ -383,7 +383,7 @@ public class Job implements BusinessEntity {
         if (representatives == null) {
             representatives = new ArrayList<>();
         }
-        
+
         return representatives;
     }
 
@@ -395,7 +395,7 @@ public class Job implements BusinessEntity {
         if (services == null) {
             services = new ArrayList<>();
         }
-        
+
         return services;
     }
 
@@ -473,8 +473,6 @@ public class Job implements BusinessEntity {
                 this.clean();
             } else {
 
-                System.out.println("Job was not saved in prepareAndSave()"); //tk
-
                 // Reset the sequence number here if the job is new.
                 if (this.getId() == null) {
                     this.setJobSequenceNumber(null);
@@ -489,8 +487,6 @@ public class Job implements BusinessEntity {
             }
 
         } catch (Exception e) {
-
-            System.out.println("Job was not saved: " + e); //tk
 
             return new ReturnMessage(false,
                     "Undefined Error!",
@@ -805,7 +801,7 @@ public class Job implements BusinessEntity {
                 billingAddress = new Address();
             }
         }
-        
+
         return billingAddress;
     }
 
@@ -858,39 +854,6 @@ public class Job implements BusinessEntity {
         return findPossibleSubcontracts(em);
     }
 
-// tk for use to create other methods dealing with subcontracts
-//    public Boolean hasSubcontracts(EntityManager em) {
-//        List<Job> jobs = Job.findJobsByYearReceivedAndJobSequenceNumber(em,
-//                this.getYearReceived(),
-//                this.getJobSequenceNumber());
-//
-//        if (jobs != null) {
-//            for (Job job : jobs) {
-//                // If this job is subcontracted and is a child of this job
-//                // then it's a subcontract
-//                if (job.getIsSubContract() && !this.getIsSubContract()) {
-//
-//                    String ccName = "Subcontract to " + job.getSubContractedDepartment().getName() + " (" + job.getJobNumber() + ")";
-//                    // Check that this cost component does not already exist.
-//                    // The assumption is that only one component will be found if any
-//                    if (!CostComponent.findCostComponentsByName(ccName,
-//                            currentJob.getJobCostingAndPayment().getCostComponents()).isEmpty()) {
-//                        deleteCostComponentByName(ccName);
-//                    }
-//                    CostComponent cc
-//                            = new CostComponent(
-//                                    ccName,
-//                                    job.getJobCostingAndPayment().getFinalCost(),
-//                                    true, false);
-//
-//                    currentJob.getJobCostingAndPayment().getCostComponents().add(cc);
-//                    setDirty(true);
-//                }
-//            }
-//        }
-//
-//        return false;
-//    }
     public Integer getNoOfTests() {
         if (noOfTests == null) {
             noOfTests = 0;
@@ -1028,17 +991,8 @@ public class Job implements BusinessEntity {
         return (getJobSamples().size() == 1) && (getJobSamples().get(0).getDescription().trim().equals("--"));
     }
 
-    /**
-     * Return empty list if the only job sample is the default sample
-     *
-     * @return
-     */
     public List<JobSample> getFilteredJobSamples() {
-        //if (hasOnlyDefaultJobSample()) {
-        //   return new ArrayList<>();
-        //} else {
-        //    return getJobSamples();
-        //}
+
         Collections.sort(getJobSamples());
 
         return jobSamples;
@@ -1126,7 +1080,6 @@ public class Job implements BusinessEntity {
     public Department getDepartmentAssignedToJob() {
 
         if (getSubContractedDepartment().getName().equals("--")) {
-            // This is not a subcontracted job see return to parent department            
             return getDepartment();
         } else {
             return getSubContractedDepartment();
@@ -1174,7 +1127,7 @@ public class Job implements BusinessEntity {
         if (subContractedDepartment == null) {
             subContractedDepartment = new Department();
         }
-        
+
         return subContractedDepartment;
     }
 
@@ -1239,12 +1192,6 @@ public class Job implements BusinessEntity {
         this.noOfTestsOrCalibrations = noOfTestsOrCalibrations;
     }
 
-    /**
-     * This currently not implemented. Use the samples collection to get the
-     * number of samples.
-     *
-     * @return
-     */
     public Long getNumberOfSamples() {
         if (numberOfSamples == null) {
             numberOfSamples = 0L;
@@ -1294,7 +1241,6 @@ public class Job implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Job)) {
             return false;
         }
@@ -1331,7 +1277,6 @@ public class Job implements BusinessEntity {
         Job lastJob = null;
         String searchQuery;
 
-        // build query based on id or name
         if (client.getId() != null) {
             searchQuery
                     = "SELECT job FROM Job job"
@@ -1347,7 +1292,7 @@ public class Job implements BusinessEntity {
         } else {
             return lastJob;
         }
-        // find last job if any
+
         List<Job> jobs = em.createQuery(searchQuery, Job.class).getResultList();
         if (jobs != null) {
             if (!jobs.isEmpty()) {
@@ -1426,7 +1371,6 @@ public class Job implements BusinessEntity {
         String datePeriodSubClause = "jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
                 + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-");
 
-        // Build query based on search type
         switch (searchType) {
             case "Appr'd & uninv'd jobs":
                 searchTextAndClause
@@ -1611,14 +1555,6 @@ public class Job implements BusinessEntity {
         return foundJobs;
     }
 
-    /**
-     * Gets all jobs that are considered to be new. Presently all jobs without
-     * an alert date set is considered new.
-     *
-     * @param em
-     * @param datePeriod
-     * @return
-     */
     public static List<Job> findAllNewJobs(EntityManager em, DatePeriod datePeriod) {
         try {
             List<Job> jobs = em.createQuery(
@@ -1635,14 +1571,6 @@ public class Job implements BusinessEntity {
         }
     }
 
-    /**
-     * Gets all jobs that have been updated. Presently all jobs without a job
-     * email date set is considered updated.
-     *
-     * @param em
-     * @param datePeriod
-     * @return
-     */
     public static List<Job> findAllUpdatedJobs(EntityManager em, DatePeriod datePeriod) {
         try {
             List<Job> jobs = em.createQuery(
@@ -1779,12 +1707,6 @@ public class Job implements BusinessEntity {
         }
     }
 
-    /**
-     * This method find all subcontracts for a job.
-     *
-     * @param em
-     * @return
-     */
     public List<Job> findSubcontracts(EntityManager em) {
         try {
 
@@ -1906,15 +1828,6 @@ public class Job implements BusinessEntity {
         return foundJobs;
     }
 
-    /*
-    (SELECT SUM(cashpayment.PAYMENT) FROM cashpayment
-      INNER JOIN `jobcostingandpayment_cashpayment` jobcostingandpayment_cashpayment ON 
-            cashpayment.ID = jobcostingandpayment_cashpayment.cashPayments_ID 
-      INNER JOIN `jobcostingandpayment` jobcostingandpayment ON 
-            jobcostingandpayment.ID = jobcostingandpayment_cashpayment.JobCostingAndPayment_ID 
-      WHERE jobcostingandpayment.ID = job.JOBCOSTINGANDPAYMENT_ID  
-     ) 
-     */
     public static List<Object[]> getJobReportRecords(
             EntityManager em,
             String startDate,
@@ -2031,7 +1944,6 @@ public class Job implements BusinessEntity {
 
     }
 
-    // tk  job records based on jobstatusandtracking date
     public static List<Object[]> getJobRecordsByTrackingDate(
             EntityManager em,
             String dateField,
@@ -2096,88 +2008,9 @@ public class Job implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-//        ReturnMessage returnMessage;
 
         try {
 
-//            if (getParent().getId() != null) {
-//                getParent().save(em);
-//            }
-//            if (getClassification().getId() != null) {
-//                getClassification().save(em);
-//            }
-//            if (getSector().getId() != null) {
-//                getSector().save(em);
-//            }
-//            if (getDepartment().getId() != null) {
-//                getDepartment().save(em);
-//            }
-//            if (getSubContractedDepartment().getId() != null) {
-//                getSubContractedDepartment().save(em);
-//            }
-//            if (getClient().getId() != null) {
-//                getClient().save(em);
-//            }
-//            if (getJobCategory().getId() != null) {
-//                getJobCategory().save(em);
-//            }
-//            if (getJobSubCategory().getId() != null) {
-//                getJobSubCategory().save(em);
-//            }
-//            if (getAssignedTo().getId() != null) {
-//                getAssignedTo().save(em);
-//            }
-
-//            returnMessage = getJobCostingAndPayment().save(em);
-//            
-//            if (!returnMessage.isSuccess()) {
-//
-//                return new ReturnMessage(false,
-//                        "Job Costing and Payment save error occurred",
-//                        "An error occurred while saving the job costing and payment"
-//                        + "\nDetails: " + returnMessage.getDetail(),
-//                        Message.SEVERITY_ERROR_NAME);
-//            }
-            
-//            getServiceContract().save(em);
-//            
-//            getJobStatusAndTracking().save(em);
-            
-//            if (getBusiness().getId() != null) {
-//                getBusiness().save(em);
-//            }
-//            if (getBusinessOffice().getId() != null) {
-//                getBusinessOffice().save(em);
-//            }
-//            if (getBillingAddress().getId() != null) {
-//                getBillingAddress().save(em);
-//            }
-//            if (getContact().getId() != null) {
-//                getContact().save(em);
-//            }
-//            for (JobSample jobSample : getJobSamples()) {
-//
-//                returnMessage = jobSample.save(em);
-//
-//                if (!returnMessage.isSuccess()) {
-//
-//                    return new ReturnMessage(false,
-//                            "Job sample save error occurred",
-//                            "An error occurred while saving job sample"
-//                            + jobSample.getReference()
-//                            + "\nDetails: " + returnMessage.getDetail(),
-//                            Message.SEVERITY_ERROR_NAME);
-//
-//                }
-//
-//            }
-//            for (Employee representative : getRepresentatives()) {
-//                representative.save(em);
-//            }
-//            for (Service service : getServices()) {
-//                service.save(em);
-//            }
-            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -2202,7 +2035,6 @@ public class Job implements BusinessEntity {
         Job currentlySavedJob = null;
         Job currentJob = this;
 
-        // Get currently saved job for later use in validation
         if (currentJob.getId() != null) {
             currentlySavedJob = Job.findJobById(em, currentJob.getId());
         }
@@ -2220,7 +2052,6 @@ public class Job implements BusinessEntity {
             return new ReturnMessage(false, "This job cannot be saved because a valid business office was not entered.");
         }
 
-        // Check if job nunmber is already associated with a job        
         Job existingJob = Job.findJobByJobNumber(em, currentJob.getJobNumber());
         if (existingJob != null) {
             long current_jobid = currentJob.getId() != null ? currentJob.getId() : -1L;
@@ -2229,14 +2060,12 @@ public class Job implements BusinessEntity {
             }
         }
 
-        // get  job number if auto is on
         if (currentJob.getAutoGenerateJobNumber()) {
             if (!validateJobNumber(currentJob.getJobNumber(), currentJob.getAutoGenerateJobNumber())) {
                 return new ReturnMessage(false, "This job cannot be saved because a valid job number was not entered.");
             }
         }
 
-        // Validate client
         if (!BusinessEntityUtils.validateName(currentJob.getClient().getName())) {
             return new ReturnMessage(false,
                     "This job cannot be saved. Please select a valid client from the list."
@@ -2246,7 +2075,6 @@ public class Job implements BusinessEntity {
             currentJob.setClient(Client.getClientById(em, currentJob.getClient().getId()));
         }
 
-        // Department        
         Department dept = Department.findByName(em, currentJob.getDepartment().getName());
         if (dept == null) {
             return new ReturnMessage(false, "This job cannot be saved because a valid department was not entered.");
@@ -2254,37 +2082,31 @@ public class Job implements BusinessEntity {
             em.refresh(dept);
             currentJob.setDepartment(dept);
         }
-        // Subcontracted department   
+
         Department subContractedDept = Department.findByName(em, currentJob.getSubContractedDepartment().getName());
         if (subContractedDept == null) {
             currentJob.setSubContractedDepartment(Department.findDefault(em, "--"));
         }
 
-        // Check for valid subcontracted department
-        // tk impl isToBeSubcontracted in Job use it as it is used in JobManager
         if (!currentJob.getIsSubContract() && getIsToBeSubcontracted()) {
             return new ReturnMessage(false, "Please enter a valid subcontracted department.");
         } else if ((currentlySavedJob != null)
                 && !currentJob.getIsSubContract()
                 && currentlySavedJob.getIsSubContract()) {
 
-            // Reset current subcontracted department
             currentJob.setSubContractedDepartment(currentlySavedJob.getSubContractedDepartment());
 
             return new ReturnMessage(false, "Please enter a valid subcontracted department.");
         }
 
-        // Check for self contracts        
         if (currentJob.getDepartment().getName().equals(currentJob.getSubContractedDepartment().getName())) {
             return new ReturnMessage(false, "The main and subcontracted departments cannot be the same.");
         }
 
-        // TAT
         if ((currentJob.getEstimatedTurnAroundTimeInDays() == 0) && currentJob.getEstimatedTurnAroundTimeRequired()) {
             return new ReturnMessage(false, "A valid estimated turnaround time (TAT) is required and must be provided.");
         }
 
-        // Assignee       
         Employee assignee = Employee.findByName(em, currentJob.getAssignedTo().getName());
         if (assignee != null) {
             if (assignee.getName().equals("--, --")
@@ -2303,12 +2125,10 @@ public class Job implements BusinessEntity {
             return new ReturnMessage(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
         }
 
-        // Validate Instructions
         if (currentJob.getInstructions().trim().equals("")) {
             return new ReturnMessage(false, "Please enter instructions for this job.");
         }
 
-        // Classification objects
         Classification classn = Classification.findClassificationByName(em, currentJob.getClassification().getName());
         if (classn == null) {
             return new ReturnMessage(false, "Please select/enter a job classification.");
@@ -2344,8 +2164,6 @@ public class Job implements BusinessEntity {
             return new ReturnMessage(false, "A main/parent job must be created before creating a subcontracted job.");
         }
 
-        // Check if job as previously saved as parent job and prevent saving 
-        // suubconttacted job if so
         if (currentJob.getId() != null) {
             Job jobFound = Job.findJobById(em, currentJob.getId());
             if (jobFound != null) {
@@ -2424,7 +2242,7 @@ public class Job implements BusinessEntity {
                         System.out.println("Job number validation error: This means 4th part is not a department code.: " + e);
                     }
                 }
-                // all is well here
+
                 return true;
             } else {
                 return false;

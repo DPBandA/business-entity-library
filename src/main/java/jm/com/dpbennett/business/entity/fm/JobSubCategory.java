@@ -151,6 +151,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
         if (departments == null) {
             departments = new ArrayList<>();
         }
+        
         return departments;
     }
 
@@ -442,10 +443,6 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            for (Department department : getDepartments()) {
-                department.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

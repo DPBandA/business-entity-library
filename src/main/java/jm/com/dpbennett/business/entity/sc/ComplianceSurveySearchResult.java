@@ -24,7 +24,7 @@ import java.util.Date;
 
 /**
  *
- * @author desbenn
+ * @author Desmond Bennett
  */
 public class ComplianceSurveySearchResult {
     private Long id;

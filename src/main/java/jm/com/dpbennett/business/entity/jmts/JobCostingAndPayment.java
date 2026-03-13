@@ -136,7 +136,12 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Currency getCurrency() {
-        return (currency == null ? new Currency() : currency);
+
+        if (currency == null) {
+            currency = new Currency();
+        }
+
+        return currency;
     }
 
     public void setCurrency(Currency currency) {
@@ -258,7 +263,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     public Employee getCostingInvoicedBy() {
 
         if (costingInvoicedBy == null) {
-            return new Employee();
+            costingInvoicedBy = new Employee();
         }
 
         return costingInvoicedBy;
@@ -271,7 +276,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     public Employee getCostingPreparedBy() {
 
         if (costingPreparedBy == null) {
-            return new Employee();
+            costingPreparedBy = new Employee();
         }
 
         return costingPreparedBy;
@@ -282,7 +287,12 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Tax getTax() {
-        return (tax == null ? new Tax() : tax);
+
+        if (tax == null) {
+            tax = new Tax();
+        }
+
+        return tax;
     }
 
     public void setTax(Tax tax) {
@@ -290,7 +300,12 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Discount getDiscount() {
-        return (discount == null ? new Discount() : discount);
+
+        if (discount == null) {
+            discount = new Discount();
+        }
+
+        return discount;
     }
 
     public void setDiscount(Discount discount) {
@@ -369,7 +384,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     public Employee getLastPaymentEnteredBy() {
 
         if (lastPaymentEnteredBy == null) {
-            return new Employee();
+            lastPaymentEnteredBy = new Employee();
         }
 
         return lastPaymentEnteredBy;
@@ -529,7 +544,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     public Employee getCostingApprovedBy() {
 
         if (costingApprovedBy == null) {
-            return new Employee();
+            costingApprovedBy = new Employee();
         }
 
         return costingApprovedBy;
@@ -804,7 +819,7 @@ public class JobCostingAndPayment implements BusinessEntity {
         if (costComponents == null) {
             costComponents = new ArrayList<>();
         }
-        
+
         return costComponents;
     }
 
@@ -1088,54 +1103,6 @@ public class JobCostingAndPayment implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
-
-            if (getCostingPreparedBy().getId() != null) {
-                getCostingPreparedBy().save(em);
-            }
-
-            if (getCostingApprovedBy().getId() != null) {
-                getCostingApprovedBy().save(em);
-            }
-
-            if (getCostingInvoicedBy().getId() != null) {
-                getCostingInvoicedBy().save(em);
-            }
-
-            if (getLastPaymentEnteredBy().getId() != null) {
-                getLastPaymentEnteredBy().save(em);
-            }
-
-            if (getTax().getId() != null) {
-                getTax().save(em);
-            }
-            if (getDiscount().getId() != null) {
-                getDiscount().save(em);
-            }
-            if (getCurrency().getId() != null) {
-                getCurrency().save(em);
-            }
-
-            for (CashPayment payment : getCashPayments()) {
-                if (!payment.save(em).isSuccess()) {
-
-                    return new ReturnMessage(false,
-                            "Payment save error occurred",
-                            "An error occurred while saving a payment",
-                            Message.SEVERITY_ERROR_NAME);
-
-                }
-            }
-
-            for (CostComponent costComponent : getCostComponents()) {
-                if (!costComponent.save(em).isSuccess()) {
-
-                    return new ReturnMessage(false,
-                            "Cost component save error occurred",
-                            "An error occurred while saving a cost component",
-                            Message.SEVERITY_ERROR_NAME);
-
-                }
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

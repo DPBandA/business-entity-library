@@ -70,9 +70,9 @@ public class ManufacturerInspection implements BusinessEntity {
     private Date inspectionEndTime;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedInspector;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<InspectionComponent> inspectionComponents;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ProductInspection> productInspections;
     @Transient
     private Boolean isDirty;
@@ -107,8 +107,9 @@ public class ManufacturerInspection implements BusinessEntity {
 
     public Contact getRepresentative() {
         if (representative == null) {
-            return new Contact();
+            representative = new Contact();
         }
+
         return representative;
     }
 
@@ -118,8 +119,9 @@ public class ManufacturerInspection implements BusinessEntity {
 
     public Address getAddress() {
         if (address == null) {
-            return new Address();
+            address = new Address();
         }
+
         return address;
     }
 
@@ -129,8 +131,9 @@ public class ManufacturerInspection implements BusinessEntity {
 
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            return new Manufacturer();
+            manufacturer = new Manufacturer();
         }
+
         return manufacturer;
     }
 
@@ -161,6 +164,11 @@ public class ManufacturerInspection implements BusinessEntity {
     }
 
     public Employee getAssignedInspector() {
+
+        if (assignedInspector == null) {
+            assignedInspector = new Employee();
+        }
+
         return assignedInspector;
     }
 
@@ -169,6 +177,11 @@ public class ManufacturerInspection implements BusinessEntity {
     }
 
     public List<InspectionComponent> getInspectionComponents() {
+
+        if (inspectionComponents == null) {
+            inspectionComponents = new ArrayList<>();
+        }
+
         return inspectionComponents;
     }
 
@@ -248,21 +261,8 @@ public class ManufacturerInspection implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        
+
         try {
-            
-            getManufacturer().save(em);
-            getAddress().save(em);
-            getRepresentative().save(em);
-            getAssignedInspector().save(em);
-            
-            for (InspectionComponent inspectionComponent : inspectionComponents) {
-                inspectionComponent.save(em);
-            }
-            
-            for (ProductInspection productInspection : productInspections) {
-                productInspection.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

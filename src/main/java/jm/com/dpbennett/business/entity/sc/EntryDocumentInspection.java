@@ -58,7 +58,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     private Date entryDocumentReportDate;
     private String containerNumbers;
     private String containerSizes;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ShippingContainer> shippingContainers;
     private Double CIF;
     private Double SCF;
@@ -320,20 +320,6 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            // Save new cost components
-            if (!getShippingContainers().isEmpty()) {
-                for (ShippingContainer shippingContainer : getShippingContainers()) {
-                    if ((shippingContainer.getIsDirty() || shippingContainer.getId() == null)
-                            && !shippingContainer.save(em).isSuccess()) {
-
-                        return new ReturnMessage(false,
-                                "Shipping container save error occurred",
-                                "An error occurred while saving a Shipping container",
-                                Message.SEVERITY_ERROR_NAME);
-                    }
-                }
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

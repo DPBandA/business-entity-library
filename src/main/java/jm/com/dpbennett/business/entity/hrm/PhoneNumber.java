@@ -158,12 +158,11 @@ public class PhoneNumber implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PhoneNumber)) {
             return false;
         }
         PhoneNumber other = (PhoneNumber) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -189,13 +188,13 @@ public class PhoneNumber implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println("Phone number save exception: " + e);
         }

@@ -23,7 +23,7 @@ import javax.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.sm.User;
 
 /**
- * 
+ *
  * @author Desmond Bennett
  */
 public interface UserManagement {
@@ -51,6 +51,6 @@ public interface UserManagement {
     public String getPassword();
 
     public void setPassword(String password);
-    
+
     public Boolean validateAndAssociateUser(EntityManager em, String username, String password);
 }

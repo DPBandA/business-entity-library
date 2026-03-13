@@ -97,6 +97,11 @@ public class JobTask implements BusinessEntity {
     }
 
     public Department getDepartmentResponsible() {
+
+        if (departmentResponsible == null) {
+            departmentResponsible = new Department();
+        }
+
         return departmentResponsible;
     }
 
@@ -105,6 +110,11 @@ public class JobTask implements BusinessEntity {
     }
 
     public Employee getEmployeeResponsible() {
+
+        if (employeeResponsible == null) {
+            employeeResponsible = new Employee();
+        }
+
         return employeeResponsible;
     }
 
@@ -168,20 +178,12 @@ public class JobTask implements BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.JobTask[id=" + id + "]";
+        return "jm.com.dpbennett.entity.JobTask[id=" + id + "]";
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getDepartmentResponsible() != null) {
-                getDepartmentResponsible().save(em);
-            }
-
-            if (getEmployeeResponsible() != null) {
-                getEmployeeResponsible().save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

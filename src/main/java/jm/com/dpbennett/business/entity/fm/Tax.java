@@ -62,7 +62,7 @@ public class Tax implements Serializable, BusinessEntity {
     private String name;
     private Double taxValue;
     private String taxValueType;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private AccountingCode accountingCode;
     private String type;
     @Column(length = 1024)
@@ -295,11 +295,13 @@ public class Tax implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
+            
         } catch (Exception e) {
             System.out.println("Tax save exception: " + e);
         }
@@ -328,7 +330,7 @@ public class Tax implements Serializable, BusinessEntity {
     public static Tax findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Tax> taxes = em.createQuery("SELECT t FROM Tax t "

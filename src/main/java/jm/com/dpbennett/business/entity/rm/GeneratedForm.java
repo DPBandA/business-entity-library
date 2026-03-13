@@ -36,7 +36,6 @@ import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
- * tk get rid of this class if it's no longer being used
  * @author Desmond Bennett
  */
 @Entity

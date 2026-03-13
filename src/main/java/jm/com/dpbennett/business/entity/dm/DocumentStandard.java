@@ -60,7 +60,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String title;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private DocumentType documentType;
     private String number;
     private String enforcement;
@@ -267,7 +267,6 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof DocumentStandard)) {
             return false;
         }
@@ -289,7 +288,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
     @Override
     public Classification getClassification() {
         if (classification == null) {
-            return new Classification();
+            classification = new Classification();
         }
         return classification;
     }
@@ -320,7 +319,7 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
     @Override
     public DocumentType getDocumentType() {
         if (documentType == null) {
-            return new DocumentType();
+            documentType = new DocumentType();
         }
 
         return documentType;
@@ -624,12 +623,6 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getDocumentType().getId() != null) {
-                getDocumentType().save(em);
-            }
-            getClassification().save(em);
-            getEditedBy().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

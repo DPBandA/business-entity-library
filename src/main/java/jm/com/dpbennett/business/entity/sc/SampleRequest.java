@@ -19,7 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sc;
 
-import java.util.AbstractList;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -67,7 +66,7 @@ public class SampleRequest implements BusinessEntity, Form {
     private Employee inspector;
     @Column(length = 1024)
     private String comments;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ProductInspection> products;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfRequest;
@@ -102,7 +101,7 @@ public class SampleRequest implements BusinessEntity, Form {
     public List<ProductInspection> getProducts() {
 
         if (products == null) {
-            return new ArrayList<>();
+            products = new ArrayList<>();
         }
 
         return products;
@@ -134,7 +133,7 @@ public class SampleRequest implements BusinessEntity, Form {
 
     public Employee getInspector() {
         if (inspector == null) {
-            return new Employee();
+            inspector = new Employee();
         }
 
         return inspector;
@@ -273,20 +272,6 @@ public class SampleRequest implements BusinessEntity, Form {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getReceivedFrom().getId() != null) {
-                getReceivedFrom().save(em);
-            }
-
-            getRepresentative().save(em);
-
-            if (getInspector().getId() != null) {
-                getInspector().save(em);
-            }
-
-            for (ProductInspection product : getProducts()) {
-                product.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

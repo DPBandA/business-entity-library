@@ -63,13 +63,13 @@ public class FinancialAccount implements
     private Boolean active;
     private String name;
     private String type;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private FinancialAccount parent;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<FinancialAccount> children;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private AccountingCode code;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Currency currency;
     @Column(length = 1024)
     private String description;
@@ -205,7 +205,7 @@ public class FinancialAccount implements
     public static List<FinancialAccount> findAllFields(EntityManager em) {
 
         try {
-            
+
             List<FinancialAccount> codes = em.createNamedQuery("findAllFields", FinancialAccount.class).getResultList();
 
             return codes;
@@ -219,9 +219,9 @@ public class FinancialAccount implements
     public static List<FinancialAccount> findFields(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<FinancialAccount> fields
                     = em.createQuery("SELECT a FROM Field a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
@@ -241,9 +241,9 @@ public class FinancialAccount implements
     public static List<FinancialAccount> findActiveFields(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<FinancialAccount> fields
                     = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
@@ -293,9 +293,9 @@ public class FinancialAccount implements
     @Override
     public int hashCode() {
         int hash = 0;
-        
+
         hash += (id != null ? id.hashCode() : 0);
-        
+
         return hash;
     }
 
@@ -328,6 +328,7 @@ public class FinancialAccount implements
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -361,9 +362,9 @@ public class FinancialAccount implements
     public static FinancialAccount findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<FinancialAccount> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", FinancialAccount.class).getResultList();
@@ -380,9 +381,9 @@ public class FinancialAccount implements
     public static FinancialAccount findByCode(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<FinancialAccount> fields = em.createQuery("SELECT a FROM FieldField a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "'", FinancialAccount.class).getResultList();
@@ -399,9 +400,9 @@ public class FinancialAccount implements
     public static FinancialAccount findActiveByCode(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<FinancialAccount> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", FinancialAccount.class).getResultList();

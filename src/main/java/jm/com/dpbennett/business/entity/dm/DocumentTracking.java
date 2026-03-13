@@ -65,7 +65,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private DocumentType documentType;
     private String number;
     private Boolean autoGenerateNumber;
@@ -131,7 +131,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            return new Employee();
+            editedBy = new Employee();
         }
 
         return editedBy;
@@ -182,7 +182,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     public Client getExternalClient() {
         if (externalClient == null) {
-            return new Client();
+            externalClient = new Client();
         }
 
         return externalClient;
@@ -226,7 +226,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     public Department getRequestingDepartment() {
         if (requestingDepartment == null) {
-            return new Department();
+            requestingDepartment = new Department();
         }
 
         return requestingDepartment;
@@ -268,7 +268,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     public Department getResponsibleDepartment() {
         if (responsibleDepartment == null) {
-            return new Department();
+            responsibleDepartment = new Department();
         }
 
         return responsibleDepartment;
@@ -358,7 +358,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     public Employee getResponsibleOfficer() {
 
         if (responsibleOfficer == null) {
-            return new Employee();
+            responsibleOfficer = new Employee();
         }
 
         return responsibleOfficer;
@@ -371,7 +371,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     public Employee getSubmittedBy() {
 
         if (submittedBy == null) {
-            return new Employee();
+            submittedBy = new Employee();
         }
 
         return submittedBy;
@@ -422,7 +422,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     @Override
     public Classification getClassification() {
         if (classification == null) {
-            return new Classification();
+            classification = new Classification();
         }
 
         return classification;
@@ -628,31 +628,6 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getDocumentType().getId() != null) {
-                getDocumentType().save(em);
-            }
-            if (getRequestingDepartment().getId() != null) {
-                getRequestingDepartment().save(em);
-            }
-            if (getResponsibleDepartment().getId() != null) {
-                getResponsibleDepartment().save(em);
-            }
-            if (getResponsibleOfficer().getId() != null) {
-                getResponsibleOfficer().save(em);
-            }
-            if (getSubmittedBy().getId() != null) {
-                getSubmittedBy().save(em);
-            }
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
-            }
-            if (getExternalClient().getId() != null) {
-                getExternalClient().save(em);
-            }
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
-            }
-
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -679,7 +654,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     public DocumentType getDocumentType() {
 
         if (documentType == null) {
-            return new DocumentType();
+            documentType = new DocumentType();
         }
 
         return documentType;

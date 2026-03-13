@@ -52,9 +52,9 @@ public class StandardsOrganization implements BusinessEntity, Company {
     private String name;
     private String number;
     private String type;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<BusinessOffice> businessOffices;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Division> divisions;
     @Transient
     private Boolean isDirty;
@@ -108,7 +108,7 @@ public class StandardsOrganization implements BusinessEntity, Company {
             return false;
         }
         StandardsOrganization other = (StandardsOrganization) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 

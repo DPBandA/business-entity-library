@@ -68,7 +68,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     private Employee completedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateTransfered; // tk change name to dateTransferred    
-    private String productOrSampleReceivedBy; // tk change to Employee entity
+    private String productOrSampleReceivedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateProductOrSampleReceived;
     @Column(length = 1024)
@@ -144,11 +144,11 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     }
 
     public Employee getCompletedBy() {
-        
+
         if (completedBy == null) {
-            return new Employee();
+            completedBy = new Employee();
         }
-        
+
         return completedBy;
     }
 
@@ -239,9 +239,9 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            return new Employee();
+            editedBy = new Employee();
         }
-        
+
         return editedBy;
     }
 
@@ -252,7 +252,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     @Override
     public Employee getEnteredBy() {
         if (enteredBy == null) {
-            return new Employee();
+            enteredBy = new Employee();
         }
 
         return enteredBy;
@@ -266,7 +266,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     public Employee getTransferredTo() {
 
         if (transferredTo == null) {
-            return new Employee();
+            transferredTo = new Employee();
         }
 
         return transferredTo;
@@ -544,19 +544,6 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getTransferredTo().getId() != null) {
-                getTransferredTo().save(em);
-            }
-            if (getEnteredBy().getId() != null) {
-                getEnteredBy().save(em);
-            }
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
-            }
-            if (getCompletedBy().getId() != null) {
-                getCompletedBy().save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

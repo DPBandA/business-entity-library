@@ -110,9 +110,9 @@ public class DatePeriod implements BusinessEntity, Comparable {
     }
 
     public static DatePeriod findById(EntityManager em, Long id) {
-        
+
         return em.find(DatePeriod.class, id);
-        
+
     }
 
     public String getLabel() {
@@ -187,13 +187,11 @@ public class DatePeriod implements BusinessEntity, Comparable {
         names.add("This month last year");
         names.add("This financial month");
         names.add("This financial year");
-        //names.add("This financial year to date");
         names.add("This year to date");
         names.add("This year");
         names.add("Last month");
         names.add("Last financial month");
         names.add("Last financial year");
-        //names.add("Last financial year to date");
         names.add("Last year");
         names.add("Custom");
 
@@ -249,14 +247,12 @@ public class DatePeriod implements BusinessEntity, Comparable {
     public void initFinancialMonthPeriod(Date baseDate) {
         Calendar c = Calendar.getInstance();
 
-        // get start date that is the 25 of the current month
         c.setTime(baseDate);
         Date edate = BusinessEntityUtils.createDate(
                 c.get(Calendar.YEAR),
                 c.get(Calendar.MONTH),
                 25);
 
-        // get end date is the 26 of the previous month
         Calendar edateCal = Calendar.getInstance();
         edateCal.setTime(edate);
         edateCal.add(Calendar.MONTH, -1);
@@ -267,24 +263,16 @@ public class DatePeriod implements BusinessEntity, Comparable {
         setEndDate(edate);
     }
 
-    /**
-     * Initialize the date period to the financial year based on the reference
-     * date.
-     *
-     * @param refDate
-     */
     public void initFinancialYearPeriod(Date refDate) {
         Calendar referenceCalendar = Calendar.getInstance();
 
         referenceCalendar.setTime(refDate);
-     
-        // This creates the reference date with 0 msecs.
+
         Date referenceDate = BusinessEntityUtils.createDate(
                 referenceCalendar.get(Calendar.YEAR),
                 referenceCalendar.get(Calendar.MONTH),
                 referenceCalendar.get(Calendar.DAY_OF_MONTH));
 
-        // Setup reference years and dates
         int referenceYear = referenceCalendar.get(Calendar.YEAR);
         Date referenceStartOfFinancialYear = BusinessEntityUtils.createDate(referenceYear, 3, 1);
         Date referenceEndOfFinancialYear = BusinessEntityUtils.createDate(referenceYear, 2, 31);
@@ -345,11 +333,6 @@ public class DatePeriod implements BusinessEntity, Comparable {
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
-//            case "This financial year to date":
-//                initFinancialYearPeriod(BusinessEntityUtils.createDate(referencDate));
-//                setStartDateDisabled(true);
-//                setEndDateDisabled(true);
-//                break;
             case "This year to date":
                 setStartDate(BusinessEntityUtils.getStartOfCurrentYear());
                 setEndDate(BusinessEntityUtils.createDate(referencDate));
@@ -374,22 +357,12 @@ public class DatePeriod implements BusinessEntity, Comparable {
                 setEndDateDisabled(true);
                 break;
             case "Last financial year":
-//                setStartDate(BusinessEntityUtils.createDate(BusinessEntityUtils.getPreviousYear(), 3, 1));
-//                setEndDate(BusinessEntityUtils.createDate(BusinessEntityUtils.getCurrentYear(), 2, 31));
                 initFinancialYearPeriod(BusinessEntityUtils.createDate(referencDate));
                 startDate = BusinessEntityUtils.adjustDate(startDate, Calendar.YEAR, -1);
                 endDate = BusinessEntityUtils.adjustDate(endDate, Calendar.YEAR, -1);
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
-//            case "Last financial year to date":
-//                // get this financial year to date and adjust years by 1
-//                initFinancialYearPeriod(BusinessEntityUtils.createDate(referencDate));
-//                startDate = BusinessEntityUtils.adjustDate(startDate, Calendar.YEAR, -1);
-//                endDate = BusinessEntityUtils.adjustDate(endDate, Calendar.YEAR, -1);
-//                setStartDateDisabled(true);
-//                setEndDateDisabled(true);
-//                break;
             case "Last year":
                 setStartDate(BusinessEntityUtils.getStartOfPreviousYear());
                 setEndDate(BusinessEntityUtils.getEndOfPreviousYear());
@@ -419,12 +392,11 @@ public class DatePeriod implements BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof DatePeriod)) {
             return false;
         }
         DatePeriod other = (DatePeriod) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -457,7 +429,7 @@ public class DatePeriod implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -477,7 +449,6 @@ public class DatePeriod implements BusinessEntity, Comparable {
 
     @Override
     public int compareTo(Object o) {
-//        return Collator.getInstance().compare(this.getLabel(), ((DatePeriod) o).getLabel());
         if (((DatePeriod) o).getId() != null && this.getId() != null) {
             return Collator.getInstance().compare(this.getId().toString(), ((DatePeriod) o).getId().toString());
         } else {

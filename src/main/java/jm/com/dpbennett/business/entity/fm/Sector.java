@@ -49,8 +49,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "sector")
 @NamedQueries({
-    @NamedQuery(name = "findAllSectors", query = "SELECT s FROM Sector s ORDER BY s.name")
-    ,
+    @NamedQuery(name = "findAllSectors", query = "SELECT s FROM Sector s ORDER BY s.name"),
     @NamedQuery(name = "findAllActiveSectors", query = "SELECT s FROM Sector s WHERE s.active = 1 ORDER BY s.name")
 })
 public class Sector implements BusinessEntity, Serializable {
@@ -132,6 +131,7 @@ public class Sector implements BusinessEntity, Serializable {
         if (departments == null) {
             departments = new ArrayList<>();
         }
+        
         return departments;
     }
 
@@ -163,7 +163,7 @@ public class Sector implements BusinessEntity, Serializable {
             return false;
         }
         Sector other = (Sector) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -226,9 +226,9 @@ public class Sector implements BusinessEntity, Serializable {
     public static Sector findSectorByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Sector> sectors = em.createQuery("SELECT s FROM Sector s "
                     + "WHERE UPPER(s.name) "
                     + "= '" + name.toUpperCase() + "'", Sector.class).getResultList();
@@ -246,9 +246,9 @@ public class Sector implements BusinessEntity, Serializable {
     public static List<Sector> findSectorsByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Sector> sectors
                     = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"
                             + name.toUpperCase().trim() + "%' ORDER BY s.name", Sector.class).getResultList();
@@ -262,9 +262,9 @@ public class Sector implements BusinessEntity, Serializable {
     public static List<Sector> findActiveSectorsByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Sector> sectors
                     = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"
                             + name.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Sector.class).getResultList();
@@ -294,18 +294,14 @@ public class Sector implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            for (Department department : departments) {
-               department.save(em);
-            }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
         } catch (Exception e) {
-           System.out.println("Sector save exception: " + e);
+            System.out.println("Sector save exception: " + e);
         }
 
         return new ReturnMessage(false, "Sector not saved");

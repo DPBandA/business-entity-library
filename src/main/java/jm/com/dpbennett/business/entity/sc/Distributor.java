@@ -53,7 +53,6 @@ public class Distributor implements BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    // tk replace with address class: List<Address> addresses.
     private String street;
     private String pO;
     private String city;

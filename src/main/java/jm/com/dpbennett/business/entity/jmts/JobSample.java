@@ -202,7 +202,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     public Client getClient() {
         if (client == null) {
-            return new Client("");
+            client = new Client("");
         }
 
         return client;
@@ -289,7 +289,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     public Employee getReceivedBy() {
 
         if (receivedBy == null) {
-            return new Employee();
+            receivedBy = new Employee();
         }
 
         return receivedBy;
@@ -303,7 +303,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     @Override
     public Employee getSampledBy() {
         if (sampledBy == null) {
-            return new Employee();
+            sampledBy = new Employee();
         }
 
         return sampledBy;
@@ -348,7 +348,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     public BusinessOffice getRegulatoryOffice() {
 
         if (regulatoryOffice == null) {
-            return new BusinessOffice();
+            regulatoryOffice = new BusinessOffice();
         }
 
         return regulatoryOffice;
@@ -511,7 +511,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     public Manufacturer getManufacturer() {
 
         if (manufacturer == null) {
-            return new Manufacturer();
+            manufacturer = new Manufacturer();
         }
 
         return manufacturer;
@@ -634,25 +634,6 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getClient().getId() != null) {
-                getClient().save(em);
-            }
-            if (getManufacturer().getId() != null) {
-                getManufacturer().save(em);
-            }
-            if (getRegulatoryOffice().getId() != null) {
-                getRegulatoryOffice().save(em);
-            }
-            if (getSampledBy().getId() != null) {
-                getSampledBy().save(em);
-            }
-            if (getReceivedBy().getId() != null) {
-                getReceivedBy().save(em);
-            }
-            for (ProductTest test : getTests()) {
-                test.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

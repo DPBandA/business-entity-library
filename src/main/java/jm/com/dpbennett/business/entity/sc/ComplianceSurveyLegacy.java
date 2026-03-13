@@ -55,7 +55,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "compliancesurvey")
-public class ComplianceSurvey implements BusinessEntity {
+public class ComplianceSurveyLegacy implements BusinessEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -199,7 +199,7 @@ public class ComplianceSurvey implements BusinessEntity {
     @Transient
     private String editStatus;
 
-    public ComplianceSurvey() {
+    public ComplianceSurveyLegacy() {
         this.surveyType = "";
     }
 
@@ -1156,11 +1156,11 @@ public class ComplianceSurvey implements BusinessEntity {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ComplianceSurvey)) {
+        if (!(object instanceof ComplianceSurveyLegacy)) {
             return false;
         }
 
-        ComplianceSurvey other = (ComplianceSurvey) object;
+        ComplianceSurveyLegacy other = (ComplianceSurveyLegacy) object;
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -1309,7 +1309,7 @@ public class ComplianceSurvey implements BusinessEntity {
         return foundComplianceSurveys;
     }
 
-    public static List<ComplianceSurvey> findComplianceSurveysByDateSearchField(
+    public static List<ComplianceSurveyLegacy> findComplianceSurveysByDateSearchField(
             EntityManager em,
             User user,
             String dateSearchField,
@@ -1320,7 +1320,7 @@ public class ComplianceSurvey implements BusinessEntity {
             Boolean includeProductInspectionSearch,
             int maxResults) {
 
-        List<ComplianceSurvey> foundComplianceSurveys;
+        List<ComplianceSurveyLegacy> foundComplianceSurveys;
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause = "";
@@ -1389,9 +1389,9 @@ public class ComplianceSurvey implements BusinessEntity {
 
         try {
             if (maxResults == 0) {
-                foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).getResultList();
+                foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurveyLegacy.class).getResultList();
             } else {
-                foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).setMaxResults(maxResults).getResultList();
+                foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurveyLegacy.class).setMaxResults(maxResults).getResultList();
             }
             if (foundComplianceSurveys == null) {
                 foundComplianceSurveys = new ArrayList<>();
@@ -1404,12 +1404,12 @@ public class ComplianceSurvey implements BusinessEntity {
         return foundComplianceSurveys;
     }
 
-    public static ComplianceSurvey findComplianceSurveyById(
+    public static ComplianceSurveyLegacy findComplianceSurveyById(
             EntityManager em, Long Id) {
 
         try {
 
-            ComplianceSurvey complianceSurvey = em.find(ComplianceSurvey.class, Id);
+            ComplianceSurveyLegacy complianceSurvey = em.find(ComplianceSurveyLegacy.class, Id);
 
             return complianceSurvey;
         } catch (Exception e) {
@@ -1418,15 +1418,15 @@ public class ComplianceSurvey implements BusinessEntity {
 
     }
 
-    public static ComplianceSurvey findDefaultComplianceSurvey(
+    public static ComplianceSurveyLegacy findDefaultComplianceSurvey(
             EntityManager em,
             String name,
             Boolean useTransaction) {
 
-        ComplianceSurvey complianceSurvey = findComplianceSurveyByName(em, name);
+        ComplianceSurveyLegacy complianceSurvey = findComplianceSurveyByName(em, name);
 
         if (complianceSurvey == null) {
-            complianceSurvey = new ComplianceSurvey();
+            complianceSurvey = new ComplianceSurveyLegacy();
             complianceSurvey.setName(name);
 
             if (useTransaction) {
@@ -1441,16 +1441,16 @@ public class ComplianceSurvey implements BusinessEntity {
         return complianceSurvey;
     }
 
-    public static ComplianceSurvey findComplianceSurveyByName(
+    public static ComplianceSurveyLegacy findComplianceSurveyByName(
             EntityManager em, String value) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<ComplianceSurvey> complianceSurveys = em.createQuery("SELECT c FROM  ComplianceSurvey c "
+            List<ComplianceSurveyLegacy> complianceSurveys = em.createQuery("SELECT c FROM  ComplianceSurvey c "
                     + "WHERE UPPER(c.name) "
-                    + "= '" + value.toUpperCase() + "'", ComplianceSurvey.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", ComplianceSurveyLegacy.class).getResultList();
             if (!complianceSurveys.isEmpty()) {
                 return complianceSurveys.get(0);
             }

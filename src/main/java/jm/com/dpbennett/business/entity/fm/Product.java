@@ -25,6 +25,7 @@ import jm.com.dpbennett.business.entity.hrm.Manufacturer;
  *
  * @author Desmond Bennett
  */
+
 public interface Product {
 
     public String getName();

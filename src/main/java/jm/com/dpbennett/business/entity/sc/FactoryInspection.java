@@ -78,9 +78,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     private Address address;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact factoryRepresentative;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<FactoryInspectionComponent> inspectionComponents;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ProductInspection> productInspections;
     private String name;
     private Integer maxDaysForCompliance;
@@ -158,7 +158,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         if (jobNumber == null) {
             jobNumber = "";
         }
-        
+
         return jobNumber;
     }
 
@@ -202,7 +202,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         String searchQuery = null;
         String searchTextAndClause = "";
         String joinClause;
-        
+
         joinClause
                 = " LEFT JOIN factoryinspection.assignedInspector assignedInspector"
                 + " LEFT JOIN factoryinspection.manufacturer manufacturer";
@@ -263,9 +263,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<FactoryInspection> factoryInspections
                     = em.createQuery("SELECT f FROM FactoryInspection f WHERE UPPER(f.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' ORDER BY f.name", FactoryInspection.class).getResultList();
@@ -281,7 +281,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<FactoryInspection> factoryInspections = em.createQuery("SELECT f FROM FactoryInspection f "
@@ -329,8 +329,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     public Address getAddress() {
         if (address == null) {
-            return new Address();
+            address = new Address();
         }
+
         return address;
     }
 
@@ -340,8 +341,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            return new Manufacturer();
+            manufacturer = new Manufacturer();
         }
+
         return manufacturer;
     }
 
@@ -350,6 +352,11 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     public BusinessOffice getBusinessOffice() {
+
+        if (businessOffice == null) {
+            businessOffice = new BusinessOffice();
+        }
+
         return businessOffice;
     }
 
@@ -387,6 +394,11 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     public Employee getAssignedInspector() {
+
+        if (assignedInspector == null) {
+            assignedInspector = new Employee();
+        }
+
         return assignedInspector;
     }
 
@@ -396,8 +408,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     public Contact getFactoryRepresentative() {
         if (factoryRepresentative == null) {
-            return new Contact();
+            factoryRepresentative = new Contact();
         }
+
         return factoryRepresentative;
     }
 
@@ -502,7 +515,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             return false;
         }
         FactoryInspection other = (FactoryInspection) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -524,41 +537,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getAssignedInspector().save(em);
-            getAddress().save(em);
-            getFactoryRepresentative().save(em);
-            
-            // Save inspection components
-            if (!getInspectionComponents().isEmpty()) {
-                for (FactoryInspectionComponent inspectionComponent : getInspectionComponents()) {
-                    if ((inspectionComponent.getIsDirty() || inspectionComponent.getId() == null)
-                            && !inspectionComponent.save(em).isSuccess()) {
-
-                        return new ReturnMessage(false,
-                                "Inspection component save error occurred",
-                                "An error occurred while saving an Inspection component",
-                                Message.SEVERITY_ERROR_NAME);
-                    }
-                }
-            }
-
-            // Save product inspections
-            if (!getProductInspections().isEmpty()) {
-                for (ProductInspection productInspection : getProductInspections()) {
-                    if ((productInspection.getIsDirty() || productInspection.getId() == null)
-                            && !productInspection.save(em).isSuccess()) {
-
-                        return new ReturnMessage(false,
-                                "Product save error occurred",
-                                "An error occurred while saving a product",
-                                Message.SEVERITY_ERROR_NAME);
-                    }
-                }
-            }
-            
-            getManufacturer().save(em);
-            getBusinessOffice().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

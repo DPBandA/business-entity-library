@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.mt;
 
 import java.text.Collator;
@@ -86,7 +85,7 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -138,7 +137,7 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
             return false;
         }
         TestMeasure other = (TestMeasure) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -169,6 +168,11 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
 
     @Override
     public Manufacturer getManufacturer() {
+
+        if (manufacturer == null) {
+            manufacturer = new Manufacturer();
+        }
+
         return manufacturer;
     }
 
@@ -218,9 +222,9 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
     public static TestMeasure findTestMeasureByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<TestMeasure> measures = em.createQuery("SELECT t FROM TestMeasure t "
                     + "WHERE t.name = '" + value + "'", TestMeasure.class).getResultList();
             if (!measures.isEmpty()) {
@@ -241,9 +245,8 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
      * @return
      */
     public static ArrayList<TestMeasure> findTestMeasuresFromCapicityList(
-            
             EntityManager em, String list) {
-        
+
         ArrayList<TestMeasure> measures = new ArrayList<TestMeasure>();
 
         String[] capacityList = list.split(",");
@@ -260,10 +263,8 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-         try {
+        try {
 
-            getManufacturer().save(em);
-            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

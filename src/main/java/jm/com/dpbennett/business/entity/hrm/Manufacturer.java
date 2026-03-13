@@ -76,13 +76,13 @@ public class Manufacturer implements BusinessEntity, Comparable {
     private Date dateLastVisited;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<MarketProduct> marketProducts;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Contact> contacts;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Address> addresses;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee productLastSampledBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Internet internet;
     @Column(length = 1024)
     private String notes;
@@ -129,6 +129,11 @@ public class Manufacturer implements BusinessEntity, Comparable {
     }
 
     public List<MarketProduct> getMarketProducts() {
+
+        if (marketProducts == null) {
+            marketProducts = new ArrayList<>();
+        }
+
         return marketProducts;
     }
 
@@ -177,6 +182,11 @@ public class Manufacturer implements BusinessEntity, Comparable {
     }
 
     public Employee getProductLastSampledBy() {
+
+        if (productLastSampledBy == null) {
+            productLastSampledBy = new Employee();
+        }
+
         return productLastSampledBy;
     }
 
@@ -550,22 +560,6 @@ public class Manufacturer implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            for (MarketProduct marketProduct : getMarketProducts()) {
-                marketProduct.save(em);
-            }
-
-            for (Contact contact : getContacts()) {
-                contact.save(em);
-            }
-
-            for (Address address : getAddresses()) {
-                address.save(em);
-            }
-
-            if (getProductLastSampledBy() != null) {
-                getProductLastSampledBy().save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

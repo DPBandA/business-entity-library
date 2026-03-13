@@ -46,7 +46,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllPrivileges", query = "SELECT p FROM Privilege p ORDER BY p.name"),
     @NamedQuery(name = "findByPrivilegesName", query = "SELECT p FROM Privilege p WHERE p.name = :name")
 })
-public class Privilege implements Serializable, PrivilegeInterface {
+public class PrivilegeLegacy implements Serializable, PrivilegeInterface {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -58,21 +58,62 @@ public class Privilege implements Serializable, PrivilegeInterface {
     private String category;
     private String roles;
     private String description;
+    // Privileges
+    private Boolean canEnterJob;
+    private Boolean canEnterOwnJob;
+    private Boolean canEnterDepartmentJob;
+    private Boolean canDeleteJob;
+    private Boolean canEditJob;
+    private Boolean canEditOwnJob;
+    private Boolean canEditDepartmentJob;
+    private Boolean canAddClient;
+    private Boolean canDeleteClient;
+    private Boolean canAddEmployee;
+    private Boolean canDeleteEmployee;
+    private Boolean canAddDepartment;
+    private Boolean canDeleteDepartment;
+    private Boolean canBeJMTSAdministrator;
+    private Boolean canBeSuperUser;
+    private Boolean canApproveJobCosting;
+    private Boolean canEnterParentJob;
+    private Boolean canEditInvoicingAndPayment;
+    private Boolean canAuthDetentionRequest; //CANAUTHDETENTIONREQUEST, Authorize detention request
+    private Boolean canAuthDetentionNotice; //CANAUTHDETENTIONNOTICE, Authorize detention notice/release
+    private Boolean canApprvReleaseRequest; //CANAPPRVRELEASEREQUEST, Approve release request
+    private Boolean canApplyTaxesToJobCosting;
+    private Boolean canBeFinancialAdministrator;
+    // End privilges
     @Transient
     private Boolean isDirty;
 
-    public Privilege() {
+    public PrivilegeLegacy() {
         init("");
     }
 
-    public Privilege(String name) {
+    public PrivilegeLegacy(String name) {
         init(name);
     }
 
     private void init(String name) {
 
         this.name = name;
-      
+        canEnterJob = false;
+        canEnterOwnJob = true;
+        canEnterDepartmentJob = true;
+        canDeleteJob = false;
+        canEditJob = false;
+        canEditOwnJob = true;
+        canEditDepartmentJob = true;
+        canAddClient = false;
+        canDeleteClient = false;
+        canAddEmployee = false;
+        canDeleteEmployee = false;
+        canAddDepartment = false;
+        canDeleteDepartment = false;
+        canBeJMTSAdministrator = false;
+        canBeSuperUser = false;
+        canApproveJobCosting = false;
+        canEnterParentJob = false;
     }
 
     @Override
@@ -83,6 +124,260 @@ public class Privilege implements Serializable, PrivilegeInterface {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getCanBeFinancialAdministrator() {
+        if (canBeFinancialAdministrator == null) {
+            canBeFinancialAdministrator = false;
+        }
+        return canBeFinancialAdministrator;
+    }
+
+    public void setCanBeFinancialAdministrator(Boolean canBeFinancialAdministrator) {
+        this.canBeFinancialAdministrator = canBeFinancialAdministrator;
+    }
+
+    public Boolean getCanApplyTaxesToJobCosting() {
+        if (canApplyTaxesToJobCosting == null) {
+            canApplyTaxesToJobCosting = true;
+        }
+        return canApplyTaxesToJobCosting;
+    }
+
+    public void setCanApplyTaxesToJobCosting(Boolean canApplyTaxesToJobCosting) {
+        this.canApplyTaxesToJobCosting = canApplyTaxesToJobCosting;
+    }
+
+    public Boolean getCanApprvReleaseRequest() {
+        if (canApprvReleaseRequest == null) {
+            canApprvReleaseRequest = false;
+        }
+        return canApprvReleaseRequest;
+    }
+
+    public void setCanApprvReleaseRequest(Boolean canApprvReleaseRequest) {
+        this.canApprvReleaseRequest = canApprvReleaseRequest;
+    }
+
+    public Boolean getCanAuthDetentionNotice() {
+        if (canAuthDetentionNotice == null) {
+            canAuthDetentionNotice = false;
+        }
+        return canAuthDetentionNotice;
+    }
+
+    public void setCanAuthDetentionNotice(Boolean canAuthDetentionNotice) {
+        this.canAuthDetentionNotice = canAuthDetentionNotice;
+    }
+
+    public Boolean getCanAuthDetentionRequest() {
+        if (canAuthDetentionRequest == null) {
+            canAuthDetentionRequest = false;
+        }
+        return canAuthDetentionRequest;
+    }
+
+    public void setCanAuthDetentionRequest(Boolean canAuthDetentionRequest) {
+        this.canAuthDetentionRequest = canAuthDetentionRequest;
+    }
+
+    public Boolean getCanEditInvoicingAndPayment() {
+        if (canEditInvoicingAndPayment == null) {
+            canEditInvoicingAndPayment = false;
+        }
+        return canEditInvoicingAndPayment;
+    }
+
+    public void setCanEditInvoicingAndPayment(Boolean canEditInvoicingAndPayment) {
+        this.canEditInvoicingAndPayment = canEditInvoicingAndPayment;
+    }
+
+    public Boolean getCanApproveJobCosting() {
+        if (canApproveJobCosting == null) {
+            canApproveJobCosting = false;
+        }
+        return canApproveJobCosting;
+    }
+
+    public void setCanApproveJobCosting(Boolean canApproveJobCosting) {
+        this.canApproveJobCosting = canApproveJobCosting;
+    }
+
+    public Boolean getCanEnterParentJob() {
+        if (canEnterParentJob == null) {
+            canEnterParentJob = false;
+        }
+        return canEnterParentJob;
+    }
+
+    public void setCanEnterParentJob(Boolean canEnterParentJob) {
+        this.canEnterParentJob = canEnterParentJob;
+    }
+
+    public Boolean getCanEnterOwnJob() {
+        if (canEnterOwnJob == null) {
+            canEnterOwnJob = false;
+        }
+        return canEnterOwnJob;
+    }
+
+    public void setCanEnterOwnJob(Boolean canEnterOwnJob) {
+        this.canEnterOwnJob = canEnterOwnJob;
+    }
+
+    public Boolean getCanEnterDepartmentJob() {
+        if (canEnterDepartmentJob == null) {
+            canEnterDepartmentJob = true;
+        }
+        return canEnterDepartmentJob;
+    }
+
+    public void setCanEnterDepartmentJob(Boolean canEnterDepartmentJob) {
+        this.canEnterDepartmentJob = canEnterDepartmentJob;
+    }
+
+    public Boolean getCanBeJMTSAdministrator() {
+        if (canBeJMTSAdministrator == null) {
+            canBeJMTSAdministrator = false;
+        }
+
+        return canBeJMTSAdministrator;
+    }
+
+    public void setCanBeJMTSAdministrator(Boolean canBeJMTSAdministrator) {
+        this.canBeJMTSAdministrator = canBeJMTSAdministrator;
+    }
+
+    public Boolean getCanBeSuperUser() {
+        if (canBeSuperUser == null) {
+            canBeSuperUser = false;
+        }
+        return canBeSuperUser;
+    }
+
+    public void setCanBeSuperUser(Boolean canBeSuperUser) {
+        this.canBeSuperUser = canBeSuperUser;
+    }
+
+    public Boolean getCanAddClient() {
+        if (canAddClient == null) {
+            canAddClient = false;
+        }
+        return canAddClient;
+    }
+
+    public void setCanAddClient(Boolean canAddClient) {
+        this.canAddClient = canAddClient;
+    }
+
+    public Boolean getCanAddDepartment() {
+        if (canAddDepartment == null) {
+            canAddDepartment = false;
+        }
+        return canAddDepartment;
+    }
+
+    public void setCanAddDepartment(Boolean canAddDepartment) {
+        this.canAddDepartment = canAddDepartment;
+    }
+
+    public Boolean getCanAddEmployee() {
+        if (canAddEmployee == null) {
+            canAddEmployee = false;
+        }
+        return canAddEmployee;
+    }
+
+    public void setCanAddEmployee(Boolean canAddEmployee) {
+        this.canAddEmployee = canAddEmployee;
+    }
+
+    public Boolean getCanDeleteClient() {
+        if (canDeleteClient == null) {
+            canDeleteClient = false;
+        }
+        return canDeleteClient;
+    }
+
+    public void setCanDeleteClient(Boolean canDeleteClient) {
+        this.canDeleteClient = canDeleteClient;
+    }
+
+    public Boolean getCanDeleteDepartment() {
+        if (canDeleteDepartment == null) {
+            canDeleteDepartment = false;
+        }
+        return canDeleteDepartment;
+    }
+
+    public void setCanDeleteDepartment(Boolean canDeleteDepartment) {
+        this.canDeleteDepartment = canDeleteDepartment;
+    }
+
+    public Boolean getCanDeleteEmployee() {
+        if (canDeleteEmployee == null) {
+            canDeleteEmployee = false;
+        }
+        return canDeleteEmployee;
+    }
+
+    public void setCanDeleteEmployee(Boolean canDeleteEmployee) {
+        this.canDeleteEmployee = canDeleteEmployee;
+    }
+
+    public Boolean getCanEditDepartmentJob() {
+        if (canEditDepartmentJob == null) {
+            canEditDepartmentJob = true;
+        }
+        return canEditDepartmentJob;
+    }
+
+    public void setCanEditDepartmentJob(Boolean canEditDepartmentJob) {
+        this.canEditDepartmentJob = canEditDepartmentJob;
+    }
+
+    public Boolean getCanDeleteJob() {
+        if (canDeleteJob == null) {
+            canDeleteJob = false;
+        }
+        return canDeleteJob;
+    }
+
+    public void setCanDeleteJob(Boolean canDeleteJob) {
+        this.canDeleteJob = canDeleteJob;
+    }
+
+    public Boolean getCanEditJob() {
+        if (canEditJob == null) {
+            canEditJob = false;
+        }
+        return canEditJob;
+    }
+
+    public void setCanEditJob(Boolean canEditJob) {
+        this.canEditJob = canEditJob;
+    }
+
+    public Boolean getCanEditOwnJob() {
+        if (canEditOwnJob == null) {
+            canEditOwnJob = false;
+        }
+        return canEditOwnJob;
+    }
+
+    public void setCanEditOwnJob(Boolean canEditOwnJob) {
+        this.canEditOwnJob = canEditOwnJob;
+    }
+
+    public Boolean getCanEnterJob() {
+        if (canEnterJob == null) {
+            canEnterJob = false;
+        }
+        return canEnterJob;
+    }
+
+    public void setCanEnterJob(Boolean canEnterJob) {
+        this.canEnterJob = canEnterJob;
     }
 
     @Override
@@ -135,10 +430,10 @@ public class Privilege implements Serializable, PrivilegeInterface {
     @Override
     public boolean equals(Object object) {
 
-        if (!(object instanceof Privilege)) {
+        if (!(object instanceof PrivilegeLegacy)) {
             return false;
         }
-        Privilege other = (Privilege) object;
+        PrivilegeLegacy other = (PrivilegeLegacy) object;
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
@@ -158,15 +453,15 @@ public class Privilege implements Serializable, PrivilegeInterface {
         this.name = name;
     }
 
-    public static Privilege findActiveByName(EntityManager em, String value) {
+    public static PrivilegeLegacy findActiveByName(EntityManager em, String value) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p "
+            List<PrivilegeLegacy> privileges = em.createQuery("SELECT p FROM Privilege p "
                     + "WHERE p.active = 1 AND UPPER(p.name) "
-                    + "= '" + value.toUpperCase() + "'", Privilege.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", PrivilegeLegacy.class).getResultList();
             if (!privileges.isEmpty()) {
                 return privileges.get(0);
             }
@@ -177,16 +472,16 @@ public class Privilege implements Serializable, PrivilegeInterface {
         }
     }
 
-    public static List<Privilege> findAllActive(EntityManager em, String query) {
+    public static List<PrivilegeLegacy> findAllActive(EntityManager em, String query) {
         try {
 
             query = query.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p"
+            List<PrivilegeLegacy> privileges = em.createQuery("SELECT p FROM Privilege p"
                     + " WHERE (p.active = 1) AND (UPPER(p.name) like '%"
                     + query + "%'" + " OR UPPER(p.category) like '%"
                     + query + "%'" + " OR UPPER(p.description) like '%"
-                    + query + "%') ORDER BY p.name", Privilege.class).getResultList();
+                    + query + "%') ORDER BY p.name", PrivilegeLegacy.class).getResultList();
 
             return privileges;
 
@@ -196,19 +491,19 @@ public class Privilege implements Serializable, PrivilegeInterface {
         }
     }
 
-    public static Privilege findByName(EntityManager em, String name) {
+    public static PrivilegeLegacy findByName(EntityManager em, String name) {
 
         try {
 
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p "
+            List<PrivilegeLegacy> privileges = em.createQuery("SELECT p FROM Privilege p "
                     + "WHERE UPPER(p.name) "
-                    + "LIKE '" + name.toUpperCase() + "%'", Privilege.class).getResultList();
+                    + "LIKE '" + name.toUpperCase() + "%'", PrivilegeLegacy.class).getResultList();
 
             if (!privileges.isEmpty()) {
 
-                Privilege privilege = privileges.get(0);
+                PrivilegeLegacy privilege = privileges.get(0);
                 em.refresh(privilege);
 
                 return privilege;
@@ -221,16 +516,16 @@ public class Privilege implements Serializable, PrivilegeInterface {
         }
     }
 
-    public static List<Privilege> findPrivileges(EntityManager em, String query) {
+    public static List<PrivilegeLegacy> findPrivileges(EntityManager em, String query) {
         try {
 
             query = query.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<Privilege> privileges = em.createQuery("SELECT p FROM Privilege p"
+            List<PrivilegeLegacy> privileges = em.createQuery("SELECT p FROM Privilege p"
                     + " WHERE (UPPER(p.name) like '%"
                     + query + "%'" + " OR UPPER(p.category) like '%"
                     + query + "%'" + " OR UPPER(p.description) like '%"
-                    + query + "%') ORDER BY p.name", Privilege.class).getResultList();
+                    + query + "%') ORDER BY p.name", PrivilegeLegacy.class).getResultList();
 
             return privileges;
 
@@ -358,7 +653,7 @@ public class Privilege implements Serializable, PrivilegeInterface {
         try {
 
             if (this.id == null) {
-                Privilege existing = Privilege.findByName(em, this.name);
+                PrivilegeLegacy existing = PrivilegeLegacy.findByName(em, this.name);
                 if (existing != null) {
                     return new ReturnMessage(false, "Privilege exists");
                 } else {

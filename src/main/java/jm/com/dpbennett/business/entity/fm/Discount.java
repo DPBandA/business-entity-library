@@ -61,7 +61,7 @@ public class Discount implements Serializable, BusinessEntity {
     private String name;
     private Double discountValue;
     private String discountValueType;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private AccountingCode accountingCode;
     private String type;
     @Column(length = 1024)
@@ -112,7 +112,7 @@ public class Discount implements Serializable, BusinessEntity {
 
     public static Discount findDefault(EntityManager em, String name) {
         Discount discount = Discount.findByName(em, name);
-        
+
         name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         if (discount == null) {
@@ -129,7 +129,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static Discount findDefault(EntityManager em,
             String name, Double value, String type) {
         Discount discount = Discount.findByName(em, name);
-        
+
         name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
         type = type.replaceAll("&amp;", "&").replaceAll("'", "`");
 
@@ -190,7 +190,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static List<Discount> findAllDiscounts(EntityManager em) {
 
         try {
-            
+
             List<Discount> discounts = em.createNamedQuery("findAllDiscounts", Discount.class).getResultList();
 
             return discounts;
@@ -200,11 +200,11 @@ public class Discount implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static List<Discount> findAllActiveDiscounts(EntityManager em) {
 
         try {
-            
+
             List<Discount> discounts = em.createNamedQuery("findAllActiveDiscounts", Discount.class).getResultList();
 
             return discounts;
@@ -218,7 +218,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static List<Discount> findDiscountsByNameAndDescription(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "`");
 
             List<Discount> discounts
@@ -317,6 +317,7 @@ public class Discount implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -350,9 +351,9 @@ public class Discount implements Serializable, BusinessEntity {
     public static Discount findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-          
+
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", Discount.class).getResultList();
@@ -387,7 +388,7 @@ public class Discount implements Serializable, BusinessEntity {
             String valueType) {
 
         try {
-            
+
             valueType = valueType.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d"

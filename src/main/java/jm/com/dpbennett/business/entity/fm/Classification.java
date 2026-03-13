@@ -64,10 +64,10 @@ public class Classification implements BusinessEntity, Serializable {
     private Boolean isEarning;
     private Boolean isTaxable;
     private String category;
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Tax defaultTax;
     @Transient
     private Boolean isDirty;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Tax defaultTax;
 
     public Classification() {
         this.name = "";
@@ -78,7 +78,12 @@ public class Classification implements BusinessEntity, Serializable {
     }
 
     public Tax getDefaultTax() {
-        return (defaultTax == null ? new Tax() : defaultTax);
+
+        if (defaultTax == null) {
+            defaultTax = new Tax();
+        }
+
+        return defaultTax;
     }
 
     public void setDefaultTax(Tax defaultTax) {
@@ -366,10 +371,6 @@ public class Classification implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getDefaultTax().getId() != null) {
-                getDefaultTax().save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

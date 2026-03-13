@@ -29,7 +29,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
  */
 public class BusinessEntityComboBoxModel extends DefaultComboBoxModel {
 
-    private List<BusinessEntity> data;
+    private final List<BusinessEntity> data;
     private BusinessEntity selection;
 
     public BusinessEntityComboBoxModel(List<BusinessEntity> data) {

@@ -412,7 +412,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public Tax getTax() {
-        return (tax == null ? new Tax() : tax);
+
+        if (tax == null) {
+            tax = new Tax();
+        }
+
+        return tax;
     }
 
     public void setTax(Tax tax) {
@@ -420,7 +425,11 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public Discount getDiscount() {
-        return (discount == null ? new Discount() : discount);
+        if (discount == null) {
+            discount = new Discount();
+        }
+
+        return discount;
     }
 
     public void setDiscount(Discount discount) {
@@ -575,7 +584,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public Currency getCurrency() {
-        return (currency == null ? new Currency() : currency);
+
+        if (currency == null) {
+            currency = new Currency();
+        }
+
+        return currency;
     }
 
     public void setCurrency(Currency currency) {
@@ -583,7 +597,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public Currency getPaymentCurrency() {
-        return (paymentCurrency == null ? new Currency() : paymentCurrency);
+
+        if (paymentCurrency == null) {
+            paymentCurrency = new Currency();
+        }
+
+        return paymentCurrency;
     }
 
     public void setPaymentCurrency(Currency paymentCurrency) {
@@ -965,6 +984,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (costComponents == null) {
             costComponents = new ArrayList<>();
         }
+        
         return costComponents;
     }
 
@@ -983,6 +1003,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (attachments == null) {
             attachments = new ArrayList<>();
         }
+        
         return attachments;
     }
 
@@ -1025,7 +1046,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public Supplier getSupplier() {
 
         if (supplier == null) {
-            return new Supplier();
+            supplier = new Supplier();
         }
 
         return supplier;
@@ -1188,7 +1209,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            return new Employee();
+            editedBy = new Employee();
         }
 
         return editedBy;
@@ -1219,7 +1240,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public Department getOriginatingDepartment() {
         if (originatingDepartment == null) {
-            return new Department();
+            originatingDepartment = new Department();
         }
 
         return originatingDepartment;
@@ -1247,7 +1268,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public Department getPurchasingDepartment() {
         if (purchasingDepartment == null) {
-            return new Department();
+            purchasingDepartment = new Department();
         }
 
         return purchasingDepartment;
@@ -1336,7 +1357,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public Employee getProcurementOfficer() {
         if (procurementOfficer == null) {
-            return new Employee();
+            procurementOfficer = new Employee();
         }
 
         return procurementOfficer;
@@ -1348,7 +1369,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public Employee getOriginator() {
         if (originator == null) {
-            return new Employee();
+            originator = new Employee();
         }
 
         return originator;
@@ -1361,7 +1382,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Override
     public DocumentType getDocumentType() {
         if (documentType == null) {
-            return new DocumentType();
+            documentType = new DocumentType();
         }
 
         return documentType;
@@ -1413,7 +1434,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Override
     public Classification getClassification() {
         if (classification == null) {
-            return new Classification();
+            classification = new Classification();
         }
 
         return classification;
@@ -1600,97 +1621,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public ReturnMessage save(EntityManager em) {
 
         try {
-
-            if (getDocumentType().getId() != null) {
-                getDocumentType().save(em);
-            }
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
-            }
-            if (getOriginatingDepartment().getId() != null) {
-                getOriginatingDepartment().save(em);
-            }
-            if (getPurchasingDepartment().getId() != null) {
-                getPurchasingDepartment().save(em);
-            }
-            if (getProcurementOfficer().getId() != null) {
-                getProcurementOfficer().save(em);
-            }
-            if (getOriginator().getId() != null) {
-                getOriginator().save(em);
-            }
-            if (getTax().getId() != null) {
-                getTax().save(em);
-            }
-            if (getDiscount().getId() != null) {
-                getDiscount().save(em);
-            }
-            if (getApprover1() != null) {
-                getApprover1().save(em);
-            }
-            if (getApprover2() != null) {
-                getApprover2().save(em);
-            }
-            if (getApprover3() != null) {
-                getApprover3().save(em);
-            }
-            if (getApprover4() != null) {
-                getApprover4().save(em);
-            }
-            if (getApprover5() != null) {
-                getApprover5().save(em);
-            }
-            if (getRecommender1() != null) {
-                getRecommender1().save(em);
-            }
-            if (getRecommender2() != null) {
-                getRecommender2().save(em);
-            }
-            if (getRecommender3() != null) {
-                getRecommender3().save(em);
-            }
-            if (getRecommender4() != null) {
-                getRecommender4().save(em);
-            }
-            if (getRecommender5() != null) {
-                getRecommender5().save(em);
-            }
-            if (getCurrency().getId() != null) {
-                getCurrency().save(em);
-            }
-            if (getPaymentCurrency().getId() != null) {
-                getPaymentCurrency().save(em);
-            }
-            if (getSupplier().getId() != null) {
-                getSupplier().save(em);
-            }
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
-            }
-
-            for (Attachment attachment : getAttachments()) {
-                if ((attachment.getId() == null || attachment.getIsDirty())
-                        && !attachment.save(em).isSuccess()) {
-
-                    return new ReturnMessage(false,
-                            "Attachment save error occurred",
-                            "An error occurred while saving an attachment",
-                            Message.SEVERITY_ERROR_NAME);
-
-                }
-            }
-
-            for (CostComponent costComponent : getCostComponents()) {
-                if ((costComponent.getIsDirty() || costComponent.getId() == null)
-                        && !costComponent.save(em).isSuccess()) {
-
-                    return new ReturnMessage(false,
-                            "Cost component save error occurred",
-                            "An error occurred while saving a cost component",
-                            Message.SEVERITY_ERROR_NAME);
-
-                }
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

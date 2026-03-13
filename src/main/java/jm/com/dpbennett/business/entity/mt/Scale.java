@@ -71,7 +71,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
     private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Certification certification;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Sticker> stickers;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateScheduledForTest;
@@ -100,7 +100,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
 
     public Client getClient() {
         if (client == null) {
-            return new Client();
+            client = new Client();
         }
 
         return client;
@@ -189,6 +189,11 @@ public class Scale implements Product, BusinessEntity, Comparable {
     }
 
     public List<Sticker> getStickers() {
+
+        if (stickers != null) {
+            stickers = new ArrayList<>();
+        }
+
         return stickers;
     }
 
@@ -242,8 +247,9 @@ public class Scale implements Product, BusinessEntity, Comparable {
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            return new Manufacturer("");
+            manufacturer = new Manufacturer("");
         }
+
         return manufacturer;
     }
 
@@ -366,16 +372,6 @@ public class Scale implements Product, BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            getManufacturer().save(em);
-            //getCertification().save(em);
-            if (getClient().getId() != null) {
-                getClient().save(em);
-            }
-
-            for (Sticker sticker : stickers) {
-                sticker.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

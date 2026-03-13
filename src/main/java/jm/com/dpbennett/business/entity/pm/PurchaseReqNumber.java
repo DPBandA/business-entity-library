@@ -105,7 +105,6 @@ public class PurchaseReqNumber implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PurchaseReqNumber)) {
             return false;
         }
@@ -200,14 +199,14 @@ public class PurchaseReqNumber implements BusinessEntity {
             purchaseReqNumber.setYear(year);
             purchaseReqNumber.setSequentialNumber(last);
         }
-        
+
         return purchaseReqNumber;
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

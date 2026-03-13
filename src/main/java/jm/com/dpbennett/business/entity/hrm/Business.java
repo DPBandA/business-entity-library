@@ -61,13 +61,13 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private String notes;
     private String taxRegistrationNumber;
     private String departmentLabel;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee head;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Department> departments;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Address> addresses;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Contact> contacts;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastAccessed;
@@ -143,7 +143,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public Employee getHead() {
 
         if (head == null) {
-            return new Employee();
+            head = new Employee();
         }
 
         return head;
@@ -157,6 +157,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         if (departments == null) {
             departments = new ArrayList<>();
         }
+
         return departments;
     }
 
@@ -238,6 +239,11 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public List<Address> getAddresses() {
+
+        if (addresses == null) {
+            addresses = new ArrayList<>();
+        }
+
         return addresses;
     }
 
@@ -248,6 +254,11 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public List<Contact> getContacts() {
+
+        if (contacts == null) {
+            contacts = new ArrayList<>();
+        }
+
         return contacts;
     }
 
@@ -373,6 +384,17 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
     }
 
+    public static List<Business> findAllActive(EntityManager em) {
+
+        try {
+            return em.createQuery("SELECT b FROM Business b WHERE b.active = 1 ORDER BY b.name",
+                    Business.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     public static List<Business> findAllByName(EntityManager em, String value) {
 
         try {
@@ -409,19 +431,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public ReturnMessage save(EntityManager em) {
 
         try {
-
-            if (getHead().getId() != null) {
-                getHead().save(em);
-            }
-            for (Department department : getDepartments()) {
-                department.save(em);
-            }
-            for (Address address : getAddresses()) {
-                address.save(em);
-            }
-            for (Contact contact : getContacts()) {
-                contact.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

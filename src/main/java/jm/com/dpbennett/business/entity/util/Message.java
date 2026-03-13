@@ -21,6 +21,10 @@ package jm.com.dpbennett.business.entity.util;
 
 import java.io.Serializable;
 
+/**
+ *
+ * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
+ */
 public class Message implements Serializable {
 
     public static final String SEVERITY_INFO_NAME = "INFO";

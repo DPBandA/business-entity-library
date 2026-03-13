@@ -22,7 +22,7 @@ package jm.com.dpbennett.business.entity.rm;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 public interface Form {
   

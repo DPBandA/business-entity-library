@@ -36,9 +36,8 @@ import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
- * tk may no longer be needed and should be deleted
  *
- * @author dbennett
+ * @author Dessmond Bennett
  */
 @Entity
 @Table(name = "complianceDailyReport")

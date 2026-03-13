@@ -79,9 +79,6 @@ public class ProcurementMethod implements BusinessEntity {
     private Integer quotationsRequired;
     private Boolean active;
 
-    /**
-     * Default constructor.
-     */
     public ProcurementMethod() {
         requiredSignatoryPositions = new ArrayList<>();
         description = "";
@@ -151,14 +148,6 @@ public class ProcurementMethod implements BusinessEntity {
         this.procurementMethod = procurementMethod;
     }
 
-    /**
-     * Splits the description into three(3) parts.
-     *
-     * @param part1Length
-     * @param part2Length
-     * @param part3Length
-     * @return
-     */
     public String[] splitDescription(int part1Length, int part2Length, int part3Length) {
         int descriptionLength = getDescription().length();
         String[] descriptionParts = {"", "", ""};
@@ -186,6 +175,11 @@ public class ProcurementMethod implements BusinessEntity {
     }
 
     public List<EmployeePosition> getRequiredSignatoryPositions() {
+
+        if (requiredSignatoryPositions == null) {
+            requiredSignatoryPositions = new ArrayList<>();
+        }
+
         return requiredSignatoryPositions;
     }
 
@@ -234,7 +228,7 @@ public class ProcurementMethod implements BusinessEntity {
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            return new Employee();
+            editedBy = new Employee();
         }
 
         return editedBy;
@@ -273,7 +267,6 @@ public class ProcurementMethod implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ProcurementMethod)) {
             return false;
         }
@@ -354,14 +347,6 @@ public class ProcurementMethod implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
-
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
-            }
-
-            for (EmployeePosition requiredSignatoryPosition : getRequiredSignatoryPositions()) {
-                requiredSignatoryPosition.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

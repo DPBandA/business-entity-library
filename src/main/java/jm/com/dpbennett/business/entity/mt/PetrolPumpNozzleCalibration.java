@@ -20,7 +20,6 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.mt;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
-//import jm.com.dpbennett.business.entity.jmts.Job;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -59,8 +58,6 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long ownerId;
-    //@OneToOne(cascade = CascadeType.REFRESH)
-    //private Job job;
     private String name;
     private String type;
     private Double hourlyRate = 0.0;
@@ -71,7 +68,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     private Double setPetrolUsage = 0.0;
     private Double actualPetrolUsage = 0.0;
     private Double petrolCost = 0.0;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<PetrolPumpNozzleCalibrationPoint> calibrationPoints;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date calibrationDate;
@@ -221,22 +218,13 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            //getJob().save(em);
-            
-            //getCalibrationDoneBy().save(em);
-            
-            for (PetrolPumpNozzleCalibrationPoint calibrationPoint : calibrationPoints) {
-                calibrationPoint.setOwnerId(id);
-                calibrationPoint.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
-          
+
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -602,6 +590,10 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         if (calibrationPoints != null) {
             Collections.sort(calibrationPoints);
         }
+        else {
+            calibrationPoints = new ArrayList<>();
+        }
+        
         return calibrationPoints;
     }
 
@@ -625,11 +617,9 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
 //        }
 //        return job;
 //    }
-
 //    public void setJob(Job job) {
 //        this.job = job;
 //    }
-
     public Double getTotalizerEnd() {
         return totalizerEnd;
     }

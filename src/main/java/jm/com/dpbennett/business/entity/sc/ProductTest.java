@@ -153,6 +153,11 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
 
     @Override
     public Employee getTestDoneBy() {
+
+        if (testDoneBy == null) {
+            testDoneBy = new Employee();
+        }
+
         return testDoneBy;
     }
 
@@ -189,8 +194,6 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            getTestDoneBy().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

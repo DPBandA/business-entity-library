@@ -82,7 +82,7 @@ public class User extends DefaultEntity {
     private List<Privilege> privileges;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Module> activeModules;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<SystemOption> settings;
     @Transient
     private Boolean isDirty;
@@ -230,7 +230,7 @@ public class User extends DefaultEntity {
     public Privilege getPrivilege() {
 
         if (privilege == null) {
-            return new Privilege();
+            privilege = new Privilege();
         }
 
         return privilege;
@@ -332,7 +332,7 @@ public class User extends DefaultEntity {
         if (privileges == null) {
             privileges = new ArrayList<>();
         }
-        
+
         return privileges;
     }
 
@@ -344,7 +344,7 @@ public class User extends DefaultEntity {
         if (activeModules == null) {
             activeModules = new ArrayList<>();
         }
-        
+
         return activeModules;
     }
 
@@ -361,7 +361,7 @@ public class User extends DefaultEntity {
 
         return allActiveModules;
     }
-    
+
     public String getAllPrivileges() {
         String allPrivileges = "";
 
@@ -404,7 +404,7 @@ public class User extends DefaultEntity {
 
         try {
             Department department = user.getEmployee().getDepartment();
-            for (Business business : Business.findAll(em)) {
+            for (Business business : Business.findAllActive(em)) {
                 for (Department dept : business.getDepartments()) {
                     if (Objects.equals(department.getId(), dept.getId())) {
                         return business;
@@ -572,7 +572,7 @@ public class User extends DefaultEntity {
     public Employee getEmployee() {
 
         if (employee == null) {
-            return new Employee();
+            employee = new Employee();
         }
 
         return employee;
@@ -804,22 +804,6 @@ public class User extends DefaultEntity {
         ReturnMessage rm = new ReturnMessage();
 
         try {
-
-            if (getEmployee().getId() != null) {
-                getEmployee().save(em);
-            }
-            if (getPrivilege().getId() != null) {
-                getPrivilege().save(em);
-            }
-            for (Privilege priv : getPrivileges()) {
-                priv.save(em);
-            }
-            for (Module activeModule : getActiveModules()) {
-                activeModule.save(em);
-            }
-            for (SystemOption setting : getSettings()) {
-                setting.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

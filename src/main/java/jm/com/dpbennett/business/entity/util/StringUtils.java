@@ -23,8 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StringUtils {
+
     public static List<String> splitString(String string, String itemSep) {
-        
+
         return Arrays.asList(string.split(itemSep));
     }
 }

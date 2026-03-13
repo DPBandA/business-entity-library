@@ -206,7 +206,6 @@ public class LdapContext implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof LdapContext)) {
             return false;
         }
@@ -254,9 +253,9 @@ public class LdapContext implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<LdapContext> ldapContexts
                     = em.createQuery("SELECT l FROM LdapContext l WHERE "
                             + "( UPPER(l.name) LIKE '%" + value + "%'"
@@ -264,9 +263,9 @@ public class LdapContext implements BusinessEntity {
                             + " OR UPPER(l.initialContextFactory) like '%" + value + "%'"
                             + " OR UPPER(l.providerUrl) LIKE '%" + value + "%'"
                             + ") AND l.active = 1 ORDER BY l.name", LdapContext.class).getResultList();
-            
+
             return ldapContexts;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -277,9 +276,9 @@ public class LdapContext implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<LdapContext> ldapContexts
                     = em.createQuery("SELECT l FROM LdapContext l WHERE "
                             + "UPPER(l.name) LIKE '%" + value + "%'"
@@ -287,9 +286,9 @@ public class LdapContext implements BusinessEntity {
                             + " OR UPPER(l.initialContextFactory) like '%" + value + "%'"
                             + " OR UPPER(l.providerUrl) LIKE '%" + value + "%'"
                             + " ORDER BY l.name", LdapContext.class).getResultList();
-            
+
             return ldapContexts;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -341,7 +340,7 @@ public class LdapContext implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<LdapContext> ldapContexts = em.createQuery("SELECT l FROM LdapContext l "
@@ -419,7 +418,7 @@ public class LdapContext implements BusinessEntity {
                 connection.createSubcontext(
                         "uid=" + user.getUsername() + "," + context.domainName,
                         attributes);
-                
+
                 return true;
             }
 

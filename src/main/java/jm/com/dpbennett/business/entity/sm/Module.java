@@ -359,7 +359,6 @@ public class Module implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Module)) {
             return false;
         }
@@ -386,10 +385,6 @@ public class Module implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            for (Privilege privilege : privileges) {
-                privilege.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -580,5 +575,5 @@ public class Module implements BusinessEntity {
     public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
 }

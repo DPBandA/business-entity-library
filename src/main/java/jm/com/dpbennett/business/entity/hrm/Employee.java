@@ -70,17 +70,17 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private String username;
     private String title;
     private String name;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Internet internet;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Signature signature;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Department department;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<EmployeePosition> positions;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Address> addresses;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<PhoneNumber> phoneNumbers;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date birthDate;
@@ -211,7 +211,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public Signature getSignature() {
 
         if (signature == null) {
-            return new Signature();
+            signature = new Signature();
         }
 
         return signature;
@@ -270,6 +270,11 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     }
 
     public List<PhoneNumber> getPhoneNumbers() {
+
+        if (phoneNumbers == null) {
+            phoneNumbers = new ArrayList<>();
+        }
+
         return phoneNumbers;
     }
 
@@ -725,29 +730,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            getInternet().save(em);
-
-            if (getSignature().getId() != null) {
-                getSignature().save(em);
-            }
-            
-            // NB: This results in stack overflow. To be investigated.
-            //if (getDepartment().getId() != null) {
-            //    getDepartment().save(em);
-            //}
-            
-            for (EmployeePosition position : getPositions()) {
-                position.save(em);
-            }
-
-            for (Address address : getAddresses()) {
-                address.save(em);
-            }
-
-            for (PhoneNumber phoneNumber : getPhoneNumbers()) {
-                phoneNumber.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

@@ -45,7 +45,6 @@ import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
-import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -86,7 +85,7 @@ public class Complaint implements Comparable, BusinessEntity {
     private Client receivedVia;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client complainant;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ProductInspection> productInspections;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> referredTo;
@@ -158,7 +157,7 @@ public class Complaint implements Comparable, BusinessEntity {
 
     public BusinessOffice getBusinessOffice() {
         if (businessOffice == null) {
-            return new BusinessOffice();
+            businessOffice = new BusinessOffice();
         }
 
         return businessOffice;
@@ -285,7 +284,7 @@ public class Complaint implements Comparable, BusinessEntity {
 
     public Employee getReceivedBy() {
         if (receivedBy == null) {
-            return new Employee();
+            receivedBy = new Employee();
         }
 
         return receivedBy;
@@ -325,7 +324,7 @@ public class Complaint implements Comparable, BusinessEntity {
 
     public Client getComplainant() {
         if (complainant == null) {
-            return new Client();
+            complainant = new Client();
         }
 
         return complainant;
@@ -337,7 +336,7 @@ public class Complaint implements Comparable, BusinessEntity {
 
     public Client getReceivedVia() {
         if (receivedVia == null) {
-            return new Client();
+            receivedVia = new Client();
         }
 
         return receivedVia;
@@ -370,7 +369,7 @@ public class Complaint implements Comparable, BusinessEntity {
     @Override
     public Employee getEnteredBy() {
         if (enteredBy == null) {
-            return new Employee();
+            enteredBy = new Employee();
         }
 
         return enteredBy;
@@ -537,38 +536,6 @@ public class Complaint implements Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getBusinessOffice().getId() != null) {
-                getBusinessOffice().save(em);
-            }
-            if (getEnteredBy().getId() != null) {
-                getEnteredBy().save(em);
-            }
-            if (getReceivedBy().getId() != null) {
-                getReceivedBy().save(em);
-            }
-            if (getReceivedVia().getId() != null) {
-                getReceivedVia().save(em);
-            }
-            if (getComplainant().getId() != null) {
-                getComplainant().save(em);
-            }
-            for (ProductInspection productInspection : getProductInspections()) {
-                if ((productInspection.getIsDirty() || productInspection.getId() == null)
-                        && !productInspection.save(em).isSuccess()) {
-
-                    return new ReturnMessage(false,
-                            "Product save error occurred",
-                            "An error occurred while saving a product",
-                            Message.SEVERITY_ERROR_NAME);
-                }
-            }
-            for (Employee employee : getReferredTo()) {
-                employee.save(em);
-            }
-            for (Department department : getReferredToDepartment()) {
-                department.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

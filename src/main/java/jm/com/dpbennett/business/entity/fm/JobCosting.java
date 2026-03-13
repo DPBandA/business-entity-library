@@ -52,7 +52,7 @@ public class JobCosting implements Serializable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<CostComponent> costComponents;
     @Transient
     private Boolean isDirty;

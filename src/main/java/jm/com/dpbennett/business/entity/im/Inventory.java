@@ -77,7 +77,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String stockKeepingUnit;
     private String measurementUnit;
     private String valuationMethod;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private MarketProduct product;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateAcquired;
@@ -89,7 +89,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private Date dateEdited;
     @Temporal(javax.persistence.TemporalType.TIME)
     private Date timeChecked;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Supplier supplier;
     private String batchCode;
     private String dateMark;
@@ -98,9 +98,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Currency currency;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<CostComponent> costComponents;
     @Transient
     private Boolean isDirty;
@@ -362,6 +362,11 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public Employee getEditedBy() {
+
+        if (editedBy == null) {
+            editedBy = new Employee();
+        }
+
         return editedBy;
     }
 
@@ -535,7 +540,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Inventory> inventory
@@ -555,9 +560,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
                     + "WHERE UPPER(i.name)" + " = '" + name + "'",
                     Inventory.class).getResultList();
@@ -573,14 +578,14 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
         return null;
     }
-    
+
     public static Inventory findActiveByName(
             EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
                     + "WHERE UPPER(i.name)" + " = '" + name + "'"
                     + " AND i.active = 1",
@@ -602,7 +607,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             EntityManager em,
             String searchText,
             Integer maxResults) {
-        
+
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         List<Inventory> foundInventory = new ArrayList<>();
@@ -657,7 +662,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             Integer maxResults) {
 
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        
+
         List<Inventory> foundInventory = new ArrayList<>();
         String searchQuery;
         String searchTextAndClause;
@@ -805,6 +810,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Override
     public Employee getEnteredBy() {
 
+        if (enteredBy == null) {
+            enteredBy = new Employee();
+        }
+
         return enteredBy;
     }
 
@@ -815,8 +824,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public Category getInventoryCategory() {
         if (category == null) {
-            return new Category();
+            category = new Category();
         }
+
         return category;
     }
 
@@ -924,25 +934,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getInventoryCategory().save(em);
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
-
-            // Save new/edited cost components
-            if (!getCostComponents().isEmpty()) {
-                for (CostComponent costComponent : getCostComponents()) {
-                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
-                            && !costComponent.save(em).isSuccess()) {
-
-                        return new ReturnMessage(false,
-                                "Cost component save error occurred",
-                                "An error occurred while saving a cost component",
-                                Message.SEVERITY_ERROR_NAME);
-
-                    }
-                }
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

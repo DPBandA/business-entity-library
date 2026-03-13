@@ -88,7 +88,7 @@ public class ServiceRequest implements BusinessEntity {
     private JobSubCategory jobSubCategory;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedTo;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private ServiceContract serviceContract;
     @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice businessOffice;
@@ -349,7 +349,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public Classification getClassification() {
         if (classification == null) {
-            return new Classification();
+            classification = new Classification();
         }
 
         return classification;
@@ -361,7 +361,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public Sector getSector() {
         if (sector == null) {
-            return new Sector();
+            sector = new Sector();
         }
 
         return sector;
@@ -385,7 +385,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public ServiceContract getServiceContract() {
         if (serviceContract == null) {
-            return new ServiceContract();
+            serviceContract = new ServiceContract();
         }
 
         return serviceContract;
@@ -405,7 +405,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public Client getClient() {
         if (client == null) {
-            return new Client("");
+            client = new Client("");
         }
 
         return client;
@@ -417,7 +417,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public Department getDepartment() {
         if (department == null) {
-            return new Department();
+            department = new Department();
         }
 
         return department;
@@ -429,7 +429,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public Employee getAssignedTo() {
         if (assignedTo == null) {
-            return new Employee();
+            assignedTo = new Employee();
         }
 
         return assignedTo;
@@ -441,7 +441,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public JobCategory getJobCategory() {
         if (jobCategory == null) {
-            return new JobCategory();
+            jobCategory = new JobCategory();
         }
 
         return jobCategory;
@@ -453,7 +453,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public JobSubCategory getJobSubCategory() {
         if (jobSubCategory == null) {
-            return new JobSubCategory();
+            jobSubCategory = new JobSubCategory();
         }
 
         return jobSubCategory;
@@ -613,29 +613,29 @@ public class ServiceRequest implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
-            }
-            if (getSector().getId() != null) {
-                getSector().save(em);
-            }
-            if (getDepartment().getId() != null) {
-                getDepartment().save(em);
-            }
-            if (getClient().getId() != null) {
-                getClient().save(em);
-            }
-            if (getJobCategory().getId() != null) {
-                getJobCategory().save(em);
-            }
-            if (getJobSubCategory().getId() != null) {
-                getJobSubCategory().save(em);
-            }
-            if (getAssignedTo().getId() != null) {
-                getAssignedTo().save(em);
-            }
+//            if (getClassification().getId() != null) {
+//                getClassification().save(em);
+//            }
+//            if (getSector().getId() != null) {
+//                getSector().save(em);
+//            }
+//            if (getDepartment().getId() != null) {
+//                getDepartment().save(em);
+//            }
+//            if (getClient().getId() != null) {
+//                getClient().save(em);
+//            }
+//            if (getJobCategory().getId() != null) {
+//                getJobCategory().save(em);
+//            }
+//            if (getJobSubCategory().getId() != null) {
+//                getJobSubCategory().save(em);
+//            }
+//            if (getAssignedTo().getId() != null) {
+//                getAssignedTo().save(em);
+//            }
 
-            getServiceContract().save(em);
+//            getServiceContract().save(em);
 
             if (getBusinessOffice().getId() != null) {
                 getBusinessOffice().save(em);

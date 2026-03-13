@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.cert;
 
 import java.io.Serializable;
@@ -116,5 +115,5 @@ public interface CertificationInterface extends BusinessEntity, Comparable, Seri
 
     @Override
     ReturnMessage validate(EntityManager em);
-    
+
 }

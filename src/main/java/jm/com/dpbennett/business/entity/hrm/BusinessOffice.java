@@ -56,9 +56,9 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Internet internet;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Address address;
     private String code;
     private Boolean active;
@@ -160,7 +160,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
         if (address == null) {
             address = new Address();
         }
-        
+
         return address;
     }
 
@@ -346,9 +346,6 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
-
-            getInternet().save(em);
-            getAddress().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.hrm;
 
 import java.io.Serializable;
@@ -35,7 +34,6 @@ import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
-
 
 /**
  *
@@ -94,7 +92,7 @@ public class Internet implements BusinessEntity, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -199,12 +197,11 @@ public class Internet implements BusinessEntity, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Internet)) {
             return false;
         }
         Internet other = (Internet) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -221,12 +218,12 @@ public class Internet implements BusinessEntity, Serializable {
     @Override
     public void setName(String name) {
     }
-    
-     public static Internet findDefaultInternet(
+
+    public static Internet findDefaultInternet(
             EntityManager em,
             String name,
             Boolean useTransaction) {
-         
+
         Internet internet = findInternetByName(em, name);
 
         if (internet == null) {
@@ -244,13 +241,13 @@ public class Internet implements BusinessEntity, Serializable {
 
         return internet;
     }
-    
+
     public static Internet findInternetByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Internet> internets = em.createQuery("SELECT i FROM Internet i "
                     + "WHERE UPPER(i.name) "
                     + "= '" + value.toUpperCase() + "'", Internet.class).getResultList();
@@ -266,14 +263,14 @@ public class Internet implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-         try {
+        try {
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println("Internet save exception: " + e);
         }

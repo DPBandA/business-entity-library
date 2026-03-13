@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.cm;
 
 import jm.com.dpbennett.business.entity.hrm.Address;
@@ -44,7 +43,7 @@ public interface Customer {
     public void setContacts(List<Contact> contacts);
 
     public Address getDefaultAddress();
-    
+
     public Contact getDefaultContact();
 
     public Date getDateLastAccessed();

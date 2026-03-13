@@ -229,8 +229,6 @@ public class Registration implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            getJob().save(em);
             
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

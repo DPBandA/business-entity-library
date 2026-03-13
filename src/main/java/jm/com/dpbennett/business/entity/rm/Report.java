@@ -69,7 +69,7 @@ public class Report implements BusinessEntity {
     private String reportFile = "";
     private String reportFileMimeType = "";
     private String reportOutputFileMimeType = "";
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ReportTableColumn> reportColumns;
     private Boolean active;
     private Boolean usePackagedReportFileTemplate;
@@ -82,7 +82,7 @@ public class Report implements BusinessEntity {
     private List<Employee> employees;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Client> clients;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<DatePeriod> datePeriods;
     private Boolean departmentRequired;
     private Boolean employeeRequired;
@@ -155,7 +155,7 @@ public class Report implements BusinessEntity {
     }
 
     public List<Department> getDepartments() {
-        if (departments != null && !departments.isEmpty()) {
+        if (departments != null) {
             Collections.sort(departments);
         } else {
             departments = new ArrayList<>();
@@ -183,7 +183,7 @@ public class Report implements BusinessEntity {
     }
 
     public List<Client> getClients() {
-        if (clients != null && !clients.isEmpty()) {
+        if (clients != null) {
             Collections.sort(clients);
         } else {
             clients = new ArrayList<>();
@@ -286,6 +286,11 @@ public class Report implements BusinessEntity {
     }
 
     public List<ReportTableColumn> getReportColumns() {
+
+        if (reportColumns == null) {
+            reportColumns = new ArrayList<>();
+        }
+
         return reportColumns;
     }
 
@@ -532,36 +537,6 @@ public class Report implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            for (ReportTableColumn reportColumn : reportColumns) {
-                reportColumn.save(em);
-            }
-
-            for (Department department : departments) {
-                department.save(em);
-            }
-
-            for (Employee employee : employees) {
-                employee.save(em);
-            }
-
-            for (Client client : clients) {
-                client.save(em);
-            }
-
-            if (!getDatePeriods().isEmpty()) {
-                for (DatePeriod datePeriod : getDatePeriods()) {
-                    if ((datePeriod.getIsDirty() || datePeriod.getId() == null)
-                            && !datePeriod.save(em).isSuccess()) {
-
-                        return new ReturnMessage(false,
-                                "Date period save error occurred",
-                                "An error occurred while saving a date period",
-                                Message.SEVERITY_ERROR_NAME);
-
-                    }
-                }
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

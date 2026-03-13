@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity.util;
 import java.util.Date;
 
 public class SearchInputParameters {
+
     private String searchType;
     private String dateField;
     private String searchText;
@@ -75,6 +76,6 @@ public class SearchInputParameters {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-    }   
-    
+    }
+
 }

@@ -68,7 +68,7 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     private Manufacturer manufacturer;
     @Transient
     private Boolean isDirty;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     List<PetrolPumpNozzle> nozzles;
 
     public PetrolPump(PetrolPump src, Long id) {
@@ -136,8 +136,9 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            return new Manufacturer();
+            manufacturer = new Manufacturer();
         }
+
         return manufacturer;
     }
 
@@ -284,13 +285,6 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            getManufacturer().save(em);
-
-            for (PetrolPumpNozzle petrolPumpNozzle : nozzles) {
-                petrolPumpNozzle.setOwnerId(id);
-                petrolPumpNozzle.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

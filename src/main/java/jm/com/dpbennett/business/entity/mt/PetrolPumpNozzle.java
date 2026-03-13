@@ -65,15 +65,15 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     private String status;
     private String testMeasures;
     private String comments;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<PetrolPumpNozzleCalibration> calibrations;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Seal lastSealIssued;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Sticker lastStickerIssued;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private PetrolPumpNozzleCalibration lastCalibration;
     @Transient
     private Boolean isDirty;
@@ -146,6 +146,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
         if (lastCalibration == null) {
             lastCalibration = new PetrolPumpNozzleCalibration();
         }
+
         return lastCalibration;
     }
 
@@ -183,8 +184,9 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            return new Manufacturer();
+            manufacturer = new Manufacturer();
         }
+
         return manufacturer;
     }
 
@@ -227,7 +229,13 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     }
 
     public List<PetrolPumpNozzleCalibration> getCalibrations() {
-        Collections.sort(calibrations);
+
+        if (calibrations != null) {
+            Collections.sort(calibrations);
+        }
+        else {
+            calibrations = new ArrayList<>();
+        }
 
         return calibrations;
     }
@@ -357,16 +365,6 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
 
         try {
-
-            getLastSealIssued().save(em);
-            getLastStickerIssued().save(em);            
-            getManufacturer().save(em);
-            getLastCalibration().save(em);
-
-            for (PetrolPumpNozzleCalibration calibration : calibrations) {
-                calibration.setOwnerId(id);
-                calibration.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

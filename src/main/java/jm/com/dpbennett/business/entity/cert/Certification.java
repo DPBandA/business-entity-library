@@ -168,6 +168,10 @@ public class Certification implements CertificationInterface {
     @Override
     public Employee getCertificateSignedBy() {
 
+        if (certificateSignedBy == null) {
+            certificateSignedBy = new Employee();
+        }
+
         return certificateSignedBy;
     }
 

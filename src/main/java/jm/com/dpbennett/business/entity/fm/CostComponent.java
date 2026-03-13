@@ -77,14 +77,14 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private Boolean isEditable;
     @Column(length = 1024)
     private String description;
-    private String unit;
-    @Transient
-    private Boolean isDirty;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    private String unit;    
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Currency currency;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date costDate;
     private Double currencyExchangeRate;
+    @Transient
+    private Boolean isDirty;
 
     public CostComponent() {
         name = "";
@@ -245,13 +245,13 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
                 setIsFixedCost(false);
                 setIsHeading(false);
                 break;
-            case "Subcontract":   
+            case "Subcontract":
                 setIsFixedCost(true);
                 setIsHeading(false);
                 setHours(0.0);
                 setHoursOrQuantity(1.0);
                 setRate(getCost());
-                break;    
+                break;
             default:
                 setIsFixedCost(false);
                 setIsHeading(false);
@@ -534,19 +534,19 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             isDirty = false;
-            
-            em.getTransaction().begin();            
+
+            em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
-            
+
             System.out.println("Cost Component save exception: " + e);
-            
+
             return new ReturnMessage(false,
                     "Cost component not saved",
                     "An error occurred while saving a cost component: " + e,

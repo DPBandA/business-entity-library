@@ -435,7 +435,7 @@ public class Post implements Document, Comparable, BusinessEntity {
                 posts = em.createQuery("SELECT p FROM Post p "
                         + "WHERE p.name "
                         + "= '" + value + "'",
-                         Post.class).getResultList();
+                        Post.class).getResultList();
             }
 
             if (!posts.isEmpty()) {

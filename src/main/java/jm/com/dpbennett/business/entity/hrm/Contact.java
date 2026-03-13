@@ -64,11 +64,11 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     private String lastName;
     private String middleName;
     private String notes;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Internet internet;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<PhoneNumber> phoneNumbers;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Address> addresses;
     @Transient
     private Boolean isDirty;
@@ -579,15 +579,15 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getInternet().save(em);
+//            getInternet().save(em);
 
-            for (PhoneNumber phoneNumber : getPhoneNumbers()) {
-                BusinessEntityUtils.saveBusinessEntity(em, phoneNumber);
-            }
+//            for (PhoneNumber phoneNumber : getPhoneNumbers()) {
+//                BusinessEntityUtils.saveBusinessEntity(em, phoneNumber);
+//            }
 
-            for (Address address : getAddresses()) {
-                BusinessEntityUtils.saveBusinessEntity(em, address);
-            }
+//            for (Address address : getAddresses()) {
+//                BusinessEntityUtils.saveBusinessEntity(em, address);
+//            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

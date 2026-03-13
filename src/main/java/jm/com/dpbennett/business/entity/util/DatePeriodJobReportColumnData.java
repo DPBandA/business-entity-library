@@ -25,10 +25,9 @@ import jm.com.dpbennett.business.entity.jmts.JobCostingAndPayment;
 import jm.com.dpbennett.business.entity.fm.JobSubCategory;
 import jm.com.dpbennett.business.entity.fm.Sector;
 
-
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 public class DatePeriodJobReportColumnData extends Job implements Comparable {
 

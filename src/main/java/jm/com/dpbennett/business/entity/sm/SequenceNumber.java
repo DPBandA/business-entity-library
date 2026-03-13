@@ -151,16 +151,12 @@ public class SequenceNumber implements BusinessEntity {
             sequenceNumber.setName(value);
             sequenceNumber.setSequentialNumber(1L);
             sequenceNumber.setYearReceived(year);
-//            em.getTransaction().begin();
             em.persist(sequenceNumber);
-//            em.getTransaction().commit();
         } else {
             sequenceNumber.setName(value);
             sequenceNumber.setSequentialNumber(last + 1);
             sequenceNumber.setYearReceived(year);
-//            em.getTransaction().begin();
             em.persist(sequenceNumber);
-//            em.getTransaction().commit();
         }
 
         return sequenceNumber.getSequentialNumber();

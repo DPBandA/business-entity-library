@@ -69,8 +69,8 @@ public class Security {
                 | NoSuchPaddingException | InvalidKeyException e) {
 
             System.out.println(e);
-        } 
-        
+        }
+
         return decryptedText;
 
     }

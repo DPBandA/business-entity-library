@@ -62,7 +62,7 @@ public class JobCategory implements Serializable, BusinessEntity {
     private String category;
     private Boolean isEarning;
     private Boolean isTaxable;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Department> departments;
     private Boolean active;
     @Column(length = 1024)
@@ -362,10 +362,6 @@ public class JobCategory implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            for (Department department : getDepartments()) {
-                department.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

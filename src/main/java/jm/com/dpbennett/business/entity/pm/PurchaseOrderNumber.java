@@ -140,7 +140,7 @@ public class PurchaseOrderNumber implements BusinessEntity {
             return null;
         }
     }
-    
+
     public static PurchaseOrderNumber findLastPurchaseOrderNumber(
             EntityManager em,
             Integer year) {
@@ -166,7 +166,7 @@ public class PurchaseOrderNumber implements BusinessEntity {
             purchaseOrderNumber.setYear(year);
             purchaseOrderNumber.setSequentialNumber(last);
         }
-        
+
         return purchaseOrderNumber;
     }
 
@@ -206,7 +206,7 @@ public class PurchaseOrderNumber implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

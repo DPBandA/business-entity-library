@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.hrm;
 
 import jm.com.dpbennett.business.entity.Company;
@@ -59,7 +58,7 @@ public class Laboratory implements BusinessEntity, Company {
     private String name;
     private String type;
     private String number;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<BusinessOffice> businessOffices;
     private Boolean active;
     @Transient
@@ -78,7 +77,7 @@ public class Laboratory implements BusinessEntity, Company {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -116,7 +115,7 @@ public class Laboratory implements BusinessEntity, Company {
             return false;
         }
         Laboratory other = (Laboratory) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -160,6 +159,11 @@ public class Laboratory implements BusinessEntity, Company {
 
     @Override
     public List<BusinessOffice> getBusinessOffices() {
+
+        if (businessOffices == null) {
+            businessOffices = new ArrayList<>();
+        }
+
         return businessOffices;
     }
 
@@ -168,13 +172,13 @@ public class Laboratory implements BusinessEntity, Company {
         this.businessOffices = businessOffices;
     }
 
-    public static List<Laboratory> findLaboratoriesByName(EntityManager em, 
+    public static List<Laboratory> findLaboratoriesByName(EntityManager em,
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Laboratory> laboratories;
             laboratories = em.createQuery("SELECT l FROM Laboratory l where UPPER(l.name) like '"
                     + value.toUpperCase().trim() + "%' ORDER BY l.name", Laboratory.class).getResultList();
@@ -198,9 +202,9 @@ public class Laboratory implements BusinessEntity, Company {
     public static Laboratory findLaboratoryByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Laboratory> laboratories = em.createQuery("SELECT l FROM Laboratory l "
                     + "WHERE UPPER(l.name) "
                     + "= '" + value.toUpperCase() + "'", Laboratory.class).getResultList();
@@ -252,12 +256,8 @@ public class Laboratory implements BusinessEntity, Company {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-         try {
+        try {
 
-            for (BusinessOffice office : getBusinessOffices()) {
-                office.save(em);
-            }
-        
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

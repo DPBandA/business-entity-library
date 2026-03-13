@@ -41,9 +41,6 @@ import jm.com.dpbennett.business.entity.util.NumberUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
- * This class encapsulates the properties and methods of the energy label of an
- * energy product.
- *
  * @author Desmond Bennett
  */
 @Entity
@@ -93,25 +90,22 @@ public class EnergyLabel implements BusinessEntity {
     private String standard;
     private String type;
     private String validity;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private EnergyConsumptionAndEfficiency energyConsumptionAndEfficiency;
-    @Transient
-    private Boolean isDirty;
-    @Transient
-    private Boolean showSampleWatermark;
     private String yearOfEvaluation;
     private String feature1;
     private String feature2;
     private String letterRating;
     private String batchCode;
     private String efficiencyRatio;
+    private String serialNumber;
     @Transient
     private String editStatus;
-    private String serialNumber;
+    @Transient
+    private Boolean isDirty;
+    @Transient
+    private Boolean showSampleWatermark;
 
-    /**
-     * The default constructor of an EnergyLabel.
-     */
     public EnergyLabel() {
         starRating = "";
         calcStarRating = false;
@@ -261,11 +255,6 @@ public class EnergyLabel implements BusinessEntity {
         this.yearOfEvaluation = yearOfEvaluation;
     }
 
-    /**
-     * Indicates if the cooling capacity is to be shown on the label.
-     *
-     * @return
-     */
     public Boolean getShowCoolingCapacity() {
         if (showCoolingCapacity == null) {
             showCoolingCapacity = true;
@@ -273,20 +262,10 @@ public class EnergyLabel implements BusinessEntity {
         return showCoolingCapacity;
     }
 
-    /**
-     * Indicates if the cooling capacity is to be shown on the label.
-     *
-     * @param showCoolingCapacity
-     */
     public void setShowCoolingCapacity(Boolean showCoolingCapacity) {
         this.showCoolingCapacity = showCoolingCapacity;
     }
 
-    /**
-     * Indicates if the heating capacity is to be shown on the label.
-     *
-     * @return
-     */
     public Boolean getShowHeatingCapacity() {
         if (showHeatingCapacity == null) {
             showHeatingCapacity = false;
@@ -294,20 +273,10 @@ public class EnergyLabel implements BusinessEntity {
         return showHeatingCapacity;
     }
 
-    /**
-     * Indicates if the heating capacity is to be shown on the label.
-     *
-     * @param showHeatingCapacity
-     */
     public void setShowHeatingCapacity(Boolean showHeatingCapacity) {
         this.showHeatingCapacity = showHeatingCapacity;
     }
 
-    /**
-     * Gets the inputted or calculated star rating of the product.
-     *
-     * @return
-     */
     public String getStarRating() {
         if (isCalcStarRating()) {
             starRating = getCalcStarRating().toString();
@@ -318,20 +287,10 @@ public class EnergyLabel implements BusinessEntity {
         return (starRating == null || starRating.isEmpty() ? "0.0" : starRating);
     }
 
-    /**
-     * Sets the inputted or calculated star rating of the product.
-     *
-     * @param starRating
-     */
-    public void setStarRating(String starRating) {
+     public void setStarRating(String starRating) {
         this.starRating = starRating;
     }
 
-    /**
-     * Gets if star rating is to be calculated.
-     *
-     * @return
-     */
     public Boolean isCalcStarRating() {
         if (calcStarRating == null) {
             calcStarRating = false;
@@ -339,41 +298,21 @@ public class EnergyLabel implements BusinessEntity {
         return calcStarRating;
     }
 
-    /**
-     * Sets if star rating is to be calculated.
-     *
-     * @param calcStarRating
-     */
     public void setCalcStarRating(Boolean calcStarRating) {
         this.calcStarRating = calcStarRating;
     }
 
-    /**
-     * Gets if BEC is to be calculated.
-     *
-     * @return
-     */
-    public Boolean isCalcBEC() {
+     public Boolean isCalcBEC() {
         if (calcBEC == null) {
             calcBEC = false;
         }
         return calcBEC;
     }
 
-    /**
-     * Gets if BEC is to be calculated.
-     *
-     * @param calcBEC
-     */
     public void setCalcBEC(Boolean calcBEC) {
         this.calcBEC = calcBEC;
     }
 
-    /**
-     * Gets if Total Adjusted Volume is to be calculated.
-     *
-     * @return
-     */
     public Boolean isCalcTotalAdjustedVol() {
         if (calcTotalAdjustedVol == null) {
             calcTotalAdjustedVol = false;
@@ -381,38 +320,18 @@ public class EnergyLabel implements BusinessEntity {
         return calcTotalAdjustedVol;
     }
 
-    /**
-     * Sets if Total Adjusted Volume is to be calculated.
-     *
-     * @param calcTotalAdjustedVol
-     */
-    public void setCalcTotalAdjustedVol(Boolean calcTotalAdjustedVol) {
+     public void setCalcTotalAdjustedVol(Boolean calcTotalAdjustedVol) {
         this.calcTotalAdjustedVol = calcTotalAdjustedVol;
     }
 
-    /**
-     * Gets the Energy Consumption Reduction Factor (ERF) for a product.
-     *
-     * @return
-     */
     public String getERF() {
         return (ERF == null || ERF.isEmpty() ? "0.0" : ERF);
     }
 
-    /**
-     * Sets the Energy Consumption Reduction Factor (ERF) for a product.
-     *
-     * @param ERF
-     */
     public void setERF(String ERF) {
         this.ERF = ERF;
     }
 
-    /**
-     * Gets the Base Energy Consumption (BEC) for the product.
-     *
-     * @return
-     */
     public String getBEC() {
         if (isCalcBEC()) {
             BEC = getCalcBEC().toString();
@@ -424,99 +343,47 @@ public class EnergyLabel implements BusinessEntity {
         }
     }
 
-    /**
-     * Sets the Base Energy Consumption (BEC) for the product.
-     *
-     * @param BEC
-     */
-    public void setBEC(String BEC) {
+      public void setBEC(String BEC) {
         this.BEC = BEC;
     }
 
-    /**
-     * Gets the energyConsumptionAndEfficiency property of this EnergyLabel.
-     *
-     * @see EnergyConsumptionAndEfficiency
-     * @return
-     */
     public EnergyConsumptionAndEfficiency getEnergyConsumptionAndEfficiency() {
         return energyConsumptionAndEfficiency;
     }
 
-    /**
-     * Sets the energyConsumptionAndEfficiency property of this EnergyLabel.
-     *
-     * @see EnergyConsumptionAndEfficiency
-     * @param energyConsumptionAndEfficiency
-     */
     public void setEnergyConsumptionAndEfficiency(
             EnergyConsumptionAndEfficiency energyConsumptionAndEfficiency) {
         this.energyConsumptionAndEfficiency = energyConsumptionAndEfficiency;
     }
 
-    /**
-     * Gets the fresh food compartment volume of a refrigerator.
-     *
-     * @return
-     */
     public String getFreshFoodCompartmentVol() {
 
         return (freshFoodCompartmentVol == null
                 || freshFoodCompartmentVol.isEmpty() ? "0.0" : freshFoodCompartmentVol);
     }
 
-    /**
-     * Sets the fresh food compartment volume of a refrigerator.
-     *
-     * @param freshFoodCompartmentVol
-     */
     public void setFreshFoodCompartmentVol(String freshFoodCompartmentVol) {
         this.freshFoodCompartmentVol = freshFoodCompartmentVol;
     }
 
-    /**
-     * Gets the freezer compartment volume of a refrigerator or freezer.
-     *
-     * @return
-     */
     public String getFreezerCompartmentVol() {
 
         return (freezerCompartmentVol == null
                 || freezerCompartmentVol.isEmpty() ? "0.0" : freezerCompartmentVol);
     }
 
-    /**
-     * Sets the freezer compartment volume of a refrigerator or freezer.
-     *
-     * @param freezerCompartmentVol
-     */
     public void setFreezerCompartmentVol(String freezerCompartmentVol) {
         this.freezerCompartmentVol = freezerCompartmentVol;
     }
 
-    /**
-     * Gets the Comparative Energy Consumption (CEC) for the product.
-     *
-     * @return
-     */
     public String getCEC() {
         return (CEC == null || CEC.isEmpty() ? "0.0" : CEC);
     }
 
-    /**
-     * Sets the Comparative Energy Consumption (CEC) for the product.
-     *
-     * @param CEC
-     */
-    public void setCEC(String CEC) {
+     public void setCEC(String CEC) {
         this.CEC = CEC;
     }
 
-    /**
-     * Gets the Total Adjusted Volume of the product.
-     *
-     * @return
-     */
     public String getTotalAdjustedVol() {
         if (isCalcTotalAdjustedVol()) {
             totalAdjustedVol = getCalcTotalAdjustedVol().toString();
@@ -528,318 +395,146 @@ public class EnergyLabel implements BusinessEntity {
         }
     }
 
-    /**
-     * Sets the Total Adjusted Volume of the product.
-     *
-     * @param totalAdjustedVol
-     */
     public void setTotalAdjustedVol(String totalAdjustedVol) {
         this.totalAdjustedVol = totalAdjustedVol;
     }
 
-    /**
-     * Gets the Fixed Allowance Factor (Cf) for the product.
-     *
-     * @return
-     */
     public String getCf() {
         return (Cf == null || Cf.isEmpty() ? "0.0" : Cf);
     }
 
-    /**
-     * Sets the Fixed Allowance Factor (Cf) for the product.
-     *
-     * @param Cf
-     */
     public void setCf(String Cf) {
         this.Cf = Cf;
     }
 
-    /**
-     * Gets the Variable Allowance Factor (Cv) for the product.
-     *
-     * @return
-     */
     public String getCv() {
         return (Cv == null || Cv.isEmpty() ? "0.0" : Cv);
     }
 
-    /**
-     * Sets the Variable Allowance Factor (Cv) for the product.
-     *
-     * @param Cv
-     */
     public void setCv(String Cv) {
         this.Cv = Cv;
     }
 
-    /**
-     * Gets the Annual Energy Efficiency Ratio (AEER) property.
-     *
-     * @return
-     */
     public String getAEER() {
 
         return (AEER == null || AEER.isEmpty() ? "0.0" : AEER);
     }
 
-    /**
-     * Sets the Annual Energy Efficiency Ratio (AEER) property.
-     *
-     * @param AEER
-     */
     public void setAEER(String AEER) {
         this.AEER = AEER;
     }
 
-    /**
-     * Gets the Annual Coefficient of Performance (ACOP) property.
-     *
-     * @return
-     */
     public String getACOP() {
 
         return (ACOP == null || ACOP.isEmpty() ? "0.0" : ACOP);
     }
 
-    /**
-     * Sets the Annual Coefficient of Performance (ACOP) property.
-     *
-     * @param ACOP
-     */
     public void setACOP(String ACOP) {
         this.ACOP = ACOP;
     }
 
-    /**
-     * Gets the rated voltage or voltage range of the product.
-     *
-     * @return
-     */
     public String getRatedVoltage() {
         return ratedVoltage;
     }
 
-    /**
-     * Sets the rated voltage or voltage range of the product.
-     *
-     * @param ratedVoltage
-     */
     public void setRatedVoltage(String ratedVoltage) {
         this.ratedVoltage = ratedVoltage;
     }
 
-    /**
-     * Gets the rated frequency or frequency range of the product.
-     *
-     * @return
-     */
     public String getRatedFrequency() {
         return ratedFrequency;
     }
 
-    /**
-     * Sets the rated frequency or frequency range of the product.
-     *
-     * @param ratedFrequency
-     */
     public void setRatedFrequency(String ratedFrequency) {
         this.ratedFrequency = ratedFrequency;
     }
 
-    /**
-     * Gets the heating capacity of an air-conditioning unit.
-     *
-     * @return
-     */
-    public String getHeatingCapacity() {
+     public String getHeatingCapacity() {
 
         return (heatingCapacity == null || heatingCapacity.isEmpty() ? "0.0" : heatingCapacity);
     }
 
-    /**
-     * Sets the heating capacity of an air-conditioning unit.
-     *
-     * @param heatingCapacity
-     */
     public void setHeatingCapacity(String heatingCapacity) {
         this.heatingCapacity = heatingCapacity;
     }
 
-    /**
-     * Gets the cooling capacity of an air-conditioning unit.
-     *
-     * @return
-     */
-    public String getCoolingCapacity() {
+     public String getCoolingCapacity() {
 
         return (coolingCapacity == null || coolingCapacity.isEmpty() ? "0.0" : coolingCapacity);
     }
 
-    /**
-     * Sets the cooling capacity of an air-conditioning unit.
-     *
-     * @param coolingCapacity
-     */
-    public void setCoolingCapacity(String coolingCapacity) {
+     public void setCoolingCapacity(String coolingCapacity) {
         this.coolingCapacity = coolingCapacity;
     }
 
-    /**
-     * Gets the annual energy consumption of the product. If the string is null
-     * or empty "0.0" is returned.
-     *
-     * @return annualConsumption
-     */
     public String getAnnualConsumption() {
 
         return (annualConsumption == null || annualConsumption.isEmpty() ? "0.0" : annualConsumption);
     }
 
-    /**
-     * Sets the annual energy consumption of the product.
-     *
-     * @param annualConsumption
-     */
     public void setAnnualConsumption(String annualConsumption) {
         this.annualConsumption = annualConsumption;
     }
 
-    /**
-     * Gets the brand of the product.
-     *
-     * @return
-     */
     public String getBrand() {
         return this.brand;
     }
 
-    /**
-     * Sets the brand of the product.
-     *
-     * @param brand
-     */
     public void setBrand(String brand) {
         this.brand = brand;
     }
 
-    /**
-     * Gets the volumetric capacity of the product. For refrigerators and wine
-     * chillers the is taken to be the Total Refrigerated Volume.
-     *
-     * @return
-     */
     public String getCapacity() {
 
         return (capacity == null || capacity.isEmpty() ? "0.0" : capacity);
     }
 
-    /**
-     * Sets the volumetric capacity of the product.
-     *
-     * @param capacity
-     */
     public void setCapacity(String capacity) {
         this.capacity = capacity;
     }
 
-    /**
-     * Gets the first cost per Kwh.
-     *
-     * @return
-     */
     public String getCostPerKwh() {
 
         return (costPerKwh == null || costPerKwh.isEmpty() ? "0.0" : costPerKwh);
     }
 
-    /**
-     * Sets the first cost per kWh.
-     *
-     * @param costPerKwh
-     */
     public void setCostPerKwh(String costPerKwh) {
         this.costPerKwh = costPerKwh;
     }
 
-    /**
-     * Gets the second cost per kWh.
-     *
-     * @return
-     */
     public String getCostPerKwh2() {
 
         return (costPerKwh2 == null || costPerKwh2.isEmpty() ? "0.0" : costPerKwh2);
     }
 
-    /**
-     * Sets the second cost per kWh.
-     *
-     * @param costPerKwh2
-     */
     public void setCostPerKwh2(String costPerKwh2) {
         this.costPerKwh2 = costPerKwh2;
     }
 
-    /**
-     * Gets the country of origin of the product.
-     *
-     * @return
-     */
     public String getCountry() {
         return this.country;
     }
 
-    /**
-     * Sets the country of origin of the product.
-     *
-     * @param country
-     */
     public void setCountry(String country) {
         this.country = country;
     }
 
-    /**
-     * Gets the defrost type of the product (e.g manual, automatic).
-     *
-     * @return
-     */
     public String getDefrost() {
         return this.defrost;
     }
 
-    /**
-     * Sets the defrost type of this product.
-     *
-     * @param defrost
-     */
     public void setDefrost(String defrost) {
         this.defrost = defrost;
     }
 
-    /**
-     * Gets the distributor of the product.
-     *
-     * @return
-     */
     public String getDistributor() {
         return this.distributor;
     }
 
-    /**
-     * Sets the distributor of the product.
-     *
-     * @param distributor
-     */
     public void setDistributor(String distributor) {
         this.distributor = distributor;
     }
 
-    /**
-     * Gets the job number of the product.
-     *
-     * @return
-     */
     public String getJobNumber() {
         if (jobNumber == null) {
             jobNumber = "";
@@ -847,111 +542,51 @@ public class EnergyLabel implements BusinessEntity {
         return this.jobNumber;
     }
 
-    /**
-     * Sets the job number of the product.
-     *
-     * @param jobNumber
-     */
     public void setJobNumber(String jobNumber) {
         this.jobNumber = jobNumber;
     }
 
-    /**
-     * Gets the labelName of this EnergyLabel.
-     *
-     * @return the labelName
-     */
     public String getLabelName() {
         return this.labelName;
     }
 
-    /**
-     * Sets the labelName of this EnergyLabel to the specified value.
-     *
-     * @param labelName
-     */
     public void setLabelName(String labelName) {
         this.labelName = labelName;
     }
 
-    /**
-     * Gets the manufacturer of the product.
-     *
-     * @return
-     */
     public String getManufacturer() {
         return this.manufacturer;
     }
 
-    /**
-     * Sets the manufacturer of the product.
-     *
-     * @param manufacturer
-     */
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
     }
 
-    /**
-     * Gets the model of the product.
-     *
-     * @return the model
-     */
     public String getModel() {
         return this.model;
     }
 
-    /**
-     * Sets the model of the product.
-     *
-     * @param model
-     */
     public void setModel(String model) {
         this.model = model;
     }
 
-    /**
-     * Gets the operating cost of the product.
-     *
-     * @return the operatingCost
-     */
     public String getOperatingCost() {
 
         return (operatingCost == null || operatingCost.isEmpty() ? "0.0" : operatingCost);
     }
 
-    /**
-     * Sets the operating cost of the product.
-     *
-     * @param operatingCost
-     */
     public void setOperatingCost(String operatingCost) {
         this.operatingCost = operatingCost;
     }
 
-    /**
-     * Gets the standard to which the product was tested.
-     *
-     * @return the standard
-     */
     public String getStandard() {
         return this.standard;
     }
 
-    /**
-     * Sets the standard to which the product was tested.
-     *
-     * @param standard
-     */
     public void setStandard(String standard) {
         this.standard = standard;
     }
 
-    /**
-     * Gets the type of the product.
-     *
-     * @return
-     */
     @Override
     public String getType() {
         if (type == null) {
@@ -960,41 +595,19 @@ public class EnergyLabel implements BusinessEntity {
         return this.type;
     }
 
-    /**
-     * Sets the type of the product (e.g Refrigerator, Room Air-conditioner
-     * etc.)
-     *
-     * @param type the new type
-     */
     @Override
     public void setType(String type) {
         this.type = type;
     }
 
-    /**
-     * Gets the year of validity of this EnergyLabel.
-     *
-     * @return
-     */
     public String getValidity() {
         return this.validity;
     }
 
-    /**
-     * Sets the year of validity of this EnergyLabel.
-     *
-     * @param validity the new validity
-     */
     public void setValidity(String validity) {
         this.validity = validity;
     }
 
-    /**
-     * Returns a hash code value for the object. This implementation computes a
-     * hash code value based on the id fields in this object.
-     *
-     * @return a hash code value for this object.
-     */
     @Override
     public int hashCode() {
         int hash = 0;
@@ -1002,18 +615,8 @@ public class EnergyLabel implements BusinessEntity {
         return hash;
     }
 
-    /**
-     * Determines whether another object is equal to this EnergyLabel. The
-     * result is <code>true</code> if and only if the argument is not null and
-     * is a EnergyLabel object that has the same id field values as this object.
-     *
-     * @param object the reference object with which to compare
-     * @return <code>true</code> if this object is the same as the argument;
-     * <code>false</code> otherwise.
-     */
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof EnergyLabel)) {
             return false;
         }
@@ -1024,22 +627,11 @@ public class EnergyLabel implements BusinessEntity {
                 || !this.id.equals(other.id)));
     }
 
-    /**
-     * Returns the label's name as a string representation of the label.
-     *
-     * @return
-     */
     @Override
     public String toString() {
         return labelName;
     }
 
-    /**
-     * Saves the label data to a database.
-     *
-     * @param em
-     * @return
-     */
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
@@ -1061,52 +653,26 @@ public class EnergyLabel implements BusinessEntity {
         return new ReturnMessage(false, "Energy Label not saved");
     }
 
-    /**
-     * Gets the id of this EnergyLabel.
-     *
-     * @return
-     */
     @Override
     public Long getId() {
         return id;
     }
 
-    /**
-     * Sets this id of this EnergyLabel.
-     *
-     * @param id
-     */
     @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * Gets the name of this EnergyLabel.
-     *
-     * @return
-     */
     @Override
     public String getName() {
         return labelName;
     }
 
-    /**
-     * Sets the name of this EnergyLabel.
-     *
-     * @param name
-     */
     @Override
     public void setName(String name) {
         this.labelName = name;
     }
 
-    /**
-     * Validates this EnergyLabel. Currently, only double values are validated.
-     *
-     * @param em
-     * @return
-     */
     @Override
     public ReturnMessage validate(EntityManager em) {
         try {
@@ -1255,11 +821,6 @@ public class EnergyLabel implements BusinessEntity {
         this.showSampleWatermark = showSampleWatermark;
     }
 
-    /**
-     * Gets the isDirty flag that determines if this EnergyLabel was edited.
-     *
-     * @return
-     */
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -1268,66 +829,35 @@ public class EnergyLabel implements BusinessEntity {
         return isDirty;
     }
 
-    /**
-     * Sets the isDirty flag that determines if this EnergyLabel was edited.
-     *
-     * @param isDirty
-     */
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
 
-    /**
-     * Calculates and returns the Star Rating Index (SRI) for cooling.
-     *
-     * @return
-     */
     public Double getCoolingSRI() {
         Double aeer = NumberUtils.getDoubleValue(getAEER());
 
         return (aeer * 8.0 - 18.0) / 4.0;
     }
 
-    /**
-     * Calculates and returns the Star Rating Index (SRI) for heating.
-     *
-     * @return
-     */
     public Double getHeatingSRI() {
         Double acop = NumberUtils.getDoubleValue(getACOP());
 
         return (acop * 8.0 - 18.0) / 4.0;
     }
 
-    /**
-     * Gets the Star Rating Index (SRI) of a refrigerator.
-     *
-     * @return
-     */
     public Double getRefrigeratorSRI() {
         return 1.0 + (Math.log(NumberUtils.getDoubleValue(getCEC())
                 / NumberUtils.getDoubleValue(getBEC()))
                 / Math.log(1.0 - NumberUtils.getDoubleValue(getERF())));
     }
 
-    /**
-     * Calculates and returns the calculated Base Energy Consumption (BEC) of a
-     * refrigerator.
-     *
-     * @return
-     */
     public Double getCalcBEC() {
         return (NumberUtils.getDoubleValue(getCf())
                 + NumberUtils.getDoubleValue(getCv())
                 * Math.pow(NumberUtils.getDoubleValue(getTotalAdjustedVol()), 0.67));
     }
 
-    /**
-     * Calculates the star rating for a product based on the product type.
-     *
-     * @return
-     */
     public Double getCalcStarRating() {
         if (getType().equals("Room Air-conditioner")) {
             return getCalcStarRatingForRoomAC();
@@ -1337,11 +867,6 @@ public class EnergyLabel implements BusinessEntity {
 
     }
 
-    /**
-     * Calculates the star rating for a refrigerator.
-     *
-     * @return
-     */
     private Double getCalcStarRatingForRefrigerator() {
         Double sri = getRefrigeratorSRI();
 
@@ -1391,11 +916,6 @@ public class EnergyLabel implements BusinessEntity {
         return 0.0;
     }
 
-    /**
-     * Calculates the star rating for Room Air-conditioner.
-     *
-     * @return
-     */
     private Double getCalcStarRatingForRoomAC() {
         Double sri;
 
@@ -1454,13 +974,6 @@ public class EnergyLabel implements BusinessEntity {
         return 0.0;
     }
 
-    /**
-     * Calculates the total adjusted volume for a refrigerator. It is assumed
-     * that the stored value is in cubic meters so it is multiplied by 1000.0 to
-     * get litres.
-     *
-     * @return
-     */
     private Double getCalcTotalAdjustedVol() {
         return NumberUtils.getDoubleValue(totalAdjustedVol) * 1000.0;
     }

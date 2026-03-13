@@ -80,6 +80,7 @@ public class ShippingContainer implements BusinessEntity {
         if (isDirty == null) {
             isDirty = false;
         }
+        
         return isDirty;
     }
 
@@ -169,7 +170,6 @@ public class ShippingContainer implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ShippingContainer)) {
             return false;
         }
@@ -228,13 +228,13 @@ public class ShippingContainer implements BusinessEntity {
 
     }
 
-    public static ShippingContainer findShippingContainerByNumber(EntityManager em, 
+    public static ShippingContainer findShippingContainerByNumber(EntityManager em,
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<ShippingContainer> containers = em.createQuery("SELECT s FROM ShippingContainer s "
                     + "WHERE UPPER(s.number) "
                     + "= '" + value.toUpperCase() + "'", ShippingContainer.class).getResultList();
@@ -257,7 +257,7 @@ public class ShippingContainer implements BusinessEntity {
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }

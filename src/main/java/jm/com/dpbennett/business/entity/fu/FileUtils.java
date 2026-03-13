@@ -26,13 +26,13 @@ package jm.com.dpbennett.business.entity.fu;
 public class FileUtils {
 
     public static String getAbsoluteFilePath(String fileName, Class runtimeClass) {
-        
+
         String absolute = runtimeClass.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
         absolute = absolute.substring(0, absolute.length() - 1);
         absolute = absolute.substring(0, absolute.lastIndexOf("/") + 1);
         String absoluteFilePath = absolute + fileName;
         String os = System.getProperty("os.name");
-        
+
         if (os.contains("Windows")) {
             absoluteFilePath = absoluteFilePath.replace("/", "\\\\");
             if (absoluteFilePath.contains("file:\\\\")) {

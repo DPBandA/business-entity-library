@@ -69,9 +69,6 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
     @Transient
     private Boolean isDirty;
 
-    /**
-     * The default constructor.
-     */
     public EnergyConsumptionAndEfficiency() {
         name = "";
         itemNo = "";
@@ -87,12 +84,6 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         adjustmentFactor = 0.0;
     }
 
-    /**
-     * A constructor that takes an id and name as parameters.
-     *
-     * @param id
-     * @param name
-     */
     public EnergyConsumptionAndEfficiency(Long id, String name) {
         this.id = id;
         this.name = name;
@@ -109,50 +100,24 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         adjustmentFactor = 0.0;
     }
 
-    /**
-     * Gets the id.
-     *
-     * @return
-     */
     @Override
     public Long getId() {
         return id;
     }
 
-    /**
-     * Sets the id.
-     *
-     * @param id
-     */
     @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * Gets an Adjustment Factor (AF) used in the calculation of Adjusted Volume (AV).
-     * 
-     * @return 
-     */
     public Double getAdjustmentFactor() {
         return adjustmentFactor;
     }
 
-    /**
-     * Sets an Adjustment Factor (AF) used in the calculation of Adjusted Volume (AV).
-     * 
-     * @param adjustmentFactor 
-     */
     public void setAdjustmentFactor(Double adjustmentFactor) {
         this.adjustmentFactor = adjustmentFactor;
-    }    
+    }
 
-    /**
-     * Gets the class of the product. This usually applies to air-conditioning
-     * products.
-     *
-     * @return
-     */
     public String getProductClass() {
         if (productClass == null) {
             productClass = "";
@@ -160,79 +125,34 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         return productClass;
     }
 
-    /**
-     * Sets the product class. This usually applies to air-conditioning
-     * products.
-     *
-     * @param productClass
-     */
     public void setProductClass(String productClass) {
         this.productClass = productClass;
     }
 
-    /**
-     * Gets the rated frequency or frequency range of the product.
-     *
-     * @return
-     */
     public String getProductRatedFrequency() {
         return productRatedFrequency;
     }
 
-    /**
-     * Sets the rated frequency or frequency range of the product.
-     *
-     * @param productRatedFrequency
-     */
     public void setProductRatedFrequency(String productRatedFrequency) {
         this.productRatedFrequency = productRatedFrequency;
     }
 
-    /**
-     * Gets the minimum Combined Energy Efficiency Ratio (CEER) of the product
-     * class.
-     *
-     * @return
-     */
     public Double getMinCEER() {
         return minCEER;
     }
 
-    /**
-     * Sets the minimum Combined Energy Efficiency Ratio (CEER) of the product
-     * class.
-     *
-     * @param minCEER
-     */
     public void setMinCEER(Double minCEER) {
         this.minCEER = minCEER;
     }
 
-    /**
-     * Gets the Minimum Energy Efficiency Requirements (MEER) of the product
-     * class. This is the same as minimum CEER (??)
-     *
-     * @return
-     */
     public Double getMinMEER() {
         return minMEER;
     }
 
-    /**
-     * Sets the Minimum Energy Efficiency Requirements (MEER) of the product
-     * class. This is the same as minimum CEER (??)
-     *
-     * @param minMEER
-     */
     public void setMinMEER(Double minMEER) {
         this.minMEER = minMEER;
     }
 
-    /**
-     * Gets the product's type (e.g. Refrigerator, Room Air-conditioner).
-     *
-     * @return
-     */
     public String getProductType() {
         if (productType == null) {
             productType = "";
@@ -240,104 +160,42 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         return productType;
     }
 
-    /**
-     * Sets the product's type (e.g. Refrigerator, Room Air-conditioner).
-     *
-     * @param productType
-     */
     public void setProductType(String productType) {
         this.productType = productType;
     }
 
-    /**
-     * Gets the coefficient of the product's Adjusted Volume (AV) in litres.
-     * This is part of the formula used to calculate the maximum allowed energy
-     * consumption of a product.
-     *
-     * @return
-     */
     public Double getAVLCoefficient() {
         return AVLCoefficient;
     }
 
-    /**
-     * Sets the coefficient of the product's Adjusted Volume (AV) in litres.
-     * This is part of the formula used to calculate the maximum allowed energy
-     * consumption of a product.
-     *
-     * @param AVLCoefficient
-     */
     public void setAVLCoefficient(Double AVLCoefficient) {
         this.AVLCoefficient = AVLCoefficient;
     }
 
-    /**
-     * Gets the coefficient of the product's Adjusted Volume (AV) in cubic feet.
-     * This is part of the formula used to calculate the maximum allowed energy
-     * consumption of a product.
-     *
-     * @return
-     */
     public Double getAVCuFtCoefficient() {
         return AVCuFtCoefficient;
     }
 
-    /**
-     * Sets the coefficient of the product's Adjusted Volume (AV) in cubic feet.
-     * This is part of the formula used to calculate the maximum allowed energy
-     * consumption of a product.
-     *
-     * @param AVCuFtCoefficient
-     */
     public void setAVCuFtCoefficient(Double AVCuFtCoefficient) {
         this.AVCuFtCoefficient = AVCuFtCoefficient;
     }
 
-    /**
-     * Gets the constant for calculating maximum energy consumption. This is
-     * part of the formula used to calculate the maximum allowed energy
-     * consumption of a product.
-     *
-     * @return
-     */
     public Double getConsumptionConstant() {
         return consumptionConstant;
     }
 
-    /**
-     * Sets the constant for calculating maximum energy consumption. This is
-     * part of the formula used to calculate the maximum allowed energy
-     * consumption of a product.
-     *
-     * @param consumptionConstant
-     */
     public void setConsumptionConstant(Double consumptionConstant) {
         this.consumptionConstant = consumptionConstant;
     }
 
-    /**
-     * Gets the item number for the product's type.
-     *
-     * @return
-     */
     public String getItemNo() {
         return itemNo;
     }
 
-    /**
-     * Sets the item number for the product's type.
-     *
-     * @param itemNo
-     */
     public void setItemNo(String itemNo) {
         this.itemNo = itemNo;
     }
 
-    /**
-     * Gets the detail of the product's type.
-     *
-     * @return
-     */
     public String getProductTypeDetail() {
         if (productTypeDetail == null) {
             productTypeDetail = "";
@@ -345,20 +203,10 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         return productTypeDetail;
     }
 
-    /**
-     * Sets the detail of the product's type.
-     *
-     * @param productTypeDetail
-     */
     public void setProductTypeDetail(String productTypeDetail) {
         this.productTypeDetail = productTypeDetail;
     }
 
-    /**
-     * Gets the isDirty flag that determines if this object is dirty (edited).
-     *
-     * @return
-     */
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -368,41 +216,21 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         return isDirty;
     }
 
-    /**
-     * Sets the isDirty flag that determines if this object is dirty (edited).
-     *
-     * @param isDirty
-     */
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
 
-    /**
-     * Gets the name of this object.
-     *
-     * @return
-     */
     @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets the name of this object.
-     *
-     * @param name
-     */
     @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Gets a hash code for this object.
-     *
-     * @return
-     */
     @Override
     public int hashCode() {
         int hash = 0;
@@ -410,13 +238,6 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         return hash;
     }
 
-    /**
-     * Tests if this object is equal to another object of the same type. This
-     * method won't work in the case the Id fields are not set.
-     *
-     * @param object
-     * @return
-     */
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof EnergyConsumptionAndEfficiency)) {
@@ -427,11 +248,6 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
-    /**
-     * Gets the string representation of this object.
-     *
-     * @return
-     */
     @Override
     public String toString() {
         if (getProductType().equals("Room Air-conditioner")) {
@@ -458,9 +274,9 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
     public static List<BusinessEntity> findAllByProductType(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-          
+
             List<BusinessEntity> list
                     = em.createQuery("SELECT e FROM EnergyConsumptionAndEfficiency e where UPPER(e.productType) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY e.productType", BusinessEntity.class).getResultList();

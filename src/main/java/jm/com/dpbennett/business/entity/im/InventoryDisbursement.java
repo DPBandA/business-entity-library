@@ -60,7 +60,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private Long id;
     private String name;
     private String type;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Inventory inventory;
     private Double quantityOrdered;
     private Double quantityReceived;
@@ -87,7 +87,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private String editStatus;
     @Transient
     private List<BusinessEntity.Action> actions;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private CostComponent costComponent;
 
     public InventoryDisbursement() {
@@ -197,6 +197,11 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     @Override
     public Employee getEditedBy() {
+
+        if (editedBy == null) {
+            editedBy = new Employee();
+        }
+
         return editedBy;
     }
 
@@ -358,7 +363,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
             EntityManager em,
             String searchText,
             Integer maxResults) {
-        
+
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         List<InventoryDisbursement> foundInventoryDisbursements;
@@ -445,6 +450,10 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public Employee getEnteredBy() {
 
+        if (enteredBy == null) {
+            enteredBy = new Employee();
+        }
+
         return enteredBy;
     }
 
@@ -520,15 +529,13 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
-           
-            // tk check the purpose
-            if (getInventory().findCostComponentById(getCostComponent().getId()) == null) {
-                getInventory().getCostComponents().add(getCostComponent());
-                getInventory().save(em);
-            }
+
+            // tk check the purpose. This adds a cost component to the invnetory.
+            // check if it's necessary.
+//            if (getInventory().findCostComponentById(getCostComponent().getId()) == null) {
+//                getInventory().getCostComponents().add(getCostComponent());
+//                // getInventory().save(em);
+//            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

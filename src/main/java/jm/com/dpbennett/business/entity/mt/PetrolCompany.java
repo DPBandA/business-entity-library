@@ -73,7 +73,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     private Date dateFirstReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastAccessed;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<PetrolStation> petrolStations;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<BusinessOffice> businessOffices;
@@ -125,6 +125,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
         if (internet == null) {
             internet = new Internet();
         }
+        
         return internet;
     }
 
@@ -135,7 +136,10 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     public List<PetrolStation> getPetrolStations() {
         if (petrolStations != null) {
             Collections.sort(petrolStations);
+        } else {
+            petrolStations = new ArrayList<>();
         }
+
         return petrolStations;
     }
 
@@ -178,6 +182,11 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
 
     @Override
     public List<Address> getAddresses() {
+
+        if (addresses == null) {
+            addresses = new ArrayList<>();
+        }
+
         return addresses;
     }
 
@@ -188,6 +197,11 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
 
     @Override
     public List<Contact> getContacts() {
+
+        if (contacts == null) {
+            contacts = new ArrayList<>();
+        }
+
         return contacts;
     }
 
@@ -258,6 +272,11 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
 
     @Override
     public List<BusinessOffice> getBusinessOffices() {
+
+        if (businessOffices == null) {
+            businessOffices = new ArrayList<>();
+        }
+
         return businessOffices;
     }
 
@@ -345,26 +364,6 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            for (Contact contact : contacts) {
-                contact.save(em);
-            }
-
-            for (Address address : addresses) {
-                address.save(em);
-            }
-
-            for (PetrolStation petrolStation : petrolStations) {
-                petrolStation.save(em);
-            }
-
-            for (BusinessOffice businessOffice : businessOffices) {
-                businessOffice.save(em);
-            }
-
-            if (getInternet() != null) {
-                getInternet().save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
