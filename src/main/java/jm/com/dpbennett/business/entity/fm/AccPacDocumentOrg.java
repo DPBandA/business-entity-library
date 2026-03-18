@@ -45,57 +45,43 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
-@Table(name = "arobl")
-public class AccPacDocument implements Serializable, BusinessEntity {
+@Table(name = "AROBL")
+public class AccPacDocumentOrg implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Column(length = 22, name = "IDINVC", nullable = false)
+    @Column(length = 22, name = "IDINVC")
     private String idInvc;
-
     @Column(length = 12, name = "IDCUST")
     private String idCust;
-
-    @Column(name = "AMTDUETC", precision = 10, scale = 3)
+    @Column(name = "AMTDUETC", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal custCurrencyAmountDue;
-
-    @Column(name = "AMTDUEHC", precision = 10, scale = 3)
+    @Column(name = "AMTDUEHC", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal funcCurrencyAmountDue;
-
     @Column(length = 4, name = "FISCYR")
     private String fiscalYear;
-
-    @Column(name = "DATEINVC", precision = 9, scale = 0)
+    @Column(name = "DATEINVC", columnDefinition = "DECIMAL(9,0)")
     private BigDecimal documentDate;
-
-    @Column(name = "DATEDUE", precision = 9, scale = 0)
+    @Column(name = "DATEDUE", columnDefinition = "DECIMAL(9,0)")
     private BigDecimal dueDate;
-
-    @Column(name = "AMTINVCHC", precision = 10, scale = 3)
+    @Column(name = "AMTINVCHC", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal funcCurrencyInvoiceAmount;
-
-    @Column(name = "AMTINVCTC", precision = 10, scale = 3)
+    @Column(name = "AMTINVCTC", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal custCurrencyInvoiceAmount;
-
-    @Column(name = "DATEPAID", precision = 9, scale = 0)
+    @Column(name = "DATEPAID", columnDefinition = "DECIMAL(9,0)")
     private BigDecimal datePaid;
-
-    @Column(name = "TRXTYPEID")
+    @Column(name = "TRXTYPEID", columnDefinition = "SMALLINT(5,0)")
     private Integer transactionType;
-
-    @Column(name = "TRXTYPETXT")
+    @Column(name = "TRXTYPETXT", columnDefinition = "SMALLINT(5,0)")
     private Integer documentType;
-
-    @Column(name = "SWPAID")
+    @Column(name = "SWPAID", columnDefinition = "SMALLINT(5,0)")
     private Integer fullyPaid;
-
     @Column(length = 22, name = "IDORDERNBR")
     private String idORDERNBR;
-
     @Transient
     private Boolean isDirty;
 
-    public AccPacDocument() {
+    public AccPacDocumentOrg() {
     }
 
     public String getIdORDERNBR() {
@@ -330,10 +316,10 @@ public class AccPacDocument implements Serializable, BusinessEntity {
     @Override
     public boolean equals(Object object) {
 
-        if (!(object instanceof AccPacDocument)) {
+        if (!(object instanceof AccPacDocumentOrg)) {
             return false;
         }
-        AccPacDocument other = (AccPacDocument) object;
+        AccPacDocumentOrg other = (AccPacDocumentOrg) object;
 
         return !((this.idInvc == null && other.idInvc != null) || (this.idInvc != null && !this.idInvc.equals(other.idInvc)));
     }
@@ -343,11 +329,11 @@ public class AccPacDocument implements Serializable, BusinessEntity {
         return "jm.com.dpbennett.entity.AccPacDocument[id=" + idInvc + "]";
     }
 
-    public static List<AccPacDocument> findAccPacDocumentsByCustomerId(EntityManager em, String customerId) {
+    public static List<AccPacDocumentOrg> findAccPacDocumentsByCustomerId(EntityManager em, String customerId) {
         try {
-            List<AccPacDocument> docs = em.createQuery("SELECT d FROM AccPacDocument d "
+            List<AccPacDocumentOrg> docs = em.createQuery("SELECT d FROM AccPacDocument d "
                     + "WHERE d.idCust "
-                    + "LIKE '" + customerId + "%'", AccPacDocument.class).getResultList();
+                    + "LIKE '" + customerId + "%'", AccPacDocumentOrg.class).getResultList();
 
             if (docs == null) {
                 return new ArrayList<>();
@@ -360,11 +346,11 @@ public class AccPacDocument implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<AccPacDocument> findAccPacInvoicesByCustomerId(EntityManager em, String customerId) {
+    public static List<AccPacDocumentOrg> findAccPacInvoicesByCustomerId(EntityManager em, String customerId) {
         try {
-            List<AccPacDocument> docs = em.createQuery("SELECT d FROM AccPacDocument d "
+            List<AccPacDocumentOrg> docs = em.createQuery("SELECT d FROM AccPacDocument d "
                     + "WHERE d.idCust "
-                    + "LIKE '" + customerId + "%' AND d.documentType = 1", AccPacDocument.class).getResultList();
+                    + "LIKE '" + customerId + "%' AND d.documentType = 1", AccPacDocumentOrg.class).getResultList();
 
             if (docs == null) {
                 return new ArrayList<>();
@@ -377,20 +363,20 @@ public class AccPacDocument implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<AccPacDocument> findAccPacInvoicesDueByCustomerId(EntityManager em,
+    public static List<AccPacDocumentOrg> findAccPacInvoicesDueByCustomerId(EntityManager em,
             String customerId, Boolean includePrepayments) {
 
-        List<AccPacDocument> foundsDocs;
+        List<AccPacDocumentOrg> foundsDocs;
 
         try {
             if (includePrepayments) {
                 foundsDocs = em.createQuery("SELECT d FROM AccPacDocument d "
                         + "WHERE d.idCust "
-                        + "LIKE '" + customerId + "%' AND d.fullyPaid = 0 ORDER BY d.dueDate DESC", AccPacDocument.class).getResultList();
+                        + "LIKE '" + customerId + "%' AND d.fullyPaid = 0 ORDER BY d.dueDate DESC", AccPacDocumentOrg.class).getResultList();
             } else {
                 foundsDocs = em.createQuery("SELECT d FROM AccPacDocument d "
                         + "WHERE d.idCust " // NB: 50 == Prepayment transaction type
-                        + "LIKE '" + customerId + "%' AND d.fullyPaid = 0 AND d.transactionType <> 50 ORDER BY d.dueDate DESC", AccPacDocument.class).getResultList();
+                        + "LIKE '" + customerId + "%' AND d.fullyPaid = 0 AND d.transactionType <> 50 ORDER BY d.dueDate DESC", AccPacDocumentOrg.class).getResultList();
             }
 
             if (foundsDocs != null) {

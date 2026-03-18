@@ -279,7 +279,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Employee getInspector() {
         if (inspector == null) {
-            inspector = new Employee();
+            return  new Employee();
         }
 
         return inspector;
@@ -303,7 +303,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Client getDistributor() {
         if (distributor == null) {
-            distributor = new Client();
+            return new Client();
         }
 
         return distributor;
@@ -627,7 +627,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            manufacturer = new Manufacturer();
+            return new Manufacturer();
         }
 
         return manufacturer;
@@ -659,7 +659,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Client getBusinessSource() {
         if (businessSource == null) {
-            businessSource = new Client();
+            return new Client();
         }
 
         return businessSource;
@@ -671,7 +671,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Client getClient() {
         if (client == null) {
-            client = new Client();
+            return new Client();
         }
 
         return client;
@@ -797,23 +797,29 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
             if (getProductCategory().getId() != null) {
                 getProductCategory().save(em);
             }
-            if (getManufacturer().getId() != null) {
-                getManufacturer().save(em);
+            
+            if (manufacturer != null) {
+                manufacturer.save(em);
             }
-            if (getDistributor().getId() != null) {
-                getDistributor().save(em);
+            
+            if (distributor != null) {
+                distributor.save(em);
             }
+            
             if (getMarketProduct().getId() != null) {
                 getMarketProduct().save(em);
             }
-            if (getClient().getId() != null) {
-                getClient().save(em);
+            
+            if (client != null) {
+                client.save(em);
             }
-            if (getBusinessSource().getId() != null) {
-                getBusinessSource().save(em);
+            
+            if (businessSource != null) {
+                businessSource.save(em);
             }
-            if (getInspector().getId() != null) {
-                getInspector().save(em);
+            
+            if (inspector != null) {
+                inspector.save(em);
             }
 
             em.getTransaction().begin();

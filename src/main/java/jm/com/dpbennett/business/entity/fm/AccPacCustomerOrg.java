@@ -41,63 +41,52 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  * @version 1.0
  */
 @Entity
-@Table(name = "arcus")
-public class AccPacCustomer implements Serializable, BusinessEntity {
+@Table(name = "ARCUS")
+public class AccPacCustomerOrg implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Column(length = 12, name = "IDCUST")
     private String idCust;
-
     @Column(length = 60, name = "NAMECUST")
     private String customerName;
-
-    @Column(name = "AMTCRLIMT", precision = 10, scale = 3)
+    @Column(name = "AMTCRLIMT", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal creditLimit;
-
-    @Column(name = "SWBALFWD")
+    @Column(name = "SWBALFWD", columnDefinition = "SMALLINT(5,0)")
     private Integer accountType;
-
-    @Column(name = "AMTBALDUET", precision = 10, scale = 3)
+    @Column(name = "AMTBALDUET", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal balanceDueInCust;
-
-    @Column(name = "AMTBALDUEH", precision = 10, scale = 3)
+    @Column(name = "AMTBALDUEH", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal balanceDueInFunc;
-
-    @Column(name = "DATELASTST")
-    private BigDecimal dateOfLastStatement; // or Date (recommended)
-
-    @Column(name = "AMTLASTSTT", precision = 10, scale = 3)
+    @Column(name = "DATELASTST", columnDefinition = "DECIMAL(9,0)")
+    private BigDecimal dateOfLastStatement;
+    @Column(name = "AMTLASTSTT", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal lastStatementTotalCust;
-
-    @Column(name = "AMTPDUE", precision = 10, scale = 3)
+    @Column(name = "AMTPDUE", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal amountPastDue;
-
-    @Column(name = "CNTOPENINV", precision = 4, scale = 0)
+    @Column(name = "CNTOPENINV", columnDefinition = "DECIMAL(4,0)")
     private BigDecimal numberOfOpenDocuments;
-
-    @Column(name = "AMTLASTIVH", precision = 10, scale = 3)
+    @Column(name = "AMTLASTIVH", columnDefinition = "DECIMAL(10,3)")
     private BigDecimal lastInvoiceAmt;
-
     @Column(length = 6, name = "IDACCTSET")
     private String IDACCTSET;
     @Transient
     private Boolean isDirty;
 
-    public AccPacCustomer() {
+    public AccPacCustomerOrg() {
         balanceDueInCust = new BigDecimal(0.0);
         balanceDueInFunc = new BigDecimal(0.0);
         creditLimit = new BigDecimal(0.0);
     }
 
-    public AccPacCustomer(String customerName) {
+    public AccPacCustomerOrg(String customerName) {
         this.customerName = customerName;
         balanceDueInCust = new BigDecimal(0.0);
         balanceDueInFunc = new BigDecimal(0.0);
         creditLimit = new BigDecimal(0.0);
     }
 
-    public AccPacCustomer(String idCust, String customerName) {
+    public AccPacCustomerOrg(String idCust, String customerName) {
         this.idCust = idCust;
         this.customerName = customerName;
         balanceDueInCust = new BigDecimal(0.0);
@@ -235,10 +224,10 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     @Override
     public boolean equals(Object object) {
 
-        if (!(object instanceof AccPacCustomer)) {
+        if (!(object instanceof AccPacCustomerOrg)) {
             return false;
         }
-        AccPacCustomer other = (AccPacCustomer) object;
+        AccPacCustomerOrg other = (AccPacCustomerOrg) object;
 
         return !((this.idCust == null && other.idCust != null) || (this.idCust != null && !this.idCust.equals(other.idCust)));
     }
@@ -248,18 +237,17 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
         return getCustomerName();
     }
 
-    public static List<AccPacCustomer> findAllByName(EntityManager em, String value) {
+    public static List<AccPacCustomerOrg> findAllByName(EntityManager em, String value) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<AccPacCustomer> clients;
-            clients = em.createQuery(
-                    "SELECT a FROM AccPacCustomer a"
+            List<AccPacCustomerOrg> clients;
+            clients = em.createQuery("SELECT a FROM AccPacCustomer a"
                     + " WHERE UPPER(a.customerName)"
                     + " LIKE '" + value.toUpperCase().trim()
-                    + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
+                    + "%' ORDER BY a.customerName", AccPacCustomerOrg.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -267,18 +255,17 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<AccPacCustomer> findAllByNameAndId(EntityManager em, String value) {
+    public static List<AccPacCustomerOrg> findAllByNameAndId(EntityManager em, String value) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<AccPacCustomer> clients;
-            clients = em.createQuery(
-                    "SELECT a FROM AccPacCustomer a"
+            List<AccPacCustomerOrg> clients;
+            clients = em.createQuery("SELECT a FROM AccPacCustomer a"
                     + " WHERE UPPER(a.customerName) LIKE '" + value.toUpperCase().trim() + "%'"
                     + " OR UPPER(a.idCust) LIKE '" + value.toUpperCase().trim() + "%'"
-                    + " ORDER BY a.customerName", AccPacCustomer.class).getResultList();
+                    + " ORDER BY a.customerName", AccPacCustomerOrg.class).getResultList();
             return clients;
         } catch (Exception e) {
             System.out.println(e);
@@ -286,17 +273,16 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
         }
     }
 
-    public static AccPacCustomer findByName(EntityManager em, String value) {
+    public static AccPacCustomerOrg findByName(EntityManager em, String value) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<AccPacCustomer> customers = em.createQuery(
-                    "SELECT a FROM AccPacCustomer a"
+            List<AccPacCustomerOrg> customers = em.createQuery("SELECT a FROM AccPacCustomer a"
                     + " WHERE UPPER(a.customerName)"
                     + " LIKE '" + value.toUpperCase().trim()
-                    + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
+                    + "%' ORDER BY a.customerName", AccPacCustomerOrg.class).getResultList();
 
             if (!customers.isEmpty()) {
                 return customers.get(0);
@@ -348,7 +334,7 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
-
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
