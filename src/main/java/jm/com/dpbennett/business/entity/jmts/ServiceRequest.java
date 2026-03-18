@@ -88,7 +88,7 @@ public class ServiceRequest implements BusinessEntity {
     private JobSubCategory jobSubCategory;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedTo;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private ServiceContract serviceContract;
     @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice businessOffice;
@@ -129,7 +129,7 @@ public class ServiceRequest implements BusinessEntity {
     public Service getService() {
 
         if (service == null) {
-            return new Service();
+            service = new Service();
         }
 
         return service;
@@ -160,8 +160,6 @@ public class ServiceRequest implements BusinessEntity {
         Calendar c = Calendar.getInstance();
         Integer year;
 
-        // use the date submitted to get the year if it is valid
-        // and only if this is not a subcontracted job
         if (dateSubmitted != null) {
             c.setTime(dateSubmitted);
             year = c.get(Calendar.YEAR);
@@ -180,9 +178,7 @@ public class ServiceRequest implements BusinessEntity {
         String sequenceNumber;
 
         if ((autoGenerateServiceRequestNumber != null) && (autoGenerateServiceRequestNumber != false)) {
-            // include the department code based on parent or subcontract
-            if (department != null) { // not a subcontract
-                // get the department code based on its id
+            if (department != null) {
                 if (department.getCode() != null) {
                     departmentOrCompanyCode = department.getCode();
                 } else {
@@ -192,18 +188,14 @@ public class ServiceRequest implements BusinessEntity {
                 departmentOrCompanyCode = "?";
             }
 
-            // use the date submitted to get the year if it is valid
-            // and only if this is not a subcontracted job
             year = "" + getYearReceived();
 
-            // include the sequence number if it is valid
             if (serviceRequestSequenceNumber != null) {
-                //sequenceNumber = job.getJobSequenceNumber().toString();
                 sequenceNumber = BusinessEntityUtils.getIntegerString(serviceRequestSequenceNumber, 4);
             } else {
                 sequenceNumber = "?";
             }
-            // finally set number
+
             setServiceRequestNumber("SR/" + departmentOrCompanyCode + "/" + year + "/" + sequenceNumber);
         }
 
@@ -256,7 +248,7 @@ public class ServiceRequest implements BusinessEntity {
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            return new Employee();
+            editedBy = new Employee();
         }
 
         return editedBy;
@@ -270,7 +262,7 @@ public class ServiceRequest implements BusinessEntity {
     @Override
     public Employee getEnteredBy() {
         if (enteredBy == null) {
-            return new Employee();
+            enteredBy = new Employee();
         }
 
         return enteredBy;
@@ -309,7 +301,7 @@ public class ServiceRequest implements BusinessEntity {
     public Contact getContact() {
 
         if (contact == null) {
-            return new Contact();
+            contact = new Contact();
         }
 
         return contact;
@@ -319,22 +311,6 @@ public class ServiceRequest implements BusinessEntity {
         this.contact = contact;
     }
 
-//    public List<Service> getServices() {
-//        if (services != null) {
-//            Collections.sort(services);
-//        } else {
-//            services = new ArrayList<Service>();
-//        }
-//
-//        return services;
-//    }
-//
-//    public void setServices(List<Service> services) {
-//        this.services = services;
-//    }
-//    public String getServiceRequestNumber() {
-//        return serviceRequestNumber;
-//    }
     public void setServiceRequestNumber(String serviceRequestNumber) {
         this.serviceRequestNumber = serviceRequestNumber;
     }
@@ -349,7 +325,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public Classification getClassification() {
         if (classification == null) {
-            return new Classification();
+            classification = new Classification();
         }
 
         return classification;
@@ -361,7 +337,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public Sector getSector() {
         if (sector == null) {
-            return new Sector();
+            sector = new Sector();
         }
 
         return sector;
@@ -373,7 +349,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public BusinessOffice getBusinessOffice() {
         if (businessOffice == null) {
-            return new BusinessOffice();
+            businessOffice = new BusinessOffice();
         }
 
         return businessOffice;
@@ -385,7 +361,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public ServiceContract getServiceContract() {
         if (serviceContract == null) {
-            return new ServiceContract();
+            serviceContract = new ServiceContract();
         }
 
         return serviceContract;
@@ -405,7 +381,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public Client getClient() {
         if (client == null) {
-            return new Client("");
+            client = new Client("");
         }
 
         return client;
@@ -417,7 +393,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public Department getDepartment() {
         if (department == null) {
-            return new Department();
+            department = new Department();
         }
 
         return department;
@@ -429,7 +405,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public Employee getAssignedTo() {
         if (assignedTo == null) {
-            return new Employee();
+            assignedTo = new Employee();
         }
 
         return assignedTo;
@@ -441,7 +417,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public JobCategory getJobCategory() {
         if (jobCategory == null) {
-            return new JobCategory();
+            jobCategory = new JobCategory();
         }
 
         return jobCategory;
@@ -453,7 +429,7 @@ public class ServiceRequest implements BusinessEntity {
 
     public JobSubCategory getJobSubCategory() {
         if (jobSubCategory == null) {
-            return new JobSubCategory();
+            jobSubCategory = new JobSubCategory();
         }
 
         return jobSubCategory;
@@ -496,10 +472,10 @@ public class ServiceRequest implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ServiceRequest)) {
             return false;
         }
+        
         ServiceRequest other = (ServiceRequest) object;
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
@@ -616,39 +592,47 @@ public class ServiceRequest implements BusinessEntity {
             if (getClassification().getId() != null) {
                 getClassification().save(em);
             }
+            
             if (getSector().getId() != null) {
                 getSector().save(em);
             }
+            
             if (getDepartment().getId() != null) {
                 getDepartment().save(em);
             }
+            
             if (getClient().getId() != null) {
                 getClient().save(em);
             }
+            
             if (getJobCategory().getId() != null) {
                 getJobCategory().save(em);
             }
+            
             if (getJobSubCategory().getId() != null) {
                 getJobSubCategory().save(em);
             }
+            
             if (getAssignedTo().getId() != null) {
                 getAssignedTo().save(em);
             }
 
-            getServiceContract().save(em);
-
             if (getBusinessOffice().getId() != null) {
                 getBusinessOffice().save(em);
             }
+            
             if (getService().getId() != null) {
                 getService().save(em);
             }
+            
             if (getContact().getId() != null) {
                 getContact().save(em);
             }
+            
             if (getEnteredBy().getId() != null) {
                 getEnteredBy().save(em);
             }
+            
             if (getEditedBy().getId() != null) {
                 getEditedBy().save(em);
             }

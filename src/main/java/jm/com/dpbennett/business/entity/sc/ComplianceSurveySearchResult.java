@@ -24,9 +24,10 @@ import java.util.Date;
 
 /**
  *
- * @author desbenn
+ * @author Desmond Bennett
  */
 public class ComplianceSurveySearchResult {
+
     private Long id;
     private Date dateOfSurvey;
     private Employee inspector;
@@ -54,5 +55,5 @@ public class ComplianceSurveySearchResult {
     public void setInspector(Employee inspector) {
         this.inspector = inspector;
     }
-    
+
 }

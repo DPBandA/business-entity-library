@@ -308,12 +308,12 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof CashPayment)) {
             return false;
         }
         CashPayment other = (CashPayment) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -334,12 +334,13 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
     @Override
     public void setName(String name) {
-        
+
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
             em.getTransaction().begin();
             isDirty = false;
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -347,9 +348,9 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            
+
             System.out.println("Cash Payment save exception: " + e);
-            
+
             return new ReturnMessage(false,
                     "Cash payment not saved",
                     "An error occurred while saving a cash payment: " + e,
@@ -363,12 +364,6 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
         return new ReturnMessage();
     }
 
-    /**
-     * Compare payments using the date of payment
-     *
-     * @param o
-     * @return
-     */
     @Override
     public int compareTo(Object o) {
         if ((((CashPayment) o).dateOfPayment != null) && (this.dateOfPayment != null)) {

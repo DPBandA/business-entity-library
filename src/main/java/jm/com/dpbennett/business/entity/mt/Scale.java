@@ -100,7 +100,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
 
     public Client getClient() {
         if (client == null) {
-            return new Client();
+            client = new Client();
         }
 
         return client;
@@ -189,6 +189,11 @@ public class Scale implements Product, BusinessEntity, Comparable {
     }
 
     public List<Sticker> getStickers() {
+
+        if (stickers == null) {
+            stickers = new ArrayList<>();
+        }
+
         return stickers;
     }
 
@@ -205,7 +210,6 @@ public class Scale implements Product, BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Scale)) {
             return false;
         }
@@ -216,7 +220,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.Scale[id=" + id + "]";
+        return "jm.com.dpbennett.entity.Scale[id=" + id + "]";
     }
 
     @Override
@@ -242,8 +246,9 @@ public class Scale implements Product, BusinessEntity, Comparable {
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            return new Manufacturer("");
+            manufacturer = new Manufacturer("");
         }
+
         return manufacturer;
     }
 
@@ -345,7 +350,6 @@ public class Scale implements Product, BusinessEntity, Comparable {
                     + " JOIN scale.client client"
                     + " JOIN scale.certification certification"
                     + " JOIN scale.manufacturer manufacturer"
-                    //                    + " WHERE (2 >= 1)" // used as placeholder for now
                     + " WHERE (certification." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                     + " AND certification." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                     + searchTextAndClause
@@ -367,13 +371,19 @@ public class Scale implements Product, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getManufacturer().save(em);
-            //getCertification().save(em);
+            if (getManufacturer().getId() != null) {
+                getManufacturer().save(em);
+            }
+
+            if (getCertification().getId() != null) {
+                getCertification().save(em);
+            }
+
             if (getClient().getId() != null) {
                 getClient().save(em);
             }
 
-            for (Sticker sticker : stickers) {
+            for (Sticker sticker : getStickers()) {
                 sticker.save(em);
             }
 

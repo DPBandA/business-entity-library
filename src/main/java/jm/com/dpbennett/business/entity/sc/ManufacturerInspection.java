@@ -107,8 +107,9 @@ public class ManufacturerInspection implements BusinessEntity {
 
     public Contact getRepresentative() {
         if (representative == null) {
-            return new Contact();
+            representative = new Contact();
         }
+
         return representative;
     }
 
@@ -118,8 +119,9 @@ public class ManufacturerInspection implements BusinessEntity {
 
     public Address getAddress() {
         if (address == null) {
-            return new Address();
+            address = new Address();
         }
+
         return address;
     }
 
@@ -129,8 +131,9 @@ public class ManufacturerInspection implements BusinessEntity {
 
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            return new Manufacturer();
+            manufacturer = new Manufacturer();
         }
+
         return manufacturer;
     }
 
@@ -161,6 +164,11 @@ public class ManufacturerInspection implements BusinessEntity {
     }
 
     public Employee getAssignedInspector() {
+
+        if (assignedInspector == null) {
+            assignedInspector = new Employee();
+        }
+
         return assignedInspector;
     }
 
@@ -169,6 +177,11 @@ public class ManufacturerInspection implements BusinessEntity {
     }
 
     public List<InspectionComponent> getInspectionComponents() {
+
+        if (inspectionComponents == null) {
+            inspectionComponents = new ArrayList<>();
+        }
+
         return inspectionComponents;
     }
 
@@ -182,6 +195,7 @@ public class ManufacturerInspection implements BusinessEntity {
                 }
             }
         }
+
         return components;
     }
 
@@ -222,7 +236,6 @@ public class ManufacturerInspection implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ManufacturerInspection)) {
             return false;
         }
@@ -233,7 +246,7 @@ public class ManufacturerInspection implements BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FactoryInspection[id=" + id + "]";
+        return "jm.com.dpbennett.entity.FactoryInspection[id=" + id + "]";
     }
 
     @Override
@@ -248,19 +261,30 @@ public class ManufacturerInspection implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        
+
         try {
-            
-            getManufacturer().save(em);
-            getAddress().save(em);
-            getRepresentative().save(em);
-            getAssignedInspector().save(em);
-            
-            for (InspectionComponent inspectionComponent : inspectionComponents) {
+
+            if (getManufacturer().getId() != null) {
+                getManufacturer().save(em);
+            }
+
+            if (getAddress().getId() != null) {
+                getAddress().save(em);
+            }
+
+            if (getRepresentative().getId() != null) {
+                getRepresentative().save(em);
+            }
+
+            if (getAssignedInspector().getId() != null) {
+                getAssignedInspector().save(em);
+            }
+
+            for (InspectionComponent inspectionComponent : getInspectionComponents()) {
                 inspectionComponent.save(em);
             }
-            
-            for (ProductInspection productInspection : productInspections) {
+
+            for (ProductInspection productInspection : getProductInspections()) {
                 productInspection.save(em);
             }
 

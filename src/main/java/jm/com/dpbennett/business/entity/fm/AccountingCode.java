@@ -220,7 +220,6 @@ public class AccountingCode implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof AccountingCode)) {
             return false;
         }
@@ -247,13 +246,13 @@ public class AccountingCode implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }

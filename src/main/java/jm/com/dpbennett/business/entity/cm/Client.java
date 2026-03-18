@@ -71,7 +71,7 @@ public class Client implements ClientInterface {
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Address billingAddress;
@@ -81,9 +81,9 @@ public class Client implements ClientInterface {
     private Discount discount;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Tax defaultTax;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
     @Column(length = 1024)
     private String notes;
@@ -165,7 +165,12 @@ public class Client implements ClientInterface {
 
     @Override
     public Tax getDefaultTax() {
-        return (defaultTax == null ? new Tax() : defaultTax);
+
+        if (defaultTax == null) {
+            defaultTax = new Tax();
+        }
+
+        return defaultTax;
     }
 
     @Override
@@ -207,6 +212,8 @@ public class Client implements ClientInterface {
         if (billingAddress == null) {
             if (!getBillingAddresses().isEmpty()) {
                 billingAddress = getBillingAddresses().get(0);
+            } else {
+                billingAddress = new Address();
             }
         }
 
@@ -223,7 +230,10 @@ public class Client implements ClientInterface {
         if (billingContact == null) {
             if (!getContacts().isEmpty()) {
                 billingContact = getContacts().get(0);
+            } else {
+                billingContact = new Contact();
             }
+
         }
 
         return billingContact;
@@ -236,7 +246,12 @@ public class Client implements ClientInterface {
 
     @Override
     public Discount getDiscount() {
-        return (discount == null ? new Discount() : discount);
+
+        if (discount == null) {
+            discount = new Discount();
+        }
+
+        return discount;
     }
 
     @Override
@@ -297,7 +312,7 @@ public class Client implements ClientInterface {
     public Employee getEditedBy() {
 
         if (editedBy == null) {
-            return new Employee();
+            editedBy = new Employee();
         }
 
         return editedBy;
@@ -368,7 +383,7 @@ public class Client implements ClientInterface {
     public Employee getEnteredBy() {
 
         if (enteredBy == null) {
-            return new Employee();
+            enteredBy = new Employee();
         }
 
         return enteredBy;
@@ -379,11 +394,6 @@ public class Client implements ClientInterface {
         this.enteredBy = enteredBy;
     }
 
-    /**
-     * Copy the client without copying the id field
-     *
-     * @param src
-     */
     @Override
     public final void doCopy(Client src) {
         contacts = new ArrayList<>();
@@ -494,14 +504,6 @@ public class Client implements ClientInterface {
         this.name = name;
     }
 
-    /**
-     * This method guards against returning very long names. This is used in an
-     * autocomplete JSF component for instance to prevent the list of clients
-     * from extending beyond the screen. In the future, the maximum length of
-     * say 50 will be a value stored in the resource bundle of the BEL.
-     *
-     * @return
-     */
     @Override
     public String getTruncatedName() {
         if (getName().length() >= 50) {
@@ -566,51 +568,34 @@ public class Client implements ClientInterface {
         String list = "";
 
         for (Contact contact : getContacts()) {
-            //for (PhoneNumber phoneNumber : contact.getPhoneNumbers()) {
-            if (list.equals("")) // first? 
-            {
+            if (list.equals("")) {
                 list = contact.getMainPhoneNumber().getLocalNumber();
             } else {
                 list = list + ", " + contact.getMainPhoneNumber().getLocalNumber();
             }
-            //}
+
         }
 
         return list;
     }
 
-    /**
-     * Get the first main contact which is treated as the main contact in the
-     * list of contacts.
-     *
-     * @return
-     */
     @Override
     public Contact getDefaultContact() {
         if (!getContacts().isEmpty()) {
-            // Use the last found contact as the main contact if none was found.            
             return getContacts().get(getContacts().size() - 1);
         } else {
             return new Contact("", "", "Main");
         }
     }
 
-    /**
-     * Get the main contact which is treated as the main contact in the list of
-     * contacts.
-     *
-     * @return
-     */
     @Override
     public Contact getMainContact() {
         if (!getContacts().isEmpty()) {
-            //return getContacts().get(0);
             for (Contact contact : getContacts()) {
                 if (contact.getType().equals("Main")) {
                     return contact;
                 }
             }
-            // use the first found address as the billing address
             Contact contact = getContacts().get(0);
             contact.setType("Main");
             return contact;
@@ -628,12 +613,6 @@ public class Client implements ClientInterface {
         return getContacts().get(0);
     }
 
-    /**
-     * Returns the first found address with billing type "Billing" as the main
-     * billing address.
-     *
-     * @return
-     */
     @Override
     public Address getDefaultAddress() {
         if (!getBillingAddresses().isEmpty()) {
@@ -714,7 +693,6 @@ public class Client implements ClientInterface {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Client)) {
             return false;
         }
@@ -802,8 +780,6 @@ public class Client implements ClientInterface {
                             + " ORDER BY c.name", Client.class).
                             setMaxResults(maxSearchResults).getResultList();
 
-            // NB: This is used to remove clients with ' in their names. This may not be
-            // needed in the future.
             Iterator<Client> iterator = clients.iterator();
             while (iterator.hasNext()) {
                 Client element = iterator.next();
@@ -836,8 +812,6 @@ public class Client implements ClientInterface {
                             + " ORDER BY c.name", Client.class).setFirstResult(firstResult).
                             setMaxResults(maxResults).getResultList();
 
-            // NB: This is used to remove clients with ' in their names. This may not be
-            // needed in the future.
             Iterator<Client> iterator = clients.iterator();
             while (iterator.hasNext()) {
                 Client element = iterator.next();
@@ -890,33 +864,6 @@ public class Client implements ClientInterface {
         }
     }
 
-//    public static List<Client> findClientsByFirstPartOfName(EntityManager em, String value) {
-//
-//        try {
-//
-//            value = value.replaceAll("'", "`");
-//
-//            List<Client> clients
-//                    = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
-//                            + value.toUpperCase()
-//                            + "%' ORDER BY c.name", Client.class).getResultList();
-//            return clients;
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return new ArrayList<>();
-//        }
-//    }
-    // is in client manager. remove later
-//    public static List<Client> getAllClients(EntityManager em) {
-//
-//        try {
-//            List<Client> clients = em.createNamedQuery("findAllClients", Client.class).getResultList();
-//            return clients;
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return null;
-//        }
-//    }
     public static Client findByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Client> clients;
@@ -986,18 +933,6 @@ public class Client implements ClientInterface {
         }
     }
 
-    // tk change name to findClientById
-    public static Client getClientById(EntityManager em, Long Id) {
-
-        try {
-            Client client = em.find(Client.class, Id);
-            return client;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
     public static Client findActiveDefault(
             EntityManager em,
             String name,
@@ -1046,11 +981,10 @@ public class Client implements ClientInterface {
             if (getEnteredBy().getId() != null) {
                 getEnteredBy().save(em);
             }
+            
             if (getEditedBy().getId() != null) {
                 getEditedBy().save(em);
             }
-            
-            getInternet().save(em);
 
             if (getBillingAddress() != null) {
                 getBillingAddress().save(em);
@@ -1058,15 +992,19 @@ public class Client implements ClientInterface {
             if (getBillingContact() != null) {
                 getBillingContact().save(em);
             }
+            
             if (getDiscount().getId() != null) {
                 getDiscount().save(em);
             }
+            
             if (getDefaultTax().getId() != null) {
                 getDefaultTax().save(em);
             }
+            
             for (Contact contact : getContacts()) {
                 contact.save(em);
             }
+            
             for (Address address : getAddresses()) {
                 address.save(em);
             }

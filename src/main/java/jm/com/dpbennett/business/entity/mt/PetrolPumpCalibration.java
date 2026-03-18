@@ -65,20 +65,22 @@ public class PetrolPumpCalibration implements Calibration, Comparable,
     private Employee calibrationDoneBy;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<PetrolPumpCalibrationValue> calibrationValues;
-    
+
     public PetrolPumpCalibration() {
         calibrationValues = new ArrayList<>();
         calibrationValues.add(new PetrolPumpCalibrationValue());
     }
-    
+
+    @Override
     public Long getId() {
         return id;
     }
-    
+
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public PetrolPumpCalibrationValue getLastCalibrationValue() {
         if (!calibrationValues.isEmpty()) {
             return calibrationValues.get(calibrationValues.size() - 1);
@@ -87,230 +89,242 @@ public class PetrolPumpCalibration implements Calibration, Comparable,
             return calibrationValues.get(0);
         }
     }
-    
+
     public List<PetrolPumpCalibrationValue> getCalibrationValues() {
+
+        if (calibrationValues == null) {
+            calibrationValues = new ArrayList<>();
+        }
+
         return calibrationValues;
     }
-    
+
     public void setCalibrationValues(List<PetrolPumpCalibrationValue> calibrationValues) {
         this.calibrationValues = calibrationValues;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof PetrolPumpCalibration)) {
             return false;
         }
         PetrolPumpCalibration other = (PetrolPumpCalibration) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
-    
+
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.PetrolPumpCalibration[id=" + id + "]";
+        return "jm.com.dpbennett.entity.PetrolPumpCalibration[id=" + id + "]";
     }
-    
+
     @Override
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
-    
+
     @Override
     public Double getHourlyRate() {
         return hourlyRate;
     }
-    
+
     @Override
     public void setHourlyRate(Double hourlyRate) {
         this.hourlyRate = hourlyRate;
     }
-    
+
     @Override
     public Date getCalibrationDate() {
         return calibrationDate;
     }
-    
+
     @Override
     public void setCalibrationDate(Date calibrationDate) {
         this.calibrationDate = calibrationDate;
     }
-    
+
     @Override
     public Employee getCalibrationDoneBy() {
+
+        if (calibrationDoneBy == null) {
+            calibrationDoneBy = new Employee();
+        }
+
         return calibrationDoneBy;
     }
-    
+
     @Override
     public void setCalibrationDoneBy(Employee calibrationDoneBy) {
         this.calibrationDoneBy = calibrationDoneBy;
     }
-    
+
     @Override
     public Date getReCalibrationDate() {
         return reCalibrationDate;
     }
-    
+
     @Override
     public void setReCalibrationDate(Date reCalibrationDate) {
         this.reCalibrationDate = reCalibrationDate;
     }
-    
+
     @Override
     public String getName() {
         return name;
     }
-    
+
     @Override
     public void setName(String name) {
         this.name = name;
     }
-    
+
     @Override
     public String getType() {
         return type;
     }
-    
+
     @Override
     public void setType(String type) {
         this.type = type;
     }
-    
+
     @Override
     public Boolean getActive() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setActive(Boolean active) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public String getCategory() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setCategory(String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public Date getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setDateEntered(Date dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public Date getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setDateEdited(Date dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getCalibrationDoneBy().save(em);
-            
-            for (PetrolPumpCalibrationValue calibrationValue : calibrationValues) {
-               calibrationValue.save(em);
+
+            if (getCalibrationDoneBy().getId() != null) {
+                getCalibrationDoneBy().save(em);
             }
-            
+
+            for (PetrolPumpCalibrationValue calibrationValue : getCalibrationValues()) {
+                calibrationValue.save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
-            
+
             return new ReturnMessage();
         } catch (Exception e) {
             System.out.println(e);
         }
-        
+
         return new ReturnMessage(false, "Petrol Pump Calibration not saved");
     }
-    
+
     @Override
     public ReturnMessage delete(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setIsDirty(Boolean isDirty) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public String getDescription() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setDescription(String description) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public String getNotes() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setNotes(String notes) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public String getComments() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setComments(String comments) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public Person getEditedBy() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setEditedBy(Person person) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public Person getEnteredBy() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public void setEnteredBy(Person person) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -340,5 +354,5 @@ public class PetrolPumpCalibration implements Calibration, Comparable,
     public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
 }

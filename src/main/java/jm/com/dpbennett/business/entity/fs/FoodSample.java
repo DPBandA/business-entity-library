@@ -23,6 +23,7 @@ import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import java.io.Serializable;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -75,17 +76,17 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateReturned;
     private Integer methodOfDisposal;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Manufacturer manufacturer;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private BusinessOffice regulatoryOffice;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee sampledBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee receivedBy;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<FoodTest> tests;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Laboratory assignedLab;
     @Transient
     private Boolean isDirty;
@@ -99,7 +100,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public static FoodSample findByName(EntityManager em, String value,
             Boolean ignoreCase) {
 
@@ -116,7 +117,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
                 foodSamples = em.createQuery("SELECT s FROM FoodSample s "
                         + "WHERE s.name "
                         + "= '" + value + "'",
-                         FoodSample.class).getResultList();
+                        FoodSample.class).getResultList();
             }
 
             if (!foodSamples.isEmpty()) {
@@ -144,6 +145,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     }
 
     public Laboratory getAssignedLab() {
+
+        if (assignedLab == null) {
+            assignedLab = new Laboratory();
+        }
+
         return assignedLab;
     }
 
@@ -152,6 +158,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     }
 
     public List<FoodTest> getTests() {
+
+        if (tests == null) {
+            tests = new ArrayList<>();
+        }
+
         return tests;
     }
 
@@ -168,7 +179,6 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof FoodSample)) {
             return false;
         }
@@ -179,7 +189,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FoodSample[id=" + id + "]";
+        return "jm.com.dpbennett.entity.FoodSample[id=" + id + "]";
     }
 
     public Long getJobId() {
@@ -192,6 +202,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public Employee getReceivedBy() {
+
+        if (receivedBy == null) {
+            receivedBy = new Employee();
+        }
+
         return receivedBy;
     }
 
@@ -202,6 +217,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public Employee getSampledBy() {
+
+        if (sampledBy == null) {
+            sampledBy = new Employee();
+        }
+
         return sampledBy;
     }
 
@@ -242,6 +262,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public BusinessOffice getRegulatoryOffice() {
+
+        if (regulatoryOffice == null) {
+            regulatoryOffice = new BusinessOffice();
+        }
+
         return regulatoryOffice;
     }
 
@@ -351,6 +376,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public Manufacturer getManufacturer() {
+
+        if (manufacturer == null) {
+            manufacturer = new Manufacturer();
+        }
+
         return manufacturer;
     }
 
@@ -373,16 +403,29 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getManufacturer().save(em);
-            getRegulatoryOffice().save(em);
-            getSampledBy().save(em);
-            getReceivedBy().save(em);
-
-            for (FoodTest test : tests) {
-                test.save(em);
-            }
-
-            getAssignedLab().save(em);
+//            if (getManufacturer().getId() != null) {
+//                getManufacturer().save(em);
+//            }
+//
+//            if (getRegulatoryOffice().getId() != null) {
+//                getRegulatoryOffice().save(em);
+//            }
+//
+//            if (getSampledBy().getId() != null) {
+//                getSampledBy().save(em);
+//            }
+//
+//            if (getReceivedBy().getId() != null) {
+//                getReceivedBy().save(em);
+//            }
+//
+//            for (FoodTest test : getTests()) {
+//                test.save(em);
+//            }
+//
+//            if (getAssignedLab().getId() != null) {
+//                getAssignedLab().save(em);
+//            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

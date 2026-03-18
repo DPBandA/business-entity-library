@@ -84,7 +84,7 @@ public class JobCostingBatch implements Serializable, BusinessEntity {
     public Client getClient() {
 
         if (client == null) {
-            return new Client();
+            client = new Client();
         }
 
         return client;
@@ -103,6 +103,11 @@ public class JobCostingBatch implements Serializable, BusinessEntity {
     }
 
     public List<Job> getJobs() {
+
+        if (jobs == null) {
+            jobs = new ArrayList<>();
+        }
+
         return jobs;
     }
 
@@ -119,7 +124,6 @@ public class JobCostingBatch implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof JobCostingBatch)) {
             return false;
         }
@@ -201,7 +205,7 @@ public class JobCostingBatch implements Serializable, BusinessEntity {
                 getClient().save(em);
             }
 
-            for (Job job : jobs) {
+            for (Job job : getJobs()) {
                 job.save(em);
             }
 

@@ -97,6 +97,11 @@ public class JobTask implements BusinessEntity {
     }
 
     public Department getDepartmentResponsible() {
+
+        if (departmentResponsible == null) {
+            departmentResponsible = new Department();
+        }
+
         return departmentResponsible;
     }
 
@@ -105,6 +110,11 @@ public class JobTask implements BusinessEntity {
     }
 
     public Employee getEmployeeResponsible() {
+
+        if (employeeResponsible == null) {
+            employeeResponsible = new Employee();
+        }
+
         return employeeResponsible;
     }
 
@@ -157,7 +167,6 @@ public class JobTask implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof JobTask)) {
             return false;
         }
@@ -168,7 +177,7 @@ public class JobTask implements BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.JobTask[id=" + id + "]";
+        return "jm.com.dpbennett.entity.JobTask[id=" + id + "]";
     }
 
     @Override

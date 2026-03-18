@@ -136,7 +136,12 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Currency getCurrency() {
-        return (currency == null ? new Currency() : currency);
+
+        if (currency == null) {
+            currency = new Currency();
+        }
+
+        return currency;
     }
 
     public void setCurrency(Currency currency) {
@@ -183,17 +188,11 @@ public class JobCostingAndPayment implements BusinessEntity {
         }
     }
 
-    /**
-     * Returns the type of discount as Percentage, Currency or Fixed Cost.
-     *
-     * @deprecated This feature is already encapsulated in the Discount class.
-     *
-     * @return
-     */
     public String getDiscountType() {
         if (discountType == null) {
             discountType = "Percentage";
         }
+
         return discountType;
     }
 
@@ -257,10 +256,6 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     public Employee getCostingInvoicedBy() {
 
-        if (costingInvoicedBy == null) {
-            return new Employee();
-        }
-
         return costingInvoicedBy;
     }
 
@@ -269,11 +264,6 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Employee getCostingPreparedBy() {
-
-        if (costingPreparedBy == null) {
-            return new Employee();
-        }
-
         return costingPreparedBy;
     }
 
@@ -282,7 +272,12 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Tax getTax() {
-        return (tax == null ? new Tax() : tax);
+
+        if (tax == null) {
+            tax = new Tax();
+        }
+
+        return tax;
     }
 
     public void setTax(Tax tax) {
@@ -290,7 +285,12 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Discount getDiscount() {
-        return (discount == null ? new Discount() : discount);
+
+        if (discount == null) {
+            discount = new Discount();
+        }
+
+        return discount;
     }
 
     public void setDiscount(Discount discount) {
@@ -301,19 +301,8 @@ public class JobCostingAndPayment implements BusinessEntity {
         return new ArrayList<>();
     }
 
-//    public AccountingCode getAccountingCode() {
-//        if (accountingCode == null) {
-//            accountingCode = new AccountingCode();
-//        }
-//        return accountingCode;
-//    }
-//
-//    public void setAccountingCode(AccountingCode accountingCode) {
-//        this.accountingCode = accountingCode;
-//    }
     public static void createSampleBasedJobCostings(Job currentJob) {
         if (currentJob.getJobCostingAndPayment().getAllSortedCostComponents().isEmpty()) {
-            // Add all existing samples as cost oomponents            
             for (JobSample jobSample : currentJob.getJobSamples()) {
                 currentJob.getJobCostingAndPayment().getAllSortedCostComponents().add(new CostComponent(jobSample.getDescription()));
             }
@@ -367,11 +356,6 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Employee getLastPaymentEnteredBy() {
-
-        if (lastPaymentEnteredBy == null) {
-            return new Employee();
-        }
-
         return lastPaymentEnteredBy;
     }
 
@@ -466,12 +450,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         }
     }
 
-    /**
-     * Builds and return a list of cost components with the costing to which the
-     * cost component used as a header cost component belong
-     *
-     * @return
-     */
     public List<CostComponent> getAllSortedCostComponents() {
 
         Collections.sort(getCostComponents());
@@ -528,10 +506,6 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     public Employee getCostingApprovedBy() {
 
-        if (costingApprovedBy == null) {
-            return new Employee();
-        }
-
         return costingApprovedBy;
     }
 
@@ -558,12 +532,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         this.completed = completed;
     }
 
-    /**
-     * Gets the cash payments made. Note that if there are no cash payments but
-     * a deposit exists, the deposit is created as a "Final" payment.
-     *
-     * @return
-     */
     public List<CashPayment> getCashPayments() {
         if (cashPayments != null) {
             Collections.sort(cashPayments);
@@ -578,11 +546,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         this.cashPayments = cashPayments;
     }
 
-    /**
-     * Get the deposit payment for the job.
-     *
-     * @return
-     */
     public Double getDeposit() {
         deposit = 0.0;
 
@@ -607,11 +570,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         this.deposit = deposit;
     }
 
-    /**
-     * Get the total payments from cash payments and deposit if any.
-     *
-     * @return
-     */
     public Double getTotalPayment() {
         Double payment = getDeposit();
 
@@ -777,7 +735,6 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof JobCostingAndPayment)) {
             return false;
         }
@@ -804,7 +761,7 @@ public class JobCostingAndPayment implements BusinessEntity {
         if (costComponents == null) {
             costComponents = new ArrayList<>();
         }
-        
+
         return costComponents;
     }
 
@@ -1050,11 +1007,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         return minDepositTotalTax;
     }
 
-    /**
-     * Get total cost. Total cost includes total tax
-     *
-     * @return
-     */
     public Double getTotalCost() {
 
         totalCost = getFinalCostWithDiscount() + getTotalTax();
@@ -1072,11 +1024,6 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     }
 
-    /**
-     *
-     * @param job
-     * @return
-     */
     public static Boolean getCanApplyTax(Job job) {
         return job.getClassification().getIsEarning()
                 && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option?
@@ -1089,28 +1036,14 @@ public class JobCostingAndPayment implements BusinessEntity {
 
         try {
 
-            if (getCostingPreparedBy().getId() != null) {
-                getCostingPreparedBy().save(em);
-            }
-
-            if (getCostingApprovedBy().getId() != null) {
-                getCostingApprovedBy().save(em);
-            }
-
-            if (getCostingInvoicedBy().getId() != null) {
-                getCostingInvoicedBy().save(em);
-            }
-
-            if (getLastPaymentEnteredBy().getId() != null) {
-                getLastPaymentEnteredBy().save(em);
-            }
-
             if (getTax().getId() != null) {
                 getTax().save(em);
             }
+            
             if (getDiscount().getId() != null) {
                 getDiscount().save(em);
             }
+            
             if (getCurrency().getId() != null) {
                 getCurrency().save(em);
             }

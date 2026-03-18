@@ -150,7 +150,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     public Employee getLastAssignee() {
         if (lastAssignee == null) {
-            return new Employee();
+            lastAssignee = new Employee();
         }
 
         return lastAssignee;
@@ -162,7 +162,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     public Client getClient() {
         if (client == null) {
-            return new Client();
+            client = new Client();
         }
 
         return client;
@@ -382,7 +382,6 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
                     + " JOIN petrolStation.client client"
                     + " JOIN petrolStation.certification certification"
                     + " JOIN petrolStation.lastAssignee lastAssignee"
-                    //                    + " WHERE (2 >= 1)" // used as placeholder for now
                     + " WHERE (certification." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                     + " AND certification." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                     + searchTextAndClause
@@ -441,9 +440,11 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
             if (getClient().getId() != null) {
                 getClient().save(em);
             }
+            
             if (getLastAssignee().getId() != null) {
                 getLastAssignee().save(em);
             }
+            
             for (PetrolPump petrolPump : getPetrolPumps()) {
                 petrolPump.setOwnerId(id);
                 petrolPump.save(em);

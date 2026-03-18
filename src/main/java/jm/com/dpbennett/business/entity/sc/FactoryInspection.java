@@ -158,7 +158,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         if (jobNumber == null) {
             jobNumber = "";
         }
-        
+
         return jobNumber;
     }
 
@@ -202,7 +202,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         String searchQuery = null;
         String searchTextAndClause = "";
         String joinClause;
-        
+
         joinClause
                 = " LEFT JOIN factoryinspection.assignedInspector assignedInspector"
                 + " LEFT JOIN factoryinspection.manufacturer manufacturer";
@@ -228,7 +228,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                     searchQuery
                             = "SELECT DISTINCT factoryInspection FROM FactoryInspection factoryInspection"
                             + joinClause
-                            + " WHERE (0 = 0)" // used as place holder
+                            + " WHERE (0 = 0)"
                             + searchTextAndClause
                             + " ORDER BY factoryInspection.id DESC";
                 } else {
@@ -263,9 +263,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<FactoryInspection> factoryInspections
                     = em.createQuery("SELECT f FROM FactoryInspection f WHERE UPPER(f.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' ORDER BY f.name", FactoryInspection.class).getResultList();
@@ -281,7 +281,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<FactoryInspection> factoryInspections = em.createQuery("SELECT f FROM FactoryInspection f "
@@ -329,8 +329,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     public Address getAddress() {
         if (address == null) {
-            return new Address();
+            address = new Address();
         }
+
         return address;
     }
 
@@ -340,8 +341,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            return new Manufacturer();
+            manufacturer = new Manufacturer();
         }
+
         return manufacturer;
     }
 
@@ -350,6 +352,11 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     public BusinessOffice getBusinessOffice() {
+
+        if (businessOffice == null) {
+            businessOffice = new BusinessOffice();
+        }
+
         return businessOffice;
     }
 
@@ -357,11 +364,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         this.businessOffice = businessOffice;
     }
 
-    /**
-     * Get all the entities contained in lists in this class
-     *
-     * @return
-     */
     public List<BusinessEntity> getAllBusinessEntitiesLists() {
         ArrayList<BusinessEntity> entities = new ArrayList<>();
 
@@ -387,6 +389,11 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     public Employee getAssignedInspector() {
+
+        if (assignedInspector == null) {
+            assignedInspector = new Employee();
+        }
+
         return assignedInspector;
     }
 
@@ -396,8 +403,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     public Contact getFactoryRepresentative() {
         if (factoryRepresentative == null) {
-            return new Contact();
+            factoryRepresentative = new Contact();
         }
+
         return factoryRepresentative;
     }
 
@@ -442,6 +450,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                 }
             }
         }
+
         return components;
     }
 
@@ -470,9 +479,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     public String getInspectionType() {
-//        if (inspectionType == null) {
-//            inspectionType = "Routine";
-//        }
+
         return inspectionType;
     }
 
@@ -497,12 +504,11 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof FactoryInspection)) {
             return false;
         }
         FactoryInspection other = (FactoryInspection) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -524,12 +530,19 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getAssignedInspector().save(em);
-            getAddress().save(em);
-            getFactoryRepresentative().save(em);
-            
-            // Save inspection components
+
+            if (getAssignedInspector().getId() != null) {
+                getAssignedInspector().save(em);
+            }
+
+            if (getAddress().getId() != null) {
+                getAddress().save(em);
+            }
+
+            if (getFactoryRepresentative().getId() != null) {
+                getFactoryRepresentative().save(em);
+            }
+
             if (!getInspectionComponents().isEmpty()) {
                 for (FactoryInspectionComponent inspectionComponent : getInspectionComponents()) {
                     if ((inspectionComponent.getIsDirty() || inspectionComponent.getId() == null)
@@ -543,7 +556,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                 }
             }
 
-            // Save product inspections
             if (!getProductInspections().isEmpty()) {
                 for (ProductInspection productInspection : getProductInspections()) {
                     if ((productInspection.getIsDirty() || productInspection.getId() == null)
@@ -556,9 +568,14 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                     }
                 }
             }
-            
-            getManufacturer().save(em);
-            getBusinessOffice().save(em);
+
+            if (getManufacturer().getId() != null) {
+                getManufacturer().save(em);
+            }
+
+            if (getBusinessOffice().getId() != null) {
+                getBusinessOffice().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

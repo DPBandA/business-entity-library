@@ -78,7 +78,12 @@ public class Classification implements BusinessEntity, Serializable {
     }
 
     public Tax getDefaultTax() {
-        return (defaultTax == null ? new Tax() : defaultTax);
+
+        if (defaultTax == null) {
+            defaultTax = new Tax();
+        }
+
+        return defaultTax;
     }
 
     public void setDefaultTax(Tax defaultTax) {
@@ -210,7 +215,6 @@ public class Classification implements BusinessEntity, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Classification)) {
             return false;
         }
@@ -366,10 +370,6 @@ public class Classification implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getDefaultTax().getId() != null) {
-                getDefaultTax().save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

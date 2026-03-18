@@ -319,24 +319,24 @@ public class SystemOption implements BusinessEntity {
         try {
 
             return Boolean.valueOf(optionValue);
-            
+
         } catch (NumberFormatException e) {
 
             return false;
         }
 
     }
-    
+
     public void setBoolean(Boolean optionValue) {
-         try {
+        try {
 
             this.optionValue = optionValue.toString();
-            
+
         } catch (NumberFormatException e) {
-            
+
             this.optionValue = "false";
         }
-         
+
     }
 
     public static List<String> getStringList(EntityManager em, String name) {
@@ -463,7 +463,6 @@ public class SystemOption implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof SystemOption)) {
             return false;
         }
@@ -682,13 +681,13 @@ public class SystemOption implements BusinessEntity {
 
     @Override
     public String getDescription() {
-        
+
         return comments;
     }
 
     @Override
     public void setDescription(String description) {
-        
+
         comments = description;
     }
 

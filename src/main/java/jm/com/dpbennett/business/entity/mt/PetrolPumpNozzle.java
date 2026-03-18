@@ -106,7 +106,6 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
         this.lastSealIssued = lastSealIssued;
         this.lastStickerIssued = lastStickerIssued;
 
-        // build measure string
         testMeasures = "" + measures.get(0).getCapacity().toString();
         testMeasures = testMeasures + "," + measures.get(1).getCapacity().toString();
 
@@ -146,6 +145,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
         if (lastCalibration == null) {
             lastCalibration = new PetrolPumpNozzleCalibration();
         }
+
         return lastCalibration;
     }
 
@@ -204,7 +204,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     public List<Sticker> getStickers() {
         List<Sticker> stickers = new ArrayList<>();
 
-        // tk
+        // tk?
         // Get Stickers here based on ownerId;
         return stickers;
     }
@@ -227,7 +227,13 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     }
 
     public List<PetrolPumpNozzleCalibration> getCalibrations() {
-        Collections.sort(calibrations);
+
+        if (calibrations != null) {
+            Collections.sort(calibrations);
+        }
+        else {
+            calibrations = new ArrayList<>();
+        }
 
         return calibrations;
     }
@@ -265,7 +271,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     public List<Seal> getSeals() {
         List<Seal> seals = new ArrayList<>();
 
-        // tk
+        // tk?
         // Get Stickers here based on ownerId;
         return seals;
     }
@@ -290,7 +296,6 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PetrolPumpNozzle)) {
             return false;
         }
@@ -306,7 +311,6 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
     @Override
     public int compareTo(Object o) {
-//        return Collator.getInstance().compare(this.toString(), o.toString());
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
 
@@ -358,12 +362,23 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
         try {
 
-            getLastSealIssued().save(em);
-            getLastStickerIssued().save(em);            
-            getManufacturer().save(em);
-            getLastCalibration().save(em);
+            if (getLastSealIssued().getId() != null) {
+                getLastSealIssued().save(em);
+            }
 
-            for (PetrolPumpNozzleCalibration calibration : calibrations) {
+            if (getLastStickerIssued().getId() != null) {
+                getLastStickerIssued().save(em);
+            }
+
+            if (getManufacturer().getId() != null) {
+                getManufacturer().save(em);
+            }
+
+            if (getLastCalibration().getId() != null) {
+                getLastCalibration().save(em);
+            }
+
+            for (PetrolPumpNozzleCalibration calibration : getCalibrations()) {
                 calibration.setOwnerId(id);
                 calibration.save(em);
             }

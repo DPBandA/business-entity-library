@@ -61,14 +61,12 @@ public class ServiceContract implements BusinessEntity {
     private Service selectedService;
     private String serviceRequestedDetails;
     private String serviceRequestedOtherText;
-    // Additional services    
     private Boolean additionalServiceUrgent;
     private Boolean additionalServiceFaxResults;
     private Boolean additionalServiceTelephonePresumptiveResults;
     private Boolean additionalServiceSendMoreContractForms;
     private Boolean additionalServiceOther;
     private String additionalServiceOtherText;
-    // Intended market
     private Boolean intendedMarketLocal;
     private Boolean intendedMarketCaricom;
     private Boolean intendedMarketUK;
@@ -90,14 +88,12 @@ public class ServiceContract implements BusinessEntity {
 
     public ServiceContract() {
         selectedService = new Service();
-        // Additional services
         additionalServiceUrgent = false;
         additionalServiceFaxResults = false;
         additionalServiceTelephonePresumptiveResults = false;
         additionalServiceSendMoreContractForms = false;
         additionalServiceOther = false;
         additionalServiceOtherText = "";
-        // Intended market
         intendedMarketLocal = true;
         intendedMarketCaricom = false;
         intendedMarketUK = false;
@@ -109,14 +105,12 @@ public class ServiceContract implements BusinessEntity {
 
     public ServiceContract(ServiceContract src) {
         selectedService = new Service();
-        // Additional services
         additionalServiceUrgent = src.additionalServiceUrgent;
         additionalServiceFaxResults = src.additionalServiceFaxResults;
         additionalServiceTelephonePresumptiveResults = src.additionalServiceTelephonePresumptiveResults;
         additionalServiceSendMoreContractForms = src.additionalServiceSendMoreContractForms;
         additionalServiceOther = src.additionalServiceOther;
         additionalServiceOtherText = src.additionalServiceOtherText;
-        // Intended market
         intendedMarketLocal = src.intendedMarketLocal;
         intendedMarketCaricom = src.intendedMarketCaricom;
         intendedMarketUK = src.intendedMarketUK;
@@ -459,7 +453,9 @@ public class ServiceContract implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getSelectedService().save(em);
+            if (getSelectedService().getId() != null) {
+                getSelectedService().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

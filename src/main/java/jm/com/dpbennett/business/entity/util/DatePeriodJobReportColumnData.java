@@ -25,10 +25,9 @@ import jm.com.dpbennett.business.entity.jmts.JobCostingAndPayment;
 import jm.com.dpbennett.business.entity.fm.JobSubCategory;
 import jm.com.dpbennett.business.entity.fm.Sector;
 
-
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 public class DatePeriodJobReportColumnData extends Job implements Comparable {
 
@@ -40,6 +39,7 @@ public class DatePeriodJobReportColumnData extends Job implements Comparable {
         super.setJobSubCategory(jobSubCategory);
         super.setJobCostingAndPayment(new JobCostingAndPayment());
         super.getJobCostingAndPayment().setFinalCost(totalFinalCost);
+        
         if (numberOfTestsOrCalibrations != null) {
             super.setNoOfTestsOrCalibrations(numberOfTestsOrCalibrations.intValue());
         }

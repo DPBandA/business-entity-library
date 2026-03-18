@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.auth;
 
 import java.io.Serializable;
@@ -77,7 +76,7 @@ public class Signature implements Serializable, BusinessEntity {
         this.name = name;
         this.signatureImage = signatureImage;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -108,12 +107,12 @@ public class Signature implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof Signature)) {
             return false;
         }
         Signature other = (Signature) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -138,14 +137,14 @@ public class Signature implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-         try {
+        try {
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println("Signature save exception: " + e);
         }

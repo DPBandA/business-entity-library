@@ -215,6 +215,11 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Currency getCurrency() {
+
+        if (currency == null) {
+            currency = new Currency();
+        }
+
         return currency;
     }
 
@@ -245,20 +250,19 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
                 setIsFixedCost(false);
                 setIsHeading(false);
                 break;
-            case "Subcontract":   
+            case "Subcontract":
                 setIsFixedCost(true);
                 setIsHeading(false);
                 setHours(0.0);
                 setHoursOrQuantity(1.0);
                 setRate(getCost());
-                break;    
+                break;
             default:
                 setIsFixedCost(false);
                 setIsHeading(false);
                 break;
         }
 
-        // Recalculate cost
         getCost();
     }
 
@@ -487,7 +491,6 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof CostComponent)) {
             return false;
         }
@@ -534,19 +537,19 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            isDirty = false;
-            
-            em.getTransaction().begin();            
+
+            em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
+            isDirty = false;
+
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
-            
+
             System.out.println("Cost Component save exception: " + e);
-            
+
             return new ReturnMessage(false,
                     "Cost component not saved",
                     "An error occurred while saving a cost component: " + e,

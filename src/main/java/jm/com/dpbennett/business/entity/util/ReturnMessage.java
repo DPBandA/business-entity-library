@@ -21,27 +21,27 @@ package jm.com.dpbennett.business.entity.util;
 
 public class ReturnMessage extends Message {
 
-    private boolean success;   
+    private boolean success;
 
     public ReturnMessage(boolean success, String header,
             String message, String severity) {
-        
+
         super(header, message, severity);
         this.success = success;
-        
+
     }
-    
+
     public ReturnMessage(boolean success, String message) {
-        
+
         super("", message, Message.SEVERITY_ERROR_NAME);
         this.success = success;
-        
+
     }
 
     public ReturnMessage() {
-        
+
         super("", "", Message.SEVERITY_ERROR_NAME);
-        this.success = true;        
+        this.success = true;
     }
 
     public boolean isSuccess() {
@@ -51,12 +51,12 @@ public class ReturnMessage extends Message {
     public void setSuccess(boolean success) {
         this.success = success;
     }
-    
+
     public String getDetail() {
         String detail;
-        
+
         detail = getHeader() + "\n" + getMessage();
-                
+
         return detail;
     }
 

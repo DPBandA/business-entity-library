@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.cm;
 
 import jm.com.dpbennett.business.entity.hrm.Contact;
@@ -36,15 +35,15 @@ public interface ClientOwner {
     public void setIsClientDirty(Boolean dirty);
 
     public Boolean getIsClientDirty();
-    
+
     public void setBillingAddress(Address billingAddress);
-    
+
     public Address getBillingAddress();
-    
+
     public void setContact(Contact contact);
-    
+
     public Contact getContact();
-    
+
     public Boolean getIsDirty();
 
     public void setIsDirty(Boolean dirty);

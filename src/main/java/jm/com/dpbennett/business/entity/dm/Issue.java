@@ -58,5 +58,5 @@ public class Issue {
     public void setBody(String body) {
         this.body = body;
     }
-    
+
 }

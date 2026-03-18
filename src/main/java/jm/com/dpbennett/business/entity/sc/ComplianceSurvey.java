@@ -220,7 +220,7 @@ public class ComplianceSurvey implements BusinessEntity {
     public Employee getInspectorForSampleRequestPOE() {
 
         if (inspectorForSampleRequestPOE == null) {
-            return new Employee();
+            inspectorForSampleRequestPOE = new Employee();
         }
 
         return inspectorForSampleRequestPOE;
@@ -232,7 +232,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getRetailOutletAddress() {
         if (retailOutletAddress == null) {
-            return new Address();
+            retailOutletAddress = new Address();
         }
 
         return retailOutletAddress;
@@ -244,7 +244,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getConsigneeAddress() {
         if (consigneeAddress == null) {
-            return new Address();
+            consigneeAddress = new Address();
         }
 
         return consigneeAddress;
@@ -271,7 +271,7 @@ public class ComplianceSurvey implements BusinessEntity {
     public BusinessOffice getBusinessOffice() {
 
         if (businessOffice == null) {
-            return new BusinessOffice();
+            businessOffice = new BusinessOffice();
         }
 
         return businessOffice;
@@ -525,7 +525,7 @@ public class ComplianceSurvey implements BusinessEntity {
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            return new Employee();
+            editedBy = new Employee();
         }
 
         return editedBy;
@@ -538,7 +538,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getApprovedBySigForReleaseRequestPOE() {
         if (approvedBySigForReleaseRequestPOE == null) {
-            return new Signature();
+            approvedBySigForReleaseRequestPOE = new Signature();
         }
 
         return approvedBySigForReleaseRequestPOE;
@@ -550,7 +550,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getApprovedByEmployeeForReleaseRequestPOE() {
         if (approvedByEmployeeForReleaseRequestPOE == null) {
-            return new Employee();
+            approvedByEmployeeForReleaseRequestPOE = new Employee();
         }
 
         return approvedByEmployeeForReleaseRequestPOE;
@@ -570,7 +570,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getAuthSigForDetentionRequestPOE() {
         if (authSigForDetentionRequestPOE == null) {
-            return new Signature();
+            authSigForDetentionRequestPOE = new Signature();
         }
 
         return authSigForDetentionRequestPOE;
@@ -590,7 +590,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getAuthEmployeeForDetentionRequestPOE() {
         if (authEmployeeForDetentionRequestPOE == null) {
-            return new Employee();
+            authEmployeeForDetentionRequestPOE = new Employee();
         }
 
         return authEmployeeForDetentionRequestPOE;
@@ -602,7 +602,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getInspectorSigForSampleRequestPOE() {
         if (inspectorSigForSampleRequestPOE == null) {
-            return new Signature();
+            inspectorSigForSampleRequestPOE = new Signature();
         }
 
         return inspectorSigForSampleRequestPOE;
@@ -622,7 +622,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getPreparedBySigForReleaseRequestPOE() {
         if (preparedBySigForReleaseRequestPOE == null) {
-            return new Signature();
+            preparedBySigForReleaseRequestPOE = new Signature();
         }
 
         return preparedBySigForReleaseRequestPOE;
@@ -634,7 +634,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getPreparedByEmployeeForReleaseRequestPOE() {
         if (preparedByEmployeeForReleaseRequestPOE == null) {
-            return new Employee();
+            preparedByEmployeeForReleaseRequestPOE = new Employee();
         }
 
         return preparedByEmployeeForReleaseRequestPOE;
@@ -654,7 +654,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getAuthSigForNoticeOfReleaseFromDentionDM() {
         if (authSigForNoticeOfReleaseFromDentionDM == null) {
-            return new Signature();
+            authSigForNoticeOfReleaseFromDentionDM = new Signature();
         }
 
         return authSigForNoticeOfReleaseFromDentionDM;
@@ -674,7 +674,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getAuthEmpForNoticeOfReleaseFromDentionDM() {
         if (authEmpForNoticeOfReleaseFromDentionDM == null) {
-            return new Employee();
+            authEmpForNoticeOfReleaseFromDentionDM = new Employee();
         }
 
         return authEmpForNoticeOfReleaseFromDentionDM;
@@ -686,7 +686,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getAuthSigForNoticeOfDentionDM() {
         if (authSigForNoticeOfDentionDM == null) {
-            return new Signature();
+            authSigForNoticeOfDentionDM = new Signature();
         }
 
         return authSigForNoticeOfDentionDM;
@@ -706,7 +706,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getAuthEmployeeForNoticeOfDentionDM() {
         if (authEmployeeForNoticeOfDentionDM == null) {
-            return new Employee();
+            authEmployeeForNoticeOfDentionDM = new Employee();
         }
 
         return authEmployeeForNoticeOfDentionDM;
@@ -927,7 +927,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Client getBroker() {
         if (broker == null) {
-            return new Client("", false);
+            broker = new Client("", false);
         }
 
         return broker;
@@ -939,7 +939,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Contact getBrokerRepresentative() {
         if (brokerRepresentative == null) {
-            return new Contact();
+            brokerRepresentative = new Contact();
         }
 
         return brokerRepresentative;
@@ -951,7 +951,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getBrokerAddress() {
         if (brokerAddress == null) {
-            return new Address();
+            brokerAddress = new Address();
         }
 
         return brokerAddress;
@@ -963,7 +963,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Client getConsignee() {
         if (consignee == null) {
-            return new Client("", false);
+            consignee = new Client("", false);
         }
 
         return consignee;
@@ -975,8 +975,9 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getSpecifiedReleaseLocation() {
         if (specifiedReleaseLocation == null) {
-            specifiedReleaseLocation = new Address("");
+            specifiedReleaseLocation = new Address();
         }
+
         return specifiedReleaseLocation;
     }
 
@@ -987,7 +988,7 @@ public class ComplianceSurvey implements BusinessEntity {
     public Contact getConsigneeRepresentative() {
         if (consigneeRepresentative == null) {
 
-            return new Contact();
+            consigneeRepresentative = new Contact();
 
         }
 
@@ -1067,7 +1068,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getInspector() {
         if (inspector == null) {
-            return new Employee();
+            inspector = new Employee();
         }
 
         return inspector;
@@ -1107,7 +1108,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Client getRetailOutlet() {
         if (retailOutlet == null) {
-            return new Client("", false);
+            retailOutlet = new Client("", false);
         }
 
         return retailOutlet;
@@ -1120,7 +1121,7 @@ public class ComplianceSurvey implements BusinessEntity {
     public Contact getRetailRepresentative() {
         if (retailRepresentative == null) {
 
-            return new Contact();
+            retailRepresentative = new Contact();
         }
 
         return retailRepresentative;
@@ -1155,7 +1156,6 @@ public class ComplianceSurvey implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ComplianceSurvey)) {
             return false;
         }
@@ -1336,7 +1336,6 @@ public class ComplianceSurvey implements BusinessEntity {
                 + " LEFT JOIN complianceSurvey.brokerRepresentative brokerRepresentative"
                 + " LEFT JOIN complianceSurvey.entryDocumentInspection entryDocumentInspection"
                 + (includeProductInspectionSearch ? " JOIN complianceSurvey.productInspections productInspections" : "")
-                //+ " JOIN complianceSurvey.productInspections productInspections"
                 + " LEFT JOIN complianceSurvey.inspector inspector";
         switch (searchType) {
             case "General":
@@ -1370,13 +1369,13 @@ public class ComplianceSurvey implements BusinessEntity {
                     searchQuery
                             = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
                             + joinClause
-                            + " WHERE (0 = 0)" // used as place holder
+                            + " WHERE (0 = 0)"
                             + searchTextAndClause
                             + " ORDER BY complianceSurvey.id DESC";
                 } else {
                     searchQuery
                             = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
-                            + joinClause // tk date search field to be used when doing dashboard search
+                            + joinClause
                             + " WHERE (complianceSurvey." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                             + " AND complianceSurvey." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                             + searchTextAndClause
@@ -1480,31 +1479,49 @@ public class ComplianceSurvey implements BusinessEntity {
                 getConsignee().save(em);
             }
 
-            getConsigneeRepresentative().save(em);
+            if (getConsigneeRepresentative().getId() != null) {
+                getConsigneeRepresentative().save(em);
+            }
 
-            getConsigneeAddress().save(em);
+            if (getConsigneeAddress().getId() != null) {
+                getConsigneeAddress().save(em);
+            }
 
             if (getBroker().getId() != null) {
                 getBroker().save(em);
             }
 
-            getBrokerRepresentative().save(em);
+            if (getBrokerRepresentative().getId() != null) {
+                getBrokerRepresentative().save(em);
+            }
 
-            getBrokerAddress().save(em);
+            if (getBrokerAddress().getId() != null) {
+                getBrokerAddress().save(em);
+            }
 
             if (getRetailOutlet().getId() != null) {
                 getRetailOutlet().save(em);
             }
 
-            getRetailRepresentative().save(em);
+            if (getRetailRepresentative().getId() != null) {
+                getRetailRepresentative().save(em);
+            }
 
-            getRetailOutletAddress().save(em);
+            if (getRetailOutletAddress().getId() != null) {
+                getRetailOutletAddress().save(em);
+            }
 
-            getSpecifiedReleaseLocation().save(em);
+            if (getSpecifiedReleaseLocation().getId() != null) {
+                getSpecifiedReleaseLocation().save(em);
+            }
 
-            getSpecifiedReleaseLocationDomesticMarket().save(em);
+            if (getSpecifiedReleaseLocationDomesticMarket().getId() != null) {
+                getSpecifiedReleaseLocationDomesticMarket().save(em);
+            }
 
-            getLocationOfDetainedProductDomesticMarket().save(em);
+            if (getLocationOfDetainedProductDomesticMarket().getId() != null) {
+                getLocationOfDetainedProductDomesticMarket().save(em);
+            }
 
             if (getAuthSigForDetentionRequestPOE().getId() != null) {
                 getAuthSigForDetentionRequestPOE().save(em);

@@ -58,7 +58,7 @@ public class StatusTracking implements BusinessEntity {
     @Column(length = 1024)
     private String valueTracked;
     private String valueTrackedType;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private StatusNote statusNote;
 
     @Override
@@ -104,6 +104,11 @@ public class StatusTracking implements BusinessEntity {
     }
 
     public StatusNote getStatusNote() {
+
+        if (statusNote == null) {
+            statusNote = new StatusNote();
+        }
+
         return statusNote;
     }
 
@@ -143,7 +148,6 @@ public class StatusTracking implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof StatusTracking)) {
             return false;
         }
@@ -160,6 +164,11 @@ public class StatusTracking implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+//
+//            if (getStatusNote().getId() != null) {
+//                getStatusNote().save(em);
+//            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

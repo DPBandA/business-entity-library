@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.rm;
 
 import java.util.Date;
@@ -36,12 +35,13 @@ import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
- * tk get rid of this class if it's no longer being used
+ *
  * @author Desmond Bennett
  */
 @Entity
 @Table(name = "generatedform")
 public class GeneratedForm implements BusinessEntity, Form {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -51,8 +51,8 @@ public class GeneratedForm implements BusinessEntity, Form {
     private Date startDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
-    private String reportFile = "";
-    private String reportFileMimeType = "";
+    private String reportFile;
+    private String reportFileMimeType;
     @Transient
     private Boolean isDirty;
 
@@ -65,7 +65,7 @@ public class GeneratedForm implements BusinessEntity, Form {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -121,12 +121,12 @@ public class GeneratedForm implements BusinessEntity, Form {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof GeneratedForm)) {
             return false;
         }
         GeneratedForm other = (GeneratedForm) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -144,8 +144,8 @@ public class GeneratedForm implements BusinessEntity, Form {
     public void setName(String name) {
         this.name = name;
     }
-    
-     public static GeneratedForm findGeneratedFormById(EntityManager em, Long Id) {
+
+    public static GeneratedForm findGeneratedFormById(EntityManager em, Long Id) {
 
         try {
             GeneratedForm form = em.find(GeneratedForm.class, Id);

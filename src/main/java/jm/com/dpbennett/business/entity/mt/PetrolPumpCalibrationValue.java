@@ -62,21 +62,18 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
     private Double rate = 0.0;
     private Double petrolUsage = 0.0;
     private Double petrolCost = 0.0;
-    // pump nozzle errors
     private Double error1 = 0.0;
     private Double error2 = 0.0;
     private Double error3 = 0.0;
     private Double error4 = 0.0;
     private Double error5 = 0.0;
     private Double error6 = 0.0;
-    // pump measure/capacity (in litres) used in calibration
     private Double measure1 = 5.0;
     private Double measure2 = 5.0;
     private Double measure3 = 5.0;
     private Double measure4 = 20.0;
     private Double measure5 = 20.0;
     private Double measure6 = 20.0;
-    // pump measure tolerances
     private Double measureTolerance1 = 15.0;
     private Double measureTolerance2 = 15.0;
     private Double measureTolerance3 = 15.0;
@@ -114,15 +111,22 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
         this.measureTolerance6 = original.measureTolerance6;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
     public Employee getRecordedBy() {
+
+        if (recordedBy == null) {
+            recordedBy = new Employee();
+        }
+
         return recordedBy;
     }
 
@@ -169,12 +173,11 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
     }
 
     public String getPass() {
-        int numOfFailuresForFirst3 = 0; // first 3 errors
+        int numOfFailuresForFirst3 = 0;
 
-        int numOfFailuresForSecond3 = 0; // second 3 errors
+        int numOfFailuresForSecond3 = 0; //
         String pass = "Yes";
 
-        // first 3 measures
         if (Math.abs(error1) > Math.abs(measureTolerance1 * 1000)) {
             ++numOfFailuresForFirst3;
 
@@ -186,7 +189,7 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
         if (Math.abs(error3) > Math.abs(measureTolerance3 * 1000)) {
             ++numOfFailuresForFirst3;
 
-        } // remaining 3 measures
+        }
         if (Math.abs(error4) > Math.abs(measureTolerance4 * 1000)) {
             ++numOfFailuresForSecond3;
 
@@ -434,24 +437,19 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PetrolPumpCalibrationValue)) {
             return false;
 
         }
         PetrolPumpCalibrationValue other = (PetrolPumpCalibrationValue) object;
 
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-
-        }
-        return true;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
 
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.PetrolPumpCalibrationValue[id=" + id + "]";
+        return "jm.com.dpbennett.entity.PetrolPumpCalibrationValue[id=" + id + "]";
     }
 
     @Override
@@ -522,8 +520,10 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getRecordedBy().save(em);
+
+            if (getRecordedBy().getId() != null) {
+                getRecordedBy().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

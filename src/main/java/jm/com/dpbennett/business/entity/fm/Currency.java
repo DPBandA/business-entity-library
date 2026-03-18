@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
@@ -52,7 +51,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private String code;  
+    private String code;
     private String type;
     private String symbol;
     private String description;
@@ -65,9 +64,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
         this.symbol = "$";
         this.description = "";
         this.isDirty = false;
-    }      
-    
-    
+    }
 
     public Currency(String name) {
         this.name = name;
@@ -125,7 +122,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
             return false;
         }
         Currency other = (Currency) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -143,20 +140,20 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public static Currency findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
                     + "WHERE UPPER(c.name) "
                     + "= '" + value.toUpperCase() + "'", Currency.class).getResultList();
             if (!currencies.isEmpty()) {
                 return currencies.get(0);
             }
-            
+
             return null;
         } catch (Exception e) {
             System.out.println(e);
@@ -164,13 +161,13 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
         }
 
     }
-    
+
     public static Currency findByCode(EntityManager em, String code) {
 
         try {
-            
+
             code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
                     + "WHERE c.code "
                     + "= '" + code + "'", Currency.class).getResultList();
@@ -184,11 +181,11 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
         }
 
     }
-    
+
     public static List<Currency> findAll(EntityManager em) {
 
         try {
-            
+
             List<Currency> codes = em.createQuery("SELECT c FROM Currency c ORDER BY c.code", Currency.class).getResultList();
 
             return codes;
@@ -197,15 +194,15 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Currency> findAllByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Currency> currencies
-                    = em.createQuery("SELECT c FROM Currency c WHERE UPPER(c.name) LIKE '%"                            
+                    = em.createQuery("SELECT c FROM Currency c WHERE UPPER(c.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' ORDER BY c.name",
                             Currency.class).getResultList();
             return currencies;
@@ -218,7 +215,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
     public static Currency findById(EntityManager em, Long id) {
 
         try {
-            
+
             Currency code = em.find(Currency.class, id);
 
             return code;
@@ -231,6 +228,7 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

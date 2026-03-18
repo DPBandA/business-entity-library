@@ -166,6 +166,7 @@ public class JobCategory implements Serializable, BusinessEntity {
         if (departments == null) {
             departments = new ArrayList<>();
         }
+        
         return departments;
     }
 
@@ -227,7 +228,6 @@ public class JobCategory implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof JobCategory)) {
             return false;
         }

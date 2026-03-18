@@ -19,7 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sc;
 
-import java.util.AbstractList;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -102,7 +101,7 @@ public class SampleRequest implements BusinessEntity, Form {
     public List<ProductInspection> getProducts() {
 
         if (products == null) {
-            return new ArrayList<>();
+            products = new ArrayList<>();
         }
 
         return products;
@@ -134,7 +133,7 @@ public class SampleRequest implements BusinessEntity, Form {
 
     public Employee getInspector() {
         if (inspector == null) {
-            return new Employee();
+            inspector = new Employee();
         }
 
         return inspector;
@@ -187,7 +186,6 @@ public class SampleRequest implements BusinessEntity, Form {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof SampleRequest)) {
             return false;
         }
@@ -198,7 +196,7 @@ public class SampleRequest implements BusinessEntity, Form {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.SampleRequest[id=" + id + "]";
+        return "jm.com.dpbennett.entity.SampleRequest[id=" + id + "]";
     }
 
     @Override
@@ -260,7 +258,7 @@ public class SampleRequest implements BusinessEntity, Form {
         try {
             foundSampleRequests = em.createQuery(searchQuery, SampleRequest.class).getResultList();
             if (foundSampleRequests == null) {
-                foundSampleRequests = new ArrayList<SampleRequest>();
+                foundSampleRequests = new ArrayList<>();
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -278,7 +276,9 @@ public class SampleRequest implements BusinessEntity, Form {
                 getReceivedFrom().save(em);
             }
 
-            getRepresentative().save(em);
+            if (getRepresentative().getId() != null) {
+                getRepresentative().save(em);
+            }
 
             if (getInspector().getId() != null) {
                 getInspector().save(em);

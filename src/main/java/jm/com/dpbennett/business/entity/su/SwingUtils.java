@@ -39,5 +39,5 @@ public class SwingUtils {
 
         return model;
     }
-    
+
 }

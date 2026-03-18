@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.dm;
 
 import java.io.Serializable;
@@ -46,18 +45,18 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllDocumentSequenceNumbers", query = "SELECT d FROM DocumentSequenceNumber d ORDER BY d.sequentialNumber"),
     @NamedQuery(name = "getLastDocumentSequenceNumber",
-    query = "SELECT MAX(e.sequentialNumber) "
-    + "FROM DocumentSequenceNumber e "
-    + "WHERE e.yearReceived = :yearReceived "
-    + "AND e.monthReceived = :monthReceived "
-    + "AND e.documentTypeId = :documentTypeId"),
+            query = "SELECT MAX(e.sequentialNumber) "
+            + "FROM DocumentSequenceNumber e "
+            + "WHERE e.yearReceived = :yearReceived "
+            + "AND e.monthReceived = :monthReceived "
+            + "AND e.documentTypeId = :documentTypeId"),
     @NamedQuery(name = "getDocumentSequenceNumber",
-    query = "SELECT MAX(e.sequentialNumber) "
-    + "FROM DocumentSequenceNumber e "
-    + "WHERE e.yearReceived = :yearReceived "
-    + "AND e.monthReceived = :monthReceived "
-    + "AND e.documentTypeId = :documentTypeId "
-    + "AND e.sequentialNumber = :sequentialNumber")
+            query = "SELECT MAX(e.sequentialNumber) "
+            + "FROM DocumentSequenceNumber e "
+            + "WHERE e.yearReceived = :yearReceived "
+            + "AND e.monthReceived = :monthReceived "
+            + "AND e.documentTypeId = :documentTypeId "
+            + "AND e.sequentialNumber = :sequentialNumber")
 })
 public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
@@ -81,7 +80,7 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -137,12 +136,11 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof DocumentSequenceNumber)) {
             return false;
         }
         DocumentSequenceNumber other = (DocumentSequenceNumber) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -158,10 +156,9 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
     @Override
     public void setName(String name) {
-        
+
     }
-    
-    
+
     public static List<DocumentSequenceNumber> findAllDocumentSequenceNumbers(EntityManager em) {
 
         try {
@@ -173,7 +170,7 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static Long findLastDocumentSequenceNumber(EntityManager em, Integer year, Integer month, Long typeId) {
         Long last;
 
@@ -189,24 +186,13 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
         return last;
     }
-    
-     /**
-     * Returns the supplied sequential number of if there is an existing
-     * sequence number with the supplied year, month and document type id.nceNumber
-     *
-     * @param em
-     * @param sequentialNumber
-     * @param year
-     * @param month
-     * @param typeId
-     * @return
-     */
-    public static Long findDocumentSequenceNumber(EntityManager em, 
+
+    public static Long findDocumentSequenceNumber(EntityManager em,
             Long sequentialNumber,
-            Integer year, 
-            Integer month, 
+            Integer year,
+            Integer month,
             Long typeId) {
-        
+
         Long last;
 
         try {

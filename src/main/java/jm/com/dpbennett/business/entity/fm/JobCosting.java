@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
@@ -62,8 +61,8 @@ public class JobCosting implements Serializable, BusinessEntity {
     }
 
     public JobCosting(JobCosting orgJobCosting) {
-       this.name =  orgJobCosting.name;
-       costComponents = new ArrayList<>();
+        this.name = orgJobCosting.name;
+        costComponents = new ArrayList<>();
     }
 
     public JobCosting(String name) {
@@ -76,7 +75,7 @@ public class JobCosting implements Serializable, BusinessEntity {
         this.name = name;
         costComponents = new ArrayList<>();
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -130,18 +129,18 @@ public class JobCosting implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-      
+
         if (!(object instanceof JobCosting)) {
             return false;
         }
         JobCosting other = (JobCosting) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.JobCosting[id=" + id + "]";
+        return "jm.com.dpbennett.entity.JobCosting[id=" + id + "]";
     }
 
     @Override

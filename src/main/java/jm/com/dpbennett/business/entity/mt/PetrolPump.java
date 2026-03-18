@@ -136,8 +136,9 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            return new Manufacturer();
+            manufacturer = new Manufacturer();
         }
+
         return manufacturer;
     }
 
@@ -202,7 +203,7 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     public List<Sticker> getStickers() {
         List<Sticker> stickers = new ArrayList<>();
 
-        // tk
+        // tk?
         // Get petrolPumpNozzles here based on ownerId;
         return stickers;
     }
@@ -226,7 +227,6 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PetrolPump)) {
             return false;
         }
@@ -285,9 +285,11 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getManufacturer().save(em);
+            if (getManufacturer().getId() != null) {
+                getManufacturer().save(em);
+            }
 
-            for (PetrolPumpNozzle petrolPumpNozzle : nozzles) {
+            for (PetrolPumpNozzle petrolPumpNozzle : getNozzles()) {
                 petrolPumpNozzle.setOwnerId(id);
                 petrolPumpNozzle.save(em);
             }

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.mt;
 
 import java.util.Date;
@@ -25,8 +24,8 @@ import jm.com.dpbennett.business.entity.hrm.Employee;
 
 /**
  *
- * 
- * @author dbennett 
+ *
+ * @author Desmond Bennett
  */
 public interface Calibration {
 

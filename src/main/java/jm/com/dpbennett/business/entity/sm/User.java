@@ -32,7 +32,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -76,13 +75,13 @@ public class User extends DefaultEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private List<Module> activeModules;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private List<SystemOption> settings;
     @Transient
     private Boolean isDirty;
@@ -230,7 +229,7 @@ public class User extends DefaultEntity {
     public Privilege getPrivilege() {
 
         if (privilege == null) {
-            return new Privilege();
+            privilege = new Privilege();
         }
 
         return privilege;
@@ -332,7 +331,7 @@ public class User extends DefaultEntity {
         if (privileges == null) {
             privileges = new ArrayList<>();
         }
-        
+
         return privileges;
     }
 
@@ -344,7 +343,7 @@ public class User extends DefaultEntity {
         if (activeModules == null) {
             activeModules = new ArrayList<>();
         }
-        
+
         return activeModules;
     }
 
@@ -361,7 +360,7 @@ public class User extends DefaultEntity {
 
         return allActiveModules;
     }
-    
+
     public String getAllPrivileges() {
         String allPrivileges = "";
 
@@ -404,7 +403,7 @@ public class User extends DefaultEntity {
 
         try {
             Department department = user.getEmployee().getDepartment();
-            for (Business business : Business.findAll(em)) {
+            for (Business business : Business.findAllActive(em)) {
                 for (Department dept : business.getDepartments()) {
                     if (Objects.equals(department.getId(), dept.getId())) {
                         return business;
@@ -448,15 +447,15 @@ public class User extends DefaultEntity {
     }
 
     public Boolean getIsJobsPreferredJobTableView() {
-        return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Jobs");
+        return getJobTableViewPreference().equals("Jobs");
     }
 
     public Boolean getIsCashierPreferredJobTableView() {
-        return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Cashier View");
+        return getJobTableViewPreference().equals("Cashier View");
     }
 
     public Boolean getIsJobCostingsPreferredJobTableView() {
-        return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Job Costings");
+        return getJobTableViewPreference().equals("Job Costings");
     }
 
     public static Boolean isUserDepartmentSupervisor(Job job, User user, EntityManager em) {
@@ -572,7 +571,7 @@ public class User extends DefaultEntity {
     public Employee getEmployee() {
 
         if (employee == null) {
-            return new Employee();
+            employee = new Employee();
         }
 
         return employee;
@@ -808,15 +807,19 @@ public class User extends DefaultEntity {
             if (getEmployee().getId() != null) {
                 getEmployee().save(em);
             }
+            
             if (getPrivilege().getId() != null) {
                 getPrivilege().save(em);
             }
+            
             for (Privilege priv : getPrivileges()) {
                 priv.save(em);
             }
+            
             for (Module activeModule : getActiveModules()) {
                 activeModule.save(em);
             }
+            
             for (SystemOption setting : getSettings()) {
                 setting.save(em);
             }
@@ -844,15 +847,6 @@ public class User extends DefaultEntity {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * Determine if the current user is the department's supervisor. This is
-     * done by determining if the user is the head/active acting head of the
-     * department to which the job was assigned.
-     *
-     * @param job
-     * @param em
-     * @return
-     */
     public Boolean isUserDepartmentSupervisor(Job job, EntityManager em) {
 
         Job foundJob = Job.findJobById(em, job.getId());

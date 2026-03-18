@@ -28,26 +28,20 @@ import java.text.ParseException;
  * @author Desmond Bennett <info@dpbennett.com.jm at https//dpbennett.com.jm>
  */
 public class NumberUtils {
-    
+
     public static String formatAsCurrency(Double number, String symbol) {
         DecimalFormat formatter = new DecimalFormat("#,###.##;(#,###.##)");
 
         try {
 
-            return symbol + formatter.format(number);            
+            return symbol + formatter.format(number);
         } catch (NumberFormatException e) {
             System.out.println(e);
-            
+
             return "";
         }
     }
-    
-    /**
-     * This is a utility method used to validate a double value string.
-     *
-     * @param value
-     * @return
-     */
+
     public static ReturnMessage validateDoubleValue(String value) {
         DecimalFormat formatter = new DecimalFormat("#,##0.00");
 
@@ -63,13 +57,6 @@ public class NumberUtils {
         return new ReturnMessage(false, "Double value is invalid");
     }
 
-    /**
-     * Returns the double value of a string if the string represents a valid
-     * double value. If the string is invalid, 0.0 is returned.
-     *
-     * @param value
-     * @return
-     */
     public static double getDoubleValue(String value) {
         try {
             return Double.parseDouble(value);
@@ -80,15 +67,9 @@ public class NumberUtils {
 
         return 0.0;
     }
-    
-    /**
-     * This is a utility method used to validate an integer value string.
-     *
-     * @param value
-     * @return
-     */
+
     public static ReturnMessage validateIntegerValue(String value) {
-       
+
         try {
 
             Integer.valueOf(value);

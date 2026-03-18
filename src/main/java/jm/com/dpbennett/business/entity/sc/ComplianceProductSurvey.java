@@ -69,7 +69,6 @@ public class ComplianceProductSurvey implements BusinessEntity, Form {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ComplianceProductSurvey)) {
             return false;
         }
@@ -80,7 +79,7 @@ public class ComplianceProductSurvey implements BusinessEntity, Form {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.ComplianceProductSurvey[id=" + id + "]";
+        return "jm.com.dpbennett.entity.ComplianceProductSurvey[id=" + id + "]";
     }
 
     @Override

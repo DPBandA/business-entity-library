@@ -65,7 +65,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     private String sourceURL;
     private String destinationURL;
     private String contentType;
-    private String documentType;    
+    private String documentType;
     @Column(length = 1024)
     private String description;
     private String category;
@@ -84,7 +84,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         this.type = "";
         this.isDirty = false;
         this.documentType = "Other";
-        
+
     }
 
     public Attachment(String name,
@@ -108,7 +108,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         if (documentType == null) {
             documentType = "";
         }
-        
+
         return documentType;
     }
 
@@ -121,6 +121,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         if (type == null) {
             type = "";
         }
+        
         return type;
     }
 
@@ -240,7 +241,6 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Attachment)) {
             return false;
         }
@@ -282,9 +282,9 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     public static Attachment findAttachmentByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Attachment> attachments = em.createQuery("SELECT a FROM Attachment a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", Attachment.class).getResultList();
@@ -300,14 +300,14 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     }
 
     public static List<Attachment> findAttachmentsByName(
-            EntityManager em, 
+            EntityManager em,
             String value,
             int maxResults) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Attachment> attachments
                     = em.createQuery("SELECT a FROM Attachment a where UPPER(a.name) like '%"
                             + value.toUpperCase().trim()
@@ -322,7 +322,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     public static List<Attachment> findAttachmentsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
-           
+
             List<Attachment> attachments
                     = em.createQuery("SELECT a FROM Attachment a where UPPER(a.name) like '%"
                             + value.toUpperCase().trim() + "%' AND a.category = " + category + " ORDER BY a.name", Attachment.class).getResultList();
@@ -336,6 +336,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

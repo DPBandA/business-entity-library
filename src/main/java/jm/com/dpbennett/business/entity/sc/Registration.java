@@ -190,7 +190,6 @@ public class Registration implements BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Registration)) {
             return false;
         }
@@ -213,7 +212,7 @@ public class Registration implements BusinessEntity, Comparable {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.Registration[id=" + id + "]";
+        return "jm.com.dpbennett.entity.Registration[id=" + id + "]";
     }
 
     @Override
@@ -230,8 +229,10 @@ public class Registration implements BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getJob().save(em);
-            
+            if (getJob().getId() != null) {
+                getJob().save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

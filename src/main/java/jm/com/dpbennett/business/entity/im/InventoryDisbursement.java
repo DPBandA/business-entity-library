@@ -60,7 +60,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private Long id;
     private String name;
     private String type;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Inventory inventory;
     private Double quantityOrdered;
     private Double quantityReceived;
@@ -75,9 +75,9 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
     private String status;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee enteredBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee editedBy;
     @Column(length = 1024)
     private String description;
@@ -87,7 +87,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private String editStatus;
     @Transient
     private List<BusinessEntity.Action> actions;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private CostComponent costComponent;
 
     public InventoryDisbursement() {
@@ -176,10 +176,11 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     public Inventory getInventory() {
         if (inventory == null) {
-            Inventory invtry = new Inventory();
 
-            return invtry;
+            inventory = new Inventory();
+
         }
+
         return inventory;
     }
 
@@ -197,6 +198,11 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     @Override
     public Employee getEditedBy() {
+
+        if (editedBy == null) {
+            editedBy = new Employee();
+        }
+
         return editedBy;
     }
 
@@ -218,7 +224,6 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         Date now = new Date();
 
         try {
-            // Get employee for later use
             Employee employee = user.getEmployee();
 
             if (getIsDirty()) {
@@ -269,13 +274,12 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     public void addAction(BusinessEntity.Action action) {
 
-        // Just return if the action already exists.
         for (Action existingAction : getActions()) {
             if (existingAction == action) {
                 return;
             }
         }
-        // Add a new action if possible
+
         switch (action) {
             case CREATE:
                 getActions().add(BusinessEntity.Action.CREATE);
@@ -358,7 +362,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
             EntityManager em,
             String searchText,
             Integer maxResults) {
-        
+
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         List<InventoryDisbursement> foundInventoryDisbursements;
@@ -378,7 +382,6 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
                 + " OR UPPER(enteredBy.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(editedBy.name) LIKE '%" + searchText.toUpperCase() + "%'";
 
-        // Build query     
         searchTextAndClause
                 = " WHERE"
                 + mainSearchWhereClause;
@@ -445,6 +448,10 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public Employee getEnteredBy() {
 
+        if (enteredBy == null) {
+            enteredBy = new Employee();
+        }
+
         return enteredBy;
     }
 
@@ -469,7 +476,6 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof InventoryDisbursement)) {
             return false;
         }
@@ -520,15 +526,26 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
-           
-            // tk check the purpose
-            if (getInventory().findCostComponentById(getCostComponent().getId()) == null) {
-                getInventory().getCostComponents().add(getCostComponent());
-                getInventory().save(em);
-            }
+
+//            if (getInventory().getId() != null) {
+//                getInventory().save(em);
+//            }
+//
+//            if (getEnteredBy().getId() != null) {
+//                getEnteredBy().save(em);
+//            }
+//
+//            if (getEditedBy().getId() != null) {
+//                getEditedBy().save(em);
+//            }
+//            
+//            getCostComponent().save(em);            
+//          
+//            // tk check why this done and if it is necessary.
+//            if (getInventory().findCostComponentById(getCostComponent().getId()) == null) {
+//                getInventory().getCostComponents().add(getCostComponent());
+//                getInventory().save(em);
+//            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

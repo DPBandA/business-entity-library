@@ -87,7 +87,7 @@ public class StrategicPriority implements BusinessEntity, Comparable {
             return false;
         }
         StrategicPriority other = (StrategicPriority) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -111,7 +111,8 @@ public class StrategicPriority implements BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-         try {
+        try {
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 import java.util.Date;
@@ -30,7 +29,8 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  *
  * @author Desmond Bennett
  */
-public class TestEntity implements Account{
+public class TestEntity implements Account {
+
     public static void main(String[] args) {
         System.out.println("Yes iya!");
     }
@@ -42,7 +42,7 @@ public class TestEntity implements Account{
 
     @Override
     public void setName(String name) {
-        
+
     }
 
     @Override

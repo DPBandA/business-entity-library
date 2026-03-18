@@ -152,7 +152,6 @@ public class Preference implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Preference)) {
             return false;
         }
@@ -171,6 +170,7 @@ public class Preference implements BusinessEntity {
         if (name == null) {
             name = "";
         }
+        
         return name;
     }
 
@@ -231,6 +231,7 @@ public class Preference implements BusinessEntity {
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             Query query = em.createNamedQuery("findAllPreferencesByName");
             query.setParameter("name", value);
+            
             return query.getResultList();
         } catch (Exception e) {
             System.out.println(e);

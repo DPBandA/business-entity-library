@@ -403,7 +403,7 @@ public class Field implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
-        
+
         try {
 
             if (this.id == null) {
@@ -422,7 +422,7 @@ public class Field implements Serializable, BusinessEntity {
         }
 
         return new ReturnMessage(false, "Field not saved");
-        
+
     }
 
     @Override

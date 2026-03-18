@@ -256,7 +256,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public MarketProduct getMarketProduct() {
         if (marketProduct == null) {
-            return new MarketProduct();
+            marketProduct = new MarketProduct();
         }
 
         return marketProduct;
@@ -279,7 +279,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Employee getInspector() {
         if (inspector == null) {
-            return new Employee();
+            inspector = new Employee();
         }
 
         return inspector;
@@ -291,7 +291,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Category getProductCategory() {
         if (productCategory == null) {
-            return new Category();
+            productCategory = new Category();
         }
 
         return productCategory;
@@ -303,7 +303,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Client getDistributor() {
         if (distributor == null) {
-            return new Client();
+            distributor = new Client();
         }
 
         return distributor;
@@ -585,7 +585,6 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ProductInspection)) {
             return false;
         }
@@ -628,7 +627,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            return new Manufacturer();
+            manufacturer = new Manufacturer();
         }
 
         return manufacturer;
@@ -660,7 +659,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Client getBusinessSource() {
         if (businessSource == null) {
-            return new Client();
+            businessSource = new Client();
         }
 
         return businessSource;
@@ -672,7 +671,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Client getClient() {
         if (client == null) {
-            return new Client();
+            client = new Client();
         }
 
         return client;
@@ -788,7 +787,6 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         String thisIdStr = (this.getId() == null ? "" + Integer.MAX_VALUE : this.getId().toString());
         String oIdStr = (((ProductInspection) o).getId() == null ? "" + Integer.MAX_VALUE : ((ProductInspection) o).getId().toString());
 
-        //return Collator.getInstance().compare(this.getId().toString(), ((ProductInspection) o).getId().toString());
         return Collator.getInstance().compare(thisIdStr, oIdStr);
     }
 

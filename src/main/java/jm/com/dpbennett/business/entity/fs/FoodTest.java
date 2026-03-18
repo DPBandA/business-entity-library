@@ -58,7 +58,7 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     private String type;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date testDate;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee testDoneBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date reTestDate;
@@ -75,7 +75,7 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public static FoodTest findByName(EntityManager em, String value,
             Boolean ignoreCase) {
 
@@ -92,13 +92,13 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
                 foodTests = em.createQuery("SELECT t FROM FoodTest t "
                         + "WHERE t.name "
                         + "= '" + value + "'",
-                         FoodTest.class).getResultList();
+                        FoodTest.class).getResultList();
             }
 
             if (!foodTests.isEmpty()) {
                 return foodTests.get(0);
             }
-            
+
             return null;
         } catch (Exception e) {
             System.out.println(e);
@@ -140,7 +140,7 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FoodTest[id=" + id + "]";
+        return "jm.com.dpbennett.entity.FoodTest[id=" + id + "]";
     }
 
     @Override
@@ -185,6 +185,11 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
 
     @Override
     public Employee getTestDoneBy() {
+
+        if (testDoneBy == null) {
+            testDoneBy = new Employee();
+        }
+
         return testDoneBy;
     }
 
@@ -222,8 +227,10 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getTestDoneBy().save(em);
-            
+//            if (getTestDoneBy().getId() != null) {
+//                getTestDoneBy().save(em);
+//            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -333,7 +340,7 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
-       try {
+        try {
 
             if (this.id == null) {
                 FoodTest existing = FoodTest.findByName(em, this.name, false);

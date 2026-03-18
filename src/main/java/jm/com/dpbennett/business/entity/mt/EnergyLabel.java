@@ -109,9 +109,6 @@ public class EnergyLabel implements BusinessEntity {
     private String editStatus;
     private String serialNumber;
 
-    /**
-     * The default constructor of an EnergyLabel.
-     */
     public EnergyLabel() {
         starRating = "";
         calcStarRating = false;
@@ -440,6 +437,11 @@ public class EnergyLabel implements BusinessEntity {
      * @return
      */
     public EnergyConsumptionAndEfficiency getEnergyConsumptionAndEfficiency() {
+
+        if (energyConsumptionAndEfficiency == null) {
+            energyConsumptionAndEfficiency = new EnergyConsumptionAndEfficiency();
+        }
+
         return energyConsumptionAndEfficiency;
     }
 
@@ -1013,7 +1015,6 @@ public class EnergyLabel implements BusinessEntity {
      */
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof EnergyLabel)) {
             return false;
         }
@@ -1043,10 +1044,9 @@ public class EnergyLabel implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            if (energyConsumptionAndEfficiency != null) {
-                if (energyConsumptionAndEfficiency.getId() == null) {
-                    energyConsumptionAndEfficiency.save(em);
-                }
+
+            if (getEnergyConsumptionAndEfficiency().getId() != null) {
+                getEnergyConsumptionAndEfficiency().save(em);
             }
 
             em.getTransaction().begin();

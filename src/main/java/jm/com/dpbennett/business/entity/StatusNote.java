@@ -71,11 +71,10 @@ public class StatusNote implements Serializable, BusinessEntity {
     private Boolean isDirty;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateCreated;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee createdBy;
     @Transient
     private String header;
-    
 
     public StatusNote() {
         active = true;
@@ -96,7 +95,7 @@ public class StatusNote implements Serializable, BusinessEntity {
         description = "";
         category = "";
     }
-    
+
     public StatusNote(String text, Employee createdBy, Date dateCreated) {
         active = true;
         name = "";
@@ -104,7 +103,7 @@ public class StatusNote implements Serializable, BusinessEntity {
         type = "";
         description = "";
         category = "";
-        
+
         this.text = text;
         this.createdBy = createdBy;
         this.dateCreated = dateCreated;
@@ -197,14 +196,14 @@ public class StatusNote implements Serializable, BusinessEntity {
     public static List<StatusNote> findstatusNotes(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<StatusNote> statusNotes
                     = em.createQuery("SELECT s FROM StatusNote s WHERE UPPER(s.text) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(s.description) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(s.code) LIKE '%" + value.toUpperCase().trim()                          
-                            + "%' OR UPPER(s.type) LIKE '%" + value.toUpperCase().trim()                           
+                            + "%' OR UPPER(s.code) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(s.type) LIKE '%" + value.toUpperCase().trim()
                             + "%' ORDER BY s.dateCreated DESC",
                             StatusNote.class).getResultList();
             return statusNotes;
@@ -213,17 +212,17 @@ public class StatusNote implements Serializable, BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<StatusNote> findActiveStatusNotes(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<StatusNote> statusNotes
                     = em.createQuery("SELECT s FROM StatusNote s WHERE (UPPER(s.text) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(s.description) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(s.code) LIKE '%" + value.toUpperCase().trim()                           
+                            + "%' OR UPPER(s.code) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(s.type) LIKE '%" + value.toUpperCase().trim()
                             + "%') AND (s.active = 1 OR s.active IS NULL) ORDER BY s.dateCreated DESC",
                             StatusNote.class).getResultList();
@@ -237,9 +236,9 @@ public class StatusNote implements Serializable, BusinessEntity {
     public static List<StatusNote> findActiveStatusNotesByEntityId(EntityManager em, Long entityId) {
 
         try {
-            
+
             List<StatusNote> statusNotes
-                    = em.createQuery("SELECT s FROM StatusNote s WHERE" 
+                    = em.createQuery("SELECT s FROM StatusNote s WHERE"
                             + " s.entityId = " + entityId
                             + " AND (s.active = 1 OR s.active IS NULL) ORDER BY s.id DESC",
                             StatusNote.class).getResultList();
@@ -289,7 +288,7 @@ public class StatusNote implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof StatusNote)) {
             return false;
         }
@@ -316,9 +315,9 @@ public class StatusNote implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getCreatedBy().save(em);
-            
+
+//            getCreatedBy().save(em);
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -438,5 +437,5 @@ public class StatusNote implements Serializable, BusinessEntity {
     public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-   
+
 }

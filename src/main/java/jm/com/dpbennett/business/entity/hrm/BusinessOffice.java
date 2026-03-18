@@ -56,9 +56,9 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Address address;
     private String code;
     private Boolean active;
@@ -160,7 +160,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
         if (address == null) {
             address = new Address();
         }
-        
+
         return address;
     }
 
@@ -198,7 +198,6 @@ public class BusinessOffice implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof BusinessOffice)) {
             return false;
         }
@@ -279,7 +278,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
 
     public static List<String> findAllBusinessOfficeNames(EntityManager em) {
 
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
 
         try {
             List<BusinessOffice> offices = em.createNamedQuery("findAllBusinessOffices", BusinessOffice.class).getResultList();
@@ -346,9 +345,6 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
-
-            getInternet().save(em);
-            getAddress().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

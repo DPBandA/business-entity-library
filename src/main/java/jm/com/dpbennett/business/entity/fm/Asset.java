@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.fm;
 
 /**
@@ -25,8 +24,12 @@ package jm.com.dpbennett.business.entity.fm;
  * @author Desmond Bennett
  */
 public interface Asset {
+
     public String getName();
+
     public void setName(String name);
+
     public String getType();
+
     public void setType(String type);
 }

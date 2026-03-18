@@ -59,7 +59,6 @@ public class DocumentReport implements BusinessEntity {
     private Date endDate;
     @Column(length = 1024)
     private String sqlText;
-    // Show/hide fields
     private Boolean showType = false;
     private Boolean showNumber = false;
     private Boolean showDateReceived = false;
@@ -320,7 +319,6 @@ public class DocumentReport implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof DocumentReport)) {
             return false;
         }
@@ -331,7 +329,7 @@ public class DocumentReport implements BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.DocumentReport[id=" + id + "]";
+        return "jm.com.dpbennett.entity.DocumentReport[id=" + id + "]";
     }
 
     public static List<DocumentReport> findAllDocumentReports(EntityManager em) {

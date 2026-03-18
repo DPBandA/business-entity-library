@@ -143,7 +143,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public Employee getHead() {
 
         if (head == null) {
-            return new Employee();
+            head = new Employee();
         }
 
         return head;
@@ -157,6 +157,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         if (departments == null) {
             departments = new ArrayList<>();
         }
+
         return departments;
     }
 
@@ -209,7 +210,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Business)) {
             return false;
         }
@@ -220,7 +220,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.Business[id=" + id + "]";
+        return "jm.com.dpbennett.entity.Business[id=" + id + "]";
     }
 
     @Override
@@ -238,6 +238,11 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public List<Address> getAddresses() {
+
+        if (addresses == null) {
+            addresses = new ArrayList<>();
+        }
+
         return addresses;
     }
 
@@ -248,6 +253,11 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public List<Contact> getContacts() {
+
+        if (contacts == null) {
+            contacts = new ArrayList<>();
+        }
+
         return contacts;
     }
 
@@ -322,7 +332,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
     }
 
-    // Get the first business that matches the given name
     public static Business findByName(EntityManager em, String value) {
 
         try {
@@ -373,6 +382,17 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
     }
 
+    public static List<Business> findAllActive(EntityManager em) {
+
+        try {
+            return em.createQuery("SELECT b FROM Business b WHERE b.active = 1 ORDER BY b.name",
+                    Business.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     public static List<Business> findAllByName(EntityManager em, String value) {
 
         try {
@@ -413,12 +433,15 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
             if (getHead().getId() != null) {
                 getHead().save(em);
             }
+
             for (Department department : getDepartments()) {
                 department.save(em);
             }
+
             for (Address address : getAddresses()) {
                 address.save(em);
             }
+            
             for (Contact contact : getContacts()) {
                 contact.save(em);
             }

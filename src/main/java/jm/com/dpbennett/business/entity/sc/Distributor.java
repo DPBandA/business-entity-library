@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sc;
 
 import java.util.Date;
@@ -37,7 +36,6 @@ import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
-
 /**
  *
  * @author Desmond Bennett
@@ -53,7 +51,6 @@ public class Distributor implements BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    // tk replace with address class: List<Address> addresses.
     private String street;
     private String pO;
     private String city;
@@ -94,7 +91,7 @@ public class Distributor implements BusinessEntity {
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
-    
+
     @Override
     public String getName() {
         return name;
@@ -170,12 +167,11 @@ public class Distributor implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the Id fields are not set
         if (!(object instanceof Distributor)) {
             return false;
         }
         Distributor other = (Distributor) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -188,38 +184,37 @@ public class Distributor implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
                     + "WHERE UPPER(d.name) "
                     + "LIKE '" + value.toUpperCase() + "%' "
                     + "ORDER BY d.name", Distributor.class).getResultList();
-            
+
             return distributors;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
 
-    // Get the first distributor that matches the given name
     public static Distributor findDistributorByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", Distributor.class).getResultList();
             if (!distributors.isEmpty()) {
                 return distributors.get(0);
             }
-            
+
             return null;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -236,7 +231,7 @@ public class Distributor implements BusinessEntity {
             return null;
         }
     }
-    
+
     public static Distributor findDefaultDistributor(EntityManager em,
             String name,
             Boolean useTransaction) {

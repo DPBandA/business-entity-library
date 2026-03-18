@@ -131,6 +131,11 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
     }
 
     public TestMeasure getTestMeasure() {
+
+        if (testMeasure == null) {
+            testMeasure = new TestMeasure();
+        }
+
         return testMeasure;
     }
 
@@ -166,7 +171,7 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.PetrolPumpNozzleCalibrationPoint[id=" + id + "]";
+        return "jm.com.dpbennett.entity.PetrolPumpNozzleCalibrationPoint[id=" + id + "]";
     }
 
     @Override
@@ -192,23 +197,23 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
 
     @Override
     public void setName(String name) {
-        
+
     }
 
     @Override
     public String getType() {
-        
+
         return "";
     }
 
     @Override
     public void setType(String type) {
-        
+
     }
 
     @Override
     public String getCategory() {
-        
+
         return "";
     }
 
@@ -239,8 +244,10 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            //getTestMeasure().save(em);
+
+            if (getTestMeasure().getId() != null) {
+                getTestMeasure().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

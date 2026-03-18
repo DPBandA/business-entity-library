@@ -174,9 +174,9 @@ public class Division implements BusinessEntity, Comparable {
     public Employee getHead() {
 
         if (head == null) {
-            return new Employee();
+            head = new Employee();
         }
-        
+
         return head;
     }
 
@@ -248,7 +248,6 @@ public class Division implements BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Division)) {
             return false;
         }
@@ -367,13 +366,6 @@ public class Division implements BusinessEntity, Comparable {
         }
     }
 
-    /**
-     * Finds the first division that contains the specified subgroup.
-     *
-     * @param em
-     * @param subgroup
-     * @return
-     */
     public static Division findBySubgroup(EntityManager em, Subgroup subgroup) {
 
         try {
@@ -402,15 +394,7 @@ public class Division implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            if (getHead().getId() != null) {
-                getHead().save(em);
-            }
-            for (Department department : getDepartments()) {
-                department.save(em);
-            }
-            for (Subgroup subgroup : getSubgroups()) {
-                subgroup.save(em);
-            }
+                   
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

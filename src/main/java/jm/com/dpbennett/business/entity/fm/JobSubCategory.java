@@ -151,6 +151,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
         if (departments == null) {
             departments = new ArrayList<>();
         }
+        
         return departments;
     }
 
@@ -194,7 +195,6 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof JobSubCategory)) {
             return false;
         }
@@ -360,7 +360,6 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
                 }
             }
 
-            // sort each earning cat and rebuild list
             jobSubCategories.clear();
             Collections.sort(earningJobSubCategories);
             Collections.sort(nonEarningJobSubCategories);
@@ -393,7 +392,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
 
         ArrayList<String> names = new ArrayList<>();
 
-        try {  // use String.class
+        try {
 
             List<JobSubCategory> jobSubCategories = em.createNamedQuery("findAllJobSubCategories", JobSubCategory.class).getResultList();
             for (JobSubCategory jobSubCategory : jobSubCategories) {

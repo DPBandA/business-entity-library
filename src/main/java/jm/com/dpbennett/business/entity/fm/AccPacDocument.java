@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
@@ -76,13 +75,13 @@ public class AccPacDocument implements Serializable, BusinessEntity {
     @Column(name = "TRXTYPETXT", columnDefinition = "SMALLINT(5,0)")
     private Integer documentType;
     @Column(name = "SWPAID", columnDefinition = "SMALLINT(5,0)")
-    private Integer fullyPaid; 
+    private Integer fullyPaid;
     @Column(length = 22, name = "IDORDERNBR")
     private String idORDERNBR;
     @Transient
     private Boolean isDirty;
-    
-    public AccPacDocument() {        
+
+    public AccPacDocument() {
     }
 
     public String getIdORDERNBR() {
@@ -178,14 +177,11 @@ public class AccPacDocument implements Serializable, BusinessEntity {
     public Integer getDaysOverdue() {
         Integer daysOverdue = 0;
 
-        //
         Calendar cNow = Calendar.getInstance();
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
         try {
             Date due = formatter.parse(dueDate.toString());
             if (cNow.getTime().after(due)) {
-                // get calendate date for due date and compare to the current
-                // calendar date
                 Calendar cDue = Calendar.getInstance();
                 cDue.setTime(due);
 
@@ -199,7 +195,7 @@ public class AccPacDocument implements Serializable, BusinessEntity {
             } else {
                 return daysOverdue;
             }
-      
+
         } catch (ParseException ex) {
             System.out.println(ex);
             return 0;
@@ -216,8 +212,6 @@ public class AccPacDocument implements Serializable, BusinessEntity {
         try {
             Date docDate = formatter.parse(documentDate.toString());
             if (cNow.getTime().after(docDate)) {
-                // get calendate date for document date and compare to the current
-                // calendar date
                 Calendar cDocDate = Calendar.getInstance();
                 cDocDate.setTime(docDate);
 
@@ -321,18 +315,18 @@ public class AccPacDocument implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof AccPacDocument)) {
             return false;
         }
         AccPacDocument other = (AccPacDocument) object;
-        
+
         return !((this.idInvc == null && other.idInvc != null) || (this.idInvc != null && !this.idInvc.equals(other.idInvc)));
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.AccPacDocument[id=" + idInvc + "]";
+        return "jm.com.dpbennett.entity.AccPacDocument[id=" + idInvc + "]";
     }
 
     public static List<AccPacDocument> findAccPacDocumentsByCustomerId(EntityManager em, String customerId) {
@@ -369,14 +363,6 @@ public class AccPacDocument implements Serializable, BusinessEntity {
         }
     }
 
-    /**
-     * NB: Documents with an amount due over 0.0 is assumed to be an invoice.
-     *
-     * @param em
-     * @param customerId
-     * @param includePrepayments
-     * @return
-     */
     public static List<AccPacDocument> findAccPacInvoicesDueByCustomerId(EntityManager em,
             String customerId, Boolean includePrepayments) {
 

@@ -51,11 +51,6 @@ public class ReportTableColumn implements BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    /**
-     * This is the method of the entity class that is called to get the value
-     * for the column The format of specifying a method is {class path}/{method}
-     * e.g. jm.org.bsj.entity.Job/getJobNumber
-     */
     private String entityClassMethodName;
     @Transient
     private Boolean isDirty;
@@ -118,7 +113,6 @@ public class ReportTableColumn implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ReportTableColumn)) {
             return false;
         }
@@ -129,7 +123,7 @@ public class ReportTableColumn implements BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.ReportTableColumn[id=" + id + "]";
+        return "jm.com.dpbennett.entity.ReportTableColumn[id=" + id + "]";
     }
 
     public static List<ReportTableColumn> findAllReportTableColumns(EntityManager em) {
@@ -155,7 +149,7 @@ public class ReportTableColumn implements BusinessEntity {
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Report not saved");
+        return new ReturnMessage(false, "Report Table Column not saved");
     }
 
     @Override

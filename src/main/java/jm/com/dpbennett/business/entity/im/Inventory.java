@@ -68,7 +68,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String name;
     private String code;
     private String type;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Category category;
     private Double quantity;
     private Double unitCost;
@@ -77,7 +77,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String stockKeepingUnit;
     private String measurementUnit;
     private String valuationMethod;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private MarketProduct product;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateAcquired;
@@ -89,18 +89,18 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private Date dateEdited;
     @Temporal(javax.persistence.TemporalType.TIME)
     private Date timeChecked;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Supplier supplier;
     private String batchCode;
     private String dateMark;
     private String status;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee enteredBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee editedBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Currency currency;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<CostComponent> costComponents;
     @Transient
     private Boolean isDirty;
@@ -311,6 +311,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         if (costComponents == null) {
             costComponents = new ArrayList<>();
         }
+        
         return costComponents;
     }
 
@@ -362,6 +363,11 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public Employee getEditedBy() {
+
+        if (editedBy == null) {
+            editedBy = new Employee();
+        }
+
         return editedBy;
     }
 
@@ -383,7 +389,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         Date now = new Date();
 
         try {
-            // Get employee for later use
             Employee employee = user.getEmployee();
 
             if (getIsDirty()) {
@@ -434,13 +439,12 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public void addAction(BusinessEntity.Action action) {
 
-        // Just return if the action already exists.
         for (Action existingAction : getActions()) {
             if (existingAction == action) {
                 return;
             }
         }
-        // Add a new action if possible
+
         switch (action) {
             case CREATE:
                 getActions().add(BusinessEntity.Action.CREATE);
@@ -535,7 +539,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Inventory> inventory
@@ -555,9 +559,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
                     + "WHERE UPPER(i.name)" + " = '" + name + "'",
                     Inventory.class).getResultList();
@@ -573,14 +577,14 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
         return null;
     }
-    
+
     public static Inventory findActiveByName(
             EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
                     + "WHERE UPPER(i.name)" + " = '" + name + "'"
                     + " AND i.active = 1",
@@ -602,7 +606,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             EntityManager em,
             String searchText,
             Integer maxResults) {
-        
+
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         List<Inventory> foundInventory = new ArrayList<>();
@@ -627,7 +631,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
                 + " OR UPPER(inventory.dateMark) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(inventory.status) LIKE '%" + searchText.toUpperCase() + "%'";
 
-        // Build query     
         searchTextAndClause
                 = " WHERE"
                 + mainSearchWhereClause;
@@ -657,7 +660,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             Integer maxResults) {
 
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        
+
         List<Inventory> foundInventory = new ArrayList<>();
         String searchQuery;
         String searchTextAndClause;
@@ -680,7 +683,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
                 + " OR UPPER(inventory.dateMark) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(inventory.status) LIKE '%" + searchText.toUpperCase() + "%')";
 
-        // Build query     
         searchTextAndClause
                 = " WHERE  inventory.active = 1 AND ("
                 + mainSearchWhereClause;
@@ -805,6 +807,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Override
     public Employee getEnteredBy() {
 
+        if (enteredBy == null) {
+            enteredBy = new Employee();
+        }
+
         return enteredBy;
     }
 
@@ -815,8 +821,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public Category getInventoryCategory() {
         if (category == null) {
-            return new Category();
+            category = new Category();
         }
+
         return category;
     }
 
@@ -841,7 +848,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Inventory)) {
             return false;
         }
@@ -924,25 +930,32 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getInventoryCategory().save(em);
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
 
-            // Save new/edited cost components
-            if (!getCostComponents().isEmpty()) {
-                for (CostComponent costComponent : getCostComponents()) {
-                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
-                            && !costComponent.save(em).isSuccess()) {
-
-                        return new ReturnMessage(false,
-                                "Cost component save error occurred",
-                                "An error occurred while saving a cost component",
-                                Message.SEVERITY_ERROR_NAME);
-
-                    }
-                }
-            }
+//            if (getInventoryCategory().getId() != null) {
+//                getInventoryCategory().save(em);
+//            }
+//
+//            if (getEnteredBy().getId() != null) {
+//                getEnteredBy().save(em);
+//            }
+//
+//            if (getEditedBy().getId() != null) {
+//                getEditedBy().save(em);
+//            }
+//
+//            if (!getCostComponents().isEmpty()) {
+//                for (CostComponent costComponent : getCostComponents()) {
+//                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
+//                            && !costComponent.save(em).isSuccess()) {
+//
+//                        return new ReturnMessage(false,
+//                                "Cost component save error occurred",
+//                                "An error occurred while saving a cost component",
+//                                Message.SEVERITY_ERROR_NAME);
+//
+//                    }
+//                }
+//            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

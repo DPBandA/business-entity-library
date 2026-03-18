@@ -160,6 +160,11 @@ public class Tax implements Serializable, BusinessEntity {
     }
 
     public AccountingCode getAccountingCode() {
+
+        if (accountingCode == null) {
+            accountingCode = new AccountingCode();
+        }
+
         return accountingCode;
     }
 
@@ -268,7 +273,6 @@ public class Tax implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Tax)) {
             return false;
         }
@@ -295,6 +299,7 @@ public class Tax implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -328,7 +333,7 @@ public class Tax implements Serializable, BusinessEntity {
     public static Tax findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Tax> taxes = em.createQuery("SELECT t FROM Tax t "

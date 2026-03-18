@@ -30,8 +30,8 @@ import javax.swing.JTextArea;
  */
 public class BusinessEntityCellRenderer extends DefaultListCellRenderer {
 
-    private int rows;
-    private int columns;
+    private final int rows;
+    private final int columns;
 
     public BusinessEntityCellRenderer(int rows, int columns) {
         this.rows = rows;

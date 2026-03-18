@@ -26,7 +26,7 @@ import jm.com.dpbennett.business.entity.rm.DatePeriod;
 public class SearchParameters implements Serializable {
 
     private String name;
-     private String jobType;
+    private String jobType;
     private ArrayList jobTypes;
     private Boolean showJobTypes;
     private ArrayList searchTypes;
@@ -38,7 +38,7 @@ public class SearchParameters implements Serializable {
     private DatePeriod datePeriod;
     private String searchText;
 
-    public SearchParameters (
+    public SearchParameters(
             String name,
             ArrayList jobTypes,
             Boolean showJobTypes,
@@ -58,11 +58,11 @@ public class SearchParameters implements Serializable {
         this.showSearchTypes = showSearchTypes;
         this.dateField = dateField;
         this.showDateField = showDateField;
-         this.searchDateFields = searchDateFields;
+        this.searchDateFields = searchDateFields;
         this.searchType = searchType;
         this.datePeriod = datePeriod;
         this.searchText = searchText;
-        
+
     }
 
     public String getJobType() {
@@ -96,7 +96,7 @@ public class SearchParameters implements Serializable {
     public void setShowDateField(Boolean showDateField) {
         this.showDateField = showDateField;
     }
-    
+
     public ArrayList getJobTypes() {
         return jobTypes;
     }

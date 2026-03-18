@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.cert;
 
 import jm.com.dpbennett.business.entity.hrm.Business;
@@ -59,15 +60,15 @@ public class Certification implements CertificationInterface {
     private String notes;
     private Boolean active;
     private String certificateNumber;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee certificateSignedBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Business grantedTo;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateIssued;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date expiryDate;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Client applicant;
     @Transient
     private Boolean isDirty;
@@ -221,16 +222,7 @@ public class Certification implements CertificationInterface {
 
     @Override
     public Date getExpiryDate() {
-        // tk get the option that dictates how the expiry date is to calculated.
-//        if ((expiryDate == null) && (dateIssued != null)) {
-//            Calendar calendar;
-//
-//            calendar = Calendar.getInstance();
-//            calendar.setTime(dateIssued);
-//            calendar.add(Calendar.MONTH, 6);  // tk period to be made option
-//
-//            return calendar.getTime();
-//        }
+
         return expiryDate;
     }
 
@@ -248,7 +240,6 @@ public class Certification implements CertificationInterface {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Certification)) {
             return false;
         }
@@ -265,7 +256,6 @@ public class Certification implements CertificationInterface {
 
     @Override
     public int compareTo(Object o) {
-        // this sorts in descending based on issue date.
         if ((((Certification) o).dateIssued != null) && (this.dateIssued != null)) {
             return Collator.getInstance().compare(
                     Long.toString(((Certification) o).dateIssued.getTime()),
@@ -291,15 +281,15 @@ public class Certification implements CertificationInterface {
 
         try {
 
-            if (getCertificateSignedBy().getId() != null) {
-                getCertificateSignedBy().save(em);
-            }
-            if (getGrantedTo().getId() != null) {
-                getGrantedTo().save(em);
-            }
-            if (getApplicant().getId() != null) {
-                getApplicant().save(em);
-            }
+//            if (getCertificateSignedBy().getId() != null) {
+//                getCertificateSignedBy().save(em);
+//            }
+//            if (getGrantedTo().getId() != null) {
+//                getGrantedTo().save(em);
+//            }
+//            if (getApplicant().getId() != null) {
+//                getApplicant().save(em);
+//            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

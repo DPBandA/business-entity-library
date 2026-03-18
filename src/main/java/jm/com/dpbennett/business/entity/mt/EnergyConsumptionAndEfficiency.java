@@ -69,9 +69,6 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
     @Transient
     private Boolean isDirty;
 
-    /**
-     * The default constructor.
-     */
     public EnergyConsumptionAndEfficiency() {
         name = "";
         itemNo = "";
@@ -87,12 +84,6 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         adjustmentFactor = 0.0;
     }
 
-    /**
-     * A constructor that takes an id and name as parameters.
-     *
-     * @param id
-     * @param name
-     */
     public EnergyConsumptionAndEfficiency(Long id, String name) {
         this.id = id;
         this.name = name;
@@ -109,43 +100,35 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         adjustmentFactor = 0.0;
     }
 
-    /**
-     * Gets the id.
-     *
-     * @return
-     */
     @Override
     public Long getId() {
         return id;
     }
 
-    /**
-     * Sets the id.
-     *
-     * @param id
-     */
     @Override
     public void setId(Long id) {
         this.id = id;
     }
 
     /**
-     * Gets an Adjustment Factor (AF) used in the calculation of Adjusted Volume (AV).
-     * 
-     * @return 
+     * Gets an Adjustment Factor (AF) used in the calculation of Adjusted Volume
+     * (AV).
+     *
+     * @return
      */
     public Double getAdjustmentFactor() {
         return adjustmentFactor;
     }
 
     /**
-     * Sets an Adjustment Factor (AF) used in the calculation of Adjusted Volume (AV).
-     * 
-     * @param adjustmentFactor 
+     * Sets an Adjustment Factor (AF) used in the calculation of Adjusted Volume
+     * (AV).
+     *
+     * @param adjustmentFactor
      */
     public void setAdjustmentFactor(Double adjustmentFactor) {
         this.adjustmentFactor = adjustmentFactor;
-    }    
+    }
 
     /**
      * Gets the class of the product. This usually applies to air-conditioning
@@ -354,11 +337,6 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         this.productTypeDetail = productTypeDetail;
     }
 
-    /**
-     * Gets the isDirty flag that determines if this object is dirty (edited).
-     *
-     * @return
-     */
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -368,41 +346,21 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         return isDirty;
     }
 
-    /**
-     * Sets the isDirty flag that determines if this object is dirty (edited).
-     *
-     * @param isDirty
-     */
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
 
-    /**
-     * Gets the name of this object.
-     *
-     * @return
-     */
     @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets the name of this object.
-     *
-     * @param name
-     */
     @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Gets a hash code for this object.
-     *
-     * @return
-     */
     @Override
     public int hashCode() {
         int hash = 0;
@@ -410,13 +368,6 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         return hash;
     }
 
-    /**
-     * Tests if this object is equal to another object of the same type. This
-     * method won't work in the case the Id fields are not set.
-     *
-     * @param object
-     * @return
-     */
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof EnergyConsumptionAndEfficiency)) {
@@ -427,11 +378,6 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
-    /**
-     * Gets the string representation of this object.
-     *
-     * @return
-     */
     @Override
     public String toString() {
         if (getProductType().equals("Room Air-conditioner")) {
@@ -458,9 +404,9 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
     public static List<BusinessEntity> findAllByProductType(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-          
+
             List<BusinessEntity> list
                     = em.createQuery("SELECT e FROM EnergyConsumptionAndEfficiency e where UPPER(e.productType) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY e.productType", BusinessEntity.class).getResultList();
@@ -488,6 +434,7 @@ public class EnergyConsumptionAndEfficiency implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

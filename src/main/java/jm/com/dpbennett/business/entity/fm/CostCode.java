@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
@@ -116,13 +115,13 @@ public class CostCode implements BusinessEntity, Serializable {
             return false;
         }
         CostCode other = (CostCode) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.CostCode[id=" + id + "]";
+        return "jm.com.dpbennett.entity.CostCode[id=" + id + "]";
     }
 
     @Override
@@ -134,13 +133,13 @@ public class CostCode implements BusinessEntity, Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public static CostCode findCostCodeByCode(EntityManager em, String code) {
 
         try {
-            
+
             code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<CostCode> codes = em.createQuery("SELECT c FROM CostCode c "
                     + "WHERE c.code "
                     + "= '" + code + "'", CostCode.class).getResultList();
@@ -154,7 +153,7 @@ public class CostCode implements BusinessEntity, Serializable {
         }
 
     }
-    
+
     public static List<CostCode> findAllCostCodes(EntityManager em) {
 
         try {
@@ -170,7 +169,7 @@ public class CostCode implements BusinessEntity, Serializable {
     public static CostCode findCostCodeById(EntityManager em, Long id) {
 
         try {
-            
+
             CostCode code = em.find(CostCode.class, id);
 
             return code;

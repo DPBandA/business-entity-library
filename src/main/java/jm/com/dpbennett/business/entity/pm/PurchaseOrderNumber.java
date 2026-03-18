@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.pm;
 
 import java.util.Date;
@@ -140,7 +141,7 @@ public class PurchaseOrderNumber implements BusinessEntity {
             return null;
         }
     }
-    
+
     public static PurchaseOrderNumber findLastPurchaseOrderNumber(
             EntityManager em,
             Integer year) {
@@ -166,7 +167,7 @@ public class PurchaseOrderNumber implements BusinessEntity {
             purchaseOrderNumber.setYear(year);
             purchaseOrderNumber.setSequentialNumber(last);
         }
-        
+
         return purchaseOrderNumber;
     }
 
@@ -206,7 +207,7 @@ public class PurchaseOrderNumber implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

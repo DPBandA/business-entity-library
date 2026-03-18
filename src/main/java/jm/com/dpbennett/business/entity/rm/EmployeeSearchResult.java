@@ -24,6 +24,7 @@ package jm.com.dpbennett.business.entity.rm;
  * @author Desmond Bennett
  */
 public class EmployeeSearchResult {
+
     private Long id;
     private String firstName;
     private String lastName;
@@ -51,5 +52,5 @@ public class EmployeeSearchResult {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-       
+
 }

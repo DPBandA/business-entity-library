@@ -37,14 +37,14 @@ import org.apache.batik.util.Base64EncoderStream;
 public class QRCodeGenerator {
 
     public static void main(String[] args) throws WriterException, IOException {
-        System.out.println(QRCodeGenerator.getQRCodeImageData("getQRCodeData()", 
+        System.out.println(QRCodeGenerator.getQRCodeImageData("getQRCodeData()",
                 125)); // tk make system option
     }
-    
+
     public static String getQRCodeImageData(String qrCodeText, int size) throws WriterException, IOException {
         return base64Encode(convertBufferedImageToByteArray(createQRBufferedImage(qrCodeText, size)));
     }
-    
+
     private static BufferedImage createQRBufferedImage(String qrCodeText, int size)
             throws WriterException, IOException {
         // Create the ByteMatrix for the QR-Code that encodes the given String
@@ -70,7 +70,7 @@ public class QRCodeGenerator {
                 }
             }
         }
-        
+
         return image;
 
     }

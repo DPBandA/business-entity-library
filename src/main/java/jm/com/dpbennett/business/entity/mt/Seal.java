@@ -142,9 +142,9 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
     public Employee getAssignee() {
         if (assignee == null) {
-            return new Employee();
+            assignee = new Employee();
         }
-        
+
         return assignee;
     }
 
@@ -196,7 +196,7 @@ public class Seal implements Product, BusinessEntity, Comparable {
     public Manufacturer getManufacturer() {
 
         if (manufacturer == null) {
-            return new Manufacturer();
+            manufacturer = new Manufacturer();
         }
 
         return manufacturer;
@@ -242,7 +242,6 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Seal)) {
             return false;
         }
@@ -259,14 +258,11 @@ public class Seal implements Product, BusinessEntity, Comparable {
     @Override
     public int compareTo(Object o) {
         Long oTime, thisTime;
-        // get dates as long values for comparison
-        // this object
         if (((Seal) o).getDateIssued() != null) {
             oTime = ((Seal) o).getDateIssued().getTime();
         } else {
             oTime = 0L;
         }
-        // other object
         if (this.getDateIssued() != null) {
             thisTime = this.getDateIssued().getTime();
         } else {
@@ -310,7 +306,7 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<Seal>();
+            return new ArrayList<>();
         }
     }
 

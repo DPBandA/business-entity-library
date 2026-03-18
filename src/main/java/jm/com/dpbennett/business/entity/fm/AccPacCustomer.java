@@ -37,9 +37,6 @@ import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
- * This class encapsulates the fields of the Accpac ARCUS database table as an
- * AccPacCustomer.
- *
  * @author Desmond Bennett
  * @version 1.0
  */
@@ -76,9 +73,6 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     @Transient
     private Boolean isDirty;
 
-    /**
-     * Constructs an AccPacCustomer and initializes important fields.
-     */
     public AccPacCustomer() {
         balanceDueInCust = new BigDecimal(0.0);
         balanceDueInFunc = new BigDecimal(0.0);
@@ -229,7 +223,7 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof AccPacCustomer)) {
             return false;
         }
@@ -246,9 +240,9 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public static List<AccPacCustomer> findAllByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<AccPacCustomer> clients;
             clients = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"
@@ -265,9 +259,9 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public static List<AccPacCustomer> findAllByNameAndId(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<AccPacCustomer> clients;
             clients = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"
@@ -284,9 +278,9 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public static AccPacCustomer findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<AccPacCustomer> customers = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"
                     + " WHERE UPPER(a.customerName)"
@@ -343,6 +337,7 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

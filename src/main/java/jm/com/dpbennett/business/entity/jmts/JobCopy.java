@@ -29,12 +29,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -74,7 +71,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllJobs", query = "SELECT j FROM Job j ORDER BY j.jobNumber"),
     @NamedQuery(name = "findByJobNumber", query = "SELECT j FROM Job j WHERE j.jobNumber = :jobNumber")
 })
-public class Job implements BusinessEntity {
+public class JobCopy implements BusinessEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -93,44 +90,44 @@ public class Job implements BusinessEntity {
     private Boolean locked;
     private Boolean isEarningJob;
     private Boolean newClient;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Job parent;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private JobCopy parent;
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Classification classification;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Sector sector;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Department department;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Department subContractedDepartment;
     private Integer yearReceived;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client client;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private JobCategory jobCategory;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private JobSubCategory jobSubCategory;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedTo;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL)
     private JobCostingAndPayment jobCostingAndPayment;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL)
     private ServiceContract serviceContract;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL)
     private JobStatusAndTracking jobStatusAndTracking;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Business business;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice businessOffice;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Address billingAddress;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Contact contact;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<JobSample> jobSamples;
-    @ManyToMany
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> representatives;
-    @ManyToMany
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Service> services;
     @Column(length = 1024)
     private String jobDescription;
@@ -157,7 +154,7 @@ public class Job implements BusinessEntity {
     @Transient
     private Boolean visited;
 
-    public Job() {
+    public JobCopy() {
         this.name = "";
         this.jobNumber = "";
         this.isToBeSubcontracted = false;
@@ -166,7 +163,7 @@ public class Job implements BusinessEntity {
         this.actions = new ArrayList<>();
     }
 
-    public Job(String name) {
+    public JobCopy(String name) {
         this.name = name;
         this.jobNumber = name;
         this.isToBeSubcontracted = false;
@@ -175,7 +172,7 @@ public class Job implements BusinessEntity {
         this.actions = new ArrayList<>();
     }
 
-    public Job(Long id) {
+    public JobCopy(Long id) {
         this.id = id;
         this.name = "";
         this.jobNumber = name;
@@ -414,11 +411,11 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public Job getParent() {
+    public JobCopy getParent() {
         return parent;
     }
 
-    public void setParent(Job parent) {
+    public void setParent(JobCopy parent) {
         this.parent = parent;
     }
 
@@ -448,9 +445,9 @@ public class Job implements BusinessEntity {
                 if ((this.getJobSequenceNumber() == null)) {
                     nextJobSequenceNumber = JobSequenceNumber.findNextJobSequenceNumber(em, this.getYearReceived());
                     this.setJobSequenceNumber(nextJobSequenceNumber.getSequentialNumber());
-                    this.setJobNumber(Job.generateJobNumber(this, em));
+                    this.setJobNumber(JobCopy.generateJobNumber(this, em));
                 } else {
-                    this.setJobNumber(Job.generateJobNumber(this, em));
+                    this.setJobNumber(JobCopy.generateJobNumber(this, em));
                 }
             }
 
@@ -499,13 +496,13 @@ public class Job implements BusinessEntity {
         this.setIsDirty(false);
     }
 
-    public static Job copy(EntityManager em,
-            Job job,
+    public static JobCopy copy(EntityManager em,
+            JobCopy job,
             User user,
             Boolean autoGenerateJobNumber,
             Boolean linkSamples) {
 
-        Job copy = new Job();
+        JobCopy copy = new JobCopy();
 
         copy.setIsEarningJob(job.getIsEarningJob());
         copy.setAutoGenerateJobNumber(autoGenerateJobNumber);
@@ -552,13 +549,13 @@ public class Job implements BusinessEntity {
         copy.setIsToBeCopied(true);
         copy.setJobDescription(job.getJobDescription());
         if (copy.getAutoGenerateJobNumber()) {
-            copy.setJobNumber(Job.generateJobNumber(copy, em));
+            copy.setJobNumber(JobCopy.generateJobNumber(copy, em));
         }
 
         return copy;
     }
 
-    public static Job create(
+    public static JobCopy create(
             EntityManager em,
             EntityManager hrem,
             EntityManager fmem,
@@ -566,20 +563,20 @@ public class Job implements BusinessEntity {
             User user,
             Boolean autoGenerateJobNumber) {
 
-        Job job = Job.create(em, hrem, fmem, user, autoGenerateJobNumber);
+        JobCopy job = JobCopy.create(em, hrem, fmem, user, autoGenerateJobNumber);
         job.name = name;
 
         return job;
     }
 
-    public static Job create(
+    public static JobCopy create(
             EntityManager em,
             EntityManager hrem,
             EntityManager fmem,
             User user,
             Boolean autoGenerateJobNumber) {
 
-        Job job = new Job();
+        JobCopy job = new JobCopy();
         job.setClient(new Client("", false));
         job.setBillingAddress(job.getClient().getDefaultAddress());
         job.setContact(job.getClient().getDefaultContact());
@@ -608,13 +605,13 @@ public class Job implements BusinessEntity {
         job.setJobCostingAndPayment(JobCostingAndPayment.create(em));
         job.setNumberOfSamples(0L);
         if (job.getAutoGenerateJobNumber()) {
-            job.setJobNumber(Job.generateJobNumber(job, em));
+            job.setJobNumber(JobCopy.generateJobNumber(job, em));
         }
 
         return job;
     }
 
-    private static String buildJobNumber(Job job, EntityManager em) {
+    private static String buildJobNumber(JobCopy job, EntityManager em) {
         Calendar c = Calendar.getInstance();
         String departmentOrCompanyCode;
         String year = "?";
@@ -655,7 +652,7 @@ public class Job implements BusinessEntity {
         return job.getJobNumber();
     }
 
-    private static String buildProformaNumber(Job job) {
+    private static String buildProformaNumber(JobCopy job) {
         Calendar c = Calendar.getInstance();
         String departmentOrCompanyCode;
         String month;
@@ -715,7 +712,7 @@ public class Job implements BusinessEntity {
         return job.getJobNumber();
     }
 
-    public static String generateJobNumber(Job job, EntityManager em) {
+    public static String generateJobNumber(JobCopy job, EntityManager em) {
         if (job.getJobCostingAndPayment().getEstimate()) {
             return buildProformaNumber(job);
         } else {
@@ -812,12 +809,12 @@ public class Job implements BusinessEntity {
                 || getSubContractedDepartment().getName().equals("--"));
     }
 
-    public List<Job> getSubcontracts(EntityManager em) {
+    public List<JobCopy> getSubcontracts(EntityManager em) {
 
         return findSubcontracts(em);
     }
 
-    public List<Job> getPossibleSubcontracts(EntityManager em) {
+    public List<JobCopy> getPossibleSubcontracts(EntityManager em) {
 
         return findPossibleSubcontracts(em);
     }
@@ -844,7 +841,7 @@ public class Job implements BusinessEntity {
         this.noOfCalibrations = noOfCalibrations;
     }
 
-    public Job(JobSubCategory jobSubCategory, Double finalCost) {
+    public JobCopy(JobSubCategory jobSubCategory, Double finalCost) {
         this.isToBeSubcontracted = false;
         this.jobCostingAndPayment = new JobCostingAndPayment();
         this.jobCostingAndPayment.setFinalCost(finalCost);
@@ -1209,10 +1206,10 @@ public class Job implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof Job)) {
+        if (!(object instanceof JobCopy)) {
             return false;
         }
-        Job other = (Job) object;
+        JobCopy other = (JobCopy) object;
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
@@ -1241,8 +1238,8 @@ public class Job implements BusinessEntity {
         this.name = name;
     }
 
-    public static Job findLastClientJob(EntityManager em, Client client) {
-        Job lastJob = null;
+    public static JobCopy findLastClientJob(EntityManager em, Client client) {
+        JobCopy lastJob = null;
         String searchQuery;
 
         if (client.getId() != null) {
@@ -1260,7 +1257,7 @@ public class Job implements BusinessEntity {
         } else {
             return lastJob;
         }
-        List<Job> jobs = em.createQuery(searchQuery, Job.class).getResultList();
+        List<JobCopy> jobs = em.createQuery(searchQuery, JobCopy.class).getResultList();
         if (jobs != null) {
             if (!jobs.isEmpty()) {
                 lastJob = jobs.get(jobs.size() - 1);
@@ -1270,7 +1267,7 @@ public class Job implements BusinessEntity {
         return lastJob;
     }
 
-    public static List<Job> findJobsByDateSearchField(
+    public static List<JobCopy> findJobsByDateSearchField(
             EntityManager em,
             User user,
             DatePeriod dateSearchPeriod,
@@ -1279,7 +1276,7 @@ public class Job implements BusinessEntity {
             Integer maxResults,
             Boolean estimate) {
 
-        List<Job> foundJobs;
+        List<JobCopy> foundJobs;
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery = null;
         String searchTextAndClause;
@@ -1510,9 +1507,9 @@ public class Job implements BusinessEntity {
 
         try {
             if (maxResults == 0) {
-                foundJobs = em.createQuery(searchQuery, Job.class).getResultList();
+                foundJobs = em.createQuery(searchQuery, JobCopy.class).getResultList();
             } else {
-                foundJobs = em.createQuery(searchQuery, Job.class).setMaxResults(maxResults).getResultList();
+                foundJobs = em.createQuery(searchQuery, JobCopy.class).setMaxResults(maxResults).getResultList();
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -1522,13 +1519,13 @@ public class Job implements BusinessEntity {
         return foundJobs;
     }
 
-    public static List<Job> findAllNewJobs(EntityManager em, DatePeriod datePeriod) {
+    public static List<JobCopy> findAllNewJobs(EntityManager em, DatePeriod datePeriod) {
         try {
-            List<Job> jobs = em.createQuery("SELECT j FROM Job j"
+            List<JobCopy> jobs = em.createQuery("SELECT j FROM Job j"
                     + " JOIN j.jobStatusAndTracking t"
                     + " WHERE (t.dateSubmitted >= " + BusinessEntityUtils.getDateString(datePeriod.getStartDate(), "'", "YMD", "-")
                     + " AND t.dateSubmitted <= " + BusinessEntityUtils.getDateString(datePeriod.getEndDate(), "'", "YMD", "-") + ")"
-                    + " AND t.alertDate IS NULL", Job.class).getResultList();
+                    + " AND t.alertDate IS NULL", JobCopy.class).getResultList();
 
             return jobs;
         } catch (Exception e) {
@@ -1537,13 +1534,13 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public static List<Job> findAllUpdatedJobs(EntityManager em, DatePeriod datePeriod) {
+    public static List<JobCopy> findAllUpdatedJobs(EntityManager em, DatePeriod datePeriod) {
         try {
-            List<Job> jobs = em.createQuery("SELECT j FROM Job j"
+            List<JobCopy> jobs = em.createQuery("SELECT j FROM Job j"
                     + " JOIN j.jobStatusAndTracking t"
                     + " WHERE (t.dateSubmitted >= " + BusinessEntityUtils.getDateString(datePeriod.getStartDate(), "'", "YMD", "-")
                     + " AND t.dateSubmitted <= " + BusinessEntityUtils.getDateString(datePeriod.getEndDate(), "'", "YMD", "-") + ")"
-                    + " AND t.dateJobEmailWasSent IS NULL", Job.class).getResultList();
+                    + " AND t.dateJobEmailWasSent IS NULL", JobCopy.class).getResultList();
 
             return jobs;
         } catch (Exception e) {
@@ -1552,10 +1549,10 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public static List<Job> findAllJobs(EntityManager em) {
+    public static List<JobCopy> findAllJobs(EntityManager em) {
 
         try {
-            List<Job> jobs = em.createNamedQuery("findAllJobs", Job.class).getResultList();
+            List<JobCopy> jobs = em.createNamedQuery("findAllJobs", JobCopy.class).getResultList();
 
             return jobs;
         } catch (Exception e) {
@@ -1564,14 +1561,14 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public static List<Job> findJobsByBusinessOfficeId(
+    public static List<JobCopy> findJobsByBusinessOfficeId(
             EntityManager em, Long businessOfficeId) {
 
         try {
 
-            List<Job> jobs = em.createQuery("SELECT j FROM Job j"
+            List<JobCopy> jobs = em.createQuery("SELECT j FROM Job j"
                     + " JOIN j.businessOffice businessOffice"
-                    + " WHERE businessOffice.id = " + businessOfficeId, Job.class).getResultList();
+                    + " WHERE businessOffice.id = " + businessOfficeId, JobCopy.class).getResultList();
 
             return jobs;
         } catch (Exception e) {
@@ -1580,15 +1577,15 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public static Job findJobByJobNumber(EntityManager em, String value) {
+    public static JobCopy findJobByJobNumber(EntityManager em, String value) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<Job> jobs = em.createQuery("SELECT j FROM Job j "
+            List<JobCopy> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE UPPER(j.jobNumber) "
-                    + "= '" + value.toUpperCase() + "'", Job.class).getResultList();
+                    + "= '" + value.toUpperCase() + "'", JobCopy.class).getResultList();
 
             if (!jobs.isEmpty()) {
                 return jobs.get(0);
@@ -1601,20 +1598,20 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public static Job findParentJob(EntityManager em,
+    public static JobCopy findParentJob(EntityManager em,
             Integer yearReceived, Long jobSequenceNumber) {
         return null;
     }
 
-    public static Job findJobByYearReceivedAndJobSequence(
+    public static JobCopy findJobByYearReceivedAndJobSequence(
             EntityManager em, Integer yearReceived, Long jobSequenceNumber) {
 
         try {
 
-            List<Job> jobs = em.createQuery("SELECT j FROM Job j "
+            List<JobCopy> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE j.yearReceived = "
                     + yearReceived.toString() + " AND j.jobSequenceNumber = "
-                    + jobSequenceNumber.toString(), Job.class).getResultList();
+                    + jobSequenceNumber.toString(), JobCopy.class).getResultList();
 
             if (!jobs.isEmpty()) {
                 return jobs.get(0);
@@ -1627,10 +1624,10 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public static Job findJobById(EntityManager em, Long id) {
+    public static JobCopy findJobById(EntityManager em, Long id) {
 
         try {
-            Job job = em.find(Job.class, id);
+            JobCopy job = em.find(JobCopy.class, id);
 
             return job;
         } catch (Exception e) {
@@ -1639,12 +1636,12 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public static List<Job> findIncompleteSubcontracts(EntityManager em, Job job) {
-        List<Job> foundJobs;
-        ArrayList<Job> incompleteSubcontracts = new ArrayList<>();
+    public static List<JobCopy> findIncompleteSubcontracts(EntityManager em, JobCopy job) {
+        List<JobCopy> foundJobs;
+        ArrayList<JobCopy> incompleteSubcontracts = new ArrayList<>();
 
         foundJobs = findJobsByYearReceivedAndJobSequenceNumber(em, job.yearReceived, job.jobSequenceNumber);
-        for (Job foundJob : foundJobs) {
+        for (JobCopy foundJob : foundJobs) {
             if (foundJob.getIsSubContract() && !foundJob.getJobStatusAndTracking().getCompleted()) {
                 incompleteSubcontracts.add(foundJob);
             }
@@ -1653,16 +1650,16 @@ public class Job implements BusinessEntity {
         return incompleteSubcontracts;
     }
 
-    public static List<Job> findJobsByYearReceivedAndJobSequenceNumber(
+    public static List<JobCopy> findJobsByYearReceivedAndJobSequenceNumber(
             EntityManager em,
             Integer yearReceived,
             Long jobSequenceNumber) {
         try {
 
-            List<Job> jobs = em.createQuery("SELECT j FROM Job j "
+            List<JobCopy> jobs = em.createQuery("SELECT j FROM Job j "
                     + "WHERE j.yearReceived = "
                     + yearReceived.toString() + " AND j.jobSequenceNumber = "
-                    + jobSequenceNumber.toString(), Job.class).getResultList();
+                    + jobSequenceNumber.toString(), JobCopy.class).getResultList();
 
             return jobs;
         } catch (Exception e) {
@@ -1671,11 +1668,11 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public List<Job> findSubcontracts(EntityManager em) {
+    public List<JobCopy> findSubcontracts(EntityManager em) {
         try {
 
-            List<Job> jobs = em.createQuery("SELECT j FROM Job j "
-                    + "WHERE (j.parent.id = " + this.id + " AND j.id <> " + this.id + ")", Job.class).getResultList();
+            List<JobCopy> jobs = em.createQuery("SELECT j FROM Job j "
+                    + "WHERE (j.parent.id = " + this.id + " AND j.id <> " + this.id + ")", JobCopy.class).getResultList();
 
             return jobs;
 
@@ -1685,14 +1682,14 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public List<Job> findPossibleSubcontracts(EntityManager em) {
-        List<Job> possibleSubcontracts = new ArrayList<>();
+    public List<JobCopy> findPossibleSubcontracts(EntityManager em) {
+        List<JobCopy> possibleSubcontracts = new ArrayList<>();
 
-        List<Job> jobs = Job.findJobsByYearReceivedAndJobSequenceNumber(em,
+        List<JobCopy> jobs = JobCopy.findJobsByYearReceivedAndJobSequenceNumber(em,
                 this.getYearReceived(),
                 this.getJobSequenceNumber());
         if (jobs != null) {
-            for (Job job : jobs) {
+            for (JobCopy job : jobs) {
                 if (job.getIsSubContract() && !this.getIsSubContract()) {
                     possibleSubcontracts.add(job);
                 }
@@ -1702,11 +1699,11 @@ public class Job implements BusinessEntity {
         return possibleSubcontracts;
     }
 
-    public static List<String> getJobNumbersWithCosts(List<Job> jobs) {
+    public static List<String> getJobNumbersWithCosts(List<JobCopy> jobs) {
         List<String> jobNumbersWithCosts = new ArrayList<>();
         DecimalFormat formatter = new DecimalFormat("$#,##0.00");
 
-        for (Job job : jobs) {
+        for (JobCopy job : jobs) {
             jobNumbersWithCosts.add(job.getJobNumber()
                     + " (" + formatter.format(job.getJobCostingAndPayment().getFinalCost()) + ")");
         }
@@ -1714,17 +1711,17 @@ public class Job implements BusinessEntity {
         return jobNumbersWithCosts;
     }
 
-    public static List<Job> findAllByJobNumber(
+    public static List<JobCopy> findAllByJobNumber(
             EntityManager em, String value, int maxResults) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<Job> numbers
+            List<JobCopy> numbers
                     = em.createQuery("SELECT j FROM Job j WHERE UPPER(j.jobNumber) LIKE '%"
                             + value.toUpperCase().trim() + "%'"
-                            + " ORDER BY j.id DESC", Job.class).setMaxResults(maxResults).getResultList();
+                            + " ORDER BY j.id DESC", JobCopy.class).setMaxResults(maxResults).getResultList();
             return numbers;
 
         } catch (Exception e) {
@@ -1733,12 +1730,12 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public static List<Job> findJobsWithJobCosting(
+    public static List<JobCopy> findJobsWithJobCosting(
             EntityManager em,
             String departmentName,
             String searchText) {
 
-        List<Job> foundJobs;
+        List<JobCopy> foundJobs;
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
         String searchQuery;
         String searchTextAndClause = "";
@@ -1780,7 +1777,7 @@ public class Job implements BusinessEntity {
                 + searchTextAndClause
                 + " ORDER BY job.id DESC";
         try {
-            foundJobs = em.createQuery(searchQuery, Job.class).getResultList();
+            foundJobs = em.createQuery(searchQuery, JobCopy.class).getResultList();
             if (foundJobs == null) {
                 foundJobs = new ArrayList<>();
             }
@@ -1979,35 +1976,35 @@ public class Job implements BusinessEntity {
             if (getClassification().getId() != null) {
                 getClassification().save(em);
             }
-
+            
             if (getSector().getId() != null) {
                 getSector().save(em);
             }
-
+            
             if (getDepartment().getId() != null) {
                 getDepartment().save(em);
             }
-
+            
             if (getSubContractedDepartment().getId() != null) {
                 getSubContractedDepartment().save(em);
             }
-
+            
             if (getClient().getId() != null) {
                 getClient().save(em);
             }
-
+            
             if (getJobCategory().getId() != null) {
                 getJobCategory().save(em);
-            }
-
+            }            
+            
             if (getJobSubCategory().getId() != null) {
                 getJobSubCategory().save(em);
             }
-
+            
             if (getAssignedTo().getId() != null) {
                 getAssignedTo().save(em);
             }
-
+            
             returnMessage = getJobCostingAndPayment().save(em);
 
             if (!returnMessage.isSuccess()) {
@@ -2018,27 +2015,27 @@ public class Job implements BusinessEntity {
                         + "\nDetails: " + returnMessage.getDetail(),
                         Message.SEVERITY_ERROR_NAME);
             }
-
+            
             getServiceContract().save(em);
-
+            
             getJobStatusAndTracking().save(em);
-
+            
             if (getBusiness().getId() != null) {
                 getBusiness().save(em);
             }
-
+            
             if (getBusinessOffice().getId() != null) {
                 getBusinessOffice().save(em);
             }
-
+            
             if (getBillingAddress().getId() != null) {
                 getBillingAddress().save(em);
             }
-
+            
             if (getContact().getId() != null) {
                 getContact().save(em);
             }
-
+            
             for (JobSample jobSample : getJobSamples()) {
 
                 returnMessage = jobSample.save(em);
@@ -2055,15 +2052,15 @@ public class Job implements BusinessEntity {
                 }
 
             }
-
+            
             for (Employee representative : getRepresentatives()) {
                 representative.save(em);
             }
-
+            
             for (Service service : getServices()) {
                 service.save(em);
             }
-
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -2085,11 +2082,12 @@ public class Job implements BusinessEntity {
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-        Job currentlySavedJob = null;
-        Job currentJob = this;
+        JobCopy currentlySavedJob = null;
+        JobCopy currentJob = this;
 
+        // Get currently saved job for later use in validation
         if (currentJob.getId() != null) {
-            currentlySavedJob = Job.findJobById(em, currentJob.getId());
+            currentlySavedJob = JobCopy.findJobById(em, currentJob.getId());
         }
 
         if (!BusinessEntityUtils.validateName(currentJob.getBusinessOffice().getName())) {
@@ -2105,7 +2103,7 @@ public class Job implements BusinessEntity {
             return new ReturnMessage(false, "This job cannot be saved because a valid business office was not entered.");
         }
 
-        Job existingJob = Job.findJobByJobNumber(em, currentJob.getJobNumber());
+        JobCopy existingJob = JobCopy.findJobByJobNumber(em, currentJob.getJobNumber());
         if (existingJob != null) {
             long current_jobid = currentJob.getId() != null ? currentJob.getId() : -1L;
             if (existingJob.getId() != current_jobid) {
@@ -2216,7 +2214,7 @@ public class Job implements BusinessEntity {
         }
 
         if (currentJob.getId() != null) {
-            Job jobFound = Job.findJobById(em, currentJob.getId());
+            JobCopy jobFound = JobCopy.findJobById(em, currentJob.getId());
             if (jobFound != null) {
                 if (!jobFound.getIsSubContract() && currentJob.getIsSubContract()) {
                     return new ReturnMessage(false, "A main/parent job cannot be converted to a subcontracted job.\n"
@@ -2292,11 +2290,11 @@ public class Job implements BusinessEntity {
         }
     }
 
-    public List<BusinessEntity.Action> getActions() {
+    public List<Action> getActions() {
         return actions;
     }
 
-    public void setActions(List<BusinessEntity.Action> actions) {
+    public void setActions(List<Action> actions) {
         this.actions = actions;
     }
 

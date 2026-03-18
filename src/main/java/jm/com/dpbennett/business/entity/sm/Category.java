@@ -153,9 +153,9 @@ public class Category implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Category> categories
                     = em.createQuery("SELECT c FROM Category c where UPPER(c.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY c.name", Category.class).getResultList();
@@ -175,7 +175,7 @@ public class Category implements BusinessEntity {
         List<Category> categories;
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             if (ignoreCase) {
@@ -188,7 +188,7 @@ public class Category implements BusinessEntity {
                 categories = em.createQuery("SELECT c FROM Category c"
                         + " WHERE c.name "
                         + "= '" + value + "'"
-                        + " AND (c.active = 1 OR c.active IS NULL)", 
+                        + " AND (c.active = 1 OR c.active IS NULL)",
                         Category.class).getResultList();
             }
 
@@ -208,7 +208,7 @@ public class Category implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Category> categories
@@ -252,7 +252,7 @@ public class Category implements BusinessEntity {
     public static List<Category> findCategoriesByType(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             return em.createQuery("SELECT c FROM Category c "
@@ -273,13 +273,13 @@ public class Category implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }

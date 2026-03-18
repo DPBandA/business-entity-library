@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.hrm;
 
 import java.io.Serializable;
@@ -39,7 +38,6 @@ import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
-
 
 /**
  *
@@ -87,7 +85,7 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
-    
+
     @Override
     public Boolean getActive() {
         return active;
@@ -125,12 +123,11 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof DepartmentUnit)) {
             return false;
         }
         DepartmentUnit other = (DepartmentUnit) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -156,21 +153,21 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.name, ((DepartmentUnit) o).name);
     }
-    
-    public static List<DepartmentUnit> findDepartmentUnitsByName(EntityManager em, 
+
+    public static List<DepartmentUnit> findDepartmentUnitsByName(EntityManager em,
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
-            List<DepartmentUnit> departmentUnits =
-                    em.createQuery("SELECT d FROM DepartmentUnit d where UPPER(d.name) like '"
-                    + value.toUpperCase().trim() + "%' ORDER BY d.name", DepartmentUnit.class).getResultList();
+
+            List<DepartmentUnit> departmentUnits
+                    = em.createQuery("SELECT d FROM DepartmentUnit d where UPPER(d.name) like '"
+                            + value.toUpperCase().trim() + "%' ORDER BY d.name", DepartmentUnit.class).getResultList();
             return departmentUnits;
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<DepartmentUnit>();
+            return new ArrayList<>();
         }
     }
 
@@ -187,9 +184,9 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
     public static DepartmentUnit findDepartmentUnitByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<DepartmentUnit> departmentUnits = em.createQuery("SELECT d FROM DepartmentUnit d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", DepartmentUnit.class).getResultList();
@@ -209,9 +206,9 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
 
     public static List<String> findAllDepartmentUnitNames(EntityManager em) {
 
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
 
-        try { // tk try String.class instead of Department.class for better performance
+        try {
             List<DepartmentUnit> departmentUnits = em.createNamedQuery("findAllDepartmentUnits", DepartmentUnit.class).getResultList();
             for (DepartmentUnit departmentUnit : departmentUnits) {
                 names.add(departmentUnit.getName());
@@ -232,7 +229,7 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
             return null;
         }
     }
-    
+
     public static DepartmentUnit getDefaultDepartmentUnit(EntityManager em,
             String name) {
         DepartmentUnit departmentUnit = DepartmentUnit.findDepartmentUnitByName(em, name);
@@ -251,8 +248,8 @@ public class DepartmentUnit implements Serializable, BusinessEntity, Comparable 
 
     @Override
     public ReturnMessage save(EntityManager em) {
-         try {
-        
+        try {
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

@@ -47,8 +47,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "employeeposition")
 @NamedQueries({
-    @NamedQuery(name = "findAllEmployeePositions", query = "SELECT e FROM EmployeePosition e ORDER BY e.title")
-    ,
+    @NamedQuery(name = "findAllEmployeePositions", query = "SELECT e FROM EmployeePosition e ORDER BY e.title"),
     @NamedQuery(name = "findAllActiveEmployeePositions", query = "SELECT e FROM EmployeePosition e WHERE e.active = 1 ORDER BY e.title")
 })
 public class EmployeePosition implements Serializable, BusinessEntity, Comparable {
@@ -59,8 +58,8 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     private String type;
     private String title;
     private String classification;
-    private String category;    
-    private Boolean active;    
+    private String category;
+    private Boolean active;
     private Double salary;
     private String payCycle;
     private Double manHourRate;
@@ -71,10 +70,6 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     @Transient
     private Boolean isDirty;
 
-    /**
-     * Constructs and EmployeePosition object.
-     * 
-     */
     public EmployeePosition() {
         type = "";
         title = "";
@@ -239,7 +234,6 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof EmployeePosition)) {
             return false;
         }
@@ -316,13 +310,13 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static EmployeePosition findEmployeePositionByTitle(EntityManager em, 
+    public static EmployeePosition findEmployeePositionByTitle(EntityManager em,
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
                     + "WHERE UPPER(e.title) "
                     + "= '" + value.toUpperCase() + "'", EmployeePosition.class).getResultList();
@@ -342,9 +336,9 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<EmployeePosition> employeePositions
                     = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY e.title", EmployeePosition.class).getResultList();
@@ -356,13 +350,13 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     }
 
     public static List<EmployeePosition> findActiveEmployeePositionsByTitle(
-            EntityManager em, 
+            EntityManager em,
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<EmployeePosition> employeePositions
                     = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
                             + value.toUpperCase().trim() + "%' AND e.active = 1 ORDER BY e.title", EmployeePosition.class).getResultList();
@@ -378,9 +372,9 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
                     + "WHERE e.active = 1 AND UPPER(e.title) "
                     + "= '" + value + "'",
@@ -400,13 +394,13 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }

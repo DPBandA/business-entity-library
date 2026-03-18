@@ -100,6 +100,7 @@ public class UnitCost implements Serializable, BusinessEntity {
         if (laboratory == null) {
             laboratory = new Laboratory();
         }
+        
         return laboratory;
     }
 
@@ -111,6 +112,7 @@ public class UnitCost implements Serializable, BusinessEntity {
         if (departmentUnit == null) {
             departmentUnit = new DepartmentUnit();
         }
+        
         return departmentUnit;
     }
 
@@ -194,8 +196,9 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     public Department getDepartment() {
         if (department == null) {
-            return new Department("");
+            department = new Department("");
         }
+        
         return department;
     }
 
@@ -212,7 +215,6 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof UnitCost)) {
             return false;
         }
@@ -292,7 +294,7 @@ public class UnitCost implements Serializable, BusinessEntity {
         try {
             foundUnitCosts = em.createQuery(searchQuery, UnitCost.class).getResultList();
             if (foundUnitCosts == null) {
-                foundUnitCosts = new ArrayList<UnitCost>();
+                foundUnitCosts = new ArrayList<>();
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -305,11 +307,19 @@ public class UnitCost implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getDepartment().save(em);
-            getLaboratory().save(em);
-            getDepartmentUnit().save(em);
-            
+
+            if (getDepartment().getId() != null) {
+                getDepartment().save(em);
+            }
+
+            if (getLaboratory().getId() != null) {
+                getLaboratory().save(em);
+            }
+
+            if (getDepartmentUnit().getId() != null) {
+                getDepartmentUnit().save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

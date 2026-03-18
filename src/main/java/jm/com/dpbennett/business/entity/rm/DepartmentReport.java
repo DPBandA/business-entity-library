@@ -90,6 +90,11 @@ public class DepartmentReport implements Serializable, BusinessEntity {
     }
 
     public Department getDepartment() {
+
+        if (department == null) {
+            department = new Department();
+        }
+
         return department;
     }
 
@@ -106,7 +111,6 @@ public class DepartmentReport implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof DepartmentReport)) {
             return false;
         }
@@ -118,7 +122,7 @@ public class DepartmentReport implements Serializable, BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.DepartmentReport[id=" + id + "]";
+        return "jm.com.dpbennett.entity.DepartmentReport[id=" + id + "]";
     }
 
     public static DepartmentReport findDepartmentReportById(EntityManager em, Long Id) {
@@ -215,8 +219,10 @@ public class DepartmentReport implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getDepartment().save(em);
+
+            if (getDepartment().getId() != null) {
+                getDepartment().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

@@ -32,4 +32,5 @@ public interface SearchManagement {
     public String getCurrentSearchParameterKey();
 
     public void setCurrentSearchParameterKey(String currentSearchParameterKey);
+    
 }

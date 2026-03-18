@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.rm;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -44,9 +43,8 @@ public class FieldUpdate implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private String fieldName;
-    private String className;    
+    private String className;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateUpdated;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -59,62 +57,30 @@ public class FieldUpdate implements Serializable {
     public void setUpdatedBy(Employee updatedBy) {
         this.updatedBy = updatedBy;
     }
-    
-    /**
-     * Get the value of dateUpdated
-     *
-     * @return the value of dateUpdated
-     */
+
     public Date getDateUpdated() {
         return dateUpdated;
     }
 
-    /**
-     * Set the value of dateUpdated
-     *
-     * @param dateUpdated new value of dateUpdated
-     */
     public void setDateUpdated(Date dateUpdated) {
         this.dateUpdated = dateUpdated;
     }
 
-
-    /**
-     * Get the value of className
-     *
-     * @return the value of className
-     */
     public String getClassName() {
         return className;
     }
 
-    /**
-     * Set the value of className
-     *
-     * @param className new value of className
-     */
     public void setClassName(String className) {
         this.className = className;
     }
 
-
     public FieldUpdate() {
     }
 
-    /**
-     * Get the value of fieldName
-     *
-     * @return the value of fieldName
-     */
     public String getFieldName() {
         return fieldName;
     }
 
-    /**
-     * Set the value of fieldName
-     *
-     * @param fieldName new value of fieldName
-     */
     public void setFieldName(String fieldName) {
         this.fieldName = fieldName;
     }
@@ -136,15 +102,12 @@ public class FieldUpdate implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof FieldUpdate)) {
             return false;
         }
         FieldUpdate other = (FieldUpdate) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override

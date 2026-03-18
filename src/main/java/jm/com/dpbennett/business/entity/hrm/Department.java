@@ -35,7 +35,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -74,17 +73,17 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     private Employee head;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee actingHead;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private List<JobCategory> jobCategories;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private List<Employee> staff;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private List<Laboratory> laboratories;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private List<DepartmentUnit> departmentUnits;
 
     @Transient
@@ -213,7 +212,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public Employee getHead() {
 
         if (head == null) {
-            return new Employee();
+            head = new Employee();
         }
 
         return head;
@@ -225,7 +224,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     public Employee getActingHead() {
         if (actingHead == null) {
-            return new Employee();
+            actingHead = new Employee();
         }
 
         return actingHead;
@@ -304,7 +303,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Department)) {
             return false;
         }
@@ -353,8 +351,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
                     = em.createQuery("SELECT d FROM Department d WHERE UPPER(d.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Department.class).getResultList();
 
-            // NB: This is used to remove departments with ' in their names. This may not be
-            // needed in the future.
             Iterator<Department> iterator = departments.iterator();
             while (iterator.hasNext()) {
                 Department element = iterator.next();
@@ -496,22 +492,23 @@ public class Department implements Serializable, BusinessEntity, Comparable {
             if (getHead().getId() != null) {
                 getHead().save(em);
             }
+            
             if (getActingHead().getId() != null) {
                 getActingHead().save(em);
             }
-
-            getInternet().save(em);
-            getPrivilege().save(em);
-
+           
             for (JobCategory jobCategory : getJobCategories()) {
                 jobCategory.save(em);
             }
+            
             for (Employee employee : getStaff()) {
                 employee.save(em);
             }
+            
             for (Laboratory laboratory : getLaboratories()) {
                 laboratory.save(em);
             }
+            
             for (DepartmentUnit departmentUnit : getDepartmentUnits()) {
                 departmentUnit.save(em);
             }
@@ -534,14 +531,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    /**
-     * This method guards against returning very long names. This is used in an
-     * autocomplete JSF component for instance to prevent the list of entity
-     * names from extending beyond the screen. In the future, the maximum length
-     * of say 50 will be a value stored in the resource bundle of the BEL.
-     *
-     * @return
-     */
     public String getTruncatedName() {
         if (getName().length() >= 50) {
             return getName().substring(0, 50);
@@ -574,7 +563,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
         if (job.getSubContractedDepartment().getName().equals("--")
                 || job.getSubContractedDepartment().getName().equals("")) {
-            // This is not a subcontracted job see return to parent department            
+
             dept = Department.findByName(em, job.getDepartment().getName());
             if (dept != null) {
                 em.refresh(dept);

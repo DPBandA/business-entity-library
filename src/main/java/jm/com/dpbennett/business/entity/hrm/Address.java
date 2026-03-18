@@ -121,7 +121,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         }
         return isDirty;
     }
-    
+
     @Override
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
@@ -293,7 +293,6 @@ public class Address implements Serializable, BusinessEntity, Comparable {
             return "";
         } else {
 
-//            Address.prepare(this);
             return getAddressLine1()
                     + "; " + getAddressLine2()
                     + "; " + getCity()
@@ -356,9 +355,9 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     public static Address findAddressByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Address> addresses = em.createQuery("SELECT a FROM Address a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", Address.class).getResultList();
@@ -372,17 +371,10 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    /**
-     * Find an address associated with a client.
-     *
-     * @param em
-     * @param value
-     * @return
-     */
     public static Address findClientAddress(EntityManager em, String value) {
 
         try {
-            
+
             String address[] = value.split("; ");
             String addressLine1 = address[0];
             String addressLine2 = address[1];
@@ -408,17 +400,6 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    /**
-     * Find an address associated with a client given the client's id. This
-     * method uses a cude method by finding the client first then looping over
-     * the addresses to find the required address. I full SQL solution is to be
-     * developed.
-     *
-     * @param em
-     * @param query
-     * @param clientId
-     * @return
-     */
     public static Address findClientAddressById(EntityManager em, String query, Long clientId) {
 
         try {
@@ -506,9 +487,9 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     public static List<Address> findClientAddresses(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "`");
-           
+
             List<Address> addresses;
             Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
                     + " WHERE a.addressLine1 LIKE '%" + value + "%'"
@@ -541,7 +522,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -558,7 +539,7 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     public ReturnMessage validate(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     public static Boolean validate(Address address) {
 
         if (address != null) {

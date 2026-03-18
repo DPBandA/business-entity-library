@@ -30,6 +30,7 @@ import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -70,31 +71,30 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private String username;
     private String title;
     private String name;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    private List<EmployeePosition> positions;
+    @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature signature;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Address> addresses;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<PhoneNumber> phoneNumbers;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department department;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<EmployeePosition> positions;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<Address> addresses;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<PhoneNumber> phoneNumbers;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date birthDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateHired;
     private String notes;
     private Boolean active;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Signature signature;
     @Transient
     private Boolean isDirty;
 
     public Employee() {
         firstName = "";
         lastName = "";
-        internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
         positions = new ArrayList<>();
@@ -211,7 +211,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public Signature getSignature() {
 
         if (signature == null) {
-            return new Signature();
+            signature = new Signature();
         }
 
         return signature;
@@ -270,6 +270,11 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     }
 
     public List<PhoneNumber> getPhoneNumbers() {
+
+        if (phoneNumbers == null) {
+            phoneNumbers = new ArrayList<>();
+        }
+
         return phoneNumbers;
     }
 
@@ -533,14 +538,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    /**
-     * Gets first employee with the given firstname and lasname
-     *
-     * @param em
-     * @param firstName
-     * @param lastName
-     * @return
-     */
     public static Employee findByFirstAndLastName(EntityManager em,
             String firstName, String lastName) {
 
@@ -568,14 +565,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         return null;
     }
 
-    /**
-     * Gets first active employee with the given firstname and lasname
-     *
-     * @param em
-     * @param firstName
-     * @param lastName
-     * @return
-     */
     public static Employee findActiveByName(EntityManager em,
             String firstName,
             String lastName) {
@@ -673,7 +662,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
         name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-        // NB: This assumes that the name is given as "lastname, firstname"
         String names[] = name.split(",");
 
         if (names.length == 2) {
@@ -725,29 +713,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            getInternet().save(em);
-
-            if (getSignature().getId() != null) {
-                getSignature().save(em);
-            }
-            
-            // NB: This results in stack overflow. To be investigated.
-            //if (getDepartment().getId() != null) {
-            //    getDepartment().save(em);
-            //}
-            
-            for (EmployeePosition position : getPositions()) {
-                position.save(em);
-            }
-
-            for (Address address : getAddresses()) {
-                address.save(em);
-            }
-
-            for (PhoneNumber phoneNumber : getPhoneNumbers()) {
-                phoneNumber.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

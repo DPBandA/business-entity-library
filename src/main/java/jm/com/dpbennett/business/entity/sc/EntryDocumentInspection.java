@@ -150,6 +150,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
         if (invoiceNumber == null) {
             invoiceNumber = "";
         }
+        
         return invoiceNumber;
     }
 
@@ -225,6 +226,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
         if (CIF == null) {
             CIF = 0.0;
         }
+        
         return CIF;
     }
 
@@ -269,7 +271,6 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof EntryDocumentInspection)) {
             return false;
         }
@@ -306,7 +307,6 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
 
         if (containerNumbers != null) {
             ArrayList<String> list = new ArrayList<>(Arrays.asList(containerNumbers.split("[,;:|/]")));
-            //containerNumberList.add("");
             for (String string : list) {
                 containerNumberList.add(string.trim());
             }
@@ -321,7 +321,6 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            // Save new cost components
             if (!getShippingContainers().isEmpty()) {
                 for (ShippingContainer shippingContainer : getShippingContainers()) {
                     if ((shippingContainer.getIsDirty() || shippingContainer.getId() == null)

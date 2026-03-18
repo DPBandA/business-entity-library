@@ -65,19 +65,19 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private DocumentType documentType;
     private String number;
     private Boolean autoGenerateNumber;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateReceived;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Department requestingDepartment;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Department responsibleDepartment;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee responsibleOfficer;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee submittedBy;
     @Column(length = 1024)
     private String description;
@@ -88,7 +88,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfCompletion;
     private String url;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Classification classification;
     @Column(length = 1024)
     private String comments;
@@ -99,14 +99,14 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     private Integer yearReceived;
     private Integer turnAroundTime;
     private Long numberOfDocuments;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Client externalClient;
     @Column(length = 1024)
     private String goal;
     @Column(length = 1024)
     private String status;
     private String priorityLevel;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee editedBy;
     @Transient
     private Boolean isDirty;
@@ -131,7 +131,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            return new Employee();
+            editedBy = new Employee();
         }
 
         return editedBy;
@@ -182,7 +182,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     public Client getExternalClient() {
         if (externalClient == null) {
-            return new Client();
+            externalClient = new Client();
         }
 
         return externalClient;
@@ -226,7 +226,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     public Department getRequestingDepartment() {
         if (requestingDepartment == null) {
-            return new Department();
+            requestingDepartment = new Department();
         }
 
         return requestingDepartment;
@@ -268,7 +268,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     public Department getResponsibleDepartment() {
         if (responsibleDepartment == null) {
-            return new Department();
+            responsibleDepartment = new Department();
         }
 
         return responsibleDepartment;
@@ -358,7 +358,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     public Employee getResponsibleOfficer() {
 
         if (responsibleOfficer == null) {
-            return new Employee();
+            responsibleOfficer = new Employee();
         }
 
         return responsibleOfficer;
@@ -371,7 +371,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     public Employee getSubmittedBy() {
 
         if (submittedBy == null) {
-            return new Employee();
+            submittedBy = new Employee();
         }
 
         return submittedBy;
@@ -400,7 +400,6 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof DocumentTracking)) {
             return false;
         }
@@ -411,7 +410,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.Document[id=" + id + "]";
+        return "jm.com.dpbennett.entity.Document[id=" + id + "]";
     }
 
     @Override
@@ -422,7 +421,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     @Override
     public Classification getClassification() {
         if (classification == null) {
-            return new Classification();
+            classification = new Classification();
         }
 
         return classification;
@@ -434,13 +433,10 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     }
 
     public Integer getCurrentDocumentTurnaroundTime() {
-        //Integer workingDays = null;
 
-        // if exp. date not set just return null
         if (getDateReceived() == null) {
             return null;
         }
-        // if date of completion not set then use current date
         if (getDateOfCompletion() == null) {
             return null;
         }
@@ -593,21 +589,17 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     public static String getDocumentTrackingNumber(DocumentTracking documentTracking, String prefix) {
         String number = prefix;
 
-        // append department code
         if (documentTracking.getResponsibleDepartment().getCode() != null) {
             number = number + documentTracking.getResponsibleDepartment().getCode();
         } else {
             number = number + "?";
         }
-        // append doc type
         if (documentTracking.getDocumentType() != null) {
             number = number + "_" + documentTracking.getDocumentType().getCode();
         }
-        // append doc form
         if (documentTracking.getDocumentForm() != null) {
             number = number + "/" + documentTracking.getDocumentForm();
         }
-        // append doc seq
         if (documentTracking.getSequenceNumber() != null) {
             NumberFormat formatter = DecimalFormat.getIntegerInstance();
             formatter.setMinimumIntegerDigits(2);
@@ -615,7 +607,6 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
         } else {
             number = number + "_?";
         }
-        // append month in the form (MMM) and year in the form (YY).
         if (documentTracking.getDateReceived() != null) {
             number = number + "/" + BusinessEntityUtils.getMonthShortFormat(documentTracking.getDateReceived())
                     + BusinessEntityUtils.getYearShortFormat(documentTracking.getDateReceived(), 2);
@@ -628,30 +619,30 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getDocumentType().getId() != null) {
-                getDocumentType().save(em);
-            }
-            if (getRequestingDepartment().getId() != null) {
-                getRequestingDepartment().save(em);
-            }
-            if (getResponsibleDepartment().getId() != null) {
-                getResponsibleDepartment().save(em);
-            }
-            if (getResponsibleOfficer().getId() != null) {
-                getResponsibleOfficer().save(em);
-            }
-            if (getSubmittedBy().getId() != null) {
-                getSubmittedBy().save(em);
-            }
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
-            }
-            if (getExternalClient().getId() != null) {
-                getExternalClient().save(em);
-            }
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
-            }
+//            if (getDocumentType().getId() != null) {
+//                getDocumentType().save(em);
+//            }
+//            if (getRequestingDepartment().getId() != null) {
+//                getRequestingDepartment().save(em);
+//            }
+//            if (getResponsibleDepartment().getId() != null) {
+//                getResponsibleDepartment().save(em);
+//            }
+//            if (getResponsibleOfficer().getId() != null) {
+//                getResponsibleOfficer().save(em);
+//            }
+//            if (getSubmittedBy().getId() != null) {
+//                getSubmittedBy().save(em);
+//            }
+//            if (getClassification().getId() != null) {
+//                getClassification().save(em);
+//            }
+//            if (getExternalClient().getId() != null) {
+//                getExternalClient().save(em);
+//            }
+//            if (getEditedBy().getId() != null) {
+//                getEditedBy().save(em);
+//            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -679,7 +670,7 @@ public class DocumentTracking implements Document, Serializable, Comparable, Bus
     public DocumentType getDocumentType() {
 
         if (documentType == null) {
-            return new DocumentType();
+            documentType = new DocumentType();
         }
 
         return documentType;

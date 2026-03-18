@@ -97,7 +97,6 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ProductTest)) {
             return false;
         }
@@ -108,7 +107,7 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FoodTest[id=" + id + "]";
+        return "jm.com.dpbennett.entity.FoodTest[id=" + id + "]";
     }
 
     @Override
@@ -190,7 +189,9 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getTestDoneBy().save(em);
+            if (getTestDoneBy().getId() != null) {
+                getTestDoneBy().save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

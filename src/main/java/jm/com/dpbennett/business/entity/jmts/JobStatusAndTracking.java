@@ -144,11 +144,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     }
 
     public Employee getCompletedBy() {
-        
-        if (completedBy == null) {
-            return new Employee();
-        }
-        
+
         return completedBy;
     }
 
@@ -238,10 +234,11 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
 
     @Override
     public Employee getEditedBy() {
+
         if (editedBy == null) {
-            return new Employee();
+            editedBy = new Employee();
         }
-        
+
         return editedBy;
     }
 
@@ -252,7 +249,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     @Override
     public Employee getEnteredBy() {
         if (enteredBy == null) {
-            return new Employee();
+            enteredBy = new Employee();
         }
 
         return enteredBy;
@@ -264,10 +261,6 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     }
 
     public Employee getTransferredTo() {
-
-        if (transferredTo == null) {
-            return new Employee();
-        }
 
         return transferredTo;
     }
@@ -394,13 +387,6 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
         this.jobEmailFrequency = jobEmailFrequency;
     }
 
-//    public String getJobEnteredBy() {
-//        return jobEnteredBy;
-//    }
-//
-//    public void setJobEnteredBy(String jobEnteredBy) {
-//        this.jobEnteredBy = jobEnteredBy;
-//    }
     public String getJobTransferedTo() {
         return jobTransferedTo;
     }
@@ -467,7 +453,6 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof JobStatusAndTracking)) {
             return false;
         }
@@ -478,7 +463,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.JobStatusAndTracking[id=" + id + "]";
+        return "jm.com.dpbennett.entity.JobStatusAndTracking[id=" + id + "]";
     }
 
     @Override
@@ -544,19 +529,6 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getTransferredTo().getId() != null) {
-                getTransferredTo().save(em);
-            }
-            if (getEnteredBy().getId() != null) {
-                getEnteredBy().save(em);
-            }
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
-            }
-            if (getCompletedBy().getId() != null) {
-                getCompletedBy().save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

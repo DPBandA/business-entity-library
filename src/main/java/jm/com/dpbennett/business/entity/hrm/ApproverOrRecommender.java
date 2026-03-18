@@ -60,5 +60,4 @@ public class ApproverOrRecommender extends Employee {
             return getName() + " (Rec'er)";
         }
     }
-
 }

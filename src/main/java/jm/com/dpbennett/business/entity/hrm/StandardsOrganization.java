@@ -103,18 +103,17 @@ public class StandardsOrganization implements BusinessEntity, Company {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof StandardsOrganization)) {
             return false;
         }
         StandardsOrganization other = (StandardsOrganization) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.StandardsOrganization[id=" + id + "]";
+        return "jm.com.dpbennett.entity.StandardsOrganization[id=" + id + "]";
     }
 
     @Override

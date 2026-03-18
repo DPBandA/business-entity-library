@@ -282,14 +282,6 @@ public class BusinessEntityUtils {
         return Boolean.FALSE;
     }
 
-    /**
-     * Returns a method that is of known basic type given a string representing
-     * a path to a method that will return a value for use in table of values
-     * for example.
-     *
-     * @param methodPath
-     * @return
-     */
     public static Method getMethodOfKnownDataType(String methodPath) {
         int i = 0;
         Method method = null;
@@ -297,19 +289,15 @@ public class BusinessEntityUtils {
         try {
 
             String[] methodNames = methodPath.split("/");
-            // first class that could contain the method
             Class c = Class.forName(methodNames[0]);
-            // get array of method names
             String[] methodName = methodNames[1].split("\\.");
 
             do {
-                // get method with basic datatype and call it if possible
                 method = c.getMethod(methodName[i], (Class[]) null);
                 String dataType = method.getReturnType().getName();
                 if (isBasicDataType(dataType)) {
                     break;
                 } else {
-                    // get and use the class returned by this method
                     c = method.getReturnType();
                 }
                 i++;
@@ -323,13 +311,6 @@ public class BusinessEntityUtils {
         }
     }
 
-    /**
-     * Returns the class to which a method belongs given the the methods path
-     * for example.
-     *
-     * @param methodPath
-     * @return
-     */
     public static Class getClass(String methodPath) {
         int i = 0;
         Method method;
@@ -338,19 +319,15 @@ public class BusinessEntityUtils {
         try {
 
             String[] methodNames = methodPath.split("/");
-            // first class that could contain the method
             c = Class.forName(methodNames[0]);
-            // get array of method names
             String[] methodName = methodNames[1].split("\\.");
 
             do {
-                // get method with basic datatype and call it if possible
                 method = c.getMethod(methodName[i], (Class[]) null);
                 String dataType = method.getReturnType().getName();
                 if (isBasicDataType(dataType)) {
                     return c;
                 } else {
-                    // get and use the class returned by this method
                     c = method.getReturnType();
                 }
                 i++;
@@ -370,9 +347,7 @@ public class BusinessEntityUtils {
         Class c;
         Method m;
 
-        // split the path into class and methods string
         String[] path = methodPath.split("/");
-        // get array of method names
         String[] methodNames = path[1].split("\\.");
 
         int i = -1;
@@ -391,12 +366,6 @@ public class BusinessEntityUtils {
         return value;
     }
 
-    /**
-     * Creates a new client object given an AccPac client object
-     *
-     * @param apcustomer
-     * @return
-     */
     public static Client createClient(AccPacCustomer apcustomer) {
         Client client = new Client();
 
@@ -425,6 +394,29 @@ public class BusinessEntityUtils {
         }
 
     }
+    
+//    public static BusinessEntity saveBusinessEntity(EntityManager em, BusinessEntity businessEntity) {
+//
+//        try {
+//
+//            businessEntity.setName(sanitize(businessEntity.getName()));
+//
+//            if (businessEntity.getId() != null) {
+//                em.merge(businessEntity);
+//            } else {
+//                em.persist(businessEntity);
+//            }
+//
+//            return businessEntity;
+//
+//        } catch (Exception e) {
+//
+//            System.out.println(e);
+//
+//            return null;
+//        }
+//
+//    }
 
     public synchronized static void saveBusinessEntityInTransaction(EntityManager em,
             BusinessEntity entity) {
@@ -464,7 +456,6 @@ public class BusinessEntityUtils {
     public static int getYearFromDate(Date date) {
         Calendar c;
 
-        // current time and date
         c = Calendar.getInstance();
         c.setTime(date);
 
@@ -474,10 +465,8 @@ public class BusinessEntityUtils {
     public static Date getStartOfCurrentYear() {
         Calendar c, current;
 
-        // current time and date
         current = Calendar.getInstance();
         c = Calendar.getInstance();
-        // set start date
         c.set(current.get(Calendar.YEAR), Calendar.JANUARY, 1, 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
@@ -487,10 +476,8 @@ public class BusinessEntityUtils {
     public static Date getEndOfCurrentYear() {
         Calendar c, current;
 
-        // current time and date
         current = Calendar.getInstance();
         c = Calendar.getInstance();
-        // set end date
         c.set(current.get(Calendar.YEAR), Calendar.DECEMBER, 31, 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
@@ -500,10 +487,8 @@ public class BusinessEntityUtils {
     public static Date getStartOfCurrentMonth() {
         Calendar c, current;
 
-        // current time and date
         current = Calendar.getInstance();
         c = Calendar.getInstance();
-        // set start date
         c.set(current.get(Calendar.YEAR), current.get(Calendar.MONTH), 1, 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
@@ -513,10 +498,8 @@ public class BusinessEntityUtils {
     public static Date getStartOfCurrentMonthPreviousYear() {
         Calendar c, current;
 
-        // current time and date
         current = Calendar.getInstance();
         c = Calendar.getInstance();
-        // set start date
         c.set(current.get(Calendar.YEAR) - 1, current.get(Calendar.MONTH), 1, 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
@@ -526,10 +509,8 @@ public class BusinessEntityUtils {
     public static Date getStartOfMonthInCurrentYear(int monthIndex) {
         Calendar c, current;
 
-        // current time and date
         current = Calendar.getInstance();
         c = Calendar.getInstance();
-        // set start date
         c.set(current.get(Calendar.YEAR), monthIndex, 1, 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
@@ -539,10 +520,8 @@ public class BusinessEntityUtils {
     public static Date getEndOfCurrentMonth() {
         Calendar c, current;
 
-        // current time and date
         current = Calendar.getInstance();
         c = Calendar.getInstance();
-        // set end date
         c.set(current.get(Calendar.YEAR), current.get(Calendar.MONTH), getDaysInMonth(current.get(Calendar.MONTH)), 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
@@ -552,10 +531,8 @@ public class BusinessEntityUtils {
     public static Date getEndOfCurrentMonthPreviousYear() {
         Calendar c, current;
 
-        // current time and date
         current = Calendar.getInstance();
         c = Calendar.getInstance();
-        // set end date
         c.set(current.get(Calendar.YEAR) - 1, current.get(Calendar.MONTH), getDaysInMonth(current.get(Calendar.MONTH)), 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
@@ -565,10 +542,8 @@ public class BusinessEntityUtils {
     public static Date getThisDatePreviousYear() {
         Calendar c, current;
 
-        // current time and date
         current = Calendar.getInstance();
         c = Calendar.getInstance();
-        // set end date
         c.set(current.get(Calendar.YEAR) - 1, current.get(Calendar.MONTH), getDaysInMonth(current.get(Calendar.MONTH)), 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
@@ -578,22 +553,14 @@ public class BusinessEntityUtils {
     public static Date getEndOfMonthInCurrentYear(int monthIndex) {
         Calendar c, current;
 
-        // current time and date
         current = Calendar.getInstance();
         c = Calendar.getInstance();
-        // set end date
         c.set(current.get(Calendar.YEAR), monthIndex, getDaysInMonth(monthIndex), 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
         return c.getTime();
     }
 
-    /**
-     * Get the number of days in a month using the current year
-     *
-     * @param month
-     * @return
-     */
     public static int getDaysInMonth(int month) {
         Calendar current = Calendar.getInstance();
 
@@ -680,15 +647,12 @@ public class BusinessEntityUtils {
     }
 
     public static String getDateString(Calendar c, String delim, String format, String sep) {
-        // date delimiter
         if (delim == null) {
             delim = "'";
         }
-        // date format, YMD, MDY etc
         if (format == null) {
             format = "YMD";
         }
-        // separator of date fields
         if (sep == null) {
             sep = "-";
         }
@@ -741,13 +705,6 @@ public class BusinessEntityUtils {
         }
     }
 
-    /**
-     * Returns a date given an integer representation of a date in the form
-     * YYYYMMDD
-     *
-     * @param dateInt
-     * @return
-     */
     public static Date getDateFromInt(int dateInt) {
         Calendar c = Calendar.getInstance();
         String dateString = "" + dateInt;
@@ -760,13 +717,6 @@ public class BusinessEntityUtils {
         return c.getTime();
     }
 
-    /**
-     * Returns an integer representation of a date in the form YYYYMMDD given a
-     * Date object.
-     *
-     * @param date
-     * @return
-     */
     public static int getIntFromDate(Date date) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -781,7 +731,6 @@ public class BusinessEntityUtils {
     public static int getPreviousYear() {
         Calendar c;
 
-        // current time and date
         c = Calendar.getInstance();
 
         return c.get(Calendar.YEAR) - 1;
@@ -804,10 +753,8 @@ public class BusinessEntityUtils {
     public static Date getStartOfPreviousYear() {
         Calendar c, current;
 
-        // current time and date
         current = Calendar.getInstance();
         c = Calendar.getInstance();
-        // set start date
         c.set(current.get(Calendar.YEAR) - 1, Calendar.JANUARY, 1, 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
@@ -817,10 +764,8 @@ public class BusinessEntityUtils {
     public static Date getEndOfPreviousYear() {
         Calendar c, current;
 
-        // current time and date
         current = Calendar.getInstance();
         c = Calendar.getInstance();
-        // set end date
         c.set(current.get(Calendar.YEAR) - 1, Calendar.DECEMBER, 31, 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
 
@@ -902,8 +847,6 @@ public class BusinessEntityUtils {
         Calendar endCal = Calendar.getInstance();
         endCal.setTime(createDate(endDate));
 
-        // return 0 if end date is earlier that start date
-        // inc days if working days is a weekend
         if (startCal.after(endCal)) {
             return 0;
         } else if (startCal.equals(endCal)) {
@@ -913,7 +856,6 @@ public class BusinessEntityUtils {
             workDays++;
         }
 
-        // count days excluding sat. and sun.
         while (startCal.before(endCal)) {
             if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
                     && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
@@ -925,18 +867,14 @@ public class BusinessEntityUtils {
         return workDays;
     }
 
-    // Put this method in DatePeriod class as a static or done away with the method
-    // and use the periods in selectedReport??
     public static DatePeriod[] getMonthlyReportDatePeriods(DatePeriod reportingPeriod) {
 
-        // previous reporting period
         DatePeriod previousReportingPeriod
                 = new DatePeriod("Previous reporting period", "month", null, null,
                         BusinessEntityUtils.adjustDate(reportingPeriod.getStartDate(), Calendar.MONTH, -1),
                         BusinessEntityUtils.adjustDate(reportingPeriod.getEndDate(), Calendar.MONTH, -1),
                         false, false, true);
 
-        // reporting period year to date
         Calendar now = Calendar.getInstance();
         Calendar reportingPeriodEndDateCalendar = Calendar.getInstance();
         reportingPeriodEndDateCalendar.setTime(reportingPeriod.getEndDate());
@@ -953,13 +891,11 @@ public class BusinessEntityUtils {
                 BusinessEntityUtils.createDate(year, monthIndex, day),
                 false, false, true);
 
-        // reporting period last year
         DatePeriod reportingPeriodLastYear = new DatePeriod("Reporting period last year", "year", null, null,
                 BusinessEntityUtils.adjustDate(reportingPeriod.getStartDate(), Calendar.YEAR, -1),
                 BusinessEntityUtils.adjustDate(reportingPeriod.getEndDate(), Calendar.YEAR, -1),
                 false, false, true);
 
-        // Last financial year to date
         DatePeriod lastFinancialYTD = new DatePeriod("Financial year to date",
                 "year",
                 null,
@@ -1013,14 +949,6 @@ public class BusinessEntityUtils {
         return em.unwrap(java.sql.Connection.class);
     }
 
-    /**
-     *
-     * @param driverClassName
-     * @param url
-     * @param user
-     * @param password
-     * @return
-     */
     public static Connection establishConnection(
             String driverClassName,
             String url,
@@ -1173,7 +1101,6 @@ public class BusinessEntityUtils {
 
         if (c != null) {
             int year = c.get(Calendar.YEAR);
-            // just year validation for now
             if ((year < minYear) || (year > maxYear)) {
                 return false;
             }
@@ -1184,22 +1111,10 @@ public class BusinessEntityUtils {
         return true;
     }
 
-    /**
-     * getAlphaCode Generates code for 0 to 701 (A - ZZ)
-     *
-     * @param number int
-     * @return String
-     */
     public static String getAlphaCode(long number) {
         return convertNumberToAlphabet(number);
     }
 
-    /**
-     * Convert number to spreadsheet style column names e.g. 1 -> B
-     *
-     * @param num
-     * @return
-     */
     public static String convertNumberToAlphabet(long num) {
         long numeric = (num) % 26;
         String letter = "" + (char) (65 + numeric);
@@ -1212,17 +1127,6 @@ public class BusinessEntityUtils {
         }
     }
 
-    /**
-     * Determines the corresponding index for a maximum sequence of characters.
-     * The sequence of characters are those that are obtained from a spreadsheet
-     * column heading (eg AR).Currently it works for alphabets up to "ZZ" but
-     * falls apart beyond that. Need to fix this!
-     *
-     * @param alphabet
-     * @param len
-     * @param num
-     * @return
-     */
     public static int convertAlphabetToNumber(String alphabet, int len, int num) {
         int letterIndex, previousLetterIndex;
 
@@ -1303,7 +1207,6 @@ public class BusinessEntityUtils {
         int year = c.get(Calendar.YEAR);
         yearString = yearString + year;
 
-        // get last x digits of year
         yearString = yearString.substring(yearString.length() - digits, yearString.length());
 
         return yearString;
@@ -1382,13 +1285,6 @@ public class BusinessEntityUtils {
 
     }
 
-    /**
-     * Delete a generic entity
-     *
-     * @param em
-     * @param entity
-     * @return
-     */
     public static Boolean deleteEntity(EntityManager em, Object entity) {
 
         try {
@@ -1405,4 +1301,17 @@ public class BusinessEntityUtils {
         return true;
     }
 
+    public static <T extends BusinessEntity> T attachReference(EntityManager em, T entity) {
+
+        if (entity == null) {
+            return null;
+        }
+
+        if (entity.getId() == null) {
+            return entity;
+        }
+
+        return em.getReference((Class<T>) entity.getClass(), entity.getId());
+    }
+  
 }

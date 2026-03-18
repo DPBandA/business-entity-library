@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
 /**
@@ -37,9 +36,9 @@ public interface Transaction extends BusinessEntity {
 
     @Override
     public void setType(String type);
-    
+
     public Double getAmount();
-    
+
     public void setAmount(Double amount);
-    
+
 }

@@ -70,7 +70,6 @@ public class CompanyRegistration implements BusinessEntity, Form {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof CompanyRegistration)) {
             return false;
         }
@@ -81,7 +80,7 @@ public class CompanyRegistration implements BusinessEntity, Form {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.CompanyRegistration[id=" + id + "]";
+        return "jm.com.dpbennett.entity.CompanyRegistration[id=" + id + "]";
     }
 
     @Override

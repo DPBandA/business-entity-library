@@ -98,7 +98,7 @@ public class DocumentInspection implements Comparable, BusinessEntity {
         if (consignee == null) {
             consignee = new Client("", false);
         }
-        
+
         return consignee;
     }
 
@@ -144,7 +144,7 @@ public class DocumentInspection implements Comparable, BusinessEntity {
 
     public Employee getInspector() {
         if (inspector == null) {
-            return new Employee();
+            inspector = new Employee();
         }
 
         return inspector;
@@ -171,7 +171,6 @@ public class DocumentInspection implements Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof DocumentInspection)) {
             return false;
         }
@@ -238,9 +237,8 @@ public class DocumentInspection implements Comparable, BusinessEntity {
                 searchQuery
                         = "SELECT documentInspection FROM DocumentInspection documentInspection"
                         + joinClause
-                        + " WHERE (0 = 0)" // used as place holder
+                        + " WHERE (0 = 0)"
                         + searchTextAndClause
-                        //                        + " GROUP BY documentInspection.id"
                         + " ORDER BY documentInspection.id DESC";
             } else {
                 searchQuery
@@ -249,7 +247,6 @@ public class DocumentInspection implements Comparable, BusinessEntity {
                         + " WHERE (documentInspection." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                         + " AND documentInspection." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                         + searchTextAndClause
-                        //                        + " GROUP BY complianceSurvey.id"
                         + " ORDER BY documentInspection.id DESC";
             }
         } else if (searchType.equals("?")) {
@@ -285,6 +282,7 @@ public class DocumentInspection implements Comparable, BusinessEntity {
             if (getInspector().getId() != null) {
                 getInspector().save(em);
             }
+            
             if (getConsignee().getId() != null) {
                 getConsignee().save(em);
             }

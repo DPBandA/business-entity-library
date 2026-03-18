@@ -93,12 +93,12 @@ public class Subgroup implements BusinessEntity, Comparable {
         this.active = active;
     }
 
-   public Employee getHead() {
+    public Employee getHead() {
 
         if (head == null) {
-            return new Employee();
+            head = new Employee();
         }
-        
+
         return head;
     }
 
@@ -110,7 +110,7 @@ public class Subgroup implements BusinessEntity, Comparable {
         if (departments == null) {
             departments = new ArrayList<>();
         }
-        
+
         return departments;
     }
 
@@ -153,12 +153,11 @@ public class Subgroup implements BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Subgroup)) {
             return false;
         }
         Subgroup other = (Subgroup) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -227,7 +226,7 @@ public class Subgroup implements BusinessEntity, Comparable {
     public static Subgroup findActiveSubgroupByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
@@ -245,19 +244,12 @@ public class Subgroup implements BusinessEntity, Comparable {
         }
     }
 
-    /**
-     * Get the first subgroup that matches the given name
-     *
-     * @param em
-     * @param value
-     * @return
-     */
     public static Subgroup findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
                     + "WHERE UPPER(s.name) "
                     + "= '" + value.toUpperCase() + "'", Subgroup.class).getResultList();
@@ -315,9 +307,9 @@ public class Subgroup implements BusinessEntity, Comparable {
     public static List<Subgroup> findAllByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Subgroup> subgroups
                     = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY s.name", Subgroup.class).getResultList();
@@ -327,13 +319,13 @@ public class Subgroup implements BusinessEntity, Comparable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Subgroup> findAllActiveByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Subgroup> subgroups
                     = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
                             + value.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Subgroup.class).getResultList();
@@ -344,13 +336,6 @@ public class Subgroup implements BusinessEntity, Comparable {
         }
     }
 
-    /**
-     * Finds the first subgroup that contains the specified department.
-     * 
-     * @param em
-     * @param department
-     * @return 
-     */
     public static Subgroup findByDepartment(EntityManager em, Department department) {
 
         try {
@@ -359,7 +344,7 @@ public class Subgroup implements BusinessEntity, Comparable {
                     = em.createQuery(
                             "SELECT s FROM Subgroup s"
                             + " JOIN s.departments departments"
-                            + " WHERE departments.id = " + department.getId(), 
+                            + " WHERE departments.id = " + department.getId(),
                             Subgroup.class).getResultList();
 
             if (!subgroups.isEmpty()) {
@@ -378,13 +363,7 @@ public class Subgroup implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            if (getHead().getId() != null) {
-                getHead().save(em);
-            }
-            for (Department department : getDepartments()) {
-                department.save(em);
-            }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

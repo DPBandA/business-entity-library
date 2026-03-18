@@ -194,12 +194,11 @@ public class FactoryInspectionComponent implements BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof FactoryInspectionComponent)) {
             return false;
         }
         FactoryInspectionComponent other = (FactoryInspectionComponent) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
