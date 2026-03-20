@@ -80,7 +80,7 @@ public class Manufacturer implements BusinessEntity, Comparable {
     private List<Contact> contacts;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Employee productLastSampledBy;
     @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
@@ -563,10 +563,6 @@ public class Manufacturer implements BusinessEntity, Comparable {
                 marketProduct.save(em);
             }
 
-            if (getProductLastSampledBy() != null) {
-                getProductLastSampledBy().save(em);
-            }
-            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

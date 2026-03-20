@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.cert;
 
 import jm.com.dpbennett.business.entity.hrm.Business;
@@ -60,15 +59,15 @@ public class Certification implements CertificationInterface {
     private String notes;
     private Boolean active;
     private String certificateNumber;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee certificateSignedBy;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Business grantedTo;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateIssued;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date expiryDate;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Client applicant;
     @Transient
     private Boolean isDirty;
@@ -169,6 +168,10 @@ public class Certification implements CertificationInterface {
     @Override
     public Employee getCertificateSignedBy() {
 
+        if (certificateSignedBy == null) {
+            return new Employee();
+        }
+
         return certificateSignedBy;
     }
 
@@ -182,6 +185,7 @@ public class Certification implements CertificationInterface {
         if (grantedTo == null) {
             return new Business();
         }
+        
         return grantedTo;
     }
 
@@ -281,15 +285,17 @@ public class Certification implements CertificationInterface {
 
         try {
 
-//            if (getCertificateSignedBy().getId() != null) {
-//                getCertificateSignedBy().save(em);
-//            }
-//            if (getGrantedTo().getId() != null) {
-//                getGrantedTo().save(em);
-//            }
-//            if (getApplicant().getId() != null) {
-//                getApplicant().save(em);
-//            }
+            if (certificateSignedBy != null) {
+                certificateSignedBy.save(em);
+            }
+
+            if (grantedTo != null) {
+                grantedTo.save(em);
+            }
+
+            if (applicant.getId() != null) {
+                applicant.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

@@ -66,7 +66,7 @@ public class Classification implements BusinessEntity, Serializable {
     private String category;
     @Transient
     private Boolean isDirty;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Tax defaultTax;
 
     public Classification() {

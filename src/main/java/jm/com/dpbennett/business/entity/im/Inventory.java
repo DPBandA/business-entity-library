@@ -68,7 +68,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String name;
     private String code;
     private String type;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Category category;
     private Double quantity;
     private Double unitCost;
@@ -77,7 +77,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String stockKeepingUnit;
     private String measurementUnit;
     private String valuationMethod;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private MarketProduct product;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateAcquired;
@@ -89,18 +89,18 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private Date dateEdited;
     @Temporal(javax.persistence.TemporalType.TIME)
     private Date timeChecked;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Supplier supplier;
     private String batchCode;
     private String dateMark;
     private String status;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<CostComponent> costComponents;
     @Transient
     private Boolean isDirty;
@@ -311,7 +311,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         if (costComponents == null) {
             costComponents = new ArrayList<>();
         }
-        
+
         return costComponents;
     }
 
@@ -365,7 +365,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     public Employee getEditedBy() {
 
         if (editedBy == null) {
-            editedBy = new Employee();
+            return new Employee();
         }
 
         return editedBy;
@@ -761,7 +761,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public Supplier getSupplier() {
         if (supplier == null) {
-            supplier = new Supplier();
+            return new Supplier();
         }
         return supplier;
     }
@@ -808,7 +808,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     public Employee getEnteredBy() {
 
         if (enteredBy == null) {
-            enteredBy = new Employee();
+            return new Employee();
         }
 
         return enteredBy;
@@ -821,7 +821,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public Category getInventoryCategory() {
         if (category == null) {
-            category = new Category();
+            return new Category();
         }
 
         return category;
@@ -931,31 +931,35 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     public ReturnMessage save(EntityManager em) {
         try {
 
-//            if (getInventoryCategory().getId() != null) {
-//                getInventoryCategory().save(em);
-//            }
-//
-//            if (getEnteredBy().getId() != null) {
-//                getEnteredBy().save(em);
-//            }
-//
-//            if (getEditedBy().getId() != null) {
-//                getEditedBy().save(em);
-//            }
-//
-//            if (!getCostComponents().isEmpty()) {
-//                for (CostComponent costComponent : getCostComponents()) {
-//                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
-//                            && !costComponent.save(em).isSuccess()) {
-//
-//                        return new ReturnMessage(false,
-//                                "Cost component save error occurred",
-//                                "An error occurred while saving a cost component",
-//                                Message.SEVERITY_ERROR_NAME);
-//
-//                    }
-//                }
-//            }
+            if (category != null) {
+                category.save(em);
+            }
+
+            if (enteredBy != null) {
+                enteredBy.save(em);
+            }
+
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
+
+            if (supplier != null) {
+                supplier.save(em);
+            }
+
+            if (!getCostComponents().isEmpty()) {
+                for (CostComponent costComponent : getCostComponents()) {
+                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
+                            && !costComponent.save(em).isSuccess()) {
+
+                        return new ReturnMessage(false,
+                                "Cost component save error occurred",
+                                "An error occurred while saving a cost component",
+                                Message.SEVERITY_ERROR_NAME);
+
+                    }
+                }
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

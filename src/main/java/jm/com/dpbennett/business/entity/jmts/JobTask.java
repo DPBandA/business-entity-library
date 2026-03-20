@@ -99,7 +99,7 @@ public class JobTask implements BusinessEntity {
     public Department getDepartmentResponsible() {
 
         if (departmentResponsible == null) {
-            departmentResponsible = new Department();
+            return new Department();
         }
 
         return departmentResponsible;
@@ -112,7 +112,7 @@ public class JobTask implements BusinessEntity {
     public Employee getEmployeeResponsible() {
 
         if (employeeResponsible == null) {
-            employeeResponsible = new Employee();
+            return new Employee();
         }
 
         return employeeResponsible;
@@ -184,12 +184,12 @@ public class JobTask implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getDepartmentResponsible() != null) {
-                getDepartmentResponsible().save(em);
+            if (departmentResponsible != null) {
+                departmentResponsible.save(em);
             }
 
-            if (getEmployeeResponsible() != null) {
-                getEmployeeResponsible().save(em);
+            if (employeeResponsible != null) {
+                employeeResponsible.save(em);
             }
 
             em.getTransaction().begin();

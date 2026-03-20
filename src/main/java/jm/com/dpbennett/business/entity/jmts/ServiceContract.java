@@ -131,7 +131,7 @@ public class ServiceContract implements BusinessEntity {
     public Service getSelectedService() {
 
         if (selectedService == null) {
-            selectedService = new Service();
+            return new Service();
         }
 
         return selectedService;
@@ -453,8 +453,8 @@ public class ServiceContract implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getSelectedService().getId() != null) {
-                getSelectedService().save(em);
+            if (selectedService != null) {
+                selectedService.save(em);
             }
 
             em.getTransaction().begin();

@@ -256,7 +256,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public MarketProduct getMarketProduct() {
         if (marketProduct == null) {
-            marketProduct = new MarketProduct();
+            return new MarketProduct();
         }
 
         return marketProduct;
@@ -279,7 +279,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Employee getInspector() {
         if (inspector == null) {
-            return  new Employee();
+            return new Employee();
         }
 
         return inspector;
@@ -291,7 +291,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Category getProductCategory() {
         if (productCategory == null) {
-            productCategory = new Category();
+            return new Category();
         }
 
         return productCategory;
@@ -794,30 +794,30 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getProductCategory().getId() != null) {
-                getProductCategory().save(em);
+            if (productCategory != null) {
+                productCategory.save(em);
             }
-            
+
             if (manufacturer != null) {
                 manufacturer.save(em);
             }
-            
+
             if (distributor != null) {
                 distributor.save(em);
             }
-            
-            if (getMarketProduct().getId() != null) {
-                getMarketProduct().save(em);
+
+            if (marketProduct != null) {
+                marketProduct.save(em);
             }
-            
+
             if (client != null) {
                 client.save(em);
             }
-            
+
             if (businessSource != null) {
                 businessSource.save(em);
             }
-            
+
             if (inspector != null) {
                 inspector.save(em);
             }

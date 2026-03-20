@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
@@ -48,39 +49,28 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     @Id
     @Column(length = 12, name = "IDCUST")
     private String idCust;
-
     @Column(length = 60, name = "NAMECUST")
     private String customerName;
-
     @Column(name = "AMTCRLIMT", precision = 10, scale = 3)
     private BigDecimal creditLimit;
-
     @Column(name = "SWBALFWD")
     private Integer accountType;
-
     @Column(name = "AMTBALDUET", precision = 10, scale = 3)
     private BigDecimal balanceDueInCust;
-
     @Column(name = "AMTBALDUEH", precision = 10, scale = 3)
     private BigDecimal balanceDueInFunc;
-
     @Column(name = "DATELASTST")
-    private BigDecimal dateOfLastStatement; // or Date (recommended)
-
+    private BigDecimal dateOfLastStatement;
     @Column(name = "AMTLASTSTT", precision = 10, scale = 3)
     private BigDecimal lastStatementTotalCust;
-
     @Column(name = "AMTPDUE", precision = 10, scale = 3)
     private BigDecimal amountPastDue;
-
     @Column(name = "CNTOPENINV", precision = 4, scale = 0)
     private BigDecimal numberOfOpenDocuments;
-
     @Column(name = "AMTLASTIVH", precision = 10, scale = 3)
     private BigDecimal lastInvoiceAmt;
-
     @Column(length = 6, name = "IDACCTSET")
-    private String IDACCTSET;
+    private String IDACCTSET;    
     @Transient
     private Boolean isDirty;
 

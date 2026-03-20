@@ -68,7 +68,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     private Double setPetrolUsage = 0.0;
     private Double actualPetrolUsage = 0.0;
     private Double petrolCost = 0.0;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PetrolPumpNozzleCalibrationPoint> calibrationPoints;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date calibrationDate;
@@ -210,8 +210,8 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getCalibrationDoneBy().getId() != null) {
-                getCalibrationDoneBy().save(em);
+            if (calibrationDoneBy != null) {
+                calibrationDoneBy.save(em);
             }
 
             for (PetrolPumpNozzleCalibrationPoint calibrationPoint : getCalibrationPoints()) {
@@ -678,7 +678,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     public Employee getCalibrationDoneBy() {
 
         if (calibrationDoneBy == null) {
-            calibrationDoneBy = new Employee();
+            return new Employee();
         }
 
         return calibrationDoneBy;

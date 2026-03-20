@@ -66,15 +66,15 @@ public class Supplier implements BusinessEntity, Comparable {
     private String name;
     private String number;
     private String type;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
     @Column(length = 1024)
     private String notes;
@@ -187,7 +187,7 @@ public class Supplier implements BusinessEntity, Comparable {
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            editedBy = new Employee();
+            return new Employee();
         }
 
         return editedBy;
@@ -226,7 +226,7 @@ public class Supplier implements BusinessEntity, Comparable {
     @Override
     public Employee getEnteredBy() {
         if (enteredBy == null) {
-            enteredBy = new Employee();
+            return new Employee();
         }
 
         return enteredBy;
@@ -745,23 +745,21 @@ public class Supplier implements BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-//            for (Contact contact : getContacts()) {
-//                contact.save(em);
-//            }
-//
-//            for (Address address : getAddresses()) {
-//                address.save(em);
-//            }
-//
-//            getInternet().save(em);
-//
-//            if (getEnteredBy().getId() != null) {
-//                getEnteredBy().save(em);
-//            }
-//
-//            if (getEditedBy().getId() != null) {
-//                getEditedBy().save(em);
-//            }
+            for (Contact contact : getContacts()) {
+                contact.save(em);
+            }
+
+            for (Address address : getAddresses()) {
+                address.save(em);
+            }
+
+            if (enteredBy != null) {
+                enteredBy.save(em);
+            }
+
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

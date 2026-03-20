@@ -164,10 +164,6 @@ public class StatusTracking implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-//
-//            if (getStatusNote().getId() != null) {
-//                getStatusNote().save(em);
-//            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

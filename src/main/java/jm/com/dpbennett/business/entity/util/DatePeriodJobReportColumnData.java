@@ -39,7 +39,7 @@ public class DatePeriodJobReportColumnData extends Job implements Comparable {
         super.setJobSubCategory(jobSubCategory);
         super.setJobCostingAndPayment(new JobCostingAndPayment());
         super.getJobCostingAndPayment().setFinalCost(totalFinalCost);
-        
+
         if (numberOfTestsOrCalibrations != null) {
             super.setNoOfTestsOrCalibrations(numberOfTestsOrCalibrations.intValue());
         }

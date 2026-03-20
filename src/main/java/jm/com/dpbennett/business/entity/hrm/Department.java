@@ -33,6 +33,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -75,7 +76,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     private Employee actingHead;
     @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Privilege privilege;
     @OneToOne(cascade = CascadeType.REFRESH)
     private List<JobCategory> jobCategories;
@@ -83,7 +84,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     private List<Employee> staff;
     @OneToOne(cascade = CascadeType.REFRESH)
     private List<Laboratory> laboratories;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne
     private List<DepartmentUnit> departmentUnits;
 
     @Transient
@@ -127,7 +128,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     public Privilege getPrivilege() {
         if (privilege == null) {
-            privilege = new Privilege(name);
+            return new Privilege(name);
         }
 
         return privilege;
@@ -489,28 +490,12 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getHead().getId() != null) {
-                getHead().save(em);
+            if (privilege != null) {
+                privilege.save(em);
             }
-            
-            if (getActingHead().getId() != null) {
-                getActingHead().save(em);
-            }
-           
+
             for (JobCategory jobCategory : getJobCategories()) {
                 jobCategory.save(em);
-            }
-            
-            for (Employee employee : getStaff()) {
-                employee.save(em);
-            }
-            
-            for (Laboratory laboratory : getLaboratories()) {
-                laboratory.save(em);
-            }
-            
-            for (DepartmentUnit departmentUnit : getDepartmentUnits()) {
-                departmentUnit.save(em);
             }
 
             em.getTransaction().begin();

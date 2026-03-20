@@ -167,7 +167,7 @@ public class Client implements ClientInterface {
     public Tax getDefaultTax() {
 
         if (defaultTax == null) {
-            defaultTax = new Tax();
+            return new Tax();
         }
 
         return defaultTax;
@@ -213,7 +213,7 @@ public class Client implements ClientInterface {
             if (!getBillingAddresses().isEmpty()) {
                 billingAddress = getBillingAddresses().get(0);
             } else {
-                billingAddress = new Address();
+                return new Address();
             }
         }
 
@@ -231,7 +231,7 @@ public class Client implements ClientInterface {
             if (!getContacts().isEmpty()) {
                 billingContact = getContacts().get(0);
             } else {
-                billingContact = new Contact();
+                return new Contact();
             }
 
         }
@@ -248,7 +248,7 @@ public class Client implements ClientInterface {
     public Discount getDiscount() {
 
         if (discount == null) {
-            discount = new Discount();
+            return new Discount();
         }
 
         return discount;
@@ -312,7 +312,7 @@ public class Client implements ClientInterface {
     public Employee getEditedBy() {
 
         if (editedBy == null) {
-            editedBy = new Employee();
+            return new Employee();
         }
 
         return editedBy;
@@ -383,7 +383,7 @@ public class Client implements ClientInterface {
     public Employee getEnteredBy() {
 
         if (enteredBy == null) {
-            enteredBy = new Employee();
+            return new Employee();
         }
 
         return enteredBy;
@@ -978,27 +978,28 @@ public class Client implements ClientInterface {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getEnteredBy().getId() != null) {
-                getEnteredBy().save(em);
+            if (enteredBy != null) {
+                enteredBy.save(em);
             }
             
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
+            if (editedBy != null) {
+                editedBy.save(em);
             }
 
-            if (getBillingAddress() != null) {
-                getBillingAddress().save(em);
-            }
-            if (getBillingContact() != null) {
-                getBillingContact().save(em);
+            if (billingAddress != null) {
+                billingAddress.save(em);
             }
             
-            if (getDiscount().getId() != null) {
-                getDiscount().save(em);
+            if (billingContact != null) {
+                billingContact.save(em);
             }
             
-            if (getDefaultTax().getId() != null) {
-                getDefaultTax().save(em);
+            if (discount != null) {
+                discount.save(em);
+            }
+            
+            if (defaultTax != null) {
+                defaultTax.save(em);
             }
             
             for (Contact contact : getContacts()) {

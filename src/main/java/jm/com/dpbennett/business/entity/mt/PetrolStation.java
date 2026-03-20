@@ -77,7 +77,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     private Boolean isDirty;
     @Transient
     private String editStatus;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     List<PetrolPump> petrolPumps;
 
     public PetrolStation() {
@@ -150,7 +150,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     public Employee getLastAssignee() {
         if (lastAssignee == null) {
-            lastAssignee = new Employee();
+            return new Employee();
         }
 
         return lastAssignee;
@@ -162,7 +162,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     public Client getClient() {
         if (client == null) {
-            client = new Client();
+            return new Client();
         }
 
         return client;
@@ -437,12 +437,12 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getClient().getId() != null) {
-                getClient().save(em);
+            if (client != null) {
+                client.save(em);
             }
             
-            if (getLastAssignee().getId() != null) {
-                getLastAssignee().save(em);
+            if (lastAssignee != null) {
+                lastAssignee.save(em);
             }
             
             for (PetrolPump petrolPump : getPetrolPumps()) {

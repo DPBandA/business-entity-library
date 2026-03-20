@@ -61,13 +61,13 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private String notes;
     private String taxRegistrationNumber;
     private String departmentLabel;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Employee head;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Department> departments;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastAccessed;
@@ -429,22 +429,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public ReturnMessage save(EntityManager em) {
 
         try {
-
-            if (getHead().getId() != null) {
-                getHead().save(em);
-            }
-
-            for (Department department : getDepartments()) {
-                department.save(em);
-            }
-
-            for (Address address : getAddresses()) {
-                address.save(em);
-            }
-            
-            for (Contact contact : getContacts()) {
-                contact.save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

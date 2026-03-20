@@ -340,7 +340,7 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             isDirty = false;
             BusinessEntityUtils.saveBusinessEntity(em, this);

@@ -92,7 +92,7 @@ public class DepartmentReport implements Serializable, BusinessEntity {
     public Department getDepartment() {
 
         if (department == null) {
-            department = new Department();
+            return new Department();
         }
 
         return department;
@@ -220,8 +220,8 @@ public class DepartmentReport implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getDepartment().getId() != null) {
-                getDepartment().save(em);
+            if (department != null) {
+                department.save(em);
             }
 
             em.getTransaction().begin();

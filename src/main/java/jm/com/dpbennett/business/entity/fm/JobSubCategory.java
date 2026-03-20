@@ -445,7 +445,7 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
             for (Department department : getDepartments()) {
                 department.save(em);
             }
-
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

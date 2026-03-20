@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.sc;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -74,13 +75,13 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     private String generalComments;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedInspector;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Address address;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Contact factoryRepresentative;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<FactoryInspectionComponent> inspectionComponents;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<ProductInspection> productInspections;
     private String name;
     private Integer maxDaysForCompliance;
@@ -341,7 +342,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            manufacturer = new Manufacturer();
+            return new Manufacturer();
         }
 
         return manufacturer;
@@ -354,7 +355,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public BusinessOffice getBusinessOffice() {
 
         if (businessOffice == null) {
-            businessOffice = new BusinessOffice();
+            return new BusinessOffice();
         }
 
         return businessOffice;
@@ -391,7 +392,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public Employee getAssignedInspector() {
 
         if (assignedInspector == null) {
-            assignedInspector = new Employee();
+            return new Employee();
         }
 
         return assignedInspector;
@@ -531,17 +532,17 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getAssignedInspector().getId() != null) {
-                getAssignedInspector().save(em);
+            if (assignedInspector != null) {
+                assignedInspector.save(em);
             }
 
-            if (getAddress().getId() != null) {
-                getAddress().save(em);
-            }
+//            if (getAddress().getId() != null) {
+//                getAddress().save(em);
+//            }
 
-            if (getFactoryRepresentative().getId() != null) {
-                getFactoryRepresentative().save(em);
-            }
+//            if (getFactoryRepresentative().getId() != null) {
+//                getFactoryRepresentative().save(em);
+//            }
 
             if (!getInspectionComponents().isEmpty()) {
                 for (FactoryInspectionComponent inspectionComponent : getInspectionComponents()) {
@@ -569,12 +570,12 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                 }
             }
 
-            if (getManufacturer().getId() != null) {
-                getManufacturer().save(em);
+            if (manufacturer != null) {
+                manufacturer.save(em);
             }
 
-            if (getBusinessOffice().getId() != null) {
-                getBusinessOffice().save(em);
+            if (businessOffice != null) {
+                businessOffice.save(em);
             }
 
             em.getTransaction().begin();

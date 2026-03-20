@@ -131,7 +131,7 @@ public class Sector implements BusinessEntity, Serializable {
         if (departments == null) {
             departments = new ArrayList<>();
         }
-        
+
         return departments;
     }
 

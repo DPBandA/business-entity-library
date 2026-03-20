@@ -194,7 +194,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            editedBy = new Employee();
+            return new Employee();
         }
 
         return editedBy;
@@ -245,7 +245,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Client getExternalClient() {
         if (externalClient == null) {
-            externalClient = new Client();
+            return new Client();
         }
 
         return externalClient;
@@ -299,7 +299,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Department getRequestingDepartment() {
         if (requestingDepartment == null) {
-            requestingDepartment = new Department();
+            return new Department();
         }
 
         return requestingDepartment;
@@ -341,7 +341,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Department getResponsibleDepartment() {
         if (responsibleDepartment == null) {
-            responsibleDepartment = new Department();
+            return new Department();
         }
 
         return responsibleDepartment;
@@ -435,7 +435,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Employee getResponsibleOfficer() {
         if (responsibleOfficer == null) {
-            responsibleOfficer = new Employee();
+            return new Employee();
         }
 
         return responsibleOfficer;
@@ -447,7 +447,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     public Employee getSubmittedBy() {
         if (submittedBy == null) {
-            submittedBy = new Employee();
+            return new Employee();
         }
 
         return submittedBy;
@@ -460,7 +460,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Override
     public DocumentType getDocumentType() {
         if (documentType == null) {
-            documentType = new DocumentType();
+            return new DocumentType();
         }
 
         return documentType;
@@ -511,7 +511,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Override
     public Classification getClassification() {
         if (classification == null) {
-            classification = new Classification();
+            return new Classification();
         }
 
         return classification;
@@ -704,29 +704,36 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getDocumentType().getId() != null) {
-                getDocumentType().save(em);
+            if (documentType != null) {
+                documentType.save(em);
             }
-            if (getRequestingDepartment().getId() != null) {
-                getRequestingDepartment().save(em);
+            
+            if (requestingDepartment != null) {
+                requestingDepartment.save(em);
             }
-            if (getResponsibleDepartment().getId() != null) {
-                getResponsibleDepartment().save(em);
+            
+            if (responsibleDepartment != null) {
+                responsibleDepartment.save(em);
             }
-            if (getResponsibleOfficer().getId() != null) {
-                getResponsibleOfficer().save(em);
+            
+            if (responsibleOfficer != null) {
+                responsibleOfficer.save(em);
             }
-            if (getSubmittedBy().getId() != null) {
-                getSubmittedBy().save(em);
+            
+            if (submittedBy != null) {
+                submittedBy.save(em);
             }
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
+            
+            if (classification != null) {
+                classification.save(em);
             }
-            if (getExternalClient().getId() != null) {
-                getExternalClient().save(em);
+            
+            if (externalClient != null) {
+                externalClient.save(em);
             }
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
+            
+            if (editedBy != null) {
+                editedBy.save(em);
             }
 
             em.getTransaction().begin();

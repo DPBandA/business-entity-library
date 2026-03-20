@@ -52,7 +52,7 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
     private Long id;
     private Long ownerId;
     private Long number;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private TestMeasure testMeasure;
     private Double error;
     private Double tolerance;
@@ -244,10 +244,6 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getTestMeasure().getId() != null) {
-                getTestMeasure().save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

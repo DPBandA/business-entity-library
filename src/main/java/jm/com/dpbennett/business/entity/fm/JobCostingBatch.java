@@ -84,7 +84,7 @@ public class JobCostingBatch implements Serializable, BusinessEntity {
     public Client getClient() {
 
         if (client == null) {
-            client = new Client();
+            return new Client();
         }
 
         return client;
@@ -201,8 +201,8 @@ public class JobCostingBatch implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getClient().getId() != null) {
-                getClient().save(em);
+            if (client != null) {
+                client.save(em);
             }
 
             for (Job job : getJobs()) {

@@ -58,7 +58,7 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     private String type;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date testDate;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee testDoneBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date reTestDate;
@@ -187,7 +187,7 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     public Employee getTestDoneBy() {
 
         if (testDoneBy == null) {
-            testDoneBy = new Employee();
+            return new Employee();
         }
 
         return testDoneBy;
@@ -227,10 +227,10 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     public ReturnMessage save(EntityManager em) {
         try {
 
-//            if (getTestDoneBy().getId() != null) {
-//                getTestDoneBy().save(em);
-//            }
-
+            if (testDoneBy != null) {
+                testDoneBy.save(em);
+            }
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

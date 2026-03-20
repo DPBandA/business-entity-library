@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.mt;
 
 import java.text.Collator;
@@ -169,7 +170,7 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
     public Manufacturer getManufacturer() {
 
         if (manufacturer == null) {
-            manufacturer = new Manufacturer();
+            return new Manufacturer();
         }
 
         return manufacturer;
@@ -252,8 +253,8 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getManufacturer().getId() != null) {
-                getManufacturer().save(em);
+            if (manufacturer != null) {
+                manufacturer.save(em);
             }
 
             em.getTransaction().begin();

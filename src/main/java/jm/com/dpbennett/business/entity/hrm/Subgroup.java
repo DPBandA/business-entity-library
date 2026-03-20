@@ -55,10 +55,10 @@ public class Subgroup implements BusinessEntity, Comparable {
     private String code;
     private String type;
     private String notes;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Department> departments;
     private Boolean active;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Employee head;
     @Transient
     private Boolean isDirty;

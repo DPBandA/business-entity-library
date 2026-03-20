@@ -73,7 +73,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     private Date dateFirstReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastAccessed;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PetrolStation> petrolStations;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<BusinessOffice> businessOffices;
@@ -125,7 +125,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
         if (internet == null) {
             internet = new Internet();
         }
-        
+
         return internet;
     }
 

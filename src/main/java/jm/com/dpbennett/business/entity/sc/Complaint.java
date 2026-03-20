@@ -86,7 +86,7 @@ public class Complaint implements Comparable, BusinessEntity {
     private Client receivedVia;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client complainant;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<ProductInspection> productInspections;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> referredTo;
@@ -158,7 +158,7 @@ public class Complaint implements Comparable, BusinessEntity {
 
     public BusinessOffice getBusinessOffice() {
         if (businessOffice == null) {
-            businessOffice = new BusinessOffice();
+            return new BusinessOffice();
         }
 
         return businessOffice;
@@ -285,7 +285,7 @@ public class Complaint implements Comparable, BusinessEntity {
 
     public Employee getReceivedBy() {
         if (receivedBy == null) {
-            receivedBy = new Employee();
+            return new Employee();
         }
 
         return receivedBy;
@@ -325,7 +325,7 @@ public class Complaint implements Comparable, BusinessEntity {
 
     public Client getComplainant() {
         if (complainant == null) {
-            complainant = new Client();
+            return new Client();
         }
 
         return complainant;
@@ -337,7 +337,7 @@ public class Complaint implements Comparable, BusinessEntity {
 
     public Client getReceivedVia() {
         if (receivedVia == null) {
-            receivedVia = new Client();
+            return new Client();
         }
 
         return receivedVia;
@@ -370,7 +370,7 @@ public class Complaint implements Comparable, BusinessEntity {
     @Override
     public Employee getEnteredBy() {
         if (enteredBy == null) {
-            enteredBy = new Employee();
+            return new Employee();
         }
 
         return enteredBy;
@@ -537,26 +537,26 @@ public class Complaint implements Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getBusinessOffice().getId() != null) {
-                getBusinessOffice().save(em);
+            if (businessOffice != null) {
+                businessOffice.save(em);
             }
-            
-            if (getEnteredBy().getId() != null) {
-                getEnteredBy().save(em);
+
+            if (enteredBy != null) {
+                enteredBy.save(em);
             }
-            
-            if (getReceivedBy().getId() != null) {
-                getReceivedBy().save(em);
+
+            if (receivedBy != null) {
+                receivedBy.save(em);
             }
-            
-            if (getReceivedVia().getId() != null) {
-                getReceivedVia().save(em);
+
+            if (receivedVia != null) {
+                receivedVia.save(em);
             }
-            
-            if (getComplainant().getId() != null) {
-                getComplainant().save(em);
+
+            if (complainant != null) {
+                complainant.save(em);
             }
-            
+
             for (ProductInspection productInspection : getProductInspections()) {
                 if ((productInspection.getIsDirty() || productInspection.getId() == null)
                         && !productInspection.save(em).isSuccess()) {
@@ -567,11 +567,11 @@ public class Complaint implements Comparable, BusinessEntity {
                             Message.SEVERITY_ERROR_NAME);
                 }
             }
-            
+
             for (Employee employee : getReferredTo()) {
                 employee.save(em);
             }
-            
+
             for (Department department : getReferredToDepartment()) {
                 department.save(em);
             }

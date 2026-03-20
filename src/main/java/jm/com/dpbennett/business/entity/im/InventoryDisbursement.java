@@ -60,7 +60,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private Long id;
     private String name;
     private String type;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.ALL)
     private Inventory inventory;
     private Double quantityOrdered;
     private Double quantityReceived;
@@ -75,9 +75,9 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
     private String status;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
     @Column(length = 1024)
     private String description;
@@ -87,7 +87,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private String editStatus;
     @Transient
     private List<BusinessEntity.Action> actions;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.ALL)
     private CostComponent costComponent;
 
     public InventoryDisbursement() {
@@ -176,9 +176,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     public Inventory getInventory() {
         if (inventory == null) {
-
             inventory = new Inventory();
-
         }
 
         return inventory;
@@ -200,7 +198,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     public Employee getEditedBy() {
 
         if (editedBy == null) {
-            editedBy = new Employee();
+            return new Employee();
         }
 
         return editedBy;
@@ -449,7 +447,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     public Employee getEnteredBy() {
 
         if (enteredBy == null) {
-            enteredBy = new Employee();
+            return new Employee();
         }
 
         return enteredBy;
@@ -527,26 +525,20 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     public ReturnMessage save(EntityManager em) {
         try {
 
-//            if (getInventory().getId() != null) {
-//                getInventory().save(em);
-//            }
-//
-//            if (getEnteredBy().getId() != null) {
-//                getEnteredBy().save(em);
-//            }
-//
-//            if (getEditedBy().getId() != null) {
-//                getEditedBy().save(em);
-//            }
-//            
-//            getCostComponent().save(em);            
-//          
-//            // tk check why this done and if it is necessary.
+            if (enteredBy != null) {
+                enteredBy.save(em);
+            }
+
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
+                       
+            // tk check why this done and if it is necessary. Could it done elsewhere?
 //            if (getInventory().findCostComponentById(getCostComponent().getId()) == null) {
 //                getInventory().getCostComponents().add(getCostComponent());
 //                getInventory().save(em);
 //            }
-
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

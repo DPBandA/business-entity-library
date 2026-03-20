@@ -171,7 +171,7 @@ public class Email implements Serializable, BusinessEntity {
         if (isDirty == null) {
             isDirty = false;
         }
-        
+
         return isDirty;
     }
 
@@ -206,7 +206,7 @@ public class Email implements Serializable, BusinessEntity {
         if (active == null) {
             active = true;
         }
-        
+
         return active;
     }
 

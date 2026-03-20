@@ -52,9 +52,9 @@ public class StandardsOrganization implements BusinessEntity, Company {
     private String name;
     private String number;
     private String type;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<BusinessOffice> businessOffices;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Division> divisions;
     @Transient
     private Boolean isDirty;

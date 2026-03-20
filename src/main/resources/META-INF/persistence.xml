@@ -115,7 +115,6 @@
     <class>jm.com.dpbennett.business.entity.sc.ShippingContainer</class>
     <class>jm.com.dpbennett.business.entity.sm.Category</class>
     <class>jm.com.dpbennett.business.entity.sm.Country</class>
-    <class>jm.com.dpbennett.business.entity.sm.LdapContext</class>
     <class>jm.com.dpbennett.business.entity.sm.Module</class>
     <class>jm.com.dpbennett.business.entity.sm.Notification</class>
     <class>jm.com.dpbennett.business.entity.sm.Preference</class>

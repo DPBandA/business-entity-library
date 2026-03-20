@@ -102,7 +102,7 @@ public class JobReportItem implements BusinessEntity, Comparable {
         if (departments == null) {
             departments = new ArrayList<>();
         }
-        
+
         return departments;
     }
 

@@ -38,7 +38,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
 @Table(name = "privilege")
@@ -57,7 +57,7 @@ public class Privilege implements Serializable, PrivilegeInterface {
     private String type;
     private String category;
     private String roles;
-    private String description;    
+    private String description;
     @Transient
     private Boolean isDirty;
 

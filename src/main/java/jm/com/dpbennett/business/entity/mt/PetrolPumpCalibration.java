@@ -63,7 +63,7 @@ public class PetrolPumpCalibration implements Calibration, Comparable,
     private Date reCalibrationDate;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee calibrationDoneBy;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PetrolPumpCalibrationValue> calibrationValues;
 
     public PetrolPumpCalibration() {
@@ -155,7 +155,7 @@ public class PetrolPumpCalibration implements Calibration, Comparable,
     public Employee getCalibrationDoneBy() {
 
         if (calibrationDoneBy == null) {
-            calibrationDoneBy = new Employee();
+            return new Employee();
         }
 
         return calibrationDoneBy;
@@ -240,8 +240,8 @@ public class PetrolPumpCalibration implements Calibration, Comparable,
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getCalibrationDoneBy().getId() != null) {
-                getCalibrationDoneBy().save(em);
+            if (calibrationDoneBy != null) {
+                calibrationDoneBy.save(em);
             }
 
             for (PetrolPumpCalibrationValue calibrationValue : getCalibrationValues()) {

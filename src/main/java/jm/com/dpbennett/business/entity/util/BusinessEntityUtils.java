@@ -394,29 +394,6 @@ public class BusinessEntityUtils {
         }
 
     }
-    
-//    public static BusinessEntity saveBusinessEntity(EntityManager em, BusinessEntity businessEntity) {
-//
-//        try {
-//
-//            businessEntity.setName(sanitize(businessEntity.getName()));
-//
-//            if (businessEntity.getId() != null) {
-//                em.merge(businessEntity);
-//            } else {
-//                em.persist(businessEntity);
-//            }
-//
-//            return businessEntity;
-//
-//        } catch (Exception e) {
-//
-//            System.out.println(e);
-//
-//            return null;
-//        }
-//
-//    }
 
     public synchronized static void saveBusinessEntityInTransaction(EntityManager em,
             BusinessEntity entity) {
@@ -1313,5 +1290,5 @@ public class BusinessEntityUtils {
 
         return em.getReference((Class<T>) entity.getClass(), entity.getId());
     }
-  
+
 }

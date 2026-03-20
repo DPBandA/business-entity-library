@@ -24,5 +24,5 @@ public interface BusinessEntityManagement {
     public void setIsDirty(Boolean isDirty);
 
     public Boolean getIsDirty();
-    
+
 }

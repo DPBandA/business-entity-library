@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.util;
 
 import com.google.zxing.BarcodeFormat;
@@ -38,7 +39,7 @@ public class QRCodeGenerator {
 
     public static void main(String[] args) throws WriterException, IOException {
         System.out.println(QRCodeGenerator.getQRCodeImageData("getQRCodeData()",
-                125)); // tk make system option
+                125));
     }
 
     public static String getQRCodeImageData(String qrCodeText, int size) throws WriterException, IOException {

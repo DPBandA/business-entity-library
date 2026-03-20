@@ -58,7 +58,7 @@ public class Laboratory implements BusinessEntity, Company {
     private String name;
     private String type;
     private String number;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<BusinessOffice> businessOffices;
     private Boolean active;
     @Transient
@@ -256,7 +256,7 @@ public class Laboratory implements BusinessEntity, Company {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
+        
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

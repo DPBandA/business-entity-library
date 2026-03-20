@@ -100,7 +100,7 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            manufacturer = new Manufacturer();
+            return new Manufacturer();
         }
 
         return manufacturer;
@@ -461,8 +461,8 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getManufacturer().getId() != null) {
-                getManufacturer().save(em);
+            if (manufacturer != null) {
+                manufacturer.save(em);
             }
 
             for (Category category : getCategories()) {

@@ -65,15 +65,15 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     private String status;
     private String testMeasures;
     private String comments;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PetrolPumpNozzleCalibration> calibrations;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Seal lastSealIssued;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Sticker lastStickerIssued;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private PetrolPumpNozzleCalibration lastCalibration;
     @Transient
     private Boolean isDirty;
@@ -362,20 +362,8 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
         try {
 
-            if (getLastSealIssued().getId() != null) {
-                getLastSealIssued().save(em);
-            }
-
-            if (getLastStickerIssued().getId() != null) {
-                getLastStickerIssued().save(em);
-            }
-
             if (getManufacturer().getId() != null) {
                 getManufacturer().save(em);
-            }
-
-            if (getLastCalibration().getId() != null) {
-                getLastCalibration().save(em);
             }
 
             for (PetrolPumpNozzleCalibration calibration : getCalibrations()) {

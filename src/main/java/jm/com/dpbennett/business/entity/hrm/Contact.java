@@ -557,14 +557,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public ReturnMessage save(EntityManager em) {
         try {
 
-            for (PhoneNumber phoneNumber : getPhoneNumbers()) {
-                BusinessEntityUtils.saveBusinessEntity(em, phoneNumber);
-            }
-
-            for (Address address : getAddresses()) {
-                BusinessEntityUtils.saveBusinessEntity(em, address);
-            }
-
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

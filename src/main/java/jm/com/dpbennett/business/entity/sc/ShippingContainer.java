@@ -92,7 +92,7 @@ public class ShippingContainer implements BusinessEntity {
         if (percentageDetained == null) {
             percentageDetained = 0.0;
         }
-        
+
         return percentageDetained;
     }
 

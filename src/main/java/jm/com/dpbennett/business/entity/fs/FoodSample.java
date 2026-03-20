@@ -76,17 +76,17 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateReturned;
     private Integer methodOfDisposal;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice regulatoryOffice;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee sampledBy;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee receivedBy;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(cascade = CascadeType.ALL)
     private List<FoodTest> tests;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Laboratory assignedLab;
     @Transient
     private Boolean isDirty;
@@ -147,7 +147,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     public Laboratory getAssignedLab() {
 
         if (assignedLab == null) {
-            assignedLab = new Laboratory();
+            return new Laboratory();
         }
 
         return assignedLab;
@@ -204,7 +204,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     public Employee getReceivedBy() {
 
         if (receivedBy == null) {
-            receivedBy = new Employee();
+            return new Employee();
         }
 
         return receivedBy;
@@ -219,7 +219,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     public Employee getSampledBy() {
 
         if (sampledBy == null) {
-            sampledBy = new Employee();
+            return new Employee();
         }
 
         return sampledBy;
@@ -264,7 +264,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     public BusinessOffice getRegulatoryOffice() {
 
         if (regulatoryOffice == null) {
-            regulatoryOffice = new BusinessOffice();
+            return new BusinessOffice();
         }
 
         return regulatoryOffice;
@@ -378,7 +378,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     public Manufacturer getManufacturer() {
 
         if (manufacturer == null) {
-            manufacturer = new Manufacturer();
+            return new Manufacturer();
         }
 
         return manufacturer;
@@ -403,29 +403,29 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     public ReturnMessage save(EntityManager em) {
         try {
 
-//            if (getManufacturer().getId() != null) {
-//                getManufacturer().save(em);
-//            }
-//
-//            if (getRegulatoryOffice().getId() != null) {
-//                getRegulatoryOffice().save(em);
-//            }
-//
-//            if (getSampledBy().getId() != null) {
-//                getSampledBy().save(em);
-//            }
-//
-//            if (getReceivedBy().getId() != null) {
-//                getReceivedBy().save(em);
-//            }
-//
-//            for (FoodTest test : getTests()) {
-//                test.save(em);
-//            }
-//
-//            if (getAssignedLab().getId() != null) {
-//                getAssignedLab().save(em);
-//            }
+            if (manufacturer != null) {
+                manufacturer.save(em);
+            }
+
+            if (regulatoryOffice != null) {
+                regulatoryOffice.save(em);
+            }
+
+            if (sampledBy != null) {
+                sampledBy.save(em);
+            }
+
+            if (receivedBy != null) {
+                receivedBy.save(em);
+            }
+
+            for (FoodTest test : getTests()) {
+                test.save(em);
+            }
+
+            if (assignedLab != null) {
+                assignedLab.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

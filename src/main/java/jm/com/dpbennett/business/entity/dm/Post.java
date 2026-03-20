@@ -60,7 +60,7 @@ public class Post implements Document, Comparable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String title;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private DocumentType documentType;
     private String number;
     private String enforcement;
@@ -78,7 +78,7 @@ public class Post implements Document, Comparable, BusinessEntity {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
     private String url;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Classification classification;
     @Column(length = 1024)
     private String notes;
@@ -90,7 +90,7 @@ public class Post implements Document, Comparable, BusinessEntity {
     private String status;
     private String workPerformedOnDocument;
     private String documentForm;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
     private Long sequenceNumber;
     private String name;
@@ -165,7 +165,7 @@ public class Post implements Document, Comparable, BusinessEntity {
     public Employee getEditedBy() {
 
         if (editedBy == null) {
-            editedBy = new Employee();
+            return new Employee();
         }
 
         return editedBy;
@@ -294,7 +294,7 @@ public class Post implements Document, Comparable, BusinessEntity {
     @Override
     public Classification getClassification() {
         if (classification == null) {
-            classification = new Classification();
+            return new Classification();
         }
 
         return classification;
@@ -326,7 +326,7 @@ public class Post implements Document, Comparable, BusinessEntity {
     @Override
     public DocumentType getDocumentType() {
         if (documentType == null) {
-            documentType = new DocumentType();
+            return new DocumentType();
         }
 
         return documentType;
@@ -620,16 +620,16 @@ public class Post implements Document, Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getDocumentType().getId() != null) {
-                getDocumentType().save(em);
+            if (documentType != null) {
+                documentType.save(em);
             }
 
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
+            if (classification != null) {
+                classification.save(em);
             }
 
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
+            if (editedBy != null) {
+                editedBy.save(em);
             }
 
             em.getTransaction().begin();

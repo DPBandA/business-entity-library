@@ -32,6 +32,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -77,11 +78,11 @@ public class User extends DefaultEntity {
     private Employee employee;
     @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Module> activeModules;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<SystemOption> settings;
     @Transient
     private Boolean isDirty;
@@ -229,7 +230,7 @@ public class User extends DefaultEntity {
     public Privilege getPrivilege() {
 
         if (privilege == null) {
-            privilege = new Privilege();
+            return new Privilege();
         }
 
         return privilege;
@@ -571,7 +572,7 @@ public class User extends DefaultEntity {
     public Employee getEmployee() {
 
         if (employee == null) {
-            employee = new Employee();
+            return new Employee();
         }
 
         return employee;
@@ -804,22 +805,22 @@ public class User extends DefaultEntity {
 
         try {
 
-            if (getEmployee().getId() != null) {
-                getEmployee().save(em);
+            if (employee != null) {
+                employee.save(em);
             }
-            
-            if (getPrivilege().getId() != null) {
-                getPrivilege().save(em);
+
+            if (privilege != null) {
+                privilege.save(em);
             }
-            
+
             for (Privilege priv : getPrivileges()) {
                 priv.save(em);
             }
-            
+
             for (Module activeModule : getActiveModules()) {
                 activeModule.save(em);
             }
-            
+
             for (SystemOption setting : getSettings()) {
                 setting.save(em);
             }

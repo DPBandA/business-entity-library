@@ -750,7 +750,7 @@ public class Job implements BusinessEntity {
             if (client != null) {
                 setContact(client.getMainContact());
             } else {
-                contact = new Contact();
+                return new Contact();
             }
         }
 
@@ -766,7 +766,7 @@ public class Job implements BusinessEntity {
             if (client != null) {
                 setBillingAddress(client.getDefaultAddress());
             } else {
-                billingAddress = new Address();
+                return new Address();
             }
         }
 
@@ -891,7 +891,7 @@ public class Job implements BusinessEntity {
     public Classification getClassification() {
 
         if (classification == null) {
-            classification = new Classification();
+            return new Classification();
         }
 
         return classification;
@@ -903,7 +903,7 @@ public class Job implements BusinessEntity {
 
     public Sector getSector() {
         if (sector == null) {
-            sector = new Sector();
+            return new Sector();
         }
 
         return sector;
@@ -980,7 +980,7 @@ public class Job implements BusinessEntity {
 
     public Business getBusiness() {
         if (business == null) {
-            business = new Business();
+            return new Business();
         }
 
         return business;
@@ -992,7 +992,7 @@ public class Job implements BusinessEntity {
 
     public BusinessOffice getBusinessOffice() {
         if (businessOffice == null) {
-            businessOffice = new BusinessOffice();
+            return new BusinessOffice();
         }
 
         return businessOffice;
@@ -1023,7 +1023,7 @@ public class Job implements BusinessEntity {
 
     public Client getClient() {
         if (client == null) {
-            client = new Client();
+            return new Client();
         }
 
         return client;
@@ -1035,7 +1035,7 @@ public class Job implements BusinessEntity {
 
     public Department getDepartment() {
         if (department == null) {
-            department = new Department();
+            return new Department();
         }
 
         return department;
@@ -1057,7 +1057,7 @@ public class Job implements BusinessEntity {
     public Employee getAssignedTo() {
 
         if (assignedTo == null) {
-            assignedTo = new Employee();
+            return new Employee();
         }
 
         return assignedTo;
@@ -1069,7 +1069,7 @@ public class Job implements BusinessEntity {
 
     public JobCategory getJobCategory() {
         if (jobCategory == null) {
-            jobCategory = new JobCategory();
+            return new JobCategory();
         }
 
         return jobCategory;
@@ -1081,7 +1081,7 @@ public class Job implements BusinessEntity {
 
     public JobSubCategory getJobSubCategory() {
         if (jobSubCategory == null) {
-            jobSubCategory = new JobSubCategory();
+            return new JobSubCategory();
         }
 
         return jobSubCategory;
@@ -1093,7 +1093,7 @@ public class Job implements BusinessEntity {
 
     public Department getSubContractedDepartment() {
         if (subContractedDepartment == null) {
-            subContractedDepartment = new Department();
+            return new Department();
         }
 
         return subContractedDepartment;
@@ -1976,36 +1976,36 @@ public class Job implements BusinessEntity {
 
         try {
 
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
+            if (classification != null) {
+                classification.save(em);
             }
 
-            if (getSector().getId() != null) {
-                getSector().save(em);
+            if (sector != null) {
+                sector.save(em);
             }
 
-            if (getDepartment().getId() != null) {
-                getDepartment().save(em);
+            if (department != null) {
+                department.save(em);
             }
 
-            if (getSubContractedDepartment().getId() != null) {
-                getSubContractedDepartment().save(em);
+            if (subContractedDepartment != null) {
+                subContractedDepartment.save(em);
             }
 
-            if (getClient().getId() != null) {
-                getClient().save(em);
+            if (client != null) {
+                client.save(em);
             }
 
-            if (getJobCategory().getId() != null) {
-                getJobCategory().save(em);
+            if (jobCategory != null) {
+                jobCategory.save(em);
             }
 
-            if (getJobSubCategory().getId() != null) {
-                getJobSubCategory().save(em);
+            if (jobSubCategory != null) {
+                jobSubCategory.save(em);
             }
 
-            if (getAssignedTo().getId() != null) {
-                getAssignedTo().save(em);
+            if (assignedTo != null) {
+                assignedTo.save(em);
             }
 
             returnMessage = getJobCostingAndPayment().save(em);
@@ -2023,20 +2023,20 @@ public class Job implements BusinessEntity {
 
             getJobStatusAndTracking().save(em);
 
-            if (getBusiness().getId() != null) {
-                getBusiness().save(em);
+            if (business != null) {
+                business.save(em);
             }
 
-            if (getBusinessOffice().getId() != null) {
-                getBusinessOffice().save(em);
+            if (businessOffice != null) {
+                businessOffice.save(em);
             }
 
-            if (getBillingAddress().getId() != null) {
-                getBillingAddress().save(em);
+            if (billingAddress != null) {
+                billingAddress.save(em);
             }
 
-            if (getContact().getId() != null) {
-                getContact().save(em);
+            if (contact != null) {
+                contact.save(em);
             }
 
             for (JobSample jobSample : getJobSamples()) {

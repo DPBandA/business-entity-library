@@ -98,7 +98,7 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     public Laboratory getLaboratory() {
         if (laboratory == null) {
-            laboratory = new Laboratory();
+            return new Laboratory();
         }
         
         return laboratory;
@@ -110,7 +110,7 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     public DepartmentUnit getDepartmentUnit() {
         if (departmentUnit == null) {
-            departmentUnit = new DepartmentUnit();
+            return new DepartmentUnit();
         }
         
         return departmentUnit;
@@ -196,7 +196,7 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     public Department getDepartment() {
         if (department == null) {
-            department = new Department("");
+            return new Department("");
         }
         
         return department;
@@ -308,16 +308,16 @@ public class UnitCost implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getDepartment().getId() != null) {
-                getDepartment().save(em);
+            if (department != null) {
+                department.save(em);
             }
 
-            if (getLaboratory().getId() != null) {
-                getLaboratory().save(em);
+            if (laboratory != null) {
+                laboratory.save(em);
             }
 
-            if (getDepartmentUnit().getId() != null) {
-                getDepartmentUnit().save(em);
+            if (departmentUnit != null) {
+                departmentUnit.save(em);
             }
 
             em.getTransaction().begin();

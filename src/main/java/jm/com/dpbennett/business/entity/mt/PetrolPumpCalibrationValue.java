@@ -124,7 +124,7 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
     public Employee getRecordedBy() {
 
         if (recordedBy == null) {
-            recordedBy = new Employee();
+            return new Employee();
         }
 
         return recordedBy;
@@ -521,8 +521,8 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getRecordedBy().getId() != null) {
-                getRecordedBy().save(em);
+            if (recordedBy != null) {
+                recordedBy.save(em);
             }
 
             em.getTransaction().begin();

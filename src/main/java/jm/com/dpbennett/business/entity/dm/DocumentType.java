@@ -300,7 +300,7 @@ public class DocumentType implements Comparable, BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

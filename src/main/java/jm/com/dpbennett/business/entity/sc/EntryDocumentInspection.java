@@ -58,7 +58,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     private Date entryDocumentReportDate;
     private String containerNumbers;
     private String containerSizes;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<ShippingContainer> shippingContainers;
     private Double CIF;
     private Double SCF;
@@ -150,7 +150,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
         if (invoiceNumber == null) {
             invoiceNumber = "";
         }
-        
+
         return invoiceNumber;
     }
 
@@ -226,7 +226,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
         if (CIF == null) {
             CIF = 0.0;
         }
-        
+
         return CIF;
     }
 

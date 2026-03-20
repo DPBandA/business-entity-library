@@ -32,7 +32,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class TestEntity implements Account {
 
     public static void main(String[] args) {
-        System.out.println("Yes iya!");
+        System.out.println("Yes iyah!");
     }
 
     @Override

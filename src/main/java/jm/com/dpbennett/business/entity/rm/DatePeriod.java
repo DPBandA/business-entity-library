@@ -110,9 +110,9 @@ public class DatePeriod implements BusinessEntity, Comparable {
     }
 
     public static DatePeriod findById(EntityManager em, Long id) {
-        
+
         return em.find(DatePeriod.class, id);
-        
+
     }
 
     public String getLabel() {
@@ -267,7 +267,7 @@ public class DatePeriod implements BusinessEntity, Comparable {
         Calendar referenceCalendar = Calendar.getInstance();
 
         referenceCalendar.setTime(refDate);
-     
+
         Date referenceDate = BusinessEntityUtils.createDate(
                 referenceCalendar.get(Calendar.YEAR),
                 referenceCalendar.get(Calendar.MONTH),
@@ -396,7 +396,7 @@ public class DatePeriod implements BusinessEntity, Comparable {
             return false;
         }
         DatePeriod other = (DatePeriod) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -429,7 +429,7 @@ public class DatePeriod implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

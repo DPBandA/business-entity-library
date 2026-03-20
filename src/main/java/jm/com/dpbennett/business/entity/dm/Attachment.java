@@ -121,7 +121,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         if (type == null) {
             type = "";
         }
-        
+
         return type;
     }
 
@@ -336,7 +336,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

@@ -166,7 +166,7 @@ public class JobCategory implements Serializable, BusinessEntity {
         if (departments == null) {
             departments = new ArrayList<>();
         }
-        
+
         return departments;
     }
 

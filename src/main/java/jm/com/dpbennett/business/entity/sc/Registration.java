@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.sc;
 
 import jm.com.dpbennett.business.entity.jmts.Job;
@@ -92,7 +93,7 @@ public class Registration implements BusinessEntity, Comparable {
 
     public Job getJob() {
         if (job == null) {
-            job = new Job("");
+            return new Job("");
         }
 
         return job;
@@ -229,8 +230,8 @@ public class Registration implements BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getJob().getId() != null) {
-                getJob().save(em);
+            if (job != null) {
+                job.save(em);
             }
 
             em.getTransaction().begin();

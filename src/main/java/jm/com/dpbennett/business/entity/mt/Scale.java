@@ -71,7 +71,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
     private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Certification certification;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Sticker> stickers;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateScheduledForTest;
@@ -100,7 +100,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
 
     public Client getClient() {
         if (client == null) {
-            client = new Client();
+            return new Client();
         }
 
         return client;
@@ -138,7 +138,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
 
     public Certification getCertification() {
         if (certification == null) {
-            certification = new Certification();
+            return new Certification();
         }
 
         return certification;
@@ -246,7 +246,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            manufacturer = new Manufacturer("");
+            return new Manufacturer("");
         }
 
         return manufacturer;
@@ -371,16 +371,16 @@ public class Scale implements Product, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getManufacturer().getId() != null) {
-                getManufacturer().save(em);
+            if (manufacturer != null) {
+                manufacturer.save(em);
             }
 
-            if (getCertification().getId() != null) {
-                getCertification().save(em);
+            if (certification != null) {
+                certification.save(em);
             }
 
-            if (getClient().getId() != null) {
-                getClient().save(em);
+            if (client != null) {
+                client.save(em);
             }
 
             for (Sticker sticker : getStickers()) {

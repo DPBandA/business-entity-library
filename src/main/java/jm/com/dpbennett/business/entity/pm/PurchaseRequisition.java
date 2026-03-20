@@ -76,53 +76,53 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private DocumentType documentType;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Classification classification;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Department originatingDepartment;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Department purchasingDepartment;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee procurementOfficer;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee originator;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Tax tax;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver1;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver2;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver3;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver4;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approver5;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender1;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender2;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender3;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender4;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee recommender5;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Currency paymentCurrency;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Supplier supplier;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Attachment> attachments;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(cascade = CascadeType.ALL)
     private List<CostComponent> costComponents;
     @Column(length = 1024)
     private String description;
@@ -414,7 +414,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public Tax getTax() {
 
         if (tax == null) {
-            tax = new Tax();
+            return new Tax();
         }
 
         return tax;
@@ -427,7 +427,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public Discount getDiscount() {
 
         if (discount == null) {
-            discount = new Discount();
+            return new Discount();
         }
 
         return discount;
@@ -587,7 +587,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public Currency getCurrency() {
 
         if (currency == null) {
-            currency = new Currency();
+            return new Currency();
         }
 
         return currency;
@@ -600,7 +600,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public Currency getPaymentCurrency() {
 
         if (paymentCurrency == null) {
-            paymentCurrency = new Currency();
+            return new Currency();
         }
 
         return paymentCurrency;
@@ -967,6 +967,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (costComponents == null) {
             costComponents = new ArrayList<>();
         }
+        
         return costComponents;
     }
 
@@ -1027,7 +1028,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public Supplier getSupplier() {
 
         if (supplier == null) {
-            supplier = new Supplier();
+            return new Supplier();
         }
 
         return supplier;
@@ -1189,7 +1190,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            editedBy = new Employee();
+            return new Employee();
         }
 
         return editedBy;
@@ -1220,7 +1221,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public Department getOriginatingDepartment() {
         if (originatingDepartment == null) {
-            originatingDepartment = new Department();
+            return new Department();
         }
 
         return originatingDepartment;
@@ -1248,7 +1249,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public Department getPurchasingDepartment() {
         if (purchasingDepartment == null) {
-            purchasingDepartment = new Department();
+            return new Department();
         }
 
         return purchasingDepartment;
@@ -1337,7 +1338,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public Employee getProcurementOfficer() {
         if (procurementOfficer == null) {
-            procurementOfficer = new Employee();
+            return new Employee();
         }
 
         return procurementOfficer;
@@ -1349,7 +1350,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public Employee getOriginator() {
         if (originator == null) {
-            originator = new Employee();
+            return new Employee();
         }
 
         return originator;
@@ -1362,7 +1363,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Override
     public DocumentType getDocumentType() {
         if (documentType == null) {
-            documentType = new DocumentType();
+            return new DocumentType();
         }
 
         return documentType;
@@ -1413,7 +1414,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Override
     public Classification getClassification() {
         if (classification == null) {
-            classification = new Classification();
+            return new Classification();
         }
 
         return classification;
@@ -1600,96 +1601,117 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
         try {
 
-//            if (getDocumentType().getId() != null) {
-//                getDocumentType().save(em);
-//            }
-//            if (getClassification().getId() != null) {
-//                getClassification().save(em);
-//            }
-//            if (getOriginatingDepartment().getId() != null) {
-//                getOriginatingDepartment().save(em);
-//            }
-//            if (getPurchasingDepartment().getId() != null) {
-//                getPurchasingDepartment().save(em);
-//            }
-//            if (getProcurementOfficer().getId() != null) {
-//                getProcurementOfficer().save(em);
-//            }
-//            if (getOriginator().getId() != null) {
-//                getOriginator().save(em);
-//            }
-//            if (getTax().getId() != null) {
-//                getTax().save(em);
-//            }
-//            if (getDiscount().getId() != null) {
-//                getDiscount().save(em);
-//            }
-//            if (getApprover1() != null) {
-//                getApprover1().save(em);
-//            }
-//            if (getApprover2() != null) {
-//                getApprover2().save(em);
-//            }
-//            if (getApprover3() != null) {
-//                getApprover3().save(em);
-//            }
-//            if (getApprover4() != null) {
-//                getApprover4().save(em);
-//            }
-//            if (getApprover5() != null) {
-//                getApprover5().save(em);
-//            }
-//            if (getRecommender1() != null) {
-//                getRecommender1().save(em);
-//            }
-//            if (getRecommender2() != null) {
-//                getRecommender2().save(em);
-//            }
-//            if (getRecommender3() != null) {
-//                getRecommender3().save(em);
-//            }
-//            if (getRecommender4() != null) {
-//                getRecommender4().save(em);
-//            }
-//            if (getRecommender5() != null) {
-//                getRecommender5().save(em);
-//            }
-//            if (getCurrency().getId() != null) {
-//                getCurrency().save(em);
-//            }
-//            if (getPaymentCurrency().getId() != null) {
-//                getPaymentCurrency().save(em);
-//            }
-//            if (getSupplier().getId() != null) {
-//                getSupplier().save(em);
-//            }
-//            if (getEditedBy().getId() != null) {
-//                getEditedBy().save(em);
-//            }
-//
-//            for (Attachment attachment : getAttachments()) {
-//                if ((attachment.getId() == null || attachment.getIsDirty())
-//                        && !attachment.save(em).isSuccess()) {
-//
-//                    return new ReturnMessage(false,
-//                            "Attachment save error occurred",
-//                            "An error occurred while saving an attachment",
-//                            Message.SEVERITY_ERROR_NAME);
-//
-//                }
-//            }
-//
-//            for (CostComponent costComponent : getCostComponents()) {
-//                if ((costComponent.getIsDirty() || costComponent.getId() == null)
-//                        && !costComponent.save(em).isSuccess()) {
-//
-//                    return new ReturnMessage(false,
-//                            "Cost component save error occurred",
-//                            "An error occurred while saving a cost component",
-//                            Message.SEVERITY_ERROR_NAME);
-//
-//                }
-//            }
+            if (documentType != null) {
+                documentType.save(em);
+            }
+
+            if (classification != null) {
+                classification.save(em);
+            }
+
+            if (originatingDepartment != null) {
+                originatingDepartment.save(em);
+            }
+
+            if (purchasingDepartment != null) {
+                purchasingDepartment.save(em);
+            }
+
+            if (procurementOfficer != null) {
+                procurementOfficer.save(em);
+            }
+
+            if (originator != null) {
+                originator.save(em);
+            }
+
+            if (tax != null) {
+                tax.save(em);
+            }
+
+            if (discount != null) {
+                discount.save(em);
+            }
+
+            if (getApprover1() != null) {
+                getApprover1().save(em);
+            }
+
+            if (getApprover2() != null) {
+                getApprover2().save(em);
+            }
+
+            if (getApprover3() != null) {
+                getApprover3().save(em);
+            }
+
+            if (getApprover4() != null) {
+                getApprover4().save(em);
+            }
+
+            if (getApprover5() != null) {
+                getApprover5().save(em);
+            }
+
+            if (getRecommender1() != null) {
+                getRecommender1().save(em);
+            }
+
+            if (getRecommender2() != null) {
+                getRecommender2().save(em);
+            }
+
+            if (getRecommender3() != null) {
+                getRecommender3().save(em);
+            }
+
+            if (getRecommender4() != null) {
+                getRecommender4().save(em);
+            }
+
+            if (getRecommender5() != null) {
+                getRecommender5().save(em);
+            }
+
+            if (currency != null) {
+                currency.save(em);
+            }
+
+            if (paymentCurrency != null) {
+                paymentCurrency.save(em);
+            }
+
+            if (supplier != null) {
+                supplier.save(em);
+            }
+
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
+
+            for (Attachment attachment : getAttachments()) {
+                if ((attachment.getId() == null || attachment.getIsDirty())
+                        && !attachment.save(em).isSuccess()) {
+
+                    return new ReturnMessage(false,
+                            "Attachment save error occurred",
+                            "An error occurred while saving an attachment",
+                            Message.SEVERITY_ERROR_NAME);
+
+                }
+            }
+
+            for (CostComponent costComponent : getCostComponents()) {
+                if ((costComponent.getIsDirty() || costComponent.getId() == null)
+                        && !costComponent.save(em).isSuccess()) {
+
+                    return new ReturnMessage(false,
+                            "Cost component save error occurred",
+                            "An error occurred while saving a cost component",
+                            Message.SEVERITY_ERROR_NAME);
+
+                }
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

@@ -134,6 +134,11 @@ public class StatusNote implements Serializable, BusinessEntity {
     }
 
     public Employee getCreatedBy() {
+
+        if (createdBy == null) {
+            return new Employee();
+        }
+
         return createdBy;
     }
 
@@ -316,7 +321,9 @@ public class StatusNote implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-//            getCreatedBy().save(em);
+            if (createdBy != null) {
+                createdBy.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

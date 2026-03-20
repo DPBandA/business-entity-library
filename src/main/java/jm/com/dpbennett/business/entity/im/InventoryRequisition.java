@@ -66,9 +66,9 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     private Boolean approved;
     private Boolean received;
     private Boolean issued;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Department department;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee contactPerson;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateRequisitionApproved;
@@ -82,19 +82,19 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     private Date dateEdited;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateInventoryIssued;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee requisitionApprovedBy;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inventoryReceivedBy;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee requisitionBy;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inventoryIssuedBy;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(cascade = CascadeType.ALL)
     private List<InventoryDisbursement> inventoryDisbursements;
     @Transient
     private Boolean isDirty;
@@ -207,7 +207,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
 
     public Employee getInventoryIssuedBy() {
         if (inventoryIssuedBy == null) {
-            inventoryIssuedBy = new Employee();
+            return new Employee();
         }
 
         return inventoryIssuedBy;
@@ -227,7 +227,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
 
     public Department getDepartment() {
         if (department == null) {
-            department = new Department();
+            return new Department();
         }
 
         return department;
@@ -240,7 +240,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public Employee getContactPerson() {
 
         if (contactPerson == null) {
-            contactPerson = new Employee();
+            return new Employee();
         }
 
         return contactPerson;
@@ -276,7 +276,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
 
     public Employee getRequisitionApprovedBy() {
         if (requisitionApprovedBy == null) {
-            requisitionApprovedBy = new Employee();
+            return new Employee();
         }
 
         return requisitionApprovedBy;
@@ -289,7 +289,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public Employee getInventoryReceivedBy() {
 
         if (inventoryReceivedBy == null) {
-            inventoryReceivedBy = new Employee();
+            return new Employee();
         }
 
         return inventoryReceivedBy;
@@ -302,7 +302,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public Employee getRequisitionBy() {
 
         if (requisitionBy == null) {
-            requisitionBy = new Employee();
+            return new Employee();
         }
 
         return requisitionBy;
@@ -334,6 +334,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
         if (inventoryDisbursements == null) {
             inventoryDisbursements = new ArrayList<>();
         }
+        
         return inventoryDisbursements;
     }
 
@@ -355,7 +356,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public Employee getEditedBy() {
 
         if (editedBy == null) {
-            editedBy = new Employee();
+            return new Employee();
         }
 
         return editedBy;
@@ -601,7 +602,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public Employee getEnteredBy() {
 
         if (enteredBy == null) {
-            enteredBy = new Employee();
+            return new Employee();
         }
 
         return enteredBy;
@@ -672,42 +673,49 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public ReturnMessage save(EntityManager em) {
         try {
 
-//            if (getDepartment().getId() != null) {
-//                getDepartment().save(em);
-//            }
-//            if (getContactPerson().getId() != null) {
-//                getContactPerson().save(em);
-//            }
-//            if (getRequisitionApprovedBy().getId() != null) {
-//                getRequisitionApprovedBy().save(em);
-//            }
-//            if (getInventoryReceivedBy().getId() != null) {
-//                getInventoryReceivedBy().save(em);
-//            }
-//            if (getRequisitionBy().getId() != null) {
-//                getRequisitionBy().save(em);
-//            }
-//            if (getEnteredBy().getId() != null) {
-//                getEnteredBy().save(em);
-//            }
-//            if (getEditedBy().getId() != null) {
-//                getEditedBy().save(em);
-//            }
-//            if (getInventoryIssuedBy().getId() != null) {
-//                getInventoryIssuedBy().save(em);
-//            }
-//          
-//            for (InventoryDisbursement inventoryDisbursement : getInventoryDisbursements()) {
-//                if (!inventoryDisbursement.save(em).isSuccess()) {
-//
-//                    return new ReturnMessage(false,
-//                            "Inventory disbursement save error occurred",
-//                            "An error occurred while saving an inventory disbursement",
-//                            Message.SEVERITY_ERROR_NAME);
-//
-//                }
-//            }
-//            
+            if (department != null) {
+                department.save(em);
+            }
+            
+            if (contactPerson != null) {
+                contactPerson.save(em);
+            }
+            
+            if (requisitionApprovedBy != null) {
+                requisitionApprovedBy.save(em);
+            }
+            
+            if (inventoryReceivedBy != null) {
+                inventoryReceivedBy.save(em);
+            }
+            
+            if (requisitionBy != null) {
+                requisitionBy.save(em);
+            }
+            
+            if (enteredBy != null) {
+                enteredBy.save(em);
+            }
+            
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
+            
+            if (inventoryIssuedBy != null) {
+                inventoryIssuedBy.save(em);
+            }
+          
+            for (InventoryDisbursement inventoryDisbursement : getInventoryDisbursements()) {
+                if (!inventoryDisbursement.save(em).isSuccess()) {
+
+                    return new ReturnMessage(false,
+                            "Inventory disbursement save error occurred",
+                            "An error occurred while saving an inventory disbursement",
+                            Message.SEVERITY_ERROR_NAME);
+
+                }
+            }
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

@@ -106,7 +106,7 @@ public class FieldUpdate implements Serializable {
             return false;
         }
         FieldUpdate other = (FieldUpdate) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 

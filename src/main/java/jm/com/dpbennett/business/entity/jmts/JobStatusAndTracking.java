@@ -67,8 +67,8 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee completedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateTransfered; // tk change name to dateTransferred    
-    private String productOrSampleReceivedBy; // tk change to Employee entity
+    private Date dateTransfered;
+    private String productOrSampleReceivedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateProductOrSampleReceived;
     @Column(length = 1024)
@@ -144,6 +144,10 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     }
 
     public Employee getCompletedBy() {
+
+        if (completedBy == null) {
+            return new Employee();
+        }
 
         return completedBy;
     }
@@ -236,7 +240,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     public Employee getEditedBy() {
 
         if (editedBy == null) {
-            editedBy = new Employee();
+            return new Employee();
         }
 
         return editedBy;
@@ -249,7 +253,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     @Override
     public Employee getEnteredBy() {
         if (enteredBy == null) {
-            enteredBy = new Employee();
+            return new Employee();
         }
 
         return enteredBy;
@@ -261,6 +265,10 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     }
 
     public Employee getTransferredTo() {
+
+        if (transferredTo == null) {
+            return new Employee();
+        }
 
         return transferredTo;
     }
@@ -529,6 +537,22 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            if (transferredTo != null) {
+                transferredTo.save(em);
+            }
+
+            if (enteredBy != null) {
+                enteredBy.save(em);
+            }
+
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
+
+            if (completedBy != null) {
+                completedBy.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

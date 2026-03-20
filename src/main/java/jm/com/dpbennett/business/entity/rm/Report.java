@@ -81,7 +81,7 @@ public class Report implements BusinessEntity {
     private List<Employee> employees;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Client> clients;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<DatePeriod> datePeriods;
     private Boolean departmentRequired;
     private Boolean employeeRequired;

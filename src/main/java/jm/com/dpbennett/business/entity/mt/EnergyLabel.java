@@ -93,7 +93,7 @@ public class EnergyLabel implements BusinessEntity {
     private String standard;
     private String type;
     private String validity;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private EnergyConsumptionAndEfficiency energyConsumptionAndEfficiency;
     @Transient
     private Boolean isDirty;
@@ -1044,10 +1044,6 @@ public class EnergyLabel implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            if (getEnergyConsumptionAndEfficiency().getId() != null) {
-                getEnergyConsumptionAndEfficiency().save(em);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);

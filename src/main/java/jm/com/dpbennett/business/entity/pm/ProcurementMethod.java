@@ -228,7 +228,7 @@ public class ProcurementMethod implements BusinessEntity {
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            editedBy = new Employee();
+            return new Employee();
         }
 
         return editedBy;
@@ -348,8 +348,8 @@ public class ProcurementMethod implements BusinessEntity {
 
         try {
 
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
+            if (editedBy != null) {
+                editedBy.save(em);
             }
 
             for (EmployeePosition requiredSignatoryPosition : getRequiredSignatoryPositions()) {

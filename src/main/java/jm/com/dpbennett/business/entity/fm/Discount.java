@@ -61,7 +61,7 @@ public class Discount implements Serializable, BusinessEntity {
     private String name;
     private Double discountValue;
     private String discountValueType;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private AccountingCode accountingCode;
     private String type;
     @Column(length = 1024)

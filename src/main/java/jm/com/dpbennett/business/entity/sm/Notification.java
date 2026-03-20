@@ -385,7 +385,6 @@ public class Notification implements BusinessEntity {
 
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
                     + "WHERE n.active = 1 ORDER BY n.issueTime DESC",
-
                     Notification.class).setMaxResults(maxResult).getResultList();
 
             return alerts;

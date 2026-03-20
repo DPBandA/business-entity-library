@@ -70,9 +70,9 @@ public class ManufacturerInspection implements BusinessEntity {
     private Date inspectionEndTime;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedInspector;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<InspectionComponent> inspectionComponents;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<ProductInspection> productInspections;
     @Transient
     private Boolean isDirty;
@@ -107,7 +107,7 @@ public class ManufacturerInspection implements BusinessEntity {
 
     public Contact getRepresentative() {
         if (representative == null) {
-            representative = new Contact();
+            return new Contact();
         }
 
         return representative;
@@ -119,7 +119,7 @@ public class ManufacturerInspection implements BusinessEntity {
 
     public Address getAddress() {
         if (address == null) {
-            address = new Address();
+            return new Address();
         }
 
         return address;
@@ -131,7 +131,7 @@ public class ManufacturerInspection implements BusinessEntity {
 
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            manufacturer = new Manufacturer();
+            return new Manufacturer();
         }
 
         return manufacturer;
@@ -166,7 +166,7 @@ public class ManufacturerInspection implements BusinessEntity {
     public Employee getAssignedInspector() {
 
         if (assignedInspector == null) {
-            assignedInspector = new Employee();
+            return new Employee();
         }
 
         return assignedInspector;
@@ -264,20 +264,20 @@ public class ManufacturerInspection implements BusinessEntity {
 
         try {
 
-            if (getManufacturer().getId() != null) {
-                getManufacturer().save(em);
+            if (manufacturer != null) {
+                manufacturer.save(em);
             }
 
-            if (getAddress().getId() != null) {
-                getAddress().save(em);
+            if (address != null) {
+                address.save(em);
             }
 
-            if (getRepresentative().getId() != null) {
-                getRepresentative().save(em);
+            if (representative != null) {
+                representative.save(em);
             }
 
-            if (getAssignedInspector().getId() != null) {
-                getAssignedInspector().save(em);
+            if (assignedInspector != null) {
+                assignedInspector.save(em);
             }
 
             for (InspectionComponent inspectionComponent : getInspectionComponents()) {

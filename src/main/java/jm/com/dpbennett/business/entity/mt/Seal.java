@@ -142,7 +142,7 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
     public Employee getAssignee() {
         if (assignee == null) {
-            assignee = new Employee();
+            return new Employee();
         }
 
         return assignee;
@@ -196,7 +196,7 @@ public class Seal implements Product, BusinessEntity, Comparable {
     public Manufacturer getManufacturer() {
 
         if (manufacturer == null) {
-            manufacturer = new Manufacturer();
+            return new Manufacturer();
         }
 
         return manufacturer;
@@ -347,11 +347,11 @@ public class Seal implements Product, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getManufacturer().getId() != null) {
-                getManufacturer().save(em);
+            if (manufacturer != null) {
+                manufacturer.save(em);
             }
-            if (getAssignee().getId() != null) {
-                getAssignee().save(em);
+            if (assignee != null) {
+                assignee.save(em);
             }
 
             em.getTransaction().begin();

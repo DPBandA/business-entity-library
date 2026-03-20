@@ -34,6 +34,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -71,7 +72,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private String username;
     private String title;
     private String name;
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<EmployeePosition> positions;
     @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
@@ -104,7 +105,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public Employee(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
         positions = new ArrayList<>();
@@ -246,7 +246,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     @JsonbTransient
     public Department getDepartment() {
         if (department == null) {
-            return new Department();
+            department = new Department();
         }
 
         return department;
@@ -714,6 +714,9 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public ReturnMessage save(EntityManager em) {
         try {
 
+            //getInternet().save(em); // tk
+//            System.out.println("Internet ID: " + getInternet().getId());
+//            System.out.println("Is managed: " + em.contains(getInternet()));
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

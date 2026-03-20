@@ -52,46 +52,32 @@ public class AccPacDocument implements Serializable, BusinessEntity {
     @Id
     @Column(length = 22, name = "IDINVC", nullable = false)
     private String idInvc;
-
     @Column(length = 12, name = "IDCUST")
     private String idCust;
-
     @Column(name = "AMTDUETC", precision = 10, scale = 3)
     private BigDecimal custCurrencyAmountDue;
-
     @Column(name = "AMTDUEHC", precision = 10, scale = 3)
     private BigDecimal funcCurrencyAmountDue;
-
     @Column(length = 4, name = "FISCYR")
     private String fiscalYear;
-
     @Column(name = "DATEINVC", precision = 9, scale = 0)
     private BigDecimal documentDate;
-
     @Column(name = "DATEDUE", precision = 9, scale = 0)
     private BigDecimal dueDate;
-
     @Column(name = "AMTINVCHC", precision = 10, scale = 3)
     private BigDecimal funcCurrencyInvoiceAmount;
-
     @Column(name = "AMTINVCTC", precision = 10, scale = 3)
     private BigDecimal custCurrencyInvoiceAmount;
-
     @Column(name = "DATEPAID", precision = 9, scale = 0)
     private BigDecimal datePaid;
-
     @Column(name = "TRXTYPEID")
     private Integer transactionType;
-
     @Column(name = "TRXTYPETXT")
     private Integer documentType;
-
     @Column(name = "SWPAID")
     private Integer fullyPaid;
-
     @Column(length = 22, name = "IDORDERNBR")
     private String idORDERNBR;
-
     @Transient
     private Boolean isDirty;
 

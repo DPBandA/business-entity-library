@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.sc;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -133,7 +134,7 @@ public class SampleRequest implements BusinessEntity, Form {
 
     public Employee getInspector() {
         if (inspector == null) {
-            inspector = new Employee();
+            return new Employee();
         }
 
         return inspector;
@@ -145,7 +146,7 @@ public class SampleRequest implements BusinessEntity, Form {
 
     public Client getReceivedFrom() {
         if (receivedFrom == null) {
-            receivedFrom = new Client();
+            return new Client();
         }
 
         return receivedFrom;
@@ -157,7 +158,7 @@ public class SampleRequest implements BusinessEntity, Form {
 
     public Contact getRepresentative() {
         if (representative == null) {
-            representative = new Contact();
+            return new Contact();
         }
 
         return representative;
@@ -272,16 +273,16 @@ public class SampleRequest implements BusinessEntity, Form {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getReceivedFrom().getId() != null) {
-                getReceivedFrom().save(em);
+            if (receivedFrom != null) {
+                receivedFrom.save(em);
             }
 
-            if (getRepresentative().getId() != null) {
-                getRepresentative().save(em);
+            if (representative != null) {
+                representative.save(em);
             }
 
-            if (getInspector().getId() != null) {
-                getInspector().save(em);
+            if (inspector != null) {
+                inspector.save(em);
             }
 
             for (ProductInspection product : getProducts()) {

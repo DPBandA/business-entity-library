@@ -115,12 +115,12 @@ public class ComplianceSurvey implements BusinessEntity {
     private String referenceNumber;
     @Column(length = 1024)
     private String reasonForDetention;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Address specifiedReleaseLocation;
     // Notice of refease from detention
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Address specifiedReleaseLocationDomesticMarket;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Address locationOfDetainedProductDomesticMarket;
     private Boolean retailer;
     private Boolean distributor;
@@ -167,9 +167,9 @@ public class ComplianceSurvey implements BusinessEntity {
     private Date approvedBySigDateForReleaseRequestPOE;
     // Notice of Detention - Domestic Market
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature authSigForNoticeOfDentionDM; // tk replace with *Detention*
+    private Signature authSigForNoticeOfDentionDM;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date authSigDateForNoticeOfDentionDM; // tk replace with *Detention*
+    private Date authSigDateForNoticeOfDentionDM;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee authEmployeeForNoticeOfDentionDM; // tk replace with *Detention*
     // Notice of Release from Detention - Domestic Market
@@ -184,7 +184,7 @@ public class ComplianceSurvey implements BusinessEntity {
     private Employee editedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateEdited;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private EntryDocumentInspection entryDocumentInspection;
     private String jobNumber;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -192,7 +192,7 @@ public class ComplianceSurvey implements BusinessEntity {
     private String workProgress;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> inspectors;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<ProductInspection> productInspections;
     private Boolean applicationForRehabilitation;
     @Transient
@@ -220,7 +220,7 @@ public class ComplianceSurvey implements BusinessEntity {
     public Employee getInspectorForSampleRequestPOE() {
 
         if (inspectorForSampleRequestPOE == null) {
-            inspectorForSampleRequestPOE = new Employee();
+            return new Employee();
         }
 
         return inspectorForSampleRequestPOE;
@@ -232,7 +232,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getRetailOutletAddress() {
         if (retailOutletAddress == null) {
-            retailOutletAddress = new Address();
+            return new Address();
         }
 
         return retailOutletAddress;
@@ -244,7 +244,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getConsigneeAddress() {
         if (consigneeAddress == null) {
-            consigneeAddress = new Address();
+            return new Address();
         }
 
         return consigneeAddress;
@@ -271,7 +271,7 @@ public class ComplianceSurvey implements BusinessEntity {
     public BusinessOffice getBusinessOffice() {
 
         if (businessOffice == null) {
-            businessOffice = new BusinessOffice();
+            return new BusinessOffice();
         }
 
         return businessOffice;
@@ -525,7 +525,7 @@ public class ComplianceSurvey implements BusinessEntity {
     @Override
     public Employee getEditedBy() {
         if (editedBy == null) {
-            editedBy = new Employee();
+            return new Employee();
         }
 
         return editedBy;
@@ -538,7 +538,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getApprovedBySigForReleaseRequestPOE() {
         if (approvedBySigForReleaseRequestPOE == null) {
-            approvedBySigForReleaseRequestPOE = new Signature();
+            return new Signature();
         }
 
         return approvedBySigForReleaseRequestPOE;
@@ -550,7 +550,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getApprovedByEmployeeForReleaseRequestPOE() {
         if (approvedByEmployeeForReleaseRequestPOE == null) {
-            approvedByEmployeeForReleaseRequestPOE = new Employee();
+            return new Employee();
         }
 
         return approvedByEmployeeForReleaseRequestPOE;
@@ -570,7 +570,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getAuthSigForDetentionRequestPOE() {
         if (authSigForDetentionRequestPOE == null) {
-            authSigForDetentionRequestPOE = new Signature();
+            return new Signature();
         }
 
         return authSigForDetentionRequestPOE;
@@ -590,7 +590,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getAuthEmployeeForDetentionRequestPOE() {
         if (authEmployeeForDetentionRequestPOE == null) {
-            authEmployeeForDetentionRequestPOE = new Employee();
+            return new Employee();
         }
 
         return authEmployeeForDetentionRequestPOE;
@@ -602,7 +602,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getInspectorSigForSampleRequestPOE() {
         if (inspectorSigForSampleRequestPOE == null) {
-            inspectorSigForSampleRequestPOE = new Signature();
+            return new Signature();
         }
 
         return inspectorSigForSampleRequestPOE;
@@ -622,7 +622,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getPreparedBySigForReleaseRequestPOE() {
         if (preparedBySigForReleaseRequestPOE == null) {
-            preparedBySigForReleaseRequestPOE = new Signature();
+            return new Signature();
         }
 
         return preparedBySigForReleaseRequestPOE;
@@ -634,7 +634,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getPreparedByEmployeeForReleaseRequestPOE() {
         if (preparedByEmployeeForReleaseRequestPOE == null) {
-            preparedByEmployeeForReleaseRequestPOE = new Employee();
+            return new Employee();
         }
 
         return preparedByEmployeeForReleaseRequestPOE;
@@ -654,7 +654,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getAuthSigForNoticeOfReleaseFromDentionDM() {
         if (authSigForNoticeOfReleaseFromDentionDM == null) {
-            authSigForNoticeOfReleaseFromDentionDM = new Signature();
+            return new Signature();
         }
 
         return authSigForNoticeOfReleaseFromDentionDM;
@@ -674,7 +674,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getAuthEmpForNoticeOfReleaseFromDentionDM() {
         if (authEmpForNoticeOfReleaseFromDentionDM == null) {
-            authEmpForNoticeOfReleaseFromDentionDM = new Employee();
+            return new Employee();
         }
 
         return authEmpForNoticeOfReleaseFromDentionDM;
@@ -686,7 +686,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Signature getAuthSigForNoticeOfDentionDM() {
         if (authSigForNoticeOfDentionDM == null) {
-            authSigForNoticeOfDentionDM = new Signature();
+            return new Signature();
         }
 
         return authSigForNoticeOfDentionDM;
@@ -706,7 +706,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getAuthEmployeeForNoticeOfDentionDM() {
         if (authEmployeeForNoticeOfDentionDM == null) {
-            authEmployeeForNoticeOfDentionDM = new Employee();
+            return new Employee();
         }
 
         return authEmployeeForNoticeOfDentionDM;
@@ -780,7 +780,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getInspectionAddress() {
         if (inspectionAddress == null) {
-            inspectionAddress = new Address();
+            return new Address();
         }
 
         return inspectionAddress;
@@ -876,7 +876,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getLocationOfDetainedProductDomesticMarket() {
         if (locationOfDetainedProductDomesticMarket == null) {
-            locationOfDetainedProductDomesticMarket = new Address();
+            return new Address();
         }
 
         return locationOfDetainedProductDomesticMarket;
@@ -888,7 +888,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getSpecifiedReleaseLocationDomesticMarket() {
         if (specifiedReleaseLocationDomesticMarket == null) {
-            specifiedReleaseLocationDomesticMarket = new Address();
+            return new Address();
         }
 
         return specifiedReleaseLocationDomesticMarket;
@@ -927,7 +927,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Client getBroker() {
         if (broker == null) {
-            broker = new Client("", false);
+            return new Client("", false);
         }
 
         return broker;
@@ -939,7 +939,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Contact getBrokerRepresentative() {
         if (brokerRepresentative == null) {
-            brokerRepresentative = new Contact();
+            return new Contact();
         }
 
         return brokerRepresentative;
@@ -951,7 +951,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getBrokerAddress() {
         if (brokerAddress == null) {
-            brokerAddress = new Address();
+            return new Address();
         }
 
         return brokerAddress;
@@ -963,7 +963,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Client getConsignee() {
         if (consignee == null) {
-            consignee = new Client("", false);
+            return new Client("", false);
         }
 
         return consignee;
@@ -975,7 +975,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getSpecifiedReleaseLocation() {
         if (specifiedReleaseLocation == null) {
-            specifiedReleaseLocation = new Address();
+            return new Address();
         }
 
         return specifiedReleaseLocation;
@@ -988,7 +988,7 @@ public class ComplianceSurvey implements BusinessEntity {
     public Contact getConsigneeRepresentative() {
         if (consigneeRepresentative == null) {
 
-            consigneeRepresentative = new Contact();
+            return new Contact();
 
         }
 
@@ -1068,7 +1068,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Employee getInspector() {
         if (inspector == null) {
-            inspector = new Employee();
+            return new Employee();
         }
 
         return inspector;
@@ -1108,7 +1108,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Client getRetailOutlet() {
         if (retailOutlet == null) {
-            retailOutlet = new Client("", false);
+            return new Client("", false);
         }
 
         return retailOutlet;
@@ -1121,7 +1121,7 @@ public class ComplianceSurvey implements BusinessEntity {
     public Contact getRetailRepresentative() {
         if (retailRepresentative == null) {
 
-            retailRepresentative = new Contact();
+            return new Contact();
         }
 
         return retailRepresentative;
@@ -1466,120 +1466,123 @@ public class ComplianceSurvey implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getBusinessOffice().getId() != null) {
-                getBusinessOffice().save(em);
-            }
-            if (getInspector().getId() != null) {
-                getInspector().save(em);
+            if (businessOffice != null) {
+                businessOffice.save(em);
             }
 
-            getInspectionAddress().save(em);
-
-            if (getConsignee().getId() != null) {
-                getConsignee().save(em);
+            if (inspector != null) {
+                inspector.save(em);
             }
 
-            if (getConsigneeRepresentative().getId() != null) {
-                getConsigneeRepresentative().save(em);
+            if (inspectionAddress != null) {
+                inspectionAddress.save(em);
             }
 
-            if (getConsigneeAddress().getId() != null) {
-                getConsigneeAddress().save(em);
+            if (consignee != null) {
+                consignee.save(em);
             }
 
-            if (getBroker().getId() != null) {
-                getBroker().save(em);
+            if (consigneeRepresentative != null) {
+                consigneeRepresentative.save(em);
             }
 
-            if (getBrokerRepresentative().getId() != null) {
-                getBrokerRepresentative().save(em);
+            if (consigneeAddress != null) {
+                consigneeAddress.save(em);
             }
 
-            if (getBrokerAddress().getId() != null) {
-                getBrokerAddress().save(em);
+            if (broker != null) {
+                broker.save(em);
             }
 
-            if (getRetailOutlet().getId() != null) {
-                getRetailOutlet().save(em);
+            if (brokerRepresentative != null) {
+                brokerRepresentative.save(em);
             }
 
-            if (getRetailRepresentative().getId() != null) {
-                getRetailRepresentative().save(em);
+            if (brokerAddress != null) {
+                brokerAddress.save(em);
             }
 
-            if (getRetailOutletAddress().getId() != null) {
-                getRetailOutletAddress().save(em);
+            if (retailOutlet != null) {
+                retailOutlet.save(em);
             }
 
-            if (getSpecifiedReleaseLocation().getId() != null) {
-                getSpecifiedReleaseLocation().save(em);
+            if (retailRepresentative != null) {
+                retailRepresentative.save(em);
             }
 
-            if (getSpecifiedReleaseLocationDomesticMarket().getId() != null) {
-                getSpecifiedReleaseLocationDomesticMarket().save(em);
+            if (retailOutletAddress != null) {
+                retailOutletAddress.save(em);
             }
 
-            if (getLocationOfDetainedProductDomesticMarket().getId() != null) {
-                getLocationOfDetainedProductDomesticMarket().save(em);
+//            if (specifiedReleaseLocation != null) {
+//                specifiedReleaseLocation.save(em);
+//            }
+
+//            if (specifiedReleaseLocationDomesticMarket != null) {
+//                specifiedReleaseLocationDomesticMarket.save(em);
+//            }
+
+//            if (locationOfDetainedProductDomesticMarket != null) {
+//                locationOfDetainedProductDomesticMarket.save(em);
+//            }
+
+            if (authSigForDetentionRequestPOE != null) {
+                authSigForDetentionRequestPOE.save(em);
             }
 
-            if (getAuthSigForDetentionRequestPOE().getId() != null) {
-                getAuthSigForDetentionRequestPOE().save(em);
+            if (authEmployeeForDetentionRequestPOE != null) {
+                authEmployeeForDetentionRequestPOE.save(em);
             }
 
-            if (getAuthEmployeeForDetentionRequestPOE().getId() != null) {
-                getAuthEmployeeForDetentionRequestPOE().save(em);
+            if (inspectorForSampleRequestPOE != null) {
+                inspectorForSampleRequestPOE.save(em);
             }
 
-            if (getInspectorForSampleRequestPOE().getId() != null) {
-                getInspectorForSampleRequestPOE().save(em);
+            if (inspectorSigForSampleRequestPOE != null) {
+                inspectorSigForSampleRequestPOE.save(em);
             }
 
-            if (getInspectorSigForSampleRequestPOE().getId() != null) {
-                getInspectorSigForSampleRequestPOE().save(em);
+            if (preparedBySigForReleaseRequestPOE != null) {
+                preparedBySigForReleaseRequestPOE.save(em);
             }
 
-            if (getPreparedBySigForReleaseRequestPOE().getId() != null) {
-                getPreparedBySigForReleaseRequestPOE().save(em);
+            if (preparedByEmployeeForReleaseRequestPOE != null) {
+                preparedByEmployeeForReleaseRequestPOE.save(em);
             }
 
-            if (getPreparedByEmployeeForReleaseRequestPOE().getId() != null) {
-                getPreparedByEmployeeForReleaseRequestPOE().save(em);
+            if (approvedBySigForReleaseRequestPOE != null) {
+                approvedBySigForReleaseRequestPOE.save(em);
             }
 
-            if (getApprovedBySigForReleaseRequestPOE().getId() != null) {
-                getApprovedBySigForReleaseRequestPOE().save(em);
+            if (approvedByEmployeeForReleaseRequestPOE != null) {
+                approvedByEmployeeForReleaseRequestPOE.save(em);
             }
 
-            if (getApprovedByEmployeeForReleaseRequestPOE().getId() != null) {
-                getApprovedByEmployeeForReleaseRequestPOE().save(em);
+            if (authSigForNoticeOfDentionDM != null) {
+                authSigForNoticeOfDentionDM.save(em);
             }
 
-            if (getAuthSigForNoticeOfDentionDM().getId() != null) {
-                getAuthSigForNoticeOfDentionDM().save(em);
+            if (authEmployeeForNoticeOfDentionDM != null) {
+                authEmployeeForNoticeOfDentionDM.save(em);
             }
 
-            if (getAuthEmployeeForNoticeOfDentionDM().getId() != null) {
-                getAuthEmployeeForNoticeOfDentionDM().save(em);
+            if (authSigForNoticeOfReleaseFromDentionDM != null) {
+                authSigForNoticeOfReleaseFromDentionDM.save(em);
             }
 
-            if (getAuthSigForNoticeOfReleaseFromDentionDM().getId() != null) {
-                getAuthSigForNoticeOfReleaseFromDentionDM().save(em);
-            }
-
-            if (getAuthEmpForNoticeOfReleaseFromDentionDM().getId() != null) {
-                getAuthEmpForNoticeOfReleaseFromDentionDM().save(em);
+            if (authEmpForNoticeOfReleaseFromDentionDM != null) {
+                authEmpForNoticeOfReleaseFromDentionDM.save(em);
             }
 
             for (Employee inspector1 : getInspectors()) {
                 inspector1.save(em);
             }
 
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
+            if (editedBy != null) {
+                editedBy.save(em);
             }
 
-            getEntryDocumentInspection().save(em);
+//            getEntryDocumentInspection().save(em);
 
             for (DocumentStandard documentStandard : getStandardsBreached()) {
                 documentStandard.save(em);

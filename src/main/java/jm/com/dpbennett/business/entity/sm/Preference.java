@@ -170,7 +170,7 @@ public class Preference implements BusinessEntity {
         if (name == null) {
             name = "";
         }
-        
+
         return name;
     }
 
@@ -231,7 +231,7 @@ public class Preference implements BusinessEntity {
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             Query query = em.createNamedQuery("findAllPreferencesByName");
             query.setParameter("name", value);
-            
+
             return query.getResultList();
         } catch (Exception e) {
             System.out.println(e);

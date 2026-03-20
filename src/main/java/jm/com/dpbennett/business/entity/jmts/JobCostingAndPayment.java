@@ -92,9 +92,9 @@ public class JobCostingAndPayment implements BusinessEntity {
     private Discount discount;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<CashPayment> cashPayments;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<CostComponent> costComponents;
     private Double minDeposit;
     private Double totalTax;
@@ -138,7 +138,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     public Currency getCurrency() {
 
         if (currency == null) {
-            currency = new Currency();
+            return new Currency();
         }
 
         return currency;
@@ -274,7 +274,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     public Tax getTax() {
 
         if (tax == null) {
-            tax = new Tax();
+            return new Tax();
         }
 
         return tax;
@@ -287,7 +287,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     public Discount getDiscount() {
 
         if (discount == null) {
-            discount = new Discount();
+            return new Discount();
         }
 
         return discount;
@@ -1035,17 +1035,33 @@ public class JobCostingAndPayment implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
+            
+            if (costingPreparedBy != null) {
+                costingPreparedBy.save(em);
+            }
+            
+            if (costingApprovedBy != null) {
+                costingApprovedBy.save(em);
+            }
+            
+            if (costingInvoicedBy != null) {
+                costingInvoicedBy.save(em);
+            }
+            
+            if (lastPaymentEnteredBy != null) {
+                lastPaymentEnteredBy.save(em);
+            }
 
-            if (getTax().getId() != null) {
-                getTax().save(em);
+            if (tax != null) {
+                tax.save(em);
             }
             
-            if (getDiscount().getId() != null) {
-                getDiscount().save(em);
+            if (discount != null) {
+                discount.save(em);
             }
             
-            if (getCurrency().getId() != null) {
-                getCurrency().save(em);
+            if (currency != null) {
+                currency.save(em);
             }
 
             for (CashPayment payment : getCashPayments()) {

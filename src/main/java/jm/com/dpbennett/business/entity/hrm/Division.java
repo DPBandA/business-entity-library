@@ -61,12 +61,12 @@ public class Division implements BusinessEntity, Comparable {
     private String code;
     private String type;
     private String notes;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Department> departments;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Subgroup> subgroups;
     private Boolean active;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Employee head;
     @Transient
     private Boolean isDirty;
@@ -394,7 +394,7 @@ public class Division implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-                   
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

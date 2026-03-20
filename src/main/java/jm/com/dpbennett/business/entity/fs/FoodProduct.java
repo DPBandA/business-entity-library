@@ -67,9 +67,9 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     private Date dateLastManufactured;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastTested;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Category> categories;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
     @Transient
     private Boolean isDirty;
@@ -255,9 +255,9 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            manufacturer = new Manufacturer();
+            return new Manufacturer();
         }
-        
+
         return manufacturer;
     }
 
@@ -270,14 +270,14 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     public ReturnMessage save(EntityManager em) {
         try {
 
-//            for (Category category : getCategories()) {
-//                category.save(em);
-//            }
-//
-//            if (getManufacturer().getId() != null) {
-//                getManufacturer().save(em);
-//            }
+            for (Category category : getCategories()) {
+                category.save(em);
+            }
 
+            if (manufacturer != null) {
+                manufacturer.save(em);
+            }
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
