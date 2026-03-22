@@ -58,7 +58,7 @@ public class Laboratory implements BusinessEntity, Company {
     private String name;
     private String type;
     private String number;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<BusinessOffice> businessOffices;
     private Boolean active;
     @Transient

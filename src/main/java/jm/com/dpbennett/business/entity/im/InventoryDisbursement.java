@@ -60,7 +60,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private Long id;
     private String name;
     private String type;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Inventory inventory;
     private Double quantityOrdered;
     private Double quantityReceived;

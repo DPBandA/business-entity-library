@@ -79,9 +79,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     private Address address;
     @OneToOne(cascade = CascadeType.ALL)
     private Contact factoryRepresentative;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<FactoryInspectionComponent> inspectionComponents;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<ProductInspection> productInspections;
     private String name;
     private Integer maxDaysForCompliance;
@@ -535,14 +535,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             if (assignedInspector != null) {
                 assignedInspector.save(em);
             }
-
-//            if (getAddress().getId() != null) {
-//                getAddress().save(em);
-//            }
-
-//            if (getFactoryRepresentative().getId() != null) {
-//                getFactoryRepresentative().save(em);
-//            }
 
             if (!getInspectionComponents().isEmpty()) {
                 for (FactoryInspectionComponent inspectionComponent : getInspectionComponents()) {

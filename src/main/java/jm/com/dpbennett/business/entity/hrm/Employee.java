@@ -72,7 +72,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private String username;
     private String title;
     private String name;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<EmployeePosition> positions;
     @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
@@ -714,9 +714,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public ReturnMessage save(EntityManager em) {
         try {
 
-            //getInternet().save(em); // tk
-//            System.out.println("Internet ID: " + getInternet().getId());
-//            System.out.println("Is managed: " + em.contains(getInternet()));
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();

@@ -80,7 +80,7 @@ public class Manufacturer implements BusinessEntity, Comparable {
     private List<Contact> contacts;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee productLastSampledBy;
     @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;

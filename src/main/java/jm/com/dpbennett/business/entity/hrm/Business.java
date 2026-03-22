@@ -61,9 +61,9 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private String notes;
     private String taxRegistrationNumber;
     private String departmentLabel;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee head;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;

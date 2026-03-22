@@ -80,7 +80,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private String unit;
     @Transient
     private Boolean isDirty;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date costDate;

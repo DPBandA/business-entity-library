@@ -71,7 +71,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
     private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Certification certification;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Sticker> stickers;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateScheduledForTest;

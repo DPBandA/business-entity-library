@@ -94,7 +94,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     private Employee editedBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inventoryIssuedBy;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<InventoryDisbursement> inventoryDisbursements;
     @Transient
     private Boolean isDirty;

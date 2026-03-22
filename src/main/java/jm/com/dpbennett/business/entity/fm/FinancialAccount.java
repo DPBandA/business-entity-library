@@ -63,13 +63,13 @@ public class FinancialAccount implements
     private Boolean active;
     private String name;
     private String type;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private FinancialAccount parent;
     @OneToMany(cascade = CascadeType.ALL)
     private List<FinancialAccount> children;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private AccountingCode code;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
     @Column(length = 1024)
     private String description;

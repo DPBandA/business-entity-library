@@ -77,7 +77,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     private Boolean isDirty;
     @Transient
     private String editStatus;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     List<PetrolPump> petrolPumps;
 
     public PetrolStation() {

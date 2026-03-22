@@ -86,7 +86,7 @@ public class Complaint implements Comparable, BusinessEntity {
     private Client receivedVia;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client complainant;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<ProductInspection> productInspections;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Employee> referredTo;

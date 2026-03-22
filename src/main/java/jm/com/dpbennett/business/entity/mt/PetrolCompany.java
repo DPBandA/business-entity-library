@@ -73,7 +73,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     private Date dateFirstReceived;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastAccessed;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<PetrolStation> petrolStations;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<BusinessOffice> businessOffices;

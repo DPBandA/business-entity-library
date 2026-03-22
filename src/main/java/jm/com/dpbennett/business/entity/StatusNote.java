@@ -71,7 +71,7 @@ public class StatusNote implements Serializable, BusinessEntity {
     private Boolean isDirty;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateCreated;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee createdBy;
     @Transient
     private String header;

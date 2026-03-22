@@ -61,12 +61,12 @@ public class Division implements BusinessEntity, Comparable {
     private String code;
     private String type;
     private String notes;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Subgroup> subgroups;
     private Boolean active;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee head;
     @Transient
     private Boolean isDirty;

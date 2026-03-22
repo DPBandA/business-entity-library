@@ -82,7 +82,7 @@ public class User extends DefaultEntity {
     private List<Privilege> privileges;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Module> activeModules;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<SystemOption> settings;
     @Transient
     private Boolean isDirty;
@@ -808,10 +808,10 @@ public class User extends DefaultEntity {
             if (employee != null) {
                 employee.save(em);
             }
-
-            if (privilege != null) {
-                privilege.save(em);
-            }
+//
+//            if (privilege != null) {
+//                privilege.save(em);
+//            }
 
             for (Privilege priv : getPrivileges()) {
                 priv.save(em);

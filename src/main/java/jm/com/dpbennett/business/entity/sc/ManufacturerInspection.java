@@ -70,9 +70,9 @@ public class ManufacturerInspection implements BusinessEntity {
     private Date inspectionEndTime;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedInspector;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<InspectionComponent> inspectionComponents;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<ProductInspection> productInspections;
     @Transient
     private Boolean isDirty;

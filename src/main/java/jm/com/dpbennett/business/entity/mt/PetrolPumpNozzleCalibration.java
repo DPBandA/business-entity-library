@@ -68,7 +68,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     private Double setPetrolUsage = 0.0;
     private Double actualPetrolUsage = 0.0;
     private Double petrolCost = 0.0;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<PetrolPumpNozzleCalibrationPoint> calibrationPoints;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date calibrationDate;

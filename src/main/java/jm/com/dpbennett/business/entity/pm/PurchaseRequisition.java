@@ -120,9 +120,9 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     private Supplier supplier;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<Attachment> attachments;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<CostComponent> costComponents;
     @Column(length = 1024)
     private String description;

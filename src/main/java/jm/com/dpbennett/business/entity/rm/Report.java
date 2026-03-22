@@ -69,7 +69,7 @@ public class Report implements BusinessEntity {
     private String reportFile = "";
     private String reportFileMimeType = "";
     private String reportOutputFileMimeType = "";
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<ReportTableColumn> reportColumns;
     private Boolean active;
     private Boolean usePackagedReportFileTemplate;
@@ -81,7 +81,7 @@ public class Report implements BusinessEntity {
     private List<Employee> employees;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Client> clients;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<DatePeriod> datePeriods;
     private Boolean departmentRequired;
     private Boolean employeeRequired;

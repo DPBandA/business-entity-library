@@ -65,15 +65,15 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     private String status;
     private String testMeasures;
     private String comments;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REFRESH)
     private List<PetrolPumpNozzleCalibration> calibrations;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Seal lastSealIssued;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private Sticker lastStickerIssued;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private PetrolPumpNozzleCalibration lastCalibration;
     @Transient
     private Boolean isDirty;
