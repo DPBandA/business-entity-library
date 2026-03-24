@@ -135,7 +135,7 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     @Override
     public Boolean getActive() {
         if (active == null) {
-            active = false;
+            active = true;
         }
         return active;
     }

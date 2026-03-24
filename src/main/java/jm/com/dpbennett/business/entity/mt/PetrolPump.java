@@ -68,7 +68,7 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     private Manufacturer manufacturer;
     @Transient
     private Boolean isDirty;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     List<PetrolPumpNozzle> nozzles;
 
     public PetrolPump(PetrolPump src, Long id) {

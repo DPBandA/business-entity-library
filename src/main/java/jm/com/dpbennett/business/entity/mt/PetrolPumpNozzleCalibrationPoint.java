@@ -52,7 +52,7 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
     private Long id;
     private Long ownerId;
     private Long number;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private TestMeasure testMeasure;
     private Double error;
     private Double tolerance;
@@ -133,7 +133,7 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
     public TestMeasure getTestMeasure() {
 
         if (testMeasure == null) {
-            testMeasure = new TestMeasure();
+            return new TestMeasure();
         }
 
         return testMeasure;
