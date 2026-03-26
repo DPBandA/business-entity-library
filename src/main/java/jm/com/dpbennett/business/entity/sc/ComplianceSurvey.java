@@ -204,6 +204,11 @@ public class ComplianceSurvey implements BusinessEntity {
         this.surveyType = "";
     }
 
+    public Boolean getCanExportDetentionRequestPOEForm() {
+
+        return getAuthEmployeeForDetentionRequestPOE().getId() != null;
+    }
+
     public String getConsignmentSizeDetained() {
 
         if (consignmentSizeDetained == null) {
@@ -763,6 +768,7 @@ public class ComplianceSurvey implements BusinessEntity {
         if (requestForDetentionIssuedForPortOfEntry == null) {
             requestForDetentionIssuedForPortOfEntry = false;
         }
+
         return requestForDetentionIssuedForPortOfEntry;
     }
 
@@ -1517,15 +1523,12 @@ public class ComplianceSurvey implements BusinessEntity {
 //            if (specifiedReleaseLocation != null) {
 //                specifiedReleaseLocation.save(em);
 //            }
-
 //            if (specifiedReleaseLocationDomesticMarket != null) {
 //                specifiedReleaseLocationDomesticMarket.save(em);
 //            }
-
 //            if (locationOfDetainedProductDomesticMarket != null) {
 //                locationOfDetainedProductDomesticMarket.save(em);
 //            }
-
             if (authSigForDetentionRequestPOE != null) {
                 authSigForDetentionRequestPOE.save(em);
             }
@@ -1583,7 +1586,6 @@ public class ComplianceSurvey implements BusinessEntity {
             }
 
 //            getEntryDocumentInspection().save(em);
-
             for (DocumentStandard documentStandard : getStandardsBreached()) {
                 documentStandard.save(em);
             }
@@ -1598,9 +1600,10 @@ public class ComplianceSurvey implements BusinessEntity {
                             Message.SEVERITY_ERROR_NAME);
                 }
             }
-
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
+            setIsDirty(false);
             em.getTransaction().commit();
 
             return new ReturnMessage();

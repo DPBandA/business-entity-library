@@ -30,11 +30,9 @@ import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -246,7 +244,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     @JsonbTransient
     public Department getDepartment() {
         if (department == null) {
-            department = new Department();
+            return new Department();
         }
 
         return department;
@@ -713,6 +711,14 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            for (EmployeePosition position : getPositions()) {
+                position.save(em);
+            }
+
+            if (department != null) {
+                department.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
