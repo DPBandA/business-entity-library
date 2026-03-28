@@ -356,6 +356,11 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Employee getLastPaymentEnteredBy() {
+
+        if (lastPaymentEnteredBy == null) {
+            return new Employee();
+        }
+
         return lastPaymentEnteredBy;
     }
 
@@ -1035,19 +1040,19 @@ public class JobCostingAndPayment implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
-            
+
             if (costingPreparedBy != null) {
                 costingPreparedBy.save(em);
             }
-            
+
             if (costingApprovedBy != null) {
                 costingApprovedBy.save(em);
             }
-            
+
             if (costingInvoicedBy != null) {
                 costingInvoicedBy.save(em);
             }
-            
+
             if (lastPaymentEnteredBy != null) {
                 lastPaymentEnteredBy.save(em);
             }
@@ -1055,11 +1060,11 @@ public class JobCostingAndPayment implements BusinessEntity {
             if (tax != null) {
                 tax.save(em);
             }
-            
+
             if (discount != null) {
                 discount.save(em);
             }
-            
+
             if (currency != null) {
                 currency.save(em);
             }
