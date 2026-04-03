@@ -213,7 +213,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public Employee getHead() {
 
         if (head == null) {
-            head = new Employee();
+            return new Employee();
         }
 
         return head;
@@ -225,7 +225,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     public Employee getActingHead() {
         if (actingHead == null) {
-            actingHead = new Employee();
+            return new Employee();
         }
 
         return actingHead;

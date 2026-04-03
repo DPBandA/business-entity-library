@@ -101,7 +101,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public AccountingCode getAccountingCode() {
 
         if (accountingCode == null) {
-            accountingCode = new AccountingCode();
+            return new AccountingCode();
         }
 
         return accountingCode;

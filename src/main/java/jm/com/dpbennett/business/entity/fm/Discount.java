@@ -182,7 +182,7 @@ public class Discount implements Serializable, BusinessEntity {
     public AccountingCode getAccountingCode() {
 
         if (accountingCode == null) {
-            accountingCode = new AccountingCode();
+            return new AccountingCode();
         }
 
         return accountingCode;

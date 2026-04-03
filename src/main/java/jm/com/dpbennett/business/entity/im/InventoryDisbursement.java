@@ -176,7 +176,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     public Inventory getInventory() {
         if (inventory == null) {
-            inventory = new Inventory();
+            return new Inventory();
         }
 
         return inventory;

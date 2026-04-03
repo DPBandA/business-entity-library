@@ -155,7 +155,7 @@ public class FinancialAccount implements
     public Currency getCurrency() {
 
         if (currency == null) {
-            currency = new Currency();
+            return new Currency();
         }
 
         return currency;
@@ -168,7 +168,7 @@ public class FinancialAccount implements
     public FinancialAccount getParent() {
 
         if (parent == null) {
-            parent = new FinancialAccount();
+            return new FinancialAccount();
         }
 
         return parent;
@@ -180,7 +180,7 @@ public class FinancialAccount implements
 
     public AccountingCode getCode() {
         if (code == null) {
-            code = new AccountingCode();
+            return new AccountingCode();
         }
 
         return code;

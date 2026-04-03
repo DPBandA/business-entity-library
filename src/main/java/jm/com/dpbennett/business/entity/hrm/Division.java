@@ -174,7 +174,7 @@ public class Division implements BusinessEntity, Comparable {
     public Employee getHead() {
 
         if (head == null) {
-            head = new Employee();
+            return new Employee();
         }
 
         return head;

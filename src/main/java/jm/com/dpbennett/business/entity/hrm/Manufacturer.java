@@ -184,7 +184,7 @@ public class Manufacturer implements BusinessEntity, Comparable {
     public Employee getProductLastSampledBy() {
 
         if (productLastSampledBy == null) {
-            productLastSampledBy = new Employee();
+            return new Employee();
         }
 
         return productLastSampledBy;

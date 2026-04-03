@@ -795,8 +795,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public MarketProduct getProduct() {
         if (product == null) {
-            product = new MarketProduct();
+            return new MarketProduct();
         }
+        
         return product;
     }
 

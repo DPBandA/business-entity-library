@@ -80,7 +80,7 @@ public class Classification implements BusinessEntity, Serializable {
     public Tax getDefaultTax() {
 
         if (defaultTax == null) {
-            defaultTax = new Tax();
+            return new Tax();
         }
 
         return defaultTax;

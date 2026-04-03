@@ -217,7 +217,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     public Currency getCurrency() {
 
         if (currency == null) {
-            currency = new Currency();
+            return new Currency();
         }
 
         return currency;
