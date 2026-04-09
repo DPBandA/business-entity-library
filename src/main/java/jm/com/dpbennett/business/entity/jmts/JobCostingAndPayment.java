@@ -74,6 +74,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     private String finalCostDoneBy;
     private Double paymentReceivedToDate;
     private Double deposit;
+    private Double reimbursable;
     private Double amountDue;
     private Boolean costingCompleted;
     private Boolean costingApproved;
@@ -568,11 +569,11 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Double getReimbursable() {
-        return deposit;
+        return reimbursable;
     }
 
-    public void setReimbursable(Double deposit) {
-        this.deposit = deposit;
+    public void setReimbursable(Double reimbursable) {
+        this.reimbursable = reimbursable;
     }
 
     public Double getTotalPayment() {
@@ -1025,7 +1026,7 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     public Double getProformaTotalCost() {
 
-        return getFinalCostWithDiscount() + getTotalTax() + getReimbursable();
+        return getFinalCostWithDiscount() + getTotalTax() - getReimbursable();
 
     }
 
