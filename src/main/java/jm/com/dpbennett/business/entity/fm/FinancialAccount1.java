@@ -22,14 +22,12 @@ package jm.com.dpbennett.business.entity.fm;
 import jm.com.dpbennett.business.entity.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -50,13 +48,13 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "financialaccount")
 @NamedQueries({
-    @NamedQuery(name = "findAllFinancialAccounts",
-            query = "SELECT f FROM FinancialAccount f ORDER BY f.name")
+    @NamedQuery(name = "findAllFields",
+            query = "SELECT f FROM Field f ORDER BY f.name")
 })
-public class FinancialAccount implements
+public class FinancialAccount1 implements
         Serializable,
         Account,
-        Comparable<FinancialAccount> {
+        Comparable<FinancialAccount1> {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -65,12 +63,10 @@ public class FinancialAccount implements
     private Boolean active;
     private String name;
     private String type;
-    @OneToOne
-    private FinancialAccount parent;
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, 
-            fetch = FetchType.LAZY,
-            orphanRemoval = true)
-    private List<FinancialAccount> children;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private FinancialAccount1 parent;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<FinancialAccount1> children;
     @OneToOne(cascade = CascadeType.REFRESH)
     private AccountingCode code;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -84,24 +80,26 @@ public class FinancialAccount implements
     @Transient
     private Boolean isDirty;
 
-    public FinancialAccount() {
+    public FinancialAccount1() {
         active = true;
         name = "";
         description = "";
         category = "";
+        code = new AccountingCode();
         total = 0.0;
     }
 
-    public FinancialAccount(String name) {
+    public FinancialAccount1(String name) {
         active = true;
         this.name = name;
         type = "";
         description = "";
         category = "";
+        code = new AccountingCode();
         total = 0.0;
     }
 
-    public FinancialAccount(String name, String description, Double total) {
+    public FinancialAccount1(String name, String description, Double total) {
         active = true;
         this.name = name;
         type = "";
@@ -111,29 +109,16 @@ public class FinancialAccount implements
         this.total = total;
     }
 
-    public void addChild(FinancialAccount child) {
-        child.setParent(this);
-        getChildren().add(child);
-    }
-
-    public void removeChild(FinancialAccount child) {
-        child.setParent(null);
-        getChildren().remove(child);
-    }
-
-    public List<FinancialAccount> getChildren() {
+    public List<FinancialAccount1> getChildren() {
 
         if (children == null) {
             children = new ArrayList<>();
-        }
-        else {
-            children.sort(Comparator.naturalOrder());
         }
 
         return children;
     }
 
-    public void setChildren(List<FinancialAccount> children) {
+    public void setChildren(List<FinancialAccount1> children) {
         this.children = children;
     }
 
@@ -180,12 +165,16 @@ public class FinancialAccount implements
         this.currency = currency;
     }
 
-    public FinancialAccount getParent() {
+    public FinancialAccount1 getParent() {
+
+        if (parent == null) {
+            return new FinancialAccount1();
+        }
 
         return parent;
     }
 
-    public void setParent(FinancialAccount parent) {
+    public void setParent(FinancialAccount1 parent) {
         this.parent = parent;
     }
 
@@ -224,11 +213,11 @@ public class FinancialAccount implements
         this.category = category;
     }
 
-    public static List<FinancialAccount> findAllFinancialAccounts(EntityManager em) {
+    public static List<FinancialAccount1> findAllFields(EntityManager em) {
 
         try {
 
-            List<FinancialAccount> codes = em.createNamedQuery("findAllFinancialAccounts", FinancialAccount.class).getResultList();
+            List<FinancialAccount1> codes = em.createNamedQuery("findAllFields", FinancialAccount1.class).getResultList();
 
             return codes;
 
@@ -238,44 +227,44 @@ public class FinancialAccount implements
         }
     }
 
-    public static List<FinancialAccount> findFinancialAccounts(EntityManager em, String value) {
+    public static List<FinancialAccount1> findFields(EntityManager em, String value) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<FinancialAccount> financialAccounts
-                    = em.createQuery("SELECT a FROM FinancialAccount a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
+            List<FinancialAccount1> fields
+                    = em.createQuery("SELECT a FROM Field a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
                             + "%' ORDER BY a.name",
-                            FinancialAccount.class).getResultList();
-            return financialAccounts;
+                            FinancialAccount1.class).getResultList();
+            return fields;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
 
-    public static List<FinancialAccount> findActiveFinancialAccounts(EntityManager em, String value) {
+    public static List<FinancialAccount1> findActiveFields(EntityManager em, String value) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<FinancialAccount> financialAccounts
-                    = em.createQuery("SELECT a FROM FinancialAccount a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
+            List<FinancialAccount1> fields
+                    = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
                             + "%') AND (a.active = 1 OR a.active IS NULL) ORDER BY a.name",
-                            FinancialAccount.class).getResultList();
-            return financialAccounts;
+                            FinancialAccount1.class).getResultList();
+            return fields;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -323,10 +312,10 @@ public class FinancialAccount implements
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof FinancialAccount)) {
+        if (!(object instanceof FinancialAccount1)) {
             return false;
         }
-        FinancialAccount other = (FinancialAccount) object;
+        FinancialAccount1 other = (FinancialAccount1) object;
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
@@ -349,6 +338,10 @@ public class FinancialAccount implements
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+            
+            for (FinancialAccount1 financialAccount : getChildren()) {
+                financialAccount.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -359,7 +352,7 @@ public class FinancialAccount implements
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Financial Account not saved");
+        return new ReturnMessage(false, "Field not saved");
     }
 
     @Override
@@ -380,17 +373,17 @@ public class FinancialAccount implements
         this.isDirty = isDirty;
     }
 
-    public static FinancialAccount findByName(EntityManager em, String value) {
+    public static FinancialAccount1 findByName(EntityManager em, String value) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<FinancialAccount> financialAccounts = em.createQuery("SELECT a FROM FinancialAccount a "
+            List<FinancialAccount1> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.name) "
-                    + "= '" + value.toUpperCase() + "'", FinancialAccount.class).getResultList();
-            if (!financialAccounts.isEmpty()) {
-                return financialAccounts.get(0);
+                    + "= '" + value.toUpperCase() + "'", FinancialAccount1.class).getResultList();
+            if (!fields.isEmpty()) {
+                return fields.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -399,17 +392,17 @@ public class FinancialAccount implements
         }
     }
 
-    public static FinancialAccount findByCode(EntityManager em, String value) {
+    public static FinancialAccount1 findByCode(EntityManager em, String value) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<FinancialAccount> financialAccounts = em.createQuery("SELECT a FROM FinancialAccount a "
+            List<FinancialAccount1> fields = em.createQuery("SELECT a FROM FieldField a "
                     + "WHERE UPPER(a.code) "
-                    + "= '" + value.toUpperCase() + "'", FinancialAccount.class).getResultList();
-            if (!financialAccounts.isEmpty()) {
-                return financialAccounts.get(0);
+                    + "= '" + value.toUpperCase() + "'", FinancialAccount1.class).getResultList();
+            if (!fields.isEmpty()) {
+                return fields.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -418,17 +411,17 @@ public class FinancialAccount implements
         }
     }
 
-    public static FinancialAccount findActiveByCode(EntityManager em, String value) {
+    public static FinancialAccount1 findActiveByCode(EntityManager em, String value) {
 
         try {
 
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-            List<FinancialAccount> financialAccounts = em.createQuery("SELECT a FROM FinancialAccount a "
+            List<FinancialAccount1> fields = em.createQuery("SELECT a FROM Field a "
                     + "WHERE UPPER(a.code) "
-                    + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", FinancialAccount.class).getResultList();
-            if (!financialAccounts.isEmpty()) {
-                return financialAccounts.get(0);
+                    + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", FinancialAccount1.class).getResultList();
+            if (!fields.isEmpty()) {
+                return fields.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -438,7 +431,7 @@ public class FinancialAccount implements
     }
 
     @Override
-    public int compareTo(FinancialAccount fa) {
+    public int compareTo(FinancialAccount1 fa) {
         return this.getName().compareTo(fa.getName());
     }
 

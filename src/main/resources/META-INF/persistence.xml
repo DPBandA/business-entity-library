@@ -130,8 +130,7 @@
     <class>jm.com.dpbennett.business.entity.pm.PurchaseOrderNumber</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="FINPU" transaction-type="RESOURCE_LOCAL">
@@ -141,8 +140,7 @@
     <class>jm.com.dpbennett.business.entity.fm.AccPacCustomer</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.cache.shared.default" value="false"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="JMTS3PU" transaction-type="RESOURCE_LOCAL">
@@ -270,8 +268,7 @@
     <class>jm.com.dpbennett.business.entity.pm.PurchaseOrderNumber</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.cache.shared.default" value="false"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="JMTS5PU" transaction-type="RESOURCE_LOCAL">
@@ -399,8 +396,7 @@
     <class>jm.com.dpbennett.business.entity.pm.PurchaseOrderNumber</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.cache.shared.default" value="false"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="CMPU" transaction-type="RESOURCE_LOCAL">
@@ -528,8 +524,7 @@
     <class>jm.com.dpbennett.business.entity.pm.PurchaseOrderNumber</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.cache.shared.default" value="false"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="FMPU" transaction-type="RESOURCE_LOCAL">
@@ -657,8 +652,7 @@
     <class>jm.com.dpbennett.business.entity.pm.PurchaseOrderNumber</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.cache.shared.default" value="false"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="HRMPU" transaction-type="RESOURCE_LOCAL">
@@ -786,8 +780,7 @@
     <class>jm.com.dpbennett.business.entity.pm.PurchaseOrderNumber</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.cache.shared.default" value="false"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="LOPU" transaction-type="RESOURCE_LOCAL">
@@ -915,8 +908,7 @@
     <class>jm.com.dpbennett.business.entity.pm.PurchaseOrderNumber</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.cache.shared.default" value="false"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="LPPU" transaction-type="RESOURCE_LOCAL">
@@ -1044,8 +1036,7 @@
     <class>jm.com.dpbennett.business.entity.pm.PurchaseOrderNumber</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.cache.shared.default" value="false"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="RMPU" transaction-type="RESOURCE_LOCAL">
@@ -1173,8 +1164,7 @@
     <class>jm.com.dpbennett.business.entity.pm.PurchaseOrderNumber</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.cache.shared.default" value="false"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="SCPU" transaction-type="RESOURCE_LOCAL">
@@ -1302,8 +1292,7 @@
     <class>jm.com.dpbennett.business.entity.pm.PurchaseOrderNumber</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.cache.shared.default" value="false"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="SMPU" transaction-type="RESOURCE_LOCAL">
@@ -1431,8 +1420,7 @@
     <class>jm.com.dpbennett.business.entity.pm.PurchaseOrderNumber</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <!--      <property name="eclipselink.cache.shared.default" value="false"/>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="PU" transaction-type="RESOURCE_LOCAL">
@@ -1561,10 +1549,11 @@
     <class>jm.com.dpbennett.business.entity.auth.LdapContext</class>
     <validation-mode>NONE</validation-mode>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/jmts?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/jmts-2026-02-07?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
       <property name="javax.persistence.jdbc.user" value="test"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.password" value="1234567890"/>
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
 </persistence>
