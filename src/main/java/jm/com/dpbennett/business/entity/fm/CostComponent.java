@@ -341,6 +341,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.isEditable = src.isEditable;
         this.description = src.description;
         this.unit = src.unit;
+        this.currency = src.currency;
     }
 
     public Boolean getIsSubcontract() {

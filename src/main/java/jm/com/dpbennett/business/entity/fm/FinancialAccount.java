@@ -65,9 +65,9 @@ public class FinancialAccount implements
     private Boolean active;
     private String name;
     private String type;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REFRESH)
     private FinancialAccount parent;
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, 
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
             orphanRemoval = true)
     private List<FinancialAccount> children;
@@ -125,8 +125,7 @@ public class FinancialAccount implements
 
         if (children == null) {
             children = new ArrayList<>();
-        }
-        else {
+        } else {
             children.sort(Comparator.naturalOrder());
         }
 
@@ -224,7 +223,7 @@ public class FinancialAccount implements
         this.category = category;
     }
 
-    public static List<FinancialAccount> findAllFinancialAccounts(EntityManager em) {
+    public static List<FinancialAccount> findAll(EntityManager em) {
 
         try {
 
@@ -238,21 +237,14 @@ public class FinancialAccount implements
         }
     }
 
-    public static List<FinancialAccount> findFinancialAccounts(EntityManager em, String value) {
+    public static List<FinancialAccount> find(EntityManager em) {
 
         try {
 
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
             List<FinancialAccount> financialAccounts
-                    = em.createQuery("SELECT a FROM FinancialAccount a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
-                            + "%' ORDER BY a.name",
-                            FinancialAccount.class).getResultList();
+                    = em.createQuery("SELECT a FROM FinancialAccount a WHERE a.parent IS NULL ORDER BY a.name", FinancialAccount.class)
+                            .getResultList();
+
             return financialAccounts;
         } catch (Exception e) {
             System.out.println(e);
@@ -260,22 +252,17 @@ public class FinancialAccount implements
         }
     }
 
-    public static List<FinancialAccount> findActiveFinancialAccounts(EntityManager em, String value) {
+    public static List<FinancialAccount> findActive(EntityManager em) {
 
         try {
 
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
             List<FinancialAccount> financialAccounts
-                    = em.createQuery("SELECT a FROM FinancialAccount a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
-                            + "%') AND (a.active = 1 OR a.active IS NULL) ORDER BY a.name",
-                            FinancialAccount.class).getResultList();
-            return financialAccounts;
+                    = em.createQuery("SELECT a FROM FinancialAccount a "
+                            + "WHERE (a.parent IS NULL) AND (a.active = 1 OR a.active IS NULL) "
+                            + "ORDER BY a.name", FinancialAccount.class)
+                            .getResultList();
+            
+           return financialAccounts;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
