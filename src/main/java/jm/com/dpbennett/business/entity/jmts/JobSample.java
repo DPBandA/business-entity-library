@@ -113,10 +113,6 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
         tests = new ArrayList<>();
     }
 
-    public JobSample(JobSample src) {
-        copy(src);
-    }
-
     @Override
     public Long getId() {
         return id;
@@ -151,37 +147,41 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
         this.isToBeAdded = isToBeAdded;
     }
 
-    public final void copy(JobSample src) {
-        this.jobId = src.jobId;
-        this.name = src.name;
-        this.code = src.code;
-        this.reference = src.reference;
-        this.referenceIndex = src.referenceIndex;
-        this.sampleQuantity = src.sampleQuantity;
-        this.quantity = src.quantity;
-        this.unitOfMeasure = src.unitOfMeasure;
-        this.description = src.description;
-        this.type = src.type;
-        this.comments = src.comments;
-        this.productType = src.productType;
-        this.productModel = src.productModel;
-        this.productSerialNumber = src.productSerialNumber;
-        this.productCode = src.productCode;
-        this.productBrand = src.productBrand;
-        this.sampleSize = src.sampleSize;
-        this.client = src.client;
-        this.tests = src.tests;
-        this.dateReceived = src.dateReceived;
-        this.dateSampled = src.dateSampled;
-        this.dateReturned = src.dateReturned;
-        this.methodOfDisposal = src.methodOfDisposal;
-        this.manufacturer = src.manufacturer;
-        this.regulatoryOffice = src.regulatoryOffice;
-        this.sampledBy = src.sampledBy;
-        this.receivedBy = src.receivedBy;
-        this.countryOfOrigin = src.countryOfOrigin;
-        this.isToBeAdded = src.isToBeAdded;
-        this.isDirty = src.isDirty;
+    public static JobSample copy(JobSample src) {
+        
+        JobSample copy = new JobSample();
+        
+        copy.jobId = src.jobId;
+        copy.name = src.name;
+        copy.code = src.code;
+        copy.reference = src.reference;
+        copy.referenceIndex = src.referenceIndex;
+        copy.sampleQuantity = src.sampleQuantity;
+        copy.quantity = src.quantity;
+        copy.unitOfMeasure = src.unitOfMeasure;
+        copy.description = src.description;
+        copy.type = src.type;
+        copy.comments = src.comments;
+        copy.productType = src.productType;
+        copy.productModel = src.productModel;
+        copy.productSerialNumber = src.productSerialNumber;
+        copy.productCode = src.productCode;
+        copy.productBrand = src.productBrand;
+        copy.sampleSize = src.sampleSize;
+        copy.client = src.client;
+        copy.manufacturer = src.manufacturer;
+        copy.regulatoryOffice = src.regulatoryOffice;
+        copy.sampledBy = src.sampledBy;
+        copy.receivedBy = src.receivedBy;
+        copy.tests = src.tests;
+        copy.countryOfOrigin = src.countryOfOrigin;
+        copy.dateReceived = src.dateReceived;
+        copy.dateSampled = src.dateSampled;
+        copy.dateReturned = src.dateReturned;
+        copy.methodOfDisposal = src.methodOfDisposal;  
+        copy.isToBeAdded = src.isToBeAdded;
+        
+        return copy;
     }
 
     public String getCountryOfOrigin() {

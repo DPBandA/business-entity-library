@@ -77,14 +77,14 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private Boolean isEditable;
     @Column(length = 1024)
     private String description;
-    private String unit;
-    @Transient
-    private Boolean isDirty;
+    private String unit;    
     @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date costDate;
     private Double currencyExchangeRate;
+    @Transient
+    private Boolean isDirty;
 
     public CostComponent() {
         name = "";
@@ -342,6 +342,34 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.description = src.description;
         this.unit = src.unit;
         this.currency = src.currency;
+        this.costDate = src.costDate;
+        this.currencyExchangeRate = src.currencyExchangeRate;
+    }
+    
+    public static CostComponent copy(CostComponent src) {
+        CostComponent copy = new CostComponent();
+        
+        copy.name = src.name;
+        copy.code = src.code;
+        copy.type = src.type;
+        copy.category = src.category;
+        copy.hours = src.hours;
+        copy.hoursOrQuantity = src.hoursOrQuantity;
+        copy.rate = src.rate;
+        copy.convertedRate = src.convertedRate;
+        copy.cost = src.cost;
+        copy.convertedCost = src.convertedCost;
+        copy.comments = src.comments;
+        copy.isHeading = src.isHeading;
+        copy.isFixedCost = src.isFixedCost;
+        copy.isEditable = src.isEditable;
+        copy.description = src.description;
+        copy.unit = src.unit;
+        copy.currency = src.currency;
+        copy.costDate = src.costDate;
+        copy.currencyExchangeRate = src.currencyExchangeRate;
+        
+        return copy;
     }
 
     public Boolean getIsSubcontract() {

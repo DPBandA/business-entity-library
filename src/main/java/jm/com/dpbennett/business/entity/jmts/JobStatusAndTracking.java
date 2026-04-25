@@ -127,6 +127,48 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
         this.id = id;
     }
 
+    public static JobStatusAndTracking copy(JobStatusAndTracking src) {
+
+        JobStatusAndTracking copy = new JobStatusAndTracking();
+
+        copy.dateSubmitted = src.dateSubmitted;
+        copy.dateAndTimeEntered = src.dateAndTimeEntered;
+        copy.jobTransferedTo = src.jobTransferedTo;
+        copy.transferredTo = src.transferredTo;
+        copy.enteredBy = src.enteredBy;
+        copy.editedBy = src.editedBy;
+        copy.completedBy = src.completedBy;
+        copy.dateTransfered = src.dateTransfered;
+        copy.productOrSampleReceivedBy = src.productOrSampleReceivedBy;
+        copy.dateProductOrSampleReceived = src.dateProductOrSampleReceived;
+        copy.statusNote = src.statusNote;
+        copy.samplesCollected = src.samplesCollected;
+        copy.samplesCollectedBy = src.samplesCollectedBy;
+        copy.dateSamplesCollected = src.dateSamplesCollected;
+        copy.expectedDateOfCompletion = src.expectedDateOfCompletion;
+        copy.dateOfCompletion = src.dateOfCompletion;
+        copy.dateStatusEdited = src.dateStatusEdited;
+        copy.workProgress = src.workProgress;
+        copy.documentCollected = src.documentCollected;
+        copy.documentCollectedBy = src.documentCollectedBy;
+        copy.dateDocumentCollected = src.dateDocumentCollected;
+        copy.dateJobEmailWasSent = src.dateJobEmailWasSent;
+        copy.jobEmailFrequency = src.jobEmailFrequency;
+        copy.completed = src.completed;
+        copy.alertDate = src.alertDate;
+        copy.dateOfLastPayment = src.dateOfLastPayment;
+        copy.depositDate = src.depositDate;
+        copy.costingDate = src.costingDate;
+        copy.dateCostingCompleted = src.dateCostingCompleted;
+        copy.dateCostingApproved = src.dateCostingApproved;
+        copy.dateCostingInvoiced = src.dateCostingInvoiced;
+        copy.expectedStartDate = src.expectedStartDate;
+        copy.startDate = src.startDate;        
+
+        return copy;
+
+    }
+
     public Date getDateOpened() {
         return dateOpened;
     }

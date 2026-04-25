@@ -342,6 +342,13 @@ public class Job implements BusinessEntity {
         return getJobCostingAndPayment().getCashPayments();
     }
 
+    public List<Job> getInvoices() {
+
+        // tk implement getting jobs with type Invoice and parent job as the
+        // current job.
+        return null;
+    }
+
     public void setCashPayments(List<CashPayment> cashPayments) {
         getJobCostingAndPayment().setCashPayments(cashPayments);
     }
@@ -499,62 +506,59 @@ public class Job implements BusinessEntity {
         this.setIsDirty(false);
     }
 
-    public static Job copy(EntityManager em,
-            Job job,
-            User user,
-            Boolean autoGenerateJobNumber,
-            Boolean linkSamples) {
+    public static Job copy(Job src) {
 
         Job copy = new Job();
-
-        copy.setIsEarningJob(job.getIsEarningJob());
-        copy.setAutoGenerateJobNumber(autoGenerateJobNumber);
-        copy.setYearReceived(Calendar.getInstance().get(Calendar.YEAR));
-        copy.setBusiness(job.getBusiness());
-        copy.setBusinessOffice(job.getBusinessOffice());
-        copy.setClassification(job.getClassification());
-        copy.setClient(job.getClient());
-        copy.setBillingAddress(job.getBillingAddress());
-        copy.setContact(job.getContact());
-        copy.setDepartment(job.getDepartment());
-        copy.setSubContractedDepartment(Department.findDefault(em, "--"));
-        copy.setAssignedTo(job.getAssignedTo());
-        copy.setRepresentatives(job.getRepresentatives());
-        copy.setEstimatedTurnAroundTimeInDays(job.getEstimatedTurnAroundTimeInDays());
-        copy.setEstimatedTurnAroundTimeRequired(job.getEstimatedTurnAroundTimeRequired());
-        copy.setInstructions(job.getInstructions());
-        copy.setServiceLocation(job.getServiceLocation());
-        copy.setServiceContract(new ServiceContract(job.getServiceContract()));
-        copy.setServices(job.getServices());
-        List<JobSample> samples = job.getJobSamples();
-        copy.setNumberOfSamples(job.getNumberOfSamples());
-        if (linkSamples) {
-            for (JobSample jobSample : samples) {
-                copy.getJobSamples().add(jobSample);
-            }
-        } else {
-            for (JobSample jobSample : samples) {
-                jobSample.setDateSampled(new Date());
-                jobSample.setDateReceived(new Date());
-                copy.getJobSamples().add(new JobSample(jobSample));
-            }
+        copy.setName(src.getName());
+        copy.setType(src.getType());
+        copy.setJobNumber(src.getJobNumber());
+        copy.setAutoGenerateJobNumber(src.getAutoGenerateJobNumber());
+        copy.setJobSequenceNumber(src.getJobSequenceNumber());
+        copy.setReportNumber(src.getReportNumber());
+        copy.setComment(src.getComment());
+        copy.setNumberOfSamples(src.getNumberOfSamples());
+        copy.setEstimatedTurnAroundTimeInDays(src.getEstimatedTurnAroundTimeInDays());
+        copy.setEstimatedTurnAroundTimeRequired(src.getEstimatedTurnAroundTimeRequired());
+        copy.setLocked(src.getLocked());
+        copy.setIsEarningJob(src.getIsEarningJob());
+        copy.setNewClient(src.getNewClient());
+        copy.setParent(src.getParent());
+        copy.setClassification(src.getClassification());
+        copy.setSector(src.getSector());
+        copy.setDepartment(src.getDepartment());
+        copy.setSubContractedDepartment(src.getSubContractedDepartment());
+        copy.setYearReceived(src.getYearReceived());
+        copy.setClient(src.getClient());
+        copy.setJobCategory(src.getJobCategory());
+        copy.setJobSubCategory(src.getJobSubCategory());
+        copy.setAssignedTo(src.getAssignedTo());
+        copy.setJobCostingAndPayment(JobCostingAndPayment.copy(src.getJobCostingAndPayment()));
+        copy.setServiceContract(ServiceContract.copy(src.getServiceContract()));
+        copy.setJobStatusAndTracking(JobStatusAndTracking.copy(src.getJobStatusAndTracking()));
+        copy.setBusiness(src.getBusiness());
+        copy.setBusinessOffice(src.getBusinessOffice());
+        copy.setBillingAddress(src.getBillingAddress());
+        copy.setContact(src.getContact());
+        for (JobSample jobSample : src.getJobSamples()) {
+            jobSample.setDateSampled(new Date());
+            jobSample.setDateReceived(new Date());
+            copy.getJobSamples().add(JobSample.copy(jobSample));
         }
-        copy.setJobCostingAndPayment(JobCostingAndPayment.create(em));
-        copy.setSector(job.getSector());
-        copy.setJobCategory(job.getJobCategory());
-        copy.setJobSubCategory(job.getJobSubCategory());
-        copy.setJobStatusAndTracking(new JobStatusAndTracking());
-        copy.getJobStatusAndTracking().setDateSubmitted(new Date());
-        copy.getJobStatusAndTracking().setDateAndTimeEntered(new Date());
-        copy.getJobStatusAndTracking().setWorkProgress("Not started");
-        copy.getJobStatusAndTracking().setStartDate(null);
-        copy.setReportNumber("");
-        copy.setIsToBeCopied(true);
-        copy.setJobDescription(job.getJobDescription());
-        if (copy.getAutoGenerateJobNumber()) {
-            copy.setJobNumber(Job.generateJobNumber(copy, em));
-        }
-
+        copy.setRepresentatives(src.getRepresentatives());
+        copy.setServices(src.getServices());
+        copy.setJobDescription(src.getJobDescription());
+        copy.setInstructions(src.getInstructions());
+        copy.setNoOfTests(src.getNoOfTests());
+        copy.setNoOfCalibrations(src.getNoOfCalibrations());
+        copy.setNoOfTestsOrCalibrations(src.getNoOfTestsOrCalibrations());
+        copy.setNoOfInspections(src.getNoOfInspections());
+        copy.setNoOfTrainings(src.getNoOfTrainings());
+        copy.setNoOfLabelAssessments(src.getNoOfLabelAssessments());
+        copy.setNoOfCertifications(src.getNoOfCertifications());
+        copy.setNoOfConsultations(src.getNoOfConsultations());
+        copy.setNoOfTests(src.getNoOfTests());
+        copy.setServiceLocation(src.getServiceLocation());
+        
         return copy;
     }
 

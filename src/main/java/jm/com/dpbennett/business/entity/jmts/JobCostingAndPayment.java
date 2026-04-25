@@ -104,12 +104,12 @@ public class JobCostingAndPayment implements BusinessEntity {
     private String discountType;
     @Column(name = "DISCOUNT")
     private Double discountValue;
-    @Transient
-    private Boolean isDirty;
     private Boolean active;
     @Column(length = 1024)
     private String description;
     private Boolean estimate;
+    @Transient
+    private Boolean isDirty;
 
     public JobCostingAndPayment() {
         this.totalCost = 0.0;
@@ -134,6 +134,77 @@ public class JobCostingAndPayment implements BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public void setTotalTax(Double totalTax) {
+        this.totalTax = totalTax;
+    }
+
+    public static JobCostingAndPayment copy(JobCostingAndPayment src) {
+
+        JobCostingAndPayment copy = new JobCostingAndPayment();
+
+        copy.setJobId(src.getJobId());
+        copy.setName(src.getName());
+        copy.setCompleted(src.getCompleted());
+        copy.setInvoiceNumber(src.getInvoiceNumber());
+        copy.setPurchaseOrderNumber(src.getPurchaseOrderNumber());
+        copy.setReceiptNumber(src.getReceiptNumber());
+        copy.setPaymentTerms(src.getPaymentTerms());
+        copy.setEstimatedCost(src.getEstimatedCost());
+        copy.setEstimatedCostDoneBy(src.getEstimatedCostDoneBy());
+        copy.setFinalCost(src.getFinalCost());
+        copy.setFinalCostDoneBy(src.getFinalCostDoneBy());
+        copy.setPaymentReceivedToDate(src.getPaymentReceivedToDate());
+        copy.setDeposit(src.getDeposit());
+        copy.setReimbursable(src.getReimbursable());
+        copy.setCostingCompleted(src.getCostingCompleted());
+        copy.setCostingApproved(src.getCostingApproved());
+        copy.setInvoiced(src.getInvoiced());
+        copy.setCostingPreparedBy(src.getCostingPreparedBy());
+        copy.setCostingApprovedBy(src.getCostingApprovedBy());
+        copy.setCostingInvoicedBy(src.getCostingInvoicedBy());
+        copy.setLastPaymentEnteredBy(src.getLastPaymentEnteredBy());
+        copy.setTax(src.getTax());
+        copy.setDiscount(src.getDiscount());
+        copy.setCurrency(src.getCurrency());
+        copy.setCashPayments(src.copyCashPayments());
+        copy.setCostComponents(src.copyCostComponents());
+        copy.setMinDeposit(src.getMinDeposit());
+        copy.setTotalTax(src.getTotalTax());
+        copy.setTotalCost(src.getTotalCost());
+        copy.setPercentageGCT(src.getPercentageGCT());
+        copy.setDiscountType(src.getDiscountType());
+        copy.setDiscountValue(src.getDiscountValue());
+        copy.setActive(src.getActive());
+        copy.setDescription(src.getDescription());
+        copy.setEstimate(src.getEstimate());
+
+        return copy;
+    }
+
+    public List<CashPayment> copyCashPayments() {
+
+        List<CashPayment> copies = new ArrayList<>();
+
+        for (CashPayment cashPayment : getCashPayments()) {
+            copies.add(CashPayment.copy(cashPayment));
+        }
+
+        return copies;
+
+    }
+
+    public List<CostComponent> copyCostComponents() {
+
+        List<CostComponent> copies = new ArrayList<>();
+
+        for (CostComponent costComponent : getCostComponents()) {
+            copies.add(CostComponent.copy(costComponent));
+        }
+
+        return copies;
+
     }
 
     public Currency getCurrency() {

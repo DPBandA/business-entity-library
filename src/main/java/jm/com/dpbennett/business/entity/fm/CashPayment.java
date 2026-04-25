@@ -124,6 +124,28 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
         this.id = id;
     }
 
+    public static CashPayment copy(CashPayment src) {
+        CashPayment copy = new CashPayment();
+
+        copy.type = src.type;
+        copy.jobId = src.jobId;
+        copy.payment = src.payment;
+        copy.receiptNumber = src.receiptNumber;
+        copy.invoiceNumber = src.invoiceNumber;
+        copy.dateOfPayment = src.dateOfPayment;
+        copy.payeeTitle = src.payeeTitle;
+        copy.payeeFirstname = src.payeeFirstname;
+        copy.payeeLastname = src.payeeLastname;
+        copy.comment = src.comment;
+        copy.userId = src.userId;
+        copy.discount = src.discount;
+        copy.discountType = src.discountType;
+        copy.paymentTerms = src.paymentTerms;
+        copy.paymentPurpose = src.paymentPurpose;
+
+        return copy;
+    }
+
     public static List<CashPayment> findCashPaymentsByOwnerId(EntityManager em, Long ownerId) {
 
         try {

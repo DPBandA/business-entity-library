@@ -120,6 +120,39 @@ public class ServiceContract implements BusinessEntity {
         intendedMarketOtherText = src.intendedMarketOtherText;
     }
 
+    public static ServiceContract copy(ServiceContract src) {
+        
+        ServiceContract copy = new ServiceContract();
+        
+        copy.jobId = src.jobId;
+        copy.selectedService = src.selectedService;
+        copy.serviceRequestedDetails = src.serviceRequestedDetails;
+        copy.serviceRequestedOtherText = src.serviceRequestedOtherText;
+        copy.additionalServiceUrgent = src.additionalServiceUrgent;
+        copy.additionalServiceFaxResults = src.additionalServiceFaxResults;
+        copy.additionalServiceTelephonePresumptiveResults = src.additionalServiceTelephonePresumptiveResults;
+        copy.additionalServiceSendMoreContractForms = src.additionalServiceSendMoreContractForms;
+        copy.additionalServiceOther = src.additionalServiceOther;
+        copy.additionalServiceOtherText = src.additionalServiceOtherText;
+        copy.intendedMarketLocal = src.intendedMarketLocal;
+        copy.intendedMarketCaricom = src.intendedMarketCaricom;
+        copy.intendedMarketUK = src.intendedMarketUK;
+        copy.intendedMarketUSA = src.intendedMarketUSA;
+        copy.intendedMarketCanada = src.intendedMarketCanada;
+        copy.intendedMarketOther = src.intendedMarketOther;
+        copy.intendedMarketOtherText = src.intendedMarketOtherText;
+        copy.billingAddressId = src.billingAddressId;
+        copy.specialInstructions = src.specialInstructions;
+        copy.submittedBy = src.submittedBy;
+        copy.receivedBy = src.receivedBy;
+        copy.estimatedTurnAroundTime = src.estimatedTurnAroundTime;
+        copy.autoAddSampleInformation = src.autoAddSampleInformation;
+        
+        
+        return copy;
+
+    }
+
     public Job getJob() {
         return job;
     }
