@@ -513,15 +513,13 @@ public class Job implements BusinessEntity {
         copy.setType(src.getType());
         copy.setJobNumber(src.getJobNumber());
         copy.setAutoGenerateJobNumber(src.getAutoGenerateJobNumber());
-        copy.setJobSequenceNumber(src.getJobSequenceNumber());
-        copy.setReportNumber(src.getReportNumber());
+        copy.setJobSequenceNumber(src.getJobSequenceNumber());        
         copy.setComment(src.getComment());
         copy.setNumberOfSamples(src.getNumberOfSamples());
         copy.setEstimatedTurnAroundTimeInDays(src.getEstimatedTurnAroundTimeInDays());
         copy.setEstimatedTurnAroundTimeRequired(src.getEstimatedTurnAroundTimeRequired());
         copy.setLocked(src.getLocked());
         copy.setIsEarningJob(src.getIsEarningJob());
-        copy.setNewClient(src.getNewClient());
         copy.setParent(src.getParent());
         copy.setClassification(src.getClassification());
         copy.setSector(src.getSector());
@@ -534,6 +532,7 @@ public class Job implements BusinessEntity {
         copy.setAssignedTo(src.getAssignedTo());
         copy.setJobCostingAndPayment(JobCostingAndPayment.copy(src.getJobCostingAndPayment()));
         copy.setServiceContract(ServiceContract.copy(src.getServiceContract()));
+        copy.setServiceLocation(src.getServiceLocation());
         copy.setJobStatusAndTracking(JobStatusAndTracking.copy(src.getJobStatusAndTracking()));
         copy.setBusiness(src.getBusiness());
         copy.setBusinessOffice(src.getBusinessOffice());
@@ -548,6 +547,8 @@ public class Job implements BusinessEntity {
         copy.setServices(src.getServices());
         copy.setJobDescription(src.getJobDescription());
         copy.setInstructions(src.getInstructions());
+        copy.setNewClient(src.getNewClient());
+        copy.setReportNumber(src.getReportNumber());
         copy.setNoOfTests(src.getNoOfTests());
         copy.setNoOfCalibrations(src.getNoOfCalibrations());
         copy.setNoOfTestsOrCalibrations(src.getNoOfTestsOrCalibrations());
@@ -557,7 +558,6 @@ public class Job implements BusinessEntity {
         copy.setNoOfCertifications(src.getNoOfCertifications());
         copy.setNoOfConsultations(src.getNoOfConsultations());
         copy.setNoOfTests(src.getNoOfTests());
-        copy.setServiceLocation(src.getServiceLocation());
         
         return copy;
     }
