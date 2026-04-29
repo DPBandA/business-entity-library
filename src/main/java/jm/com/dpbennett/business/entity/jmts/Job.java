@@ -342,11 +342,20 @@ public class Job implements BusinessEntity {
         return getJobCostingAndPayment().getCashPayments();
     }
 
-    public List<Job> getInvoices() {
+    public static List<Job> findInvoices(EntityManager em, Job parent) {
 
-        // tk implement getting jobs with type Invoice and parent job as the
-        // current job.
-        return null;
+        try {
+
+            List<Job> jobs = em.createQuery("SELECT j FROM Job j"
+                    + " WHERE j.type = 'Invoice' AND j.parent.id = " + parent.id, Job.class).getResultList();
+            
+            return jobs;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
     }
 
     public void setCashPayments(List<CashPayment> cashPayments) {
@@ -513,7 +522,7 @@ public class Job implements BusinessEntity {
         copy.setType(src.getType());
         copy.setJobNumber(src.getJobNumber());
         copy.setAutoGenerateJobNumber(src.getAutoGenerateJobNumber());
-        copy.setJobSequenceNumber(src.getJobSequenceNumber());        
+        copy.setJobSequenceNumber(src.getJobSequenceNumber());
         copy.setComment(src.getComment());
         copy.setNumberOfSamples(src.getNumberOfSamples());
         copy.setEstimatedTurnAroundTimeInDays(src.getEstimatedTurnAroundTimeInDays());
@@ -558,7 +567,7 @@ public class Job implements BusinessEntity {
         copy.setNoOfCertifications(src.getNoOfCertifications());
         copy.setNoOfConsultations(src.getNoOfConsultations());
         copy.setNoOfTests(src.getNoOfTests());
-        
+
         return copy;
     }
 
@@ -659,6 +668,17 @@ public class Job implements BusinessEntity {
         return job.getJobNumber();
     }
 
+    private static String buildInvoiceNumber(Job job) {
+
+        if (job.getJobSequenceNumber() != null) {
+            job.setJobNumber(BusinessEntityUtils.getIntegerString(job.getJobSequenceNumber(), 6));
+        } else {
+            job.setJobNumber("?");
+        }
+
+        return job.getJobNumber();
+    }
+
     private static String buildProformaNumber(Job job) {
         Calendar c = Calendar.getInstance();
         String departmentOrCompanyCode;
@@ -720,10 +740,15 @@ public class Job implements BusinessEntity {
     }
 
     public static String generateJobNumber(Job job, EntityManager em) {
-        if (job.getJobCostingAndPayment().getEstimate()) {
-            return buildProformaNumber(job);
-        } else {
-            return buildJobNumber(job, em);
+        switch (job.getType()) {
+            case "Proforma Invoice":
+                return buildProformaNumber(job);
+            case "Invoice":
+                return buildInvoiceNumber(job);
+            case "Job":
+                return buildJobNumber(job, em);
+            default:
+                return "";
         }
     }
 

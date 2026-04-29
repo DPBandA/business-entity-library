@@ -1256,7 +1256,7 @@ public class BusinessEntityUtils {
 
             return date.getTime();
         } catch (ParseException ex) {
-            System.out.println(ex);
+            
             return 0L;
         }
 
