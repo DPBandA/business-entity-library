@@ -640,6 +640,10 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Double getReimbursable() {
+        if (reimbursable == null) {
+            reimbursable = 0.0;
+        }
+
         return reimbursable;
     }
 

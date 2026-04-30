@@ -347,7 +347,8 @@ public class Job implements BusinessEntity {
         try {
 
             List<Job> jobs = em.createQuery("SELECT j FROM Job j"
-                    + " WHERE j.type = 'Invoice' AND j.parent.id = " + parent.id, Job.class).getResultList();
+                    + " WHERE j.type = 'Invoice' AND j.parent.id = " + parent.id
+                    + " ORDER BY j.id DESC", Job.class).getResultList();
             
             return jobs;
 
