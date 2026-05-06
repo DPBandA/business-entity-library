@@ -58,6 +58,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private String name;
     private String number;
     private String type;
+    private String description;
     private String notes;
     private String taxRegistrationNumber;
     private String departmentLabel;
@@ -499,7 +500,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public void setDateEntered(Date dateEntered) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
@@ -509,7 +509,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public void setDateEdited(Date dateEdited) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
@@ -519,12 +518,18 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public String getDescription() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        if (description == null) {
+            description = "";
+        }
+
+        return description;
     }
 
     @Override
     public void setDescription(String description) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        this.description = description;
     }
 
     @Override
@@ -544,22 +549,41 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public void setEditedBy(Person person) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public Person getEnteredBy() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return null;
     }
 
     @Override
     public void setEnteredBy(Person person) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+
+            if (this.id == null) {
+
+                Business existing = Business.findByName(em, this.name);
+                if (existing != null) {
+
+                    return new ReturnMessage(false, "Organization exists");
+                } else {
+
+                    return save(em);
+                }
+            } else {
+
+                return save(em);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Organization not saved");
     }
 
     @Override
