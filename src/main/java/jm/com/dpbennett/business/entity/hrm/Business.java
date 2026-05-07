@@ -431,6 +431,14 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
         try {
 
+            for (Contact contact : getContacts()) {
+                contact.save(em);
+            }
+
+            for (Address address : getAddresses()) {
+                address.save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -528,7 +536,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public void setDescription(String description) {
-        
+
         this.description = description;
     }
 
