@@ -429,10 +429,6 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     public Employee getLastPaymentEnteredBy() {
 
-        if (lastPaymentEnteredBy == null) {
-            return new Employee();
-        }
-
         return lastPaymentEnteredBy;
     }
 
