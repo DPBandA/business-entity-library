@@ -221,7 +221,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public String toString() {
-        return "jm.com.dpbennett.entity.Business[id=" + id + "]";
+        return getName();
     }
 
     @Override
@@ -229,6 +229,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         if (name == null) {
             name = "";
         }
+        
         return name;
     }
 
