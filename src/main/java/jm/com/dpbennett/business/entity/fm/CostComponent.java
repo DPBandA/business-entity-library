@@ -77,7 +77,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private Boolean isEditable;
     @Column(length = 1024)
     private String description;
-    private String unit;    
+    private String unit;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -207,6 +207,10 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Date getCostDate() {
+        if (costDate == null) {
+            costDate = new Date();
+        }
+
         return costDate;
     }
 
@@ -345,10 +349,10 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.costDate = src.costDate;
         this.currencyExchangeRate = src.currencyExchangeRate;
     }
-    
+
     public static CostComponent copy(CostComponent src) {
         CostComponent copy = new CostComponent();
-        
+
         copy.name = src.name;
         copy.code = src.code;
         copy.type = src.type;
@@ -368,7 +372,7 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         copy.currency = src.currency;
         copy.costDate = src.costDate;
         copy.currencyExchangeRate = src.currencyExchangeRate;
-        
+
         return copy;
     }
 
