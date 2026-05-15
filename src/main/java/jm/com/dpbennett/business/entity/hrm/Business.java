@@ -78,6 +78,10 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private String domainName;
     @Transient
     private Boolean isDirty;
+    @Transient
+    private Address billingAddress;
+    @Transient
+    private Contact contact;
 
     public Business() {
         this.name = "";
@@ -103,6 +107,64 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         this.departmentLabel = "Department";
         this.departments = new ArrayList<>();
         this.domainName = "";
+    }
+
+    public Contact getMainContact() {
+        if (!getContacts().isEmpty()) {
+            for (Contact mainContact : getContacts()) {
+                if (mainContact.getType().equals("Main")) {
+                    return mainContact;
+                }
+            }
+            Contact mainContact = getContacts().get(0);
+            mainContact.setType("Main");
+            return mainContact;
+        } else {
+            Contact mainContact = new Contact();
+            mainContact.setType("Main");
+            getContacts().add(mainContact);
+            return getContacts().get(0);
+        }
+    }
+
+    public Contact getContact() {
+        if (contact == null) {
+            setContact(getMainContact());
+        }
+
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+
+    public List<Address> getBillingAddresses() {
+        ArrayList<Address> billingAddresses = new ArrayList<>();
+
+        for (Address address : getAddresses()) {
+            if (address.getType().equals("Billing")) {
+                billingAddresses.add(address);
+            }
+        }
+
+        return billingAddresses;
+    }
+
+    public Address getBillingAddress() {
+        if (billingAddress == null) {
+            //if (client != null) {
+            setBillingAddress(getDefaultAddress());
+            //} else {
+            //    return new Address();
+            //}
+        }
+
+        return billingAddress;
+    }
+
+    public void setBillingAddress(Address billingAddress) {
+        this.billingAddress = billingAddress;
     }
 
     public String getDepartmentLabel() {
@@ -229,7 +291,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         if (name == null) {
             name = "";
         }
-        
+
         return name;
     }
 
@@ -460,7 +522,17 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public Address getDefaultAddress() {
-        return new Address();
+        if (!getBillingAddresses().isEmpty()) {
+
+            return getBillingAddresses().get(getBillingAddresses().size() - 1);
+
+        } else if (!getAddresses().isEmpty()) {
+
+            return getAddresses().get(getAddresses().size() - 1);
+
+        } else {
+            return new Address("", "Billing");
+        }
     }
 
     @Override
