@@ -256,6 +256,10 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public String getTaxRegistrationNumber() {
+        if (taxRegistrationNumber == null) {
+            taxRegistrationNumber = "";
+        }
+
         return taxRegistrationNumber;
     }
 

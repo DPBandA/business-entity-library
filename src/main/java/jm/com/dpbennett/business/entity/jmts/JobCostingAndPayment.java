@@ -758,6 +758,7 @@ public class JobCostingAndPayment implements BusinessEntity {
         if (purchaseOrderNumber == null) {
             purchaseOrderNumber = "";
         }
+        
         return purchaseOrderNumber;
     }
 
