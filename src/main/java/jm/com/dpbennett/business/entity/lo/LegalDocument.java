@@ -20,7 +20,6 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.lo;
 
 import jm.com.dpbennett.business.entity.dm.DocumentType;
-import jm.com.dpbennett.business.entity.dm.Document;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -45,7 +44,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.rm.DatePeriod;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -61,7 +59,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllLegalDocuments", query = "SELECT l FROM LegalDocument l ORDER BY l.number")
 })
-public class LegalDocument implements Document, Comparable, BusinessEntity {
+public class LegalDocument implements LegalDocumentInterface {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -121,20 +119,24 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     public LegalDocument() {
     }
 
+    @Override
     public String getStrategicPriority() {
         return strategicPriority;
     }
 
+    @Override
     public void setStrategicPriority(String strategicPriority) {
         this.strategicPriority = strategicPriority;
     }
 
+    @Override
     public Integer getActualTurnaroundTime() {
         actualTurnaroundTime = getCurrentDocumentActualTurnaroundTime();
 
         return actualTurnaroundTime;
     }
 
+    @Override
     public void setActualTurnaroundTime(Integer actualTurnaroundTime) {
         this.actualTurnaroundTime = actualTurnaroundTime;
     }
@@ -152,6 +154,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.isDirty = isDirty;
     }
 
+    @Override
     public Boolean getVisited() {
         if (visited == null) {
             visited = false;
@@ -159,6 +162,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return visited;
     }
 
+    @Override
     public void setVisited(Boolean visited) {
         this.visited = visited;
     }
@@ -167,6 +171,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return dateOfCompletion != null;
     }
 
+    @Override
     public String getRowStyle() {
 
         if (getVisited()) {
@@ -205,30 +210,37 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         editedBy = (Employee) person;
     }
 
+    @Override
     public String getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(String status) {
         this.status = status;
     }
 
+    @Override
     public String getPriorityLevel() {
         return priorityLevel;
     }
 
+    @Override
     public void setPriorityLevel(String priorityLevel) {
         this.priorityLevel = priorityLevel;
     }
 
+    @Override
     public String getGoal() {
         return goal;
     }
 
+    @Override
     public void setGoal(String goal) {
         this.goal = goal;
     }
 
+    @Override
     public Integer getYearReceived() {
         Calendar c = Calendar.getInstance();
 
@@ -239,10 +251,12 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return yearReceived;
     }
 
+    @Override
     public void setYearReceived(Integer yearReceived) {
         this.yearReceived = yearReceived;
     }
 
+    @Override
     public Client getExternalClient() {
         if (externalClient == null) {
             return new Client();
@@ -251,6 +265,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return externalClient;
     }
 
+    @Override
     public void setExternalClient(Client externalClient) {
         this.externalClient = externalClient;
     }
@@ -260,10 +275,12 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.numberOfDocuments = numberOfDocuments;
     }
 
+    @Override
     public Long getNumberOfDocuments() {
         return numberOfDocuments;
     }
 
+    @Override
     public void setNumberOfDocuments(Long numberOfDocuments) {
         this.numberOfDocuments = numberOfDocuments;
     }
@@ -276,16 +293,19 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         }
     }
 
+    @Override
     public Integer getTurnaroundTime() {
         turnaroundTime = getCurrentDocumentTurnaroundTime();
 
         return turnaroundTime;
     }
 
+    @Override
     public void setTurnaroundTime(Integer turnaroundTime) {
         this.turnaroundTime = turnaroundTime;
     }
 
+    @Override
     public Boolean getAutoGenerateNumber() {
         if (autoGenerateNumber == null) {
             autoGenerateNumber = false;
@@ -293,10 +313,12 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return autoGenerateNumber;
     }
 
+    @Override
     public void setAutoGenerateNumber(Boolean autoGenerateNumber) {
         this.autoGenerateNumber = autoGenerateNumber;
     }
 
+    @Override
     public Department getRequestingDepartment() {
         if (requestingDepartment == null) {
             return new Department();
@@ -305,10 +327,12 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return requestingDepartment;
     }
 
+    @Override
     public void setRequestingDepartment(Department requestingDepartment) {
         this.requestingDepartment = requestingDepartment;
     }
 
+    @Override
     public Integer getMonthReceived() {
         Calendar c = Calendar.getInstance();
 
@@ -319,26 +343,32 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return monthReceived;
     }
 
+    @Override
     public void setMonthReceived(Integer monthReceived) {
         this.monthReceived = monthReceived;
     }
 
+    @Override
     public Long getSequenceNumber() {
         return sequenceNumber;
     }
 
+    @Override
     public void setSequenceNumber(Long sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
     }
 
+    @Override
     public String getDocumentForm() {
         return documentForm;
     }
 
+    @Override
     public void setDocumentForm(String documentForm) {
         this.documentForm = documentForm;
     }
 
+    @Override
     public Department getResponsibleDepartment() {
         if (responsibleDepartment == null) {
             return new Department();
@@ -357,14 +387,17 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.comments = comments;
     }
 
+    @Override
     public String getWorkPerformedOnDocument() {
         return workPerformedOnDocument;
     }
 
+    @Override
     public void setWorkPerformedOnDocument(String workPerformedOnDocument) {
         this.workPerformedOnDocument = workPerformedOnDocument;
     }
 
+    @Override
     public void setResponsibleDepartment(Department responsibleDepartment) {
         this.responsibleDepartment = responsibleDepartment;
     }
@@ -379,18 +412,22 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.id = id;
     }
 
+    @Override
     public Date getDateOfCompletion() {
         return dateOfCompletion;
     }
 
+    @Override
     public void setDateOfCompletion(Date dateOfCompletion) {
         this.dateOfCompletion = dateOfCompletion;
     }
 
+    @Override
     public Date getDateReceived() {
         return dateReceived;
     }
 
+    @Override
     public void setDateReceived(Date dateReceived) {
         this.dateReceived = dateReceived;
     }
@@ -405,10 +442,12 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.description = description;
     }
 
+    @Override
     public Date getExpectedDateOfCompletion() {
         return expectedDateOfCompletion;
     }
 
+    @Override
     public void setExpectedDateOfCompletion(Date expectedDateOfCompletion) {
         this.expectedDateOfCompletion = expectedDateOfCompletion;
     }
@@ -433,6 +472,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.number = number;
     }
 
+    @Override
     public Employee getResponsibleOfficer() {
         if (responsibleOfficer == null) {
             return new Employee();
@@ -441,10 +481,12 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return responsibleOfficer;
     }
 
+    @Override
     public void setResponsibleOfficer(Employee responsibleOfficer) {
         this.responsibleOfficer = responsibleOfficer;
     }
 
+    @Override
     public Employee getSubmittedBy() {
         if (submittedBy == null) {
             return new Employee();
@@ -453,6 +495,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return submittedBy;
     }
 
+    @Override
     public void setSubmittedBy(Employee submittedBy) {
         this.submittedBy = submittedBy;
     }
@@ -522,6 +565,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.classification = classification;
     }
 
+    @Override
     public Integer getCurrentDocumentActualTurnaroundTime() {
         if (dateReceived != null && dateOfCompletion != null) {
             return BusinessEntityUtils.calculatePeriodInWorkingDays(dateReceived, dateOfCompletion);
