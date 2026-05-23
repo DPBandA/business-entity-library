@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
@@ -37,51 +36,52 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
  *
- * @author dbennett
+ * @author Desmond Bennett
  */
 @Entity
-@Table(name = "AROBL")
+@Table(name = "arobl")
 public class AccPacDocument implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Column(length = 22, name = "IDINVC")
+    @Column(length = 22, name = "IDINVC", nullable = false)
     private String idInvc;
     @Column(length = 12, name = "IDCUST")
     private String idCust;
-    @Column(name = "AMTDUETC", columnDefinition = "DECIMAL(10,3)")
+    @Column(name = "AMTDUETC", precision = 10, scale = 3)
     private BigDecimal custCurrencyAmountDue;
-    @Column(name = "AMTDUEHC", columnDefinition = "DECIMAL(10,3)")
+    @Column(name = "AMTDUEHC", precision = 10, scale = 3)
     private BigDecimal funcCurrencyAmountDue;
     @Column(length = 4, name = "FISCYR")
     private String fiscalYear;
-    @Column(name = "DATEINVC", columnDefinition = "DECIMAL(9,0)")
+    @Column(name = "DATEINVC", precision = 9, scale = 0)
     private BigDecimal documentDate;
-    @Column(name = "DATEDUE", columnDefinition = "DECIMAL(9,0)")
+    @Column(name = "DATEDUE", precision = 9, scale = 0)
     private BigDecimal dueDate;
-    @Column(name = "AMTINVCHC", columnDefinition = "DECIMAL(10,3)")
+    @Column(name = "AMTINVCHC", precision = 10, scale = 3)
     private BigDecimal funcCurrencyInvoiceAmount;
-    @Column(name = "AMTINVCTC", columnDefinition = "DECIMAL(10,3)")
+    @Column(name = "AMTINVCTC", precision = 10, scale = 3)
     private BigDecimal custCurrencyInvoiceAmount;
-    @Column(name = "DATEPAID", columnDefinition = "DECIMAL(9,0)")
+    @Column(name = "DATEPAID", precision = 9, scale = 0)
     private BigDecimal datePaid;
-    @Column(name = "TRXTYPEID", columnDefinition = "SMALLINT(5,0)")
+    @Column(name = "TRXTYPEID")
     private Integer transactionType;
-    @Column(name = "TRXTYPETXT", columnDefinition = "SMALLINT(5,0)")
+    @Column(name = "TRXTYPETXT")
     private Integer documentType;
-    @Column(name = "SWPAID", columnDefinition = "SMALLINT(5,0)")
-    private Integer fullyPaid; 
+    @Column(name = "SWPAID")
+    private Integer fullyPaid;
     @Column(length = 22, name = "IDORDERNBR")
     private String idORDERNBR;
     @Transient
     private Boolean isDirty;
-    
-    public AccPacDocument() {        
+
+    public AccPacDocument() {
     }
 
     public String getIdORDERNBR() {
@@ -177,14 +177,11 @@ public class AccPacDocument implements Serializable, BusinessEntity {
     public Integer getDaysOverdue() {
         Integer daysOverdue = 0;
 
-        //
         Calendar cNow = Calendar.getInstance();
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
         try {
             Date due = formatter.parse(dueDate.toString());
             if (cNow.getTime().after(due)) {
-                // get calendate date for due date and compare to the current
-                // calendar date
                 Calendar cDue = Calendar.getInstance();
                 cDue.setTime(due);
 
@@ -198,7 +195,7 @@ public class AccPacDocument implements Serializable, BusinessEntity {
             } else {
                 return daysOverdue;
             }
-      
+
         } catch (ParseException ex) {
             System.out.println(ex);
             return 0;
@@ -215,8 +212,6 @@ public class AccPacDocument implements Serializable, BusinessEntity {
         try {
             Date docDate = formatter.parse(documentDate.toString());
             if (cNow.getTime().after(docDate)) {
-                // get calendate date for document date and compare to the current
-                // calendar date
                 Calendar cDocDate = Calendar.getInstance();
                 cDocDate.setTime(docDate);
 
@@ -320,18 +315,18 @@ public class AccPacDocument implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof AccPacDocument)) {
             return false;
         }
         AccPacDocument other = (AccPacDocument) object;
-        
+
         return !((this.idInvc == null && other.idInvc != null) || (this.idInvc != null && !this.idInvc.equals(other.idInvc)));
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.AccPacDocument[id=" + idInvc + "]";
+        return "jm.com.dpbennett.entity.AccPacDocument[id=" + idInvc + "]";
     }
 
     public static List<AccPacDocument> findAccPacDocumentsByCustomerId(EntityManager em, String customerId) {
@@ -368,14 +363,6 @@ public class AccPacDocument implements Serializable, BusinessEntity {
         }
     }
 
-    /**
-     * NB: Documents with an amount due over 0.0 is assumed to be an invoice.
-     *
-     * @param em
-     * @param customerId
-     * @param includePrepayments
-     * @return
-     */
     public static List<AccPacDocument> findAccPacInvoicesDueByCustomerId(EntityManager em,
             String customerId, Boolean includePrepayments) {
 
@@ -563,6 +550,26 @@ public class AccPacDocument implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

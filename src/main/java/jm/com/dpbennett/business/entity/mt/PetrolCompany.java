@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -44,6 +44,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -63,9 +64,9 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     private String name;
     private String number;
     private String type;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
     private String notes;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -76,7 +77,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     private List<PetrolStation> petrolStations;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<BusinessOffice> businessOffices;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
     private String taxRegistrationNumber;
     @Transient
@@ -124,6 +125,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
         if (internet == null) {
             internet = new Internet();
         }
+
         return internet;
     }
 
@@ -134,7 +136,10 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     public List<PetrolStation> getPetrolStations() {
         if (petrolStations != null) {
             Collections.sort(petrolStations);
+        } else {
+            petrolStations = new ArrayList<>();
         }
+
         return petrolStations;
     }
 
@@ -151,7 +156,6 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PetrolCompany)) {
             return false;
         }
@@ -162,7 +166,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.PetrolCompany[id=" + id + "]";
+        return "jm.com.dpbennett.entity.PetrolCompany[id=" + id + "]";
     }
 
     @Override
@@ -177,6 +181,11 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
 
     @Override
     public List<Address> getAddresses() {
+
+        if (addresses == null) {
+            addresses = new ArrayList<>();
+        }
+
         return addresses;
     }
 
@@ -187,6 +196,11 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
 
     @Override
     public List<Contact> getContacts() {
+
+        if (contacts == null) {
+            contacts = new ArrayList<>();
+        }
+
         return contacts;
     }
 
@@ -257,6 +271,11 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
 
     @Override
     public List<BusinessOffice> getBusinessOffices() {
+
+        if (businessOffices == null) {
+            businessOffices = new ArrayList<>();
+        }
+
         return businessOffices;
     }
 
@@ -290,7 +309,7 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
 
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<PetrolCompany>();
+            return new ArrayList<>();
         }
     }
 
@@ -345,24 +364,20 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            for (Contact contact : contacts) {
+            for (Contact contact : getContacts()) {
                 contact.save(em);
             }
 
-            for (Address address : addresses) {
+            for (Address address : getAddresses()) {
                 address.save(em);
             }
 
-            for (PetrolStation petrolStation : petrolStations) {
+            for (PetrolStation petrolStation : getPetrolStations()) {
                 petrolStation.save(em);
             }
 
-            for (BusinessOffice businessOffice : businessOffices) {
+            for (BusinessOffice businessOffice : getBusinessOffices()) {
                 businessOffice.save(em);
-            }
-
-            if (getInternet() != null) {
-                getInternet().save(em);
             }
 
             em.getTransaction().begin();
@@ -474,6 +489,26 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

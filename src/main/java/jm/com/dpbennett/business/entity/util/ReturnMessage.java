@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,31 +17,32 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.util;
 
 public class ReturnMessage extends Message {
 
-    private boolean success;   
+    private boolean success;
 
     public ReturnMessage(boolean success, String header,
             String message, String severity) {
-        
+
         super(header, message, severity);
         this.success = success;
-        
+
     }
-    
+
     public ReturnMessage(boolean success, String message) {
-        
+
         super("", message, Message.SEVERITY_ERROR_NAME);
         this.success = success;
-        
+
     }
 
     public ReturnMessage() {
-        
+
         super("", "", Message.SEVERITY_ERROR_NAME);
-        this.success = true;        
+        this.success = true;
     }
 
     public boolean isSuccess() {
@@ -51,12 +52,12 @@ public class ReturnMessage extends Message {
     public void setSuccess(boolean success) {
         this.success = success;
     }
-    
+
     public String getDetail() {
         String detail;
-        
+
         detail = getHeader() + "\n" + getMessage();
-                
+
         return detail;
     }
 

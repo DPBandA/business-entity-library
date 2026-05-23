@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -20,9 +20,9 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.cert;
 
+import jakarta.persistence.EntityManager;
 import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.hrm.Business;
@@ -50,9 +50,9 @@ public interface CertificationInterface extends BusinessEntity, Comparable, Seri
 
     Employee getCertificateSignedBy();
 
-    Date getDateIssued();
+    LocalDate getDateIssued();
 
-    Date getExpiryDate();
+    LocalDate getExpiryDate();
 
     Business getGrantedTo();
 
@@ -88,9 +88,9 @@ public interface CertificationInterface extends BusinessEntity, Comparable, Seri
 
     void setCertificateSignedBy(Employee certificateSignedBy);
 
-    void setDateIssued(Date dateIssued);
+    void setDateIssued(LocalDate dateIssued);
 
-    void setExpiryDate(Date expiryDate);
+    void setExpiryDate(LocalDate expiryDate);
 
     void setGrantedTo(Business grantedTo);
 
@@ -116,5 +116,5 @@ public interface CertificationInterface extends BusinessEntity, Comparable, Seri
 
     @Override
     ReturnMessage validate(EntityManager em);
-    
+
 }

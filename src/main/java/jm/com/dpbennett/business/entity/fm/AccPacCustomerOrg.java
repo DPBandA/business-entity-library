@@ -1,0 +1,484 @@
+/*
+Business Entity Library (BEL) - A foundational library for JSF web applications 
+Copyright (C) 2026  D P Bennett & Associates Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Email: info@dpbennett.com.jm
+ */
+package jm.com.dpbennett.business.entity.fm;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.util.ReturnMessage;
+
+/**
+ * @author Desmond Bennett
+ * @version 1.0
+ */
+@Entity
+@Table(name = "ARCUS")
+public class AccPacCustomerOrg implements Serializable, BusinessEntity {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Column(length = 12, name = "IDCUST")
+    private String idCust;
+    @Column(length = 60, name = "NAMECUST")
+    private String customerName;
+    @Column(name = "AMTCRLIMT", columnDefinition = "DECIMAL(10,3)")
+    private BigDecimal creditLimit;
+    @Column(name = "SWBALFWD", columnDefinition = "SMALLINT(5,0)")
+    private Integer accountType;
+    @Column(name = "AMTBALDUET", columnDefinition = "DECIMAL(10,3)")
+    private BigDecimal balanceDueInCust;
+    @Column(name = "AMTBALDUEH", columnDefinition = "DECIMAL(10,3)")
+    private BigDecimal balanceDueInFunc;
+    @Column(name = "DATELASTST", columnDefinition = "DECIMAL(9,0)")
+    private BigDecimal dateOfLastStatement;
+    @Column(name = "AMTLASTSTT", columnDefinition = "DECIMAL(10,3)")
+    private BigDecimal lastStatementTotalCust;
+    @Column(name = "AMTPDUE", columnDefinition = "DECIMAL(10,3)")
+    private BigDecimal amountPastDue;
+    @Column(name = "CNTOPENINV", columnDefinition = "DECIMAL(4,0)")
+    private BigDecimal numberOfOpenDocuments;
+    @Column(name = "AMTLASTIVH", columnDefinition = "DECIMAL(10,3)")
+    private BigDecimal lastInvoiceAmt;
+    @Column(length = 6, name = "IDACCTSET")
+    private String IDACCTSET;
+    @Transient
+    private Boolean isDirty;
+
+    public AccPacCustomerOrg() {
+        balanceDueInCust = new BigDecimal(0.0);
+        balanceDueInFunc = new BigDecimal(0.0);
+        creditLimit = new BigDecimal(0.0);
+    }
+
+    public AccPacCustomerOrg(String customerName) {
+        this.customerName = customerName;
+        balanceDueInCust = new BigDecimal(0.0);
+        balanceDueInFunc = new BigDecimal(0.0);
+        creditLimit = new BigDecimal(0.0);
+    }
+
+    public AccPacCustomerOrg(String idCust, String customerName) {
+        this.idCust = idCust;
+        this.customerName = customerName;
+        balanceDueInCust = new BigDecimal(0.0);
+        balanceDueInFunc = new BigDecimal(0.0);
+        creditLimit = new BigDecimal(0.0);
+    }
+
+    public String getIdCust() {
+        return idCust;
+    }
+
+    public void setIdCust(String idCust) {
+        this.idCust = idCust;
+    }
+
+    public String getIDACCTSET() {
+        if (IDACCTSET == null) {
+            IDACCTSET = "";
+        }
+        return IDACCTSET;
+    }
+
+    public void setIDACCTSET(String IDACCTSET) {
+        this.IDACCTSET = IDACCTSET;
+    }
+
+    public BigDecimal getAmountPastDue() {
+        return amountPastDue;
+    }
+
+    public void setAmountPastDue(BigDecimal amountPastDue) {
+        this.amountPastDue = amountPastDue;
+    }
+
+    public BigDecimal getLastInvoiceAmt() {
+        return lastInvoiceAmt;
+    }
+
+    public void setLastInvoiceAmt(BigDecimal lastInvoiceAmt) {
+        this.lastInvoiceAmt = lastInvoiceAmt;
+    }
+
+    public BigDecimal getNumberOfOpenDocuments() {
+        return numberOfOpenDocuments;
+    }
+
+    public void setNumberOfOpenDocuments(BigDecimal numberOfOpenDocuments) {
+        this.numberOfOpenDocuments = numberOfOpenDocuments;
+    }
+
+    public BigDecimal getLastStatementTotalCust() {
+        return lastStatementTotalCust;
+    }
+
+    public void setLastStatementTotalCust(BigDecimal lastStatementTotalCust) {
+        this.lastStatementTotalCust = lastStatementTotalCust;
+    }
+
+    public BigDecimal getDateOfLastStatement() {
+        return dateOfLastStatement;
+    }
+
+    public void setDateOfLastStatement(BigDecimal dateOfLastStatement) {
+        this.dateOfLastStatement = dateOfLastStatement;
+    }
+
+    public Integer getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(Integer accountType) {
+        this.accountType = accountType;
+    }
+
+    public BigDecimal getBalanceDueInCust() {
+        return balanceDueInCust;
+    }
+
+    public void setBalanceDueInCust(BigDecimal balanceDueInCust) {
+        this.balanceDueInCust = balanceDueInCust;
+    }
+
+    public BigDecimal getBalanceDueInFunc() {
+        return balanceDueInFunc;
+    }
+
+    public void setBalanceDueInFunc(BigDecimal balanceDueInFunc) {
+        this.balanceDueInFunc = balanceDueInFunc;
+    }
+
+    public BigDecimal getCreditLimit() {
+        return creditLimit;
+    }
+
+    public void setCreditLimit(BigDecimal creditLimit) {
+        this.creditLimit = creditLimit;
+    }
+
+    public BigDecimal getBalanceDueCreditLimitDifference() {
+
+        if ((balanceDueInFunc != null) && (creditLimit != null)) {
+            if (creditLimit.doubleValue() == 0.0) {
+                return new BigDecimal(0.0);
+            }
+
+            BigDecimal diff = balanceDueInFunc.subtract(creditLimit);
+            if (diff.doubleValue() < 0.0) {
+                return new BigDecimal(0.0);
+            } else {
+                return diff;
+            }
+        } else {
+            return new BigDecimal(0.0);
+        }
+    }
+
+    public String getCustomerName() {
+        if (customerName == null) {
+            customerName = "";
+        }
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (idCust != null ? idCust.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+
+        if (!(object instanceof AccPacCustomerOrg)) {
+            return false;
+        }
+        AccPacCustomerOrg other = (AccPacCustomerOrg) object;
+
+        return !((this.idCust == null && other.idCust != null) || (this.idCust != null && !this.idCust.equals(other.idCust)));
+    }
+
+    @Override
+    public String toString() {
+        return getCustomerName();
+    }
+
+    public static List<AccPacCustomerOrg> findAllByName(EntityManager em, String value) {
+
+        try {
+
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<AccPacCustomerOrg> clients;
+            clients = em.createQuery("SELECT a FROM AccPacCustomer a"
+                    + " WHERE UPPER(a.customerName)"
+                    + " LIKE '" + value.toUpperCase().trim()
+                    + "%' ORDER BY a.customerName", AccPacCustomerOrg.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<AccPacCustomerOrg> findAllByNameAndId(EntityManager em, String value) {
+
+        try {
+
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<AccPacCustomerOrg> clients;
+            clients = em.createQuery("SELECT a FROM AccPacCustomer a"
+                    + " WHERE UPPER(a.customerName) LIKE '" + value.toUpperCase().trim() + "%'"
+                    + " OR UPPER(a.idCust) LIKE '" + value.toUpperCase().trim() + "%'"
+                    + " ORDER BY a.customerName", AccPacCustomerOrg.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static AccPacCustomerOrg findByName(EntityManager em, String value) {
+
+        try {
+
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<AccPacCustomerOrg> customers = em.createQuery("SELECT a FROM AccPacCustomer a"
+                    + " WHERE UPPER(a.customerName)"
+                    + " LIKE '" + value.toUpperCase().trim()
+                    + "%' ORDER BY a.customerName", AccPacCustomerOrg.class).getResultList();
+
+            if (!customers.isEmpty()) {
+                return customers.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean getIsDirty() {
+        if (isDirty == null) {
+            isDirty = false;
+        }
+        return isDirty;
+    }
+
+    @Override
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+
+    @Override
+    public Long getId() {
+        if (getIdCust() != null) {
+            return 1L;
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setId(Long id) {
+    }
+
+    @Override
+    public String getName() {
+        return getCustomerName();
+    }
+
+    @Override
+    public void setName(String name) {
+        customerName = name;
+    }
+
+    @Override
+    public ReturnMessage save(EntityManager em) {
+
+        try {
+
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, this);
+            em.getTransaction().commit();
+
+            return new ReturnMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Accpac Customer not saved");
+    }
+
+    @Override
+    public ReturnMessage validate(EntityManager em) {
+        return new ReturnMessage();
+    }
+
+    @Override
+    public Boolean getActive() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setActive(Boolean active) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getType() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setType(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(Date dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Date getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(Date dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage delete(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDescription(String description) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEditedBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditedBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Person getEnteredBy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEnteredBy(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getCategory() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setCategory(String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getNotes() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setNotes(String notes) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getComments() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setComments(String comments) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+}

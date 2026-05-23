@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -19,24 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.cert;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Business;
-import java.text.Collator;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.hrm.Employee;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -62,10 +61,8 @@ public class Certification implements CertificationInterface {
     private Employee certificateSignedBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Business grantedTo;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateIssued;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date expiryDate;
+    private LocalDate dateIssued;
+    private LocalDate expiryDate;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client applicant;
     @Transient
@@ -86,8 +83,8 @@ public class Certification implements CertificationInterface {
         this.expiryDate = certification.expiryDate;
         this.applicant = certification.applicant;
     }
-    
-     public static List<Certification> findAllByOwnerId(EntityManager em, Long ownerId) {
+
+    public static List<Certification> findAllByOwnerId(EntityManager em, Long ownerId) {
 
         try {
             List<Certification> certifications = em.createQuery("SELECT c FROM Certification c"
@@ -125,6 +122,7 @@ public class Certification implements CertificationInterface {
         if (applicant == null) {
             return new Client("");
         }
+
         return applicant;
     }
 
@@ -166,6 +164,10 @@ public class Certification implements CertificationInterface {
     @Override
     public Employee getCertificateSignedBy() {
 
+        if (certificateSignedBy == null) {
+            return new Employee();
+        }
+
         return certificateSignedBy;
     }
 
@@ -179,6 +181,7 @@ public class Certification implements CertificationInterface {
         if (grantedTo == null) {
             return new Business();
         }
+
         return grantedTo;
     }
 
@@ -208,32 +211,23 @@ public class Certification implements CertificationInterface {
     }
 
     @Override
-    public Date getDateIssued() {
+    public LocalDate getDateIssued() {
         return dateIssued;
     }
 
     @Override
-    public void setDateIssued(Date dateIssued) {
+    public void setDateIssued(LocalDate dateIssued) {
         this.dateIssued = dateIssued;
     }
 
     @Override
-    public Date getExpiryDate() {
-        // tk get the option that dictates how the expiry date is to calculated.
-//        if ((expiryDate == null) && (dateIssued != null)) {
-//            Calendar calendar;
-//
-//            calendar = Calendar.getInstance();
-//            calendar.setTime(dateIssued);
-//            calendar.add(Calendar.MONTH, 6);  // tk period to be made option
-//
-//            return calendar.getTime();
-//        }
+    public LocalDate getExpiryDate() {
+
         return expiryDate;
     }
 
     @Override
-    public void setExpiryDate(Date expiryDate) {
+    public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
     }
 
@@ -246,7 +240,6 @@ public class Certification implements CertificationInterface {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Certification)) {
             return false;
         }
@@ -263,15 +256,18 @@ public class Certification implements CertificationInterface {
 
     @Override
     public int compareTo(Object o) {
-        // this sorts in descending based on issue date.
-        if ((((Certification) o).dateIssued != null) && (this.dateIssued != null)) {
-            return Collator.getInstance().compare(
-                    Long.toString(((Certification) o).dateIssued.getTime()),
-                    Long.toString(this.dateIssued.getTime()));
-        } else {
-            return 0;
-        }
 
+        Certification certification = (Certification) o;
+
+        if (certification.dateIssued != null && this.dateIssued != null) {
+
+            return certification.dateIssued.compareTo(this.dateIssued);
+
+        } else {
+
+            return 0;
+
+        }
     }
 
     @Override
@@ -289,10 +285,17 @@ public class Certification implements CertificationInterface {
 
         try {
 
-            // Save entities from other modules
-            getCertificateSignedBy().save(em);
-            getGrantedTo().save(em);
-            getApplicant().save(em);
+            if (certificateSignedBy != null) {
+                certificateSignedBy.save(em);
+            }
+
+            if (grantedTo != null) {
+                grantedTo.save(em);
+            }
+
+            if (applicant.getId() != null) {
+                applicant.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -327,12 +330,12 @@ public class Certification implements CertificationInterface {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDate getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDate dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -372,12 +375,12 @@ public class Certification implements CertificationInterface {
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDate getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDate dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -403,6 +406,26 @@ public class Certification implements CertificationInterface {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

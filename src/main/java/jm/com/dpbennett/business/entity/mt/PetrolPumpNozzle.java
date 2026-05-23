@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -39,6 +39,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.fm.Product;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -64,15 +65,15 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     private String status;
     private String testMeasures;
     private String comments;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PetrolPumpNozzleCalibration> calibrations;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Seal lastSealIssued;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Sticker lastStickerIssued;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private PetrolPumpNozzleCalibration lastCalibration;
     @Transient
     private Boolean isDirty;
@@ -105,7 +106,6 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
         this.lastSealIssued = lastSealIssued;
         this.lastStickerIssued = lastStickerIssued;
 
-        // build measure string
         testMeasures = "" + measures.get(0).getCapacity().toString();
         testMeasures = testMeasures + "," + measures.get(1).getCapacity().toString();
 
@@ -145,6 +145,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
         if (lastCalibration == null) {
             lastCalibration = new PetrolPumpNozzleCalibration();
         }
+
         return lastCalibration;
     }
 
@@ -155,7 +156,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     public Sticker getLastStickerIssued() {
 
         if (lastStickerIssued == null) {
-            lastStickerIssued = new Sticker();
+            return new Sticker();
         }
 
         return lastStickerIssued;
@@ -168,7 +169,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
     public Seal getLastSealIssued() {
         if (lastSealIssued == null) {
-            lastSealIssued = new Seal();
+            return new Seal();
         }
 
         return lastSealIssued;
@@ -203,7 +204,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     public List<Sticker> getStickers() {
         List<Sticker> stickers = new ArrayList<>();
 
-        // tk
+        // tk?
         // Get Stickers here based on ownerId;
         return stickers;
     }
@@ -226,7 +227,13 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     }
 
     public List<PetrolPumpNozzleCalibration> getCalibrations() {
-        Collections.sort(calibrations);
+
+        if (calibrations != null) {
+            Collections.sort(calibrations);
+        }
+        else {
+            calibrations = new ArrayList<>();
+        }
 
         return calibrations;
     }
@@ -264,7 +271,7 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
     public List<Seal> getSeals() {
         List<Seal> seals = new ArrayList<>();
 
-        // tk
+        // tk?
         // Get Stickers here based on ownerId;
         return seals;
     }
@@ -289,7 +296,6 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PetrolPumpNozzle)) {
             return false;
         }
@@ -305,7 +311,6 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
     @Override
     public int compareTo(Object o) {
-//        return Collator.getInstance().compare(this.toString(), o.toString());
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
 
@@ -357,12 +362,11 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
         try {
 
-            getLastSealIssued().save(em);
-            getLastStickerIssued().save(em);            
-            getManufacturer().save(em);
-            getLastCalibration().save(em);
-
-            for (PetrolPumpNozzleCalibration calibration : calibrations) {
+            if (manufacturer != null) {
+                manufacturer.save(em);
+            }
+          
+            for (PetrolPumpNozzleCalibration calibration : getCalibrations()) {
                 calibration.setOwnerId(id);
                 calibration.save(em);
             }
@@ -473,6 +477,26 @@ public class PetrolPumpNozzle implements Product, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

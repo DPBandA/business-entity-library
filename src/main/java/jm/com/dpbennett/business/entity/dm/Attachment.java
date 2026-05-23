@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -19,27 +19,28 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.dm;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -55,6 +56,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Attachment implements BusinessEntity, Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -64,7 +66,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     private String sourceURL;
     private String destinationURL;
     private String contentType;
-    private String documentType;    
+    private String documentType;
     @Column(length = 1024)
     private String description;
     private String category;
@@ -83,7 +85,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         this.type = "";
         this.isDirty = false;
         this.documentType = "Other";
-        
+
     }
 
     public Attachment(String name,
@@ -107,7 +109,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         if (documentType == null) {
             documentType = "";
         }
-        
+
         return documentType;
     }
 
@@ -120,6 +122,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
         if (type == null) {
             type = "";
         }
+
         return type;
     }
 
@@ -239,7 +242,6 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Attachment)) {
             return false;
         }
@@ -281,9 +283,9 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     public static Attachment findAttachmentByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Attachment> attachments = em.createQuery("SELECT a FROM Attachment a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", Attachment.class).getResultList();
@@ -299,14 +301,14 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     }
 
     public static List<Attachment> findAttachmentsByName(
-            EntityManager em, 
+            EntityManager em,
             String value,
             int maxResults) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Attachment> attachments
                     = em.createQuery("SELECT a FROM Attachment a where UPPER(a.name) like '%"
                             + value.toUpperCase().trim()
@@ -321,7 +323,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     public static List<Attachment> findAttachmentsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
-           
+
             List<Attachment> attachments
                     = em.createQuery("SELECT a FROM Attachment a where UPPER(a.name) like '%"
                             + value.toUpperCase().trim() + "%' AND a.category = " + category + " ORDER BY a.name", Attachment.class).getResultList();
@@ -335,6 +337,7 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -391,12 +394,12 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDate getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDate dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -426,12 +429,12 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDate getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDate dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -457,6 +460,26 @@ public class Attachment implements BusinessEntity, Serializable, Comparable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

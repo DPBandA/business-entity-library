@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL)
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.util;
 
 import com.google.zxing.BarcodeFormat;
@@ -37,14 +38,14 @@ import org.apache.batik.util.Base64EncoderStream;
 public class QRCodeGenerator {
 
     public static void main(String[] args) throws WriterException, IOException {
-        System.out.println(QRCodeGenerator.getQRCodeImageData("getQRCodeData()", 
-                125)); // tk make system option
+        System.out.println(QRCodeGenerator.getQRCodeImageData("getQRCodeData()",
+                125));
     }
-    
+
     public static String getQRCodeImageData(String qrCodeText, int size) throws WriterException, IOException {
         return base64Encode(convertBufferedImageToByteArray(createQRBufferedImage(qrCodeText, size)));
     }
-    
+
     private static BufferedImage createQRBufferedImage(String qrCodeText, int size)
             throws WriterException, IOException {
         // Create the ByteMatrix for the QR-Code that encodes the given String
@@ -70,7 +71,7 @@ public class QRCodeGenerator {
                 }
             }
         }
-        
+
         return image;
 
     }

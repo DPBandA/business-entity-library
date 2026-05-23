@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.sc;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -43,6 +44,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -73,9 +75,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     private String generalComments;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedInspector;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Address address;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Contact factoryRepresentative;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<FactoryInspectionComponent> inspectionComponents;
@@ -157,7 +159,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         if (jobNumber == null) {
             jobNumber = "";
         }
-        
+
         return jobNumber;
     }
 
@@ -201,7 +203,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         String searchQuery = null;
         String searchTextAndClause = "";
         String joinClause;
-        
+
         joinClause
                 = " LEFT JOIN factoryinspection.assignedInspector assignedInspector"
                 + " LEFT JOIN factoryinspection.manufacturer manufacturer";
@@ -227,7 +229,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                     searchQuery
                             = "SELECT DISTINCT factoryInspection FROM FactoryInspection factoryInspection"
                             + joinClause
-                            + " WHERE (0 = 0)" // used as place holder
+                            + " WHERE (0 = 0)"
                             + searchTextAndClause
                             + " ORDER BY factoryInspection.id DESC";
                 } else {
@@ -262,9 +264,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<FactoryInspection> factoryInspections
                     = em.createQuery("SELECT f FROM FactoryInspection f WHERE UPPER(f.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' ORDER BY f.name", FactoryInspection.class).getResultList();
@@ -280,7 +282,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<FactoryInspection> factoryInspections = em.createQuery("SELECT f FROM FactoryInspection f "
@@ -328,8 +330,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     public Address getAddress() {
         if (address == null) {
-            return new Address();
+            address = new Address();
         }
+
         return address;
     }
 
@@ -341,6 +344,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         if (manufacturer == null) {
             return new Manufacturer();
         }
+
         return manufacturer;
     }
 
@@ -349,6 +353,11 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     public BusinessOffice getBusinessOffice() {
+
+        if (businessOffice == null) {
+            return new BusinessOffice();
+        }
+
         return businessOffice;
     }
 
@@ -356,11 +365,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         this.businessOffice = businessOffice;
     }
 
-    /**
-     * Get all the entities contained in lists in this class
-     *
-     * @return
-     */
     public List<BusinessEntity> getAllBusinessEntitiesLists() {
         ArrayList<BusinessEntity> entities = new ArrayList<>();
 
@@ -386,6 +390,11 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     public Employee getAssignedInspector() {
+
+        if (assignedInspector == null) {
+            return new Employee();
+        }
+
         return assignedInspector;
     }
 
@@ -395,8 +404,9 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     public Contact getFactoryRepresentative() {
         if (factoryRepresentative == null) {
-            return new Contact();
+            factoryRepresentative = new Contact();
         }
+
         return factoryRepresentative;
     }
 
@@ -441,6 +451,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                 }
             }
         }
+
         return components;
     }
 
@@ -469,9 +480,7 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     public String getInspectionType() {
-//        if (inspectionType == null) {
-//            inspectionType = "Routine";
-//        }
+
         return inspectionType;
     }
 
@@ -496,12 +505,11 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof FactoryInspection)) {
             return false;
         }
         FactoryInspection other = (FactoryInspection) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -523,12 +531,11 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getAssignedInspector().save(em);
-            getAddress().save(em);
-            getFactoryRepresentative().save(em);
-            
-            // Save inspection components
+
+            if (assignedInspector != null) {
+                assignedInspector.save(em);
+            }
+
             if (!getInspectionComponents().isEmpty()) {
                 for (FactoryInspectionComponent inspectionComponent : getInspectionComponents()) {
                     if ((inspectionComponent.getIsDirty() || inspectionComponent.getId() == null)
@@ -542,7 +549,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                 }
             }
 
-            // Save product inspections
             if (!getProductInspections().isEmpty()) {
                 for (ProductInspection productInspection : getProductInspections()) {
                     if ((productInspection.getIsDirty() || productInspection.getId() == null)
@@ -555,9 +561,14 @@ public class FactoryInspection implements BusinessEntity, Serializable {
                     }
                 }
             }
-            
-            getManufacturer().save(em);
-            getBusinessOffice().save(em);
+
+            if (manufacturer != null) {
+                manufacturer.save(em);
+            }
+
+            if (businessOffice != null) {
+                businessOffice.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -683,6 +694,26 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

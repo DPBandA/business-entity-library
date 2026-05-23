@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -40,6 +40,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.Asset;
 import jm.com.dpbennett.business.entity.fm.CostComponent;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
@@ -86,7 +87,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private String editStatus;
     @Transient
     private List<BusinessEntity.Action> actions;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private CostComponent costComponent;
 
     public InventoryDisbursement() {
@@ -175,10 +176,9 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     public Inventory getInventory() {
         if (inventory == null) {
-            Inventory invtry = new Inventory();
-
-            return invtry;
+            return new Inventory();
         }
+
         return inventory;
     }
 
@@ -196,6 +196,11 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     @Override
     public Employee getEditedBy() {
+
+        if (editedBy == null) {
+            return new Employee();
+        }
+
         return editedBy;
     }
 
@@ -217,7 +222,6 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         Date now = new Date();
 
         try {
-            // Get employee for later use
             Employee employee = user.getEmployee();
 
             if (getIsDirty()) {
@@ -268,13 +272,12 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     public void addAction(BusinessEntity.Action action) {
 
-        // Just return if the action already exists.
         for (Action existingAction : getActions()) {
             if (existingAction == action) {
                 return;
             }
         }
-        // Add a new action if possible
+
         switch (action) {
             case CREATE:
                 getActions().add(BusinessEntity.Action.CREATE);
@@ -357,7 +360,7 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
             EntityManager em,
             String searchText,
             Integer maxResults) {
-        
+
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         List<InventoryDisbursement> foundInventoryDisbursements;
@@ -377,7 +380,6 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
                 + " OR UPPER(enteredBy.name) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(editedBy.name) LIKE '%" + searchText.toUpperCase() + "%'";
 
-        // Build query     
         searchTextAndClause
                 = " WHERE"
                 + mainSearchWhereClause;
@@ -444,6 +446,10 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public Employee getEnteredBy() {
 
+        if (enteredBy == null) {
+            return new Employee();
+        }
+
         return enteredBy;
     }
 
@@ -468,7 +474,6 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof InventoryDisbursement)) {
             return false;
         }
@@ -519,16 +524,21 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
-           
-            // tk check the purpose
-            if (getInventory().findCostComponentById(getCostComponent().getId()) == null) {
-                getInventory().getCostComponents().add(getCostComponent());
-                getInventory().save(em);
+
+            if (enteredBy != null) {
+                enteredBy.save(em);
             }
 
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
+                       
+            // tk check why this done and if it is necessary. Could it done elsewhere?
+//            if (getInventory().findCostComponentById(getCostComponent().getId()) == null) {
+//                getInventory().getCostComponents().add(getCostComponent());
+//                getInventory().save(em);
+//            }
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -603,6 +613,26 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

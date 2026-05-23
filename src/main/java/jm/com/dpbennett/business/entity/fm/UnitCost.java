@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -39,6 +39,7 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Laboratory;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -97,8 +98,9 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     public Laboratory getLaboratory() {
         if (laboratory == null) {
-            laboratory = new Laboratory();
+            return new Laboratory();
         }
+        
         return laboratory;
     }
 
@@ -108,8 +110,9 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     public DepartmentUnit getDepartmentUnit() {
         if (departmentUnit == null) {
-            departmentUnit = new DepartmentUnit();
+            return new DepartmentUnit();
         }
+        
         return departmentUnit;
     }
 
@@ -195,6 +198,7 @@ public class UnitCost implements Serializable, BusinessEntity {
         if (department == null) {
             return new Department("");
         }
+        
         return department;
     }
 
@@ -211,7 +215,6 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof UnitCost)) {
             return false;
         }
@@ -291,7 +294,7 @@ public class UnitCost implements Serializable, BusinessEntity {
         try {
             foundUnitCosts = em.createQuery(searchQuery, UnitCost.class).getResultList();
             if (foundUnitCosts == null) {
-                foundUnitCosts = new ArrayList<UnitCost>();
+                foundUnitCosts = new ArrayList<>();
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -304,11 +307,19 @@ public class UnitCost implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getDepartment().save(em);
-            getLaboratory().save(em);
-            getDepartmentUnit().save(em);
-            
+
+            if (department != null) {
+                department.save(em);
+            }
+
+            if (laboratory != null) {
+                laboratory.save(em);
+            }
+
+            if (departmentUnit != null) {
+                departmentUnit.save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -423,6 +434,26 @@ public class UnitCost implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

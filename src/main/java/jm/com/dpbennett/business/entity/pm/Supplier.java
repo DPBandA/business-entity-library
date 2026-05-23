@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -45,6 +45,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -65,11 +66,11 @@ public class Supplier implements BusinessEntity, Comparable {
     private String name;
     private String number;
     private String type;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
@@ -94,10 +95,6 @@ public class Supplier implements BusinessEntity, Comparable {
     @Transient
     private Boolean isNameAndIdEditable;
 
-    /**
-     * Constructs a Supplier object.
-     *
-     */
     public Supplier() {
         name = "";
         contacts = new ArrayList<>();
@@ -168,6 +165,7 @@ public class Supplier implements BusinessEntity, Comparable {
         if (isDirty == null) {
             isDirty = false;
         }
+
         return isDirty;
     }
 
@@ -188,6 +186,10 @@ public class Supplier implements BusinessEntity, Comparable {
 
     @Override
     public Employee getEditedBy() {
+        if (editedBy == null) {
+            return new Employee();
+        }
+
         return editedBy;
     }
 
@@ -226,6 +228,7 @@ public class Supplier implements BusinessEntity, Comparable {
         if (enteredBy == null) {
             return new Employee();
         }
+
         return enteredBy;
     }
 
@@ -234,11 +237,6 @@ public class Supplier implements BusinessEntity, Comparable {
         this.enteredBy = (Employee) person;
     }
 
-    /**
-     * Copy the Supplier without copying the id field
-     *
-     * @param src
-     */
     public final void doCopy(Supplier src) {
         contacts = new ArrayList<>();
         addresses = new ArrayList<>();
@@ -309,7 +307,7 @@ public class Supplier implements BusinessEntity, Comparable {
         if (internet == null) {
             internet = new Internet();
         }
-        
+
         return internet;
     }
 
@@ -330,14 +328,6 @@ public class Supplier implements BusinessEntity, Comparable {
         this.name = name;
     }
 
-    /**
-     * This method guards against returning very long names. This is used in an
-     * autocomplete JSF component for instance to prevent the list of suppliers
-     * from extending beyond the screen. In the future, the maximum length of
-     * say 50 will be a value stored in the resource bundle of the BEL.
-     *
-     * @return
-     */
     public String getTruncatedName() {
         if (getName().length() >= 50) {
             return getName().substring(0, 50);
@@ -394,49 +384,32 @@ public class Supplier implements BusinessEntity, Comparable {
         String list = "";
 
         for (Contact contact : getContacts()) {
-            //for (PhoneNumber phoneNumber : contact.getPhoneNumbers()) {
-            if (list.equals("")) // first? 
-            {
+            if (list.equals("")) {
                 list = contact.getMainPhoneNumber().getLocalNumber();
             } else {
                 list = list + ", " + contact.getMainPhoneNumber().getLocalNumber();
             }
-            //}
         }
 
         return list;
     }
 
-    /**
-     * Get the first main contact which is treated as the main contact in the
-     * list of contacts.
-     *
-     * @return
-     */
     public Contact getDefaultContact() {
         if (!getContacts().isEmpty()) {
-            // Use the last found contact as the main contact if none was found.            
             return getContacts().get(getContacts().size() - 1);
         } else {
             return new Contact("", "", "Main");
         }
     }
 
-    /**
-     * Get the main contact which is treated as the main contact in the list of
-     * contacts.
-     *
-     * @return
-     */
     public Contact getMainContact() {
         if (!getContacts().isEmpty()) {
-            //return getContacts().get(0);
             for (Contact contact : getContacts()) {
                 if (contact.getType().equals("Main")) {
                     return contact;
                 }
             }
-            // use the first found address as the billing address
+
             Contact contact = getContacts().get(0);
             contact.setType("Main");
             return contact;
@@ -453,12 +426,6 @@ public class Supplier implements BusinessEntity, Comparable {
         return getContacts().get(0);
     }
 
-    /**
-     * Returns the first found address with billing type "Billing" as the main
-     * billing address.
-     *
-     * @return
-     */
     public Address getDefaultAddress() {
         if (!getBillingAddresses().isEmpty()) {
 
@@ -513,7 +480,6 @@ public class Supplier implements BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Supplier)) {
             return false;
         }
@@ -599,8 +565,6 @@ public class Supplier implements BusinessEntity, Comparable {
                             + " ORDER BY s.id", Supplier.class).
                             setMaxResults(maxSearchResults).getResultList();
 
-            // NB: This is used to remove supplier with ' in their names. This may not be
-            // needed in the future.
             Iterator<Supplier> iterator = suppliers.iterator();
             while (iterator.hasNext()) {
                 Supplier element = iterator.next();
@@ -788,11 +752,14 @@ public class Supplier implements BusinessEntity, Comparable {
             for (Address address : getAddresses()) {
                 address.save(em);
             }
-            
-            getInternet().save(em);
 
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
+            if (enteredBy != null) {
+                enteredBy.save(em);
+            }
+
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -858,6 +825,26 @@ public class Supplier implements BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

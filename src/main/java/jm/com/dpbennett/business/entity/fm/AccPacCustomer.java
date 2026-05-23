@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
@@ -32,18 +33,16 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
- * This class encapsulates the fields of the Accpac ARCUS database table as an
- * AccPacCustomer.
- *
  * @author Desmond Bennett
  * @version 1.0
  */
 @Entity
-@Table(name = "ARCUS")
+@Table(name = "arcus")
 public class AccPacCustomer implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -52,32 +51,29 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     private String idCust;
     @Column(length = 60, name = "NAMECUST")
     private String customerName;
-    @Column(name = "AMTCRLIMT", columnDefinition = "DECIMAL(10,3)")
+    @Column(name = "AMTCRLIMT", precision = 10, scale = 3)
     private BigDecimal creditLimit;
-    @Column(name = "SWBALFWD", columnDefinition = "SMALLINT(5,0)")
+    @Column(name = "SWBALFWD")
     private Integer accountType;
-    @Column(name = "AMTBALDUET", columnDefinition = "DECIMAL(10,3)")
+    @Column(name = "AMTBALDUET", precision = 10, scale = 3)
     private BigDecimal balanceDueInCust;
-    @Column(name = "AMTBALDUEH", columnDefinition = "DECIMAL(10,3)")
+    @Column(name = "AMTBALDUEH", precision = 10, scale = 3)
     private BigDecimal balanceDueInFunc;
-    @Column(name = "DATELASTST", columnDefinition = "DECIMAL(9,0)")
+    @Column(name = "DATELASTST")
     private BigDecimal dateOfLastStatement;
-    @Column(name = "AMTLASTSTT", columnDefinition = "DECIMAL(10,3)")
+    @Column(name = "AMTLASTSTT", precision = 10, scale = 3)
     private BigDecimal lastStatementTotalCust;
-    @Column(name = "AMTPDUE", columnDefinition = "DECIMAL(10,3)")
+    @Column(name = "AMTPDUE", precision = 10, scale = 3)
     private BigDecimal amountPastDue;
-    @Column(name = "CNTOPENINV", columnDefinition = "DECIMAL(4,0)")
+    @Column(name = "CNTOPENINV", precision = 4, scale = 0)
     private BigDecimal numberOfOpenDocuments;
-    @Column(name = "AMTLASTIVH", columnDefinition = "DECIMAL(10,3)")
+    @Column(name = "AMTLASTIVH", precision = 10, scale = 3)
     private BigDecimal lastInvoiceAmt;
     @Column(length = 6, name = "IDACCTSET")
-    private String IDACCTSET;
+    private String IDACCTSET;    
     @Transient
     private Boolean isDirty;
 
-    /**
-     * Constructs an AccPacCustomer and initializes important fields.
-     */
     public AccPacCustomer() {
         balanceDueInCust = new BigDecimal(0.0);
         balanceDueInFunc = new BigDecimal(0.0);
@@ -228,7 +224,7 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof AccPacCustomer)) {
             return false;
         }
@@ -245,9 +241,9 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public static List<AccPacCustomer> findAllByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<AccPacCustomer> clients;
             clients = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"
@@ -264,9 +260,9 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public static List<AccPacCustomer> findAllByNameAndId(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<AccPacCustomer> clients;
             clients = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"
@@ -283,9 +279,9 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public static AccPacCustomer findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<AccPacCustomer> customers = em.createQuery(
                     "SELECT a FROM AccPacCustomer a"
                     + " WHERE UPPER(a.customerName)"
@@ -342,6 +338,7 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -466,6 +463,26 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

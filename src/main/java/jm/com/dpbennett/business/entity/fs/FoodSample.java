@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,7 @@ import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import java.io.Serializable;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -42,6 +43,7 @@ import jm.com.dpbennett.business.entity.hrm.Laboratory;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.fm.Product;
 import jm.com.dpbennett.business.entity.mt.Sample;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -82,7 +84,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     private Employee sampledBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee receivedBy;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<FoodTest> tests;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Laboratory assignedLab;
@@ -98,7 +100,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public static FoodSample findByName(EntityManager em, String value,
             Boolean ignoreCase) {
 
@@ -115,7 +117,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
                 foodSamples = em.createQuery("SELECT s FROM FoodSample s "
                         + "WHERE s.name "
                         + "= '" + value + "'",
-                         FoodSample.class).getResultList();
+                        FoodSample.class).getResultList();
             }
 
             if (!foodSamples.isEmpty()) {
@@ -143,6 +145,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     }
 
     public Laboratory getAssignedLab() {
+
+        if (assignedLab == null) {
+            return new Laboratory();
+        }
+
         return assignedLab;
     }
 
@@ -151,6 +158,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     }
 
     public List<FoodTest> getTests() {
+
+        if (tests == null) {
+            tests = new ArrayList<>();
+        }
+
         return tests;
     }
 
@@ -167,7 +179,6 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof FoodSample)) {
             return false;
         }
@@ -178,7 +189,7 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FoodSample[id=" + id + "]";
+        return "jm.com.dpbennett.entity.FoodSample[id=" + id + "]";
     }
 
     public Long getJobId() {
@@ -191,6 +202,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public Employee getReceivedBy() {
+
+        if (receivedBy == null) {
+            return new Employee();
+        }
+
         return receivedBy;
     }
 
@@ -201,6 +217,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public Employee getSampledBy() {
+
+        if (sampledBy == null) {
+            return new Employee();
+        }
+
         return sampledBy;
     }
 
@@ -241,6 +262,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public BusinessOffice getRegulatoryOffice() {
+
+        if (regulatoryOffice == null) {
+            return new BusinessOffice();
+        }
+
         return regulatoryOffice;
     }
 
@@ -350,6 +376,11 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
 
     @Override
     public Manufacturer getManufacturer() {
+
+        if (manufacturer == null) {
+            return new Manufacturer();
+        }
+
         return manufacturer;
     }
 
@@ -372,16 +403,29 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getManufacturer().save(em);
-            getRegulatoryOffice().save(em);
-            getSampledBy().save(em);
-            getReceivedBy().save(em);
+            if (manufacturer != null) {
+                manufacturer.save(em);
+            }
 
-            for (FoodTest test : tests) {
+            if (regulatoryOffice != null) {
+                regulatoryOffice.save(em);
+            }
+
+            if (sampledBy != null) {
+                sampledBy.save(em);
+            }
+
+            if (receivedBy != null) {
+                receivedBy.save(em);
+            }
+
+            for (FoodTest test : getTests()) {
                 test.save(em);
             }
 
-            getAssignedLab().save(em);
+            if (assignedLab != null) {
+                assignedLab.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -505,6 +549,26 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
         }
 
         return new ReturnMessage(false, "Food Sample not saved");
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

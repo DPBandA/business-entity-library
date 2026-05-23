@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL)
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -42,6 +42,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import jm.com.dpbennett.business.entity.hrm.Department;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
@@ -156,6 +157,10 @@ public class Complaint implements Comparable, BusinessEntity {
     }
 
     public BusinessOffice getBusinessOffice() {
+        if (businessOffice == null) {
+            return new BusinessOffice();
+        }
+
         return businessOffice;
     }
 
@@ -282,6 +287,7 @@ public class Complaint implements Comparable, BusinessEntity {
         if (receivedBy == null) {
             return new Employee();
         }
+
         return receivedBy;
     }
 
@@ -321,6 +327,7 @@ public class Complaint implements Comparable, BusinessEntity {
         if (complainant == null) {
             return new Client();
         }
+
         return complainant;
     }
 
@@ -390,7 +397,6 @@ public class Complaint implements Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Complaint)) {
             return false;
         }
@@ -531,32 +537,42 @@ public class Complaint implements Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            // Save entities from other modules
-            getBusinessOffice().save(em);
-            getEnteredBy().save(em);
-            getReceivedBy().save(em);
-            getReceivedVia().save(em);
-            getComplainant().save(em);
+            if (businessOffice != null) {
+                businessOffice.save(em);
+            }
 
-            // Save product inspections
-            if (!getProductInspections().isEmpty()) {
-                for (ProductInspection productInspection : getProductInspections()) {
-                    if ((productInspection.getIsDirty() || productInspection.getId() == null)
-                            && !productInspection.save(em).isSuccess()) {
+            if (enteredBy != null) {
+                enteredBy.save(em);
+            }
 
-                        return new ReturnMessage(false,
-                                "Product save error occurred",
-                                "An error occurred while saving a product",
-                                Message.SEVERITY_ERROR_NAME);
-                    }
+            if (receivedBy != null) {
+                receivedBy.save(em);
+            }
+
+            if (receivedVia != null) {
+                receivedVia.save(em);
+            }
+
+            if (complainant != null) {
+                complainant.save(em);
+            }
+
+            for (ProductInspection productInspection : getProductInspections()) {
+                if ((productInspection.getIsDirty() || productInspection.getId() == null)
+                        && !productInspection.save(em).isSuccess()) {
+
+                    return new ReturnMessage(false,
+                            "Product save error occurred",
+                            "An error occurred while saving a product",
+                            Message.SEVERITY_ERROR_NAME);
                 }
             }
 
-            for (Employee employee : referredTo) {
+            for (Employee employee : getReferredTo()) {
                 employee.save(em);
             }
 
-            for (Department department : referredToDepartment) {
+            for (Department department : getReferredToDepartment()) {
                 department.save(em);
             }
 
@@ -659,6 +675,26 @@ public class Complaint implements Comparable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

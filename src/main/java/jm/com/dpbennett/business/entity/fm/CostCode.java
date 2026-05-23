@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -115,13 +116,13 @@ public class CostCode implements BusinessEntity, Serializable {
             return false;
         }
         CostCode other = (CostCode) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.CostCode[id=" + id + "]";
+        return "jm.com.dpbennett.entity.CostCode[id=" + id + "]";
     }
 
     @Override
@@ -133,13 +134,13 @@ public class CostCode implements BusinessEntity, Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public static CostCode findCostCodeByCode(EntityManager em, String code) {
 
         try {
-            
+
             code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<CostCode> codes = em.createQuery("SELECT c FROM CostCode c "
                     + "WHERE c.code "
                     + "= '" + code + "'", CostCode.class).getResultList();
@@ -153,7 +154,7 @@ public class CostCode implements BusinessEntity, Serializable {
         }
 
     }
-    
+
     public static List<CostCode> findAllCostCodes(EntityManager em) {
 
         try {
@@ -169,7 +170,7 @@ public class CostCode implements BusinessEntity, Serializable {
     public static CostCode findCostCodeById(EntityManager em, Long id) {
 
         try {
-            
+
             CostCode code = em.find(CostCode.class, id);
 
             return code;
@@ -300,6 +301,26 @@ public class CostCode implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

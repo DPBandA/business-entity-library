@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -46,6 +46,7 @@ import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.fm.Product;
 import jm.com.dpbennett.business.entity.sc.ProductTest;
 import jm.com.dpbennett.business.entity.mt.Sample;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -112,10 +113,6 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
         tests = new ArrayList<>();
     }
 
-    public JobSample(JobSample src) {
-        copy(src);
-    }
-
     @Override
     public Long getId() {
         return id;
@@ -150,37 +147,41 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
         this.isToBeAdded = isToBeAdded;
     }
 
-    public final void copy(JobSample src) {
-        this.jobId = src.jobId;
-        this.name = src.name;
-        this.code = src.code;
-        this.reference = src.reference;
-        this.referenceIndex = src.referenceIndex;
-        this.sampleQuantity = src.sampleQuantity;
-        this.quantity = src.quantity;
-        this.unitOfMeasure = src.unitOfMeasure;
-        this.description = src.description;
-        this.type = src.type;
-        this.comments = src.comments;
-        this.productType = src.productType;
-        this.productModel = src.productModel;
-        this.productSerialNumber = src.productSerialNumber;
-        this.productCode = src.productCode;
-        this.productBrand = src.productBrand;
-        this.sampleSize = src.sampleSize;
-        this.client = src.client;
-        this.tests = src.tests;
-        this.dateReceived = src.dateReceived;
-        this.dateSampled = src.dateSampled;
-        this.dateReturned = src.dateReturned;
-        this.methodOfDisposal = src.methodOfDisposal;
-        this.manufacturer = src.manufacturer;
-        this.regulatoryOffice = src.regulatoryOffice;
-        this.sampledBy = src.sampledBy;
-        this.receivedBy = src.receivedBy;
-        this.countryOfOrigin = src.countryOfOrigin;
-        this.isToBeAdded = src.isToBeAdded;
-        this.isDirty = src.isDirty;
+    public static JobSample copy(JobSample src) {
+        
+        JobSample copy = new JobSample();
+        
+        copy.jobId = src.jobId;
+        copy.name = src.name;
+        copy.code = src.code;
+        copy.reference = src.reference;
+        copy.referenceIndex = src.referenceIndex;
+        copy.sampleQuantity = src.sampleQuantity;
+        copy.quantity = src.quantity;
+        copy.unitOfMeasure = src.unitOfMeasure;
+        copy.description = src.description;
+        copy.type = src.type;
+        copy.comments = src.comments;
+        copy.productType = src.productType;
+        copy.productModel = src.productModel;
+        copy.productSerialNumber = src.productSerialNumber;
+        copy.productCode = src.productCode;
+        copy.productBrand = src.productBrand;
+        copy.sampleSize = src.sampleSize;
+        copy.client = src.client;
+        copy.manufacturer = src.manufacturer;
+        copy.regulatoryOffice = src.regulatoryOffice;
+        copy.sampledBy = src.sampledBy;
+        copy.receivedBy = src.receivedBy;
+        copy.tests = src.tests;
+        copy.countryOfOrigin = src.countryOfOrigin;
+        copy.dateReceived = src.dateReceived;
+        copy.dateSampled = src.dateSampled;
+        copy.dateReturned = src.dateReturned;
+        copy.methodOfDisposal = src.methodOfDisposal;  
+        copy.isToBeAdded = src.isToBeAdded;
+        
+        return copy;
     }
 
     public String getCountryOfOrigin() {
@@ -200,6 +201,10 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     }
 
     public Client getClient() {
+        if (client == null) {
+            return new Client("");
+        }
+
         return client;
     }
 
@@ -282,6 +287,11 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Override
     public Employee getReceivedBy() {
+
+        if (receivedBy == null) {
+            return new Employee();
+        }
+
         return receivedBy;
     }
 
@@ -295,7 +305,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
         if (sampledBy == null) {
             return new Employee();
         }
-        
+
         return sampledBy;
     }
 
@@ -336,6 +346,11 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Override
     public BusinessOffice getRegulatoryOffice() {
+
+        if (regulatoryOffice == null) {
+            return new BusinessOffice();
+        }
+
         return regulatoryOffice;
     }
 
@@ -468,7 +483,7 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     @Override
     public String toString() {
 
-        return "jm.org.bsj.entity.JobSample[id=" + id + "]";
+        return "jm.com.dpbennett.entity.JobSample[id=" + id + "]";
     }
 
     @Override
@@ -494,6 +509,11 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Override
     public Manufacturer getManufacturer() {
+
+        if (manufacturer == null) {
+            return new Manufacturer();
+        }
+
         return manufacturer;
     }
 
@@ -615,26 +635,26 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getClient() != null) {
-                getClient().save(em);
+            if (client != null) {
+                client.save(em);
             }
-
-            if (getManufacturer() != null) {
-                getManufacturer().save(em);
+            
+            if (manufacturer != null) {
+                manufacturer.save(em);
             }
-
-            if (getRegulatoryOffice() != null) {
-                getRegulatoryOffice().save(em);
+            
+            if (regulatoryOffice != null) {
+                regulatoryOffice.save(em);
             }
-
-            if (getSampledBy() != null) {
-                getSampledBy().save(em);
+            
+            if (sampledBy != null) {
+                sampledBy.save(em);
             }
-
-            if (getReceivedBy() != null) {
-                getReceivedBy().save(em);
+            
+            if (receivedBy != null) {
+                receivedBy.save(em);
             }
-
+            
             for (ProductTest test : getTests()) {
                 test.save(em);
             }
@@ -738,6 +758,26 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

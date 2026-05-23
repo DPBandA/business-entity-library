@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -40,6 +40,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -108,6 +109,7 @@ public class ManufacturerInspection implements BusinessEntity {
         if (representative == null) {
             return new Contact();
         }
+
         return representative;
     }
 
@@ -119,6 +121,7 @@ public class ManufacturerInspection implements BusinessEntity {
         if (address == null) {
             return new Address();
         }
+
         return address;
     }
 
@@ -130,6 +133,7 @@ public class ManufacturerInspection implements BusinessEntity {
         if (manufacturer == null) {
             return new Manufacturer();
         }
+
         return manufacturer;
     }
 
@@ -160,6 +164,11 @@ public class ManufacturerInspection implements BusinessEntity {
     }
 
     public Employee getAssignedInspector() {
+
+        if (assignedInspector == null) {
+            return new Employee();
+        }
+
         return assignedInspector;
     }
 
@@ -168,6 +177,11 @@ public class ManufacturerInspection implements BusinessEntity {
     }
 
     public List<InspectionComponent> getInspectionComponents() {
+
+        if (inspectionComponents == null) {
+            inspectionComponents = new ArrayList<>();
+        }
+
         return inspectionComponents;
     }
 
@@ -181,6 +195,7 @@ public class ManufacturerInspection implements BusinessEntity {
                 }
             }
         }
+
         return components;
     }
 
@@ -221,7 +236,6 @@ public class ManufacturerInspection implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ManufacturerInspection)) {
             return false;
         }
@@ -232,7 +246,7 @@ public class ManufacturerInspection implements BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FactoryInspection[id=" + id + "]";
+        return "jm.com.dpbennett.entity.FactoryInspection[id=" + id + "]";
     }
 
     @Override
@@ -247,19 +261,30 @@ public class ManufacturerInspection implements BusinessEntity {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-        
+
         try {
-            
-            getManufacturer().save(em);
-            getAddress().save(em);
-            getRepresentative().save(em);
-            getAssignedInspector().save(em);
-            
-            for (InspectionComponent inspectionComponent : inspectionComponents) {
+
+            if (manufacturer != null) {
+                manufacturer.save(em);
+            }
+
+            if (address != null) {
+                address.save(em);
+            }
+
+            if (representative != null) {
+                representative.save(em);
+            }
+
+            if (assignedInspector != null) {
+                assignedInspector.save(em);
+            }
+
+            for (InspectionComponent inspectionComponent : getInspectionComponents()) {
                 inspectionComponent.save(em);
             }
-            
-            for (ProductInspection productInspection : productInspections) {
+
+            for (ProductInspection productInspection : getProductInspections()) {
                 productInspection.save(em);
             }
 
@@ -387,6 +412,26 @@ public class ManufacturerInspection implements BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

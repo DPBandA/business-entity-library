@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -35,7 +35,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -74,17 +73,17 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     private Employee head;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee actingHead;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Privilege privilege;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private List<JobCategory> jobCategories;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private List<Employee> staff;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.REFRESH)
     private List<Laboratory> laboratories;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne
     private List<DepartmentUnit> departmentUnits;
 
     @Transient
@@ -128,7 +127,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     public Privilege getPrivilege() {
         if (privilege == null) {
-            privilege = new Privilege(name);
+            return new Privilege(name);
         }
 
         return privilege;
@@ -165,6 +164,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         if (internet == null) {
             internet = new Internet();
         }
+
         return internet;
     }
 
@@ -188,6 +188,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         if (departmentUnits == null) {
             departmentUnits = new ArrayList<>();
         }
+
         return departmentUnits;
     }
 
@@ -247,6 +248,10 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     }
 
     public List<Employee> getStaff() {
+        if (staff == null) {
+            staff = new ArrayList<>();
+        }
+
         return staff;
     }
 
@@ -298,7 +303,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Department)) {
             return false;
         }
@@ -347,8 +351,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
                     = em.createQuery("SELECT d FROM Department d WHERE UPPER(d.name) LIKE '%"
                             + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Department.class).getResultList();
 
-            // NB: This is used to remove departments with ' in their names. This may not be
-            // needed in the future.
             Iterator<Department> iterator = departments.iterator();
             while (iterator.hasNext()) {
                 Department element = iterator.next();
@@ -487,29 +489,12 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getHead().getId() != null) {
-                getHead().save(em);
+            if (privilege != null) {
+                privilege.save(em);
             }
-            if (getActingHead().getId() != null) {
-                getActingHead().save(em);
-            }
-            getInternet().save(em);
-            getPrivilege().save(em);
 
             for (JobCategory jobCategory : getJobCategories()) {
                 jobCategory.save(em);
-            }
-
-            for (Employee employee : getStaff()) {
-                employee.save(em);
-            }
-
-            for (Laboratory laboratory : getLaboratories()) {
-                laboratory.save(em);
-            }
-
-            for (DepartmentUnit departmentUnit : getDepartmentUnits()) {
-                departmentUnit.save(em);
             }
 
             em.getTransaction().begin();
@@ -530,14 +515,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    /**
-     * This method guards against returning very long names. This is used in an
-     * autocomplete JSF component for instance to prevent the list of entity
-     * names from extending beyond the screen. In the future, the maximum length
-     * of say 50 will be a value stored in the resource bundle of the BEL.
-     *
-     * @return
-     */
     public String getTruncatedName() {
         if (getName().length() >= 50) {
             return getName().substring(0, 50);
@@ -570,7 +547,7 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
         if (job.getSubContractedDepartment().getName().equals("--")
                 || job.getSubContractedDepartment().getName().equals("")) {
-            // This is not a subcontracted job see return to parent department            
+
             dept = Department.findByName(em, job.getDepartment().getName());
             if (dept != null) {
                 em.refresh(dept);
@@ -682,6 +659,26 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

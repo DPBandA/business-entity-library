@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -40,6 +40,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.fm.Product;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -91,7 +92,7 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public static FoodProduct findByName(EntityManager em, String value,
             Boolean ignoreCase) {
 
@@ -108,7 +109,7 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
                 foodProducts = em.createQuery("SELECT p FROM FoodProduct p "
                         + "WHERE p.name "
                         + "= '" + value + "'",
-                         FoodProduct.class).getResultList();
+                        FoodProduct.class).getResultList();
             }
 
             if (!foodProducts.isEmpty()) {
@@ -186,6 +187,11 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     }
 
     public List<Category> getCategories() {
+
+        if (categories == null) {
+            categories = new ArrayList<>();
+        }
+
         return categories;
     }
 
@@ -202,7 +208,6 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof FoodProduct)) {
             return false;
         }
@@ -213,7 +218,7 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FoodProduct[id=" + id + "]";
+        return "jm.com.dpbennett.entity.FoodProduct[id=" + id + "]";
     }
 
     @Override
@@ -250,8 +255,9 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     @Override
     public Manufacturer getManufacturer() {
         if (manufacturer == null) {
-            return new Manufacturer("");
+            return new Manufacturer();
         }
+
         return manufacturer;
     }
 
@@ -264,13 +270,14 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     public ReturnMessage save(EntityManager em) {
         try {
 
-            // Save external entities
-            for (Category category : categories) {
+            for (Category category : getCategories()) {
                 category.save(em);
             }
-            
-            getManufacturer().save(em);
 
+            if (manufacturer != null) {
+                manufacturer.save(em);
+            }
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -375,7 +382,7 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
-         try {
+        try {
 
             if (this.id == null) {
                 FoodProduct existing = FoodProduct.findByName(em, this.name, false);
@@ -392,5 +399,26 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Food Product not saved"); }
+        return new ReturnMessage(false, "Food Product not saved");
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

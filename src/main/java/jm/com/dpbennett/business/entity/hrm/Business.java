@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -39,6 +39,7 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.cm.Customer;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -57,6 +58,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private String name;
     private String number;
     private String type;
+    private String description;
     private String notes;
     private String taxRegistrationNumber;
     private String departmentLabel;
@@ -64,9 +66,9 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private Employee head;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastAccessed;
@@ -76,6 +78,10 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private String domainName;
     @Transient
     private Boolean isDirty;
+    @Transient
+    private Address billingAddress;
+    @Transient
+    private Contact contact;
 
     public Business() {
         this.name = "";
@@ -101,6 +107,64 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         this.departmentLabel = "Department";
         this.departments = new ArrayList<>();
         this.domainName = "";
+    }
+
+    public Contact getMainContact() {
+        if (!getContacts().isEmpty()) {
+            for (Contact mainContact : getContacts()) {
+                if (mainContact.getType().equals("Main")) {
+                    return mainContact;
+                }
+            }
+            Contact mainContact = getContacts().get(0);
+            mainContact.setType("Main");
+            return mainContact;
+        } else {
+            Contact mainContact = new Contact();
+            mainContact.setType("Main");
+            getContacts().add(mainContact);
+            return getContacts().get(0);
+        }
+    }
+
+    public Contact getContact() {
+        if (contact == null) {
+            setContact(getMainContact());
+        }
+
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+
+    public List<Address> getBillingAddresses() {
+        ArrayList<Address> billingAddresses = new ArrayList<>();
+
+        for (Address address : getAddresses()) {
+            if (address.getType().equals("Billing")) {
+                billingAddresses.add(address);
+            }
+        }
+
+        return billingAddresses;
+    }
+
+    public Address getBillingAddress() {
+        if (billingAddress == null) {
+            //if (client != null) {
+            setBillingAddress(getDefaultAddress());
+            //} else {
+            //    return new Address();
+            //}
+        }
+
+        return billingAddress;
+    }
+
+    public void setBillingAddress(Address billingAddress) {
+        this.billingAddress = billingAddress;
     }
 
     public String getDepartmentLabel() {
@@ -141,6 +205,10 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     public Employee getHead() {
 
+        if (head == null) {
+            return new Employee();
+        }
+
         return head;
     }
 
@@ -152,6 +220,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         if (departments == null) {
             departments = new ArrayList<>();
         }
+
         return departments;
     }
 
@@ -187,6 +256,10 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public String getTaxRegistrationNumber() {
+        if (taxRegistrationNumber == null) {
+            taxRegistrationNumber = "";
+        }
+
         return taxRegistrationNumber;
     }
 
@@ -204,7 +277,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Business)) {
             return false;
         }
@@ -215,7 +287,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.Business[id=" + id + "]";
+        return getName();
     }
 
     @Override
@@ -223,6 +295,7 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         if (name == null) {
             name = "";
         }
+
         return name;
     }
 
@@ -233,6 +306,11 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public List<Address> getAddresses() {
+
+        if (addresses == null) {
+            addresses = new ArrayList<>();
+        }
+
         return addresses;
     }
 
@@ -243,6 +321,11 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public List<Contact> getContacts() {
+
+        if (contacts == null) {
+            contacts = new ArrayList<>();
+        }
+
         return contacts;
     }
 
@@ -317,7 +400,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
     }
 
-    // Get the first business that matches the given name
     public static Business findByName(EntityManager em, String value) {
 
         try {
@@ -368,6 +450,17 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         }
     }
 
+    public static List<Business> findAllActive(EntityManager em) {
+
+        try {
+            return em.createQuery("SELECT b FROM Business b WHERE b.active = 1 ORDER BY b.name",
+                    Business.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     public static List<Business> findAllByName(EntityManager em, String value) {
 
         try {
@@ -387,9 +480,9 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public static List<Business> findAllActiveByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Business> businesses
                     = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
                             + value.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", Business.class).getResultList();
@@ -404,21 +497,15 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     public ReturnMessage save(EntityManager em) {
 
         try {
-            
-            getHead().save(em);
-            
-            for (Department department : getDepartments()) {
-                department.save(em);
-            }
-            
-            for (Address address : getAddresses()) {
-               address.save(em);
-            }
-            
+
             for (Contact contact : getContacts()) {
                 contact.save(em);
             }
-            
+
+            for (Address address : getAddresses()) {
+                address.save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -439,7 +526,17 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public Address getDefaultAddress() {
-        return new Address();
+        if (!getBillingAddresses().isEmpty()) {
+
+            return getBillingAddresses().get(getBillingAddresses().size() - 1);
+
+        } else if (!getAddresses().isEmpty()) {
+
+            return getAddresses().get(getAddresses().size() - 1);
+
+        } else {
+            return new Address("", "Billing");
+        }
     }
 
     @Override
@@ -488,7 +585,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public void setDateEntered(Date dateEntered) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
@@ -498,7 +594,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public void setDateEdited(Date dateEdited) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
@@ -508,12 +603,18 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public String getDescription() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        if (description == null) {
+            description = "";
+        }
+
+        return description;
     }
 
     @Override
     public void setDescription(String description) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        this.description = description;
     }
 
     @Override
@@ -533,21 +634,60 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
 
     @Override
     public void setEditedBy(Person person) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public Person getEnteredBy() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return null;
     }
 
     @Override
     public void setEnteredBy(Person person) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        try {
+
+            if (this.id == null) {
+
+                Business existing = Business.findByName(em, this.name);
+                if (existing != null) {
+
+                    return new ReturnMessage(false, "Organization exists");
+                } else {
+
+                    return save(em);
+                }
+            } else {
+
+                return save(em);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return new ReturnMessage(false, "Organization not saved");
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

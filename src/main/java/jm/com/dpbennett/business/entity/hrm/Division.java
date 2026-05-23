@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -97,13 +98,13 @@ public class Division implements BusinessEntity, Comparable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    public static Employee findHeadOfActiveDivistionByDepartment (
+
+    public static Employee findHeadOfActiveDivistionByDepartment(
             EntityManager em,
             Department department) {
-        
+
         List<Division> activeDivistions = Division.findAllActive(em);
-        
+
         for (Division activeDivistion : activeDivistions) {
             List<Department> departments = activeDivistion.getDepartments();
             for (Department department1 : departments) {
@@ -112,7 +113,7 @@ public class Division implements BusinessEntity, Comparable {
                 }
             }
         }
-       
+
         return null;
     }
 
@@ -145,10 +146,10 @@ public class Division implements BusinessEntity, Comparable {
     }
 
     public List<Subgroup> getSubgroups() {
-         if (subgroups == null) {
+        if (subgroups == null) {
             subgroups = new ArrayList<>();
         }
-        
+
         return subgroups;
     }
 
@@ -171,7 +172,11 @@ public class Division implements BusinessEntity, Comparable {
     }
 
     public Employee getHead() {
-       
+
+        if (head == null) {
+            return new Employee();
+        }
+
         return head;
     }
 
@@ -243,12 +248,11 @@ public class Division implements BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Division)) {
             return false;
         }
         Division other = (Division) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -272,9 +276,9 @@ public class Division implements BusinessEntity, Comparable {
     public static Division findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Division> divisions = em.createQuery("SELECT d FROM Division d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", Division.class).getResultList();
@@ -323,9 +327,9 @@ public class Division implements BusinessEntity, Comparable {
     public static List<Division> findAllByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Division> divisions
                     = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY d.name", Division.class).getResultList();
@@ -335,13 +339,13 @@ public class Division implements BusinessEntity, Comparable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Division> findAllActiveByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-          
+
             List<Division> divisions
                     = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
                             + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Division.class).getResultList();
@@ -361,14 +365,7 @@ public class Division implements BusinessEntity, Comparable {
             return new ArrayList<>();
         }
     }
-    
-     /**
-     * Finds the first division that contains the specified subgroup.
-     * 
-     * @param em
-     * @param subgroup
-     * @return 
-     */
+
     public static Division findBySubgroup(EntityManager em, Subgroup subgroup) {
 
         try {
@@ -377,11 +374,11 @@ public class Division implements BusinessEntity, Comparable {
                     = em.createQuery(
                             "SELECT d FROM Division d"
                             + " JOIN d.subgroups subgroups"
-                            + " WHERE subgroups.id = " + subgroup.getId(), 
+                            + " WHERE subgroups.id = " + subgroup.getId(),
                             Division.class).getResultList();
 
             if (!divisions.isEmpty()) {
-                
+
                 return divisions.get(0);
             } else {
                 return null;
@@ -397,6 +394,7 @@ public class Division implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -496,6 +494,26 @@ public class Division implements BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

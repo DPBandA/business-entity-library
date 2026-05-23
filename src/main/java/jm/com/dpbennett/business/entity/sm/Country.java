@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sm;
 
 import java.util.ArrayList;
@@ -43,11 +42,11 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "country")
-@NamedQueries({   
-    @NamedQuery(name = "findAllCountries", query = "SELECT c FROM Country c ORDER BY c.name")   
+@NamedQueries({
+    @NamedQuery(name = "findAllCountries", query = "SELECT c FROM Country c ORDER BY c.name")
 })
 public class Country implements BusinessEntity {
-   
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -63,7 +62,7 @@ public class Country implements BusinessEntity {
     public Country(String name) {
         this.name = name;
     }
-    
+
     @Override
     public Long getId() {
         return id;
@@ -87,12 +86,11 @@ public class Country implements BusinessEntity {
     public void setIsDirty(Boolean isDirty) {
         this.isDirty = isDirty;
     }
-    
+
     public String getTwoDigitCode() {
         return twoDigitCode;
     }
 
-    
     public void setTwoDigitCode(String twoDigitCode) {
         this.twoDigitCode = twoDigitCode;
     }
@@ -106,7 +104,6 @@ public class Country implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Country)) {
             return false;
         }
@@ -128,7 +125,7 @@ public class Country implements BusinessEntity {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public static List<Country> findAllCountries(EntityManager em) {
 
         try {
@@ -139,30 +136,30 @@ public class Country implements BusinessEntity {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Country> findCountriesByName(
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
-            List<Country> countries =
-                    em.createQuery("SELECT c FROM Country c where UPPER(c.name) like '%"
-                    + value.toUpperCase().trim() + "%' ORDER BY c.name", Country.class).getResultList();
+
+            List<Country> countries
+                    = em.createQuery("SELECT c FROM Country c where UPPER(c.name) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY c.name", Country.class).getResultList();
             return countries;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
-    
+
     public static Country findCountryByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Country> countries = em.createQuery("SELECT c FROM Sector c "
                     + "WHERE UPPER(c.name) "
                     + "= '" + value.toUpperCase() + "'", Country.class).getResultList();
@@ -180,6 +177,7 @@ public class Country implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -194,7 +192,7 @@ public class Country implements BusinessEntity {
 
     @Override
     public ReturnMessage validate(EntityManager em) {
-         return new ReturnMessage();
+        return new ReturnMessage();
     }
 
     @Override
@@ -204,7 +202,7 @@ public class Country implements BusinessEntity {
 
     @Override
     public void setActive(Boolean active) {
-        
+
     }
 
     @Override
@@ -307,5 +305,24 @@ public class Country implements BusinessEntity {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -19,34 +19,34 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.cm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.fm.Discount;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import jm.com.dpbennett.business.entity.fm.AccPacCustomer;
 import java.text.Collator;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Internet;
 import jm.com.dpbennett.business.entity.fm.Tax;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -70,32 +70,28 @@ public class Client implements ClientInterface {
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Address billingAddress;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Contact billingContact;    
+    private Contact billingContact;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Discount discount;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Tax defaultTax;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
     @Column(length = 1024)
     private String notes;
     private Boolean internal;
     private Double creditLimit;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateFirstReceived;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastAccessed;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEntered;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEdited;
+    private LocalDate dateFirstReceived;
+    private LocalDate dateLastAccessed;
+    private LocalDate dateEntered;
+    private LocalDate dateEdited;
     private Boolean tag;
     private String taxRegistrationNumber;
     private Boolean active;
@@ -164,7 +160,12 @@ public class Client implements ClientInterface {
 
     @Override
     public Tax getDefaultTax() {
-        return (defaultTax == null ? new Tax() : defaultTax);
+
+        if (defaultTax == null) {
+            return new Tax();
+        }
+
+        return defaultTax;
     }
 
     @Override
@@ -206,6 +207,8 @@ public class Client implements ClientInterface {
         if (billingAddress == null) {
             if (!getBillingAddresses().isEmpty()) {
                 billingAddress = getBillingAddresses().get(0);
+            } else {
+                return new Address();
             }
         }
 
@@ -222,9 +225,12 @@ public class Client implements ClientInterface {
         if (billingContact == null) {
             if (!getContacts().isEmpty()) {
                 billingContact = getContacts().get(0);
+            } else {
+                return new Contact();
             }
+
         }
-        
+
         return billingContact;
     }
 
@@ -235,7 +241,12 @@ public class Client implements ClientInterface {
 
     @Override
     public Discount getDiscount() {
-        return (discount == null ? new Discount() : discount);
+
+        if (discount == null) {
+            return new Discount();
+        }
+
+        return discount;
     }
 
     @Override
@@ -283,17 +294,22 @@ public class Client implements ClientInterface {
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDate getDateEdited() {
         return dateEdited;
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDate dateEdited) {
         this.dateEdited = dateEdited;
     }
 
     @Override
     public Employee getEditedBy() {
+
+        if (editedBy == null) {
+            return new Employee();
+        }
+
         return editedBy;
     }
 
@@ -349,17 +365,21 @@ public class Client implements ClientInterface {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDate getDateEntered() {
         return dateEntered;
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDate dateEntered) {
         this.dateEntered = dateEntered;
     }
 
     @Override
     public Employee getEnteredBy() {
+
+        if (enteredBy == null) {
+            return new Employee();
+        }
 
         return enteredBy;
     }
@@ -369,11 +389,6 @@ public class Client implements ClientInterface {
         this.enteredBy = enteredBy;
     }
 
-    /**
-     * Copy the client without copying the id field
-     *
-     * @param src
-     */
     @Override
     public final void doCopy(Client src) {
         contacts = new ArrayList<>();
@@ -462,7 +477,7 @@ public class Client implements ClientInterface {
         if (internet == null) {
             internet = new Internet();
         }
-        
+
         return internet;
     }
 
@@ -484,14 +499,6 @@ public class Client implements ClientInterface {
         this.name = name;
     }
 
-    /**
-     * This method guards against returning very long names. This is used in an
-     * autocomplete JSF component for instance to prevent the list of clients
-     * from extending beyond the screen. In the future, the maximum length of
-     * say 50 will be a value stored in the resource bundle of the BEL.
-     *
-     * @return
-     */
     @Override
     public String getTruncatedName() {
         if (getName().length() >= 50) {
@@ -556,51 +563,34 @@ public class Client implements ClientInterface {
         String list = "";
 
         for (Contact contact : getContacts()) {
-            //for (PhoneNumber phoneNumber : contact.getPhoneNumbers()) {
-            if (list.equals("")) // first? 
-            {
+            if (list.equals("")) {
                 list = contact.getMainPhoneNumber().getLocalNumber();
             } else {
                 list = list + ", " + contact.getMainPhoneNumber().getLocalNumber();
             }
-            //}
+
         }
 
         return list;
     }
 
-    /**
-     * Get the first main contact which is treated as the main contact in the
-     * list of contacts.
-     *
-     * @return
-     */
     @Override
     public Contact getDefaultContact() {
         if (!getContacts().isEmpty()) {
-            // Use the last found contact as the main contact if none was found.            
             return getContacts().get(getContacts().size() - 1);
         } else {
             return new Contact("", "", "Main");
         }
     }
 
-    /**
-     * Get the main contact which is treated as the main contact in the list of
-     * contacts.
-     *
-     * @return
-     */
     @Override
     public Contact getMainContact() {
         if (!getContacts().isEmpty()) {
-            //return getContacts().get(0);
             for (Contact contact : getContacts()) {
                 if (contact.getType().equals("Main")) {
                     return contact;
                 }
             }
-            // use the first found address as the billing address
             Contact contact = getContacts().get(0);
             contact.setType("Main");
             return contact;
@@ -618,12 +608,6 @@ public class Client implements ClientInterface {
         return getContacts().get(0);
     }
 
-    /**
-     * Returns the first found address with billing type "Billing" as the main
-     * billing address.
-     *
-     * @return
-     */
     @Override
     public Address getDefaultAddress() {
         if (!getBillingAddresses().isEmpty()) {
@@ -646,12 +630,12 @@ public class Client implements ClientInterface {
     }
 
     @Override
-    public Date getDateLastAccessed() {
+    public LocalDate getDateLastAccessed() {
         return dateLastAccessed;
     }
 
     @Override
-    public void setDateLastAccessed(Date dateLastAccessed) {
+    public void setDateLastAccessed(LocalDate dateLastAccessed) {
         this.dateLastAccessed = dateLastAccessed;
     }
 
@@ -663,12 +647,12 @@ public class Client implements ClientInterface {
     }
 
     @Override
-    public Date getDateFirstReceived() {
+    public LocalDate getDateFirstReceived() {
         return dateFirstReceived;
     }
 
     @Override
-    public void setDateFirstReceived(Date dateFirstReceived) {
+    public void setDateFirstReceived(LocalDate dateFirstReceived) {
         this.dateFirstReceived = dateFirstReceived;
     }
 
@@ -704,7 +688,6 @@ public class Client implements ClientInterface {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Client)) {
             return false;
         }
@@ -792,8 +775,6 @@ public class Client implements ClientInterface {
                             + " ORDER BY c.name", Client.class).
                             setMaxResults(maxSearchResults).getResultList();
 
-            // NB: This is used to remove clients with ' in their names. This may not be
-            // needed in the future.
             Iterator<Client> iterator = clients.iterator();
             while (iterator.hasNext()) {
                 Client element = iterator.next();
@@ -826,8 +807,6 @@ public class Client implements ClientInterface {
                             + " ORDER BY c.name", Client.class).setFirstResult(firstResult).
                             setMaxResults(maxResults).getResultList();
 
-            // NB: This is used to remove clients with ' in their names. This may not be
-            // needed in the future.
             Iterator<Client> iterator = clients.iterator();
             while (iterator.hasNext()) {
                 Client element = iterator.next();
@@ -880,33 +859,6 @@ public class Client implements ClientInterface {
         }
     }
 
-//    public static List<Client> findClientsByFirstPartOfName(EntityManager em, String value) {
-//
-//        try {
-//
-//            value = value.replaceAll("'", "`");
-//
-//            List<Client> clients
-//                    = em.createQuery("SELECT c FROM Client c where UPPER(c.name) like '"
-//                            + value.toUpperCase()
-//                            + "%' ORDER BY c.name", Client.class).getResultList();
-//            return clients;
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return new ArrayList<>();
-//        }
-//    }
-    // is in client manager. remove later
-//    public static List<Client> getAllClients(EntityManager em) {
-//
-//        try {
-//            List<Client> clients = em.createNamedQuery("findAllClients", Client.class).getResultList();
-//            return clients;
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            return null;
-//        }
-//    }
     public static Client findByName(EntityManager em, String value, Boolean ignoreCase) {
 
         List<Client> clients;
@@ -976,18 +928,6 @@ public class Client implements ClientInterface {
         }
     }
 
-    // tk change name to findClientById
-    public static Client getClientById(EntityManager em, Long Id) {
-
-        try {
-            Client client = em.find(Client.class, Id);
-            return client;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
     public static Client findActiveDefault(
             EntityManager em,
             String name,
@@ -1033,26 +973,36 @@ public class Client implements ClientInterface {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getEnteredBy() != null) {
-                getEnteredBy().save(em);
-            }
-
-            if (getEditedBy() != null) {
-                getEditedBy().save(em);
-            }
-
-            getInternet().save(em);
-            getBillingAddress().save(em);
-            getBillingContact().save(em);
-            getDiscount().save(em);
-            getDefaultTax().save(em);
-
-            for (Contact contact : getContacts()) {               
-                    contact.save(em);                
+            if (enteredBy != null) {
+                enteredBy.save(em);
             }
             
-            for (Address address : getAddresses()) {               
-                    address.save(em);                
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
+
+            if (billingAddress != null) {
+                billingAddress.save(em);
+            }
+            
+            if (billingContact != null) {
+                billingContact.save(em);
+            }
+            
+            if (discount != null) {
+                discount.save(em);
+            }
+            
+            if (defaultTax != null) {
+                defaultTax.save(em);
+            }
+            
+            for (Contact contact : getContacts()) {
+                contact.save(em);
+            }
+            
+            for (Address address : getAddresses()) {
+                address.save(em);
             }
 
             em.getTransaction().begin();
@@ -1146,5 +1096,25 @@ public class Client implements ClientInterface {
         }
 
         return new ReturnMessage(false, "Client not saved");
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

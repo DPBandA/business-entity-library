@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -37,6 +37,7 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.mt.Test;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -74,7 +75,7 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public static FoodTest findByName(EntityManager em, String value,
             Boolean ignoreCase) {
 
@@ -91,13 +92,13 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
                 foodTests = em.createQuery("SELECT t FROM FoodTest t "
                         + "WHERE t.name "
                         + "= '" + value + "'",
-                         FoodTest.class).getResultList();
+                        FoodTest.class).getResultList();
             }
 
             if (!foodTests.isEmpty()) {
                 return foodTests.get(0);
             }
-            
+
             return null;
         } catch (Exception e) {
             System.out.println(e);
@@ -139,7 +140,7 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FoodTest[id=" + id + "]";
+        return "jm.com.dpbennett.entity.FoodTest[id=" + id + "]";
     }
 
     @Override
@@ -184,6 +185,11 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
 
     @Override
     public Employee getTestDoneBy() {
+
+        if (testDoneBy == null) {
+            return new Employee();
+        }
+
         return testDoneBy;
     }
 
@@ -221,7 +227,9 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getTestDoneBy().save(em);
+            if (testDoneBy != null) {
+                testDoneBy.save(em);
+            }
             
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -332,7 +340,7 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
-       try {
+        try {
 
             if (this.id == null) {
                 FoodTest existing = FoodTest.findByName(em, this.name, false);
@@ -350,6 +358,26 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
         }
 
         return new ReturnMessage(false, "Food Test not saved");
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

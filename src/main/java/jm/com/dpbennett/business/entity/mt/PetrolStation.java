@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -42,6 +42,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -151,6 +152,7 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         if (lastAssignee == null) {
             return new Employee();
         }
+
         return lastAssignee;
     }
 
@@ -160,8 +162,9 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     public Client getClient() {
         if (client == null) {
-            return new Client("");
+            return new Client();
         }
+
         return client;
     }
 
@@ -192,7 +195,6 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     public List<PetrolPump> getPetrolPumps() {
 
         if (petrolPumps == null) {
-
             petrolPumps = new ArrayList<>();
         }
 
@@ -380,7 +382,6 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
                     + " JOIN petrolStation.client client"
                     + " JOIN petrolStation.certification certification"
                     + " JOIN petrolStation.lastAssignee lastAssignee"
-                    //                    + " WHERE (2 >= 1)" // used as placeholder for now
                     + " WHERE (certification." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
                     + " AND certification." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
                     + searchTextAndClause
@@ -436,11 +437,15 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getClient().save(em);
-
-            getLastAssignee().save(em);
-
-            for (PetrolPump petrolPump : petrolPumps) {
+            if (client != null) {
+                client.save(em);
+            }
+            
+            if (lastAssignee != null) {
+                lastAssignee.save(em);
+            }
+            
+            for (PetrolPump petrolPump : getPetrolPumps()) {
                 petrolPump.setOwnerId(id);
                 petrolPump.save(em);
             }
@@ -586,6 +591,26 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     @Override
     public void setContacts(List<Contact> contacts) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

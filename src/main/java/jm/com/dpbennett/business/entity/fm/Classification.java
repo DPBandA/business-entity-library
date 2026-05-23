@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -37,6 +37,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -47,8 +48,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "classification")
 @NamedQueries({
-    @NamedQuery(name = "findAllClassifications", query = "SELECT c FROM Classification c ORDER BY c.name")
-    ,
+    @NamedQuery(name = "findAllClassifications", query = "SELECT c FROM Classification c ORDER BY c.name"),
     @NamedQuery(name = "findAllActiveClassifications", query = "SELECT c FROM Classification c WHERE c.active = 1 ORDER BY c.name")
 })
 public class Classification implements BusinessEntity, Serializable {
@@ -78,7 +78,12 @@ public class Classification implements BusinessEntity, Serializable {
     }
 
     public Tax getDefaultTax() {
-        return (defaultTax == null ? new Tax() : defaultTax);
+
+        if (defaultTax == null) {
+            return new Tax();
+        }
+
+        return defaultTax;
     }
 
     public void setDefaultTax(Tax defaultTax) {
@@ -210,7 +215,6 @@ public class Classification implements BusinessEntity, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Classification)) {
             return false;
         }
@@ -264,9 +268,9 @@ public class Classification implements BusinessEntity, Serializable {
     public static Classification findClassificationByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Classification> classifications = em.createQuery("SELECT c FROM Classification c "
                     + "WHERE UPPER(c.name) "
                     + "= '" + value.toUpperCase() + "'", Classification.class).getResultList();
@@ -284,9 +288,9 @@ public class Classification implements BusinessEntity, Serializable {
     public static List<Classification> findClassificationsByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY c.name", Classification.class).getResultList();
@@ -300,10 +304,10 @@ public class Classification implements BusinessEntity, Serializable {
     public static List<Classification> findClassificationsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             category = category.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '%"
                             + value.toUpperCase().trim() + "%' AND c.category = " + category + " ORDER BY c.name", Classification.class).getResultList();
@@ -317,9 +321,9 @@ public class Classification implements BusinessEntity, Serializable {
     public static List<Classification> findActiveClassificationsByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '%"
                             + value.toUpperCase().trim() + "%' AND c.active = 1 ORDER BY c.name", Classification.class).getResultList();
@@ -329,14 +333,14 @@ public class Classification implements BusinessEntity, Serializable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Classification> findActiveClassificationsByNameAndCategory(EntityManager em, String value, String category) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             category = category.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c where UPPER(c.name) like '"
                             + value.toUpperCase().trim() + "%' AND c.active = 1 AND c.category = '" + category + "' ORDER BY c.name", Classification.class).getResultList();
@@ -346,16 +350,16 @@ public class Classification implements BusinessEntity, Serializable {
             return new ArrayList<>();
         }
     }
-    
+
     public static List<Classification> findActiveClassificationsByCategory(EntityManager em, String category) {
 
         try {
-            
+
             category = category.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Classification> classifications
                     = em.createQuery("SELECT c FROM Classification c WHERE "
-                            +  "c.active = 1 AND c.category = '" + category + "' ORDER BY c.name", Classification.class).getResultList();
+                            + "c.active = 1 AND c.category = '" + category + "' ORDER BY c.name", Classification.class).getResultList();
             return classifications;
         } catch (Exception e) {
             System.out.println(e);
@@ -366,9 +370,7 @@ public class Classification implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getDefaultTax().save(em);
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -477,6 +479,26 @@ public class Classification implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

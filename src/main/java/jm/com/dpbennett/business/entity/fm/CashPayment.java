@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -35,6 +35,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -121,6 +122,28 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public static CashPayment copy(CashPayment src) {
+        CashPayment copy = new CashPayment();
+
+        copy.type = src.type;
+        copy.jobId = src.jobId;
+        copy.payment = src.payment;
+        copy.receiptNumber = src.receiptNumber;
+        copy.invoiceNumber = src.invoiceNumber;
+        copy.dateOfPayment = src.dateOfPayment;
+        copy.payeeTitle = src.payeeTitle;
+        copy.payeeFirstname = src.payeeFirstname;
+        copy.payeeLastname = src.payeeLastname;
+        copy.comment = src.comment;
+        copy.userId = src.userId;
+        copy.discount = src.discount;
+        copy.discountType = src.discountType;
+        copy.paymentTerms = src.paymentTerms;
+        copy.paymentPurpose = src.paymentPurpose;
+
+        return copy;
     }
 
     public static List<CashPayment> findCashPaymentsByOwnerId(EntityManager em, Long ownerId) {
@@ -307,12 +330,12 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof CashPayment)) {
             return false;
         }
         CashPayment other = (CashPayment) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -333,12 +356,13 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
     @Override
     public void setName(String name) {
-        
+
     }
 
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
             em.getTransaction().begin();
             isDirty = false;
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -346,9 +370,9 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            
+
             System.out.println("Cash Payment save exception: " + e);
-            
+
             return new ReturnMessage(false,
                     "Cash payment not saved",
                     "An error occurred while saving a cash payment: " + e,
@@ -362,12 +386,6 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
         return new ReturnMessage();
     }
 
-    /**
-     * Compare payments using the date of payment
-     *
-     * @param o
-     * @return
-     */
     @Override
     public int compareTo(Object o) {
         if ((((CashPayment) o).dateOfPayment != null) && (this.dateOfPayment != null)) {
@@ -480,6 +498,26 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

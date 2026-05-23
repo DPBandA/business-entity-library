@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -70,31 +70,30 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private String username;
     private String title;
     private String name;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Internet internet;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature signature;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Department department;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<EmployeePosition> positions;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
+    private Internet internet;
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PhoneNumber> phoneNumbers;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Department department;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date birthDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateHired;
     private String notes;
     private Boolean active;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Signature signature;
     @Transient
     private Boolean isDirty;
 
     public Employee() {
         firstName = "";
         lastName = "";
-        internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
         positions = new ArrayList<>();
@@ -104,7 +103,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public Employee(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        internet = new Internet();
         addresses = new ArrayList<>();
         phoneNumbers = new ArrayList<>();
         positions = new ArrayList<>();
@@ -209,6 +207,11 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     }
 
     public Signature getSignature() {
+
+        if (signature == null) {
+            signature = new Signature();
+        }
+
         return signature;
     }
 
@@ -241,7 +244,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     @JsonbTransient
     public Department getDepartment() {
         if (department == null) {
-            department = new Department();
+            return new Department();
         }
 
         return department;
@@ -265,6 +268,11 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     }
 
     public List<PhoneNumber> getPhoneNumbers() {
+
+        if (phoneNumbers == null) {
+            phoneNumbers = new ArrayList<>();
+        }
+
         return phoneNumbers;
     }
 
@@ -528,14 +536,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
     }
 
-    /**
-     * Gets first employee with the given firstname and lasname
-     *
-     * @param em
-     * @param firstName
-     * @param lastName
-     * @return
-     */
     public static Employee findByFirstAndLastName(EntityManager em,
             String firstName, String lastName) {
 
@@ -563,14 +563,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         return null;
     }
 
-    /**
-     * Gets first active employee with the given firstname and lasname
-     *
-     * @param em
-     * @param firstName
-     * @param lastName
-     * @return
-     */
     public static Employee findActiveByName(EntityManager em,
             String firstName,
             String lastName) {
@@ -668,7 +660,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
         name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
-        // NB: This assumes that the name is given as "lastname, firstname"
         String names[] = name.split(",");
 
         if (names.length == 2) {
@@ -721,22 +712,12 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getInternet().save(em);
-
-            if (getSignature() != null) {
-                getSignature().save(em);
-            }
-
             for (EmployeePosition position : getPositions()) {
                 position.save(em);
             }
 
-            for (Address address : getAddresses()) {
-                address.save(em);
-            }
-            
-            for (PhoneNumber phoneNumber : getPhoneNumbers()) {
-                phoneNumber.save(em);
+            if (department != null) {
+                department.save(em);
             }
 
             em.getTransaction().begin();
@@ -902,5 +883,25 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         }
 
         return new ReturnMessage(false, "Employee not saved");
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

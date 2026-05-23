@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -24,10 +24,10 @@ package jm.com.dpbennett.business.entity.sc;
  *
  * @author Desmond Bennett
  */
-public interface GeneralComplianceSurvey {  
+public interface GeneralComplianceSurvey {
 
     public String getSurveyType();
 
     public void setSurveyType(String surveyType);
-    
+
 }

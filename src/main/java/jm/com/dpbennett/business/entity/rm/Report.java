@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -40,6 +40,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -74,7 +75,6 @@ public class Report implements BusinessEntity {
     private Boolean usePackagedReportFileTemplate;
     @Transient
     private Boolean isDirty;
-    // Report parameters
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Department> departments;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -113,6 +113,7 @@ public class Report implements BusinessEntity {
         if (departmentRequired == null) {
             departmentRequired = false;
         }
+
         return departmentRequired;
     }
 
@@ -124,6 +125,7 @@ public class Report implements BusinessEntity {
         if (employeeRequired == null) {
             employeeRequired = false;
         }
+
         return employeeRequired;
     }
 
@@ -135,6 +137,7 @@ public class Report implements BusinessEntity {
         if (clientRequired == null) {
             clientRequired = false;
         }
+
         return clientRequired;
     }
 
@@ -146,6 +149,7 @@ public class Report implements BusinessEntity {
         if (datePeriodRequired == null) {
             datePeriodRequired = false;
         }
+
         return datePeriodRequired;
     }
 
@@ -285,6 +289,11 @@ public class Report implements BusinessEntity {
     }
 
     public List<ReportTableColumn> getReportColumns() {
+
+        if (reportColumns == null) {
+            reportColumns = new ArrayList<>();
+        }
+
         return reportColumns;
     }
 
@@ -335,7 +344,6 @@ public class Report implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Report)) {
             return false;
         }
@@ -346,7 +354,7 @@ public class Report implements BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.JobReport[id=" + id + "]";
+        return "jm.com.dpbennett.entity.JobReport[id=" + id + "]";
     }
 
     public static List<Report> findAllReports(EntityManager em) {
@@ -413,9 +421,11 @@ public class Report implements BusinessEntity {
             if (!reports.isEmpty()) {
                 return reports.get(0);
             }
+
             return null;
         } catch (Exception e) {
             System.out.println(e);
+
             return null;
         }
     }
@@ -467,6 +477,7 @@ public class Report implements BusinessEntity {
             List<Report> reports
                     = em.createQuery("SELECT r FROM Report r where (r.active = 1 OR r.active IS NULL) AND UPPER(r.name) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
+
             return reports;
         } catch (Exception e) {
             System.out.println(e);
@@ -490,6 +501,7 @@ public class Report implements BusinessEntity {
                             + " AND UPPER(r.category) like '%"
                             + category.toUpperCase().trim() + "%' ORDER BY r.name", Report.class).getResultList();
             return reports;
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -532,19 +544,19 @@ public class Report implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            for (ReportTableColumn reportColumn : reportColumns) {
+            for (ReportTableColumn reportColumn : getReportColumns()) {
                 reportColumn.save(em);
             }
 
-            for (Department department : departments) {
+            for (Department department : getDepartments()) {
                 department.save(em);
             }
 
-            for (Employee employee : employees) {
+            for (Employee employee : getEmployees()) {
                 employee.save(em);
             }
 
-            for (Client client : clients) {
+            for (Client client : getClients()) {
                 client.save(em);
             }
 
@@ -656,6 +668,26 @@ public class Report implements BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

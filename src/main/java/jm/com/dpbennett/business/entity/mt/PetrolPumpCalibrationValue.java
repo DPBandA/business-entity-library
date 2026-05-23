@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,7 @@ import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -35,6 +36,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -60,21 +62,18 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
     private Double rate = 0.0;
     private Double petrolUsage = 0.0;
     private Double petrolCost = 0.0;
-    // pump nozzle errors
     private Double error1 = 0.0;
     private Double error2 = 0.0;
     private Double error3 = 0.0;
     private Double error4 = 0.0;
     private Double error5 = 0.0;
     private Double error6 = 0.0;
-    // pump measure/capacity (in litres) used in calibration
     private Double measure1 = 5.0;
     private Double measure2 = 5.0;
     private Double measure3 = 5.0;
     private Double measure4 = 20.0;
     private Double measure5 = 20.0;
     private Double measure6 = 20.0;
-    // pump measure tolerances
     private Double measureTolerance1 = 15.0;
     private Double measureTolerance2 = 15.0;
     private Double measureTolerance3 = 15.0;
@@ -112,15 +111,22 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
         this.measureTolerance6 = original.measureTolerance6;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
     public Employee getRecordedBy() {
+
+        if (recordedBy == null) {
+            return new Employee();
+        }
+
         return recordedBy;
     }
 
@@ -167,12 +173,11 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
     }
 
     public String getPass() {
-        int numOfFailuresForFirst3 = 0; // first 3 errors
+        int numOfFailuresForFirst3 = 0;
 
-        int numOfFailuresForSecond3 = 0; // second 3 errors
+        int numOfFailuresForSecond3 = 0; //
         String pass = "Yes";
 
-        // first 3 measures
         if (Math.abs(error1) > Math.abs(measureTolerance1 * 1000)) {
             ++numOfFailuresForFirst3;
 
@@ -184,7 +189,7 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
         if (Math.abs(error3) > Math.abs(measureTolerance3 * 1000)) {
             ++numOfFailuresForFirst3;
 
-        } // remaining 3 measures
+        }
         if (Math.abs(error4) > Math.abs(measureTolerance4 * 1000)) {
             ++numOfFailuresForSecond3;
 
@@ -432,24 +437,19 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PetrolPumpCalibrationValue)) {
             return false;
 
         }
         PetrolPumpCalibrationValue other = (PetrolPumpCalibrationValue) object;
 
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-
-        }
-        return true;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
 
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.PetrolPumpCalibrationValue[id=" + id + "]";
+        return "jm.com.dpbennett.entity.PetrolPumpCalibrationValue[id=" + id + "]";
     }
 
     @Override
@@ -520,8 +520,10 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getRecordedBy().save(em);
+
+            if (recordedBy != null) {
+                recordedBy.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -607,6 +609,26 @@ public class PetrolPumpCalibrationValue implements Comparable, Serializable, Bus
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

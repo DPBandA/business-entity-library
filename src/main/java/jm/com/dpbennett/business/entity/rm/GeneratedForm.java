@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.rm;
 
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -31,15 +32,17 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
- * tk get rid of this class if it's no longer being used
+ *
  * @author Desmond Bennett
  */
 @Entity
 @Table(name = "generatedform")
 public class GeneratedForm implements BusinessEntity, Form {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,8 +52,8 @@ public class GeneratedForm implements BusinessEntity, Form {
     private Date startDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
-    private String reportFile = "";
-    private String reportFileMimeType = "";
+    private String reportFile;
+    private String reportFileMimeType;
     @Transient
     private Boolean isDirty;
 
@@ -63,7 +66,7 @@ public class GeneratedForm implements BusinessEntity, Form {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -119,12 +122,12 @@ public class GeneratedForm implements BusinessEntity, Form {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof GeneratedForm)) {
             return false;
         }
         GeneratedForm other = (GeneratedForm) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -142,8 +145,8 @@ public class GeneratedForm implements BusinessEntity, Form {
     public void setName(String name) {
         this.name = name;
     }
-    
-     public static GeneratedForm findGeneratedFormById(EntityManager em, Long Id) {
+
+    public static GeneratedForm findGeneratedFormById(EntityManager em, Long Id) {
 
         try {
             GeneratedForm form = em.find(GeneratedForm.class, Id);
@@ -271,6 +274,26 @@ public class GeneratedForm implements BusinessEntity, Form {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

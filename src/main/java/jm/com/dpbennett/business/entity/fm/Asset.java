@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -25,8 +25,12 @@ package jm.com.dpbennett.business.entity.fm;
  * @author Desmond Bennett
  */
 public interface Asset {
+
     public String getName();
+
     public void setName(String name);
+
     public String getType();
+
     public void setType(String type);
 }

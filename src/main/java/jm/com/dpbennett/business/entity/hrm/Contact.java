@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -37,6 +37,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -63,11 +64,11 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     private String lastName;
     private String middleName;
     private String notes;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PhoneNumber> phoneNumbers;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
     @Transient
     private Boolean isDirty;
@@ -130,8 +131,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     public List getContactTypes() {
 
         return new ArrayList();
-        //throw new UnsupportedOperationException("Not supported yet: getContactTypes() to be put in Contact class");
-        //return Application.getStringListAsSortableSelectItems(getEntityManager(), "personalContactTypes");
     }
 
     public Contact prepare() {
@@ -276,7 +275,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Contact)) {
             return false;
         }
@@ -407,14 +405,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         }
     }
 
-    /**
-     * Gets first contact found with the given firstname and lastname
-     *
-     * @param em
-     * @param firstName
-     * @param lastName
-     * @return
-     */
     public static Contact findContactByName(EntityManager em,
             String firstName, String lastName) {
 
@@ -440,16 +430,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         return null;
     }
 
-    /**
-     * Find a contact associated with a client. This method uses a crude method
-     * by finding the client first then looping over the contacts to find the
-     * required contact. I full SQL solution is to be developed.
-     *
-     * @param em
-     * @param query
-     * @param clientId
-     * @return
-     */
     public static Contact findClientContactById(EntityManager em,
             String query, Long clientId) {
 
@@ -555,7 +535,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
         Contact contact = Contact.findContactByName(em, firstName, lastName);
 
-        // create employee if it does not exist
         if (contact == null) {
             contact = new Contact();
             contact.setFirstName(firstName);
@@ -577,16 +556,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
-            getInternet().save(em);
-
-            for (PhoneNumber phoneNumber : getPhoneNumbers()) {
-                BusinessEntityUtils.saveBusinessEntity(em, phoneNumber);
-            }
-
-            for (Address address : getAddresses()) {
-                BusinessEntityUtils.saveBusinessEntity(em, address);
-            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -706,6 +675,26 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -200,10 +200,6 @@ public class Notification implements BusinessEntity {
         return active;
     }
 
-    /**
-     *
-     * @param active
-     */
     @Override
     public void setActive(Boolean active) {
         this.active = active;
@@ -250,7 +246,6 @@ public class Notification implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Notification)) {
             return false;
         }
@@ -385,10 +380,12 @@ public class Notification implements BusinessEntity {
     public static List<Notification> findAllActiveNotifications(EntityManager em) {
 
         try {
+
+            int maxResult = SystemOption.getInteger(em, "maxSearchResults");
+
             List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
                     + "WHERE n.active = 1 ORDER BY n.issueTime DESC",
-                    // tk max results to be made system option
-                    Notification.class).setMaxResults(100).getResultList();
+                    Notification.class).setMaxResults(maxResult).getResultList();
 
             return alerts;
         } catch (Exception e) {
@@ -407,9 +404,9 @@ public class Notification implements BusinessEntity {
             if (!alerts.isEmpty()) {
                 return alerts.get(0).message;
             }
-            
+
             return "";
-            
+
         } catch (Exception e) {
 
             System.out.println(e);
@@ -643,6 +640,26 @@ public class Notification implements BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

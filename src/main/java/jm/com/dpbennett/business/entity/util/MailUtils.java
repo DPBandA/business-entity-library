@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.util;
 
 import java.io.UnsupportedEncodingException;
@@ -94,72 +95,6 @@ public class MailUtils {
         }
     }
 
-    /*
-    public static ReturnMessage postMail(
-            Session mailSession,
-            Employee fromEmployee,
-            Employee toEmployee,
-            String subject,
-            String message,
-            String contentType,
-            EntityManager em) {
-
-        InternetAddress addressFrom;
-        InternetAddress[] addressTo = null;
-        MimeMessage msg;
-
-        try {
-            // use default session if none was provided
-            if (mailSession == null) {
-                //Set the host smtp address
-//                Properties props = new Properties();
-//                props.put("mail.smtp.host", (String) SystemOption.getOptionValueObject(em, "mail.smtp.host"));
-
-                // create some properties and get the default Session
-                Session session = getDefaultEmailSession(em);
-                        //Session.getDefaultInstance(props, null);
-                //session.setDebug(debug);
-                msg = new MimeMessage(session);
-            } else {
-                msg = new MimeMessage(mailSession);
-            }
-
-            // set the from and to address
-            if (fromEmployee == null) {
-                addressFrom = new InternetAddress(
-                        (String) SystemOption.getOptionValueObject(em, "jobManagerEmailAddress"),
-                        (String) SystemOption.getOptionValueObject(em, "jobManagerEmailName"));
-            } else {
-                addressFrom = new InternetAddress(
-                        fromEmployee.getInternet().getEmail1(),
-                        fromEmployee.getFirstName() + " " + fromEmployee.getLastName());
-            }
-            msg.setFrom(addressFrom);
-
-            addressTo = new InternetAddress[1];
-            if (toEmployee != null) {
-                addressTo[0] = new InternetAddress(toEmployee.getInternet().getEmail1());
-            } else {
-                addressTo[0] = new InternetAddress(
-                        (String) SystemOption.getOptionValueObject(em, "administratorEmailAddress"));
-            }
-
-            msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
-
-            // Setting the Subject and Content Type
-            msg.setSubject(subject);
-            msg.setContent(message, contentType);
-            Transport.send(msg);
-
-            return new ReturnMessage();
-
-        } catch (UnsupportedEncodingException | MessagingException e) {
-            System.out.println("An error occurred while posting an email to: " + Arrays.toString(addressTo));
-            return new ReturnMessage(false, "An error occurred while posting an email.");
-        }
-
-    }
-     */
     public static ReturnMessage postMail(
             Session mailSession,
             String from,

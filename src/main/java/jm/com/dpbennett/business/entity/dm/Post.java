@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -40,6 +40,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -162,6 +163,11 @@ public class Post implements Document, Comparable, BusinessEntity {
 
     @Override
     public Employee getEditedBy() {
+
+        if (editedBy == null) {
+            return new Employee();
+        }
+
         return editedBy;
     }
 
@@ -290,6 +296,7 @@ public class Post implements Document, Comparable, BusinessEntity {
         if (classification == null) {
             return new Classification();
         }
+
         return classification;
     }
 
@@ -434,7 +441,7 @@ public class Post implements Document, Comparable, BusinessEntity {
                 posts = em.createQuery("SELECT p FROM Post p "
                         + "WHERE p.name "
                         + "= '" + value + "'",
-                         Post.class).getResultList();
+                        Post.class).getResultList();
             }
 
             if (!posts.isEmpty()) {
@@ -613,8 +620,17 @@ public class Post implements Document, Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getClassification().save(em);
-            getEditedBy().save(em);
+            if (documentType != null) {
+                documentType.save(em);
+            }
+
+            if (classification != null) {
+                classification.save(em);
+            }
+
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -719,5 +735,25 @@ public class Post implements Document, Comparable, BusinessEntity {
         }
 
         return new ReturnMessage(false, "Post not saved");
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

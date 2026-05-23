@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.hrm;
 
 import java.io.Serializable;
@@ -36,6 +37,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -46,8 +48,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "employeeposition")
 @NamedQueries({
-    @NamedQuery(name = "findAllEmployeePositions", query = "SELECT e FROM EmployeePosition e ORDER BY e.title")
-    ,
+    @NamedQuery(name = "findAllEmployeePositions", query = "SELECT e FROM EmployeePosition e ORDER BY e.title"),
     @NamedQuery(name = "findAllActiveEmployeePositions", query = "SELECT e FROM EmployeePosition e WHERE e.active = 1 ORDER BY e.title")
 })
 public class EmployeePosition implements Serializable, BusinessEntity, Comparable {
@@ -58,8 +59,8 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     private String type;
     private String title;
     private String classification;
-    private String category;    
-    private Boolean active;    
+    private String category;
+    private Boolean active;
     private Double salary;
     private String payCycle;
     private Double manHourRate;
@@ -70,10 +71,6 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     @Transient
     private Boolean isDirty;
 
-    /**
-     * Constructs and EmployeePosition object.
-     * 
-     */
     public EmployeePosition() {
         type = "";
         title = "";
@@ -238,7 +235,6 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof EmployeePosition)) {
             return false;
         }
@@ -315,13 +311,13 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
         }
     }
 
-    public static EmployeePosition findEmployeePositionByTitle(EntityManager em, 
+    public static EmployeePosition findEmployeePositionByTitle(EntityManager em,
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
                     + "WHERE UPPER(e.title) "
                     + "= '" + value.toUpperCase() + "'", EmployeePosition.class).getResultList();
@@ -341,9 +337,9 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<EmployeePosition> employeePositions
                     = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY e.title", EmployeePosition.class).getResultList();
@@ -355,13 +351,13 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     }
 
     public static List<EmployeePosition> findActiveEmployeePositionsByTitle(
-            EntityManager em, 
+            EntityManager em,
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<EmployeePosition> employeePositions
                     = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
                             + value.toUpperCase().trim() + "%' AND e.active = 1 ORDER BY e.title", EmployeePosition.class).getResultList();
@@ -377,9 +373,9 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
                     + "WHERE e.active = 1 AND UPPER(e.title) "
                     + "= '" + value + "'",
@@ -399,13 +395,13 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -490,6 +486,26 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

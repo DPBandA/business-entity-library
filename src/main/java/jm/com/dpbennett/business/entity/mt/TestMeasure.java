@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -39,6 +39,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.fm.Product;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -85,7 +86,7 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -132,12 +133,11 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof TestMeasure)) {
             return false;
         }
         TestMeasure other = (TestMeasure) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -168,6 +168,11 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
 
     @Override
     public Manufacturer getManufacturer() {
+
+        if (manufacturer == null) {
+            return new Manufacturer();
+        }
+
         return manufacturer;
     }
 
@@ -192,12 +197,6 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
         }
     }
 
-    /**
-     *
-     * @param em
-     * @param capicity
-     * @return
-     */
     public static TestMeasure findTestMeasureByCapacity(EntityManager em, Double capicity) {
 
         try {
@@ -217,9 +216,9 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
     public static TestMeasure findTestMeasureByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<TestMeasure> measures = em.createQuery("SELECT t FROM TestMeasure t "
                     + "WHERE t.name = '" + value + "'", TestMeasure.class).getResultList();
             if (!measures.isEmpty()) {
@@ -233,17 +232,10 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
 
     }
 
-    /**
-     *
-     * @param em
-     * @param list
-     * @return
-     */
     public static ArrayList<TestMeasure> findTestMeasuresFromCapicityList(
-            
             EntityManager em, String list) {
-        
-        ArrayList<TestMeasure> measures = new ArrayList<TestMeasure>();
+
+        ArrayList<TestMeasure> measures = new ArrayList<>();
 
         String[] capacityList = list.split(",");
 
@@ -259,10 +251,12 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
 
     @Override
     public ReturnMessage save(EntityManager em) {
-         try {
+        try {
 
-            getManufacturer().save(em);
-            
+            if (manufacturer != null) {
+                manufacturer.save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -377,6 +371,26 @@ public class TestMeasure implements BusinessEntity, Product, Comparable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

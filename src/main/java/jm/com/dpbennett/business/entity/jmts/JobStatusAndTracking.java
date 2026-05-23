@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity.jmts;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,6 +36,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -55,7 +57,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     private Date dateSubmitted;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateAndTimeEntered;
-    private String jobTransferedTo; // to be removed
+    private String jobTransferedTo;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee transferredTo;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -65,8 +67,8 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee completedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateTransfered; // tk change name to dateTransferred    
-    private String productOrSampleReceivedBy; // tk change to Employee entity
+    private Date dateTransfered;
+    private String productOrSampleReceivedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateProductOrSampleReceived;
     @Column(length = 1024)
@@ -125,6 +127,48 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
         this.id = id;
     }
 
+    public static JobStatusAndTracking copy(JobStatusAndTracking src) {
+
+        JobStatusAndTracking copy = new JobStatusAndTracking();
+
+        copy.dateSubmitted = src.dateSubmitted;
+        copy.dateAndTimeEntered = src.dateAndTimeEntered;
+        copy.jobTransferedTo = src.jobTransferedTo;
+        copy.transferredTo = src.transferredTo;
+        copy.enteredBy = src.enteredBy;
+        copy.editedBy = src.editedBy;
+        copy.completedBy = src.completedBy;
+        copy.dateTransfered = src.dateTransfered;
+        copy.productOrSampleReceivedBy = src.productOrSampleReceivedBy;
+        copy.dateProductOrSampleReceived = src.dateProductOrSampleReceived;
+        copy.statusNote = src.statusNote;
+        copy.samplesCollected = src.samplesCollected;
+        copy.samplesCollectedBy = src.samplesCollectedBy;
+        copy.dateSamplesCollected = src.dateSamplesCollected;
+        copy.expectedDateOfCompletion = src.expectedDateOfCompletion;
+        copy.dateOfCompletion = src.dateOfCompletion;
+        copy.dateStatusEdited = src.dateStatusEdited;
+        copy.workProgress = src.workProgress;
+        copy.documentCollected = src.documentCollected;
+        copy.documentCollectedBy = src.documentCollectedBy;
+        copy.dateDocumentCollected = src.dateDocumentCollected;
+        copy.dateJobEmailWasSent = src.dateJobEmailWasSent;
+        copy.jobEmailFrequency = src.jobEmailFrequency;
+        copy.completed = src.completed;
+        copy.alertDate = src.alertDate;
+        copy.dateOfLastPayment = src.dateOfLastPayment;
+        copy.depositDate = src.depositDate;
+        copy.costingDate = src.costingDate;
+        copy.dateCostingCompleted = src.dateCostingCompleted;
+        copy.dateCostingApproved = src.dateCostingApproved;
+        copy.dateCostingInvoiced = src.dateCostingInvoiced;
+        copy.expectedStartDate = src.expectedStartDate;
+        copy.startDate = src.startDate;        
+
+        return copy;
+
+    }
+
     public Date getDateOpened() {
         return dateOpened;
     }
@@ -142,6 +186,11 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     }
 
     public Employee getCompletedBy() {
+
+        if (completedBy == null) {
+            return new Employee();
+        }
+
         return completedBy;
     }
 
@@ -231,9 +280,11 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
 
     @Override
     public Employee getEditedBy() {
+
         if (editedBy == null) {
             return new Employee();
         }
+
         return editedBy;
     }
 
@@ -256,6 +307,11 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     }
 
     public Employee getTransferredTo() {
+
+        if (transferredTo == null) {
+            return new Employee();
+        }
+
         return transferredTo;
     }
 
@@ -381,13 +437,6 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
         this.jobEmailFrequency = jobEmailFrequency;
     }
 
-//    public String getJobEnteredBy() {
-//        return jobEnteredBy;
-//    }
-//
-//    public void setJobEnteredBy(String jobEnteredBy) {
-//        this.jobEnteredBy = jobEnteredBy;
-//    }
     public String getJobTransferedTo() {
         return jobTransferedTo;
     }
@@ -454,7 +503,6 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof JobStatusAndTracking)) {
             return false;
         }
@@ -465,7 +513,7 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.JobStatusAndTracking[id=" + id + "]";
+        return "jm.com.dpbennett.entity.JobStatusAndTracking[id=" + id + "]";
     }
 
     @Override
@@ -532,20 +580,20 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getTransferredTo() != null) {
-                getTransferredTo().save(em);
+            if (transferredTo != null) {
+                transferredTo.save(em);
             }
 
-            if (getEnteredBy() != null) {
-                getEnteredBy().save(em);
+            if (enteredBy != null) {
+                enteredBy.save(em);
             }
 
-            if (getEditedBy() != null) {
-                getEditedBy().save(em);
+            if (editedBy != null) {
+                editedBy.save(em);
             }
 
-            if (getCompletedBy() != null) {
-                getCompletedBy().save(em);
+            if (completedBy != null) {
+                completedBy.save(em);
             }
 
             em.getTransaction().begin();
@@ -622,6 +670,26 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

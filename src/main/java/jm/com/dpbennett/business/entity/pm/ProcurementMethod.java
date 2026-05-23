@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -41,6 +41,7 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.EmployeePosition;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -78,14 +79,11 @@ public class ProcurementMethod implements BusinessEntity {
     private Integer quotationsRequired;
     private Boolean active;
 
-    /**
-     * Default constructor.
-     */
     public ProcurementMethod() {
         requiredSignatoryPositions = new ArrayList<>();
         description = "";
     }
-    
+
     public String getUsable() {
         if (getActive()) {
             return "Yes";
@@ -150,14 +148,6 @@ public class ProcurementMethod implements BusinessEntity {
         this.procurementMethod = procurementMethod;
     }
 
-    /**
-     * Splits the description into three(3) parts.
-     *
-     * @param part1Length
-     * @param part2Length
-     * @param part3Length
-     * @return
-     */
     public String[] splitDescription(int part1Length, int part2Length, int part3Length) {
         int descriptionLength = getDescription().length();
         String[] descriptionParts = {"", "", ""};
@@ -185,6 +175,11 @@ public class ProcurementMethod implements BusinessEntity {
     }
 
     public List<EmployeePosition> getRequiredSignatoryPositions() {
+
+        if (requiredSignatoryPositions == null) {
+            requiredSignatoryPositions = new ArrayList<>();
+        }
+
         return requiredSignatoryPositions;
     }
 
@@ -235,6 +230,7 @@ public class ProcurementMethod implements BusinessEntity {
         if (editedBy == null) {
             return new Employee();
         }
+
         return editedBy;
     }
 
@@ -271,7 +267,6 @@ public class ProcurementMethod implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ProcurementMethod)) {
             return false;
         }
@@ -314,34 +309,34 @@ public class ProcurementMethod implements BusinessEntity {
             EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<ProcurementMethod> procurementMethods
                     = em.createQuery("SELECT p FROM ProcurementMethod p WHERE UPPER(p.procurementMethod) LIKE '%"
                             + value.toUpperCase().trim() + "%' ORDER BY p.procurementMethod", ProcurementMethod.class).getResultList();
-            
+
             return procurementMethods;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
-    
+
     public static List<ProcurementMethod> findAllActiveByName(
             EntityManager em, String value) {
 
-        try {            
-            
+        try {
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<ProcurementMethod> procurementMethods
                     = em.createQuery("SELECT p FROM ProcurementMethod p WHERE (p.active = 1) AND UPPER(p.procurementMethod) LIKE '%"
                             + value.toUpperCase().trim() + "%' ORDER BY p.procurementMethod", ProcurementMethod.class).getResultList();
-            
+
             return procurementMethods;
-            
+
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -352,13 +347,15 @@ public class ProcurementMethod implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
 
         try {
-            
-            getEditedBy().save(em);
-            
-            for (EmployeePosition requiredSignatoryPosition : requiredSignatoryPositions) {
+
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
+
+            for (EmployeePosition requiredSignatoryPosition : getRequiredSignatoryPositions()) {
                 requiredSignatoryPosition.save(em);
             }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -452,6 +449,26 @@ public class ProcurementMethod implements BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

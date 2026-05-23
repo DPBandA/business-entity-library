@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -48,6 +48,7 @@ import jm.com.dpbennett.business.entity.fm.MarketProduct;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.pm.Supplier;
 import jm.com.dpbennett.business.entity.sm.Category;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -310,6 +311,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         if (costComponents == null) {
             costComponents = new ArrayList<>();
         }
+
         return costComponents;
     }
 
@@ -361,6 +363,11 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public Employee getEditedBy() {
+
+        if (editedBy == null) {
+            return new Employee();
+        }
+
         return editedBy;
     }
 
@@ -382,7 +389,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         Date now = new Date();
 
         try {
-            // Get employee for later use
             Employee employee = user.getEmployee();
 
             if (getIsDirty()) {
@@ -433,13 +439,12 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public void addAction(BusinessEntity.Action action) {
 
-        // Just return if the action already exists.
         for (Action existingAction : getActions()) {
             if (existingAction == action) {
                 return;
             }
         }
-        // Add a new action if possible
+
         switch (action) {
             case CREATE:
                 getActions().add(BusinessEntity.Action.CREATE);
@@ -534,7 +539,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Inventory> inventory
@@ -554,9 +559,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
                     + "WHERE UPPER(i.name)" + " = '" + name + "'",
                     Inventory.class).getResultList();
@@ -572,14 +577,14 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
         return null;
     }
-    
+
     public static Inventory findActiveByName(
             EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
                     + "WHERE UPPER(i.name)" + " = '" + name + "'"
                     + " AND i.active = 1",
@@ -601,7 +606,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             EntityManager em,
             String searchText,
             Integer maxResults) {
-        
+
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         List<Inventory> foundInventory = new ArrayList<>();
@@ -626,7 +631,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
                 + " OR UPPER(inventory.dateMark) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(inventory.status) LIKE '%" + searchText.toUpperCase() + "%'";
 
-        // Build query     
         searchTextAndClause
                 = " WHERE"
                 + mainSearchWhereClause;
@@ -656,7 +660,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
             Integer maxResults) {
 
         searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        
+
         List<Inventory> foundInventory = new ArrayList<>();
         String searchQuery;
         String searchTextAndClause;
@@ -679,7 +683,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
                 + " OR UPPER(inventory.dateMark) LIKE '%" + searchText.toUpperCase() + "%'"
                 + " OR UPPER(inventory.status) LIKE '%" + searchText.toUpperCase() + "%')";
 
-        // Build query     
         searchTextAndClause
                 = " WHERE  inventory.active = 1 AND ("
                 + mainSearchWhereClause;
@@ -758,7 +761,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public Supplier getSupplier() {
         if (supplier == null) {
-            supplier = new Supplier();
+            return new Supplier();
         }
         return supplier;
     }
@@ -792,8 +795,9 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     public MarketProduct getProduct() {
         if (product == null) {
-            product = new MarketProduct();
+            return new MarketProduct();
         }
+        
         return product;
     }
 
@@ -803,6 +807,10 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public Employee getEnteredBy() {
+
+        if (enteredBy == null) {
+            return new Employee();
+        }
 
         return enteredBy;
     }
@@ -816,6 +824,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         if (category == null) {
             return new Category();
         }
+
         return category;
     }
 
@@ -840,7 +849,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Inventory)) {
             return false;
         }
@@ -923,12 +931,23 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getInventoryCategory().save(em);
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
 
-            // Save new/edited cost components
+            if (category != null) {
+                category.save(em);
+            }
+
+            if (enteredBy != null) {
+                enteredBy.save(em);
+            }
+
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
+
+            if (supplier != null) {
+                supplier.save(em);
+            }
+
             if (!getCostComponents().isEmpty()) {
                 for (CostComponent costComponent : getCostComponents()) {
                     if ((costComponent.getIsDirty() || costComponent.getId() == null)
@@ -1038,6 +1057,26 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -37,6 +37,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -111,7 +112,7 @@ public class Discount implements Serializable, BusinessEntity {
 
     public static Discount findDefault(EntityManager em, String name) {
         Discount discount = Discount.findByName(em, name);
-        
+
         name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
 
         if (discount == null) {
@@ -128,7 +129,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static Discount findDefault(EntityManager em,
             String name, Double value, String type) {
         Discount discount = Discount.findByName(em, name);
-        
+
         name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
         type = type.replaceAll("&amp;", "&").replaceAll("'", "`");
 
@@ -179,6 +180,11 @@ public class Discount implements Serializable, BusinessEntity {
     }
 
     public AccountingCode getAccountingCode() {
+
+        if (accountingCode == null) {
+            return new AccountingCode();
+        }
+
         return accountingCode;
     }
 
@@ -189,7 +195,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static List<Discount> findAllDiscounts(EntityManager em) {
 
         try {
-            
+
             List<Discount> discounts = em.createNamedQuery("findAllDiscounts", Discount.class).getResultList();
 
             return discounts;
@@ -199,11 +205,11 @@ public class Discount implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static List<Discount> findAllActiveDiscounts(EntityManager em) {
 
         try {
-            
+
             List<Discount> discounts = em.createNamedQuery("findAllActiveDiscounts", Discount.class).getResultList();
 
             return discounts;
@@ -217,7 +223,7 @@ public class Discount implements Serializable, BusinessEntity {
     public static List<Discount> findDiscountsByNameAndDescription(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("'", "`");
 
             List<Discount> discounts
@@ -316,6 +322,7 @@ public class Discount implements Serializable, BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -349,9 +356,9 @@ public class Discount implements Serializable, BusinessEntity {
     public static Discount findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-          
+
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", Discount.class).getResultList();
@@ -386,7 +393,7 @@ public class Discount implements Serializable, BusinessEntity {
             String valueType) {
 
         try {
-            
+
             valueType = valueType.replaceAll("&amp;", "&").replaceAll("'", "`");
 
             List<Discount> discounts = em.createQuery("SELECT d FROM Discount d"
@@ -469,6 +476,26 @@ public class Discount implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

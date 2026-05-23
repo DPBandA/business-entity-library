@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.fm;
 
 import java.io.Serializable;
@@ -38,6 +39,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -48,8 +50,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "service")
 @NamedQueries({
-    @NamedQuery(name = "findAll", query = "SELECT s FROM Service s ORDER BY s.name")
-    ,
+    @NamedQuery(name = "findAll", query = "SELECT s FROM Service s ORDER BY s.name"),
     @NamedQuery(name = "findAllActive", query = "SELECT s FROM Service s WHERE s.active = 1 ORDER BY s.name")
 })
 public class Service implements Serializable, BusinessEntity, Comparable {
@@ -98,6 +99,11 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     }
 
     public AccountingCode getAccountingCode() {
+
+        if (accountingCode == null) {
+            return new AccountingCode();
+        }
+
         return accountingCode;
     }
 
@@ -122,7 +128,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return "No";
         }
     }
-    
+
     public void setUsable(String usable) {
         if (usable.equals("Yes")) {
             setActive(true);
@@ -181,12 +187,11 @@ public class Service implements Serializable, BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Service)) {
             return false;
         }
         Service other = (Service) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -241,7 +246,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static Service findById(EntityManager em, Long id) {
 
         try {
-            
+
             Service service = em.find(Service.class, id);
 
             return service;
@@ -255,13 +260,13 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static Service findByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "LIKE '%" + name.toUpperCase() + "%'", 
+                    + "LIKE '%" + name.toUpperCase() + "%'",
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -272,17 +277,17 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
-    
-     public static Service findByExactName(EntityManager em, String name) {
+
+    public static Service findByExactName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "= '" + name.toUpperCase() + "'", 
+                    + "= '" + name.toUpperCase() + "'",
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -293,17 +298,17 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
-    
+
     public static Service findActiveByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "LIKE '%" + name.toUpperCase() + "%' AND s.active = 1", 
+                    + "LIKE '%" + name.toUpperCase() + "%' AND s.active = 1",
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -314,17 +319,17 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
-    
+
     public static Service findActiveByExactName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s "
                     + "WHERE UPPER(s.name) "
-                    + "= '" + name.toUpperCase() + "' AND s.active = 1", 
+                    + "= '" + name.toUpperCase() + "' AND s.active = 1",
                     Service.class).getResultList();
             if (!services.isEmpty()) {
                 return services.get(0);
@@ -342,10 +347,10 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             String code) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
             code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s"
                     + " JOIN s.accountingCode accountingCode"
@@ -363,17 +368,17 @@ public class Service implements Serializable, BusinessEntity, Comparable {
             return null;
         }
     }
-    
+
     public static Service findActiveByNameAndAccountingCode(
             EntityManager em,
             String serviceName,
             String code) {
 
         try {
-            
+
             serviceName = serviceName.replaceAll("&amp;", "&").replaceAll("'", "`");
             code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Service> services = em.createQuery(
                     "SELECT s FROM Service s"
                     + " JOIN s.accountingCode accountingCode"
@@ -395,9 +400,9 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static List<Service> findAllByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Service> services
                     = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
                             + name.toUpperCase().trim() + "%' ORDER BY s.name", Service.class).getResultList();
@@ -411,9 +416,9 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     public static List<Service> findAllActiveByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<Service> services
                     = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
                             + name.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Service.class).getResultList();
@@ -425,21 +430,21 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     }
 
     public static List<Service> findAllActiveByNameAndAccountingCode(
-            EntityManager em, 
-            String name, 
+            EntityManager em,
+            String name,
             String code) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
             code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Service> services
                     = em.createQuery("SELECT s FROM Service s"
                             + " JOIN s.accountingCode accountingCode"
                             + " WHERE UPPER(s.name) LIKE '%"
                             + name.toUpperCase().trim() + "%' AND s.active = 1"
-                            + " AND accountingCode.code LIKE '%" + code + "%'" 
+                            + " AND accountingCode.code LIKE '%" + code + "%'"
                             + " ORDER BY s.name", Service.class).getResultList();
             return services;
         } catch (Exception e) {
@@ -451,9 +456,7 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            getAccountingCode().save(em);
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -548,6 +551,26 @@ public class Service implements Serializable, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

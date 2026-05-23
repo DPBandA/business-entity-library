@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,7 @@ package jm.com.dpbennett.business.entity.mt;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -32,6 +33,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -50,7 +52,7 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
     private Long id;
     private Long ownerId;
     private Long number;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private TestMeasure testMeasure;
     private Double error;
     private Double tolerance;
@@ -129,6 +131,11 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
     }
 
     public TestMeasure getTestMeasure() {
+
+        if (testMeasure == null) {
+            return new TestMeasure();
+        }
+
         return testMeasure;
     }
 
@@ -164,7 +171,7 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.PetrolPumpNozzleCalibrationPoint[id=" + id + "]";
+        return "jm.com.dpbennett.entity.PetrolPumpNozzleCalibrationPoint[id=" + id + "]";
     }
 
     @Override
@@ -190,23 +197,23 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
 
     @Override
     public void setName(String name) {
-        
+
     }
 
     @Override
     public String getType() {
-        
+
         return "";
     }
 
     @Override
     public void setType(String type) {
-        
+
     }
 
     @Override
     public String getCategory() {
-        
+
         return "";
     }
 
@@ -237,8 +244,6 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            //getTestMeasure().save(em);
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -324,6 +329,26 @@ public class PetrolPumpNozzleCalibrationPoint implements Serializable,
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -36,6 +36,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -57,7 +58,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     private Date entryDocumentReportDate;
     private String containerNumbers;
     private String containerSizes;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<ShippingContainer> shippingContainers;
     private Double CIF;
     private Double SCF;
@@ -149,6 +150,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
         if (invoiceNumber == null) {
             invoiceNumber = "";
         }
+
         return invoiceNumber;
     }
 
@@ -224,6 +226,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
         if (CIF == null) {
             CIF = 0.0;
         }
+
         return CIF;
     }
 
@@ -268,7 +271,6 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof EntryDocumentInspection)) {
             return false;
         }
@@ -305,7 +307,6 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
 
         if (containerNumbers != null) {
             ArrayList<String> list = new ArrayList<>(Arrays.asList(containerNumbers.split("[,;:|/]")));
-            //containerNumberList.add("");
             for (String string : list) {
                 containerNumberList.add(string.trim());
             }
@@ -320,7 +321,6 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            // Save new cost components
             if (!getShippingContainers().isEmpty()) {
                 for (ShippingContainer shippingContainer : getShippingContainers()) {
                     if ((shippingContainer.getIsDirty() || shippingContainer.getId() == null)
@@ -459,6 +459,26 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

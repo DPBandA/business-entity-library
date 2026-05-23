@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -20,7 +20,6 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.lo;
 
 import jm.com.dpbennett.business.entity.dm.DocumentType;
-import jm.com.dpbennett.business.entity.dm.Document;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -45,9 +44,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.rm.DatePeriod;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -60,7 +59,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllLegalDocuments", query = "SELECT l FROM LegalDocument l ORDER BY l.number")
 })
-public class LegalDocument implements Document, Comparable, BusinessEntity {
+public class LegalDocument implements LegalDocumentInterface {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -117,26 +116,27 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Transient
     private Boolean visited;
 
-    /**
-     * Default constructor.
-     */
     public LegalDocument() {
     }
 
+    @Override
     public String getStrategicPriority() {
         return strategicPriority;
     }
 
+    @Override
     public void setStrategicPriority(String strategicPriority) {
         this.strategicPriority = strategicPriority;
     }
 
+    @Override
     public Integer getActualTurnaroundTime() {
         actualTurnaroundTime = getCurrentDocumentActualTurnaroundTime();
 
         return actualTurnaroundTime;
     }
 
+    @Override
     public void setActualTurnaroundTime(Integer actualTurnaroundTime) {
         this.actualTurnaroundTime = actualTurnaroundTime;
     }
@@ -154,6 +154,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.isDirty = isDirty;
     }
 
+    @Override
     public Boolean getVisited() {
         if (visited == null) {
             visited = false;
@@ -161,6 +162,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return visited;
     }
 
+    @Override
     public void setVisited(Boolean visited) {
         this.visited = visited;
     }
@@ -169,6 +171,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return dateOfCompletion != null;
     }
 
+    @Override
     public String getRowStyle() {
 
         if (getVisited()) {
@@ -198,6 +201,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         if (editedBy == null) {
             return new Employee();
         }
+
         return editedBy;
     }
 
@@ -206,30 +210,37 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         editedBy = (Employee) person;
     }
 
+    @Override
     public String getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(String status) {
         this.status = status;
     }
 
+    @Override
     public String getPriorityLevel() {
         return priorityLevel;
     }
 
+    @Override
     public void setPriorityLevel(String priorityLevel) {
         this.priorityLevel = priorityLevel;
     }
 
+    @Override
     public String getGoal() {
         return goal;
     }
 
+    @Override
     public void setGoal(String goal) {
         this.goal = goal;
     }
 
+    @Override
     public Integer getYearReceived() {
         Calendar c = Calendar.getInstance();
 
@@ -240,17 +251,21 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return yearReceived;
     }
 
+    @Override
     public void setYearReceived(Integer yearReceived) {
         this.yearReceived = yearReceived;
     }
 
+    @Override
     public Client getExternalClient() {
         if (externalClient == null) {
-            return new Client("");
+            return new Client();
         }
+
         return externalClient;
     }
 
+    @Override
     public void setExternalClient(Client externalClient) {
         this.externalClient = externalClient;
     }
@@ -260,10 +275,12 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.numberOfDocuments = numberOfDocuments;
     }
 
+    @Override
     public Long getNumberOfDocuments() {
         return numberOfDocuments;
     }
 
+    @Override
     public void setNumberOfDocuments(Long numberOfDocuments) {
         this.numberOfDocuments = numberOfDocuments;
     }
@@ -276,16 +293,19 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         }
     }
 
+    @Override
     public Integer getTurnaroundTime() {
         turnaroundTime = getCurrentDocumentTurnaroundTime();
 
         return turnaroundTime;
     }
 
+    @Override
     public void setTurnaroundTime(Integer turnaroundTime) {
         this.turnaroundTime = turnaroundTime;
     }
 
+    @Override
     public Boolean getAutoGenerateNumber() {
         if (autoGenerateNumber == null) {
             autoGenerateNumber = false;
@@ -293,22 +313,26 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return autoGenerateNumber;
     }
 
+    @Override
     public void setAutoGenerateNumber(Boolean autoGenerateNumber) {
         this.autoGenerateNumber = autoGenerateNumber;
     }
 
+    @Override
     public Department getRequestingDepartment() {
         if (requestingDepartment == null) {
-            requestingDepartment = new Department();
+            return new Department();
         }
 
         return requestingDepartment;
     }
 
+    @Override
     public void setRequestingDepartment(Department requestingDepartment) {
         this.requestingDepartment = requestingDepartment;
     }
 
+    @Override
     public Integer getMonthReceived() {
         Calendar c = Calendar.getInstance();
 
@@ -319,30 +343,37 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         return monthReceived;
     }
 
+    @Override
     public void setMonthReceived(Integer monthReceived) {
         this.monthReceived = monthReceived;
     }
 
+    @Override
     public Long getSequenceNumber() {
         return sequenceNumber;
     }
 
+    @Override
     public void setSequenceNumber(Long sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
     }
 
+    @Override
     public String getDocumentForm() {
         return documentForm;
     }
 
+    @Override
     public void setDocumentForm(String documentForm) {
         this.documentForm = documentForm;
     }
 
+    @Override
     public Department getResponsibleDepartment() {
         if (responsibleDepartment == null) {
             return new Department();
         }
+
         return responsibleDepartment;
     }
 
@@ -356,14 +387,17 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.comments = comments;
     }
 
+    @Override
     public String getWorkPerformedOnDocument() {
         return workPerformedOnDocument;
     }
 
+    @Override
     public void setWorkPerformedOnDocument(String workPerformedOnDocument) {
         this.workPerformedOnDocument = workPerformedOnDocument;
     }
 
+    @Override
     public void setResponsibleDepartment(Department responsibleDepartment) {
         this.responsibleDepartment = responsibleDepartment;
     }
@@ -378,18 +412,22 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.id = id;
     }
 
+    @Override
     public Date getDateOfCompletion() {
         return dateOfCompletion;
     }
 
+    @Override
     public void setDateOfCompletion(Date dateOfCompletion) {
         this.dateOfCompletion = dateOfCompletion;
     }
 
+    @Override
     public Date getDateReceived() {
         return dateReceived;
     }
 
+    @Override
     public void setDateReceived(Date dateReceived) {
         this.dateReceived = dateReceived;
     }
@@ -404,10 +442,12 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.description = description;
     }
 
+    @Override
     public Date getExpectedDateOfCompletion() {
         return expectedDateOfCompletion;
     }
 
+    @Override
     public void setExpectedDateOfCompletion(Date expectedDateOfCompletion) {
         this.expectedDateOfCompletion = expectedDateOfCompletion;
     }
@@ -432,24 +472,30 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.number = number;
     }
 
+    @Override
     public Employee getResponsibleOfficer() {
         if (responsibleOfficer == null) {
             return new Employee();
         }
+
         return responsibleOfficer;
     }
 
+    @Override
     public void setResponsibleOfficer(Employee responsibleOfficer) {
         this.responsibleOfficer = responsibleOfficer;
     }
 
+    @Override
     public Employee getSubmittedBy() {
         if (submittedBy == null) {
             return new Employee();
         }
+
         return submittedBy;
     }
 
+    @Override
     public void setSubmittedBy(Employee submittedBy) {
         this.submittedBy = submittedBy;
     }
@@ -487,7 +533,6 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof LegalDocument)) {
             return false;
         }
@@ -498,7 +543,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.Document[id=" + id + "]";
+        return "jm.com.dpbennett.entity.Document[id=" + id + "]";
     }
 
     @Override
@@ -511,6 +556,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         if (classification == null) {
             return new Classification();
         }
+
         return classification;
     }
 
@@ -519,6 +565,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         this.classification = classification;
     }
 
+    @Override
     public Integer getCurrentDocumentActualTurnaroundTime() {
         if (dateReceived != null && dateOfCompletion != null) {
             return BusinessEntityUtils.calculatePeriodInWorkingDays(dateReceived, dateOfCompletion);
@@ -589,7 +636,6 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
 
         switch (searchType) {
             case "Legal Documents":
-                //if (!searchText.equals("")) {
                 searchTextAndClause
                         = " AND ("
                         + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
@@ -608,7 +654,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
                         + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
                         + " )";
-                //}
+
                 searchQuery
                         = "SELECT doc FROM LegalDocument doc"
                         + " JOIN doc.responsibleDepartment responsibleDepartment"
@@ -668,21 +714,20 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     public static String getLegalDocumentNumber(LegalDocument legalDocument, String prefix) {
         String number = prefix;
 
-        // append department code
         if (legalDocument.getResponsibleDepartment().getCode() != null) {
             number = number + legalDocument.getResponsibleDepartment().getCode();
         } else {
             number = number + "?";
         }
-        // append doc type
+
         if (legalDocument.getDocumentType() != null) {
             number = number + "_" + legalDocument.getDocumentType().getCode();
         }
-        // append doc form
+
         if (legalDocument.getDocumentForm() != null) {
             number = number + "/" + legalDocument.getDocumentForm();
         }
-        // append doc seq
+
         if (legalDocument.getSequenceNumber() != null) {
             NumberFormat formatter = DecimalFormat.getIntegerInstance();
             formatter.setMinimumIntegerDigits(2);
@@ -690,7 +735,7 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
         } else {
             number = number + "_?";
         }
-        // append month in the form (MMM) and year in the form (YY).
+
         if (legalDocument.getDateReceived() != null) {
             number = number + "/" + BusinessEntityUtils.getMonthShortFormat(legalDocument.getDateReceived())
                     + BusinessEntityUtils.getYearShortFormat(legalDocument.getDateReceived(), 2);
@@ -703,18 +748,37 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            if (getDocumentType().getId() != null) {
-                getDocumentType().save(em);
+            if (documentType != null) {
+                documentType.save(em);
             }
-            getRequestingDepartment().save(em);
-            getResponsibleDepartment().save(em);
-            getResponsibleOfficer().save(em);
-            getSubmittedBy().save(em);
-            getClassification().save(em);
-            if (getExternalClient().getId() != null) {
-                getExternalClient().save(em);
+            
+            if (requestingDepartment != null) {
+                requestingDepartment.save(em);
             }
-            getEditedBy().save(em);
+            
+            if (responsibleDepartment != null) {
+                responsibleDepartment.save(em);
+            }
+            
+            if (responsibleOfficer != null) {
+                responsibleOfficer.save(em);
+            }
+            
+            if (submittedBy != null) {
+                submittedBy.save(em);
+            }
+            
+            if (classification != null) {
+                classification.save(em);
+            }
+            
+            if (externalClient != null) {
+                externalClient.save(em);
+            }
+            
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -796,11 +860,30 @@ public class LegalDocument implements Document, Comparable, BusinessEntity {
     @Override
     public String getType() {
         return "";
-        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

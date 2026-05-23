@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -29,9 +29,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -90,44 +93,44 @@ public class Job implements BusinessEntity {
     private Boolean locked;
     private Boolean isEarningJob;
     private Boolean newClient;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Job parent;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Classification classification;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Sector sector;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Department department;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Department subContractedDepartment;
     private Integer yearReceived;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private JobCategory jobCategory;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private JobSubCategory jobSubCategory;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Employee assignedTo;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private JobCostingAndPayment jobCostingAndPayment;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private ServiceContract serviceContract;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private JobStatusAndTracking jobStatusAndTracking;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Business business;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private BusinessOffice businessOffice;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Address billingAddress;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Contact contact;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobSample> jobSamples;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @ManyToMany
     private List<Employee> representatives;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @ManyToMany
     private List<Service> services;
     @Column(length = 1024)
     private String jobDescription;
@@ -339,6 +342,23 @@ public class Job implements BusinessEntity {
         return getJobCostingAndPayment().getCashPayments();
     }
 
+    public static List<Job> findInvoices(EntityManager em, Job parent) {
+
+        try {
+
+            List<Job> jobs = em.createQuery("SELECT j FROM Job j"
+                    + " WHERE j.type = 'Invoice' AND j.parent.id = " + parent.id
+                    + " ORDER BY j.id DESC", Job.class).getResultList();
+            
+            return jobs;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
+    }
+
     public void setCashPayments(List<CashPayment> cashPayments) {
         getJobCostingAndPayment().setCashPayments(cashPayments);
     }
@@ -383,6 +403,7 @@ public class Job implements BusinessEntity {
         if (representatives == null) {
             representatives = new ArrayList<>();
         }
+
         return representatives;
     }
 
@@ -394,6 +415,7 @@ public class Job implements BusinessEntity {
         if (services == null) {
             services = new ArrayList<>();
         }
+
         return services;
     }
 
@@ -410,10 +432,6 @@ public class Job implements BusinessEntity {
     }
 
     public Job getParent() {
-        if (parent == null) {
-            return new Job();
-        }
-
         return parent;
     }
 
@@ -427,28 +445,22 @@ public class Job implements BusinessEntity {
         JobSequenceNumber nextJobSequenceNumber = null;
 
         try {
-            // Get employee for later use
             Employee employee = user.getEmployee();
 
-            // Set date entered
             if (this.getJobStatusAndTracking().getDateAndTimeEntered() == null) {
                 this.getJobStatusAndTracking().setDateAndTimeEntered(now);
             }
 
-            // Set "entered by" and "edited by" if this is a new job           
             if (this.getJobStatusAndTracking().getEnteredBy().getId() == null) {
-                // This means this this is a new job so set user and person who entered the job
                 this.getJobStatusAndTracking().setEnteredBy(employee);
                 this.getJobStatusAndTracking().setEditedBy(employee);
             }
 
-            // Update re the person who last edited/entered the job etc.
             if (this.getIsDirty()) {
                 this.getJobStatusAndTracking().setDateStatusEdited(now);
                 this.getJobStatusAndTracking().setEditedBy(employee);
             }
 
-            // Modify job number with sequence number if required
             if (this.getAutoGenerateJobNumber()) {
                 if ((this.getJobSequenceNumber() == null)) {
                     nextJobSequenceNumber = JobSequenceNumber.findNextJobSequenceNumber(em, this.getYearReceived());
@@ -459,11 +471,9 @@ public class Job implements BusinessEntity {
                 }
             }
 
-            // Finally..save the job
             ReturnMessage returnMessage = this.save(em);
 
             if (returnMessage.isSuccess()) {
-                // Save job sequence number since it was used by this job
                 if (nextJobSequenceNumber != null) {
                     nextJobSequenceNumber.save(em);
                 }
@@ -473,7 +483,6 @@ public class Job implements BusinessEntity {
 
                 System.out.println("Job was not saved in prepareAndSave()"); //tk
 
-                // Reset the sequence number here if the job is new.
                 if (this.getId() == null) {
                     this.setJobSequenceNumber(null);
                 }
@@ -507,70 +516,58 @@ public class Job implements BusinessEntity {
         this.setIsDirty(false);
     }
 
-    public static Job copy(EntityManager em,
-            Job job,
-            User user,
-            Boolean autoGenerateJobNumber,
-            Boolean linkSamples) {
+    public static Job copy(Job src) {
 
         Job copy = new Job();
-
-        // General
-        copy.setIsEarningJob(job.getIsEarningJob());
-        copy.setAutoGenerateJobNumber(autoGenerateJobNumber);
-        copy.setYearReceived(Calendar.getInstance().get(Calendar.YEAR));
-        copy.setBusiness(job.getBusiness());
-        copy.setBusinessOffice(job.getBusinessOffice());
-        copy.setClassification(job.getClassification());
-        copy.setClient(job.getClient());
-        copy.setBillingAddress(job.getBillingAddress());
-        copy.setContact(job.getContact());
-        copy.setDepartment(job.getDepartment());
-        copy.setSubContractedDepartment(Department.findDefault(em, "--"));
-        copy.setAssignedTo(job.getAssignedTo());
-        copy.setRepresentatives(job.getRepresentatives());
-        copy.setEstimatedTurnAroundTimeInDays(job.getEstimatedTurnAroundTimeInDays());
-        copy.setEstimatedTurnAroundTimeRequired(job.getEstimatedTurnAroundTimeRequired());
-        copy.setInstructions(job.getInstructions());
-        // Services
-        copy.setServiceLocation(job.getServiceLocation());
-        copy.setServiceContract(new ServiceContract(job.getServiceContract()));
-        copy.setServices(job.getServices());
-        // Copy or link samples
-        List<JobSample> samples = job.getJobSamples();
-        copy.setNumberOfSamples(job.getNumberOfSamples());
-        if (linkSamples) {
-            for (JobSample jobSample : samples) {
-                copy.getJobSamples().add(jobSample);
-            }
-        } else {
-            for (JobSample jobSample : samples) {
-                jobSample.setDateSampled(new Date());
-                jobSample.setDateReceived(new Date());
-                copy.getJobSamples().add(new JobSample(jobSample));
-            }
+        copy.setName(src.getName());
+        copy.setType(src.getType());
+        copy.setJobNumber(src.getJobNumber());
+        copy.setAutoGenerateJobNumber(src.getAutoGenerateJobNumber());
+        copy.setJobSequenceNumber(src.getJobSequenceNumber());
+        copy.setComment(src.getComment());
+        copy.setNumberOfSamples(src.getNumberOfSamples());
+        copy.setEstimatedTurnAroundTimeInDays(src.getEstimatedTurnAroundTimeInDays());
+        copy.setEstimatedTurnAroundTimeRequired(src.getEstimatedTurnAroundTimeRequired());
+        copy.setLocked(src.getLocked());
+        copy.setIsEarningJob(src.getIsEarningJob());
+        copy.setParent(src.getParent());
+        copy.setClassification(src.getClassification());
+        copy.setSector(src.getSector());
+        copy.setDepartment(src.getDepartment());
+        copy.setSubContractedDepartment(src.getSubContractedDepartment());
+        copy.setYearReceived(src.getYearReceived());
+        copy.setClient(src.getClient());
+        copy.setJobCategory(src.getJobCategory());
+        copy.setJobSubCategory(src.getJobSubCategory());
+        copy.setAssignedTo(src.getAssignedTo());
+        copy.setJobCostingAndPayment(JobCostingAndPayment.copy(src.getJobCostingAndPayment()));
+        copy.setServiceContract(ServiceContract.copy(src.getServiceContract()));
+        copy.setServiceLocation(src.getServiceLocation());
+        copy.setJobStatusAndTracking(JobStatusAndTracking.copy(src.getJobStatusAndTracking()));
+        copy.setBusiness(src.getBusiness());
+        copy.setBusinessOffice(src.getBusinessOffice());
+        copy.setBillingAddress(src.getBillingAddress());
+        copy.setContact(src.getContact());
+        for (JobSample jobSample : src.getJobSamples()) {
+            jobSample.setDateSampled(new Date());
+            jobSample.setDateReceived(new Date());
+            copy.getJobSamples().add(JobSample.copy(jobSample));
         }
-        //Costing and Payment
-        copy.setJobCostingAndPayment(JobCostingAndPayment.create(em));
-        // Grouping
-        copy.setSector(job.getSector());
-        copy.setJobCategory(job.getJobCategory());
-        copy.setJobSubCategory(job.getJobSubCategory());
-        // Status and Tracking
-        copy.setJobStatusAndTracking(new JobStatusAndTracking());
-        copy.getJobStatusAndTracking().setDateSubmitted(new Date());
-        copy.getJobStatusAndTracking().setDateAndTimeEntered(new Date());
-        copy.getJobStatusAndTracking().setWorkProgress("Not started");
-        copy.getJobStatusAndTracking().setStartDate(null);
-        // Reporting
-        copy.setReportNumber("");
-        // Other
-        copy.setIsToBeCopied(true);
-        copy.setJobDescription(job.getJobDescription());
-        // Set job number
-        if (copy.getAutoGenerateJobNumber()) {
-            copy.setJobNumber(Job.generateJobNumber(copy, em));
-        }
+        copy.setRepresentatives(src.getRepresentatives());
+        copy.setServices(src.getServices());
+        copy.setJobDescription(src.getJobDescription());
+        copy.setInstructions(src.getInstructions());
+        copy.setNewClient(src.getNewClient());
+        copy.setReportNumber(src.getReportNumber());
+        copy.setNoOfTests(src.getNoOfTests());
+        copy.setNoOfCalibrations(src.getNoOfCalibrations());
+        copy.setNoOfTestsOrCalibrations(src.getNoOfTestsOrCalibrations());
+        copy.setNoOfInspections(src.getNoOfInspections());
+        copy.setNoOfTrainings(src.getNoOfTrainings());
+        copy.setNoOfLabelAssessments(src.getNoOfLabelAssessments());
+        copy.setNoOfCertifications(src.getNoOfCertifications());
+        copy.setNoOfConsultations(src.getNoOfConsultations());
+        copy.setNoOfTests(src.getNoOfTests());
 
         return copy;
     }
@@ -614,20 +611,15 @@ public class Job implements BusinessEntity {
         job.setSector(Sector.findSectorByName(fmem, "--"));
         job.setJobCategory(JobCategory.findJobCategoryByName(fmem, "--"));
         job.setJobSubCategory(JobSubCategory.findJobSubCategoryByName(fmem, "--"));
-        // service contract
         job.setServiceContract(new ServiceContract());
-        // set default values
         job.setAutoGenerateJobNumber(autoGenerateJobNumber);
         job.setIsEarningJob(Boolean.TRUE);
         job.setYearReceived(Calendar.getInstance().get(Calendar.YEAR));
-        // job status and tracking
         job.setJobStatusAndTracking(new JobStatusAndTracking());
         job.getJobStatusAndTracking().setDateAndTimeEntered(new Date());
         job.getJobStatusAndTracking().setDateSubmitted(new Date());
         job.getJobStatusAndTracking().setWorkProgress("Not started");
-        // job costing and payment
         job.setJobCostingAndPayment(JobCostingAndPayment.create(em));
-        // this is done here because job number is dependent on business office, department/subcontracted department
         job.setNumberOfSamples(0L);
         if (job.getAutoGenerateJobNumber()) {
             job.setJobNumber(Job.generateJobNumber(job, em));
@@ -646,8 +638,6 @@ public class Job implements BusinessEntity {
         departmentOrCompanyCode = job.getDepartment().getCode().equals("") ? "?" : job.getDepartment().getCode();
         subContractedDepartmenyOrCompanyCode = job.getSubContractedDepartment().getCode().equals("") ? "?" : job.getSubContractedDepartment().getCode();
 
-        // Use the date entered to get the year if it is valid
-        // and only if this is not a subcontracted job
         if ((job.getJobStatusAndTracking().getDateAndTimeEntered() != null)
                 && (subContractedDepartmenyOrCompanyCode.equals("?"))) {
             c.setTime(job.getJobStatusAndTracking().getDateAndTimeEntered());
@@ -655,15 +645,12 @@ public class Job implements BusinessEntity {
         } else if (job.getYearReceived() != null) {
             year = job.getYearReceived().toString();
         }
-        // include the sequence number if it is valid
         if (job.getJobSequenceNumber() != null) {
             sequenceNumber = BusinessEntityUtils.getIntegerString(job.getJobSequenceNumber(), 4);
         } else {
             sequenceNumber = "?";
         }
-        // set base job number
         job.setJobNumber(departmentOrCompanyCode + "/" + year + "/" + sequenceNumber);
-        // append subcontracted code if valid
         if (!subContractedDepartmenyOrCompanyCode.equals("?")) {
             job.setJobNumber(job.getJobNumber() + "/" + subContractedDepartmenyOrCompanyCode);
         }
@@ -671,13 +658,23 @@ public class Job implements BusinessEntity {
         Boolean includeRef = (Boolean) SystemOption.getOptionValueObject(em,
                 "includeSampleReference");
 
-        // Append sample codes if any
         if (includeRef) {
             if ((job.getNumberOfSamples() != null) && (job.getNumberOfSamples() > 1)) {
                 job.setJobNumber(job.getJobNumber() + "/"
                         + BusinessEntityUtils.getAlphaCode(0) + "-"
                         + BusinessEntityUtils.getAlphaCode(job.getNumberOfSamples() - 1));
             }
+        }
+
+        return job.getJobNumber();
+    }
+
+    private static String buildInvoiceNumber(Job job) {
+
+        if (job.getJobSequenceNumber() != null) {
+            job.setJobNumber(BusinessEntityUtils.getIntegerString(job.getJobSequenceNumber(), 6));
+        } else {
+            job.setJobNumber("?");
         }
 
         return job.getJobNumber();
@@ -699,38 +696,32 @@ public class Job implements BusinessEntity {
         } else {
             c.setTime(new Date());
         }
-        // Year
         String year = "" + c.get(Calendar.YEAR);
         year = year.substring(year.length() - 2, year.length());
-        // Month        
         int month_int = c.get(Calendar.MONTH) + 1;
         if (month_int < 10) {
             month = "0" + month_int;
         } else {
             month = "" + month_int;
         }
-        // Day
         int day_int = c.get(Calendar.DAY_OF_MONTH);
         if (day_int < 10) {
             day = "0" + day_int;
         } else {
             day = "" + day_int;
         }
-        // Hour
         int hour_int = c.get(Calendar.HOUR_OF_DAY);
         if (hour_int < 10) {
             hour = "0" + hour_int;
         } else {
             hour = "" + hour_int;
         }
-        // Min
         int min_int = c.get(Calendar.MINUTE);
         if (min_int < 10) {
             min = "0" + min_int;
         } else {
             min = "" + min_int;
         }
-        // Sec
         int sec_int = c.get(Calendar.SECOND);
         if (sec_int < 10) {
             sec = "0" + sec_int;
@@ -750,10 +741,15 @@ public class Job implements BusinessEntity {
     }
 
     public static String generateJobNumber(Job job, EntityManager em) {
-        if (job.getJobCostingAndPayment().getEstimate()) {
-            return buildProformaNumber(job);
-        } else {
-            return buildJobNumber(job, em);
+        switch (job.getType()) {
+            case "Proforma Invoice":
+                return buildProformaNumber(job);
+            case "Invoice":
+                return buildInvoiceNumber(job);
+            case "Job":
+                return buildJobNumber(job, em);
+            default:
+                return "";
         }
     }
 
@@ -787,6 +783,7 @@ public class Job implements BusinessEntity {
                 return new Contact();
             }
         }
+
         return contact;
     }
 
@@ -802,6 +799,7 @@ public class Job implements BusinessEntity {
                 return new Address();
             }
         }
+
         return billingAddress;
     }
 
@@ -854,39 +852,6 @@ public class Job implements BusinessEntity {
         return findPossibleSubcontracts(em);
     }
 
-// tk for use to create other methods dealing with subcontracts
-//    public Boolean hasSubcontracts(EntityManager em) {
-//        List<Job> jobs = Job.findJobsByYearReceivedAndJobSequenceNumber(em,
-//                this.getYearReceived(),
-//                this.getJobSequenceNumber());
-//
-//        if (jobs != null) {
-//            for (Job job : jobs) {
-//                // If this job is subcontracted and is a child of this job
-//                // then it's a subcontract
-//                if (job.getIsSubContract() && !this.getIsSubContract()) {
-//
-//                    String ccName = "Subcontract to " + job.getSubContractedDepartment().getName() + " (" + job.getJobNumber() + ")";
-//                    // Check that this cost component does not already exist.
-//                    // The assumption is that only one component will be found if any
-//                    if (!CostComponent.findCostComponentsByName(ccName,
-//                            currentJob.getJobCostingAndPayment().getCostComponents()).isEmpty()) {
-//                        deleteCostComponentByName(ccName);
-//                    }
-//                    CostComponent cc
-//                            = new CostComponent(
-//                                    ccName,
-//                                    job.getJobCostingAndPayment().getFinalCost(),
-//                                    true, false);
-//
-//                    currentJob.getJobCostingAndPayment().getCostComponents().add(cc);
-//                    setDirty(true);
-//                }
-//            }
-//        }
-//
-//        return false;
-//    }
     public Integer getNoOfTests() {
         if (noOfTests == null) {
             noOfTests = 0;
@@ -954,6 +919,11 @@ public class Job implements BusinessEntity {
     }
 
     public Classification getClassification() {
+
+        if (classification == null) {
+            return new Classification();
+        }
+
         return classification;
     }
 
@@ -962,6 +932,10 @@ public class Job implements BusinessEntity {
     }
 
     public Sector getSector() {
+        if (sector == null) {
+            return new Sector();
+        }
+
         return sector;
     }
 
@@ -1015,17 +989,8 @@ public class Job implements BusinessEntity {
         return (getJobSamples().size() == 1) && (getJobSamples().get(0).getDescription().trim().equals("--"));
     }
 
-    /**
-     * Return empty list if the only job sample is the default sample
-     *
-     * @return
-     */
     public List<JobSample> getFilteredJobSamples() {
-        //if (hasOnlyDefaultJobSample()) {
-        //   return new ArrayList<>();
-        //} else {
-        //    return getJobSamples();
-        //}
+
         Collections.sort(getJobSamples());
 
         return jobSamples;
@@ -1044,6 +1009,10 @@ public class Job implements BusinessEntity {
     }
 
     public Business getBusiness() {
+        if (business == null) {
+            return new Business();
+        }
+
         return business;
     }
 
@@ -1052,6 +1021,10 @@ public class Job implements BusinessEntity {
     }
 
     public BusinessOffice getBusinessOffice() {
+        if (businessOffice == null) {
+            return new BusinessOffice();
+        }
+
         return businessOffice;
     }
 
@@ -1080,7 +1053,7 @@ public class Job implements BusinessEntity {
 
     public Client getClient() {
         if (client == null) {
-            return new Client("");
+            return new Client();
         }
 
         return client;
@@ -1092,8 +1065,9 @@ public class Job implements BusinessEntity {
 
     public Department getDepartment() {
         if (department == null) {
-            return new Department("");
+            return new Department();
         }
+
         return department;
     }
 
@@ -1104,7 +1078,6 @@ public class Job implements BusinessEntity {
     public Department getDepartmentAssignedToJob() {
 
         if (getSubContractedDepartment().getName().equals("--")) {
-            // This is not a subcontracted job see return to parent department            
             return getDepartment();
         } else {
             return getSubContractedDepartment();
@@ -1112,6 +1085,10 @@ public class Job implements BusinessEntity {
     }
 
     public Employee getAssignedTo() {
+
+        if (assignedTo == null) {
+            return new Employee();
+        }
 
         return assignedTo;
     }
@@ -1121,6 +1098,10 @@ public class Job implements BusinessEntity {
     }
 
     public JobCategory getJobCategory() {
+        if (jobCategory == null) {
+            return new JobCategory();
+        }
+
         return jobCategory;
     }
 
@@ -1129,6 +1110,10 @@ public class Job implements BusinessEntity {
     }
 
     public JobSubCategory getJobSubCategory() {
+        if (jobSubCategory == null) {
+            return new JobSubCategory();
+        }
+
         return jobSubCategory;
     }
 
@@ -1138,8 +1123,9 @@ public class Job implements BusinessEntity {
 
     public Department getSubContractedDepartment() {
         if (subContractedDepartment == null) {
-            return new Department("");
+            return new Department();
         }
+
         return subContractedDepartment;
     }
 
@@ -1204,12 +1190,6 @@ public class Job implements BusinessEntity {
         this.noOfTestsOrCalibrations = noOfTestsOrCalibrations;
     }
 
-    /**
-     * This currently not implemented. Use the samples collection to get the
-     * number of samples.
-     *
-     * @return
-     */
     public Long getNumberOfSamples() {
         if (numberOfSamples == null) {
             numberOfSamples = 0L;
@@ -1259,7 +1239,6 @@ public class Job implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Job)) {
             return false;
         }
@@ -1296,7 +1275,6 @@ public class Job implements BusinessEntity {
         Job lastJob = null;
         String searchQuery;
 
-        // build query based on id or name
         if (client.getId() != null) {
             searchQuery
                     = "SELECT job FROM Job job"
@@ -1312,7 +1290,6 @@ public class Job implements BusinessEntity {
         } else {
             return lastJob;
         }
-        // find last job if any
         List<Job> jobs = em.createQuery(searchQuery, Job.class).getResultList();
         if (jobs != null) {
             if (!jobs.isEmpty()) {
@@ -1391,7 +1368,6 @@ public class Job implements BusinessEntity {
         String datePeriodSubClause = "jobStatusAndTracking." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
                 + " AND jobStatusAndTracking." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-");
 
-        // Build query based on search type
         switch (searchType) {
             case "Appr'd & uninv'd jobs":
                 searchTextAndClause
@@ -1576,18 +1552,9 @@ public class Job implements BusinessEntity {
         return foundJobs;
     }
 
-    /**
-     * Gets all jobs that are considered to be new. Presently all jobs without
-     * an alert date set is considered new.
-     *
-     * @param em
-     * @param datePeriod
-     * @return
-     */
     public static List<Job> findAllNewJobs(EntityManager em, DatePeriod datePeriod) {
         try {
-            List<Job> jobs = em.createQuery(
-                    "SELECT j FROM Job j"
+            List<Job> jobs = em.createQuery("SELECT j FROM Job j"
                     + " JOIN j.jobStatusAndTracking t"
                     + " WHERE (t.dateSubmitted >= " + BusinessEntityUtils.getDateString(datePeriod.getStartDate(), "'", "YMD", "-")
                     + " AND t.dateSubmitted <= " + BusinessEntityUtils.getDateString(datePeriod.getEndDate(), "'", "YMD", "-") + ")"
@@ -1600,18 +1567,9 @@ public class Job implements BusinessEntity {
         }
     }
 
-    /**
-     * Gets all jobs that have been updated. Presently all jobs without a job
-     * email date set is considered updated.
-     *
-     * @param em
-     * @param datePeriod
-     * @return
-     */
     public static List<Job> findAllUpdatedJobs(EntityManager em, DatePeriod datePeriod) {
         try {
-            List<Job> jobs = em.createQuery(
-                    "SELECT j FROM Job j"
+            List<Job> jobs = em.createQuery("SELECT j FROM Job j"
                     + " JOIN j.jobStatusAndTracking t"
                     + " WHERE (t.dateSubmitted >= " + BusinessEntityUtils.getDateString(datePeriod.getStartDate(), "'", "YMD", "-")
                     + " AND t.dateSubmitted <= " + BusinessEntityUtils.getDateString(datePeriod.getEndDate(), "'", "YMD", "-") + ")"
@@ -1641,8 +1599,7 @@ public class Job implements BusinessEntity {
 
         try {
 
-            List<Job> jobs = em.createQuery(
-                    "SELECT j FROM Job j"
+            List<Job> jobs = em.createQuery("SELECT j FROM Job j"
                     + " JOIN j.businessOffice businessOffice"
                     + " WHERE businessOffice.id = " + businessOfficeId, Job.class).getResultList();
 
@@ -1744,12 +1701,6 @@ public class Job implements BusinessEntity {
         }
     }
 
-    /**
-     * This method find all subcontracts for a job.
-     *
-     * @param em
-     * @return
-     */
     public List<Job> findSubcontracts(EntityManager em) {
         try {
 
@@ -1871,15 +1822,6 @@ public class Job implements BusinessEntity {
         return foundJobs;
     }
 
-    /*
-    (SELECT SUM(cashpayment.PAYMENT) FROM cashpayment
-      INNER JOIN `jobcostingandpayment_cashpayment` jobcostingandpayment_cashpayment ON 
-            cashpayment.ID = jobcostingandpayment_cashpayment.cashPayments_ID 
-      INNER JOIN `jobcostingandpayment` jobcostingandpayment ON 
-            jobcostingandpayment.ID = jobcostingandpayment_cashpayment.JobCostingAndPayment_ID 
-      WHERE jobcostingandpayment.ID = job.JOBCOSTINGANDPAYMENT_ID  
-     ) 
-     */
     public static List<Object[]> getJobReportRecords(
             EntityManager em,
             String startDate,
@@ -1996,7 +1938,6 @@ public class Job implements BusinessEntity {
 
     }
 
-    // tk  job records based on jobstatusandtracking date
     public static List<Object[]> getJobRecordsByTrackingDate(
             EntityManager em,
             String dateField,
@@ -2065,19 +2006,40 @@ public class Job implements BusinessEntity {
 
         try {
 
-            if (getParent().getId() != null) {
-                getParent().save(em);
+            if (classification != null) {
+                classification.save(em);
             }
-            getClassification().save(em);
-            getSector().save(em);
-            getDepartment().save(em);
-            getSubContractedDepartment().save(em);
-            getClient().save(em);
-            getJobCategory().save(em);
-            getJobSubCategory().save(em);
-            getAssignedTo().save(em);
+
+            if (sector != null) {
+                sector.save(em);
+            }
+
+            if (department != null) {
+                department.save(em);
+            }
+
+            if (subContractedDepartment != null) {
+                subContractedDepartment.save(em);
+            }
+
+            if (client != null) {
+                client.save(em);
+            }
+
+            if (jobCategory != null) {
+                jobCategory.save(em);
+            }
+
+            if (jobSubCategory != null) {
+                jobSubCategory.save(em);
+            }
+
+            if (assignedTo != null) {
+                assignedTo.save(em);
+            }
 
             returnMessage = getJobCostingAndPayment().save(em);
+
             if (!returnMessage.isSuccess()) {
 
                 return new ReturnMessage(false,
@@ -2088,11 +2050,24 @@ public class Job implements BusinessEntity {
             }
 
             getServiceContract().save(em);
+
             getJobStatusAndTracking().save(em);
-            getBusiness().save(em);
-            getBusinessOffice().save(em);
-            getBillingAddress().save(em);
-            getContact().save(em);
+
+            if (business != null) {
+                business.save(em);
+            }
+
+            if (businessOffice != null) {
+                businessOffice.save(em);
+            }
+
+            if (billingAddress != null) {
+                billingAddress.save(em);
+            }
+
+            if (contact != null) {
+                contact.save(em);
+            }
 
             for (JobSample jobSample : getJobSamples()) {
 
@@ -2143,7 +2118,6 @@ public class Job implements BusinessEntity {
         Job currentlySavedJob = null;
         Job currentJob = this;
 
-        // Get currently saved job for later use in validation
         if (currentJob.getId() != null) {
             currentlySavedJob = Job.findJobById(em, currentJob.getId());
         }
@@ -2161,7 +2135,6 @@ public class Job implements BusinessEntity {
             return new ReturnMessage(false, "This job cannot be saved because a valid business office was not entered.");
         }
 
-        // Check if job nunmber is already associated with a job        
         Job existingJob = Job.findJobByJobNumber(em, currentJob.getJobNumber());
         if (existingJob != null) {
             long current_jobid = currentJob.getId() != null ? currentJob.getId() : -1L;
@@ -2170,24 +2143,21 @@ public class Job implements BusinessEntity {
             }
         }
 
-        // get  job number if auto is on
         if (currentJob.getAutoGenerateJobNumber()) {
             if (!validateJobNumber(currentJob.getJobNumber(), currentJob.getAutoGenerateJobNumber())) {
                 return new ReturnMessage(false, "This job cannot be saved because a valid job number was not entered.");
             }
         }
 
-        // Validate client
         if (!BusinessEntityUtils.validateName(currentJob.getClient().getName())) {
             return new ReturnMessage(false,
                     "This job cannot be saved. Please select a valid client from the list."
                     + "You may create a new client if you have the privilege and the client's name does not appear in the list.");
 
         } else if (currentJob.getClient().getId() != null) {
-            currentJob.setClient(Client.getClientById(em, currentJob.getClient().getId()));
+            currentJob.setClient(Client.findById(em, currentJob.getClient().getId()));
         }
 
-        // Department        
         Department dept = Department.findByName(em, currentJob.getDepartment().getName());
         if (dept == null) {
             return new ReturnMessage(false, "This job cannot be saved because a valid department was not entered.");
@@ -2195,37 +2165,30 @@ public class Job implements BusinessEntity {
             em.refresh(dept);
             currentJob.setDepartment(dept);
         }
-        // Subcontracted department   
         Department subContractedDept = Department.findByName(em, currentJob.getSubContractedDepartment().getName());
         if (subContractedDept == null) {
             currentJob.setSubContractedDepartment(Department.findDefault(em, "--"));
         }
 
-        // Check for valid subcontracted department
-        // tk impl isToBeSubcontracted in Job use it as it is used in JobManager
         if (!currentJob.getIsSubContract() && getIsToBeSubcontracted()) {
             return new ReturnMessage(false, "Please enter a valid subcontracted department.");
         } else if ((currentlySavedJob != null)
                 && !currentJob.getIsSubContract()
                 && currentlySavedJob.getIsSubContract()) {
 
-            // Reset current subcontracted department
             currentJob.setSubContractedDepartment(currentlySavedJob.getSubContractedDepartment());
 
             return new ReturnMessage(false, "Please enter a valid subcontracted department.");
         }
 
-        // Check for self contracts        
         if (currentJob.getDepartment().getName().equals(currentJob.getSubContractedDepartment().getName())) {
             return new ReturnMessage(false, "The main and subcontracted departments cannot be the same.");
         }
 
-        // TAT
         if ((currentJob.getEstimatedTurnAroundTimeInDays() == 0) && currentJob.getEstimatedTurnAroundTimeRequired()) {
             return new ReturnMessage(false, "A valid estimated turnaround time (TAT) is required and must be provided.");
         }
 
-        // Assignee       
         Employee assignee = Employee.findByName(em, currentJob.getAssignedTo().getName());
         if (assignee != null) {
             if (assignee.getName().equals("--, --")
@@ -2244,12 +2207,10 @@ public class Job implements BusinessEntity {
             return new ReturnMessage(false, "This job cannot be saved because a valid assignee/department representative was not entered.");
         }
 
-        // Validate Instructions
         if (currentJob.getInstructions().trim().equals("")) {
             return new ReturnMessage(false, "Please enter instructions for this job.");
         }
 
-        // Classification objects
         Classification classn = Classification.findClassificationByName(em, currentJob.getClassification().getName());
         if (classn == null) {
             return new ReturnMessage(false, "Please select/enter a job classification.");
@@ -2280,13 +2241,10 @@ public class Job implements BusinessEntity {
             currentJob.setJobSubCategory(subCategory);
         }
 
-        // Check for valid creation of sub contracts
         if (currentJob.getIsSubContract() && currentJob.getJobSequenceNumber() == null) {
             return new ReturnMessage(false, "A main/parent job must be created before creating a subcontracted job.");
         }
 
-        // Check if job as previously saved as parent job and prevent saving 
-        // suubconttacted job if so
         if (currentJob.getId() != null) {
             Job jobFound = Job.findJobById(em, currentJob.getId());
             if (jobFound != null) {
@@ -2313,21 +2271,15 @@ public class Job implements BusinessEntity {
 
         String parts[] = jobNumber.split("/");
         if (parts != null) {
-            // check for correct number of parts
             if ((parts.length >= 3)
                     && (parts.length <= 5)) {
-                // are subgroup code, year and sequence number valid integers/long?
                 try {
                     if (auto && parts[0].equals("?")) {
-                        // This means the complete job number has not yet
-                        // been generate. Ignore for now.
                     } else {
                         departmentCode = Integer.valueOf(parts[0]);
                     }
                     year = Integer.valueOf(parts[1]);
                     if (auto && parts[2].equals("?")) {
-                        // This means the complete job number has not yet
-                        // been generate. Ignore for now.
                     } else {
                         sequenceNumber = Long.valueOf(parts[2]);
                     }
@@ -2335,10 +2287,7 @@ public class Job implements BusinessEntity {
                     System.out.println(e);
                     return false;
                 }
-                // subgroup code, year and deparment code have valid ranges?
                 if (auto && parts[0].equals("?")) {
-                    // This means the complete job number has not yet
-                    // been generate. Ignore for now.
                 } else if (departmentCode < 0) {
                     return false;
                 }
@@ -2346,13 +2295,10 @@ public class Job implements BusinessEntity {
                     return false;
                 }
                 if (auto && parts[2].equals("?")) {
-                    // This means the complete job number has not yet
-                    // been generate. Ignore for now.
                 } else if (sequenceNumber < 1L) {
                     return false;
                 }
-                // validate 4th part that can be an integer for a department
-                // code or a sample reference(s)
+
                 if (parts.length > 3) {
                     try {
                         departmentCode = Integer.valueOf(parts[3]);
@@ -2360,26 +2306,27 @@ public class Job implements BusinessEntity {
                             return false;
                         }
                     } catch (NumberFormatException e) {
-                        // This means 4th part is not a department code
-                        // and that's ok for now.
+
                         System.out.println("Job number validation error: This means 4th part is not a department code.: " + e);
                     }
                 }
-                // all is well here
+
                 return true;
             } else {
+
                 return false;
             }
         } else {
+
             return false;
         }
     }
 
-    public List<Action> getActions() {
+    public List<BusinessEntity.Action> getActions() {
         return actions;
     }
 
-    public void setActions(List<Action> actions) {
+    public void setActions(List<BusinessEntity.Action> actions) {
         this.actions = actions;
     }
 
@@ -2480,6 +2427,26 @@ public class Job implements BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

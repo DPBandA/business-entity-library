@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -20,7 +20,6 @@ Email: info@dpbennett.com.jm
 package jm.com.dpbennett.business.entity.mt;
 
 import jm.com.dpbennett.business.entity.hrm.Employee;
-//import jm.com.dpbennett.business.entity.jmts.Job;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -41,6 +40,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -58,8 +58,6 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long ownerId;
-    //@OneToOne(cascade = CascadeType.REFRESH)
-    //private Job job;
     private String name;
     private String type;
     private Double hourlyRate = 0.0;
@@ -70,7 +68,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     private Double setPetrolUsage = 0.0;
     private Double actualPetrolUsage = 0.0;
     private Double petrolCost = 0.0;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PetrolPumpNozzleCalibrationPoint> calibrationPoints;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date calibrationDate;
@@ -86,13 +84,11 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         calibrationPoints = new ArrayList<>();
 
         int i;
-        // init cal point for first 3 points
-        for (i = 0; i < 3; i++) { // tk put in options
+        for (i = 0; i < 3; i++) {
             this.calibrationPoints.add(new PetrolPumpNozzleCalibrationPoint((long) i,
                     new TestMeasure(5.0, "L", 5.0 * 0.003)));
         }
-        // init cal point for last 3 points
-        for (i = 3; i < 6; i++) { // tk put in options
+        for (i = 3; i < 6; i++) {
             this.calibrationPoints.add(new PetrolPumpNozzleCalibrationPoint((long) i,
                     new TestMeasure(20.0, "L", 20.0 * 0.003)));
         }
@@ -102,13 +98,11 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         calibrationPoints = new ArrayList<>();
 
         int i;
-        // init cal point for first 3 points
-        for (i = 0; i < 3; i++) { // tk put in options
+        for (i = 0; i < 3; i++) {
             this.calibrationPoints.add(new PetrolPumpNozzleCalibrationPoint((long) i,
                     testMeasures.get(0)));
         }
-        // init cal point for last 3 points
-        for (i = 3; i < 6; i++) { // tk put in options
+        for (i = 3; i < 6; i++) {
             this.calibrationPoints.add(new PetrolPumpNozzleCalibrationPoint((long) i,
                     testMeasures.get(1)));
         }
@@ -126,13 +120,11 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         this.calibrationPoints.clear();
 
         int i;
-        // init cal point for first 3 points
-        for (i = 0; i < 3; i++) { // tk put in options
+        for (i = 0; i < 3; i++) {
             this.calibrationPoints.add(new PetrolPumpNozzleCalibrationPoint((long) i,
                     testMeasures.get(0)));
         }
-        // init cal point for last 3 points
-        for (i = 3; i < 6; i++) { // tk put in options
+        for (i = 3; i < 6; i++) {
             this.calibrationPoints.add(new PetrolPumpNozzleCalibrationPoint((long) i,
                     testMeasures.get(1)));
         }
@@ -140,8 +132,6 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
 
     public PetrolPumpNozzleCalibration(PetrolPumpNozzleCalibration original) {
         this.calibrationPoints = new ArrayList<>();
-
-        //this.job = original.job;
         this.name = original.name;
         this.type = original.type;
         this.hourlyRate = original.hourlyRate;
@@ -152,7 +142,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         this.setPetrolUsage = original.setPetrolUsage;
         this.actualPetrolUsage = original.actualPetrolUsage;
         this.petrolCost = original.petrolCost;
-        // copy cal points
+
         List<PetrolPumpNozzleCalibrationPoint> calPoints = original.getCalibrationPoints();
         for (int i = 0; i < original.calibrationPoints.size(); i++) {
             this.calibrationPoints.add(new PetrolPumpNozzleCalibrationPoint(calPoints.get(i)));
@@ -160,7 +150,6 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
 
         this.calibrationDate = original.calibrationDate;
         this.reCalibrationDate = original.reCalibrationDate;
-        //this.calibrationDoneBy = original.calibrationDoneBy;
         this.results = original.results;
         this.dateAndTimeRecorded = original.dateAndTimeRecorded;
     }
@@ -220,12 +209,12 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            //getJob().save(em);
-            
-            //getCalibrationDoneBy().save(em);
-            
-            for (PetrolPumpNozzleCalibrationPoint calibrationPoint : calibrationPoints) {
+
+            if (calibrationDoneBy != null) {
+                calibrationDoneBy.save(em);
+            }
+
+            for (PetrolPumpNozzleCalibrationPoint calibrationPoint : getCalibrationPoints()) {
                 calibrationPoint.setOwnerId(id);
                 calibrationPoint.save(em);
             }
@@ -233,9 +222,9 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
-          
+
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -318,6 +307,26 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     class CalibrationPointErrorComparator implements Comparator<PetrolPumpNozzleCalibrationPoint> {
 
         @Override
@@ -351,7 +360,6 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     public List<PetrolPumpNozzleCalibrationPoint> getReportCalibrationPoints() {
         ArrayList<PetrolPumpNozzleCalibrationPoint> points = new ArrayList<>();
 
-        // gatther the points used in the client's report and return
         points.add(getNozzleCalibrationPointBasedOnSortedErrors(0, 0, 2));
         points.add(getNozzleCalibrationPointBasedOnSortedErrors(1, 0, 2));
         points.add(getNozzleCalibrationPointBasedOnSortedErrors(0, 3, 5));
@@ -361,15 +369,12 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     }
 
     public String getErrorFromSortedErrors(int errorIndex, int minIndex, int maxIndex) {
-        //Double lowestError = getCalibrationPoints().get(0).getError();
         ArrayList<PetrolPumpNozzleCalibrationPoint> points = new ArrayList<>();
 
         try {
             if (!getCalibrationPoints().isEmpty()) {
-                // get first 3 points for sorting
                 for (int i = minIndex; i < (maxIndex + 1); i++) {
-                    // create new cal point with non-null error suitable for
-                    // sorting
+                    
                     PetrolPumpNozzleCalibrationPoint newPoint = new PetrolPumpNozzleCalibrationPoint(getCalibrationPoints().get(i));
                     if (newPoint.getError() == null) {
                         newPoint.setError(Double.MAX_VALUE);
@@ -377,14 +382,11 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
                     points.add(newPoint);
                 }
             }
-            // sort and return the lowest error
             if (!points.isEmpty()) {
-                // sort by the absolute value of the errors
                 Collections.sort(points, new CalibrationPointErrorComparator());
 
                 PetrolPumpNozzleCalibrationPoint point = getNozzleCalibrationPointBasedOnSortedErrors(errorIndex, minIndex, maxIndex);
 
-                // return the error as a string
                 if (point.getError() == Double.MAX_VALUE) {
                     return "--";
                 } else {
@@ -406,15 +408,11 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     }
 
     public PetrolPumpNozzleCalibrationPoint getNozzleCalibrationPointBasedOnSortedErrors(int errorIndex, int minIndex, int maxIndex) {
-        //Double lowestError = getCalibrationPoints().get(0).getError();
         ArrayList<PetrolPumpNozzleCalibrationPoint> points = new ArrayList<>();
 
         try {
             if (!getCalibrationPoints().isEmpty()) {
-                // get first 3 points for sorting
                 for (int i = minIndex; i < (maxIndex + 1); i++) {
-                    // create new cal point with non-null error suitable for
-                    // sorting
                     PetrolPumpNozzleCalibrationPoint newPoint = new PetrolPumpNozzleCalibrationPoint(getCalibrationPoints().get(i));
                     if (newPoint.getError() == null) {
                         newPoint.setError(Double.MAX_VALUE);
@@ -422,9 +420,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
                     points.add(newPoint);
                 }
             }
-            // sort and return the lowest error
             if (!points.isEmpty()) {
-                // sort by the absolute value of the errors
                 Collections.sort(points, new CalibrationPointErrorComparator());
 
                 return points.get(errorIndex);
@@ -485,10 +481,12 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         getCalibrationPoints().get(5).setError(error);
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -510,7 +508,6 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     public String getResults(List<PetrolPumpNozzleCalibrationPoint> calPoints) {
         Boolean pass = null;
 
-        // do analysis to determine pass or fail etc.
         for (PetrolPumpNozzleCalibrationPoint calPoint : calPoints) {
             if ((calPoint.getError() != null) && (calPoint.getError() != Double.MAX_VALUE)) {
                 if (Math.abs(calPoint.getTestMeasure().getTolerance() * 1000) < Math.abs(calPoint.getError())) {
@@ -528,7 +525,7 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
                 }
             }
         }
-        // set result
+
         if (pass == null) {
             setResults("");
         } else if (pass) {
@@ -580,7 +577,10 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     public List<PetrolPumpNozzleCalibrationPoint> getCalibrationPoints() {
         if (calibrationPoints != null) {
             Collections.sort(calibrationPoints);
+        } else {
+            calibrationPoints = new ArrayList<>();
         }
+
         return calibrationPoints;
     }
 
@@ -595,19 +595,6 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     public void setProductDispensed(String productDispensed) {
         this.productDispensed = productDispensed;
     }
-
-//    public Job getJob() {
-//        if (job == null) {
-//            job = new Job();
-//            job.setJobNumber("");
-//            return job;
-//        }
-//        return job;
-//    }
-
-//    public void setJob(Job job) {
-//        this.job = job;
-//    }
 
     public Double getTotalizerEnd() {
         return totalizerEnd;
@@ -634,20 +621,17 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PetrolPumpNozzleCalibration)) {
             return false;
         }
         PetrolPumpNozzleCalibration other = (PetrolPumpNozzleCalibration) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.PetrolPumpNozzleCalibration[id=" + id + "]";
+        return "jm.com.dpbennett.entity.PetrolPumpNozzleCalibration[id=" + id + "]";
     }
 
     @Override
@@ -692,6 +676,11 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
 
     @Override
     public Employee getCalibrationDoneBy() {
+
+        if (calibrationDoneBy == null) {
+            return new Employee();
+        }
+
         return calibrationDoneBy;
     }
 
@@ -725,10 +714,8 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
                 + " ORDER BY petrolPumpNozzleCalibration.id DESC";
 
         try {
-            // return only one record
             foundPetrolPumpNozzleCalibrations = em.createQuery(searchQuery, PetrolPumpNozzleCalibration.class).getResultList();
             if (foundPetrolPumpNozzleCalibrations != null) {
-                // return the latest
                 if (!foundPetrolPumpNozzleCalibrations.isEmpty()) {
                     return foundPetrolPumpNozzleCalibrations.get(0);
                 }

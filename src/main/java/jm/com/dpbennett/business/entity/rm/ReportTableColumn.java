@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.rm;
 
 import java.util.Date;
@@ -32,6 +33,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -50,11 +52,6 @@ public class ReportTableColumn implements BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    /**
-     * This is the method of the entity class that is called to get the value
-     * for the column The format of specifying a method is {class path}/{method}
-     * e.g. jm.org.bsj.entity.Job/getJobNumber
-     */
     private String entityClassMethodName;
     @Transient
     private Boolean isDirty;
@@ -117,7 +114,6 @@ public class ReportTableColumn implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ReportTableColumn)) {
             return false;
         }
@@ -128,7 +124,7 @@ public class ReportTableColumn implements BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.ReportTableColumn[id=" + id + "]";
+        return "jm.com.dpbennett.entity.ReportTableColumn[id=" + id + "]";
     }
 
     public static List<ReportTableColumn> findAllReportTableColumns(EntityManager em) {
@@ -154,7 +150,7 @@ public class ReportTableColumn implements BusinessEntity {
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Report not saved");
+        return new ReturnMessage(false, "Report Table Column not saved");
     }
 
     @Override
@@ -269,6 +265,26 @@ public class ReportTableColumn implements BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

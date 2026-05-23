@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -20,20 +20,21 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.dm;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -45,18 +46,18 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @NamedQueries({
     @NamedQuery(name = "findAllDocumentSequenceNumbers", query = "SELECT d FROM DocumentSequenceNumber d ORDER BY d.sequentialNumber"),
     @NamedQuery(name = "getLastDocumentSequenceNumber",
-    query = "SELECT MAX(e.sequentialNumber) "
-    + "FROM DocumentSequenceNumber e "
-    + "WHERE e.yearReceived = :yearReceived "
-    + "AND e.monthReceived = :monthReceived "
-    + "AND e.documentTypeId = :documentTypeId"),
+            query = "SELECT MAX(e.sequentialNumber) "
+            + "FROM DocumentSequenceNumber e "
+            + "WHERE e.yearReceived = :yearReceived "
+            + "AND e.monthReceived = :monthReceived "
+            + "AND e.documentTypeId = :documentTypeId"),
     @NamedQuery(name = "getDocumentSequenceNumber",
-    query = "SELECT MAX(e.sequentialNumber) "
-    + "FROM DocumentSequenceNumber e "
-    + "WHERE e.yearReceived = :yearReceived "
-    + "AND e.monthReceived = :monthReceived "
-    + "AND e.documentTypeId = :documentTypeId "
-    + "AND e.sequentialNumber = :sequentialNumber")
+            query = "SELECT MAX(e.sequentialNumber) "
+            + "FROM DocumentSequenceNumber e "
+            + "WHERE e.yearReceived = :yearReceived "
+            + "AND e.monthReceived = :monthReceived "
+            + "AND e.documentTypeId = :documentTypeId "
+            + "AND e.sequentialNumber = :sequentialNumber")
 })
 public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
@@ -80,7 +81,7 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -136,12 +137,11 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof DocumentSequenceNumber)) {
             return false;
         }
         DocumentSequenceNumber other = (DocumentSequenceNumber) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -157,10 +157,9 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
     @Override
     public void setName(String name) {
-        
+
     }
-    
-    
+
     public static List<DocumentSequenceNumber> findAllDocumentSequenceNumbers(EntityManager em) {
 
         try {
@@ -172,7 +171,7 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static Long findLastDocumentSequenceNumber(EntityManager em, Integer year, Integer month, Long typeId) {
         Long last;
 
@@ -188,24 +187,13 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
         return last;
     }
-    
-     /**
-     * Returns the supplied sequential number of if there is an existing
-     * sequence number with the supplied year, month and document type id.nceNumber
-     *
-     * @param em
-     * @param sequentialNumber
-     * @param year
-     * @param month
-     * @param typeId
-     * @return
-     */
-    public static Long findDocumentSequenceNumber(EntityManager em, 
+
+    public static Long findDocumentSequenceNumber(EntityManager em,
             Long sequentialNumber,
-            Integer year, 
-            Integer month, 
+            Integer year,
+            Integer month,
             Long typeId) {
-        
+
         Long last;
 
         try {
@@ -278,12 +266,12 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDate getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDate dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -323,12 +311,12 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDate getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDate dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -364,6 +352,26 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.fu;
 
 /**
@@ -26,13 +27,13 @@ package jm.com.dpbennett.business.entity.fu;
 public class FileUtils {
 
     public static String getAbsoluteFilePath(String fileName, Class runtimeClass) {
-        
+
         String absolute = runtimeClass.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
         absolute = absolute.substring(0, absolute.length() - 1);
         absolute = absolute.substring(0, absolute.lastIndexOf("/") + 1);
         String absoluteFilePath = absolute + fileName;
         String os = System.getProperty("os.name");
-        
+
         if (os.contains("Windows")) {
             absoluteFilePath = absoluteFilePath.replace("/", "\\\\");
             if (absoluteFilePath.contains("file:\\\\")) {

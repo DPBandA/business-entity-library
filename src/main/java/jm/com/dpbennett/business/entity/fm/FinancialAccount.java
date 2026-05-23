@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -22,12 +22,14 @@ package jm.com.dpbennett.business.entity.fm;
 import jm.com.dpbennett.business.entity.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,6 +39,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -45,10 +48,10 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  * @author Desmond Bennett
  */
 @Entity
-@Table(name = "field")
+@Table(name = "financialaccount")
 @NamedQueries({
-    @NamedQuery(name = "findAllFields",
-            query = "SELECT f FROM Field f ORDER BY f.name")
+    @NamedQuery(name = "findAllFinancialAccounts",
+            query = "SELECT f FROM FinancialAccount f ORDER BY f.name")
 })
 public class FinancialAccount implements
         Serializable,
@@ -64,7 +67,9 @@ public class FinancialAccount implements
     private String type;
     @OneToOne(cascade = CascadeType.REFRESH)
     private FinancialAccount parent;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     private List<FinancialAccount> children;
     @OneToOne(cascade = CascadeType.REFRESH)
     private AccountingCode code;
@@ -84,7 +89,6 @@ public class FinancialAccount implements
         name = "";
         description = "";
         category = "";
-        code = new AccountingCode();
         total = 0.0;
     }
 
@@ -94,7 +98,6 @@ public class FinancialAccount implements
         type = "";
         description = "";
         category = "";
-        code = new AccountingCode();
         total = 0.0;
     }
 
@@ -108,10 +111,22 @@ public class FinancialAccount implements
         this.total = total;
     }
 
+    public void addChild(FinancialAccount child) {
+        child.setParent(this);
+        getChildren().add(child);
+    }
+
+    public void removeChild(FinancialAccount child) {
+        child.setParent(null);
+        getChildren().remove(child);
+    }
+
     public List<FinancialAccount> getChildren() {
 
         if (children == null) {
             children = new ArrayList<>();
+        } else {
+            children.sort(Comparator.naturalOrder());
         }
 
         return children;
@@ -152,6 +167,11 @@ public class FinancialAccount implements
     }
 
     public Currency getCurrency() {
+
+        if (currency == null) {
+            return new Currency();
+        }
+
         return currency;
     }
 
@@ -160,6 +180,7 @@ public class FinancialAccount implements
     }
 
     public FinancialAccount getParent() {
+
         return parent;
     }
 
@@ -169,8 +190,9 @@ public class FinancialAccount implements
 
     public AccountingCode getCode() {
         if (code == null) {
-            code = new AccountingCode();
+            return new AccountingCode();
         }
+
         return code;
     }
 
@@ -201,11 +223,11 @@ public class FinancialAccount implements
         this.category = category;
     }
 
-    public static List<FinancialAccount> findAllFields(EntityManager em) {
+    public static List<FinancialAccount> findAll(EntityManager em) {
 
         try {
-            
-            List<FinancialAccount> codes = em.createNamedQuery("findAllFields", FinancialAccount.class).getResultList();
+
+            List<FinancialAccount> codes = em.createNamedQuery("findAllFinancialAccounts", FinancialAccount.class).getResultList();
 
             return codes;
 
@@ -215,44 +237,32 @@ public class FinancialAccount implements
         }
     }
 
-    public static List<FinancialAccount> findFields(EntityManager em, String value) {
+    public static List<FinancialAccount> find(EntityManager em) {
 
         try {
-            
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
-            List<FinancialAccount> fields
-                    = em.createQuery("SELECT a FROM Field a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
-                            + "%' ORDER BY a.name",
-                            FinancialAccount.class).getResultList();
-            return fields;
+
+            List<FinancialAccount> financialAccounts
+                    = em.createQuery("SELECT a FROM FinancialAccount a WHERE a.parent IS NULL ORDER BY a.name", FinancialAccount.class)
+                            .getResultList();
+
+            return financialAccounts;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
         }
     }
 
-    public static List<FinancialAccount> findActiveFields(EntityManager em, String value) {
+    public static List<FinancialAccount> findActive(EntityManager em) {
 
         try {
+
+            List<FinancialAccount> financialAccounts
+                    = em.createQuery("SELECT a FROM FinancialAccount a "
+                            + "WHERE (a.parent IS NULL) AND (a.active = 1 OR a.active IS NULL) "
+                            + "ORDER BY a.name", FinancialAccount.class)
+                            .getResultList();
             
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
-            List<FinancialAccount> fields
-                    = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
-                            + "%') AND (a.active = 1 OR a.active IS NULL) ORDER BY a.name",
-                            FinancialAccount.class).getResultList();
-            return fields;
+           return financialAccounts;
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();
@@ -292,15 +302,14 @@ public class FinancialAccount implements
     @Override
     public int hashCode() {
         int hash = 0;
-        
+
         hash += (id != null ? id.hashCode() : 0);
-        
+
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof FinancialAccount)) {
             return false;
         }
@@ -327,6 +336,7 @@ public class FinancialAccount implements
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -336,7 +346,7 @@ public class FinancialAccount implements
             System.out.println(e);
         }
 
-        return new ReturnMessage(false, "Field not saved");
+        return new ReturnMessage(false, "Financial Account not saved");
     }
 
     @Override
@@ -360,14 +370,14 @@ public class FinancialAccount implements
     public static FinancialAccount findByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
-            List<FinancialAccount> fields = em.createQuery("SELECT a FROM Field a "
+
+            List<FinancialAccount> financialAccounts = em.createQuery("SELECT a FROM FinancialAccount a "
                     + "WHERE UPPER(a.name) "
                     + "= '" + value.toUpperCase() + "'", FinancialAccount.class).getResultList();
-            if (!fields.isEmpty()) {
-                return fields.get(0);
+            if (!financialAccounts.isEmpty()) {
+                return financialAccounts.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -379,14 +389,14 @@ public class FinancialAccount implements
     public static FinancialAccount findByCode(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
-            List<FinancialAccount> fields = em.createQuery("SELECT a FROM FieldField a "
+
+            List<FinancialAccount> financialAccounts = em.createQuery("SELECT a FROM FinancialAccount a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "'", FinancialAccount.class).getResultList();
-            if (!fields.isEmpty()) {
-                return fields.get(0);
+            if (!financialAccounts.isEmpty()) {
+                return financialAccounts.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -398,14 +408,14 @@ public class FinancialAccount implements
     public static FinancialAccount findActiveByCode(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
-            List<FinancialAccount> fields = em.createQuery("SELECT a FROM Field a "
+
+            List<FinancialAccount> financialAccounts = em.createQuery("SELECT a FROM FinancialAccount a "
                     + "WHERE UPPER(a.code) "
                     + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", FinancialAccount.class).getResultList();
-            if (!fields.isEmpty()) {
-                return fields.get(0);
+            if (!financialAccounts.isEmpty()) {
+                return financialAccounts.get(0);
             }
             return null;
         } catch (Exception e) {
@@ -486,6 +496,26 @@ public class FinancialAccount implements
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -40,6 +40,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -77,13 +78,13 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     @Column(length = 1024)
     private String description;
     private String unit;
-    @Transient
-    private Boolean isDirty;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date costDate;
     private Double currencyExchangeRate;
+    @Transient
+    private Boolean isDirty;
 
     public CostComponent() {
         name = "";
@@ -206,6 +207,10 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Date getCostDate() {
+        if (costDate == null) {
+            costDate = new Date();
+        }
+
         return costDate;
     }
 
@@ -214,6 +219,11 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     public Currency getCurrency() {
+
+        if (currency == null) {
+            return new Currency();
+        }
+
         return currency;
     }
 
@@ -244,20 +254,19 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
                 setIsFixedCost(false);
                 setIsHeading(false);
                 break;
-            case "Subcontract":   
+            case "Subcontract":
                 setIsFixedCost(true);
                 setIsHeading(false);
                 setHours(0.0);
                 setHoursOrQuantity(1.0);
                 setRate(getCost());
-                break;    
+                break;
             default:
                 setIsFixedCost(false);
                 setIsHeading(false);
                 break;
         }
 
-        // Recalculate cost
         getCost();
     }
 
@@ -336,6 +345,35 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.isEditable = src.isEditable;
         this.description = src.description;
         this.unit = src.unit;
+        this.currency = src.currency;
+        this.costDate = src.costDate;
+        this.currencyExchangeRate = src.currencyExchangeRate;
+    }
+
+    public static CostComponent copy(CostComponent src) {
+        CostComponent copy = new CostComponent();
+
+        copy.name = src.name;
+        copy.code = src.code;
+        copy.type = src.type;
+        copy.category = src.category;
+        copy.hours = src.hours;
+        copy.hoursOrQuantity = src.hoursOrQuantity;
+        copy.rate = src.rate;
+        copy.convertedRate = src.convertedRate;
+        copy.cost = src.cost;
+        copy.convertedCost = src.convertedCost;
+        copy.comments = src.comments;
+        copy.isHeading = src.isHeading;
+        copy.isFixedCost = src.isFixedCost;
+        copy.isEditable = src.isEditable;
+        copy.description = src.description;
+        copy.unit = src.unit;
+        copy.currency = src.currency;
+        copy.costDate = src.costDate;
+        copy.currencyExchangeRate = src.currencyExchangeRate;
+
+        return copy;
     }
 
     public Boolean getIsSubcontract() {
@@ -486,7 +524,6 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof CostComponent)) {
             return false;
         }
@@ -533,19 +570,19 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            isDirty = false;
-            
-            em.getTransaction().begin();            
+
+            em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
+            isDirty = false;
+
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
-            
+
             System.out.println("Cost Component save exception: " + e);
-            
+
             return new ReturnMessage(false,
                     "Cost component not saved",
                     "An error occurred while saving a cost component: " + e,
@@ -626,6 +663,26 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

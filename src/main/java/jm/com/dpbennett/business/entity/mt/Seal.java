@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.fm.Product;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -143,6 +144,7 @@ public class Seal implements Product, BusinessEntity, Comparable {
         if (assignee == null) {
             return new Employee();
         }
+
         return assignee;
     }
 
@@ -192,6 +194,11 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
     @Override
     public Manufacturer getManufacturer() {
+
+        if (manufacturer == null) {
+            return new Manufacturer();
+        }
+
         return manufacturer;
     }
 
@@ -235,7 +242,6 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Seal)) {
             return false;
         }
@@ -252,14 +258,11 @@ public class Seal implements Product, BusinessEntity, Comparable {
     @Override
     public int compareTo(Object o) {
         Long oTime, thisTime;
-        // get dates as long values for comparison
-        // this object
         if (((Seal) o).getDateIssued() != null) {
             oTime = ((Seal) o).getDateIssued().getTime();
         } else {
             oTime = 0L;
         }
-        // other object
         if (this.getDateIssued() != null) {
             thisTime = this.getDateIssued().getTime();
         } else {
@@ -303,7 +306,7 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<Seal>();
+            return new ArrayList<>();
         }
     }
 
@@ -344,8 +347,12 @@ public class Seal implements Product, BusinessEntity, Comparable {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            //getManufacturer().save(em);
-            //getAssignee().save(em);
+            if (manufacturer != null) {
+                manufacturer.save(em);
+            }
+            if (assignee != null) {
+                assignee.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -461,6 +468,26 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

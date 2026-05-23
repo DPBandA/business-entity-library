@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -43,6 +43,7 @@ import jm.com.dpbennett.business.entity.dm.DocumentStandard;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.sm.Category;
 import jm.com.dpbennett.business.entity.fm.Product;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -280,6 +281,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         if (inspector == null) {
             return new Employee();
         }
+
         return inspector;
     }
 
@@ -303,6 +305,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         if (distributor == null) {
             return new Client();
         }
+
         return distributor;
     }
 
@@ -582,7 +585,6 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ProductInspection)) {
             return false;
         }
@@ -659,6 +661,7 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         if (businessSource == null) {
             return new Client();
         }
+
         return businessSource;
     }
 
@@ -668,8 +671,9 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     public Client getClient() {
         if (client == null) {
-            return new Client("");
+            return new Client();
         }
+
         return client;
     }
 
@@ -783,7 +787,6 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
         String thisIdStr = (this.getId() == null ? "" + Integer.MAX_VALUE : this.getId().toString());
         String oIdStr = (((ProductInspection) o).getId() == null ? "" + Integer.MAX_VALUE : ((ProductInspection) o).getId().toString());
 
-        //return Collator.getInstance().compare(this.getId().toString(), ((ProductInspection) o).getId().toString());
         return Collator.getInstance().compare(thisIdStr, oIdStr);
     }
 
@@ -791,14 +794,34 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getProductCategory().save(em);
-            getManufacturer().save(em);
-            getDistributor().save(em);
-            getMarketProduct().save(em);
-            getClient().save(em);
-            getBusinessSource().save(em);
-            getInspector().save(em);
-            
+            if (productCategory != null) {
+                productCategory.save(em);
+            }
+
+            if (manufacturer != null) {
+                manufacturer.save(em);
+            }
+
+            if (distributor != null) {
+                distributor.save(em);
+            }
+
+            if (marketProduct != null) {
+                marketProduct.save(em);
+            }
+
+            if (client != null) {
+                client.save(em);
+            }
+
+            if (businessSource != null) {
+                businessSource.save(em);
+            }
+
+            if (inspector != null) {
+                inspector.save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -903,6 +926,26 @@ public class ProductInspection implements Comparable, BusinessEntity, Product {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

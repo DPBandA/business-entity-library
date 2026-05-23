@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.sm;
 
 import java.util.ArrayList;
@@ -359,7 +360,6 @@ public class Module implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Module)) {
             return false;
         }
@@ -387,7 +387,7 @@ public class Module implements BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            for (Privilege privilege : privileges) {
+            for (Privilege privilege : getPrivileges()) {
                 privilege.save(em);
             }
 
@@ -408,7 +408,7 @@ public class Module implements BusinessEntity {
         return new ReturnMessage();
     }
 
-    public static Module findActiveModuleByName(EntityManager em, String value) {
+    public static Module findActiveByName(EntityManager em, String value) {
 
         try {
 
@@ -427,7 +427,7 @@ public class Module implements BusinessEntity {
         }
     }
 
-    public static List<Module> findActiveModules(
+    public static List<Module> findActive(
             EntityManager em,
             String value,
             int maxResults) {
@@ -450,7 +450,7 @@ public class Module implements BusinessEntity {
         }
     }
 
-    public static List<Module> findModules(
+    public static List<Module> findAll(
             EntityManager em,
             String value,
             int maxResults) {
@@ -474,7 +474,7 @@ public class Module implements BusinessEntity {
         }
     }
 
-    public static List<Module> findAllActiveModules(
+    public static List<Module> findAllActive(
             EntityManager em,
             int maxResults) {
         try {
@@ -558,6 +558,26 @@ public class Module implements BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

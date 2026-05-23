@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -37,7 +37,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.DefaultEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.auth.Privilege;
 import jm.com.dpbennett.business.entity.hrm.Business;
@@ -59,7 +59,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findByJobManagerUsername", query = "SELECT e FROM User e WHERE UPPER(e.username) = :username")
 
 })
-public class User implements BusinessEntity {
+public class User extends DefaultEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -76,12 +76,14 @@ public class User implements BusinessEntity {
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee employee;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Privilege privilege;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Privilege> privileges;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Module> activeModules;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<SystemOption> settings;
     @Transient
     private Boolean isDirty;
     @Transient
@@ -96,158 +98,133 @@ public class User implements BusinessEntity {
     private Date logoutTime;
     @Transient
     private String email;
-    @Transient
-    private boolean jobAssigned;
-    @Transient
-    private boolean jobCostingPrepared;
-    @Transient
-    private boolean jobCostingApproved;
-    @Transient
-    private boolean cashPaymentMade;
-    final static String[] SETTINGS
-            = {
-                "jobAssigned",
-                "jobCostingPrepared",
-                "jobCostingApproved",
-                "cashPaymentMade"
-            };
 
     public User() {
         employee = new Employee();
         username = "";
     }
 
+    @Override
+    public List<SystemOption> getSettings() {
+        if (settings == null) {
+            settings = new ArrayList<>();
+        }
+
+        return settings;
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        this.settings = settings;
+    }
+
     public static boolean isNotificationActive(
             User user,
-            EntityManager em,
             String notificationSetting) {
 
-        SystemOption ns = user.getSetting(em, notificationSetting);
+        SystemOption ns = user.getSetting(
+                notificationSetting,
+                null,
+                "Boolean",
+                "Notification");
 
         return ns.getBoolean();
 
     }
 
-    public SystemOption getSetting(EntityManager em, String setting) {
-        List<SystemOption> settings = SystemOption.findByOwnerId(em, id);
-
-        for (SystemOption ns : settings) {
-            if (ns.getName().equals(setting)) {
-
-                return ns;
-            }
-        }
-
-        SystemOption so = new SystemOption(setting, "Boolean");
-        so.setOwnerId(id);
-        so.setOptionValue("false");
-        so.setOptionValueType("Boolean");
-        so.setCategory("Notification");
-        so.setDescription("Notiifcation setting for user " + username);
-        so.save(em);
-
-        return so;
-    }
-
-    public void loadSettings(EntityManager em) {
-
-        for (String setting : SETTINGS) {
-            switch (setting) {
-                case "jobAssigned":
-                    setJobAssigned(getSetting(em, "jobAssigned")
-                            .getBoolean());
-                    break;
-                case "jobCostingPrepared":
-                    setJobCostingPrepared(getSetting(em, "jobCostingPrepared")
-                            .getBoolean());
-                    break;
-                case "jobCostingApproved":
-                    setJobCostingApproved(getSetting(em, "jobCostingApproved")
-                            .getBoolean());
-                    break;
-                case "cashPaymentMade":
-                    setCashPaymentMade(getSetting(em, "cashPaymentMade")
-                            .getBoolean());
-                    break;
-                default:
-                    return;
-            }
-        }
-
-    }
-
-    public ReturnMessage saveNotificationSettings(EntityManager em) {
-
-        ReturnMessage rm = new ReturnMessage();
-        SystemOption so;
-
-        for (String setting : SETTINGS) {
-            switch (setting) {
-                case "jobAssigned":
-                    so = getSetting(em, "jobAssigned");
-                    if (so != null) {
-                        so.setOptionValue(Boolean.toString(isJobAssigned()));
-                        so.save(em);
-                    }
-                    break;
-                case "jobCostingPrepared":
-                    so = getSetting(em, "jobCostingPrepared");
-                    if (so != null) {
-                        so.setOptionValue(Boolean.toString(isJobCostingPrepared()));
-                        so.save(em);
-                    }
-                    break;
-                case "jobCostingApproved":
-                    so = getSetting(em, "jobCostingApproved");
-                    if (so != null) {
-                        so.setOptionValue(Boolean.toString(isJobCostingApproved()));
-                        so.save(em);
-                    }
-                    break;
-                case "cashPaymentMade":
-                    so = getSetting(em, "cashPaymentMade");
-                    if (so != null) {
-                        so.setOptionValue(Boolean.toString(isCashPaymentMade()));
-                        so.save(em);
-                    }
-                    break;
-            }
-        }
-
-        return rm;
-    }
-
     public boolean isJobAssigned() {
 
-        return jobAssigned;
+        SystemOption setting = getSetting(
+                "jobAssigned",
+                "false",
+                "Boolean",
+                "Notification");
+
+        return setting.getBoolean();
     }
 
     public void setJobAssigned(boolean jobAssigned) {
-        this.jobAssigned = jobAssigned;
+        setSetting(
+                "jobAssigned",
+                Boolean.toString(jobAssigned),
+                "Boolean",
+                "Notification");
     }
 
     public boolean isJobCostingPrepared() {
-        return jobCostingPrepared;
+        SystemOption setting = getSetting(
+                "jobCostingPrepared",
+                "false",
+                "Boolean",
+                "Notification");
+
+        return setting.getBoolean();
+
     }
 
     public void setJobCostingPrepared(boolean jobCostingPrepared) {
-        this.jobCostingPrepared = jobCostingPrepared;
+        setSetting(
+                "jobCostingPrepared",
+                Boolean.toString(jobCostingPrepared),
+                "Boolean",
+                "Notification");
+
     }
 
     public boolean isJobCostingApproved() {
-        return jobCostingApproved;
+        SystemOption setting = getSetting(
+                "jobCostingApproved",
+                "false",
+                "Boolean",
+                "Notification");
+
+        return setting.getBoolean();
+
     }
 
     public void setJobCostingApproved(boolean jobCostingApproved) {
-        this.jobCostingApproved = jobCostingApproved;
+        setSetting(
+                "jobCostingApproved",
+                Boolean.toString(jobCostingApproved),
+                "Boolean",
+                "Notification");
     }
 
     public boolean isCashPaymentMade() {
-        return cashPaymentMade;
+        SystemOption setting = getSetting(
+                "cashPaymentMade",
+                "false",
+                "Boolean",
+                "Notification");
+
+        return setting.getBoolean();
+
     }
 
     public void setCashPaymentMade(boolean cashPaymentMade) {
-        this.cashPaymentMade = cashPaymentMade;
+        setSetting(
+                "cashPaymentMade",
+                Boolean.toString(cashPaymentMade),
+                "Boolean",
+                "Notification");
+    }
+
+    public boolean isRenderMobileUI() {
+        SystemOption setting = getSetting(
+                "renderMobileUI",
+                "false",
+                "Boolean",
+                "Notification");
+
+        return setting.getBoolean();
+    }
+
+    public void setRenderMobileUI(boolean renderMobileUI) {
+        setSetting(
+                "renderMobileUI",
+                Boolean.toString(renderMobileUI),
+                "Boolean",
+                "Notification");
     }
 
     public Privilege getPrivilege() {
@@ -355,6 +332,7 @@ public class User implements BusinessEntity {
         if (privileges == null) {
             privileges = new ArrayList<>();
         }
+
         return privileges;
     }
 
@@ -366,6 +344,7 @@ public class User implements BusinessEntity {
         if (activeModules == null) {
             activeModules = new ArrayList<>();
         }
+
         return activeModules;
     }
 
@@ -381,6 +360,20 @@ public class User implements BusinessEntity {
         }
 
         return allActiveModules;
+    }
+
+    public String getAllPrivileges() {
+        String allPrivileges = "";
+
+        for (int i = 0; i < getPrivileges().size(); i++) {
+            if (i == 0) {
+                allPrivileges = getPrivileges().get(i).getDescription();
+            } else {
+                allPrivileges = allPrivileges + ", " + getPrivileges().get(i).getDescription();
+            }
+        }
+
+        return allPrivileges;
     }
 
     public void setActiveModules(List<Module> activeModules) {
@@ -411,7 +404,7 @@ public class User implements BusinessEntity {
 
         try {
             Department department = user.getEmployee().getDepartment();
-            for (Business business : Business.findAll(em)) {
+            for (Business business : Business.findAllActive(em)) {
                 for (Department dept : business.getDepartments()) {
                     if (Objects.equals(department.getId(), dept.getId())) {
                         return business;
@@ -455,15 +448,15 @@ public class User implements BusinessEntity {
     }
 
     public Boolean getIsJobsPreferredJobTableView() {
-        return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Jobs");
+        return getJobTableViewPreference().equals("Jobs");
     }
 
     public Boolean getIsCashierPreferredJobTableView() {
-        return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Cashier View");
+        return getJobTableViewPreference().equals("Cashier View");
     }
 
     public Boolean getIsJobCostingsPreferredJobTableView() {
-        return /*getModules().getJobManagementAndTrackingModule() &&*/ getJobTableViewPreference().equals("Job Costings");
+        return getJobTableViewPreference().equals("Job Costings");
     }
 
     public static Boolean isUserDepartmentSupervisor(Job job, User user, EntityManager em) {
@@ -577,6 +570,10 @@ public class User implements BusinessEntity {
     }
 
     public Employee getEmployee() {
+
+        if (employee == null) {
+            return new Employee();
+        }
 
         return employee;
     }
@@ -808,17 +805,24 @@ public class User implements BusinessEntity {
 
         try {
 
-            getEmployee().save(em);
-            if (getPrivilege().getId() != null) {
-                getPrivilege().save(em);
+            if (employee != null) {
+                employee.save(em);
             }
+//
+//            if (privilege != null) {
+//                privilege.save(em);
+//            }
 
-            for (Privilege priv : privileges) {
+            for (Privilege priv : getPrivileges()) {
                 priv.save(em);
             }
 
-            for (Module activeModule : activeModules) {
+            for (Module activeModule : getActiveModules()) {
                 activeModule.save(em);
+            }
+
+            for (SystemOption setting : getSettings()) {
+                setting.save(em);
             }
 
             em.getTransaction().begin();
@@ -844,15 +848,6 @@ public class User implements BusinessEntity {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * Determine if the current user is the department's supervisor. This is
-     * done by determining if the user is the head/active acting head of the
-     * department to which the job was assigned.
-     *
-     * @param job
-     * @param em
-     * @return
-     */
     public Boolean isUserDepartmentSupervisor(Job job, EntityManager em) {
 
         Job foundJob = Job.findJobById(em, job.getId());

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -40,6 +40,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -59,7 +60,7 @@ public class Email implements Serializable, BusinessEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private String type; // eg Template
+    private String type;
     private String classification;
     private String category;
     private String subject;
@@ -170,6 +171,7 @@ public class Email implements Serializable, BusinessEntity {
         if (isDirty == null) {
             isDirty = false;
         }
+
         return isDirty;
     }
 
@@ -204,6 +206,7 @@ public class Email implements Serializable, BusinessEntity {
         if (active == null) {
             active = true;
         }
+
         return active;
     }
 
@@ -267,12 +270,11 @@ public class Email implements Serializable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Email)) {
             return false;
         }
         Email other = (Email) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -314,13 +316,13 @@ public class Email implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static Email findEmailByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Email> emails = em.createQuery("SELECT e FROM Email e "
                     + "WHERE UPPER(e.name) "
                     + "= '" + value.toUpperCase() + "'", Email.class).getResultList();
@@ -335,13 +337,13 @@ public class Email implements Serializable, BusinessEntity {
             return null;
         }
     }
-    
+
     public static Email findActiveEmailByName(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Email> emails = em.createQuery("SELECT e FROM Email e "
                     + "WHERE e.active = 1 AND UPPER(e.name) "
                     + "= '" + value.toUpperCase() + "'", Email.class).getResultList();
@@ -360,9 +362,9 @@ public class Email implements Serializable, BusinessEntity {
     public static Email findEmailBySubject(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Email> emails = em.createQuery("SELECT e FROM Email e "
                     + "WHERE UPPER(e.subject) "
                     + "= '" + value.toUpperCase() + "'", Email.class).getResultList();
@@ -381,9 +383,9 @@ public class Email implements Serializable, BusinessEntity {
     public static List<Email> findEmailsBySubject(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where UPPER(e.subject) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
@@ -399,9 +401,9 @@ public class Email implements Serializable, BusinessEntity {
     public static List<Email> findEmails(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where UPPER(e.name) like '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(e.subject) like '%" + value.toUpperCase().trim()
@@ -419,9 +421,9 @@ public class Email implements Serializable, BusinessEntity {
     public static List<Email> findActiveEmailsBySubject(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where e.active = 1 AND UPPER(e.subject) like '%"
                             + value.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
@@ -436,14 +438,14 @@ public class Email implements Serializable, BusinessEntity {
 
     public static List<Email> findActiveEmailsByCategoryAndSubject(
             EntityManager em,
-            String category, 
+            String category,
             String subject) {
 
         try {
-            
+
             category = category.replaceAll("&amp;", "&").replaceAll("'", "`");
             subject = subject.replaceAll("&amp;", "&").replaceAll("'", "`");
-          
+
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where e.active = 1 AND UPPER(e.subject) like '%"
                             + subject.toUpperCase().trim() + "%'"
@@ -461,9 +463,9 @@ public class Email implements Serializable, BusinessEntity {
     public static List<Email> findActiveEmails(EntityManager em, String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Email> emails
                     = em.createQuery("SELECT e FROM Email e where e.active = 1 AND (UPPER(e.name) like '%" + value.toUpperCase().trim()
                             + "%' OR UPPER(e.subject) like '%" + value.toUpperCase().trim()
@@ -580,6 +582,26 @@ public class Email implements Serializable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

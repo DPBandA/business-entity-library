@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -46,6 +46,8 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.fm.Service;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -86,18 +88,16 @@ public class ServiceRequest implements BusinessEntity {
     private JobSubCategory jobSubCategory;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignedTo;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private ServiceContract serviceContract;
     @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice businessOffice;
     @Column(length = 1024)
     private String jobDescription;
-    // tk Add list of services instead. Delete field from database table.
-//    @OneToOne(cascade = CascadeType.REFRESH)
-//    private Service service;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Service service;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact contact;
-    // tracking
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateSubmitted;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -126,6 +126,19 @@ public class ServiceRequest implements BusinessEntity {
         this.serviceRequestNumber = serviceRequestNumber;
     }
 
+    public Service getService() {
+
+        if (service == null) {
+            return new Service();
+        }
+
+        return service;
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+    }
+
     @Override
     public Boolean getIsDirty() {
         if (isDirty == null) {
@@ -147,8 +160,6 @@ public class ServiceRequest implements BusinessEntity {
         Calendar c = Calendar.getInstance();
         Integer year;
 
-        // use the date submitted to get the year if it is valid
-        // and only if this is not a subcontracted job
         if (dateSubmitted != null) {
             c.setTime(dateSubmitted);
             year = c.get(Calendar.YEAR);
@@ -167,9 +178,7 @@ public class ServiceRequest implements BusinessEntity {
         String sequenceNumber;
 
         if ((autoGenerateServiceRequestNumber != null) && (autoGenerateServiceRequestNumber != false)) {
-            // include the department code based on parent or subcontract
-            if (department != null) { // not a subcontract
-                // get the department code based on its id
+            if (department != null) {
                 if (department.getCode() != null) {
                     departmentOrCompanyCode = department.getCode();
                 } else {
@@ -179,18 +188,14 @@ public class ServiceRequest implements BusinessEntity {
                 departmentOrCompanyCode = "?";
             }
 
-            // use the date submitted to get the year if it is valid
-            // and only if this is not a subcontracted job
             year = "" + getYearReceived();
 
-            // include the sequence number if it is valid
             if (serviceRequestSequenceNumber != null) {
-                //sequenceNumber = job.getJobSequenceNumber().toString();
                 sequenceNumber = BusinessEntityUtils.getIntegerString(serviceRequestSequenceNumber, 4);
             } else {
                 sequenceNumber = "?";
             }
-            // finally set number
+
             setServiceRequestNumber("SR/" + departmentOrCompanyCode + "/" + year + "/" + sequenceNumber);
         }
 
@@ -245,6 +250,7 @@ public class ServiceRequest implements BusinessEntity {
         if (editedBy == null) {
             return new Employee();
         }
+
         return editedBy;
     }
 
@@ -293,6 +299,11 @@ public class ServiceRequest implements BusinessEntity {
     }
 
     public Contact getContact() {
+
+        if (contact == null) {
+            return new Contact();
+        }
+
         return contact;
     }
 
@@ -300,22 +311,6 @@ public class ServiceRequest implements BusinessEntity {
         this.contact = contact;
     }
 
-//    public List<Service> getServices() {
-//        if (services != null) {
-//            Collections.sort(services);
-//        } else {
-//            services = new ArrayList<Service>();
-//        }
-//
-//        return services;
-//    }
-//
-//    public void setServices(List<Service> services) {
-//        this.services = services;
-//    }
-//    public String getServiceRequestNumber() {
-//        return serviceRequestNumber;
-//    }
     public void setServiceRequestNumber(String serviceRequestNumber) {
         this.serviceRequestNumber = serviceRequestNumber;
     }
@@ -332,6 +327,7 @@ public class ServiceRequest implements BusinessEntity {
         if (classification == null) {
             return new Classification();
         }
+
         return classification;
     }
 
@@ -343,6 +339,7 @@ public class ServiceRequest implements BusinessEntity {
         if (sector == null) {
             return new Sector();
         }
+
         return sector;
     }
 
@@ -354,6 +351,7 @@ public class ServiceRequest implements BusinessEntity {
         if (businessOffice == null) {
             return new BusinessOffice();
         }
+
         return businessOffice;
     }
 
@@ -363,8 +361,9 @@ public class ServiceRequest implements BusinessEntity {
 
     public ServiceContract getServiceContract() {
         if (serviceContract == null) {
-            return new ServiceContract();
+            serviceContract = new ServiceContract();
         }
+
         return serviceContract;
     }
 
@@ -384,6 +383,7 @@ public class ServiceRequest implements BusinessEntity {
         if (client == null) {
             return new Client("");
         }
+
         return client;
     }
 
@@ -393,8 +393,9 @@ public class ServiceRequest implements BusinessEntity {
 
     public Department getDepartment() {
         if (department == null) {
-            return new Department("");
+            return new Department();
         }
+
         return department;
     }
 
@@ -406,6 +407,7 @@ public class ServiceRequest implements BusinessEntity {
         if (assignedTo == null) {
             return new Employee();
         }
+
         return assignedTo;
     }
 
@@ -417,6 +419,7 @@ public class ServiceRequest implements BusinessEntity {
         if (jobCategory == null) {
             return new JobCategory();
         }
+
         return jobCategory;
     }
 
@@ -428,6 +431,7 @@ public class ServiceRequest implements BusinessEntity {
         if (jobSubCategory == null) {
             return new JobSubCategory();
         }
+
         return jobSubCategory;
     }
 
@@ -468,10 +472,10 @@ public class ServiceRequest implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ServiceRequest)) {
             return false;
         }
+        
         ServiceRequest other = (ServiceRequest) object;
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
@@ -584,20 +588,55 @@ public class ServiceRequest implements BusinessEntity {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
+
+            if (classification != null) {
+                classification.save(em);
+            }
             
-            getClassification().save(em);
-            getSector().save(em);
-            getDepartment().save(em);
-            getClient().save(em);
-            getJobCategory().save(em);
-            getJobSubCategory().save(em);
-            getAssignedTo().save(em);
-            getServiceContract().save(em);
-            getBusinessOffice().save(em);
-            getContact().save(em);
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
+            if (sector != null) {
+                sector.save(em);
+            }
             
+            if (department != null) {
+                department.save(em);
+            }
+            
+            if (client != null) {
+                client.save(em);
+            }
+            
+            if (jobCategory != null) {
+                jobCategory.save(em);
+            }
+            
+            if (jobSubCategory != null) {
+                jobSubCategory.save(em);
+            }
+            
+            if (assignedTo != null) {
+                assignedTo.save(em);
+            }
+
+            if (businessOffice != null) {
+                businessOffice.save(em);
+            }
+            
+            if (service != null) {
+                service.save(em);
+            }
+            
+            if (contact != null) {
+                contact.save(em);
+            }
+            
+            if (enteredBy != null) {
+                enteredBy.save(em);
+            }
+            
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -707,6 +746,26 @@ public class ServiceRequest implements BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

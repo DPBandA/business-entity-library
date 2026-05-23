@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -41,6 +41,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.Asset;
 import jm.com.dpbennett.business.entity.hrm.Department;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.Message;
@@ -226,8 +227,9 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
 
     public Department getDepartment() {
         if (department == null) {
-            return new Department("");
+            return new Department();
         }
+
         return department;
     }
 
@@ -332,6 +334,7 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
         if (inventoryDisbursements == null) {
             inventoryDisbursements = new ArrayList<>();
         }
+        
         return inventoryDisbursements;
     }
 
@@ -377,7 +380,6 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
         Date now = new Date();
 
         try {
-            // Get employee for later use
             Employee employee = user.getEmployee();
 
             if (getIsDirty()) {
@@ -424,13 +426,12 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
 
     public void addAction(BusinessEntity.Action action) {
 
-        // Just return if the action already exists.
         for (Action existingAction : getActions()) {
             if (existingAction == action) {
                 return;
             }
         }
-        // Add a new action if possible
+
         switch (action) {
             case CREATE:
                 getActions().add(BusinessEntity.Action.CREATE);
@@ -672,38 +673,49 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getDepartment().save(em);
-            getContactPerson().save(em);
-            if (getRequisitionApprovedBy().getId() != null) {
-                getRequisitionApprovedBy().save(em);
+            if (department != null) {
+                department.save(em);
             }
-            if (getInventoryReceivedBy().getId() != null) {
-                getInventoryReceivedBy().save(em);
+            
+            if (contactPerson != null) {
+                contactPerson.save(em);
             }
-            if (getRequisitionBy().getId() != null) {
-                getRequisitionBy().save(em);
+            
+            if (requisitionApprovedBy != null) {
+                requisitionApprovedBy.save(em);
             }
-            getEnteredBy().save(em);
-            getEditedBy().save(em);
-            if (getInventoryIssuedBy().getId() != null) {
-                getInventoryIssuedBy().save(em);
+            
+            if (inventoryReceivedBy != null) {
+                inventoryReceivedBy.save(em);
             }
+            
+            if (requisitionBy != null) {
+                requisitionBy.save(em);
+            }
+            
+            if (enteredBy != null) {
+                enteredBy.save(em);
+            }
+            
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
+            
+            if (inventoryIssuedBy != null) {
+                inventoryIssuedBy.save(em);
+            }
+          
+            for (InventoryDisbursement inventoryDisbursement : getInventoryDisbursements()) {
+                if (!inventoryDisbursement.save(em).isSuccess()) {
 
-            // Save new/edited cost components
-            if (!getInventoryDisbursements().isEmpty()) {
-                for (InventoryDisbursement inventoryDisbursement : getInventoryDisbursements()) {
-                    if ((inventoryDisbursement.getIsDirty() || inventoryDisbursement.getId() == null)
-                            && !inventoryDisbursement.save(em).isSuccess()) {
+                    return new ReturnMessage(false,
+                            "Inventory disbursement save error occurred",
+                            "An error occurred while saving an inventory disbursement",
+                            Message.SEVERITY_ERROR_NAME);
 
-                        return new ReturnMessage(false,
-                                "Inventory disbursement save error occurred",
-                                "An error occurred while saving an inventory disbursement",
-                                Message.SEVERITY_ERROR_NAME);
-
-                    }
                 }
             }
-
+            
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -788,6 +800,26 @@ public class InventoryRequisition implements Serializable, Comparable, BusinessE
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -41,6 +41,7 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.MarketProduct;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -75,13 +76,13 @@ public class Manufacturer implements BusinessEntity, Comparable {
     private Date dateLastVisited;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<MarketProduct> marketProducts;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee productLastSampledBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne(cascade = CascadeType.ALL)
     private Internet internet;
     @Column(length = 1024)
     private String notes;
@@ -128,6 +129,11 @@ public class Manufacturer implements BusinessEntity, Comparable {
     }
 
     public List<MarketProduct> getMarketProducts() {
+
+        if (marketProducts == null) {
+            marketProducts = new ArrayList<>();
+        }
+
         return marketProducts;
     }
 
@@ -176,6 +182,11 @@ public class Manufacturer implements BusinessEntity, Comparable {
     }
 
     public Employee getProductLastSampledBy() {
+
+        if (productLastSampledBy == null) {
+            return new Employee();
+        }
+
         return productLastSampledBy;
     }
 
@@ -380,7 +391,6 @@ public class Manufacturer implements BusinessEntity, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Manufacturer)) {
             return false;
         }
@@ -434,7 +444,6 @@ public class Manufacturer implements BusinessEntity, Comparable {
         }
     }
 
-    // Get the first manufacturer that matches the given name
     public static Manufacturer findManufacturerByName(EntityManager em, String value) {
 
         try {
@@ -554,18 +563,6 @@ public class Manufacturer implements BusinessEntity, Comparable {
                 marketProduct.save(em);
             }
 
-            for (Contact contact : getContacts()) {
-                contact.save(em);
-            }
-
-            for (Address address : getAddresses()) {
-                address.save(em);
-            }
-
-            if (getProductLastSampledBy() != null) {
-                getProductLastSampledBy().save(em);
-            }
-
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -665,6 +662,26 @@ public class Manufacturer implements BusinessEntity, Comparable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

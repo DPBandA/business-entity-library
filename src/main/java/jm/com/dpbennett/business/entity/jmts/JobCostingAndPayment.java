@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -74,6 +74,7 @@ public class JobCostingAndPayment implements BusinessEntity {
     private String finalCostDoneBy;
     private Double paymentReceivedToDate;
     private Double deposit;
+    private Double reimbursable;
     private Double amountDue;
     private Boolean costingCompleted;
     private Boolean costingApproved;
@@ -92,9 +93,9 @@ public class JobCostingAndPayment implements BusinessEntity {
     private Discount discount;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<CashPayment> cashPayments;
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<CostComponent> costComponents;
     private Double minDeposit;
     private Double totalTax;
@@ -103,12 +104,12 @@ public class JobCostingAndPayment implements BusinessEntity {
     private String discountType;
     @Column(name = "DISCOUNT")
     private Double discountValue;
-    @Transient
-    private Boolean isDirty;
     private Boolean active;
     @Column(length = 1024)
     private String description;
     private Boolean estimate;
+    @Transient
+    private Boolean isDirty;
 
     public JobCostingAndPayment() {
         this.totalCost = 0.0;
@@ -135,8 +136,84 @@ public class JobCostingAndPayment implements BusinessEntity {
         this.id = id;
     }
 
+    public void setTotalTax(Double totalTax) {
+        this.totalTax = totalTax;
+    }
+
+    public static JobCostingAndPayment copy(JobCostingAndPayment src) {
+
+        JobCostingAndPayment copy = new JobCostingAndPayment();
+
+        copy.setJobId(src.getJobId());
+        copy.setName(src.getName());
+        copy.setCompleted(src.getCompleted());
+        copy.setInvoiceNumber(src.getInvoiceNumber());
+        copy.setPurchaseOrderNumber(src.getPurchaseOrderNumber());
+        copy.setReceiptNumber(src.getReceiptNumber());
+        copy.setPaymentTerms(src.getPaymentTerms());
+        copy.setEstimatedCost(src.getEstimatedCost());
+        copy.setEstimatedCostDoneBy(src.getEstimatedCostDoneBy());
+        copy.setFinalCost(src.getFinalCost());
+        copy.setFinalCostDoneBy(src.getFinalCostDoneBy());
+        copy.setPaymentReceivedToDate(src.getPaymentReceivedToDate());
+        copy.setDeposit(src.getDeposit());
+        copy.setReimbursable(src.getReimbursable());
+        copy.setCostingCompleted(src.getCostingCompleted());
+        copy.setCostingApproved(src.getCostingApproved());
+        copy.setInvoiced(src.getInvoiced());
+        copy.setCostingPreparedBy(src.getCostingPreparedBy());
+        copy.setCostingApprovedBy(src.getCostingApprovedBy());
+        copy.setCostingInvoicedBy(src.getCostingInvoicedBy());
+        copy.setLastPaymentEnteredBy(src.getLastPaymentEnteredBy());
+        copy.setTax(src.getTax());
+        copy.setDiscount(src.getDiscount());
+        copy.setCurrency(src.getCurrency());
+        copy.setCashPayments(src.copyCashPayments());
+        copy.setCostComponents(src.copyCostComponents());
+        copy.setMinDeposit(src.getMinDeposit());
+        copy.setTotalTax(src.getTotalTax());
+        copy.setTotalCost(src.getTotalCost());
+        copy.setPercentageGCT(src.getPercentageGCT());
+        copy.setDiscountType(src.getDiscountType());
+        copy.setDiscountValue(src.getDiscountValue());
+        copy.setActive(src.getActive());
+        copy.setDescription(src.getDescription());
+        copy.setEstimate(src.getEstimate());
+
+        return copy;
+    }
+
+    public List<CashPayment> copyCashPayments() {
+
+        List<CashPayment> copies = new ArrayList<>();
+
+        for (CashPayment cashPayment : getCashPayments()) {
+            copies.add(CashPayment.copy(cashPayment));
+        }
+
+        return copies;
+
+    }
+
+    public List<CostComponent> copyCostComponents() {
+
+        List<CostComponent> copies = new ArrayList<>();
+
+        for (CostComponent costComponent : getCostComponents()) {
+            copies.add(CostComponent.copy(costComponent));
+        }
+
+        return copies;
+
+    }
+
     public Currency getCurrency() {
-        return (currency == null ? new Currency() : currency);
+
+        if (currency == null) {
+            return new Currency();
+        }
+
+        return currency;
     }
 
     public void setCurrency(Currency currency) {
@@ -183,17 +260,11 @@ public class JobCostingAndPayment implements BusinessEntity {
         }
     }
 
-    /**
-     * Returns the type of discount as Percentage, Currency or Fixed Cost.
-     *
-     * @deprecated This feature is already encapsulated in the Discount class.
-     *
-     * @return
-     */
     public String getDiscountType() {
         if (discountType == null) {
             discountType = "Percentage";
         }
+
         return discountType;
     }
 
@@ -257,10 +328,6 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     public Employee getCostingInvoicedBy() {
 
-        if (costingInvoicedBy == null) {
-            return new Employee();
-        }
-
         return costingInvoicedBy;
     }
 
@@ -269,11 +336,6 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Employee getCostingPreparedBy() {
-
-        if (costingPreparedBy == null) {
-            return new Employee();
-        }
-
         return costingPreparedBy;
     }
 
@@ -282,7 +344,12 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Tax getTax() {
-        return (tax == null ? new Tax() : tax);
+
+        if (tax == null) {
+            return new Tax();
+        }
+
+        return tax;
     }
 
     public void setTax(Tax tax) {
@@ -290,7 +357,12 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Discount getDiscount() {
-        return (discount == null ? new Discount() : discount);
+
+        if (discount == null) {
+            return new Discount();
+        }
+
+        return discount;
     }
 
     public void setDiscount(Discount discount) {
@@ -301,19 +373,8 @@ public class JobCostingAndPayment implements BusinessEntity {
         return new ArrayList<>();
     }
 
-//    public AccountingCode getAccountingCode() {
-//        if (accountingCode == null) {
-//            accountingCode = new AccountingCode();
-//        }
-//        return accountingCode;
-//    }
-//
-//    public void setAccountingCode(AccountingCode accountingCode) {
-//        this.accountingCode = accountingCode;
-//    }
     public static void createSampleBasedJobCostings(Job currentJob) {
         if (currentJob.getJobCostingAndPayment().getAllSortedCostComponents().isEmpty()) {
-            // Add all existing samples as cost oomponents            
             for (JobSample jobSample : currentJob.getJobSamples()) {
                 currentJob.getJobCostingAndPayment().getAllSortedCostComponents().add(new CostComponent(jobSample.getDescription()));
             }
@@ -367,10 +428,6 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Employee getLastPaymentEnteredBy() {
-
-        if (lastPaymentEnteredBy == null) {
-            return new Employee();
-        }
 
         return lastPaymentEnteredBy;
     }
@@ -466,12 +523,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         }
     }
 
-    /**
-     * Builds and return a list of cost components with the costing to which the
-     * cost component used as a header cost component belong
-     *
-     * @return
-     */
     public List<CostComponent> getAllSortedCostComponents() {
 
         Collections.sort(getCostComponents());
@@ -528,10 +579,6 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     public Employee getCostingApprovedBy() {
 
-        if (costingApprovedBy == null) {
-            return new Employee();
-        }
-
         return costingApprovedBy;
     }
 
@@ -558,12 +605,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         this.completed = completed;
     }
 
-    /**
-     * Gets the cash payments made. Note that if there are no cash payments but
-     * a deposit exists, the deposit is created as a "Final" payment.
-     *
-     * @return
-     */
     public List<CashPayment> getCashPayments() {
         if (cashPayments != null) {
             Collections.sort(cashPayments);
@@ -578,11 +619,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         this.cashPayments = cashPayments;
     }
 
-    /**
-     * Get the deposit payment for the job.
-     *
-     * @return
-     */
     public Double getDeposit() {
         deposit = 0.0;
 
@@ -600,18 +636,17 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     public Double getReimbursable() {
-        return deposit;
+        if (reimbursable == null) {
+            reimbursable = 0.0;
+        }
+
+        return reimbursable;
     }
 
-    public void setReimbursable(Double deposit) {
-        this.deposit = deposit;
+    public void setReimbursable(Double reimbursable) {
+        this.reimbursable = reimbursable;
     }
 
-    /**
-     * Get the total payments from cash payments and deposit if any.
-     *
-     * @return
-     */
     public Double getTotalPayment() {
         Double payment = getDeposit();
 
@@ -723,6 +758,7 @@ public class JobCostingAndPayment implements BusinessEntity {
         if (purchaseOrderNumber == null) {
             purchaseOrderNumber = "";
         }
+        
         return purchaseOrderNumber;
     }
 
@@ -777,7 +813,6 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof JobCostingAndPayment)) {
             return false;
         }
@@ -804,6 +839,7 @@ public class JobCostingAndPayment implements BusinessEntity {
         if (costComponents == null) {
             costComponents = new ArrayList<>();
         }
+
         return costComponents;
     }
 
@@ -1049,11 +1085,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         return minDepositTotalTax;
     }
 
-    /**
-     * Get total cost. Total cost includes total tax
-     *
-     * @return
-     */
     public Double getTotalCost() {
 
         totalCost = getFinalCostWithDiscount() + getTotalTax();
@@ -1067,15 +1098,10 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     public Double getProformaTotalCost() {
 
-        return getFinalCostWithDiscount() + getTotalTax() + getReimbursable();
+        return getFinalCostWithDiscount() + getTotalTax() - getReimbursable();
 
     }
 
-    /**
-     *
-     * @param job
-     * @return
-     */
     public static Boolean getCanApplyTax(Job job) {
         return job.getClassification().getIsEarning()
                 && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option?
@@ -1088,25 +1114,33 @@ public class JobCostingAndPayment implements BusinessEntity {
 
         try {
 
-            if (getCostingPreparedBy().getId() != null) {
-                getCostingPreparedBy().save(em);
+            if (costingPreparedBy != null) {
+                costingPreparedBy.save(em);
             }
 
-            if (getCostingApprovedBy().getId() != null) {
-                getCostingApprovedBy().save(em);
+            if (costingApprovedBy != null) {
+                costingApprovedBy.save(em);
             }
 
-            if (getCostingInvoicedBy().getId() != null) {
-                getCostingInvoicedBy().save(em);
+            if (costingInvoicedBy != null) {
+                costingInvoicedBy.save(em);
             }
 
-            if (getLastPaymentEnteredBy().getId() != null) {
-                getLastPaymentEnteredBy().save(em);
+            if (lastPaymentEnteredBy != null) {
+                lastPaymentEnteredBy.save(em);
             }
 
-            getTax().save(em);
-            getDiscount().save(em);
-            getCurrency().save(em);
+            if (tax != null) {
+                tax.save(em);
+            }
+
+            if (discount != null) {
+                discount.save(em);
+            }
+
+            if (currency != null) {
+                currency.save(em);
+            }
 
             for (CashPayment payment : getCashPayments()) {
                 if (!payment.save(em).isSuccess()) {
@@ -1303,6 +1337,26 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

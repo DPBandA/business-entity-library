@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -20,10 +20,10 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.cm;
 
+import jakarta.persistence.EntityManager;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
-import javax.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.fm.AccPacCustomer;
 import jm.com.dpbennett.business.entity.fm.Discount;
@@ -47,11 +47,6 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
     @Override
     int compareTo(Object o);
 
-    /**
-     * Copy the client without copying the id field
-     *
-     * @param src
-     */
     void doCopy(Client src);
 
     @Override
@@ -77,32 +72,20 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
     Double getCreditLimit();
 
     @Override
-    Date getDateEdited();
+    LocalDate getDateEdited();
 
     @Override
-    Date getDateEntered();
+    LocalDate getDateEntered();
 
     @Override
-    Date getDateFirstReceived();
+    LocalDate getDateFirstReceived();
 
     @Override
-    Date getDateLastAccessed();
+    LocalDate getDateLastAccessed();
 
-    /**
-     * Returns the first found address with billing type "Billing" as the main
-     * billing address.
-     *
-     * @return
-     */
     @Override
     Address getDefaultAddress();
 
-    /**
-     * Get the first main contact which is treated as the main contact in the
-     * list of contacts.
-     *
-     * @return
-     */
     @Override
     Contact getDefaultContact();
 
@@ -136,12 +119,6 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
     @Override
     Boolean getIsDirty();
 
-    /**
-     * Get the main contact which is treated as the main contact in the list of
-     * contacts.
-     *
-     * @return
-     */
     Contact getMainContact();
 
     @Override
@@ -162,14 +139,6 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
     @Override
     String getTaxRegistrationNumber();
 
-    /**
-     * This method guards against returning very long names. This is used in an
-     * autocomplete JSF component for instance to prevent the list of clients
-     * from extending beyond the screen. In the future, the maximum length of
-     * say 50 will be a value stored in the resource bundle of the BEL.
-     *
-     * @return
-     */
     String getTruncatedName();
 
     @Override
@@ -201,16 +170,16 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
     void setCreditLimit(Double creditLimit);
 
     @Override
-    void setDateEdited(Date dateEdited);
+    void setDateEdited(LocalDate dateEdited);
 
     @Override
-    void setDateEntered(Date dateEntered);
+    void setDateEntered(LocalDate dateEntered);
 
     @Override
-    void setDateFirstReceived(Date dateFirstReceived);
+    void setDateFirstReceived(LocalDate dateFirstReceived);
 
     @Override
-    void setDateLastAccessed(Date dateLastAccessed);
+    void setDateLastAccessed(LocalDate dateLastAccessed);
 
     void setDefaultTax(Tax defaultTax);
 
@@ -268,5 +237,5 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
 
     @Override
     ReturnMessage validate(EntityManager em);
-    
+
 }

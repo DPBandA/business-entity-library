@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library. 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,11 +17,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity;
 
+import jakarta.persistence.EntityManager;
 import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.EntityManager;
+import java.time.LocalDate;
+import java.util.List;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -50,16 +53,16 @@ public interface BusinessEntity extends Serializable {
 
     public void setCategory(String category);
 
-    public Date getDateEntered();
+    public LocalDate getDateEntered();
 
-    public void setDateEntered(Date dateEntered);
+    public void setDateEntered(LocalDate dateEntered);
 
-    public Date getDateEdited();
+    public LocalDate getDateEdited();
 
-    public void setDateEdited(Date dateEdited);
+    public void setDateEdited(LocalDate dateEdited);
 
     public ReturnMessage save(EntityManager em);
-    
+
     public ReturnMessage saveUnique(EntityManager em);
 
     public ReturnMessage delete(EntityManager em);
@@ -90,9 +93,22 @@ public interface BusinessEntity extends Serializable {
 
     public void setEnteredBy(Person person);
 
-    /**
-     * The actions that can be performed with respect to an entity.
-     */
+    public List<SystemOption> getSettings();
+
+    public void setSettings(List<SystemOption> settings);
+
+    public SystemOption getSetting(
+            String setting,
+            String settingValue,
+            String type,
+            String category);
+
+    public void setSetting(
+            String setting,
+            String settingValue,
+            String type,
+            String category);
+
     public enum Action {
         CREATE, COMPLETE, EDIT, APPROVE, DELETE, CANCEL, PREPARE, INVOICE,
         COSTING, REQUEST, PAYMENT, RECOMMEND

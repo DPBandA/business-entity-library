@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -412,7 +412,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public Tax getTax() {
-        return (tax == null ? new Tax() : tax);
+
+        if (tax == null) {
+            return new Tax();
+        }
+
+        return tax;
     }
 
     public void setTax(Tax tax) {
@@ -420,7 +425,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public Discount getDiscount() {
-        return (discount == null ? new Discount() : discount);
+
+        if (discount == null) {
+            return new Discount();
+        }
+
+        return discount;
     }
 
     public void setDiscount(Discount discount) {
@@ -575,7 +585,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public Currency getCurrency() {
-        return (currency == null ? new Currency() : currency);
+
+        if (currency == null) {
+            return new Currency();
+        }
+
+        return currency;
     }
 
     public void setCurrency(Currency currency) {
@@ -583,7 +598,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public Currency getPaymentCurrency() {
-        return (paymentCurrency == null ? new Currency() : paymentCurrency);
+
+        if (paymentCurrency == null) {
+            return new Currency();
+        }
+
+        return paymentCurrency;
     }
 
     public void setPaymentCurrency(Currency paymentCurrency) {
@@ -634,14 +654,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         this.importLicenceDate = importLicenceDate;
     }
 
-    /**
-     * Splits the description into three(3) parts.
-     *
-     * @param part1Length
-     * @param part2Length
-     * @param part3Length
-     * @return
-     */
     public String[] splitDescription(int part1Length, int part2Length, int part3Length) {
         int descriptionLength = getDescription().length();
         String[] descriptionParts = {"", "", ""};
@@ -666,13 +678,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public void addAction(BusinessEntity.Action action) {
 
-        // Just return if the action already exists.
         for (Action existingAction : getActions()) {
             if (existingAction == action) {
                 return;
             }
         }
-        // Add a new action if possible
+
         switch (action) {
             case CREATE:
                 getActions().add(BusinessEntity.Action.CREATE);
@@ -799,20 +810,19 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         String year;
         String sequenceNumberStr;
 
-        // Use the date entered to get the year if it is valid
         if (getRequisitionDate() != null) {
             c.setTime(getRequisitionDate());
             year = "" + c.get(Calendar.YEAR);
         } else {
             year = "" + BusinessEntityUtils.getCurrentYear();
         }
-        // include the sequence number if it is valid
+
         if (getSequenceNumber() != null) {
             sequenceNumberStr = BusinessEntityUtils.getIntegerString(getSequenceNumber(), 6);
         } else {
             sequenceNumberStr = "?";
         }
-        // Build the PR number
+
         number = "P" + sequenceNumberStr + "/"
                 + year.substring(year.length() - 2, year.length());
 
@@ -824,14 +834,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
         String purchaseOrderSequenceNumberStr;
 
-        // include the sequence number if it is valid
         if (getPurchaseOrderSequenceNumber() != null) {
             purchaseOrderSequenceNumberStr = BusinessEntityUtils.getIntegerString(getPurchaseOrderSequenceNumber(), 6);
         } else {
             purchaseOrderSequenceNumberStr = "?";
         }
 
-        // Build the PO number
         purchaseOrderNumber = purchaseOrderSequenceNumberStr;
 
         return purchaseOrderNumber;
@@ -904,12 +912,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         return getConvertedTotalCostWithDiscount() + getTotalTax();
     }
 
-    /**
-     * Builds and return a list of cost components with the costing to which the
-     * cost component used as a header cost component belong
-     *
-     * @return
-     */
     public List<CostComponent> getAllSortedCostComponents() {
 
         Collections.sort(getCostComponents());
@@ -965,6 +967,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (costComponents == null) {
             costComponents = new ArrayList<>();
         }
+        
         return costComponents;
     }
 
@@ -1023,6 +1026,11 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     public Supplier getSupplier() {
+
+        if (supplier == null) {
+            return new Supplier();
+        }
+
         return supplier;
     }
 
@@ -1087,7 +1095,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public ArrayList<ApproverOrRecommender> getApproversAndRecommenders() {
 
         approversAndRecommenders.clear();
-        // Add approvers
+
         if (approver1 != null) {
             approversAndRecommenders.add(new ApproverOrRecommender(true, approver1));
         }
@@ -1104,7 +1112,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             approversAndRecommenders.add(new ApproverOrRecommender(true, approver5));
         }
 
-        // Add recommenders
         if (recommender1 != null) {
             approversAndRecommenders.add(new ApproverOrRecommender(false, recommender1));
         }
@@ -1185,6 +1192,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         if (editedBy == null) {
             return new Employee();
         }
+
         return editedBy;
     }
 
@@ -1213,7 +1221,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     public Department getOriginatingDepartment() {
         if (originatingDepartment == null) {
-            originatingDepartment = new Department();
+            return new Department();
         }
 
         return originatingDepartment;
@@ -1385,7 +1393,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PurchaseRequisition)) {
             return false;
         }
@@ -1407,7 +1414,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Override
     public Classification getClassification() {
         if (classification == null) {
-            classification = new Classification();
+            return new Classification();
         }
 
         return classification;
@@ -1567,13 +1574,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public static String getNumber(PurchaseRequisition pr, String prefix) {
         String number = prefix;
 
-        // Append department code
         if (pr.getPurchasingDepartment().getCode() != null) {
             number = number + pr.getPurchasingDepartment().getCode();
         } else {
             number = number + "?";
         }
-        // Append seq #
+
         if (pr.getSequenceNumber() != null) {
             NumberFormat formatter = DecimalFormat.getIntegerInstance();
             formatter.setMinimumIntegerDigits(2);
@@ -1581,7 +1587,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         } else {
             number = number + "_?";
         }
-        // Append month in the form (MMM) and year in the form (YY).
+
         if (pr.getRequisitionDate() != null) {
             number = number + "/" + BusinessEntityUtils.getMonthShortFormat(pr.getRequisitionDate())
                     + BusinessEntityUtils.getYearShortFormat(pr.getRequisitionDate(), 2);
@@ -1595,97 +1601,115 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
         try {
 
-            if (getDocumentType().getId() != null) {
-                getDocumentType().save(em);
+            if (documentType != null) {
+                documentType.save(em);
             }
-            if (getClassification().getId() != null) {
-                getClassification().save(em);
+
+            if (classification != null) {
+                classification.save(em);
             }
-            getOriginatingDepartment().save(em);
-            if (getPurchasingDepartment().getId() != null) {
-                getPurchasingDepartment().save(em);
+
+            if (originatingDepartment != null) {
+                originatingDepartment.save(em);
             }
-            if (getProcurementOfficer().getId() != null) {
-                getProcurementOfficer().save(em);
+
+            if (purchasingDepartment != null) {
+                purchasingDepartment.save(em);
             }
-            getOriginator().save(em);
-            if (getTax().getId() != null) {
-                getTax().save(em);
+
+            if (procurementOfficer != null) {
+                procurementOfficer.save(em);
             }
-            if (getDiscount().getId() != null) {
-                getDiscount().save(em);
+
+            if (originator != null) {
+                originator.save(em);
+            }
+
+            if (tax != null) {
+                tax.save(em);
+            }
+
+            if (discount != null) {
+                discount.save(em);
             }
 
             if (getApprover1() != null) {
                 getApprover1().save(em);
             }
+
             if (getApprover2() != null) {
                 getApprover2().save(em);
             }
+
             if (getApprover3() != null) {
                 getApprover3().save(em);
             }
+
             if (getApprover4() != null) {
                 getApprover4().save(em);
             }
+
             if (getApprover5() != null) {
                 getApprover5().save(em);
             }
+
             if (getRecommender1() != null) {
                 getRecommender1().save(em);
             }
+
             if (getRecommender2() != null) {
                 getRecommender2().save(em);
             }
+
             if (getRecommender3() != null) {
                 getRecommender3().save(em);
             }
+
             if (getRecommender4() != null) {
                 getRecommender4().save(em);
             }
+
             if (getRecommender5() != null) {
                 getRecommender5().save(em);
             }
 
-            if (getCurrency().getId() != null) {
-                getCurrency().save(em);
+            if (currency != null) {
+                currency.save(em);
             }
 
-            if (getPaymentCurrency().getId() != null) {
-                getPaymentCurrency().save(em);
+            if (paymentCurrency != null) {
+                paymentCurrency.save(em);
             }
 
-            getSupplier().save(em);
-
-            if (getEditedBy().getId() != null) {
-                getEditedBy().save(em);
+            if (supplier != null) {
+                supplier.save(em);
             }
 
-            if (!getAttachments().isEmpty()) {
-                for (Attachment attachment : getAttachments()) {
-                    if ((attachment.getId() == null || attachment.getIsDirty())
-                            && !attachment.save(em).isSuccess()) {
+            if (editedBy != null) {
+                editedBy.save(em);
+            }
 
-                        return new ReturnMessage(false,
-                                "Attachment save error occurred",
-                                "An error occurred while saving an attachment",
-                                Message.SEVERITY_ERROR_NAME);
+            for (Attachment attachment : getAttachments()) {
+                if ((attachment.getId() == null || attachment.getIsDirty())
+                        && !attachment.save(em).isSuccess()) {
 
-                    }
+                    return new ReturnMessage(false,
+                            "Attachment save error occurred",
+                            "An error occurred while saving an attachment",
+                            Message.SEVERITY_ERROR_NAME);
+
                 }
             }
 
-            if (!getCostComponents().isEmpty()) {
-                for (CostComponent costComponent : getCostComponents()) {
-                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
-                            && !costComponent.save(em).isSuccess()) {
+            for (CostComponent costComponent : getCostComponents()) {
+                if ((costComponent.getIsDirty() || costComponent.getId() == null)
+                        && !costComponent.save(em).isSuccess()) {
 
-                        return new ReturnMessage(false,
-                                "Cost component save error occurred",
-                                "An error occurred while saving a cost component",
-                                Message.SEVERITY_ERROR_NAME);
+                    return new ReturnMessage(false,
+                            "Cost component save error occurred",
+                            "An error occurred while saving a cost component",
+                            Message.SEVERITY_ERROR_NAME);
 
-                    }
                 }
             }
 
@@ -1714,7 +1738,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         PurchaseOrderNumber nextPurchaseOrderNumber = null;
 
         try {
-            // Get employee for later use
             Employee employee = user.getEmployee();
 
             if (getId() != null) {
@@ -1867,6 +1890,26 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

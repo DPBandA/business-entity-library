@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -48,8 +49,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "sector")
 @NamedQueries({
-    @NamedQuery(name = "findAllSectors", query = "SELECT s FROM Sector s ORDER BY s.name")
-    ,
+    @NamedQuery(name = "findAllSectors", query = "SELECT s FROM Sector s ORDER BY s.name"),
     @NamedQuery(name = "findAllActiveSectors", query = "SELECT s FROM Sector s WHERE s.active = 1 ORDER BY s.name")
 })
 public class Sector implements BusinessEntity, Serializable {
@@ -131,6 +131,7 @@ public class Sector implements BusinessEntity, Serializable {
         if (departments == null) {
             departments = new ArrayList<>();
         }
+
         return departments;
     }
 
@@ -157,12 +158,11 @@ public class Sector implements BusinessEntity, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Sector)) {
             return false;
         }
         Sector other = (Sector) object;
-        
+
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -225,9 +225,9 @@ public class Sector implements BusinessEntity, Serializable {
     public static Sector findSectorByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Sector> sectors = em.createQuery("SELECT s FROM Sector s "
                     + "WHERE UPPER(s.name) "
                     + "= '" + name.toUpperCase() + "'", Sector.class).getResultList();
@@ -245,9 +245,9 @@ public class Sector implements BusinessEntity, Serializable {
     public static List<Sector> findSectorsByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Sector> sectors
                     = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"
                             + name.toUpperCase().trim() + "%' ORDER BY s.name", Sector.class).getResultList();
@@ -261,9 +261,9 @@ public class Sector implements BusinessEntity, Serializable {
     public static List<Sector> findActiveSectorsByName(EntityManager em, String name) {
 
         try {
-            
+
             name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-           
+
             List<Sector> sectors
                     = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"
                             + name.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Sector.class).getResultList();
@@ -293,18 +293,18 @@ public class Sector implements BusinessEntity, Serializable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-            
-            for (Department department : departments) {
-               department.save(em);
+
+            for (Department department : getDepartments()) {
+                department.save(em);
             }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
 
             return new ReturnMessage();
         } catch (Exception e) {
-           System.out.println("Sector save exception: " + e);
+            System.out.println("Sector save exception: " + e);
         }
 
         return new ReturnMessage(false, "Sector not saved");
@@ -402,6 +402,26 @@ public class Sector implements BusinessEntity, Serializable {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

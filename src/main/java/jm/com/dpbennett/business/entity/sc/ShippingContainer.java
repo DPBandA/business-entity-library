@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -30,6 +30,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -91,6 +92,7 @@ public class ShippingContainer implements BusinessEntity {
         if (percentageDetained == null) {
             percentageDetained = 0.0;
         }
+
         return percentageDetained;
     }
 
@@ -168,7 +170,6 @@ public class ShippingContainer implements BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ShippingContainer)) {
             return false;
         }
@@ -207,7 +208,6 @@ public class ShippingContainer implements BusinessEntity {
                 if (shippingContainers.isEmpty()) {
                     return null;
                 } else {
-                    //List<String> containerNums = complianceSurvey.getContainerNumberList();
                     for (ShippingContainer shippingContainer : shippingContainers) {
                         if (shippingContainer.getNumber().trim().equals(containerNumber)) {
                             return shippingContainer;
@@ -227,13 +227,13 @@ public class ShippingContainer implements BusinessEntity {
 
     }
 
-    public static ShippingContainer findShippingContainerByNumber(EntityManager em, 
+    public static ShippingContainer findShippingContainerByNumber(EntityManager em,
             String value) {
 
         try {
-            
+
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            
+
             List<ShippingContainer> containers = em.createQuery("SELECT s FROM ShippingContainer s "
                     + "WHERE UPPER(s.number) "
                     + "= '" + value.toUpperCase() + "'", ShippingContainer.class).getResultList();
@@ -256,7 +256,7 @@ public class ShippingContainer implements BusinessEntity {
             em.getTransaction().commit();
 
             return new ReturnMessage();
-            
+
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -366,6 +366,26 @@ public class ShippingContainer implements BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

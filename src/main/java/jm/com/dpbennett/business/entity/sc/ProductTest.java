@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,7 @@ import jm.com.dpbennett.business.entity.mt.Test;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.text.Collator;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -35,6 +36,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -95,7 +97,6 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof ProductTest)) {
             return false;
         }
@@ -106,7 +107,7 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
 
     @Override
     public String toString() {
-        return "jm.org.bsj.entity.FoodTest[id=" + id + "]";
+        return "jm.com.dpbennett.entity.FoodTest[id=" + id + "]";
     }
 
     @Override
@@ -151,6 +152,11 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
 
     @Override
     public Employee getTestDoneBy() {
+
+        if (testDoneBy == null) {
+            return new Employee();
+        }
+
         return testDoneBy;
     }
 
@@ -188,7 +194,9 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
     public ReturnMessage save(EntityManager em) {
         try {
 
-            getTestDoneBy().save(em);
+            if (testDoneBy.getId() != null) {
+                testDoneBy.save(em);
+            }
 
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
@@ -299,6 +307,26 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<SystemOption> getSettings() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSettings(List<SystemOption> settings) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SystemOption getSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

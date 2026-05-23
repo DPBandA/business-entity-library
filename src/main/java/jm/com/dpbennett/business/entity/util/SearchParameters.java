@@ -1,6 +1,6 @@
 /*
 Business Entity Library (BEL) - A foundational library for JSF web applications 
-Copyright (C) 2025  D P Bennett & Associates Limited
+Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
+
 package jm.com.dpbennett.business.entity.util;
 
 import java.io.Serializable;
@@ -26,7 +27,7 @@ import jm.com.dpbennett.business.entity.rm.DatePeriod;
 public class SearchParameters implements Serializable {
 
     private String name;
-     private String jobType;
+    private String jobType;
     private ArrayList jobTypes;
     private Boolean showJobTypes;
     private ArrayList searchTypes;
@@ -38,7 +39,7 @@ public class SearchParameters implements Serializable {
     private DatePeriod datePeriod;
     private String searchText;
 
-    public SearchParameters (
+    public SearchParameters(
             String name,
             ArrayList jobTypes,
             Boolean showJobTypes,
@@ -58,11 +59,11 @@ public class SearchParameters implements Serializable {
         this.showSearchTypes = showSearchTypes;
         this.dateField = dateField;
         this.showDateField = showDateField;
-         this.searchDateFields = searchDateFields;
+        this.searchDateFields = searchDateFields;
         this.searchType = searchType;
         this.datePeriod = datePeriod;
         this.searchText = searchText;
-        
+
     }
 
     public String getJobType() {
@@ -96,7 +97,7 @@ public class SearchParameters implements Serializable {
     public void setShowDateField(Boolean showDateField) {
         this.showDateField = showDateField;
     }
-    
+
     public ArrayList getJobTypes() {
         return jobTypes;
     }
