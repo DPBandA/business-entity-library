@@ -19,15 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.test;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.fm.MarketProduct;
-import org.junit.Test;
-
 /**
  *
  * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>

@@ -19,10 +19,6 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.test;
 
-import java.util.Arrays;
-import jm.com.dpbennett.business.entity.pm.PurchaseRequisition;
-import org.junit.Test;
-
 /**
  *
  * @author Desmond Bennett
