@@ -20,10 +20,10 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity;
 
+import jakarta.persistence.EntityManager;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
-import javax.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -53,13 +53,13 @@ public interface BusinessEntity extends Serializable {
 
     public void setCategory(String category);
 
-    public Date getDateEntered();
+    public LocalDate getDateEntered();
 
-    public void setDateEntered(Date dateEntered);
+    public void setDateEntered(LocalDate dateEntered);
 
-    public Date getDateEdited();
+    public LocalDate getDateEdited();
 
-    public void setDateEdited(Date dateEdited);
+    public void setDateEdited(LocalDate dateEdited);
 
     public ReturnMessage save(EntityManager em);
 

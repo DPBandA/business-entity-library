@@ -20,8 +20,8 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.cm;
 
+import java.time.LocalDate;
 import jm.com.dpbennett.business.entity.hrm.Address;
-import java.util.Date;
 import java.util.List;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 
@@ -47,9 +47,9 @@ public interface Customer {
 
     public Contact getDefaultContact();
 
-    public Date getDateLastAccessed();
+    public LocalDate getDateLastAccessed();
 
-    public void setDateLastAccessed(Date dateLastAccessed);
+    public void setDateLastAccessed(LocalDate dateLastAccessed);
 
     public String getNumber();
 
@@ -59,9 +59,9 @@ public interface Customer {
 
     public void setType(String type);
 
-    public Date getDateFirstReceived();
+    public LocalDate getDateFirstReceived();
 
-    public void setDateFirstReceived(Date dateFirstReceived);
+    public void setDateFirstReceived(LocalDate dateFirstReceived);
 
     public String getNotes();
 
