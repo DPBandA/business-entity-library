@@ -20,10 +20,10 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.cm;
 
+import jakarta.persistence.EntityManager;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
-import javax.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.fm.AccPacCustomer;
 import jm.com.dpbennett.business.entity.fm.Discount;
@@ -72,16 +72,16 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
     Double getCreditLimit();
 
     @Override
-    Date getDateEdited();
+    LocalDate getDateEdited();
 
     @Override
-    Date getDateEntered();
+    LocalDate getDateEntered();
 
     @Override
-    Date getDateFirstReceived();
+    LocalDate getDateFirstReceived();
 
     @Override
-    Date getDateLastAccessed();
+    LocalDate getDateLastAccessed();
 
     @Override
     Address getDefaultAddress();
@@ -170,16 +170,16 @@ public interface ClientInterface extends BusinessEntity, Comparable, Customer, S
     void setCreditLimit(Double creditLimit);
 
     @Override
-    void setDateEdited(Date dateEdited);
+    void setDateEdited(LocalDate dateEdited);
 
     @Override
-    void setDateEntered(Date dateEntered);
+    void setDateEntered(LocalDate dateEntered);
 
     @Override
-    void setDateFirstReceived(Date dateFirstReceived);
+    void setDateFirstReceived(LocalDate dateFirstReceived);
 
     @Override
-    void setDateLastAccessed(Date dateLastAccessed);
+    void setDateLastAccessed(LocalDate dateLastAccessed);
 
     void setDefaultTax(Tax defaultTax);
 
