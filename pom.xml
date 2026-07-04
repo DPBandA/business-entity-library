@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
 
     <name>a.BEL</name>
-    <description>A library of business entities and utilities.</description>
+    <description>A library of business entities and utilities for JSF.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
