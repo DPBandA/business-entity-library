@@ -19,25 +19,25 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.dm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.fm.Classification;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -56,6 +56,202 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Post implements Document, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Post.class.getName());
+    public static Post findActiveByName(EntityManager em, String value,
+            Boolean ignoreCase) {
+        
+        List<Post> posts;
+        
+        try {
+            
+            if (ignoreCase) {
+                posts = em.createQuery("SELECT p FROM Post p "
+                        + "WHERE UPPER(p.name) "
+                        + "= '" + value.toUpperCase() + "'"
+                                + " AND p.active = 1", Post.class).getResultList();
+            } else {
+                posts = em.createQuery("SELECT p FROM Post p "
+                        + "WHERE p.name "
+                        + "= '" + value + "'"
+                                + " AND p.active = 1", Post.class).getResultList();
+            }
+            
+            if (!posts.isEmpty()) {
+                return posts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Post findByName(EntityManager em, String value,
+            Boolean ignoreCase) {
+        
+        List<Post> posts;
+        
+        try {
+            
+            if (ignoreCase) {
+                posts = em.createQuery("SELECT p FROM Post p "
+                        + "WHERE UPPER(p.name) "
+                        + "= '" + value.toUpperCase() + "'",
+                        Post.class).getResultList();
+            } else {
+                posts = em.createQuery("SELECT p FROM Post p "
+                        + "WHERE p.name "
+                        + "= '" + value + "'",
+                        Post.class).getResultList();
+            }
+            
+            if (!posts.isEmpty()) {
+                return posts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Post> findByDateSearchField(
+            EntityManager em,
+            String dateSearchField,
+            String searchType,
+            String originalSearchText,
+            Date startDate,
+            Date endDate) {
+        
+        List<Post> foundPosts;
+        String searchQuery = null;
+        String searchTextAndClause = "";
+        String searchText = originalSearchText;
+        switch (searchType) {
+            case "General":
+                if (!searchText.equals("")) {
+                    searchTextAndClause
+                            = " AND ("
+                            + " UPPER(post.number) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(post.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(post.notes) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(post.url) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(post.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " )";
+                }
+                searchQuery
+                        = "SELECT post FROM Post post"
+                        + " JOIN post.classification classification"
+                        + " WHERE (post." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND post." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY post." + dateSearchField + " DESC";
+                break;
+            case "By type":
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
+                        + " )";
+                searchQuery
+                        = "SELECT post FROM Post post"
+                        + " JOIN post.documentType t"
+                        + " WHERE (post." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND post." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY post." + dateSearchField + " DESC";
+                break;
+        }
+        
+        try {
+            foundPosts = em.createQuery(searchQuery, Post.class).getResultList();
+            if (foundPosts == null) {
+                foundPosts = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return foundPosts;
+    }
+    public static List<Post> findActive(
+            EntityManager em,
+            String value,
+            int maxResults) {
+        
+        try {
+            
+            List<Post> posts
+                    = em.createQuery("SELECT p FROM Post p WHERE (p.name like '%"
+                            + value + "%'"
+                                    + " OR p.number like '%"
+                            + value + "%')"
+                                    + " AND p.active = 1"
+                                    + " ORDER BY p.id", Post.class).setMaxResults(maxResults).getResultList();
+            return posts;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Post> find(
+            EntityManager em, String value, int maxResults) {
+        
+        try {
+            
+            List<Post> posts
+                    = em.createQuery("SELECT p FROM Post p WHERE p.name like '%"
+                            + value + "%'"
+                                    + " OR p.number like '%"
+                            + value + "%'"
+                                    + " ORDER BY p.id", Post.class).
+                            setMaxResults(maxResults).
+                            getResultList();
+            
+            return posts;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Post findById(EntityManager em, Long Id) {
+        
+        return em.find(Post.class, Id);
+    }
+    public static List<Post> findAll(EntityManager em) {
+        
+        try {
+            return em.createNamedQuery("findAllPosts", Post.class).getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static List<Post> findAllActive(EntityManager em) {
+        
+        try {
+            
+            return em.createQuery("SELECT p FROM Post p "
+                    + "WHERE p.active = 1", Post.class).getResultList();
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Post> findAllActive(
+            EntityManager em, int maxResults) {
+        
+        try {
+            
+            return em.createQuery("SELECT p FROM Post p "
+                    + "WHERE p.active = 1",
+                    Post.class).setMaxResults(maxResults).getResultList();
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -65,18 +261,12 @@ public class Post implements Document, Comparable, BusinessEntity {
     private String number;
     private String enforcement;
     private Boolean autoGenerateNumber;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateRevised;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateConfirmed;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date datePublished;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateRevisionDue;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEntered;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEdited;
+    private LocalDateTime dateRevised;
+    private LocalDateTime dateConfirmed;
+    private LocalDateTime datePublished;
+    private LocalDateTime dateRevisionDue;
+    private LocalDateTime dateEntered;
+    private LocalDateTime dateEdited;
     private String url;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Classification classification;
@@ -142,22 +332,22 @@ public class Post implements Document, Comparable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         return dateEntered;
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         this.dateEntered = dateEntered;
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         return dateEdited;
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         this.dateEdited = dateEdited;
     }
 
@@ -348,35 +538,35 @@ public class Post implements Document, Comparable, BusinessEntity {
         this.enforcement = enforcement;
     }
 
-    public Date getDateRevised() {
+    public LocalDateTime getDateRevised() {
         return dateRevised;
     }
 
-    public void setDateRevised(Date dateRevised) {
+    public void setDateRevised(LocalDateTime dateRevised) {
         this.dateRevised = dateRevised;
     }
 
-    public Date getDateConfirmed() {
+    public LocalDateTime getDateConfirmed() {
         return dateConfirmed;
     }
 
-    public void setDateConfirmed(Date dateConfirmed) {
+    public void setDateConfirmed(LocalDateTime dateConfirmed) {
         this.dateConfirmed = dateConfirmed;
     }
 
-    public Date getDatePublished() {
+    public LocalDateTime getDatePublished() {
         return datePublished;
     }
 
-    public void setDatePublished(Date datePublished) {
+    public void setDatePublished(LocalDateTime datePublished) {
         this.datePublished = datePublished;
     }
 
-    public Date getDateRevisionDue() {
+    public LocalDateTime getDateRevisionDue() {
         return dateRevisionDue;
     }
 
-    public void setDateRevisionDue(Date dateRevisionDue) {
+    public void setDateRevisionDue(LocalDateTime dateRevisionDue) {
         this.dateRevisionDue = dateRevisionDue;
     }
 
@@ -396,209 +586,6 @@ public class Post implements Document, Comparable, BusinessEntity {
         this.status = status;
     }
 
-    public static Post findActiveByName(EntityManager em, String value,
-            Boolean ignoreCase) {
-
-        List<Post> posts;
-
-        try {
-
-            if (ignoreCase) {
-                posts = em.createQuery("SELECT p FROM Post p "
-                        + "WHERE UPPER(p.name) "
-                        + "= '" + value.toUpperCase() + "'"
-                        + " AND p.active = 1", Post.class).getResultList();
-            } else {
-                posts = em.createQuery("SELECT p FROM Post p "
-                        + "WHERE p.name "
-                        + "= '" + value + "'"
-                        + " AND p.active = 1", Post.class).getResultList();
-            }
-
-            if (!posts.isEmpty()) {
-                return posts.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Post findByName(EntityManager em, String value,
-            Boolean ignoreCase) {
-
-        List<Post> posts;
-
-        try {
-
-            if (ignoreCase) {
-                posts = em.createQuery("SELECT p FROM Post p "
-                        + "WHERE UPPER(p.name) "
-                        + "= '" + value.toUpperCase() + "'",
-                        Post.class).getResultList();
-            } else {
-                posts = em.createQuery("SELECT p FROM Post p "
-                        + "WHERE p.name "
-                        + "= '" + value + "'",
-                        Post.class).getResultList();
-            }
-
-            if (!posts.isEmpty()) {
-                return posts.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Post> findByDateSearchField(
-            EntityManager em,
-            String dateSearchField,
-            String searchType,
-            String originalSearchText,
-            Date startDate,
-            Date endDate) {
-
-        List<Post> foundPosts;
-        String searchQuery = null;
-        String searchTextAndClause = "";
-        String searchText = originalSearchText;
-        switch (searchType) {
-            case "General":
-                if (!searchText.equals("")) {
-                    searchTextAndClause
-                            = " AND ("
-                            + " UPPER(post.number) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(post.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(post.notes) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(post.url) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(post.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " )";
-                }
-                searchQuery
-                        = "SELECT post FROM Post post"
-                        + " JOIN post.classification classification"
-                        + " WHERE (post." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND post." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                        + searchTextAndClause
-                        + " ORDER BY post." + dateSearchField + " DESC";
-                break;
-            case "By type":
-                searchTextAndClause
-                        = " AND ("
-                        + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
-                        + " )";
-                searchQuery
-                        = "SELECT post FROM Post post"
-                        + " JOIN post.documentType t"
-                        + " WHERE (post." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND post." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                        + searchTextAndClause
-                        + " ORDER BY post." + dateSearchField + " DESC";
-                break;
-        }
-
-        try {
-            foundPosts = em.createQuery(searchQuery, Post.class).getResultList();
-            if (foundPosts == null) {
-                foundPosts = new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundPosts;
-    }
-
-    public static List<Post> findActive(
-            EntityManager em,
-            String value,
-            int maxResults) {
-
-        try {
-
-            List<Post> posts
-                    = em.createQuery("SELECT p FROM Post p WHERE (p.name like '%"
-                            + value + "%'"
-                            + " OR p.number like '%"
-                            + value + "%')"
-                            + " AND p.active = 1"
-                            + " ORDER BY p.id", Post.class).setMaxResults(maxResults).getResultList();
-            return posts;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Post> find(
-            EntityManager em, String value, int maxResults) {
-
-        try {
-
-            List<Post> posts
-                    = em.createQuery("SELECT p FROM Post p WHERE p.name like '%"
-                            + value + "%'"
-                            + " OR p.number like '%"
-                            + value + "%'"
-                            + " ORDER BY p.id", Post.class).
-                            setMaxResults(maxResults).
-                            getResultList();
-
-            return posts;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Post findById(EntityManager em, Long Id) {
-
-        return em.find(Post.class, Id);
-    }
-
-    public static List<Post> findAll(EntityManager em) {
-
-        try {
-            return em.createNamedQuery("findAllPosts", Post.class).getResultList();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static List<Post> findAllActive(EntityManager em) {
-
-        try {
-
-            return em.createQuery("SELECT p FROM Post p "
-                    + "WHERE p.active = 1", Post.class).getResultList();
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Post> findAllActive(
-            EntityManager em, int maxResults) {
-
-        try {
-
-            return em.createQuery("SELECT p FROM Post p "
-                    + "WHERE p.active = 1",
-                    Post.class).setMaxResults(maxResults).getResultList();
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     public String getUsable() {
         if (getActive()) {

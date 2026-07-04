@@ -19,29 +19,35 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.util;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jm.com.dpbennett.business.entity.BusinessEntity;
+import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.fm.AccPacCustomer;
 import jm.com.dpbennett.business.entity.hrm.Address;
-import jm.com.dpbennett.business.entity.BusinessEntity;
-import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.rm.DatePeriod;
-import jm.com.dpbennett.business.entity.Person;
 
 /**
  *
@@ -51,15 +57,19 @@ public class BusinessEntityUtils {
 
     private static EntityManagerFactory EMF;
 
-    public static String MONTH_NAMES[] = {
+    public static final String[] MONTH_NAMES = {
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     };
 
-    public static String ALPHABET[] = {
+    public static final String[] ALPHABET = {
         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
         "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
+
+    private static final ZoneId DEFAULT_ZONE_ID = ZoneId.systemDefault();
+    private static final DateTimeFormatter MEDIUM_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+    private static final DateTimeFormatter MEDIUM_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy, h:mm a");
 
     public static String sanitize(String value) {
 
@@ -72,8 +82,8 @@ public class BusinessEntityUtils {
 
     }
 
-    public static Date getNow() {
-        return new Date();
+    public static LocalDateTime getNow() {
+        return LocalDateTime.now();
     }
 
     public static int getLetterIndex(String letter) {
@@ -96,19 +106,20 @@ public class BusinessEntityUtils {
         return false;
     }
 
-    public static Boolean isDateWithinPeriod(Date dateToCheck, Date startDate, Date endDate) {
-        return (dateToCheck.compareTo(startDate) >= 0) && (dateToCheck.compareTo(endDate) <= 0);
+    public static Boolean isDateWithinPeriod(LocalDateTime dateToCheck, LocalDateTime startDate, LocalDateTime endDate) {
+        return dateToCheck != null
+                && startDate != null
+                && endDate != null
+                && !dateToCheck.isBefore(startDate)
+                && !dateToCheck.isAfter(endDate);
     }
 
-    public static String getMonthAndYearString(Date date) {
-        String dateMonthAndYearString;
-        Calendar c = Calendar.getInstance();
+    public static String getMonthAndYearString(LocalDateTime date) {
+        if (date == null) {
+            return "";
+        }
 
-        c.setTime(date);
-        dateMonthAndYearString = MONTH_NAMES[c.get(Calendar.MONTH)];
-        dateMonthAndYearString = dateMonthAndYearString + " " + getYearFromDate(date);
-
-        return dateMonthAndYearString;
+        return MONTH_NAMES[date.getMonthValue() - 1] + " " + date.getYear();
     }
 
     public static String getBasicAddress(Address address) {
@@ -264,15 +275,12 @@ public class BusinessEntityUtils {
 
         switch (type) {
             case "java.lang.Long":
-                return Boolean.TRUE;
             case "java.lang.Integer":
-                return Boolean.TRUE;
             case "java.lang.Double":
-                return Boolean.TRUE;
             case "java.lang.Boolean":
-                return Boolean.TRUE;
             case "java.lang.String":
-                return Boolean.TRUE;
+            case "java.time.LocalDate":
+            case "java.time.LocalDateTime":
             case "java.util.Date":
                 return Boolean.TRUE;
             default:
@@ -289,7 +297,7 @@ public class BusinessEntityUtils {
         try {
 
             String[] methodNames = methodPath.split("/");
-            Class c = Class.forName(methodNames[0]);
+            Class<?> c = Class.forName(methodNames[0]);
             String[] methodName = methodNames[1].split("\\.");
 
             do {
@@ -311,10 +319,10 @@ public class BusinessEntityUtils {
         }
     }
 
-    public static Class getClass(String methodPath) {
+    public static Class<?> getClass(String methodPath) {
         int i = 0;
         Method method;
-        Class c;
+        Class<?> c;
 
         try {
 
@@ -344,7 +352,7 @@ public class BusinessEntityUtils {
     public static Object getBusinessEntityValue(Object entity, String methodPath) {
 
         Object value = null;
-        Class c;
+        Class<?> c;
         Method m;
 
         String[] path = methodPath.split("/");
@@ -382,6 +390,7 @@ public class BusinessEntityUtils {
                 em.merge(businessEntity);
             } else {
                 em.persist(businessEntity);
+                em.flush();
             }
 
             return businessEntity.getId();
@@ -404,176 +413,101 @@ public class BusinessEntityUtils {
             em.getTransaction().commit();
 
         } catch (Exception e) {
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             System.out.println(e);
         }
     }
 
-    public static Date createDate(int year, int monthIndex, int day) {
-        Calendar c;
-
-        c = Calendar.getInstance();
-        c.clear();
-        c.set(year, monthIndex, day, 0, 0, 0);
-
-        return c.getTime();
+    public static LocalDateTime createDate(int year, int monthIndex, int day) {
+        return LocalDateTime.of(year, monthIndex + 1, day, 0, 0, 0, 0);
     }
 
-    public static Date createDate(Date date) {
-        Calendar c;
-
-        c = Calendar.getInstance();
-        c.clear();
-        c.setTime(date);
-        c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
-    }
-
-    public static int getYearFromDate(Date date) {
-        Calendar c;
-
-        c = Calendar.getInstance();
-        c.setTime(date);
-
-        return c.get(Calendar.YEAR);
-    }
-
-    public static Date getStartOfCurrentYear() {
-        Calendar c, current;
-
-        current = Calendar.getInstance();
-        c = Calendar.getInstance();
-        c.set(current.get(Calendar.YEAR), Calendar.JANUARY, 1, 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
-    }
-
-    public static Date getEndOfCurrentYear() {
-        Calendar c, current;
-
-        current = Calendar.getInstance();
-        c = Calendar.getInstance();
-        c.set(current.get(Calendar.YEAR), Calendar.DECEMBER, 31, 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
-    }
-
-    public static Date getStartOfCurrentMonth() {
-        Calendar c, current;
-
-        current = Calendar.getInstance();
-        c = Calendar.getInstance();
-        c.set(current.get(Calendar.YEAR), current.get(Calendar.MONTH), 1, 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
-    }
-
-    public static Date getStartOfCurrentMonthPreviousYear() {
-        Calendar c, current;
-
-        current = Calendar.getInstance();
-        c = Calendar.getInstance();
-        c.set(current.get(Calendar.YEAR) - 1, current.get(Calendar.MONTH), 1, 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
-    }
-
-    public static Date getStartOfMonthInCurrentYear(int monthIndex) {
-        Calendar c, current;
-
-        current = Calendar.getInstance();
-        c = Calendar.getInstance();
-        c.set(current.get(Calendar.YEAR), monthIndex, 1, 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
-    }
-
-    public static Date getEndOfCurrentMonth() {
-        Calendar c, current;
-
-        current = Calendar.getInstance();
-        c = Calendar.getInstance();
-        c.set(current.get(Calendar.YEAR), current.get(Calendar.MONTH), getDaysInMonth(current.get(Calendar.MONTH)), 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
-    }
-
-    public static Date getEndOfCurrentMonthPreviousYear() {
-        Calendar c, current;
-
-        current = Calendar.getInstance();
-        c = Calendar.getInstance();
-        c.set(current.get(Calendar.YEAR) - 1, current.get(Calendar.MONTH), getDaysInMonth(current.get(Calendar.MONTH)), 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
-    }
-
-    public static Date getThisDatePreviousYear() {
-        Calendar c, current;
-
-        current = Calendar.getInstance();
-        c = Calendar.getInstance();
-        c.set(current.get(Calendar.YEAR) - 1, current.get(Calendar.MONTH), getDaysInMonth(current.get(Calendar.MONTH)), 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
-    }
-
-    public static Date getEndOfMonthInCurrentYear(int monthIndex) {
-        Calendar c, current;
-
-        current = Calendar.getInstance();
-        c = Calendar.getInstance();
-        c.set(current.get(Calendar.YEAR), monthIndex, getDaysInMonth(monthIndex), 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
-    }
-
-    public static int getDaysInMonth(int month) {
-        Calendar current = Calendar.getInstance();
-
-        switch (month) {
-            case Calendar.JANUARY:
-                return 31;
-            case Calendar.FEBRUARY:
-                int currentYear = current.get(Calendar.YEAR);
-                if ((currentYear % 4) == 0) { // leap year?
-                    return 29;
-                } else {
-                    return 28;
-                }
-            case Calendar.MARCH:
-                return 31;
-            case Calendar.APRIL:
-                return 30;
-            case Calendar.MAY:
-                return 31;
-            case Calendar.JUNE:
-                return 30;
-            case Calendar.JULY:
-                return 31;
-            case Calendar.AUGUST:
-                return 31;
-            case Calendar.SEPTEMBER:
-                return 30;
-            case Calendar.OCTOBER:
-                return 31;
-            case Calendar.NOVEMBER:
-                return 30;
-            case Calendar.DECEMBER:
-                return 31;
-            default:
-                return -1;
+    public static LocalDateTime createDate(LocalDateTime date) {
+        if (date == null) {
+            return null;
         }
+
+        return date.toLocalDate().atStartOfDay();
+    }
+
+    public static LocalDateTime createDate(LocalDate date) {
+        if (date == null) {
+            return null;
+        }
+
+        return date.atStartOfDay();
+    }
+
+    public static LocalDateTime toLocalDateTime(Date date) {
+        if (date == null) {
+            return null;
+        }
+
+        return LocalDateTime.ofInstant(date.toInstant(), DEFAULT_ZONE_ID);
+    }
+
+    public static Date toDate(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+
+        return Date.from(dateTime.atZone(DEFAULT_ZONE_ID).toInstant());
+    }
+
+    /**
+     * Compatibility helper for legacy callers. Prefer createDate(LocalDateTime).
+     */
+    public static LocalDateTime createDate(Date date) {
+        return createDate(toLocalDateTime(date));
+    }
+
+    public static int getYearFromDate(LocalDateTime date) {
+        return date != null ? date.getYear() : 0;
+    }
+
+    public static LocalDateTime getStartOfCurrentYear() {
+        return LocalDate.now().withDayOfYear(1).atStartOfDay();
+    }
+
+    public static LocalDateTime getEndOfCurrentYear() {
+        LocalDate today = LocalDate.now();
+        return LocalDate.of(today.getYear(), 12, 31).atStartOfDay();
+    }
+
+    public static LocalDateTime getStartOfCurrentMonth() {
+        return YearMonth.now().atDay(1).atStartOfDay();
+    }
+
+    public static LocalDateTime getStartOfCurrentMonthPreviousYear() {
+        LocalDate today = LocalDate.now();
+        return LocalDate.of(today.getYear() - 1, today.getMonth(), 1).atStartOfDay();
+    }
+
+    public static LocalDateTime getStartOfMonthInCurrentYear(int monthIndex) {
+        return LocalDate.of(LocalDate.now().getYear(), monthIndex + 1, 1).atStartOfDay();
+    }
+
+    public static LocalDateTime getEndOfCurrentMonth() {
+        return YearMonth.now().atEndOfMonth().atStartOfDay();
+    }
+
+    public static LocalDateTime getEndOfCurrentMonthPreviousYear() {
+        LocalDate today = LocalDate.now();
+        return YearMonth.of(today.getYear() - 1, today.getMonth()).atEndOfMonth().atStartOfDay();
+    }
+
+    public static LocalDateTime getThisDatePreviousYear() {
+        return LocalDate.now().minusYears(1).atStartOfDay();
+    }
+
+    public static LocalDateTime getEndOfMonthInCurrentYear(int monthIndex) {
+        return YearMonth.of(LocalDate.now().getYear(), monthIndex + 1).atEndOfMonth().atStartOfDay();
+    }
+
+    public static int getDaysInMonth(int monthIndex) {
+        return YearMonth.of(LocalDate.now().getYear(), monthIndex + 1).lengthOfMonth();
     }
 
     public static String getIntegerString(long number, int digits) {
@@ -583,47 +517,39 @@ public class BusinessEntityUtils {
         return string;
     }
 
-    public static String getDateString(Date d, String delim, String format, String sep) {
+    public static String getDateString(LocalDateTime d, String delim, String format, String sep) {
         if (d != null) {
-            Calendar c = Calendar.getInstance();
-            c.setTime(d);
-            return getDateString(c, delim, format, sep);
+            return getDateString(d.toLocalDate(), delim, format, sep);
         } else {
             return "";
         }
     }
 
-    public static String getDateInMediumDateFormat(Date date) {
-        DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy");
-
+    public static String getDateInMediumDateFormat(LocalDateTime date) {
         if (date != null) {
-            return formatter.format(date);
+            return date.format(MEDIUM_DATE_FORMATTER);
         } else {
             return "";
         }
     }
 
-    public static String getUserDefinedDateFormat(Date date, String format) {
-        DateFormat formatter = new SimpleDateFormat(format);
-
+    public static String getUserDefinedDateFormat(LocalDateTime date, String format) {
         if (date != null) {
-            return formatter.format(date);
+            return date.format(DateTimeFormatter.ofPattern(format));
         } else {
             return "";
         }
     }
 
-    public static String getDateInMediumDateAndTimeFormat(Date date) {
-        DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy, h:mm a");
-
+    public static String getDateInMediumDateAndTimeFormat(LocalDateTime date) {
         if (date != null) {
-            return formatter.format(date);
+            return date.format(MEDIUM_DATE_TIME_FORMATTER);
         } else {
             return "";
         }
     }
 
-    public static String getDateString(Calendar c, String delim, String format, String sep) {
+    public static String getDateString(LocalDate date, String delim, String format, String sep) {
         if (delim == null) {
             delim = "'";
         }
@@ -634,11 +560,11 @@ public class BusinessEntityUtils {
             sep = "-";
         }
 
-        if (c != null) {
+        if (date != null) {
             String str;
-            String year = getIntegerString(c.get(Calendar.YEAR), 4);
-            int month = c.get(Calendar.MONTH) + 1;
-            int day = c.get(Calendar.DAY_OF_MONTH);
+            String year = getIntegerString(date.getYear(), 4);
+            int month = date.getMonthValue();
+            int day = date.getDayOfMonth();
             switch (format) {
                 case "YMD":
                     str = delim + year + sep + month + sep + day + delim;
@@ -665,108 +591,57 @@ public class BusinessEntityUtils {
             String format,
             String sep) {
 
-        return getDateString(c, delim, format, sep);
+        return getDateString(toLocalDateTime(c.getTime()), delim, format, sep);
     }
 
     public static String getDateStringFromDate(
-            Date d,
+            LocalDateTime d,
             String delim,
             String format,
             String sep) {
-        if (d != null) {
-            Calendar c = Calendar.getInstance();
-            c.setTime(d);
-            return getDateString(c, delim, format, sep);
-        } else {
-            return "";
-        }
+        return getDateString(d, delim, format, sep);
     }
 
-    public static Date getDateFromInt(int dateInt) {
-        Calendar c = Calendar.getInstance();
+    public static LocalDateTime getDateFromInt(int dateInt) {
         String dateString = "" + dateInt;
 
         int year = Integer.parseInt(dateString.substring(0, 4));
         int month = Integer.parseInt(dateString.substring(4, 6));
         int day = Integer.parseInt(dateString.substring(6, 8));
 
-        c.set(year, month - 1, day);
-        return c.getTime();
+        return LocalDateTime.of(year, month, day, 0, 0);
     }
 
-    public static int getIntFromDate(Date date) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-
-        String yearStr = String.format("%04d", c.get(Calendar.YEAR));
-        String monthStr = String.format("%02d", c.get(Calendar.MONTH) + 1);
-        String dayStr = String.format("%02d", c.get(Calendar.DAY_OF_MONTH));
-
-        return Integer.parseInt(yearStr + monthStr + dayStr);
+    public static int getIntFromDate(LocalDateTime date) {
+        return Integer.parseInt(date.format(DateTimeFormatter.BASIC_ISO_DATE));
     }
 
     public static int getPreviousYear() {
-        Calendar c;
-
-        c = Calendar.getInstance();
-
-        return c.get(Calendar.YEAR) - 1;
+        return Year.now().getValue() - 1;
     }
 
     public static int getCurrentYear() {
-
-        Calendar c = Calendar.getInstance();
-
-        return c.get(Calendar.YEAR);
+        return Year.now().getValue();
     }
 
     public static int getNextYear() {
-
-        Calendar c = Calendar.getInstance();
-
-        return c.get(Calendar.YEAR) + 1;
+        return Year.now().getValue() + 1;
     }
 
-    public static Date getStartOfPreviousYear() {
-        Calendar c, current;
-
-        current = Calendar.getInstance();
-        c = Calendar.getInstance();
-        c.set(current.get(Calendar.YEAR) - 1, Calendar.JANUARY, 1, 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
+    public static LocalDateTime getStartOfPreviousYear() {
+        return LocalDate.of(LocalDate.now().getYear() - 1, 1, 1).atStartOfDay();
     }
 
-    public static Date getEndOfPreviousYear() {
-        Calendar c, current;
-
-        current = Calendar.getInstance();
-        c = Calendar.getInstance();
-        c.set(current.get(Calendar.YEAR) - 1, Calendar.DECEMBER, 31, 0, 0, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return c.getTime();
+    public static LocalDateTime getEndOfPreviousYear() {
+        return LocalDate.of(LocalDate.now().getYear() - 1, 12, 31).atStartOfDay();
     }
 
-    public static Date getStartOfLastMonth() {
-
-        Date date = getStartOfCurrentMonth();
-
-        return BusinessEntityUtils.adjustDate(date, Calendar.MONTH, -1);
-
+    public static LocalDateTime getStartOfLastMonth() {
+        return getStartOfCurrentMonth().minusMonths(1);
     }
 
-    public static Date getEndOfLastMonth() {
-
-        Calendar c = Calendar.getInstance();
-
-        Date date = getStartOfLastMonth();
-        c.setTime(date);
-
-        int month = c.get(Calendar.MONTH);
-
-        return BusinessEntityUtils.adjustDate(date, Calendar.DAY_OF_MONTH, getDaysInMonth(month) - 1);
+    public static LocalDateTime getEndOfLastMonth() {
+        return YearMonth.from(LocalDate.now().minusMonths(1)).atEndOfMonth().atStartOfDay();
     }
 
     public static EntityManager getEntityManager(String PU) {
@@ -805,43 +680,68 @@ public class BusinessEntityUtils {
 
     }
 
-    public static Date adjustDate(Date date, int datePart, int amount) {
-        Date adjustedDate = createDate(date);
-
-        Calendar c = Calendar.getInstance();
-        c.setTime(adjustedDate);
-        c.add(datePart, amount);
-
-        return c.getTime();
-    }
-
-    public static int calculatePeriodInWorkingDays(Date startDate, Date endDate) {
-        int workDays = 0;
-
-        Calendar startCal = Calendar.getInstance();
-        startCal.setTime(createDate(startDate));
-
-        Calendar endCal = Calendar.getInstance();
-        endCal.setTime(createDate(endDate));
-
-        if (startCal.after(endCal)) {
-            return 0;
-        } else if (startCal.equals(endCal)) {
-            return 1;
-        } else if (startCal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY
-                || startCal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-            workDays++;
+    public static LocalDateTime adjustDate(LocalDateTime date, ChronoUnit datePart, int amount) {
+        if (date == null) {
+            return null;
         }
 
-        while (startCal.before(endCal)) {
-            if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
-                    && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+        return createDate(date).plus(amount, datePart);
+    }
+
+    public static LocalDateTime adjustDate(LocalDateTime date, int datePart, int amount) {
+        return adjustDate(date, calendarFieldToChronoUnit(datePart), amount);
+    }
+
+    private static ChronoUnit calendarFieldToChronoUnit(int datePart) {
+        switch (datePart) {
+            case Calendar.YEAR:
+                return ChronoUnit.YEARS;
+            case Calendar.MONTH:
+                return ChronoUnit.MONTHS;
+            case Calendar.DAY_OF_MONTH:
+                return ChronoUnit.DAYS;
+            case Calendar.HOUR:
+            case Calendar.HOUR_OF_DAY:
+                return ChronoUnit.HOURS;
+            case Calendar.MINUTE:
+                return ChronoUnit.MINUTES;
+            case Calendar.SECOND:
+                return ChronoUnit.SECONDS;
+            default:
+                return ChronoUnit.DAYS;
+        }
+    }
+
+    public static int calculatePeriodInWorkingDays(LocalDateTime startDate, LocalDateTime endDate) {
+        int workDays = 0;
+
+        if (startDate == null || endDate == null) {
+            return 0;
+        }
+
+        LocalDate start = startDate.toLocalDate();
+        LocalDate end = endDate.toLocalDate();
+
+        if (start.isAfter(end)) {
+            return 0;
+        } else if (start.equals(end)) {
+            return isWorkingDay(start) ? 1 : 0;
+        }
+
+        LocalDate current = start;
+        while (!current.isAfter(end)) {
+            if (isWorkingDay(current)) {
                 workDays++;
             }
-            startCal.add(Calendar.DAY_OF_MONTH, 1);
+            current = current.plusDays(1);
         }
 
         return workDays;
+    }
+
+    private static boolean isWorkingDay(LocalDate date) {
+        return date.getDayOfWeek() != DayOfWeek.SATURDAY
+                && date.getDayOfWeek() != DayOfWeek.SUNDAY;
     }
 
     public static DatePeriod[] getMonthlyReportDatePeriods(DatePeriod reportingPeriod) {
@@ -852,13 +752,10 @@ public class BusinessEntityUtils {
                         BusinessEntityUtils.adjustDate(reportingPeriod.getEndDate(), Calendar.MONTH, -1),
                         false, false, true);
 
-        Calendar now = Calendar.getInstance();
-        Calendar reportingPeriodEndDateCalendar = Calendar.getInstance();
-        reportingPeriodEndDateCalendar.setTime(reportingPeriod.getEndDate());
-
-        int year = reportingPeriodEndDateCalendar.get(Calendar.YEAR);
-        int monthIndex = now.get(Calendar.MONTH);
-        int day = now.get(Calendar.DAY_OF_MONTH);
+        LocalDateTime now = LocalDateTime.now();
+        int year = reportingPeriod.getEndDate().getYear();
+        int monthIndex = now.getMonthValue() - 1;
+        int day = now.getDayOfMonth();
 
         DatePeriod reportingPeriodYTD = new DatePeriod("Financial year to date",
                 "month",
@@ -894,36 +791,33 @@ public class BusinessEntityUtils {
 
     }
 
-    public static Date getModifiedDate(Date orgDate, int modPeriod, int modAmount) {
-        Calendar calendar;
-
-        calendar = Calendar.getInstance();
-        calendar.setTime(orgDate);
-        calendar.add(modPeriod, modAmount);
-
-        return calendar.getTime();
+    public static LocalDateTime getModifiedDate(LocalDateTime orgDate, int modPeriod, int modAmount) {
+        return adjustDate(orgDate, modPeriod, modAmount);
     }
 
-    public static Boolean areDatesEqual(Date date1, Date date2) {
+    public static Boolean areDatesEqual(LocalDateTime date1, LocalDateTime date2) {
+        if (date1 == null || date2 == null) {
+            return false;
+        }
 
         return removeTimeFromDate(date1).equals(removeTimeFromDate(date2));
     }
 
-    public static Date removeTimeFromDate(Date date) {
-        Calendar cal = Calendar.getInstance();
-
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        return cal.getTime();
+    public static LocalDateTime removeTimeFromDate(LocalDateTime date) {
+        return createDate(date);
     }
 
     public static Connection getConnection(EntityManager em) {
+        if (em == null) {
+            return null;
+        }
 
-        return em.unwrap(java.sql.Connection.class);
+        try {
+            return em.unwrap(Connection.class);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
 
     public static Connection establishConnection(
@@ -1040,6 +934,7 @@ public class BusinessEntityUtils {
                 EntityManager EM = EMF.createEntityManager();
                 if (EM.isOpen()) {
                     System.out.println("Connected!");
+                    EM.close();
                 }
             } else {
                 return false;
@@ -1072,12 +967,12 @@ public class BusinessEntityUtils {
     }
 
     public static Boolean validateDate(
-            Calendar c,
+            LocalDateTime date,
             int minYear,
             int maxYear) {
 
-        if (c != null) {
-            int year = c.get(Calendar.YEAR);
+        if (date != null) {
+            int year = date.getYear();
             if ((year < minYear) || (year > maxYear)) {
                 return false;
             }
@@ -1127,66 +1022,23 @@ public class BusinessEntityUtils {
         }
     }
 
-    public static String getMonthShortFormat(Date date) {
-        String month;
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-
-        switch (c.get(Calendar.MONTH)) {
-            case 0:
-                month = "Jan";
-                break;
-            case 1:
-                month = "Feb";
-                break;
-            case 2:
-                month = "Mar";
-                break;
-            case 3:
-                month = "Apr";
-                break;
-            case 4:
-                month = "May";
-                break;
-            case 5:
-                month = "Jun";
-                break;
-            case 6:
-                month = "Jul";
-                break;
-            case 7:
-                month = "Aug";
-                break;
-            case 8:
-                month = "Sep";
-                break;
-            case 9:
-                month = "Oct";
-                break;
-            case 10:
-                month = "Nov";
-                break;
-            case 11:
-                month = "Dec";
-                break;
-            default:
-                month = "";
-                break;
+    public static String getMonthShortFormat(LocalDateTime date) {
+        if (date == null) {
+            return "";
         }
-        return month;
+
+        return date.getMonth().name().substring(0, 1)
+                + date.getMonth().name().substring(1, 3).toLowerCase();
     }
 
-    public static String getYearShortFormat(Date date, int digits) {
-        String yearString = "";
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
+    public static String getYearShortFormat(LocalDateTime date, int digits) {
+        if (date == null) {
+            return "";
+        }
 
-        int year = c.get(Calendar.YEAR);
-        yearString = yearString + year;
+        String yearString = "" + date.getYear();
 
-        yearString = yearString.substring(yearString.length() - digits, yearString.length());
-
-        return yearString;
+        return yearString.substring(yearString.length() - digits, yearString.length());
     }
 
     public static String getShortenedString(String string, int maxLength) {
@@ -1249,14 +1101,10 @@ public class BusinessEntityUtils {
     }
 
     public static long getMediumDateStringAsLong(String dateStr) {
-        DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy");
-
         try {
-            Date date = formatter.parse(dateStr);
-
-            return date.getTime();
-        } catch (ParseException ex) {
-            
+            LocalDate date = LocalDate.parse(dateStr, MEDIUM_DATE_FORMATTER);
+            return date.atStartOfDay(DEFAULT_ZONE_ID).toInstant().toEpochMilli();
+        } catch (DateTimeParseException ex) {
             return 0L;
         }
 
@@ -1266,7 +1114,8 @@ public class BusinessEntityUtils {
 
         try {
             if (entity != null) {
-                em.remove(entity);
+                Object managedEntity = em.contains(entity) ? entity : em.merge(entity);
+                em.remove(managedEntity);
             } else {
                 return false;
             }
@@ -1278,6 +1127,7 @@ public class BusinessEntityUtils {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends BusinessEntity> T attachReference(EntityManager em, T entity) {
 
         if (entity == null) {
@@ -1289,6 +1139,74 @@ public class BusinessEntityUtils {
         }
 
         return em.getReference((Class<T>) entity.getClass(), entity.getId());
+    }
+
+    /*
+     * Legacy java.util.Date overloads retained to make staged migration easier.
+     * Prefer the LocalDateTime overloads above in new BEL/Jakarta code.
+     */
+    public static Boolean isDateWithinPeriod(Date dateToCheck, Date startDate, Date endDate) {
+        return isDateWithinPeriod(toLocalDateTime(dateToCheck), toLocalDateTime(startDate), toLocalDateTime(endDate));
+    }
+
+    public static String getMonthAndYearString(Date date) {
+        return getMonthAndYearString(toLocalDateTime(date));
+    }
+
+    public static String getDateString(Date d, String delim, String format, String sep) {
+        return getDateString(toLocalDateTime(d), delim, format, sep);
+    }
+
+    public static String getDateInMediumDateFormat(Date date) {
+        return getDateInMediumDateFormat(toLocalDateTime(date));
+    }
+
+    public static String getUserDefinedDateFormat(Date date, String format) {
+        return getUserDefinedDateFormat(toLocalDateTime(date), format);
+    }
+
+    public static String getDateInMediumDateAndTimeFormat(Date date) {
+        return getDateInMediumDateAndTimeFormat(toLocalDateTime(date));
+    }
+
+    public static String getDateStringFromDate(Date d, String delim, String format, String sep) {
+        return getDateString(toLocalDateTime(d), delim, format, sep);
+    }
+
+    public static int getIntFromDate(Date date) {
+        return getIntFromDate(toLocalDateTime(date));
+    }
+
+    public static Date adjustDate(Date date, int datePart, int amount) {
+        return toDate(adjustDate(toLocalDateTime(date), datePart, amount));
+    }
+
+    public static int calculatePeriodInWorkingDays(Date startDate, Date endDate) {
+        return calculatePeriodInWorkingDays(toLocalDateTime(startDate), toLocalDateTime(endDate));
+    }
+
+    public static Date getModifiedDate(Date orgDate, int modPeriod, int modAmount) {
+        return toDate(getModifiedDate(toLocalDateTime(orgDate), modPeriod, modAmount));
+    }
+
+    public static Boolean areDatesEqual(Date date1, Date date2) {
+        return areDatesEqual(toLocalDateTime(date1), toLocalDateTime(date2));
+    }
+
+    public static Date removeTimeFromDate(Date date) {
+        return toDate(removeTimeFromDate(toLocalDateTime(date)));
+    }
+
+    public static Boolean validateDate(Calendar c, int minYear, int maxYear) {
+        return c != null && validateDate(toLocalDateTime(c.getTime()), minYear, maxYear);
+    }
+
+    public static String getMonthShortFormat(Date date) {
+        return getMonthShortFormat(toLocalDateTime(date));
+    }
+
+    public static String getYearShortFormat(Date date, int digits) {
+        return getYearShortFormat(toLocalDateTime(date), digits);
     }
 
 }
