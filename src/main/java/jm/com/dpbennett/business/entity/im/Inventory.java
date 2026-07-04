@@ -797,7 +797,7 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         if (product == null) {
             return new MarketProduct();
         }
-        
+
         return product;
     }
 
@@ -948,17 +948,14 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
                 supplier.save(em);
             }
 
-            if (!getCostComponents().isEmpty()) {
-                for (CostComponent costComponent : getCostComponents()) {
-                    if ((costComponent.getIsDirty() || costComponent.getId() == null)
-                            && !costComponent.save(em).isSuccess()) {
+            for (CostComponent costComponent : getCostComponents()) {
+                if (!costComponent.save(em).isSuccess()) {
 
-                        return new ReturnMessage(false,
-                                "Cost component save error occurred",
-                                "An error occurred while saving a cost component",
-                                Message.SEVERITY_ERROR_NAME);
+                    return new ReturnMessage(false,
+                            "Cost component save error occurred",
+                            "An error occurred while saving a cost component",
+                            Message.SEVERITY_ERROR_NAME);
 
-                    }
                 }
             }
 
