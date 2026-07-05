@@ -64,6 +64,7 @@ public class User extends DefaultEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Long ownerId;
     private Boolean active;
     private String username;
     private String PFThemeName;
@@ -102,6 +103,14 @@ public class User extends DefaultEntity {
     public User() {
         employee = new Employee();
         username = "";
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     @Override
