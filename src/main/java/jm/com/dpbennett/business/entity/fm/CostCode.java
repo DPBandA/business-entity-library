@@ -20,18 +20,19 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -46,6 +47,49 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class CostCode implements BusinessEntity, Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(CostCode.class.getName());
+    public static CostCode findCostCodeByCode(EntityManager em, String code) {
+        
+        try {
+            
+            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<CostCode> codes = em.createQuery("SELECT c FROM CostCode c "
+                    + "WHERE c.code "
+                    + "= '" + code + "'", CostCode.class).getResultList();
+            if (!codes.isEmpty()) {
+                return codes.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+    }
+    public static List<CostCode> findAllCostCodes(EntityManager em) {
+        
+        try {
+            List<CostCode> codes = em.createQuery("SELECT c FROM CostCode c ORDER BY c.code", CostCode.class).getResultList();
+            
+            return codes;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static CostCode findCostCodeById(EntityManager em, Long id) {
+        
+        try {
+            
+            CostCode code = em.find(CostCode.class, id);
+            
+            return code;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -135,50 +179,6 @@ public class CostCode implements BusinessEntity, Serializable {
         this.name = name;
     }
 
-    public static CostCode findCostCodeByCode(EntityManager em, String code) {
-
-        try {
-
-            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<CostCode> codes = em.createQuery("SELECT c FROM CostCode c "
-                    + "WHERE c.code "
-                    + "= '" + code + "'", CostCode.class).getResultList();
-            if (!codes.isEmpty()) {
-                return codes.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-    }
-
-    public static List<CostCode> findAllCostCodes(EntityManager em) {
-
-        try {
-            List<CostCode> codes = em.createQuery("SELECT c FROM CostCode c ORDER BY c.code", CostCode.class).getResultList();
-
-            return codes;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static CostCode findCostCodeById(EntityManager em, Long id) {
-
-        try {
-
-            CostCode code = em.find(CostCode.class, id);
-
-            return code;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -225,22 +225,22 @@ public class CostCode implements BusinessEntity, Serializable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

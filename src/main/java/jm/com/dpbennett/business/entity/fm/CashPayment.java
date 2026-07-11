@@ -19,20 +19,20 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -51,6 +51,47 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 })
 public class CashPayment implements Serializable, Comparable, BusinessEntity {
 
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(CashPayment.class.getName());
+    
+    public static CashPayment copy(CashPayment src) {
+        CashPayment copy = new CashPayment();
+        
+        copy.type = src.type;
+        copy.jobId = src.jobId;
+        copy.payment = src.payment;
+        copy.receiptNumber = src.receiptNumber;
+        copy.invoiceNumber = src.invoiceNumber;
+        copy.dateOfPayment = src.dateOfPayment;
+        copy.payeeTitle = src.payeeTitle;
+        copy.payeeFirstname = src.payeeFirstname;
+        copy.payeeLastname = src.payeeLastname;
+        copy.comment = src.comment;
+        copy.userId = src.userId;
+        copy.discount = src.discount;
+        copy.discountType = src.discountType;
+        copy.paymentTerms = src.paymentTerms;
+        copy.paymentPurpose = src.paymentPurpose;
+        
+        return copy;
+    }
+    public static List<CashPayment> findCashPaymentsByOwnerId(EntityManager em, Long ownerId) {
+        
+        try {
+            
+            List<CashPayment> cashPayments
+                    = em.createQuery("SELECT c FROM CashPayment c WHERE"
+                            + " c.ownerId = " + ownerId
+                            + " ORDER BY c.id DESC",
+                            CashPayment.class).getResultList();
+            
+            return cashPayments;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -59,7 +100,6 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
     private Double payment;
     private String receiptNumber;
     private String invoiceNumber;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfPayment;
     private String payeeTitle;
     private String payeeFirstname;
@@ -124,44 +164,6 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
         this.id = id;
     }
 
-    public static CashPayment copy(CashPayment src) {
-        CashPayment copy = new CashPayment();
-
-        copy.type = src.type;
-        copy.jobId = src.jobId;
-        copy.payment = src.payment;
-        copy.receiptNumber = src.receiptNumber;
-        copy.invoiceNumber = src.invoiceNumber;
-        copy.dateOfPayment = src.dateOfPayment;
-        copy.payeeTitle = src.payeeTitle;
-        copy.payeeFirstname = src.payeeFirstname;
-        copy.payeeLastname = src.payeeLastname;
-        copy.comment = src.comment;
-        copy.userId = src.userId;
-        copy.discount = src.discount;
-        copy.discountType = src.discountType;
-        copy.paymentTerms = src.paymentTerms;
-        copy.paymentPurpose = src.paymentPurpose;
-
-        return copy;
-    }
-
-    public static List<CashPayment> findCashPaymentsByOwnerId(EntityManager em, Long ownerId) {
-
-        try {
-
-            List<CashPayment> cashPayments
-                    = em.createQuery("SELECT c FROM CashPayment c WHERE"
-                            + " c.ownerId = " + ownerId
-                            + " ORDER BY c.id DESC",
-                            CashPayment.class).getResultList();
-
-            return cashPayments;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     public Long getOwnerId() {
         return ownerId;
@@ -412,22 +414,22 @@ public class CashPayment implements Serializable, Comparable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
