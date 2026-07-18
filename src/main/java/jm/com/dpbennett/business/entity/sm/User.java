@@ -817,10 +817,6 @@ public class User extends DefaultEntity {
             if (employee != null) {
                 employee.save(em);
             }
-//
-//            if (privilege != null) {
-//                privilege.save(em);
-//            }
 
             for (Privilege priv : getPrivileges()) {
                 priv.save(em);
