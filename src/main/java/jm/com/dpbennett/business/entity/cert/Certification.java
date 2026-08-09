@@ -73,6 +73,11 @@ public class Certification implements CertificationInterface {
     private Boolean isDirty;
 
     public Certification() {
+        this.number = "";
+        this.type = "";
+        this.notes = "";
+        this.active = true;
+        this.certificateNumber = "";
     }
 
     public Certification(Certification certification) {
@@ -86,6 +91,10 @@ public class Certification implements CertificationInterface {
         this.dateIssued = certification.dateIssued;
         this.expiryDate = certification.expiryDate;
         this.applicant = certification.applicant;
+    }
+
+    public Boolean getIsJobNumberValid() {
+        return !getNumber().isEmpty();
     }
 
     public static List<Certification> findAllByOwnerId(EntityManager em, Long ownerId) {
@@ -185,7 +194,7 @@ public class Certification implements CertificationInterface {
         if (grantedTo == null) {
             return new Business();
         }
-        
+
         return grantedTo;
     }
 
@@ -196,6 +205,11 @@ public class Certification implements CertificationInterface {
 
     @Override
     public String getNumber() {
+
+        if (number == null) {
+            number = "";
+        }
+
         return number;
     }
 

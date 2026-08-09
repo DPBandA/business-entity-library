@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sc;
 
 import java.util.Date;
@@ -47,8 +46,9 @@ public class CompanyRegistration implements BusinessEntity, Form {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id = null;
-    private String name = "";
+    private Long id;
+    private Long ownerId;
+    private String name;
     @Transient
     private Boolean isDirty;
 
@@ -60,6 +60,14 @@ public class CompanyRegistration implements BusinessEntity, Form {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     @Override
@@ -81,11 +89,16 @@ public class CompanyRegistration implements BusinessEntity, Form {
 
     @Override
     public String toString() {
-        return "jm.com.dpbennett.entity.CompanyRegistration[id=" + id + "]";
+        return getName();
     }
 
     @Override
     public String getName() {
+
+        if (name == null) {
+            name = "";
+        }
+
         return name;
     }
 
