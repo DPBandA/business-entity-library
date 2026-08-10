@@ -64,6 +64,8 @@ public class Certification implements CertificationInterface {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Business grantedTo;
     @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateSigned;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateIssued;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date expiryDate;
@@ -73,6 +75,11 @@ public class Certification implements CertificationInterface {
     private Boolean isDirty;
 
     public Certification() {
+        this.number = "";
+        this.type = "";
+        this.notes = "";
+        this.active = true;
+        this.certificateNumber = "";
     }
 
     public Certification(Certification certification) {
@@ -86,6 +93,18 @@ public class Certification implements CertificationInterface {
         this.dateIssued = certification.dateIssued;
         this.expiryDate = certification.expiryDate;
         this.applicant = certification.applicant;
+    }
+
+    public Date getDateSigned() {
+        return dateSigned;
+    }
+
+    public void setDateSigned(Date dateSigned) {
+        this.dateSigned = dateSigned;
+    }
+
+    public Boolean getIsJobNumberValid() {
+        return !getNumber().isEmpty();
     }
 
     public static List<Certification> findAllByOwnerId(EntityManager em, Long ownerId) {
@@ -185,7 +204,7 @@ public class Certification implements CertificationInterface {
         if (grantedTo == null) {
             return new Business();
         }
-        
+
         return grantedTo;
     }
 
@@ -196,6 +215,11 @@ public class Certification implements CertificationInterface {
 
     @Override
     public String getNumber() {
+
+        if (number == null) {
+            number = "";
+        }
+
         return number;
     }
 
