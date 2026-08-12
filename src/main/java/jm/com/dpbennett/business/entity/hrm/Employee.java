@@ -401,7 +401,11 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
 
     @Override
     public String toString() {
-        return BusinessEntityUtils.getPersonFullName(this, Boolean.TRUE);
+        return BusinessEntityUtils.getPersonFullName(this, true);
+    }
+    
+    public String getFullname() {
+        return BusinessEntityUtils.getPersonFullName(this, false);
     }
 
     @Override
