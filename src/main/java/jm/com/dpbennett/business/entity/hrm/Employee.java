@@ -19,27 +19,27 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.Person;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.auth.Signature;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -57,6 +57,306 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllEmployees", query = "SELECT e FROM Employee e ORDER BY e.lastName")
 })
 public class Employee implements Person, Serializable, Comparable, BusinessEntity {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Employee.class.getName());
+    public static Business getEmployeeOrganizationByDepartment(EntityManager em,
+            Employee employee) {
+        
+        try {
+            Department department = employee.getDepartment();
+            for (Business business : Business.findAll(em)) {
+                for (Department dept : business.getDepartments()) {
+                    if (Objects.equals(department.getId(), dept.getId())) {
+                        return business;
+                    }
+                }
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error occurred while getting the organization of a user: " + e);
+        }
+        
+        return null;
+    }
+    public static List<Employee> findByAnyPartOfName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Employee> employees
+                    = em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
+                            + value + "%'" + " OR UPPER(e.lastName) like '%"
+                            + value + "%'"
+                                    + " ORDER BY e.lastName", Employee.class).getResultList();
+            return employees;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Employee> find(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Employee> employees
+                    = em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
+                            + value + "%'" + " OR UPPER(e.lastName) like '%"
+                            + value + "%'" + " OR UPPER(e.department.name) like '%"
+                            + value + "%'"
+                                    + " ORDER BY e.lastName", Employee.class).getResultList();
+            return employees;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Employee> findAllActiveByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Employee> employees
+                    = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '%"
+                            + value + "%'" + " OR UPPER(e.lastName) like '%"
+                            + value + "%'"
+                                    + ") AND e.active = 1"
+                                    + " ORDER BY e.lastName", Employee.class).getResultList();
+            
+            return employees;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Employee> findActiveByPosition(EntityManager em,
+            String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Employee> employees
+                    = em.createQuery("SELECT e FROM Employee e"
+                            + " JOIN e.positions positions"
+                            + " WHERE positions.title = '" + value + "'"
+                                    + " AND e.active = 1",
+                            Employee.class).getResultList();
+            
+            return employees;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Employee> findActive(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Employee> employees
+                    = em.createQuery("SELECT DISTINCT e FROM Employee e LEFT JOIN e.positions positions WHERE ( UPPER(e.firstName) like '%"
+                            + value + "%'" + " OR UPPER(e.lastName) like '%"
+                            + value + "%'" + " OR UPPER(positions.title) like '%"
+                            + value + "%'" + " OR UPPER(e.department.name) like '%"
+                            + value + "%')"
+                                    + " AND e.active = 1 OR e.active IS NULL"
+                                    + " ORDER BY e.lastName", Employee.class).getResultList();
+            return employees;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Employee findByFirstAndLastName(EntityManager em,
+            String firstName, String lastName) {
+        
+        if (firstName != null && lastName != null) {
+            
+            try {
+                
+                firstName = firstName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                lastName = lastName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                
+                List<Employee> employees = em.createQuery("SELECT e FROM Employee e "
+                        + "WHERE UPPER(e.firstName) "
+                        + "= '" + firstName + "' AND UPPER(e.lastName) = '"
+                        + lastName + "'",
+                        Employee.class).getResultList();
+                if (!employees.isEmpty()) {
+                    Employee employee = employees.get(0);
+                    return employee;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        
+        return null;
+    }
+    public static Employee findActiveByName(EntityManager em,
+            String firstName,
+            String lastName) {
+        
+        if (firstName != null && lastName != null) {
+            
+            try {
+                
+                firstName = firstName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                lastName = lastName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                
+                List<Employee> employees = em.createQuery("SELECT e FROM Employee e "
+                        + "WHERE e.active = 1 AND UPPER(e.firstName) "
+                        + "= '" + firstName + "' AND UPPER(e.lastName) = '"
+                        + lastName + "'",
+                        Employee.class).getResultList();
+                if (!employees.isEmpty()) {
+                    Employee employee = employees.get(0);
+                    return employee;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        
+        return null;
+    }
+    public static List<Employee> findAll(EntityManager em) {
+        
+        try {
+            return em.createNamedQuery("findAllEmployees", Employee.class).getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static List<Employee> findAllActive(EntityManager em) {
+        
+        try {
+            return em.createQuery("SELECT e FROM Employee e WHERE (e.active = 1 OR e.active IS NULL) ORDER BY e.lastName", Employee.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<String> findAllNames(EntityManager em) {
+        
+        ArrayList<String> names = new ArrayList<>();
+        
+        try {
+            List<Employee> employees = em.createNamedQuery("findAllEmployees", Employee.class).getResultList();
+            for (Employee employee : employees) {
+                names.add(employee.getLastName() + ", " + employee.getFirstName());
+            }
+            return names;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static Employee findById(EntityManager em, Long Id) {
+        return em.find(Employee.class, Id);
+    }
+    public static Employee findDefault(
+            EntityManager em,
+            String firstName,
+            String lastName,
+            Boolean userTransaction) {
+        
+        Employee employee = Employee.findByFirstAndLastName(em, firstName, lastName);
+        
+        if (employee == null) {
+            employee = new Employee();
+            employee.setFirstName(firstName);
+            employee.setLastName(lastName);
+            
+            employee.setDepartment(Department.findDefault(em, "--"));
+            
+            if (userTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, employee);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, employee);
+            }
+        }
+        
+        return employee;
+    }
+    public static Employee findByName(EntityManager em, String name) {
+        
+        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+        
+        String names[] = name.split(",");
+        
+        if (names.length == 2) {
+            if (!names[1].trim().equals("") && !names[0].trim().equals("")) {
+                
+                return Employee.findByFirstAndLastName(em,
+                        names[1].trim(),
+                        names[0].trim());
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+    public static Employee findActiveByName(EntityManager em, String name) {
+        
+        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+        String names[] = name.split(",");
+        
+        if (names.length == 2) {
+            if (!names[1].trim().equals("") && !names[0].trim().equals("")) {
+                return Employee.findActiveByName(em,
+                        names[1].trim(),
+                        names[0].trim());
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+    public static String findDefaultEmailAdress(Employee employee, EntityManager em) {
+        String address = "";
+        
+        if (!employee.getInternet().getEmail1().trim().equals("")) {
+            address = employee.getInternet().getEmail1();
+        } else {
+            
+            String listAsString = (String) SystemOption.getOptionValueObject(em, "domainNames");
+            String domainNames[] = listAsString.split(";");
+            
+            User user = User.findActiveByEmployeeId(em, employee.getId());
+            
+            if (user != null) {
+                address = user.getUsername();
+                if (domainNames.length > 0) {
+                    address = address + "@" + domainNames[0];
+                }
+            }
+            
+        }
+        
+        return address;
+    }
+    public static List<String> getDepartmentSupervisorsEmailAddresses(Department department, EntityManager em) {
+        List<String> emails = new ArrayList<>();
+        
+        emails.add(Employee.findDefaultEmailAdress(department.getHead(), em));
+        
+        if (department.getActingHeadActive()) {
+            emails.add(Employee.findDefaultEmailAdress(department.getActingHead(), em));
+        }
+        
+        return emails;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -80,9 +380,7 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     private List<PhoneNumber> phoneNumbers;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Department department;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date birthDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateHired;
     private String notes;
     private Boolean active;
@@ -109,25 +407,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         active = true;
     }
 
-    public static Business getEmployeeOrganizationByDepartment(EntityManager em,
-            Employee employee) {
-
-        try {
-            Department department = employee.getDepartment();
-            for (Business business : Business.findAll(em)) {
-                for (Department dept : business.getDepartments()) {
-                    if (Objects.equals(department.getId(), dept.getId())) {
-                        return business;
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            System.out.println("Error occurred while getting the organization of a user: " + e);
-        }
-
-        return null;
-    }
 
     public String getEmploymentPositions() {
         String eps = "";
@@ -436,263 +715,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         this.name = name;
     }
 
-    public static List<Employee> findByAnyPartOfName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Employee> employees
-                    = em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
-                            + value + "%'" + " OR UPPER(e.lastName) like '%"
-                            + value + "%'"
-                            + " ORDER BY e.lastName", Employee.class).getResultList();
-            return employees;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Employee> find(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Employee> employees
-                    = em.createQuery("SELECT e FROM Employee e where UPPER(e.firstName) like '%"
-                            + value + "%'" + " OR UPPER(e.lastName) like '%"
-                            + value + "%'" + " OR UPPER(e.department.name) like '%"
-                            + value + "%'"
-                            + " ORDER BY e.lastName", Employee.class).getResultList();
-            return employees;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Employee> findAllActiveByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Employee> employees
-                    = em.createQuery("SELECT e FROM Employee e WHERE ( UPPER(e.firstName) like '%"
-                            + value + "%'" + " OR UPPER(e.lastName) like '%"
-                            + value + "%'"
-                            + ") AND e.active = 1"
-                            + " ORDER BY e.lastName", Employee.class).getResultList();
-
-            return employees;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Employee> findActiveByPosition(EntityManager em,
-            String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Employee> employees
-                    = em.createQuery("SELECT e FROM Employee e"
-                            + " JOIN e.positions positions"
-                            + " WHERE positions.title = '" + value + "'"
-                            + " AND e.active = 1",
-                            Employee.class).getResultList();
-
-            return employees;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Employee> findActive(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Employee> employees
-                    = em.createQuery("SELECT DISTINCT e FROM Employee e LEFT JOIN e.positions positions WHERE ( UPPER(e.firstName) like '%"
-                            + value + "%'" + " OR UPPER(e.lastName) like '%"
-                            + value + "%'" + " OR UPPER(positions.title) like '%"
-                            + value + "%'" + " OR UPPER(e.department.name) like '%"
-                            + value + "%')"
-                            + " AND e.active = 1 OR e.active IS NULL"
-                            + " ORDER BY e.lastName", Employee.class).getResultList();
-            return employees;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Employee findByFirstAndLastName(EntityManager em,
-            String firstName, String lastName) {
-
-        if (firstName != null && lastName != null) {
-
-            try {
-
-                firstName = firstName.replaceAll("&amp;", "&").replaceAll("'", "`");
-                lastName = lastName.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-                List<Employee> employees = em.createQuery("SELECT e FROM Employee e "
-                        + "WHERE UPPER(e.firstName) "
-                        + "= '" + firstName + "' AND UPPER(e.lastName) = '"
-                        + lastName + "'",
-                        Employee.class).getResultList();
-                if (!employees.isEmpty()) {
-                    Employee employee = employees.get(0);
-                    return employee;
-                }
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        return null;
-    }
-
-    public static Employee findActiveByName(EntityManager em,
-            String firstName,
-            String lastName) {
-
-        if (firstName != null && lastName != null) {
-
-            try {
-
-                firstName = firstName.replaceAll("&amp;", "&").replaceAll("'", "`");
-                lastName = lastName.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-                List<Employee> employees = em.createQuery("SELECT e FROM Employee e "
-                        + "WHERE e.active = 1 AND UPPER(e.firstName) "
-                        + "= '" + firstName + "' AND UPPER(e.lastName) = '"
-                        + lastName + "'",
-                        Employee.class).getResultList();
-                if (!employees.isEmpty()) {
-                    Employee employee = employees.get(0);
-                    return employee;
-                }
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        return null;
-    }
-
-    public static List<Employee> findAll(EntityManager em) {
-
-        try {
-            return em.createNamedQuery("findAllEmployees", Employee.class).getResultList();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static List<Employee> findAllActive(EntityManager em) {
-
-        try {
-            return em.createQuery("SELECT e FROM Employee e WHERE (e.active = 1 OR e.active IS NULL) ORDER BY e.lastName", Employee.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<String> findAllNames(EntityManager em) {
-
-        ArrayList<String> names = new ArrayList<>();
-
-        try {
-            List<Employee> employees = em.createNamedQuery("findAllEmployees", Employee.class).getResultList();
-            for (Employee employee : employees) {
-                names.add(employee.getLastName() + ", " + employee.getFirstName());
-            }
-            return names;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static Employee findById(EntityManager em, Long Id) {
-        return em.find(Employee.class, Id);
-    }
-
-    public static Employee findDefault(
-            EntityManager em,
-            String firstName,
-            String lastName,
-            Boolean userTransaction) {
-
-        Employee employee = Employee.findByFirstAndLastName(em, firstName, lastName);
-
-        if (employee == null) {
-            employee = new Employee();
-            employee.setFirstName(firstName);
-            employee.setLastName(lastName);
-
-            employee.setDepartment(Department.findDefault(em, "--"));
-
-            if (userTransaction) {
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, employee);
-                em.getTransaction().commit();
-            } else {
-                BusinessEntityUtils.saveBusinessEntity(em, employee);
-            }
-        }
-
-        return employee;
-    }
-
-    public static Employee findByName(EntityManager em, String name) {
-
-        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-        String names[] = name.split(",");
-
-        if (names.length == 2) {
-            if (!names[1].trim().equals("") && !names[0].trim().equals("")) {
-
-                return Employee.findByFirstAndLastName(em,
-                        names[1].trim(),
-                        names[0].trim());
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    public static Employee findActiveByName(EntityManager em, String name) {
-
-        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-        String names[] = name.split(",");
-
-        if (names.length == 2) {
-            if (!names[1].trim().equals("") && !names[0].trim().equals("")) {
-                return Employee.findActiveByName(em,
-                        names[1].trim(),
-                        names[0].trim());
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
 
     public Boolean isMemberOf(Department department) {
         return Objects.equals(getDepartment().getId(), department.getId());
@@ -737,41 +759,6 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
         return new ReturnMessage();
     }
 
-    public static String findDefaultEmailAdress(Employee employee, EntityManager em) {
-        String address = "";
-
-        if (!employee.getInternet().getEmail1().trim().equals("")) {
-            address = employee.getInternet().getEmail1();
-        } else {
-
-            String listAsString = (String) SystemOption.getOptionValueObject(em, "domainNames");
-            String domainNames[] = listAsString.split(";");
-
-            User user = User.findActiveByEmployeeId(em, employee.getId());
-
-            if (user != null) {
-                address = user.getUsername();
-                if (domainNames.length > 0) {
-                    address = address + "@" + domainNames[0];
-                }
-            }
-
-        }
-
-        return address;
-    }
-
-    public static List<String> getDepartmentSupervisorsEmailAddresses(Department department, EntityManager em) {
-        List<String> emails = new ArrayList<>();
-
-        emails.add(Employee.findDefaultEmailAdress(department.getHead(), em));
-
-        if (department.getActingHeadActive()) {
-            emails.add(Employee.findDefaultEmailAdress(department.getActingHead(), em));
-        }
-
-        return emails;
-    }
 
     @Override
     public int compareTo(Object o) {
@@ -789,22 +776,22 @@ public class Employee implements Person, Serializable, Comparable, BusinessEntit
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         return null;
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
 
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         return null;
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
 
     }
 

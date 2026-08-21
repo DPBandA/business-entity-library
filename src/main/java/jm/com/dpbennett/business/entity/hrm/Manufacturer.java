@@ -19,25 +19,25 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.MarketProduct;
@@ -56,6 +56,152 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 })
 public class Manufacturer implements BusinessEntity, Comparable {
 
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Manufacturer.class.getName());
+    public static List<Manufacturer> findAllActiveManufacturers(EntityManager em) {
+        
+        try {
+            
+            return em.createQuery("SELECT m FROM Manufacturer m WHERE m.active = 1 OR m.active IS NULL ORDER BY m.name", Manufacturer.class).getResultList();
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Manufacturer> findManufacturersBySearchPattern(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Manufacturer> manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
+                    + "WHERE UPPER(m.name) "
+                    + "LIKE '" + value.toUpperCase() + "%' "
+                            + "ORDER BY m.name", Manufacturer.class).getResultList();
+            return manufacturers;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Manufacturer findManufacturerById(EntityManager em, Long Id) {
+        
+        try {
+            Manufacturer manufacturer = em.find(Manufacturer.class, Id);
+            return manufacturer;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static Manufacturer findManufacturerByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Manufacturer> manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
+                    + "WHERE UPPER(m.name) "
+                    + "= '" + value.toUpperCase() + "'", Manufacturer.class).getResultList();
+            if (!manufacturers.isEmpty()) {
+                return manufacturers.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Manufacturer findDefaultManufacturer(EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        
+        Manufacturer manufacturer = Manufacturer.findManufacturerByName(em, name);
+        
+        if (manufacturer == null) {
+            manufacturer = new Manufacturer();
+            manufacturer.setName(name);
+            
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, manufacturer);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, manufacturer);
+            }
+        }
+        
+        return manufacturer;
+    }
+    public static Manufacturer findActiveManufacturerByName(EntityManager em,
+            String value,
+            Boolean ignoreCase) {
+        
+        List<Manufacturer> manufacturers;
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            if (ignoreCase) {
+                manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
+                        + "WHERE UPPER(m.name) "
+                        + "= '" + value.toUpperCase() + "'"
+                                + " AND m.active = 1", Manufacturer.class).getResultList();
+            } else {
+                manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
+                        + "WHERE m.name "
+                        + "= '" + value + "'"
+                                + " AND m.active = 1", Manufacturer.class).getResultList();
+            }
+            
+            if (!manufacturers.isEmpty()) {
+                return manufacturers.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Manufacturer> findActiveManufacturersByAnyPartOfName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Manufacturer> manufacturers
+                    = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
+                            + value + "%'"
+                                    + " AND m.active = 1"
+                                    + " ORDER BY m.name", Manufacturer.class).getResultList();
+            return manufacturers;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Manufacturer> findManufacturersByAnyPartOfName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Manufacturer> manufacturers
+                    = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
+                            + value + "%'"
+                                    + " ORDER BY m.id", Manufacturer.class).getResultList();
+            
+            return manufacturers;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -68,11 +214,8 @@ public class Manufacturer implements BusinessEntity, Comparable {
     private String taxRegistration;
     private Integer yearOfLastProductTest;
     private String paymentStatus;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date paymentDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateRegistrationDue;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastVisited;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<MarketProduct> marketProducts;
@@ -404,156 +547,6 @@ public class Manufacturer implements BusinessEntity, Comparable {
         return name;
     }
 
-    public static List<Manufacturer> findAllActiveManufacturers(EntityManager em) {
-
-        try {
-
-            return em.createQuery("SELECT m FROM Manufacturer m WHERE m.active = 1 OR m.active IS NULL ORDER BY m.name", Manufacturer.class).getResultList();
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Manufacturer> findManufacturersBySearchPattern(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Manufacturer> manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
-                    + "WHERE UPPER(m.name) "
-                    + "LIKE '" + value.toUpperCase() + "%' "
-                    + "ORDER BY m.name", Manufacturer.class).getResultList();
-            return manufacturers;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Manufacturer findManufacturerById(EntityManager em, Long Id) {
-
-        try {
-            Manufacturer manufacturer = em.find(Manufacturer.class, Id);
-            return manufacturer;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static Manufacturer findManufacturerByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Manufacturer> manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
-                    + "WHERE UPPER(m.name) "
-                    + "= '" + value.toUpperCase() + "'", Manufacturer.class).getResultList();
-            if (!manufacturers.isEmpty()) {
-                return manufacturers.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Manufacturer findDefaultManufacturer(EntityManager em,
-            String name,
-            Boolean useTransaction) {
-
-        Manufacturer manufacturer = Manufacturer.findManufacturerByName(em, name);
-
-        if (manufacturer == null) {
-            manufacturer = new Manufacturer();
-            manufacturer.setName(name);
-
-            if (useTransaction) {
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, manufacturer);
-                em.getTransaction().commit();
-            } else {
-                BusinessEntityUtils.saveBusinessEntity(em, manufacturer);
-            }
-        }
-
-        return manufacturer;
-    }
-
-    public static Manufacturer findActiveManufacturerByName(EntityManager em,
-            String value,
-            Boolean ignoreCase) {
-
-        List<Manufacturer> manufacturers;
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            if (ignoreCase) {
-                manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
-                        + "WHERE UPPER(m.name) "
-                        + "= '" + value.toUpperCase() + "'"
-                        + " AND m.active = 1", Manufacturer.class).getResultList();
-            } else {
-                manufacturers = em.createQuery("SELECT m FROM Manufacturer m "
-                        + "WHERE m.name "
-                        + "= '" + value + "'"
-                        + " AND m.active = 1", Manufacturer.class).getResultList();
-            }
-
-            if (!manufacturers.isEmpty()) {
-                return manufacturers.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Manufacturer> findActiveManufacturersByAnyPartOfName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Manufacturer> manufacturers
-                    = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
-                            + value + "%'"
-                            + " AND m.active = 1"
-                            + " ORDER BY m.name", Manufacturer.class).getResultList();
-            return manufacturers;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Manufacturer> findManufacturersByAnyPartOfName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Manufacturer> manufacturers
-                    = em.createQuery("SELECT m FROM Manufacturer m WHERE m.name like '%"
-                            + value + "%'"
-                            + " ORDER BY m.id", Manufacturer.class).getResultList();
-
-            return manufacturers;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -596,22 +589,22 @@ public class Manufacturer implements BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -19,6 +19,20 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.jmts;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import jm.com.dpbennett.business.entity.fm.Sector;
 import jm.com.dpbennett.business.entity.fm.JobSubCategory;
 import jm.com.dpbennett.business.entity.fm.JobCategory;
@@ -31,25 +45,13 @@ import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.Service;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import static jm.com.dpbennett.business.entity.util.BusinessEntityUtils.toDate;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -62,7 +64,88 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllServiceRequests", query = "SELECT s FROM ServiceRequest s ORDER BY s.serviceRequestNumber"),
     @NamedQuery(name = "findByServiceRequestNumber", query = "SELECT s FROM ServiceRequest s WHERE s.serviceRequestNumber = :serviceRequestNumber")
 })
-public class ServiceRequest implements BusinessEntity {
+public class ServiceRequest implements BusinessEntity, Cloneable {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(ServiceRequest.class.getName());
+    public static List<ServiceRequest> findServiceRequestsByDateSearchField(
+            EntityManager em,
+            User user,
+            String dateSearchField,
+            String searchType,
+            String searchText,
+            Date startDate,
+            Date endDate,
+            Boolean includeSampleSearch) {
+        
+        List<ServiceRequest> requests;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        String searchQuery = null;
+        String searchTextAndClause = "";
+        
+        if (searchType.equals("General")) {
+            
+            if (!searchText.equals("")) {
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(serviceRequest.serviceRequestNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(serviceRequest.comment) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(serviceRequest.jobDescription) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(serviceRequest.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(serviceRequest.purpose) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+            }
+            searchQuery
+                    = "SELECT serviceRequest FROM ServiceRequest serviceRequest"
+                    + " JOIN serviceRequest.department department"
+                    + " JOIN serviceRequest.classification classification"
+                    + " JOIN serviceRequest.sector sector"
+                    + " JOIN serviceRequest.client client"
+                    + " JOIN serviceRequest.jobCategory jobCategory"
+                    + " JOIN serviceRequest.jobSubCategory jobSubCategory"
+                    + " JOIN serviceRequest.assignedTo assignedTo"
+                    + " WHERE (serviceRequest." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                    + " AND serviceRequest." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                    + searchTextAndClause
+                    + " ORDER BY serviceRequest.serviceRequestSequenceNumber DESC";
+        }
+        
+        try {
+            requests = em.createQuery(searchQuery, ServiceRequest.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return requests;
+    }
+    public static ServiceRequest findServiceRequestByServiceRequestNumber(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<ServiceRequest> requests = em.createQuery("SELECT s FROM ServiceRequest s "
+                    + "WHERE UPPER(s.serviceRequestNumber) "
+                    + "= '" + value.toUpperCase() + "'", ServiceRequest.class).getResultList();
+            if (!requests.isEmpty()) {
+                return requests.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -98,22 +181,17 @@ public class ServiceRequest implements BusinessEntity {
     private Service service;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Contact contact;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateSubmitted;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateAndTimeEntered;
+    private LocalDateTime dateSubmitted;
+    private LocalDateTime dateAndTimeEntered;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
     @Column(length = 1024)
     private String statusNote;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date expectedDateOfCompletion;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfCompletion;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateStatusEdited;
+    private LocalDateTime expectedDateOfCompletion;
+    private LocalDateTime dateOfCompletion;
+    private LocalDateTime dateStatusEdited;
     @Column(length = 1024)
     private String purpose;
     @Transient
@@ -124,6 +202,9 @@ public class ServiceRequest implements BusinessEntity {
 
     public ServiceRequest(String serviceRequestNumber) {
         this.serviceRequestNumber = serviceRequestNumber;
+    }
+    public ServiceRequest(JobSubCategory jobSubCategory) {
+        this.jobSubCategory = jobSubCategory;
     }
 
     public Service getService() {
@@ -152,16 +233,14 @@ public class ServiceRequest implements BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public ServiceRequest(JobSubCategory jobSubCategory) {
-        this.jobSubCategory = jobSubCategory;
-    }
 
+    // tk Ask GPT to fix
     public Integer getYearReceived() {
         Calendar c = Calendar.getInstance();
         Integer year;
 
         if (dateSubmitted != null) {
-            c.setTime(dateSubmitted);
+            c.setTime(toDate(dateSubmitted));
             year = c.get(Calendar.YEAR);
         } else {
             Date now = new Date();
@@ -210,38 +289,39 @@ public class ServiceRequest implements BusinessEntity {
         this.purpose = purpose;
     }
 
-    public Date getDateAndTimeEntered() {
+    public LocalDateTime getDateAndTimeEntered() {
         return dateAndTimeEntered;
     }
 
-    public void setDateAndTimeEntered(Date dateAndTimeEntered) {
+    public void setDateAndTimeEntered(LocalDateTime dateAndTimeEntered) {
         this.dateAndTimeEntered = dateAndTimeEntered;
     }
 
-    public Date getDateOfCompletion() {
+    public LocalDateTime getDateOfCompletion() {
         return dateOfCompletion;
     }
 
-    public void setDateOfCompletion(Date dateOfCompletion) {
+    public void setDateOfCompletion(LocalDateTime dateOfCompletion) {
         this.dateOfCompletion = dateOfCompletion;
     }
 
-    public Date getDateStatusEdited() {
+    public LocalDateTime getDateStatusEdited() {
         return dateStatusEdited;
     }
 
-    public void setDateStatusEdited(Date dateStatusEdited) {
+    public void setDateStatusEdited(LocalDateTime dateStatusEdited) {
         this.dateStatusEdited = dateStatusEdited;
     }
 
-    public Date getDateSubmitted() {
+    public LocalDateTime getDateSubmitted() {
         if (dateSubmitted == null) {
-            dateSubmitted = new Date();
+            dateSubmitted = LocalDateTime.now();
         }
+        
         return dateSubmitted;
     }
 
-    public void setDateSubmitted(Date dateSubmitted) {
+    public void setDateSubmitted(LocalDateTime dateSubmitted) {
         this.dateSubmitted = dateSubmitted;
     }
 
@@ -272,11 +352,11 @@ public class ServiceRequest implements BusinessEntity {
         this.enteredBy = enteredBy;
     }
 
-    public Date getExpectedDateOfCompletion() {
+    public LocalDateTime getExpectedDateOfCompletion() {
         return expectedDateOfCompletion;
     }
 
-    public void setExpectedDateOfCompletion(Date expectedDateOfCompletion) {
+    public void setExpectedDateOfCompletion(LocalDateTime expectedDateOfCompletion) {
         this.expectedDateOfCompletion = expectedDateOfCompletion;
     }
 
@@ -505,85 +585,6 @@ public class ServiceRequest implements BusinessEntity {
         this.name = name;
     }
 
-    public static List<ServiceRequest> findServiceRequestsByDateSearchField(
-            EntityManager em,
-            User user,
-            String dateSearchField,
-            String searchType,
-            String searchText,
-            Date startDate,
-            Date endDate,
-            Boolean includeSampleSearch) {
-
-        List<ServiceRequest> requests;
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        String searchQuery = null;
-        String searchTextAndClause = "";
-
-        if (searchType.equals("General")) {
-
-            if (!searchText.equals("")) {
-                searchTextAndClause
-                        = " AND ("
-                        + " UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(serviceRequest.serviceRequestNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(serviceRequest.comment) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(serviceRequest.jobDescription) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(serviceRequest.statusNote) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(serviceRequest.purpose) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(sector.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobCategory.category) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(jobSubCategory.subCategory) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(assignedTo.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " )";
-            }
-            searchQuery
-                    = "SELECT serviceRequest FROM ServiceRequest serviceRequest"
-                    + " JOIN serviceRequest.department department"
-                    + " JOIN serviceRequest.classification classification"
-                    + " JOIN serviceRequest.sector sector"
-                    + " JOIN serviceRequest.client client"
-                    + " JOIN serviceRequest.jobCategory jobCategory"
-                    + " JOIN serviceRequest.jobSubCategory jobSubCategory"
-                    + " JOIN serviceRequest.assignedTo assignedTo"
-                    + " WHERE (serviceRequest." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                    + " AND serviceRequest." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                    + searchTextAndClause
-                    + " ORDER BY serviceRequest.serviceRequestSequenceNumber DESC";
-        }
-
-        try {
-            requests = em.createQuery(searchQuery, ServiceRequest.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return requests;
-    }
-
-    public static ServiceRequest findServiceRequestByServiceRequestNumber(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<ServiceRequest> requests = em.createQuery("SELECT s FROM ServiceRequest s "
-                    + "WHERE UPPER(s.serviceRequestNumber) "
-                    + "= '" + value.toUpperCase() + "'", ServiceRequest.class).getResultList();
-            if (!requests.isEmpty()) {
-                return requests.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -685,22 +686,22 @@ public class ServiceRequest implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

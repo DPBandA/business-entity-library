@@ -19,6 +19,20 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.pm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.dm.DocumentType;
 import jm.com.dpbennett.business.entity.dm.Document;
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -30,25 +44,12 @@ import jm.com.dpbennett.business.entity.dm.Attachment;
 import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.Discount;
@@ -57,6 +58,7 @@ import jm.com.dpbennett.business.entity.hrm.ApproverOrRecommender;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import static jm.com.dpbennett.business.entity.util.BusinessEntityUtils.toDate;
 import jm.com.dpbennett.business.entity.util.Message;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -73,6 +75,214 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class PurchaseRequisition implements Document, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(PurchaseRequisition.class.getName());
+    public static PurchaseRequisition create(EntityManager em, User user) {
+        
+        String defaultCurrencyName = SystemOption.getString(em,
+                "defaultCurrency");
+        Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
+        
+        PurchaseRequisition selectedPurchaseRequisition = new PurchaseRequisition();
+        selectedPurchaseRequisition.setPurchasingDepartment(Department.findDefault(em, "--"));
+        selectedPurchaseRequisition.setProcurementOfficer(Employee.findDefault(em,
+                "--", "--", false));
+        selectedPurchaseRequisition.
+                setOriginatingDepartment(user.getEmployee().getDepartment());
+        selectedPurchaseRequisition.setProcurementMethod(SystemOption.getString(em,
+                "defaultProcurementMethod"));
+        selectedPurchaseRequisition.setOriginator(user.getEmployee());
+        selectedPurchaseRequisition.setRequisitionDate(LocalDateTime.now());
+        if (selectedPurchaseRequisition.getAutoGenerateNumber()) {
+            selectedPurchaseRequisition.generateNumber();
+        }
+        selectedPurchaseRequisition.addAction(BusinessEntity.Action.CREATE);
+        selectedPurchaseRequisition.setTax(Tax.findDefault(em, "0.0"));
+        selectedPurchaseRequisition.setDiscount(Discount.findDefault(em, "0.0"));
+        selectedPurchaseRequisition.setCurrency(defaultCurrency);
+        selectedPurchaseRequisition.setIsDirty(true);
+        
+        return selectedPurchaseRequisition;
+    }
+    public static PurchaseRequisition create(
+            EntityManager em,
+            EntityManager hrmem,
+            EntityManager smem,
+            User user) {
+        
+        String defaultCurrencyName = SystemOption.getString(em,
+                "defaultCurrency");
+        Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
+        
+        PurchaseRequisition selectedPurchaseRequisition = new PurchaseRequisition();
+        selectedPurchaseRequisition.setPurchasingDepartment(Department.findDefault(hrmem, "--"));
+        selectedPurchaseRequisition.setProcurementOfficer(Employee.findDefault(hrmem,
+                "--", "--", false));
+        selectedPurchaseRequisition.
+                setOriginatingDepartment(user.getEmployee().getDepartment());
+        selectedPurchaseRequisition.setProcurementMethod(SystemOption.getString(smem,
+                "defaultProcurementMethod"));
+        selectedPurchaseRequisition.setOriginator(user.getEmployee());
+        selectedPurchaseRequisition.setRequisitionDate(LocalDateTime.now());
+        if (selectedPurchaseRequisition.getAutoGenerateNumber()) {
+            selectedPurchaseRequisition.generateNumber();
+        }
+        selectedPurchaseRequisition.addAction(BusinessEntity.Action.CREATE);
+        selectedPurchaseRequisition.setTax(Tax.findDefault(em, "0.0"));
+        selectedPurchaseRequisition.setDiscount(Discount.findDefault(em, "0.0"));
+        selectedPurchaseRequisition.setCurrency(defaultCurrency);
+        selectedPurchaseRequisition.setPaymentCurrency(defaultCurrency);
+        selectedPurchaseRequisition.setIsDirty(true);
+        
+        return selectedPurchaseRequisition;
+    }
+    public static List<PurchaseRequisition> findByDateSearchField(
+            EntityManager em,
+            String dateSearchField,
+            String searchType,
+            String searchText,
+            Date startDate,
+            Date endDate,
+            Long departmentId,
+            int maxSearchResults) {
+        
+        List<PurchaseRequisition> foundPRs;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        String searchQuery;
+        String searchTextAndClause;
+        String departmentQuery = "";
+        
+        switch (searchType) {
+            
+            default:
+                if (departmentId != null) {
+                    departmentQuery = " AND (originatingDepartment.id = " + departmentId + ")";
+                }
+                
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(pr.number) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(originatingDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(procurementOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(procurementOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(originator.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(originator.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.description) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.notes) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.status) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.workProgress) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.quotationNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.terms) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.priorityCode) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(pr.url) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )"
+                        + departmentQuery;
+                
+                searchQuery
+                        = "SELECT pr FROM PurchaseRequisition pr"
+                        + " JOIN pr.originatingDepartment originatingDepartment"
+                        + " JOIN pr.procurementOfficer procurementOfficer"
+                        + " JOIN pr.originator originator"
+                        + " JOIN pr.supplier supplier"
+                        + " WHERE (pr." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND pr." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY pr.id DESC";
+                break;
+        }
+        
+        try {
+            foundPRs = em.createQuery(searchQuery, PurchaseRequisition.class)
+                    .setMaxResults(maxSearchResults).getResultList();
+            if (foundPRs == null) {
+                foundPRs = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return foundPRs;
+    }
+    public static List<PurchaseRequisition> findAllActive(EntityManager em, int maxSearchResults) {
+        
+        List<PurchaseRequisition> foundPRs;
+        
+        try {
+            
+            foundPRs = em.createQuery(
+                    "SELECT p FROM PurchaseRequisition p "
+                            + "WHERE p.workProgress != 'Completed' AND p.workProgress != 'Cancelled' "
+                            + "ORDER BY p.id DESC",
+                    PurchaseRequisition.class).setMaxResults(maxSearchResults).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return foundPRs;
+    }
+    public static PurchaseRequisition findById(EntityManager em, Long Id) {
+        
+        return em.find(PurchaseRequisition.class, Id);
+    }
+    public static PurchaseRequisition findByPRNumber(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<PurchaseRequisition> purchaseRequisitions = em.createQuery("SELECT p FROM PurchaseRequisition p "
+                    + "WHERE UPPER(p.number) "
+                    + "= '" + value.toUpperCase() + "'", PurchaseRequisition.class).getResultList();
+            
+            if (!purchaseRequisitions.isEmpty()) {
+                return purchaseRequisitions.get(0);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<PurchaseRequisition> findAll(EntityManager em, int maxResults) {
+        
+        try {
+            return em.createNamedQuery("findAllPurchaseRequisitions", PurchaseRequisition.class)
+                    .setMaxResults(maxResults).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static String getNumber(PurchaseRequisition pr, String prefix) {
+        String number = prefix;
+        
+        if (pr.getPurchasingDepartment().getCode() != null) {
+            number = number + pr.getPurchasingDepartment().getCode();
+        } else {
+            number = number + "?";
+        }
+        
+        if (pr.getSequenceNumber() != null) {
+            NumberFormat formatter = DecimalFormat.getIntegerInstance();
+            formatter.setMinimumIntegerDigits(2);
+            number = number + "_" + formatter.format(pr.getSequenceNumber());
+        } else {
+            number = number + "_?";
+        }
+        
+        if (pr.getRequisitionDate() != null) {
+            number = number + "/" + BusinessEntityUtils.getMonthShortFormat(pr.getRequisitionDate())
+                    + BusinessEntityUtils.getYearShortFormat(pr.getRequisitionDate(), 2);
+        }
+        
+        return number;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -128,14 +338,10 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     private String description;
     @Column(length = 1024)
     private String notes;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date requisitionDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date expectedDateOfCompletion;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfCompletion;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateRequired;
+    private LocalDateTime requisitionDate;
+    private LocalDateTime expectedDateOfCompletion;
+    private LocalDateTime dateOfCompletion;
+    private LocalDateTime dateRequired;
     private String url;
     @Column(length = 1024)
     private String comments;
@@ -144,28 +350,19 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     @Column(length = 1024)
     private String status;
     private String workProgress;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEdited;
+    private LocalDateTime dateEdited;
     private String priorityCode;
     private Boolean onHandNow;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date approvalOrRecommendationDate1;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date approvalOrRecommendationDate2;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date approvalOrRecommendationDate3;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date approvalOrRecommendationDate4;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date approvalOrRecommendationDate5;
+    private LocalDateTime approvalOrRecommendationDate1;
+    private LocalDateTime approvalOrRecommendationDate2;
+    private LocalDateTime approvalOrRecommendationDate3;
+    private LocalDateTime approvalOrRecommendationDate4;
+    private LocalDateTime approvalOrRecommendationDate5;
     private String quotationNumber;
     private String purchaseOrderNumber;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date purchaseOrderDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date importLicenceDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date deliveryDateRequired;
+    private LocalDateTime purchaseOrderDate;
+    private LocalDateTime importLicenceDate;
+    private LocalDateTime deliveryDateRequired;
     private String importLicenceNum;
     @Column(length = 1024)
     private String terms;
@@ -230,66 +427,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         }
     }
 
-    public static PurchaseRequisition create(EntityManager em, User user) {
-
-        String defaultCurrencyName = SystemOption.getString(em,
-                "defaultCurrency");
-        Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
-
-        PurchaseRequisition selectedPurchaseRequisition = new PurchaseRequisition();
-        selectedPurchaseRequisition.setPurchasingDepartment(Department.findDefault(em, "--"));
-        selectedPurchaseRequisition.setProcurementOfficer(Employee.findDefault(em,
-                "--", "--", false));
-        selectedPurchaseRequisition.
-                setOriginatingDepartment(user.getEmployee().getDepartment());
-        selectedPurchaseRequisition.setProcurementMethod(SystemOption.getString(em,
-                "defaultProcurementMethod"));
-        selectedPurchaseRequisition.setOriginator(user.getEmployee());
-        selectedPurchaseRequisition.setRequisitionDate(new Date());
-        if (selectedPurchaseRequisition.getAutoGenerateNumber()) {
-            selectedPurchaseRequisition.generateNumber();
-        }
-        selectedPurchaseRequisition.addAction(BusinessEntity.Action.CREATE);
-        selectedPurchaseRequisition.setTax(Tax.findDefault(em, "0.0"));
-        selectedPurchaseRequisition.setDiscount(Discount.findDefault(em, "0.0"));
-        selectedPurchaseRequisition.setCurrency(defaultCurrency);
-        selectedPurchaseRequisition.setIsDirty(true);
-
-        return selectedPurchaseRequisition;
-    }
-
-    public static PurchaseRequisition create(
-            EntityManager em,
-            EntityManager hrmem,
-            EntityManager smem,
-            User user) {
-
-        String defaultCurrencyName = SystemOption.getString(em,
-                "defaultCurrency");
-        Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
-
-        PurchaseRequisition selectedPurchaseRequisition = new PurchaseRequisition();
-        selectedPurchaseRequisition.setPurchasingDepartment(Department.findDefault(hrmem, "--"));
-        selectedPurchaseRequisition.setProcurementOfficer(Employee.findDefault(hrmem,
-                "--", "--", false));
-        selectedPurchaseRequisition.
-                setOriginatingDepartment(user.getEmployee().getDepartment());
-        selectedPurchaseRequisition.setProcurementMethod(SystemOption.getString(smem,
-                "defaultProcurementMethod"));
-        selectedPurchaseRequisition.setOriginator(user.getEmployee());
-        selectedPurchaseRequisition.setRequisitionDate(new Date());
-        if (selectedPurchaseRequisition.getAutoGenerateNumber()) {
-            selectedPurchaseRequisition.generateNumber();
-        }
-        selectedPurchaseRequisition.addAction(BusinessEntity.Action.CREATE);
-        selectedPurchaseRequisition.setTax(Tax.findDefault(em, "0.0"));
-        selectedPurchaseRequisition.setDiscount(Discount.findDefault(em, "0.0"));
-        selectedPurchaseRequisition.setCurrency(defaultCurrency);
-        selectedPurchaseRequisition.setPaymentCurrency(defaultCurrency);
-        selectedPurchaseRequisition.setIsDirty(true);
-
-        return selectedPurchaseRequisition;
-    }
 
     public String getProcurementMethod() {
         return procurementMethod;
@@ -638,19 +775,19 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         this.importLicenceNum = importLicenceNum;
     }
 
-    public Date getDeliveryDateRequired() {
+    public LocalDateTime getDeliveryDateRequired() {
         return deliveryDateRequired;
     }
 
-    public void setDeliveryDateRequired(Date deliveryDateRequired) {
+    public void setDeliveryDateRequired(LocalDateTime deliveryDateRequired) {
         this.deliveryDateRequired = deliveryDateRequired;
     }
 
-    public Date getImportLicenceDate() {
+    public LocalDateTime getImportLicenceDate() {
         return importLicenceDate;
     }
 
-    public void setImportLicenceDate(Date importLicenceDate) {
+    public void setImportLicenceDate(LocalDateTime importLicenceDate) {
         this.importLicenceDate = importLicenceDate;
     }
 
@@ -749,43 +886,43 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         return this;
     }
 
-    public Date getApprovalOrRecommendationDate1() {
+    public LocalDateTime getApprovalOrRecommendationDate1() {
         return approvalOrRecommendationDate1;
     }
 
-    public void setApprovalOrRecommendationDate1(Date approvalOrRecommendationDate1) {
+    public void setApprovalOrRecommendationDate1(LocalDateTime approvalOrRecommendationDate1) {
         this.approvalOrRecommendationDate1 = approvalOrRecommendationDate1;
     }
 
-    public Date getApprovalOrRecommendationDate2() {
+    public LocalDateTime getApprovalOrRecommendationDate2() {
         return approvalOrRecommendationDate2;
     }
 
-    public void setApprovalOrRecommendationDate2(Date approvalOrRecommendationDate2) {
+    public void setApprovalOrRecommendationDate2(LocalDateTime approvalOrRecommendationDate2) {
         this.approvalOrRecommendationDate2 = approvalOrRecommendationDate2;
     }
 
-    public Date getApprovalOrRecommendationDate3() {
+    public LocalDateTime getApprovalOrRecommendationDate3() {
         return approvalOrRecommendationDate3;
     }
 
-    public void setApprovalOrRecommendationDate3(Date approvalOrRecommendationDate3) {
+    public void setApprovalOrRecommendationDate3(LocalDateTime approvalOrRecommendationDate3) {
         this.approvalOrRecommendationDate3 = approvalOrRecommendationDate3;
     }
 
-    public Date getApprovalOrRecommendationDate4() {
+    public LocalDateTime getApprovalOrRecommendationDate4() {
         return approvalOrRecommendationDate4;
     }
 
-    public void setApprovalOrRecommendationDate4(Date approvalOrRecommendationDate4) {
+    public void setApprovalOrRecommendationDate4(LocalDateTime approvalOrRecommendationDate4) {
         this.approvalOrRecommendationDate4 = approvalOrRecommendationDate4;
     }
 
-    public Date getApprovalOrRecommendationDate5() {
+    public LocalDateTime getApprovalOrRecommendationDate5() {
         return approvalOrRecommendationDate5;
     }
 
-    public void setApprovalOrRecommendationDate5(Date approvalOrRecommendationDate5) {
+    public void setApprovalOrRecommendationDate5(LocalDateTime approvalOrRecommendationDate5) {
         this.approvalOrRecommendationDate5 = approvalOrRecommendationDate5;
     }
 
@@ -804,6 +941,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         this.workProgress = workProgress;
     }
 
+    // tk Ask GPT to fix.
     public String generateNumber() {
 
         Calendar c = Calendar.getInstance();
@@ -811,7 +949,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         String sequenceNumberStr;
 
         if (getRequisitionDate() != null) {
-            c.setTime(getRequisitionDate());
+            c.setTime(toDate(getRequisitionDate()));
             year = "" + c.get(Calendar.YEAR);
         } else {
             year = "" + BusinessEntityUtils.getCurrentYear();
@@ -955,11 +1093,11 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         this.purchaseOrderNumber = purchaseOrderNumber;
     }
 
-    public Date getPurchaseOrderDate() {
+    public LocalDateTime getPurchaseOrderDate() {
         return purchaseOrderDate;
     }
 
-    public void setPurchaseOrderDate(Date purchaseOrderDate) {
+    public void setPurchaseOrderDate(LocalDateTime purchaseOrderDate) {
         this.purchaseOrderDate = purchaseOrderDate;
     }
 
@@ -1001,11 +1139,11 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         this.terms = terms;
     }
 
-    public Date getDateRequired() {
+    public LocalDateTime getDateRequired() {
         return dateRequired;
     }
 
-    public void setDateRequired(Date dateRequired) {
+    public void setDateRequired(LocalDateTime dateRequired) {
         this.dateRequired = dateRequired;
     }
 
@@ -1039,12 +1177,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         return dateEdited;
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         this.dateEdited = dateEdited;
     }
 
@@ -1279,19 +1417,19 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         this.id = id;
     }
 
-    public Date getDateOfCompletion() {
+    public LocalDateTime getDateOfCompletion() {
         return dateOfCompletion;
     }
 
-    public void setDateOfCompletion(Date dateOfCompletion) {
+    public void setDateOfCompletion(LocalDateTime dateOfCompletion) {
         this.dateOfCompletion = dateOfCompletion;
     }
 
-    public Date getRequisitionDate() {
+    public LocalDateTime getRequisitionDate() {
         return requisitionDate;
     }
 
-    public void setRequisitionDate(Date requisitionDate) {
+    public void setRequisitionDate(LocalDateTime requisitionDate) {
         this.requisitionDate = requisitionDate;
     }
 
@@ -1305,11 +1443,11 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
         this.description = description;
     }
 
-    public Date getExpectedDateOfCompletion() {
+    public LocalDateTime getExpectedDateOfCompletion() {
         return expectedDateOfCompletion;
     }
 
-    public void setExpectedDateOfCompletion(Date expectedDateOfCompletion) {
+    public void setExpectedDateOfCompletion(LocalDateTime expectedDateOfCompletion) {
         this.expectedDateOfCompletion = expectedDateOfCompletion;
     }
 
@@ -1442,159 +1580,6 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     public void setName(String name) {
     }
 
-    public static List<PurchaseRequisition> findByDateSearchField(
-            EntityManager em,
-            String dateSearchField,
-            String searchType,
-            String searchText,
-            Date startDate,
-            Date endDate,
-            Long departmentId,
-            int maxSearchResults) {
-
-        List<PurchaseRequisition> foundPRs;
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        String searchQuery;
-        String searchTextAndClause;
-        String departmentQuery = "";
-
-        switch (searchType) {
-
-            default:
-                if (departmentId != null) {
-                    departmentQuery = " AND (originatingDepartment.id = " + departmentId + ")";
-                }
-
-                searchTextAndClause
-                        = " AND ("
-                        + " UPPER(pr.number) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(originatingDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(procurementOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(procurementOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(originator.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(originator.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(pr.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(pr.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(pr.notes) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(pr.status) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(pr.workProgress) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(pr.quotationNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(pr.purchaseOrderNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(pr.terms) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(pr.priorityCode) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(pr.url) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " )"
-                        + departmentQuery;
-
-                searchQuery
-                        = "SELECT pr FROM PurchaseRequisition pr"
-                        + " JOIN pr.originatingDepartment originatingDepartment"
-                        + " JOIN pr.procurementOfficer procurementOfficer"
-                        + " JOIN pr.originator originator"
-                        + " JOIN pr.supplier supplier"
-                        + " WHERE (pr." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND pr." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                        + searchTextAndClause
-                        + " ORDER BY pr.id DESC";
-                break;
-        }
-
-        try {
-            foundPRs = em.createQuery(searchQuery, PurchaseRequisition.class)
-                    .setMaxResults(maxSearchResults).getResultList();
-            if (foundPRs == null) {
-                foundPRs = new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundPRs;
-    }
-
-    public static List<PurchaseRequisition> findAllActive(EntityManager em, int maxSearchResults) {
-
-        List<PurchaseRequisition> foundPRs;
-
-        try {
-
-            foundPRs = em.createQuery(
-                    "SELECT p FROM PurchaseRequisition p "
-                    + "WHERE p.workProgress != 'Completed' AND p.workProgress != 'Cancelled' "
-                    + "ORDER BY p.id DESC",
-                    PurchaseRequisition.class).setMaxResults(maxSearchResults).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundPRs;
-    }
-
-    public static PurchaseRequisition findById(EntityManager em, Long Id) {
-
-        return em.find(PurchaseRequisition.class, Id);
-    }
-
-    public static PurchaseRequisition findByPRNumber(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<PurchaseRequisition> purchaseRequisitions = em.createQuery("SELECT p FROM PurchaseRequisition p "
-                    + "WHERE UPPER(p.number) "
-                    + "= '" + value.toUpperCase() + "'", PurchaseRequisition.class).getResultList();
-
-            if (!purchaseRequisitions.isEmpty()) {
-                return purchaseRequisitions.get(0);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<PurchaseRequisition> findAll(EntityManager em, int maxResults) {
-
-        try {
-            return em.createNamedQuery("findAllPurchaseRequisitions", PurchaseRequisition.class)
-                    .setMaxResults(maxResults).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static String getNumber(PurchaseRequisition pr, String prefix) {
-        String number = prefix;
-
-        if (pr.getPurchasingDepartment().getCode() != null) {
-            number = number + pr.getPurchasingDepartment().getCode();
-        } else {
-            number = number + "?";
-        }
-
-        if (pr.getSequenceNumber() != null) {
-            NumberFormat formatter = DecimalFormat.getIntegerInstance();
-            formatter.setMinimumIntegerDigits(2);
-            number = number + "_" + formatter.format(pr.getSequenceNumber());
-        } else {
-            number = number + "_?";
-        }
-
-        if (pr.getRequisitionDate() != null) {
-            number = number + "/" + BusinessEntityUtils.getMonthShortFormat(pr.getRequisitionDate())
-                    + BusinessEntityUtils.getYearShortFormat(pr.getRequisitionDate(), 2);
-        }
-
-        return number;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -1733,7 +1718,7 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
             EntityManager em,
             EntityManager smem,
             User user) {
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
         PurchaseReqNumber nextPurchaseReqNumber = null;
         PurchaseOrderNumber nextPurchaseOrderNumber = null;
 
@@ -1854,12 +1839,12 @@ public class PurchaseRequisition implements Document, Comparable, BusinessEntity
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

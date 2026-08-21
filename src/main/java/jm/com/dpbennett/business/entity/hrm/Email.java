@@ -19,25 +19,25 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -56,6 +56,206 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Email implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Email.class.getName());
+    public static List<Email> findAllEmails(EntityManager em) {
+        
+        try {
+            List<Email> emails = em.createNamedQuery("findAllEmails", Email.class).getResultList();
+            
+            return emails;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static List<Email> findAllActiveEmails(EntityManager em) {
+        
+        try {
+            return em.createQuery("SELECT e FROM Email e WHERE e.active = 1 ORDER BY e.subject", Email.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return new ArrayList<>();
+        }
+    }
+    public static Email findEmailById(EntityManager em, Long Id) {
+        
+        try {
+            Email email = em.find(Email.class, Id);
+            return email;
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return null;
+        }
+    }
+    public static Email findEmailByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Email> emails = em.createQuery("SELECT e FROM Email e "
+                    + "WHERE UPPER(e.name) "
+                    + "= '" + value.toUpperCase() + "'", Email.class).getResultList();
+            
+            if (!emails.isEmpty()) {
+                return emails.get(0);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Email findActiveEmailByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Email> emails = em.createQuery("SELECT e FROM Email e "
+                    + "WHERE e.active = 1 AND UPPER(e.name) "
+                    + "= '" + value.toUpperCase() + "'", Email.class).getResultList();
+            
+            if (!emails.isEmpty()) {
+                return emails.get(0);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Email findEmailBySubject(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Email> emails = em.createQuery("SELECT e FROM Email e "
+                    + "WHERE UPPER(e.subject) "
+                    + "= '" + value.toUpperCase() + "'", Email.class).getResultList();
+            
+            if (!emails.isEmpty()) {
+                return emails.get(0);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Email> findEmailsBySubject(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Email> emails
+                    = em.createQuery("SELECT e FROM Email e where UPPER(e.subject) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
+            
+            return emails;
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return new ArrayList<>();
+        }
+    }
+    public static List<Email> findEmails(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Email> emails
+                    = em.createQuery("SELECT e FROM Email e where UPPER(e.name) like '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(e.subject) like '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(e.description) like '%" + value.toUpperCase().trim()
+                            + "%' ORDER BY e.subject", Email.class).getResultList();
+            
+            return emails;
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return new ArrayList<>();
+        }
+    }
+    public static List<Email> findActiveEmailsBySubject(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Email> emails
+                    = em.createQuery("SELECT e FROM Email e where e.active = 1 AND UPPER(e.subject) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
+            
+            return emails;
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return new ArrayList<>();
+        }
+    }
+    public static List<Email> findActiveEmailsByCategoryAndSubject(
+            EntityManager em,
+            String category,
+            String subject) {
+        
+        try {
+            
+            category = category.replaceAll("&amp;", "&").replaceAll("'", "`");
+            subject = subject.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Email> emails
+                    = em.createQuery("SELECT e FROM Email e where e.active = 1 AND UPPER(e.subject) like '%"
+                            + subject.toUpperCase().trim() + "%'"
+                                    + " AND UPPER(e.category) like '%"
+                            + category.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
+            
+            return emails;
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return new ArrayList<>();
+        }
+    }
+    public static List<Email> findActiveEmails(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Email> emails
+                    = em.createQuery("SELECT e FROM Email e where e.active = 1 AND (UPPER(e.name) like '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(e.subject) like '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(e.description) like '%" + value.toUpperCase().trim()
+                            + "%') ORDER BY e.subject", Email.class).getResultList();
+            
+            return emails;
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return new ArrayList<>();
+        }
+    }
+    public static Email findDefaultEmail(EntityManager em, String subject) {
+        Email email = Email.findEmailBySubject(em, subject);
+        
+        if (email == null) {
+            email = new Email(subject);
+            
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, email);
+            em.getTransaction().commit();
+        }
+        
+        return email;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -283,216 +483,6 @@ public class Email implements Serializable, BusinessEntity {
         return "Email[id=" + id + "]";
     }
 
-    public static List<Email> findAllEmails(EntityManager em) {
-
-        try {
-            List<Email> emails = em.createNamedQuery("findAllEmails", Email.class).getResultList();
-
-            return emails;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static List<Email> findAllActiveEmails(EntityManager em) {
-
-        try {
-            return em.createQuery("SELECT e FROM Email e WHERE e.active = 1 ORDER BY e.subject", Email.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return new ArrayList<>();
-        }
-    }
-
-    public static Email findEmailById(EntityManager em, Long Id) {
-
-        try {
-            Email email = em.find(Email.class, Id);
-            return email;
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return null;
-        }
-    }
-
-    public static Email findEmailByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Email> emails = em.createQuery("SELECT e FROM Email e "
-                    + "WHERE UPPER(e.name) "
-                    + "= '" + value.toUpperCase() + "'", Email.class).getResultList();
-
-            if (!emails.isEmpty()) {
-                return emails.get(0);
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Email findActiveEmailByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Email> emails = em.createQuery("SELECT e FROM Email e "
-                    + "WHERE e.active = 1 AND UPPER(e.name) "
-                    + "= '" + value.toUpperCase() + "'", Email.class).getResultList();
-
-            if (!emails.isEmpty()) {
-                return emails.get(0);
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Email findEmailBySubject(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Email> emails = em.createQuery("SELECT e FROM Email e "
-                    + "WHERE UPPER(e.subject) "
-                    + "= '" + value.toUpperCase() + "'", Email.class).getResultList();
-
-            if (!emails.isEmpty()) {
-                return emails.get(0);
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Email> findEmailsBySubject(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Email> emails
-                    = em.createQuery("SELECT e FROM Email e where UPPER(e.subject) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
-
-            return emails;
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Email> findEmails(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Email> emails
-                    = em.createQuery("SELECT e FROM Email e where UPPER(e.name) like '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(e.subject) like '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(e.description) like '%" + value.toUpperCase().trim()
-                            + "%' ORDER BY e.subject", Email.class).getResultList();
-
-            return emails;
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Email> findActiveEmailsBySubject(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Email> emails
-                    = em.createQuery("SELECT e FROM Email e where e.active = 1 AND UPPER(e.subject) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
-
-            return emails;
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Email> findActiveEmailsByCategoryAndSubject(
-            EntityManager em,
-            String category,
-            String subject) {
-
-        try {
-
-            category = category.replaceAll("&amp;", "&").replaceAll("'", "`");
-            subject = subject.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Email> emails
-                    = em.createQuery("SELECT e FROM Email e where e.active = 1 AND UPPER(e.subject) like '%"
-                            + subject.toUpperCase().trim() + "%'"
-                            + " AND UPPER(e.category) like '%"
-                            + category.toUpperCase().trim() + "%' ORDER BY e.subject", Email.class).getResultList();
-
-            return emails;
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Email> findActiveEmails(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Email> emails
-                    = em.createQuery("SELECT e FROM Email e where e.active = 1 AND (UPPER(e.name) like '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(e.subject) like '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(e.description) like '%" + value.toUpperCase().trim()
-                            + "%') ORDER BY e.subject", Email.class).getResultList();
-
-            return emails;
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return new ArrayList<>();
-        }
-    }
-
-    public static Email findDefaultEmail(EntityManager em, String subject) {
-        Email email = Email.findEmailBySubject(em, subject);
-
-        if (email == null) {
-            email = new Email(subject);
-
-            em.getTransaction().begin();
-            BusinessEntityUtils.saveBusinessEntity(em, email);
-            em.getTransaction().commit();
-        }
-
-        return email;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -516,22 +506,22 @@ public class Email implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

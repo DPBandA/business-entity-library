@@ -19,23 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -55,6 +55,103 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Sector implements BusinessEntity, Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Sector.class.getName());
+    public static List<Sector> findAllSectors(EntityManager em) {
+        
+        try {
+            List<Sector> sectors = em.createNamedQuery("findAllSectors", Sector.class).getResultList();
+            
+            return sectors;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static List<Sector> findAllActiveSectors(EntityManager em) {
+        
+        try {
+            List<Sector> sectors = em.createNamedQuery("findAllActiveSectors", Sector.class).getResultList();
+            
+            return sectors;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static Sector findSectorById(EntityManager em, Long id) {
+        
+        try {
+            Sector sector = em.find(Sector.class, id);
+            
+            return sector;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static List<Sector> findAllSectorsByDeparment(
+            EntityManager em, Department department) {
+        try {
+            List<Sector> sectors
+                    = em.createQuery(
+                            "SELECT s FROM Sector s JOIN s.departments department"
+                                    + " WHERE department.name = '" + department.getName().trim() + "'"
+                                            + " ORDER BY s.name", Sector.class).getResultList();
+            return sectors;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Sector findSectorByName(EntityManager em, String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Sector> sectors = em.createQuery("SELECT s FROM Sector s "
+                    + "WHERE UPPER(s.name) "
+                    + "= '" + name.toUpperCase() + "'", Sector.class).getResultList();
+            if (!sectors.isEmpty()) {
+                return sectors.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+    }
+    public static List<Sector> findSectorsByName(EntityManager em, String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Sector> sectors
+                    = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"
+                            + name.toUpperCase().trim() + "%' ORDER BY s.name", Sector.class).getResultList();
+            return sectors;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Sector> findActiveSectorsByName(EntityManager em, String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Sector> sectors
+                    = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"
+                            + name.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Sector.class).getResultList();
+            return sectors;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -171,108 +268,6 @@ public class Sector implements BusinessEntity, Serializable {
         return name;
     }
 
-    public static List<Sector> findAllSectors(EntityManager em) {
-
-        try {
-            List<Sector> sectors = em.createNamedQuery("findAllSectors", Sector.class).getResultList();
-
-            return sectors;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
-
-    public static List<Sector> findAllActiveSectors(EntityManager em) {
-
-        try {
-            List<Sector> sectors = em.createNamedQuery("findAllActiveSectors", Sector.class).getResultList();
-
-            return sectors;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
-
-    public static Sector findSectorById(EntityManager em, Long id) {
-
-        try {
-            Sector sector = em.find(Sector.class, id);
-
-            return sector;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
-
-    public static List<Sector> findAllSectorsByDeparment(
-            EntityManager em, Department department) {
-        try {
-            List<Sector> sectors
-                    = em.createQuery(
-                            "SELECT s FROM Sector s JOIN s.departments department"
-                            + " WHERE department.name = '" + department.getName().trim() + "'"
-                            + " ORDER BY s.name", Sector.class).getResultList();
-            return sectors;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Sector findSectorByName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Sector> sectors = em.createQuery("SELECT s FROM Sector s "
-                    + "WHERE UPPER(s.name) "
-                    + "= '" + name.toUpperCase() + "'", Sector.class).getResultList();
-            if (!sectors.isEmpty()) {
-                return sectors.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-    }
-
-    public static List<Sector> findSectorsByName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Sector> sectors
-                    = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY s.name", Sector.class).getResultList();
-            return sectors;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Sector> findActiveSectorsByName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Sector> sectors
-                    = em.createQuery("SELECT s FROM Sector s WHERE UPPER(s.name) LIKE '%"
-                            + name.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Sector.class).getResultList();
-            return sectors;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     public String getUsable() {
         if (getActive()) {
@@ -336,22 +331,22 @@ public class Sector implements BusinessEntity, Serializable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

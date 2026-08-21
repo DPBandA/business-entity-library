@@ -20,24 +20,24 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.sc;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.jmts.Job;
 import java.text.Collator;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import static jm.com.dpbennett.business.entity.util.BusinessEntityUtils.toDate;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -48,6 +48,9 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Table(name = "registration")
 public class Registration implements BusinessEntity, Comparable {
 
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Registration.class.getName());
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -56,12 +59,9 @@ public class Registration implements BusinessEntity, Comparable {
     private String status;
     private String comment;
     private Boolean active;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateRegistered;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateExpired;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfApplication;
+    private LocalDateTime dateRegistered;
+    private LocalDateTime dateExpired;
+    private LocalDateTime dateOfApplication;
     private String regulatoryDocuments;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Job job;
@@ -103,11 +103,11 @@ public class Registration implements BusinessEntity, Comparable {
         this.job = job;
     }
 
-    public Date getDateOfApplication() {
+    public LocalDateTime getDateOfApplication() {
         return dateOfApplication;
     }
 
-    public void setDateOfApplication(Date dateOfApplication) {
+    public void setDateOfApplication(LocalDateTime dateOfApplication) {
         this.dateOfApplication = dateOfApplication;
     }
 
@@ -139,19 +139,19 @@ public class Registration implements BusinessEntity, Comparable {
         this.comment = comment;
     }
 
-    public Date getDateExpired() {
+    public LocalDateTime getDateExpired() {
         return dateExpired;
     }
 
-    public void setDateExpired(Date dateExpired) {
+    public void setDateExpired(LocalDateTime dateExpired) {
         this.dateExpired = dateExpired;
     }
 
-    public Date getDateRegistered() {
+    public LocalDateTime getDateRegistered() {
         return dateRegistered;
     }
 
-    public void setDateRegistered(Date dateRegistered) {
+    public void setDateRegistered(LocalDateTime dateRegistered) {
         this.dateRegistered = dateRegistered;
     }
 
@@ -204,8 +204,8 @@ public class Registration implements BusinessEntity, Comparable {
 
         if ((((Registration) o).dateRegistered != null) && (this.dateRegistered != null)) {
             return Collator.getInstance().compare(
-                    Long.toString(((Registration) o).dateRegistered.getTime()),
-                    Long.toString(this.dateRegistered.getTime()));
+                    Long.toString(toDate(((Registration) o).dateRegistered).getTime()),
+                    Long.toString(toDate(this.dateRegistered).getTime()));
         } else {
             return 0;
         }
@@ -262,22 +262,22 @@ public class Registration implements BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

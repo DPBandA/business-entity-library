@@ -19,23 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fs;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.sm.Category;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
@@ -53,6 +53,35 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class FoodProduct implements Product, BusinessEntity, Comparable, Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(FoodProduct.class.getName());
+    public static FoodProduct findByName(EntityManager em, String value,
+            Boolean ignoreCase) {
+        
+        List<FoodProduct> foodProducts;
+        
+        try {
+            
+            if (ignoreCase) {
+                foodProducts = em.createQuery("SELECT p FROM FoodProduct p "
+                        + "WHERE UPPER(p.name) "
+                        + "= '" + value.toUpperCase() + "'",
+                        FoodProduct.class).getResultList();
+            } else {
+                foodProducts = em.createQuery("SELECT p FROM FoodProduct p "
+                        + "WHERE p.name "
+                        + "= '" + value + "'",
+                        FoodProduct.class).getResultList();
+            }
+            
+            if (!foodProducts.isEmpty()) {
+                return foodProducts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -61,11 +90,8 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     private String type;
     private String code;
     private Boolean active;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastSampled;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastManufactured;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateLastTested;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Category> categories;
@@ -93,34 +119,6 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
         this.id = id;
     }
 
-    public static FoodProduct findByName(EntityManager em, String value,
-            Boolean ignoreCase) {
-
-        List<FoodProduct> foodProducts;
-
-        try {
-
-            if (ignoreCase) {
-                foodProducts = em.createQuery("SELECT p FROM FoodProduct p "
-                        + "WHERE UPPER(p.name) "
-                        + "= '" + value.toUpperCase() + "'",
-                        FoodProduct.class).getResultList();
-            } else {
-                foodProducts = em.createQuery("SELECT p FROM FoodProduct p "
-                        + "WHERE p.name "
-                        + "= '" + value + "'",
-                        FoodProduct.class).getResultList();
-            }
-
-            if (!foodProducts.isEmpty()) {
-                return foodProducts.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public Boolean getIsDirty() {
@@ -296,22 +294,22 @@ public class FoodProduct implements Product, BusinessEntity, Comparable, Seriali
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

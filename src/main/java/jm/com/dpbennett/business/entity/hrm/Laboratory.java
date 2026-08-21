@@ -19,21 +19,21 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import jm.com.dpbennett.business.entity.Company;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -52,6 +52,83 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Laboratory implements BusinessEntity, Company {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Laboratory.class.getName());
+    public static List<Laboratory> findLaboratoriesByName(EntityManager em,
+            String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Laboratory> laboratories;
+            laboratories = em.createQuery("SELECT l FROM Laboratory l where UPPER(l.name) like '"
+                    + value.toUpperCase().trim() + "%' ORDER BY l.name", Laboratory.class).getResultList();
+            return laboratories;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Laboratory> findAllActiveLaboratories(EntityManager em) {
+        
+        try {
+            return em.createQuery("SELECT l from Laboratory l where l.active = 1 order by l.name", Laboratory.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Laboratory findLaboratoryByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Laboratory> laboratories = em.createQuery("SELECT l FROM Laboratory l "
+                    + "WHERE UPPER(l.name) "
+                    + "= '" + value.toUpperCase() + "'", Laboratory.class).getResultList();
+            if (!laboratories.isEmpty()) {
+                return laboratories.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Laboratory findLaboratoryById(EntityManager em, Long Id) {
+        return em.find(Laboratory.class, Id);
+    }
+    public static List<String> findAllLaboratoryNames(EntityManager em) {
+        
+        ArrayList<String> names = new ArrayList<>();
+        
+        try {
+            List<Laboratory> laboratories = em.createNamedQuery("findAllLaboratories", Laboratory.class).getResultList();
+            for (Laboratory laboratory : laboratories) {
+                names.add(laboratory.getName());
+            }
+            return names;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Laboratory getDefaultLaboratory(EntityManager em,
+            String name) {
+        Laboratory laboratory = Laboratory.findLaboratoryByName(em, name);
+        
+        if (laboratory == null) {
+            laboratory = new Laboratory();
+            
+            em.getTransaction().begin();
+            laboratory.setName(name);
+            BusinessEntityUtils.saveBusinessEntity(em, laboratory);
+            em.getTransaction().commit();
+        }
+        
+        return laboratory;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -171,87 +248,6 @@ public class Laboratory implements BusinessEntity, Company {
         this.businessOffices = businessOffices;
     }
 
-    public static List<Laboratory> findLaboratoriesByName(EntityManager em,
-            String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Laboratory> laboratories;
-            laboratories = em.createQuery("SELECT l FROM Laboratory l where UPPER(l.name) like '"
-                    + value.toUpperCase().trim() + "%' ORDER BY l.name", Laboratory.class).getResultList();
-            return laboratories;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Laboratory> findAllActiveLaboratories(EntityManager em) {
-
-        try {
-            return em.createQuery("SELECT l from Laboratory l where l.active = 1 order by l.name", Laboratory.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Laboratory findLaboratoryByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Laboratory> laboratories = em.createQuery("SELECT l FROM Laboratory l "
-                    + "WHERE UPPER(l.name) "
-                    + "= '" + value.toUpperCase() + "'", Laboratory.class).getResultList();
-            if (!laboratories.isEmpty()) {
-                return laboratories.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Laboratory findLaboratoryById(EntityManager em, Long Id) {
-        return em.find(Laboratory.class, Id);
-    }
-
-    public static List<String> findAllLaboratoryNames(EntityManager em) {
-
-        ArrayList<String> names = new ArrayList<>();
-
-        try {
-            List<Laboratory> laboratories = em.createNamedQuery("findAllLaboratories", Laboratory.class).getResultList();
-            for (Laboratory laboratory : laboratories) {
-                names.add(laboratory.getName());
-            }
-            return names;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Laboratory getDefaultLaboratory(EntityManager em,
-            String name) {
-        Laboratory laboratory = Laboratory.findLaboratoryByName(em, name);
-
-        if (laboratory == null) {
-            laboratory = new Laboratory();
-
-            em.getTransaction().begin();
-            laboratory.setName(name);
-            BusinessEntityUtils.saveBusinessEntity(em, laboratory);
-            em.getTransaction().commit();
-        }
-
-        return laboratory;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -285,22 +281,22 @@ public class Laboratory implements BusinessEntity, Company {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -20,18 +20,18 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.sm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.auth.Privilege;
@@ -45,6 +45,88 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Entity
 @Table(name = "modules")
 public class Module implements BusinessEntity {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Module.class.getName());
+    public static Module findActiveByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Module> modules = em.createQuery("SELECT m FROM Module m "
+                    + "WHERE m.active = 1 AND UPPER(m.name) "
+                    + "= '" + value.toUpperCase() + "'", Module.class).getResultList();
+            if (!modules.isEmpty()) {
+                return modules.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Module> findActive(
+            EntityManager em,
+            String value,
+            int maxResults) {
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Module> modules = em.createQuery("SELECT m FROM Module m"
+                    + " WHERE (m.active = 1) AND (UPPER(m.name) like '%"
+                    + value + "%'" + " OR UPPER(m.category) like '%"
+                    + value + "%'" + " OR UPPER(m.description) like '%"
+                    + value + "%') ORDER BY m.name", Module.class).
+                    setMaxResults(maxResults).getResultList();
+            
+            return modules;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Module> findAll(
+            EntityManager em,
+            String value,
+            int maxResults) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Module> modules = em.createQuery("SELECT m FROM Module m"
+                    + " WHERE (UPPER(m.name) like '%"
+                    + value + "%'" + " OR UPPER(m.category) like '%"
+                    + value + "%'" + " OR UPPER(m.description) like '%"
+                    + value + "%') ORDER BY m.name", Module.class).
+                    setMaxResults(maxResults).getResultList();
+            
+            return modules;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Module> findAllActive(
+            EntityManager em,
+            int maxResults) {
+        try {
+            
+            List<Module> modules = em.createQuery("SELECT m FROM Module m"
+                    + " WHERE m.active = 1 ORDER BY m.name", Module.class).
+                    setMaxResults(maxResults).getResultList();
+            
+            return modules;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -408,106 +490,24 @@ public class Module implements BusinessEntity {
         return new ReturnMessage();
     }
 
-    public static Module findActiveByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Module> modules = em.createQuery("SELECT m FROM Module m "
-                    + "WHERE m.active = 1 AND UPPER(m.name) "
-                    + "= '" + value.toUpperCase() + "'", Module.class).getResultList();
-            if (!modules.isEmpty()) {
-                return modules.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Module> findActive(
-            EntityManager em,
-            String value,
-            int maxResults) {
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Module> modules = em.createQuery("SELECT m FROM Module m"
-                    + " WHERE (m.active = 1) AND (UPPER(m.name) like '%"
-                    + value + "%'" + " OR UPPER(m.category) like '%"
-                    + value + "%'" + " OR UPPER(m.description) like '%"
-                    + value + "%') ORDER BY m.name", Module.class).
-                    setMaxResults(maxResults).getResultList();
-
-            return modules;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Module> findAll(
-            EntityManager em,
-            String value,
-            int maxResults) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Module> modules = em.createQuery("SELECT m FROM Module m"
-                    + " WHERE (UPPER(m.name) like '%"
-                    + value + "%'" + " OR UPPER(m.category) like '%"
-                    + value + "%'" + " OR UPPER(m.description) like '%"
-                    + value + "%') ORDER BY m.name", Module.class).
-                    setMaxResults(maxResults).getResultList();
-
-            return modules;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Module> findAllActive(
-            EntityManager em,
-            int maxResults) {
-        try {
-
-            List<Module> modules = em.createQuery("SELECT m FROM Module m"
-                    + " WHERE m.active = 1 ORDER BY m.name", Module.class).
-                    setMaxResults(maxResults).getResultList();
-
-            return modules;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

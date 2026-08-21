@@ -19,18 +19,18 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.rm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -46,6 +46,36 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class DepartmentReport implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(DepartmentReport.class.getName());
+    public static DepartmentReport findDepartmentReportById(EntityManager em, Long Id) {
+        
+        return em.find(DepartmentReport.class, Id);
+    }
+    public static DepartmentReport findDepartmentReport(
+            EntityManager em,
+            String value,
+            Integer reportPeriod,
+            Integer reportYear) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            String searchQuery
+                    = "SELECT r FROM DepartmentReport r JOIN r.department d WHERE d.name = '" + value + "'"
+                    + " AND r.reportPeriod = " + reportPeriod
+                    + " AND r.reportYear = " + reportYear;
+            
+            List<DepartmentReport> reports = em.createQuery(searchQuery, DepartmentReport.class).getResultList();
+            if (!reports.isEmpty()) {
+                return reports.get(0);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -125,36 +155,6 @@ public class DepartmentReport implements Serializable, BusinessEntity {
         return "jm.com.dpbennett.entity.DepartmentReport[id=" + id + "]";
     }
 
-    public static DepartmentReport findDepartmentReportById(EntityManager em, Long Id) {
-
-        return em.find(DepartmentReport.class, Id);
-    }
-
-    public static DepartmentReport findDepartmentReport(
-            EntityManager em,
-            String value,
-            Integer reportPeriod,
-            Integer reportYear) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            String searchQuery
-                    = "SELECT r FROM DepartmentReport r JOIN r.department d WHERE d.name = '" + value + "'"
-                    + " AND r.reportPeriod = " + reportPeriod
-                    + " AND r.reportYear = " + reportYear;
-
-            List<DepartmentReport> reports = em.createQuery(searchQuery, DepartmentReport.class).getResultList();
-            if (!reports.isEmpty()) {
-                return reports.get(0);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     @Override
     public Boolean getActive() {
@@ -197,22 +197,22 @@ public class DepartmentReport implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

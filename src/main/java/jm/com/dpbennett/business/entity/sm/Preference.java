@@ -19,19 +19,19 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sm;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Query;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -51,6 +51,91 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Preference implements BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Preference.class.getName());
+    public static List<Preference> findAllPreferencesByValue(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Preference> preferences
+                    = em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY p.preferenceValue", Preference.class).getResultList();
+            return preferences;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<String> findAllPreferenceValues(
+            EntityManager em, String value) {
+        
+        List<String> values = new ArrayList<>();
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Preference> preferences
+                    = em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '"
+                            + value.toUpperCase().trim() + "%' ORDER BY p.preferenceValue DESC", Preference.class).getResultList();
+            
+            if (preferences != null) {
+                for (Preference preference : preferences) {
+                    values.add(preference.preferenceValue);
+                }
+            }
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return values;
+        }
+        
+        return values;
+    }
+    public static List<Preference> findAllPreferencesByName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            Query query = em.createNamedQuery("findAllPreferencesByName");
+            query.setParameter("name", value);
+            
+            return query.getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Preference findPreferenceByValue(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Preference> preferences = em.createQuery("SELECT p FROM Preference p "
+                    + "WHERE UPPER(p.preferenceValue) "
+                    + "= '" + value.toUpperCase() + "'", Preference.class).getResultList();
+            if (!preferences.isEmpty()) {
+                return preferences.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Preference findPreferenceById(EntityManager em, Long Id) {
+        
+        try {
+            return em.find(Preference.class, Id);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -179,94 +264,6 @@ public class Preference implements BusinessEntity {
         this.name = name;
     }
 
-    public static List<Preference> findAllPreferencesByValue(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Preference> preferences
-                    = em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY p.preferenceValue", Preference.class).getResultList();
-            return preferences;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<String> findAllPreferenceValues(
-            EntityManager em, String value) {
-
-        List<String> values = new ArrayList<>();
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Preference> preferences
-                    = em.createQuery("SELECT p FROM Preference p where UPPER(p.preferenceValue) like '"
-                            + value.toUpperCase().trim() + "%' ORDER BY p.preferenceValue DESC", Preference.class).getResultList();
-
-            if (preferences != null) {
-                for (Preference preference : preferences) {
-                    values.add(preference.preferenceValue);
-                }
-            }
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return values;
-        }
-
-        return values;
-    }
-
-    public static List<Preference> findAllPreferencesByName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            Query query = em.createNamedQuery("findAllPreferencesByName");
-            query.setParameter("name", value);
-
-            return query.getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Preference findPreferenceByValue(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Preference> preferences = em.createQuery("SELECT p FROM Preference p "
-                    + "WHERE UPPER(p.preferenceValue) "
-                    + "= '" + value.toUpperCase() + "'", Preference.class).getResultList();
-            if (!preferences.isEmpty()) {
-                return preferences.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Preference findPreferenceById(EntityManager em, Long Id) {
-
-        try {
-            return em.find(Preference.class, Id);
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -303,22 +300,22 @@ public class Preference implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

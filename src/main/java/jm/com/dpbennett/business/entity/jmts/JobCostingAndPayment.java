@@ -19,23 +19,24 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.jmts;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.AccountingCode;
@@ -58,6 +59,255 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class JobCostingAndPayment implements BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(JobCostingAndPayment.class.getName());
+    public static JobCostingAndPayment copy(JobCostingAndPayment src) {
+        
+        JobCostingAndPayment copy = new JobCostingAndPayment();
+        
+        copy.setJobId(src.getJobId());
+        copy.setName(src.getName());
+        copy.setCompleted(src.getCompleted());
+        copy.setInvoiceNumber(src.getInvoiceNumber());
+        copy.setPurchaseOrderNumber(src.getPurchaseOrderNumber());
+        copy.setReceiptNumber(src.getReceiptNumber());
+        copy.setPaymentTerms(src.getPaymentTerms());
+        copy.setEstimatedCost(src.getEstimatedCost());
+        copy.setEstimatedCostDoneBy(src.getEstimatedCostDoneBy());
+        copy.setFinalCost(src.getFinalCost());
+        copy.setFinalCostDoneBy(src.getFinalCostDoneBy());
+        copy.setPaymentReceivedToDate(src.getPaymentReceivedToDate());
+        copy.setDeposit(src.getDeposit());
+        copy.setReimbursable(src.getReimbursable());
+        copy.setCostingCompleted(src.getCostingCompleted());
+        copy.setCostingApproved(src.getCostingApproved());
+        copy.setInvoiced(src.getInvoiced());
+        copy.setCostingPreparedBy(src.getCostingPreparedBy());
+        copy.setCostingApprovedBy(src.getCostingApprovedBy());
+        copy.setCostingInvoicedBy(src.getCostingInvoicedBy());
+        copy.setLastPaymentEnteredBy(src.getLastPaymentEnteredBy());
+        copy.setTax(src.getTax());
+        copy.setDiscount(src.getDiscount());
+        copy.setCurrency(src.getCurrency());
+        copy.setCashPayments(src.copyCashPayments());
+        copy.setCostComponents(src.copyCostComponents());
+        copy.setMinDeposit(src.getMinDeposit());
+        copy.setTotalTax(src.getTotalTax());
+        copy.setTotalCost(src.getTotalCost());
+        copy.setPercentageGCT(src.getPercentageGCT());
+        copy.setDiscountType(src.getDiscountType());
+        copy.setDiscountValue(src.getDiscountValue());
+        copy.setActive(src.getActive());
+        copy.setDescription(src.getDescription());
+        copy.setEstimate(src.getEstimate());
+        
+        return copy;
+    }
+    public static void createSampleBasedJobCostings(Job currentJob) {
+        if (currentJob.getJobCostingAndPayment().getAllSortedCostComponents().isEmpty()) {
+            for (JobSample jobSample : currentJob.getJobSamples()) {
+                currentJob.getJobCostingAndPayment().getAllSortedCostComponents().add(new CostComponent(jobSample.getDescription()));
+            }
+        } else if (currentJob.getJobSamples().size() > currentJob.getJobCostingAndPayment().getAllSortedCostComponents().size()) {
+        }
+    }
+    public static void createDefaultJobCostings(Job currentJob) {
+        
+        if (currentJob.getJobCostingAndPayment().getCostComponents().isEmpty()) {
+            currentJob.getJobCostingAndPayment().getCostComponents().add(new CostComponent("List of Assessments", Boolean.TRUE));
+            currentJob.getJobCostingAndPayment().getCostComponents().add(new CostComponent(""));
+        }
+        
+    }
+    public static JobCostingAndPayment create(EntityManager em) {
+        JobCostingAndPayment jobCostingAndPayment = new JobCostingAndPayment();
+        String defaultCurrencyName = SystemOption.getString(em,
+                "defaultCurrency");
+        Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
+        
+        jobCostingAndPayment.setPurchaseOrderNumber("");
+        jobCostingAndPayment.setTax(Tax.findDefault(em, "0.0"));
+        jobCostingAndPayment.setDiscount(Discount.findDefault(em, "0.0"));
+        jobCostingAndPayment.setCurrency(defaultCurrency);
+        
+        return jobCostingAndPayment;
+    }
+    public static List<JobCostingAndPayment> findAllJobCostingAndPaymentsByDepartmentAndName(
+            EntityManager em,
+            String departmentName,
+            String jobCostingAndPaymentName) {
+        
+        List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
+        
+        try {
+            
+            departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
+            jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Job> jobs
+                    = em.createQuery("SELECT job FROM Job job"
+                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                            + " JOIN job.department department"
+                            + " JOIN job.subContractedDepartment subContractedDepartment"
+                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
+                            + jobCostingAndPaymentName.toUpperCase().trim() + "%'"
+                                    + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
+                                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
+                                                    + " )"
+                                                    + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
+                            Job.class).setMaxResults(50).getResultList(); // tk use max result setting
+            if (!jobs.isEmpty()) {
+                for (int i = 0; i < jobs.size(); i++) {
+                    if (!jobs.get(i).getJobCostingAndPayment().getName().trim().equals("")) {
+                        jobCostingAndPayments.add(jobs.get(i).getJobCostingAndPayment());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+        
+        return jobCostingAndPayments;
+    }
+    public static List<JobCostingAndPayment> findAllActiveJobCostingAndPaymentsByDepartmentAndName(
+            EntityManager em,
+            String departmentName,
+            String jobCostingAndPaymentName) {
+        
+        List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
+        
+        try {
+            
+            departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
+            jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Job> jobs
+                    = em.createQuery("SELECT job FROM Job job"
+                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                            + " JOIN job.department department"
+                            + " JOIN job.subContractedDepartment subContractedDepartment"
+                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
+                            + jobCostingAndPaymentName.toUpperCase().trim() + "%'"
+                                    + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
+                                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
+                                                    + " )"
+                                                    + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"
+                                                    + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
+                            Job.class).setMaxResults(50).getResultList();
+            if (!jobs.isEmpty()) {
+                for (int i = 0; i < jobs.size(); i++) {
+                    if (!jobs.get(i).getJobCostingAndPayment().getName().trim().equals("")) {
+                        jobCostingAndPayments.add(jobs.get(i).getJobCostingAndPayment());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+        
+        return jobCostingAndPayments;
+    }
+    public static JobCostingAndPayment findJobCostingAndPaymentByDepartmentAndName(
+            EntityManager em,
+            String departmentName,
+            String jobCostingAndPaymentName) {
+        
+        try {
+            
+            departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
+            jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Job> jobs
+                    = em.createQuery("SELECT job FROM Job job"
+                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                            + " JOIN job.department department"
+                            + " JOIN job.subContractedDepartment subContractedDepartment"
+                            + " WHERE UPPER(jobCostingAndPayment.name) = '"
+                            + jobCostingAndPaymentName.toUpperCase().trim() + "'"
+                                    + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
+                                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
+                                                    + " )"
+                                                    + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
+            if (!jobs.isEmpty()) {
+                return jobs.get(0).getJobCostingAndPayment();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return null;
+    }
+    public static JobCostingAndPayment findActiveJobCostingAndPaymentByDepartmentAndName(
+            EntityManager em,
+            String departmentName,
+            String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Job> jobs
+                    = em.createQuery("SELECT job FROM Job job"
+                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
+                            + " JOIN job.department department"
+                            + " JOIN job.subContractedDepartment subContractedDepartment"
+                            + " WHERE UPPER(jobCostingAndPayment.name) = '"
+                            + value.toUpperCase().trim() + "'"
+                                    + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
+                                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
+                                                    + " )"
+                                                    + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"
+                                                    + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
+            if (!jobs.isEmpty()) {
+                return jobs.get(0).getJobCostingAndPayment();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return null;
+    }
+    public static JobCostingAndPayment findJobCostingAndPaymentById(
+            EntityManager em, Long Id) {
+        
+        if (Id != null) {
+            return em.find(JobCostingAndPayment.class, Id);
+        } else {
+            return null;
+        }
+    }
+    public static Boolean getCanApplyTax(Job job) {
+        return job.getClassification().getIsEarning()
+                && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option?
+                <= BusinessEntityUtils.getMediumDateStringAsLong(
+                        BusinessEntityUtils.getDateInMediumDateFormat(job.getJobStatusAndTracking().getDateSubmitted())));
+    }
+    public static List<JobCostingAndPayment> findAllEstimateJobCostingAndPayments(
+            EntityManager em,
+            String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<JobCostingAndPayment> jobCostingAndPayments
+                    = em.createQuery("SELECT jobCostingAndPayment FROM JobCostingAndPayment jobCostingAndPayment"
+                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
+                            + value.toUpperCase().trim() + "%'"
+                                    + " AND (jobCostingAndPayment.estimate = 1)"
+                                    + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
+                            JobCostingAndPayment.class).setMaxResults(500).getResultList(); // tk use max result setting
+            
+            return jobCostingAndPayments;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -140,48 +390,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         this.totalTax = totalTax;
     }
 
-    public static JobCostingAndPayment copy(JobCostingAndPayment src) {
-
-        JobCostingAndPayment copy = new JobCostingAndPayment();
-
-        copy.setJobId(src.getJobId());
-        copy.setName(src.getName());
-        copy.setCompleted(src.getCompleted());
-        copy.setInvoiceNumber(src.getInvoiceNumber());
-        copy.setPurchaseOrderNumber(src.getPurchaseOrderNumber());
-        copy.setReceiptNumber(src.getReceiptNumber());
-        copy.setPaymentTerms(src.getPaymentTerms());
-        copy.setEstimatedCost(src.getEstimatedCost());
-        copy.setEstimatedCostDoneBy(src.getEstimatedCostDoneBy());
-        copy.setFinalCost(src.getFinalCost());
-        copy.setFinalCostDoneBy(src.getFinalCostDoneBy());
-        copy.setPaymentReceivedToDate(src.getPaymentReceivedToDate());
-        copy.setDeposit(src.getDeposit());
-        copy.setReimbursable(src.getReimbursable());
-        copy.setCostingCompleted(src.getCostingCompleted());
-        copy.setCostingApproved(src.getCostingApproved());
-        copy.setInvoiced(src.getInvoiced());
-        copy.setCostingPreparedBy(src.getCostingPreparedBy());
-        copy.setCostingApprovedBy(src.getCostingApprovedBy());
-        copy.setCostingInvoicedBy(src.getCostingInvoicedBy());
-        copy.setLastPaymentEnteredBy(src.getLastPaymentEnteredBy());
-        copy.setTax(src.getTax());
-        copy.setDiscount(src.getDiscount());
-        copy.setCurrency(src.getCurrency());
-        copy.setCashPayments(src.copyCashPayments());
-        copy.setCostComponents(src.copyCostComponents());
-        copy.setMinDeposit(src.getMinDeposit());
-        copy.setTotalTax(src.getTotalTax());
-        copy.setTotalCost(src.getTotalCost());
-        copy.setPercentageGCT(src.getPercentageGCT());
-        copy.setDiscountType(src.getDiscountType());
-        copy.setDiscountValue(src.getDiscountValue());
-        copy.setActive(src.getActive());
-        copy.setDescription(src.getDescription());
-        copy.setEstimate(src.getEstimate());
-
-        return copy;
-    }
 
     public List<CashPayment> copyCashPayments() {
 
@@ -373,23 +581,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         return new ArrayList<>();
     }
 
-    public static void createSampleBasedJobCostings(Job currentJob) {
-        if (currentJob.getJobCostingAndPayment().getAllSortedCostComponents().isEmpty()) {
-            for (JobSample jobSample : currentJob.getJobSamples()) {
-                currentJob.getJobCostingAndPayment().getAllSortedCostComponents().add(new CostComponent(jobSample.getDescription()));
-            }
-        } else if (currentJob.getJobSamples().size() > currentJob.getJobCostingAndPayment().getAllSortedCostComponents().size()) {
-        }
-    }
-
-    public static void createDefaultJobCostings(Job currentJob) {
-
-        if (currentJob.getJobCostingAndPayment().getCostComponents().isEmpty()) {
-            currentJob.getJobCostingAndPayment().getCostComponents().add(new CostComponent("List of Assessments", Boolean.TRUE));
-            currentJob.getJobCostingAndPayment().getCostComponents().add(new CostComponent(""));
-        }
-
-    }
 
     @Override
     public Boolean getIsDirty() {
@@ -408,19 +599,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public static JobCostingAndPayment create(EntityManager em) {
-        JobCostingAndPayment jobCostingAndPayment = new JobCostingAndPayment();
-        String defaultCurrencyName = SystemOption.getString(em,
-                "defaultCurrency");
-        Currency defaultCurrency = Currency.findByName(em, defaultCurrencyName);
-
-        jobCostingAndPayment.setPurchaseOrderNumber("");
-        jobCostingAndPayment.setTax(Tax.findDefault(em, "0.0"));
-        jobCostingAndPayment.setDiscount(Discount.findDefault(em, "0.0"));
-        jobCostingAndPayment.setCurrency(defaultCurrency);
-
-        return jobCostingAndPayment;
-    }
 
     public Double getCalculatedMinDeposit() {
 
@@ -847,158 +1025,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         this.costComponents = costComponents;
     }
 
-    public static List<JobCostingAndPayment> findAllJobCostingAndPaymentsByDepartmentAndName(
-            EntityManager em,
-            String departmentName,
-            String jobCostingAndPaymentName) {
-
-        List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
-
-        try {
-
-            departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
-            jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Job> jobs
-                    = em.createQuery("SELECT job FROM Job job"
-                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                            + " JOIN job.department department"
-                            + " JOIN job.subContractedDepartment subContractedDepartment"
-                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
-                            + jobCostingAndPaymentName.toUpperCase().trim() + "%'"
-                            + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
-                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
-                            + " )"
-                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
-                            Job.class).setMaxResults(50).getResultList(); // tk use max result setting
-            if (!jobs.isEmpty()) {
-                for (int i = 0; i < jobs.size(); i++) {
-                    if (!jobs.get(i).getJobCostingAndPayment().getName().trim().equals("")) {
-                        jobCostingAndPayments.add(jobs.get(i).getJobCostingAndPayment());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-
-        return jobCostingAndPayments;
-    }
-
-    public static List<JobCostingAndPayment> findAllActiveJobCostingAndPaymentsByDepartmentAndName(
-            EntityManager em,
-            String departmentName,
-            String jobCostingAndPaymentName) {
-
-        List<JobCostingAndPayment> jobCostingAndPayments = new ArrayList<>();
-
-        try {
-
-            departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
-            jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Job> jobs
-                    = em.createQuery("SELECT job FROM Job job"
-                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                            + " JOIN job.department department"
-                            + " JOIN job.subContractedDepartment subContractedDepartment"
-                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
-                            + jobCostingAndPaymentName.toUpperCase().trim() + "%'"
-                            + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
-                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
-                            + " )"
-                            + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"
-                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
-                            Job.class).setMaxResults(50).getResultList();
-            if (!jobs.isEmpty()) {
-                for (int i = 0; i < jobs.size(); i++) {
-                    if (!jobs.get(i).getJobCostingAndPayment().getName().trim().equals("")) {
-                        jobCostingAndPayments.add(jobs.get(i).getJobCostingAndPayment());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-
-        return jobCostingAndPayments;
-    }
-
-    public static JobCostingAndPayment findJobCostingAndPaymentByDepartmentAndName(
-            EntityManager em,
-            String departmentName,
-            String jobCostingAndPaymentName) {
-
-        try {
-
-            departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
-            jobCostingAndPaymentName = jobCostingAndPaymentName.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Job> jobs
-                    = em.createQuery("SELECT job FROM Job job"
-                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                            + " JOIN job.department department"
-                            + " JOIN job.subContractedDepartment subContractedDepartment"
-                            + " WHERE UPPER(jobCostingAndPayment.name) = '"
-                            + jobCostingAndPaymentName.toUpperCase().trim() + "'"
-                            + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
-                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
-                            + " )"
-                            + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
-            if (!jobs.isEmpty()) {
-                return jobs.get(0).getJobCostingAndPayment();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return null;
-    }
-
-    public static JobCostingAndPayment findActiveJobCostingAndPaymentByDepartmentAndName(
-            EntityManager em,
-            String departmentName,
-            String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Job> jobs
-                    = em.createQuery("SELECT job FROM Job job"
-                            + " JOIN job.jobCostingAndPayment jobCostingAndPayment"
-                            + " JOIN job.department department"
-                            + " JOIN job.subContractedDepartment subContractedDepartment"
-                            + " WHERE UPPER(jobCostingAndPayment.name) = '"
-                            + value.toUpperCase().trim() + "'"
-                            + " AND ( UPPER(department.name) = '" + departmentName.toUpperCase() + "'"
-                            + " OR UPPER(subContractedDepartment.name) = '" + departmentName.toUpperCase() + "'"
-                            + " )"
-                            + " AND (jobCostingAndPayment.active = 1 OR jobCostingAndPayment.active IS NULL)"
-                            + " ORDER BY jobCostingAndPayment.name", Job.class).getResultList();
-            if (!jobs.isEmpty()) {
-                return jobs.get(0).getJobCostingAndPayment();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return null;
-    }
-
-    public static JobCostingAndPayment findJobCostingAndPaymentById(
-            EntityManager em, Long Id) {
-
-        if (Id != null) {
-            return em.find(JobCostingAndPayment.class, Id);
-        } else {
-            return null;
-        }
-    }
 
     private Double getFinalCostWithDiscount() {
         Double finalCostWithDiscount;
@@ -1102,12 +1128,6 @@ public class JobCostingAndPayment implements BusinessEntity {
 
     }
 
-    public static Boolean getCanApplyTax(Job job) {
-        return job.getClassification().getIsEarning()
-                && (BusinessEntityUtils.getMediumDateStringAsLong("Mar 21, 2016") // tk make sys option?
-                <= BusinessEntityUtils.getMediumDateStringAsLong(
-                        BusinessEntityUtils.getDateInMediumDateFormat(job.getJobStatusAndTracking().getDateSubmitted())));
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -1226,29 +1246,6 @@ public class JobCostingAndPayment implements BusinessEntity {
         this.description = description;
     }
 
-    public static List<JobCostingAndPayment> findAllEstimateJobCostingAndPayments(
-            EntityManager em,
-            String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<JobCostingAndPayment> jobCostingAndPayments
-                    = em.createQuery("SELECT jobCostingAndPayment FROM JobCostingAndPayment jobCostingAndPayment"
-                            + " WHERE UPPER(jobCostingAndPayment.name) LIKE '%"
-                            + value.toUpperCase().trim() + "%'"
-                            + " AND (jobCostingAndPayment.estimate = 1)"
-                            + " GROUP BY jobCostingAndPayment.name ORDER BY jobCostingAndPayment.name",
-                            JobCostingAndPayment.class).setMaxResults(500).getResultList(); // tk use max result setting
-
-            return jobCostingAndPayments;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     @Override
     public String getType() {
@@ -1271,22 +1268,22 @@ public class JobCostingAndPayment implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

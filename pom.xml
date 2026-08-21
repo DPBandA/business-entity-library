@@ -14,19 +14,19 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
         <skipTests>true</skipTests>
 
-        <!-- Java EE 8 / Payara 5 line. Do not change these to jakarta.* until the Payara 7 migration. -->
-        <javaee.version>8.0.1</javaee.version>
-        <eclipselink.version>2.7.12</eclipselink.version>
+        <!-- Java 17 / Jakarta EE 11 migration line. Payara provides the Jakarta APIs at runtime. -->
+        <jakartaee.version>11.0.0</jakartaee.version>
+        <eclipselink.version>5.0.0-B10</eclipselink.version>
         <mysql.connector.version>8.2.0</mysql.connector.version>
-        <jackson.version>2.13.3</jackson.version>
-        <zxing.version>3.3.2</zxing.version>
-        <batik.version>1.10</batik.version>
+        <jackson.version>2.17.2</jackson.version>
+        <zxing.version>3.5.3</zxing.version>
+        <batik.version>1.17</batik.version>
         <jfreechart.version>1.5.5</jfreechart.version>
-        <javax.mail.version>1.6.2</javax.mail.version>
+        <jakarta.mail.version>2.1.3</jakarta.mail.version>
+        <angus.mail.version>2.0.3</angus.mail.version>
         <junit.version>4.13.2</junit.version>
     </properties>
 
@@ -35,10 +35,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <release>${maven.compiler.release}</release>
                     <parameters>true</parameters>
                 </configuration>
             </plugin>
@@ -46,7 +45,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.2.5</version>
                 <configuration>
                     <skipTests>${skipTests}</skipTests>
                 </configuration>
@@ -55,15 +54,13 @@
     </build>
 
     <dependencies>
-        <!-- Payara 5 provides the Java EE 8 APIs at runtime. Keep this as provided. -->
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>${javaee.version}</version>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>${jakartaee.version}</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Payara 5 includes EclipseLink 2.7.x. Keep provider-specific compile APIs out of the packaged JAR/WAR. -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>org.eclipse.persistence.jpa</artifactId>
@@ -71,7 +68,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Keep only if BEL uses MOXy-specific annotations/classes. Otherwise this can be removed. -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>org.eclipse.persistence.moxy</artifactId>
@@ -87,13 +83,17 @@
             <scope>runtime</scope>
         </dependency>
 
-
-        <!-- Java EE 8 / javax.mail. Keep this until the Jakarta EE migration.
-             Needed because BEL directly imports javax.mail.* classes. -->
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <version>${javax.mail.version}</version>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>${jakarta.mail.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>${angus.mail.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -128,16 +128,16 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jcommon</artifactId>
-            <version>1.0.24</version>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-util</artifactId>
+            <version>1.10</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 </project>

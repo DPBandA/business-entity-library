@@ -19,23 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sc;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.cm.Client;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -52,6 +52,77 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class DocumentInspection implements Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(DocumentInspection.class.getName());
+    public static List<DocumentInspection> findDocumentInspectionsByDateSearchField(
+            EntityManager em,
+            User user,
+            String dateSearchField,
+            String searchType,
+            String searchText,
+            Date startDate,
+            Date endDate) {
+        
+        List<DocumentInspection> foundDocumentInspections;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        String searchQuery = null;
+        String searchTextAndClause = "";
+        String joinClause;
+        
+        joinClause = " JOIN documentInspection.inspector inspector";
+        
+        if (searchType.equals("General")) {
+            if (!searchText.equals("")) {
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(documentInspection.portOfEntry) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(inspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(inspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(documentInspection.type) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(documentInspection.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(documentInspection.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(documentInspection.actionTaken) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+            }
+            if ((startDate == null) || (endDate == null)) {
+                searchQuery
+                        = "SELECT documentInspection FROM DocumentInspection documentInspection"
+                        + joinClause
+                        + " WHERE (0 = 0)"
+                        + searchTextAndClause
+                        + " ORDER BY documentInspection.id DESC";
+            } else {
+                searchQuery
+                        = "SELECT documentInspection FROM DocumentInspection documentInspection"
+                        + joinClause
+                        + " WHERE (documentInspection." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND documentInspection." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY documentInspection.id DESC";
+            }
+        } else if (searchType.equals("?")) {
+        }
+        
+        try {
+            foundDocumentInspections = em.createQuery(searchQuery, DocumentInspection.class).getResultList();
+            if (foundDocumentInspections == null) {
+                foundDocumentInspections = new ArrayList<DocumentInspection>();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return foundDocumentInspections;
+    }
+    public static DocumentInspection findDocumentInspectionById(EntityManager em, Long Id) {
+        
+        try {
+            DocumentInspection documentInspection = em.find(DocumentInspection.class, Id);
+            return documentInspection;
+        } catch (Exception e) {
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -59,8 +130,7 @@ public class DocumentInspection implements Comparable, BusinessEntity {
     private String type;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspector;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfInspection;
+    private LocalDateTime dateOfInspection;
     private String portOfEntry;
     private String actionTaken;
     @Column(length = 1024)
@@ -154,11 +224,11 @@ public class DocumentInspection implements Comparable, BusinessEntity {
         this.inspector = inspector;
     }
 
-    public Date getDateOfInspection() {
+    public LocalDateTime getDateOfInspection() {
         return dateOfInspection;
     }
 
-    public void setDateOfInspection(Date dateOfInspection) {
+    public void setDateOfInspection(LocalDateTime dateOfInspection) {
         this.dateOfInspection = dateOfInspection;
     }
 
@@ -203,77 +273,6 @@ public class DocumentInspection implements Comparable, BusinessEntity {
         this.name = name;
     }
 
-    public static List<DocumentInspection> findDocumentInspectionsByDateSearchField(
-            EntityManager em,
-            User user,
-            String dateSearchField,
-            String searchType,
-            String searchText,
-            Date startDate,
-            Date endDate) {
-
-        List<DocumentInspection> foundDocumentInspections;
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        String searchQuery = null;
-        String searchTextAndClause = "";
-        String joinClause;
-
-        joinClause = " JOIN documentInspection.inspector inspector";
-
-        if (searchType.equals("General")) {
-            if (!searchText.equals("")) {
-                searchTextAndClause
-                        = " AND ("
-                        + " UPPER(documentInspection.portOfEntry) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(inspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(inspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(documentInspection.type) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(documentInspection.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(documentInspection.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(documentInspection.actionTaken) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " )";
-            }
-            if ((startDate == null) || (endDate == null)) {
-                searchQuery
-                        = "SELECT documentInspection FROM DocumentInspection documentInspection"
-                        + joinClause
-                        + " WHERE (0 = 0)"
-                        + searchTextAndClause
-                        + " ORDER BY documentInspection.id DESC";
-            } else {
-                searchQuery
-                        = "SELECT documentInspection FROM DocumentInspection documentInspection"
-                        + joinClause
-                        + " WHERE (documentInspection." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND documentInspection." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                        + searchTextAndClause
-                        + " ORDER BY documentInspection.id DESC";
-            }
-        } else if (searchType.equals("?")) {
-        }
-
-        try {
-            foundDocumentInspections = em.createQuery(searchQuery, DocumentInspection.class).getResultList();
-            if (foundDocumentInspections == null) {
-                foundDocumentInspections = new ArrayList<DocumentInspection>();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundDocumentInspections;
-    }
-
-    public static DocumentInspection findDocumentInspectionById(EntityManager em, Long Id) {
-
-        try {
-            DocumentInspection documentInspection = em.find(DocumentInspection.class, Id);
-            return documentInspection;
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -325,22 +324,22 @@ public class DocumentInspection implements Comparable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

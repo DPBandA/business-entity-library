@@ -20,21 +20,21 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -52,6 +52,135 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllActiveEmployeePositions", query = "SELECT e FROM EmployeePosition e WHERE e.active = 1 ORDER BY e.title")
 })
 public class EmployeePosition implements Serializable, BusinessEntity, Comparable {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(EmployeePosition.class.getName());
+    public static List<EmployeePosition> findAllEmployeePositions(EntityManager em) {
+        
+        try {
+            List<EmployeePosition> employeePositions = em.createNamedQuery("findAllEmployeePositions", EmployeePosition.class).getResultList();
+            
+            return employeePositions;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static List<EmployeePosition> findAllActiveEmployeePositions(
+            EntityManager em) {
+        
+        try {
+            List<EmployeePosition> employeePositions = em.createNamedQuery("findAllActiveEmployeePositions", EmployeePosition.class).getResultList();
+            
+            return employeePositions;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static List<String> findAllEmployeePositionTitles(EntityManager em) {
+        
+        ArrayList<String> titles = new ArrayList<>();
+        
+        try {
+            List<EmployeePosition> employeePositions
+                    = em.createNamedQuery("findAllEmployeePositions",
+                            EmployeePosition.class).getResultList();
+            for (EmployeePosition employeePosition : employeePositions) {
+                titles.add(employeePosition.getTitle());
+            }
+            
+            return titles;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static EmployeePosition findEmployeePositionById(EntityManager em, Long Id) {
+        try {
+            return em.find(EmployeePosition.class, Id);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static EmployeePosition findEmployeePositionByTitle(EntityManager em,
+            String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
+                    + "WHERE UPPER(e.title) "
+                    + "= '" + value.toUpperCase() + "'", EmployeePosition.class).getResultList();
+            
+            if (!employeePositions.isEmpty()) {
+                return employeePositions.get(0);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<EmployeePosition> findEmployeePositionsByTitle(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<EmployeePosition> employeePositions
+                    = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY e.title", EmployeePosition.class).getResultList();
+            return employeePositions;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<EmployeePosition> findActiveEmployeePositionsByTitle(
+            EntityManager em,
+            String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<EmployeePosition> employeePositions
+                    = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
+                            + value.toUpperCase().trim() + "%' AND e.active = 1 ORDER BY e.title", EmployeePosition.class).getResultList();
+            return employeePositions;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static EmployeePosition findActiveEmployeePositionByTitle(
+            EntityManager em,
+            String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
+                    + "WHERE e.active = 1 AND UPPER(e.title) "
+                    + "= '" + value + "'",
+                    EmployeePosition.class).getResultList();
+            if (!employeePositions.isEmpty()) {
+                EmployeePosition employeePosition = employeePositions.get(0);
+                
+                return employeePosition;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        
+        return null;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -258,139 +387,6 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
         title = name;
     }
 
-    public static List<EmployeePosition> findAllEmployeePositions(EntityManager em) {
-
-        try {
-            List<EmployeePosition> employeePositions = em.createNamedQuery("findAllEmployeePositions", EmployeePosition.class).getResultList();
-
-            return employeePositions;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
-
-    public static List<EmployeePosition> findAllActiveEmployeePositions(
-            EntityManager em) {
-
-        try {
-            List<EmployeePosition> employeePositions = em.createNamedQuery("findAllActiveEmployeePositions", EmployeePosition.class).getResultList();
-
-            return employeePositions;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
-
-    public static List<String> findAllEmployeePositionTitles(EntityManager em) {
-
-        ArrayList<String> titles = new ArrayList<>();
-
-        try {
-            List<EmployeePosition> employeePositions
-                    = em.createNamedQuery("findAllEmployeePositions",
-                            EmployeePosition.class).getResultList();
-            for (EmployeePosition employeePosition : employeePositions) {
-                titles.add(employeePosition.getTitle());
-            }
-
-            return titles;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static EmployeePosition findEmployeePositionById(EntityManager em, Long Id) {
-        try {
-            return em.find(EmployeePosition.class, Id);
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static EmployeePosition findEmployeePositionByTitle(EntityManager em,
-            String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
-                    + "WHERE UPPER(e.title) "
-                    + "= '" + value.toUpperCase() + "'", EmployeePosition.class).getResultList();
-
-            if (!employeePositions.isEmpty()) {
-                return employeePositions.get(0);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<EmployeePosition> findEmployeePositionsByTitle(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<EmployeePosition> employeePositions
-                    = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY e.title", EmployeePosition.class).getResultList();
-            return employeePositions;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<EmployeePosition> findActiveEmployeePositionsByTitle(
-            EntityManager em,
-            String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<EmployeePosition> employeePositions
-                    = em.createQuery("SELECT e FROM EmployeePosition e WHERE UPPER(e.title) like '%"
-                            + value.toUpperCase().trim() + "%' AND e.active = 1 ORDER BY e.title", EmployeePosition.class).getResultList();
-            return employeePositions;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static EmployeePosition findActiveEmployeePositionByTitle(
-            EntityManager em,
-            String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<EmployeePosition> employeePositions = em.createQuery("SELECT e FROM EmployeePosition e "
-                    + "WHERE e.active = 1 AND UPPER(e.title) "
-                    + "= '" + value + "'",
-                    EmployeePosition.class).getResultList();
-            if (!employeePositions.isEmpty()) {
-                EmployeePosition employeePosition = employeePositions.get(0);
-
-                return employeePosition;
-            }
-        } catch (Exception e) {
-            return null;
-        }
-
-        return null;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -420,22 +416,22 @@ public class EmployeePosition implements Serializable, BusinessEntity, Comparabl
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -1,5 +1,5 @@
 /*
-Business Entity Library (BEL) - A foundational library. 
+Business Entity Library (BEL) - A foundational library.
 Copyright (C) 2026  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
@@ -17,101 +17,96 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity;
 
+import jakarta.persistence.EntityManager;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
+ * Common contract implemented by BEL business entities.
+ *
+ * Audit values include both a date and a time, so LocalDateTime is used for
+ * dateEntered and dateEdited. Domain values representing calendar-only dates
+ * should use LocalDate instead.
  *
  * @author Desmond Bennett
  */
 public interface BusinessEntity extends Serializable {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public Boolean getActive();
+    Boolean getActive();
 
-    public void setActive(Boolean active);
+    void setActive(Boolean active);
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public String getType();
+    String getType();
 
-    public void setType(String type);
+    void setType(String type);
 
-    public String getCategory();
+    String getCategory();
 
-    public void setCategory(String category);
+    void setCategory(String category);
 
-    public Date getDateEntered();
+    LocalDateTime getDateEntered();
 
-    public void setDateEntered(Date dateEntered);
+    void setDateEntered(LocalDateTime dateEntered);
 
-    public Date getDateEdited();
+    LocalDateTime getDateEdited();
 
-    public void setDateEdited(Date dateEdited);
+    void setDateEdited(LocalDateTime dateEdited);
 
-    public ReturnMessage save(EntityManager em);
+    ReturnMessage save(EntityManager em);
 
-    public ReturnMessage saveUnique(EntityManager em);
+    ReturnMessage saveUnique(EntityManager em);
 
-    public ReturnMessage delete(EntityManager em);
+    ReturnMessage delete(EntityManager em);
 
-    public ReturnMessage validate(EntityManager em);
+    ReturnMessage validate(EntityManager em);
 
-    public Boolean getIsDirty();
+    Boolean getIsDirty();
 
-    public void setIsDirty(Boolean isDirty);
+    void setIsDirty(Boolean isDirty);
 
-    public String getDescription();
+    String getDescription();
 
-    public void setDescription(String description);
+    void setDescription(String description);
 
-    public String getNotes();
+    String getNotes();
 
-    public void setNotes(String notes);
+    void setNotes(String notes);
 
-    public String getComments();
+    String getComments();
 
-    public void setComments(String comments);
+    void setComments(String comments);
 
-    public Person getEditedBy();
+    Person getEditedBy();
 
-    public void setEditedBy(Person person);
+    void setEditedBy(Person person);
 
-    public Person getEnteredBy();
+    Person getEnteredBy();
 
-    public void setEnteredBy(Person person);
+    void setEnteredBy(Person person);
 
-    public List<SystemOption> getSettings();
+    List<SystemOption> getSettings();
 
-    public void setSettings(List<SystemOption> settings);
+    void setSettings(List<SystemOption> settings);
 
-    public SystemOption getSetting(
-            String setting,
-            String settingValue,
-            String type,
-            String category);
+    SystemOption getSetting(String setting, String settingValue, String type, String category);
 
-    public void setSetting(
-            String setting,
-            String settingValue,
-            String type,
-            String category);
+    void setSetting(String setting, String settingValue, String type, String category);
 
-    public enum Action {
+    enum Action {
         CREATE, COMPLETE, EDIT, APPROVE, DELETE, CANCEL, PREPARE, INVOICE,
         COSTING, REQUEST, PAYMENT, RECOMMEND
     }
-
 }
