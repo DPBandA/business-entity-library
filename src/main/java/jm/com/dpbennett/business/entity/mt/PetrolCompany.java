@@ -19,6 +19,19 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.mt;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import jm.com.dpbennett.business.entity.hrm.Internet;
 import jm.com.dpbennett.business.entity.Company;
 import jm.com.dpbennett.business.entity.hrm.Contact;
@@ -27,21 +40,7 @@ import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -58,6 +57,69 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class PetrolCompany implements Customer, Company, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(PetrolCompany.class.getName());
+    public static List<PetrolCompany> findPetrolCompaniesByName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<PetrolCompany> companies
+                    = em.createQuery("SELECT p FROM PetrolCompany p where UPPER(p.name) like '"
+                            + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolCompany.class).getResultList();
+            
+            return companies;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static PetrolCompany findPetrolCompanyByName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<PetrolCompany> petrolCompanies = em.createQuery("SELECT p FROM PetrolCompany p "
+                    + "WHERE UPPER(p.name) "
+                    + "= '" + value.toUpperCase() + "'", PetrolCompany.class).getResultList();
+            if (!petrolCompanies.isEmpty()) {
+                return petrolCompanies.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static PetrolCompany findPetrolCompanyById(EntityManager em, Long id) {
+        
+        try {
+            if (id != null) {
+                PetrolCompany company = em.find(PetrolCompany.class, id);
+                return company;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<PetrolCompany> findAllPetrolCompanies(EntityManager em) {
+        
+        try {
+            List<PetrolCompany> companies = em.createQuery("SELECT p FROM PetrolCompany p ORDER BY p.name", PetrolCompany.class).getResultList();
+            
+            return companies;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -69,10 +131,8 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Address> addresses;
     private String notes;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateFirstReceived;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastAccessed;
+    private LocalDateTime dateFirstReceived;
+    private LocalDateTime dateLastAccessed;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<PetrolStation> petrolStations;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -220,12 +280,12 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     }
 
     @Override
-    public Date getDateLastAccessed() {
+    public LocalDateTime getDateLastAccessed() {
         return dateLastAccessed;
     }
 
     @Override
-    public void setDateLastAccessed(Date dateLastAccessed) {
+    public void setDateLastAccessed(LocalDateTime dateLastAccessed) {
         this.dateLastAccessed = dateLastAccessed;
     }
 
@@ -250,12 +310,12 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     }
 
     @Override
-    public Date getDateFirstReceived() {
+    public LocalDateTime getDateFirstReceived() {
         return dateFirstReceived;
     }
 
     @Override
-    public void setDateFirstReceived(Date dateFirstReceived) {
+    public void setDateFirstReceived(LocalDateTime dateFirstReceived) {
         this.dateFirstReceived = dateFirstReceived;
     }
 
@@ -294,71 +354,6 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
         this.taxRegistrationNumber = taxRegistrationNumber;
     }
 
-    public static List<PetrolCompany> findPetrolCompaniesByName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<PetrolCompany> companies
-                    = em.createQuery("SELECT p FROM PetrolCompany p where UPPER(p.name) like '"
-                            + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolCompany.class).getResultList();
-
-            return companies;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static PetrolCompany findPetrolCompanyByName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<PetrolCompany> petrolCompanies = em.createQuery("SELECT p FROM PetrolCompany p "
-                    + "WHERE UPPER(p.name) "
-                    + "= '" + value.toUpperCase() + "'", PetrolCompany.class).getResultList();
-            if (!petrolCompanies.isEmpty()) {
-                return petrolCompanies.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static PetrolCompany findPetrolCompanyById(EntityManager em, Long id) {
-
-        try {
-            if (id != null) {
-                PetrolCompany company = em.find(PetrolCompany.class, id);
-                return company;
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<PetrolCompany> findAllPetrolCompanies(EntityManager em) {
-
-        try {
-            List<PetrolCompany> companies = em.createQuery("SELECT p FROM PetrolCompany p ORDER BY p.name", PetrolCompany.class).getResultList();
-
-            return companies;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -423,22 +418,22 @@ public class PetrolCompany implements Customer, Company, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

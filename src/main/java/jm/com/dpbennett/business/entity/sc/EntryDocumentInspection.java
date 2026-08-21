@@ -19,21 +19,20 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sc;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -49,13 +48,15 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Table(name = "entrydocumentinspection")
 public class EntryDocumentInspection implements Comparable, BusinessEntity {
 
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(EntryDocumentInspection.class.getName());
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     private String entryDocumentNumber;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date entryDocumentReportDate;
+    private LocalDateTime entryDocumentReportDate;
     private String containerNumbers;
     private String containerSizes;
     @OneToMany(cascade = CascadeType.ALL)
@@ -69,8 +70,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     private String waybill;
     private String internalNumber;
     private String invoiceNumber;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date invoiceDate = null;
+    private LocalDateTime invoiceDate = null;
     private String SCFFreeCode;
     private Double SCFAmountCalculated;
     @Transient
@@ -158,11 +158,11 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
         this.invoiceNumber = invoiceNumber;
     }
 
-    public Date getInvoiceDate() {
+    public LocalDateTime getInvoiceDate() {
         return invoiceDate;
     }
 
-    public void setInvoiceDate(Date invoiceDate) {
+    public void setInvoiceDate(LocalDateTime invoiceDate) {
         this.invoiceDate = invoiceDate;
     }
 
@@ -190,11 +190,11 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
         this.vessel = vessel;
     }
 
-    public Date getEntryDocumentReportDate() {
+    public LocalDateTime getEntryDocumentReportDate() {
         return entryDocumentReportDate;
     }
 
-    public void setEntryDocumentReportDate(Date entryDocumentReportDate) {
+    public void setEntryDocumentReportDate(LocalDateTime entryDocumentReportDate) {
         this.entryDocumentReportDate = entryDocumentReportDate;
     }
 
@@ -383,22 +383,22 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -19,21 +19,20 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.jmts;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -50,87 +49,11 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class JobStatusAndTracking implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateSubmitted;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateAndTimeEntered;
-    private String jobTransferedTo;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee transferredTo;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee enteredBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee editedBy;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee completedBy;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateTransfered;
-    private String productOrSampleReceivedBy;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateProductOrSampleReceived;
-    @Column(length = 1024)
-    private String statusNote;
-    private Boolean samplesCollected;
-    private String samplesCollectedBy;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateSamplesCollected;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date expectedDateOfCompletion;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfCompletion;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateStatusEdited;
-    private String workProgress;
-    private Boolean documentCollected;
-    private String documentCollectedBy;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateDocumentCollected;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateJobEmailWasSent;
-    private Integer jobEmailFrequency;
-    private Boolean completed;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date alertDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfLastPayment;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date depositDate;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date costingDate;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date dateCostingCompleted;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateCostingApproved;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateCostingInvoiced;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date expectedStartDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date startDate;
-    @Transient
-    private String editStatus;
-    @Transient
-    private User openedBy;
-    @Transient
-    private Date dateOpened;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    private static final System.Logger LOG = System.getLogger(JobStatusAndTracking.class.getName());
     public static JobStatusAndTracking copy(JobStatusAndTracking src) {
-
+        
         JobStatusAndTracking copy = new JobStatusAndTracking();
-
+        
         copy.dateSubmitted = src.dateSubmitted;
         copy.dateAndTimeEntered = src.dateAndTimeEntered;
         copy.jobTransferedTo = src.jobTransferedTo;
@@ -163,17 +86,75 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
         copy.dateCostingApproved = src.dateCostingApproved;
         copy.dateCostingInvoiced = src.dateCostingInvoiced;
         copy.expectedStartDate = src.expectedStartDate;
-        copy.startDate = src.startDate;        
-
+        copy.startDate = src.startDate;
+        
         return copy;
+        
+    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private LocalDateTime dateSubmitted;
+    private LocalDateTime dateAndTimeEntered;
+    private String jobTransferedTo;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee transferredTo;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee enteredBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee editedBy;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee completedBy;
+    private LocalDateTime dateTransfered;
+    private String productOrSampleReceivedBy;
+    private LocalDateTime dateProductOrSampleReceived;
+    @Column(length = 1024)
+    private String statusNote;
+    private Boolean samplesCollected;
+    private String samplesCollectedBy;
+    private LocalDateTime dateSamplesCollected;
+    private LocalDateTime expectedDateOfCompletion;
+    private LocalDateTime dateOfCompletion;
+    private LocalDateTime dateStatusEdited;
+    private String workProgress;
+    private Boolean documentCollected;
+    private String documentCollectedBy;
+    private LocalDateTime dateDocumentCollected;
+    private LocalDateTime dateJobEmailWasSent;
+    private Integer jobEmailFrequency;
+    private Boolean completed;
+    private LocalDateTime alertDate;
+    private LocalDateTime dateOfLastPayment;
+    private LocalDateTime depositDate;
+    private LocalDateTime costingDate;
+    private LocalDateTime dateCostingCompleted;
+    private LocalDateTime dateCostingApproved;
+    private LocalDateTime dateCostingInvoiced;
+    private LocalDateTime expectedStartDate;
+    private LocalDateTime startDate;
+    @Transient
+    private String editStatus;
+    @Transient
+    private User openedBy;
+    @Transient
+    private LocalDateTime dateOpened;
 
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    public Date getDateOpened() {
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+    public LocalDateTime getDateOpened() {
         return dateOpened;
     }
 
-    public void setDateOpened(Date dateOpened) {
+    public void setDateOpened(LocalDateTime dateOpened) {
         this.dateOpened = dateOpened;
     }
 
@@ -206,75 +187,75 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
         this.editStatus = editStatus;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getExpectedStartDate() {
+    public LocalDateTime getExpectedStartDate() {
         return expectedStartDate;
     }
 
-    public void setExpectedStartDate(Date expectedStartDate) {
+    public void setExpectedStartDate(LocalDateTime expectedStartDate) {
         this.expectedStartDate = expectedStartDate;
     }
 
-    public Date getDateCostingApproved() {
+    public LocalDateTime getDateCostingApproved() {
         return dateCostingApproved;
     }
 
-    public void setDateCostingApproved(Date dateCostingApproved) {
+    public void setDateCostingApproved(LocalDateTime dateCostingApproved) {
         this.dateCostingApproved = dateCostingApproved;
     }
 
-    public Date getDateCostingInvoiced() {
+    public LocalDateTime getDateCostingInvoiced() {
         return dateCostingInvoiced;
     }
 
-    public void setDateCostingInvoiced(Date dateCostingInvoiced) {
+    public void setDateCostingInvoiced(LocalDateTime dateCostingInvoiced) {
         this.dateCostingInvoiced = dateCostingInvoiced;
     }
 
-    public Date getDateCostingCompleted() {
+    public LocalDateTime getDateCostingCompleted() {
         return dateCostingCompleted;
     }
 
-    public void setDateCostingCompleted(Date dateCostingCompleted) {
+    public void setDateCostingCompleted(LocalDateTime dateCostingCompleted) {
         this.dateCostingCompleted = dateCostingCompleted;
     }
 
-    public Date getCostingDate() {
+    public LocalDateTime getCostingDate() {
         return costingDate;
     }
 
-    public void setCostingDate(Date costingDate) {
+    public void setCostingDate(LocalDateTime costingDate) {
         this.costingDate = costingDate;
     }
 
-    public Date getDepositDate() {
+    public LocalDateTime getDepositDate() {
         return depositDate;
     }
 
-    public void setDepositDate(Date DepositDate) {
+    public void setDepositDate(LocalDateTime DepositDate) {
         this.depositDate = DepositDate;
     }
 
-    public Date getDateOfLastPayment() {
+    public LocalDateTime getDateOfLastPayment() {
         return dateOfLastPayment;
     }
 
-    public void setDateOfLastPayment(Date dateOfLastPayment) {
+    public void setDateOfLastPayment(LocalDateTime dateOfLastPayment) {
         this.dateOfLastPayment = dateOfLastPayment;
     }
 
-    public Date getAlertDate() {
+    public LocalDateTime getAlertDate() {
         return alertDate;
     }
 
-    public void setAlertDate(Date alertDate) {
+    public void setAlertDate(LocalDateTime alertDate) {
         this.alertDate = alertDate;
     }
 
@@ -330,75 +311,75 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
         this.completed = completed;
     }
 
-    public Date getDateAndTimeEntered() {
+    public LocalDateTime getDateAndTimeEntered() {
         return dateAndTimeEntered;
     }
 
-    public void setDateAndTimeEntered(Date dateAndTimeEntered) {
+    public void setDateAndTimeEntered(LocalDateTime dateAndTimeEntered) {
         this.dateAndTimeEntered = dateAndTimeEntered;
     }
 
-    public Date getDateDocumentCollected() {
+    public LocalDateTime getDateDocumentCollected() {
         return dateDocumentCollected;
     }
 
-    public void setDateDocumentCollected(Date dateDocumentCollected) {
+    public void setDateDocumentCollected(LocalDateTime dateDocumentCollected) {
         this.dateDocumentCollected = dateDocumentCollected;
     }
 
-    public Date getDateJobEmailWasSent() {
+    public LocalDateTime getDateJobEmailWasSent() {
         return dateJobEmailWasSent;
     }
 
-    public void setDateJobEmailWasSent(Date dateJobEmailWasSent) {
+    public void setDateJobEmailWasSent(LocalDateTime dateJobEmailWasSent) {
         this.dateJobEmailWasSent = dateJobEmailWasSent;
     }
 
-    public Date getDateOfCompletion() {
+    public LocalDateTime getDateOfCompletion() {
         return dateOfCompletion;
     }
 
-    public void setDateOfCompletion(Date dateOfCompletion) {
+    public void setDateOfCompletion(LocalDateTime dateOfCompletion) {
         this.dateOfCompletion = dateOfCompletion;
     }
 
-    public Date getDateProductOrSampleReceived() {
+    public LocalDateTime getDateProductOrSampleReceived() {
         return dateProductOrSampleReceived;
     }
 
-    public void setDateProductOrSampleReceived(Date dateProductOrSampleReceived) {
+    public void setDateProductOrSampleReceived(LocalDateTime dateProductOrSampleReceived) {
         this.dateProductOrSampleReceived = dateProductOrSampleReceived;
     }
 
-    public Date getDateSamplesCollected() {
+    public LocalDateTime getDateSamplesCollected() {
         return dateSamplesCollected;
     }
 
-    public void setDateSamplesCollected(Date dateSamplesCollected) {
+    public void setDateSamplesCollected(LocalDateTime dateSamplesCollected) {
         this.dateSamplesCollected = dateSamplesCollected;
     }
 
-    public Date getDateStatusEdited() {
+    public LocalDateTime getDateStatusEdited() {
         return dateStatusEdited;
     }
 
-    public void setDateStatusEdited(Date dateStatusEdited) {
+    public void setDateStatusEdited(LocalDateTime dateStatusEdited) {
         this.dateStatusEdited = dateStatusEdited;
     }
 
-    public Date getDateSubmitted() {
+    public LocalDateTime getDateSubmitted() {
         return dateSubmitted;
     }
 
-    public void setDateSubmitted(Date dateSubmitted) {
+    public void setDateSubmitted(LocalDateTime dateSubmitted) {
         this.dateSubmitted = dateSubmitted;
     }
 
-    public Date getDateTransfered() {
+    public LocalDateTime getDateTransfered() {
         return dateTransfered;
     }
 
-    public void setDateTransfered(Date dateTransfered) {
+    public void setDateTransfered(LocalDateTime dateTransfered) {
         this.dateTransfered = dateTransfered;
     }
 
@@ -421,11 +402,11 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
         this.documentCollectedBy = documentCollectedBy;
     }
 
-    public Date getExpectedDateOfCompletion() {
+    public LocalDateTime getExpectedDateOfCompletion() {
         return expectedDateOfCompletion;
     }
 
-    public void setExpectedDateOfCompletion(Date expectedDateOfCompletion) {
+    public void setExpectedDateOfCompletion(LocalDateTime expectedDateOfCompletion) {
         this.expectedDateOfCompletion = expectedDateOfCompletion;
     }
 
@@ -557,22 +538,22 @@ public class JobStatusAndTracking implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -19,21 +19,22 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sc;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.mt.Test;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -49,18 +50,17 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class ProductTest implements Test, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(ProductTest.class.getName());
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     private Double hourlyRate;
     private String type;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date testDate;
+    private LocalDateTime testDate;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee testDoneBy;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date reTestDate;
+    private LocalDateTime reTestDate;
     private String category;
     @Transient
     private Boolean isDirty;
@@ -141,12 +141,12 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
     }
 
     @Override
-    public Date getTestDate() {
+    public LocalDateTime getTestDate() {
         return testDate;
     }
 
     @Override
-    public void setTestDate(Date testDate) {
+    public void setTestDate(LocalDateTime testDate) {
         this.testDate = testDate;
     }
 
@@ -166,12 +166,12 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
     }
 
     @Override
-    public Date getReTestDate() {
+    public LocalDateTime getReTestDate() {
         return reTestDate;
     }
 
     @Override
-    public void setReCalibrationDate(Date reTestDate) {
+    public void setReCalibrationDate(LocalDateTime reTestDate) {
         this.reTestDate = reTestDate;
     }
 
@@ -231,22 +231,22 @@ public class ProductTest implements Test, Comparable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -19,26 +19,26 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Query;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.jmts.Job;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Query;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.JobCategory;
@@ -59,6 +59,187 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findBySubGroupCode", query = "SELECT e FROM Department e WHERE e.code = :code")
 })
 public class Department implements Serializable, BusinessEntity, Comparable {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Department.class.getName());
+    public static List<Department> findAllByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Department> departments
+                    = em.createQuery("SELECT d FROM Department d where UPPER(d.name) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY d.name", Department.class).getResultList();
+            return departments;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Department> findActive(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Department> departments
+                    = em.createQuery("SELECT d FROM Department d WHERE UPPER(d.name) LIKE '%"
+                            + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Department.class).getResultList();
+            
+            Iterator<Department> iterator = departments.iterator();
+            while (iterator.hasNext()) {
+                Department element = iterator.next();
+                if (element.getName().contains("'")) {
+                    iterator.remove();
+                }
+            }
+            
+            return departments;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Department> findAllActive(EntityManager em) {
+        
+        try {
+            
+            return em.createQuery("SELECT d FROM Department d WHERE d.active = 1 ORDER BY d.name", Department.class).getResultList();
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Department findByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Department> departments = em.createQuery("SELECT d FROM Department d "
+                    + "WHERE UPPER(d.name) "
+                    + "= '" + value.toUpperCase() + "'", Department.class).getResultList();
+            if (!departments.isEmpty()) {
+                return departments.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Department findActiveByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Department> departments = em.createQuery("SELECT d FROM Department d "
+                    + "WHERE d.active = 1 AND UPPER(d.name) "
+                    + "= '" + value.toUpperCase() + "'", Department.class).getResultList();
+            if (!departments.isEmpty()) {
+                return departments.get(0);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Department findById(EntityManager em, Long Id) {
+        if (Id != null) {
+            return em.find(Department.class, Id);
+        } else {
+            return null;
+        }
+    }
+    public static List<String> findAllNames(EntityManager em) {
+        
+        ArrayList<String> names = new ArrayList<>();
+        
+        try {
+            
+            List<Department> departments = em.createNamedQuery("findAllDepartments", Department.class).getResultList();
+            
+            for (Department department : departments) {
+                names.add(department.getName());
+            }
+            return names;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static List<Department> find(EntityManager em) {
+        
+        try {
+            return em.createNamedQuery("findAllDepartments", Department.class).getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static Department findBySubGroupCode(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            Query query = em.createNamedQuery("findBySubGroupCode");
+            query.setParameter("subGroupCode", value);
+            return (Department) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static Department findDefault(EntityManager em,
+            String name) {
+        Department department = Department.findByName(em, name);
+        
+        if (department == null) {
+            department = new Department(name);
+            
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, department);
+            em.getTransaction().commit();
+        }
+        
+        return department;
+    }
+    public static Department findBySystemOptionDeptId(String option, EntityManager em) {
+        
+        Long id = (Long) SystemOption.getOptionValueObject(em, option);
+        
+        Department department = Department.findById(em, id);
+        em.refresh(department);
+        
+        if (department != null) {
+            return department;
+        } else {
+            return new Department("");
+        }
+    }
+    public static Department findAssignedToJob(Job job, EntityManager em) {
+        
+        Department dept;
+        
+        if (job.getSubContractedDepartment().getName().equals("--")
+                || job.getSubContractedDepartment().getName().equals("")) {
+            
+            dept = Department.findByName(em, job.getDepartment().getName());
+            if (dept != null) {
+                em.refresh(dept);
+            }
+            
+            return dept;
+        } else {
+            dept = Department.findByName(em, job.getSubContractedDepartment().getName());
+            em.refresh(dept);
+            
+            return dept;
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -325,165 +506,12 @@ public class Department implements Serializable, BusinessEntity, Comparable {
 
     }
 
-    public static List<Department> findAllByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Department> departments
-                    = em.createQuery("SELECT d FROM Department d where UPPER(d.name) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY d.name", Department.class).getResultList();
-            return departments;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Department> findActive(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Department> departments
-                    = em.createQuery("SELECT d FROM Department d WHERE UPPER(d.name) LIKE '%"
-                            + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Department.class).getResultList();
-
-            Iterator<Department> iterator = departments.iterator();
-            while (iterator.hasNext()) {
-                Department element = iterator.next();
-                if (element.getName().contains("'")) {
-                    iterator.remove();
-                }
-            }
-
-            return departments;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Department> findAllActive(EntityManager em) {
-
-        try {
-
-            return em.createQuery("SELECT d FROM Department d WHERE d.active = 1 ORDER BY d.name", Department.class).getResultList();
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Department findByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Department> departments = em.createQuery("SELECT d FROM Department d "
-                    + "WHERE UPPER(d.name) "
-                    + "= '" + value.toUpperCase() + "'", Department.class).getResultList();
-            if (!departments.isEmpty()) {
-                return departments.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Department findActiveByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Department> departments = em.createQuery("SELECT d FROM Department d "
-                    + "WHERE d.active = 1 AND UPPER(d.name) "
-                    + "= '" + value.toUpperCase() + "'", Department.class).getResultList();
-            if (!departments.isEmpty()) {
-                return departments.get(0);
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Department findById(EntityManager em, Long Id) {
-        if (Id != null) {
-            return em.find(Department.class, Id);
-        } else {
-            return null;
-        }
-    }
-
-    public static List<String> findAllNames(EntityManager em) {
-
-        ArrayList<String> names = new ArrayList<>();
-
-        try {
-
-            List<Department> departments = em.createNamedQuery("findAllDepartments", Department.class).getResultList();
-
-            for (Department department : departments) {
-                names.add(department.getName());
-            }
-            return names;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static List<Department> find(EntityManager em) {
-
-        try {
-            return em.createNamedQuery("findAllDepartments", Department.class).getResultList();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static Department findBySubGroupCode(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            Query query = em.createNamedQuery("findBySubGroupCode");
-            query.setParameter("subGroupCode", value);
-            return (Department) query.getSingleResult();
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     @Override
     public int compareTo(Object o) {
         return Collator.getInstance().compare(this.getName(), ((Department) o).getName());
     }
 
-    public static Department findDefault(EntityManager em,
-            String name) {
-        Department department = Department.findByName(em, name);
-
-        if (department == null) {
-            department = new Department(name);
-
-            em.getTransaction().begin();
-            BusinessEntityUtils.saveBusinessEntity(em, department);
-            em.getTransaction().commit();
-        }
-
-        return department;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -527,40 +555,6 @@ public class Department implements Serializable, BusinessEntity, Comparable {
         setName(name);
     }
 
-    public static Department findBySystemOptionDeptId(String option, EntityManager em) {
-
-        Long id = (Long) SystemOption.getOptionValueObject(em, option);
-
-        Department department = Department.findById(em, id);
-        em.refresh(department);
-
-        if (department != null) {
-            return department;
-        } else {
-            return new Department("");
-        }
-    }
-
-    public static Department findAssignedToJob(Job job, EntityManager em) {
-
-        Department dept;
-
-        if (job.getSubContractedDepartment().getName().equals("--")
-                || job.getSubContractedDepartment().getName().equals("")) {
-
-            dept = Department.findByName(em, job.getDepartment().getName());
-            if (dept != null) {
-                em.refresh(dept);
-            }
-
-            return dept;
-        } else {
-            dept = Department.findByName(em, job.getSubContractedDepartment().getName());
-            em.refresh(dept);
-
-            return dept;
-        }
-    }
 
     @Override
     public String getType() {
@@ -583,22 +577,22 @@ public class Department implements Serializable, BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

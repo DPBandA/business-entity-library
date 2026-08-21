@@ -20,17 +20,17 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.sm;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -45,6 +45,131 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Category implements BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Category.class.getName());
+    public static List<Category> findAllCategories(EntityManager em) {
+        
+        try {
+            List<Category> categories = em.createQuery("SELECT c FROM Category c ORDER BY c.name", Category.class).getResultList();
+            
+            return categories;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return new ArrayList<>();
+        }
+    }
+    public static List<Category> findCategoriesByName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Category> categories
+                    = em.createQuery("SELECT c FROM Category c where UPPER(c.name) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY c.name", Category.class).getResultList();
+            
+            return categories;
+            
+        } catch (Exception e) {
+            
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Category findActiveCategoryByName(
+            EntityManager em, String value, Boolean ignoreCase) {
+        
+        List<Category> categories;
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            if (ignoreCase) {
+                categories = em.createQuery("SELECT c FROM Category c"
+                        + " WHERE UPPER(c.name)"
+                        + " = '" + value.toUpperCase() + "'"
+                                + " AND (c.active = 1 OR c.active IS NULL)",
+                        Category.class).getResultList();
+            } else {
+                categories = em.createQuery("SELECT c FROM Category c"
+                        + " WHERE c.name "
+                        + "= '" + value + "'"
+                                + " AND (c.active = 1 OR c.active IS NULL)",
+                        Category.class).getResultList();
+            }
+            
+            if (!categories.isEmpty()) {
+                return categories.get(0);
+            }
+            
+            return null;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Category> findActiveCategoriesByName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Category> categories
+                    = em.createQuery("SELECT c FROM Category c WHERE UPPER(c.name) like '%"
+                            + value.toUpperCase().trim() + "%'"
+                                    + " AND (c.active = 1 OR c.active IS NULL)"
+                                    + " ORDER BY c.name", Category.class).getResultList();
+            
+            return categories;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Category> findActiveCategoriesByAnyPartOfNameAndType(
+            EntityManager em, String type, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            type = type.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Category> categories
+                    = em.createQuery("SELECT c FROM Category c WHERE c.name like '%"
+                            + value + "%'"
+                                    + " AND c.type = '"
+                            + type + "'"
+                                    + " AND (c.active = 1 OR c.active IS NULL)"
+                                    + " ORDER BY c.name", Category.class).setMaxResults(500).getResultList();
+            
+            return categories;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Category> findCategoriesByType(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            return em.createQuery("SELECT c FROM Category c "
+                    + "WHERE UPPER(c.type) "
+                    + "= '" + value.toUpperCase() + "' ORDER BY c.name", Category.class).getResultList();
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -136,135 +261,6 @@ public class Category implements BusinessEntity {
 
     }
 
-    public static List<Category> findAllCategories(EntityManager em) {
-
-        try {
-            List<Category> categories = em.createQuery("SELECT c FROM Category c ORDER BY c.name", Category.class).getResultList();
-
-            return categories;
-
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Category> findCategoriesByName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Category> categories
-                    = em.createQuery("SELECT c FROM Category c where UPPER(c.name) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY c.name", Category.class).getResultList();
-
-            return categories;
-
-        } catch (Exception e) {
-
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Category findActiveCategoryByName(
-            EntityManager em, String value, Boolean ignoreCase) {
-
-        List<Category> categories;
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            if (ignoreCase) {
-                categories = em.createQuery("SELECT c FROM Category c"
-                        + " WHERE UPPER(c.name)"
-                        + " = '" + value.toUpperCase() + "'"
-                        + " AND (c.active = 1 OR c.active IS NULL)",
-                        Category.class).getResultList();
-            } else {
-                categories = em.createQuery("SELECT c FROM Category c"
-                        + " WHERE c.name "
-                        + "= '" + value + "'"
-                        + " AND (c.active = 1 OR c.active IS NULL)",
-                        Category.class).getResultList();
-            }
-
-            if (!categories.isEmpty()) {
-                return categories.get(0);
-            }
-
-            return null;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Category> findActiveCategoriesByName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Category> categories
-                    = em.createQuery("SELECT c FROM Category c WHERE UPPER(c.name) like '%"
-                            + value.toUpperCase().trim() + "%'"
-                            + " AND (c.active = 1 OR c.active IS NULL)"
-                            + " ORDER BY c.name", Category.class).getResultList();
-
-            return categories;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Category> findActiveCategoriesByAnyPartOfNameAndType(
-            EntityManager em, String type, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-            type = type.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Category> categories
-                    = em.createQuery("SELECT c FROM Category c WHERE c.name like '%"
-                            + value + "%'"
-                            + " AND c.type = '"
-                            + type + "'"
-                            + " AND (c.active = 1 OR c.active IS NULL)"
-                            + " ORDER BY c.name", Category.class).setMaxResults(500).getResultList();
-
-            return categories;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Category> findCategoriesByType(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            return em.createQuery("SELECT c FROM Category c "
-                    + "WHERE UPPER(c.type) "
-                    + "= '" + value.toUpperCase() + "' ORDER BY c.name", Category.class).getResultList();
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public String toString() {
@@ -334,22 +330,22 @@ public class Category implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

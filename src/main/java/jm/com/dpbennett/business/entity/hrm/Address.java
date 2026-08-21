@@ -20,21 +20,21 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Query;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -52,6 +52,202 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllAddresses", query = "SELECT e FROM Address e ORDER BY e.type")
 })
 public class Address implements Serializable, BusinessEntity, Comparable {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Address.class.getName());
+    public static Address findDefaultAddress(
+            EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        
+        Address address = findAddressByName(em, name);
+        
+        if (address == null) {
+            address = new Address(name);
+            
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, address);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, address);
+            }
+        }
+        
+        return address;
+    }
+    public static Address findAddressByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Address> addresses = em.createQuery("SELECT a FROM Address a "
+                    + "WHERE UPPER(a.name) "
+                    + "= '" + value.toUpperCase() + "'", Address.class).getResultList();
+            if (!addresses.isEmpty()) {
+                return addresses.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Address findClientAddress(EntityManager em, String value) {
+        
+        try {
+            
+            String address[] = value.split("; ");
+            String addressLine1 = address[0];
+            String addressLine2 = address[1];
+            String city = address[2];
+            String stateOrProvince = address[3];
+            
+            List<Address> addresses;
+            Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
+                    + " WHERE a.addressLine1 = '" + addressLine1 + "'"
+                            + " AND (a.addressLine2 = '" + addressLine2 + "' OR a.addressLine2 IS NULL)"
+                                    + " AND (a.city = '" + city + "' OR a.city IS NULL)"
+                                            + " AND (a.stateOrProvince = '" + stateOrProvince + "' OR a.stateOrProvince IS NULL)",
+                    Address.class);
+            addresses = SQLQuery.getResultList();
+            
+            if (!addresses.isEmpty()) {
+                return addresses.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Address findClientAddressById(EntityManager em, String query, Long clientId) {
+        
+        try {
+            
+            String address[] = query.split("; ");
+            String addressLine1 = address[0];
+            String addressLine2 = address[1];
+            String city = address[2];
+            String stateOrProvince = address[3];
+            
+            Client client = Client.findById(em, clientId);
+            
+            if (client != null) {
+                for (Address addr : client.getAddresses()) {
+                    if (addr.getAddressLine1().equals(addressLine1)
+                            && addr.getAddressLine2().equals(addressLine2)
+                            && addr.getCity().equals(city)
+                            && addr.getStateOrProvince().equals(stateOrProvince)) {
+                        return addr;
+                    }
+                }
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Address findClientAddress(String query, Client client) {
+        
+        try {
+            
+            String address[] = query.split("; ");
+            String addressLine1 = address[0];
+            String addressLine2 = address[1];
+            String city = address[2];
+            String stateOrProvince = address[3];
+            
+            if (client != null) {
+                for (Address addr : client.getAddresses()) {
+                    if (addr.getAddressLine1().equals(addressLine1)
+                            && addr.getAddressLine2().equals(addressLine2)
+                            && addr.getCity().equals(city)
+                            && addr.getStateOrProvince().equals(stateOrProvince)) {
+                        return addr;
+                    }
+                }
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Address findAddress(String query, List<Address> addresses) {
+        
+        try {
+            
+            String address[] = query.split("; ");
+            String addressLine1 = address[0];
+            String addressLine2 = address[1];
+            String city = address[2];
+            String stateOrProvince = address[3];
+            
+            for (Address addr : addresses) {
+                if (addr.getAddressLine1().equals(addressLine1)
+                        && addr.getAddressLine2().equals(addressLine2)
+                        && addr.getCity().equals(city)
+                        && addr.getStateOrProvince().equals(stateOrProvince)) {
+                    return addr;
+                }
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Address> findClientAddresses(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("'", "`");
+            
+            List<Address> addresses;
+            Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
+                    + " WHERE a.addressLine1 LIKE '%" + value + "%'"
+                            + " OR a.addressLine2 LIKE '%" + value + "%'"
+                                    + " OR a.city LIKE '%" + value + "%'"
+                                            + " OR a.stateOrProvince LIKE '%" + value + "%'",
+                    Address.class);
+            addresses = SQLQuery.getResultList();
+            
+            return addresses;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Address findAddressById(EntityManager em, Long id) {
+        
+        try {
+            Address address = em.find(Address.class, id);
+            
+            return address;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static Boolean validate(Address address) {
+        
+        if (address != null) {
+            if (!BusinessEntityUtils.validateText(address.getAddressLine1().trim())) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        
+        return true;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -331,194 +527,6 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         }
     }
 
-    public static Address findDefaultAddress(
-            EntityManager em,
-            String name,
-            Boolean useTransaction) {
-
-        Address address = findAddressByName(em, name);
-
-        if (address == null) {
-            address = new Address(name);
-
-            if (useTransaction) {
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, address);
-                em.getTransaction().commit();
-            } else {
-                BusinessEntityUtils.saveBusinessEntity(em, address);
-            }
-        }
-
-        return address;
-    }
-
-    public static Address findAddressByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Address> addresses = em.createQuery("SELECT a FROM Address a "
-                    + "WHERE UPPER(a.name) "
-                    + "= '" + value.toUpperCase() + "'", Address.class).getResultList();
-            if (!addresses.isEmpty()) {
-                return addresses.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Address findClientAddress(EntityManager em, String value) {
-
-        try {
-
-            String address[] = value.split("; ");
-            String addressLine1 = address[0];
-            String addressLine2 = address[1];
-            String city = address[2];
-            String stateOrProvince = address[3];
-
-            List<Address> addresses;
-            Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
-                    + " WHERE a.addressLine1 = '" + addressLine1 + "'"
-                    + " AND (a.addressLine2 = '" + addressLine2 + "' OR a.addressLine2 IS NULL)"
-                    + " AND (a.city = '" + city + "' OR a.city IS NULL)"
-                    + " AND (a.stateOrProvince = '" + stateOrProvince + "' OR a.stateOrProvince IS NULL)",
-                    Address.class);
-            addresses = SQLQuery.getResultList();
-
-            if (!addresses.isEmpty()) {
-                return addresses.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Address findClientAddressById(EntityManager em, String query, Long clientId) {
-
-        try {
-
-            String address[] = query.split("; ");
-            String addressLine1 = address[0];
-            String addressLine2 = address[1];
-            String city = address[2];
-            String stateOrProvince = address[3];
-
-            Client client = Client.findById(em, clientId);
-
-            if (client != null) {
-                for (Address addr : client.getAddresses()) {
-                    if (addr.getAddressLine1().equals(addressLine1)
-                            && addr.getAddressLine2().equals(addressLine2)
-                            && addr.getCity().equals(city)
-                            && addr.getStateOrProvince().equals(stateOrProvince)) {
-                        return addr;
-                    }
-                }
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Address findClientAddress(String query, Client client) {
-
-        try {
-
-            String address[] = query.split("; ");
-            String addressLine1 = address[0];
-            String addressLine2 = address[1];
-            String city = address[2];
-            String stateOrProvince = address[3];
-
-            if (client != null) {
-                for (Address addr : client.getAddresses()) {
-                    if (addr.getAddressLine1().equals(addressLine1)
-                            && addr.getAddressLine2().equals(addressLine2)
-                            && addr.getCity().equals(city)
-                            && addr.getStateOrProvince().equals(stateOrProvince)) {
-                        return addr;
-                    }
-                }
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Address findAddress(String query, List<Address> addresses) {
-
-        try {
-
-            String address[] = query.split("; ");
-            String addressLine1 = address[0];
-            String addressLine2 = address[1];
-            String city = address[2];
-            String stateOrProvince = address[3];
-
-            for (Address addr : addresses) {
-                if (addr.getAddressLine1().equals(addressLine1)
-                        && addr.getAddressLine2().equals(addressLine2)
-                        && addr.getCity().equals(city)
-                        && addr.getStateOrProvince().equals(stateOrProvince)) {
-                    return addr;
-                }
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Address> findClientAddresses(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("'", "`");
-
-            List<Address> addresses;
-            Query SQLQuery = em.createQuery("SELECT a FROM Client c JOIN c.addresses a"
-                    + " WHERE a.addressLine1 LIKE '%" + value + "%'"
-                    + " OR a.addressLine2 LIKE '%" + value + "%'"
-                    + " OR a.city LIKE '%" + value + "%'"
-                    + " OR a.stateOrProvince LIKE '%" + value + "%'",
-                    Address.class);
-            addresses = SQLQuery.getResultList();
-
-            return addresses;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Address findAddressById(EntityManager em, Long id) {
-
-        try {
-            Address address = em.find(Address.class, id);
-
-            return address;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -541,18 +549,6 @@ public class Address implements Serializable, BusinessEntity, Comparable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public static Boolean validate(Address address) {
-
-        if (address != null) {
-            if (!BusinessEntityUtils.validateText(address.getAddressLine1().trim())) {
-                return false;
-            }
-        } else {
-            return false;
-        }
-
-        return true;
-    }
 
     @Override
     public Boolean getActive() {
@@ -575,22 +571,22 @@ public class Address implements Serializable, BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

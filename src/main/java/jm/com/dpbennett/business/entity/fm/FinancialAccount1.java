@@ -19,24 +19,24 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
@@ -57,6 +57,116 @@ public class FinancialAccount1 implements
         Comparable<FinancialAccount1> {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(FinancialAccount1.class.getName());
+    public static List<FinancialAccount1> findAllFields(EntityManager em) {
+        
+        try {
+            
+            List<FinancialAccount1> codes = em.createNamedQuery("findAllFields", FinancialAccount1.class).getResultList();
+            
+            return codes;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<FinancialAccount1> findFields(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<FinancialAccount1> fields
+                    = em.createQuery("SELECT a FROM Field a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
+                            + "%' ORDER BY a.name",
+                            FinancialAccount1.class).getResultList();
+            return fields;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<FinancialAccount1> findActiveFields(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<FinancialAccount1> fields
+                    = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
+                            + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
+                            + "%') AND (a.active = 1 OR a.active IS NULL) ORDER BY a.name",
+                            FinancialAccount1.class).getResultList();
+            return fields;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static FinancialAccount1 findByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<FinancialAccount1> fields = em.createQuery("SELECT a FROM Field a "
+                    + "WHERE UPPER(a.name) "
+                    + "= '" + value.toUpperCase() + "'", FinancialAccount1.class).getResultList();
+            if (!fields.isEmpty()) {
+                return fields.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static FinancialAccount1 findByCode(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<FinancialAccount1> fields = em.createQuery("SELECT a FROM FieldField a "
+                    + "WHERE UPPER(a.code) "
+                    + "= '" + value.toUpperCase() + "'", FinancialAccount1.class).getResultList();
+            if (!fields.isEmpty()) {
+                return fields.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static FinancialAccount1 findActiveByCode(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<FinancialAccount1> fields = em.createQuery("SELECT a FROM Field a "
+                    + "WHERE UPPER(a.code) "
+                    + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", FinancialAccount1.class).getResultList();
+            if (!fields.isEmpty()) {
+                return fields.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -213,63 +323,6 @@ public class FinancialAccount1 implements
         this.category = category;
     }
 
-    public static List<FinancialAccount1> findAllFields(EntityManager em) {
-
-        try {
-
-            List<FinancialAccount1> codes = em.createNamedQuery("findAllFields", FinancialAccount1.class).getResultList();
-
-            return codes;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<FinancialAccount1> findFields(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<FinancialAccount1> fields
-                    = em.createQuery("SELECT a FROM Field a WHERE UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
-                            + "%' ORDER BY a.name",
-                            FinancialAccount1.class).getResultList();
-            return fields;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<FinancialAccount1> findActiveFields(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<FinancialAccount1> fields
-                    = em.createQuery("SELECT a FROM Field a WHERE (UPPER(a.name) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.description) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.code) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.account) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.type) LIKE '%" + value.toUpperCase().trim()
-                            + "%' OR UPPER(a.abbreviation) LIKE '%" + value.toUpperCase().trim()
-                            + "%') AND (a.active = 1 OR a.active IS NULL) ORDER BY a.name",
-                            FinancialAccount1.class).getResultList();
-            return fields;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     @Override
     public Long getId() {
@@ -373,62 +426,6 @@ public class FinancialAccount1 implements
         this.isDirty = isDirty;
     }
 
-    public static FinancialAccount1 findByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<FinancialAccount1> fields = em.createQuery("SELECT a FROM Field a "
-                    + "WHERE UPPER(a.name) "
-                    + "= '" + value.toUpperCase() + "'", FinancialAccount1.class).getResultList();
-            if (!fields.isEmpty()) {
-                return fields.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static FinancialAccount1 findByCode(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<FinancialAccount1> fields = em.createQuery("SELECT a FROM FieldField a "
-                    + "WHERE UPPER(a.code) "
-                    + "= '" + value.toUpperCase() + "'", FinancialAccount1.class).getResultList();
-            if (!fields.isEmpty()) {
-                return fields.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static FinancialAccount1 findActiveByCode(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<FinancialAccount1> fields = em.createQuery("SELECT a FROM Field a "
-                    + "WHERE UPPER(a.code) "
-                    + "= '" + value.toUpperCase() + "' AND (a.active = 1 OR a.active IS NULL)", FinancialAccount1.class).getResultList();
-            if (!fields.isEmpty()) {
-                return fields.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public int compareTo(FinancialAccount1 fa) {
@@ -436,22 +433,22 @@ public class FinancialAccount1 implements
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

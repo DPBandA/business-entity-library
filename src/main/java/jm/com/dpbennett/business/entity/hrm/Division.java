@@ -19,23 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -54,6 +54,146 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Division implements BusinessEntity, Comparable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Division.class.getName());
+    public static Employee findHeadOfActiveDivistionByDepartment(
+            EntityManager em,
+            Department department) {
+        
+        List<Division> activeDivistions = Division.findAllActive(em);
+        
+        for (Division activeDivistion : activeDivistions) {
+            List<Department> departments = activeDivistion.getDepartments();
+            for (Department department1 : departments) {
+                if (Objects.equals(department1.getId(), department.getId())) {
+                    return activeDivistion.getHead();
+                }
+            }
+        }
+        
+        return null;
+    }
+    public static Division findById(EntityManager em, Long Id) {
+        
+        try {
+            Division division = em.find(Division.class, Id);
+            
+            return division;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static Division findByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Division> divisions = em.createQuery("SELECT d FROM Division d "
+                    + "WHERE UPPER(d.name) "
+                    + "= '" + value.toUpperCase() + "'", Division.class).getResultList();
+            
+            if (!divisions.isEmpty()) {
+                return divisions.get(0);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Division findDefault(EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        
+        Division division = Division.findByName(em, name);
+        
+        if (division == null) {
+            division = new Division(name);
+            
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, division);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, division);
+            }
+        }
+        
+        return division;
+    }
+    public static List<Division> findAll(EntityManager em) {
+        
+        try {
+            return em.createNamedQuery("findAllDivisions", Division.class).getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static List<Division> findAllByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Division> divisions
+                    = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY d.name", Division.class).getResultList();
+            return divisions;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Division> findAllActiveByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Division> divisions
+                    = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
+                            + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Division.class).getResultList();
+            return divisions;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Division> findAllActive(EntityManager em) {
+        
+        try {
+            return em.createQuery("SELECT d FROM Division d WHERE d.active = 1 ORDER BY d.name", Division.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Division findBySubgroup(EntityManager em, Subgroup subgroup) {
+        
+        try {
+            
+            List<Division> divisions
+                    = em.createQuery(
+                            "SELECT d FROM Division d"
+                                    + " JOIN d.subgroups subgroups"
+                                    + " WHERE subgroups.id = " + subgroup.getId(),
+                            Division.class).getResultList();
+            
+            if (!divisions.isEmpty()) {
+                
+                return divisions.get(0);
+            } else {
+                return null;
+            }
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -99,23 +239,6 @@ public class Division implements BusinessEntity, Comparable {
         this.id = id;
     }
 
-    public static Employee findHeadOfActiveDivistionByDepartment(
-            EntityManager em,
-            Department department) {
-
-        List<Division> activeDivistions = Division.findAllActive(em);
-
-        for (Division activeDivistion : activeDivistions) {
-            List<Department> departments = activeDivistion.getDepartments();
-            for (Department department1 : departments) {
-                if (Objects.equals(department1.getId(), department.getId())) {
-                    return activeDivistion.getHead();
-                }
-            }
-        }
-
-        return null;
-    }
 
     public String getCode() {
         return code;
@@ -261,135 +384,6 @@ public class Division implements BusinessEntity, Comparable {
         return getName();
     }
 
-    public static Division findById(EntityManager em, Long Id) {
-
-        try {
-            Division division = em.find(Division.class, Id);
-
-            return division;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
-
-    public static Division findByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Division> divisions = em.createQuery("SELECT d FROM Division d "
-                    + "WHERE UPPER(d.name) "
-                    + "= '" + value.toUpperCase() + "'", Division.class).getResultList();
-
-            if (!divisions.isEmpty()) {
-                return divisions.get(0);
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Division findDefault(EntityManager em,
-            String name,
-            Boolean useTransaction) {
-
-        Division division = Division.findByName(em, name);
-
-        if (division == null) {
-            division = new Division(name);
-
-            if (useTransaction) {
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, division);
-                em.getTransaction().commit();
-            } else {
-                BusinessEntityUtils.saveBusinessEntity(em, division);
-            }
-        }
-
-        return division;
-    }
-
-    public static List<Division> findAll(EntityManager em) {
-
-        try {
-            return em.createNamedQuery("findAllDivisions", Division.class).getResultList();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static List<Division> findAllByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Division> divisions
-                    = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY d.name", Division.class).getResultList();
-            return divisions;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Division> findAllActiveByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Division> divisions
-                    = em.createQuery("SELECT d FROM Division d where UPPER(d.name) like '%"
-                            + value.toUpperCase().trim() + "%' AND d.active = 1 ORDER BY d.name", Division.class).getResultList();
-            return divisions;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Division> findAllActive(EntityManager em) {
-
-        try {
-            return em.createQuery("SELECT d FROM Division d WHERE d.active = 1 ORDER BY d.name", Division.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Division findBySubgroup(EntityManager em, Subgroup subgroup) {
-
-        try {
-
-            List<Division> divisions
-                    = em.createQuery(
-                            "SELECT d FROM Division d"
-                            + " JOIN d.subgroups subgroups"
-                            + " WHERE subgroups.id = " + subgroup.getId(),
-                            Division.class).getResultList();
-
-            if (!divisions.isEmpty()) {
-
-                return divisions.get(0);
-            } else {
-                return null;
-            }
-
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -428,22 +422,22 @@ public class Division implements BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

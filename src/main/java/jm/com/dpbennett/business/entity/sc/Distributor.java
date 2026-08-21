@@ -20,17 +20,17 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.sc;
 
-import java.util.Date;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -48,6 +48,78 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 })
 public class Distributor implements BusinessEntity {
 
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Distributor.class.getName());
+    public static List<Distributor> findDistributorsBySearchPattern(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
+                    + "WHERE UPPER(d.name) "
+                    + "LIKE '" + value.toUpperCase() + "%' "
+                            + "ORDER BY d.name", Distributor.class).getResultList();
+            
+            return distributors;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Distributor findDistributorByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
+                    + "WHERE UPPER(d.name) "
+                    + "= '" + value.toUpperCase() + "'", Distributor.class).getResultList();
+            if (!distributors.isEmpty()) {
+                return distributors.get(0);
+            }
+            
+            return null;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Distributor findDistributorById(EntityManager em, Long Id) {
+        
+        try {
+            Distributor distributor = em.find(Distributor.class, Id);
+            return distributor;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Distributor findDefaultDistributor(EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        Distributor distributor = Distributor.findDistributorByName(em, name);
+        
+        if (distributor == null) {
+            distributor = new Distributor();
+            distributor.setName(name);
+            
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, distributor);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, distributor);
+            }
+        }
+        
+        return distributor;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -62,21 +134,20 @@ public class Distributor implements BusinessEntity {
     @Transient
     private Boolean isDirty;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Distributor() {
     }
 
     public Distributor(String name) {
         this.name = name;
+    }
+    @Override
+    public Long getId() {
+        return id;
+    }
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
@@ -181,78 +252,6 @@ public class Distributor implements BusinessEntity {
         return name;
     }
 
-    public static List<Distributor> findDistributorsBySearchPattern(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
-                    + "WHERE UPPER(d.name) "
-                    + "LIKE '" + value.toUpperCase() + "%' "
-                    + "ORDER BY d.name", Distributor.class).getResultList();
-
-            return distributors;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Distributor findDistributorByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
-                    + "WHERE UPPER(d.name) "
-                    + "= '" + value.toUpperCase() + "'", Distributor.class).getResultList();
-            if (!distributors.isEmpty()) {
-                return distributors.get(0);
-            }
-
-            return null;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Distributor findDistributorById(EntityManager em, Long Id) {
-
-        try {
-            Distributor distributor = em.find(Distributor.class, Id);
-            return distributor;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Distributor findDefaultDistributor(EntityManager em,
-            String name,
-            Boolean useTransaction) {
-        Distributor distributor = Distributor.findDistributorByName(em, name);
-
-        if (distributor == null) {
-            distributor = new Distributor();
-            distributor.setName(name);
-
-            if (useTransaction) {
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, distributor);
-                em.getTransaction().commit();
-            } else {
-                BusinessEntityUtils.saveBusinessEntity(em, distributor);
-            }
-        }
-
-        return distributor;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -306,22 +305,22 @@ public class Distributor implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

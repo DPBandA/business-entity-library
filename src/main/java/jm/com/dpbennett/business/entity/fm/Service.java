@@ -20,23 +20,23 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -56,6 +56,230 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Service implements Serializable, BusinessEntity, Comparable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Service.class.getName());
+    public static List<Service> findAll(EntityManager em) {
+
+        try {
+            List<Service> services = em.createNamedQuery("findAll", Service.class).getResultList();
+
+            return services;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Service> findAllActive(EntityManager em) {
+
+        try {
+            List<Service> services = em.createNamedQuery("findAllActive", Service.class).getResultList();
+
+            return services;
+        } catch (Exception e) {
+            System.out.println(e);
+
+            return null;
+        }
+    }
+    public static Service findById(EntityManager em, Long id) {
+
+        try {
+
+            Service service = em.find(Service.class, id);
+
+            return service;
+        } catch (Exception e) {
+            System.out.println(e);
+
+            return null;
+        }
+    }
+    public static Service findByName(EntityManager em, String name) {
+
+        try {
+
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Service> services = em.createQuery(
+                    "SELECT s FROM Service s "
+                            + "WHERE UPPER(s.name) "
+                            + "LIKE '%" + name.toUpperCase() + "%'",
+                    Service.class).getResultList();
+            if (!services.isEmpty()) {
+                return services.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Service findByExactName(EntityManager em, String name) {
+
+        try {
+
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Service> services = em.createQuery(
+                    "SELECT s FROM Service s "
+                            + "WHERE UPPER(s.name) "
+                            + "= '" + name.toUpperCase() + "'",
+                    Service.class).getResultList();
+            if (!services.isEmpty()) {
+                return services.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Service findActiveByName(EntityManager em, String name) {
+
+        try {
+
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Service> services = em.createQuery(
+                    "SELECT s FROM Service s "
+                            + "WHERE UPPER(s.name) "
+                            + "LIKE '%" + name.toUpperCase() + "%' AND s.active = 1",
+                    Service.class).getResultList();
+            if (!services.isEmpty()) {
+                return services.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Service findActiveByExactName(EntityManager em, String name) {
+
+        try {
+
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Service> services = em.createQuery(
+                    "SELECT s FROM Service s "
+                            + "WHERE UPPER(s.name) "
+                            + "= '" + name.toUpperCase() + "' AND s.active = 1",
+                    Service.class).getResultList();
+            if (!services.isEmpty()) {
+                return services.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Service findByNameAndAccountingCode(
+            EntityManager em,
+            String name,
+            String code) {
+
+        try {
+
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Service> services = em.createQuery(
+                    "SELECT s FROM Service s"
+                            + " JOIN s.accountingCode accountingCode"
+                            + " WHERE UPPER(s.name)"
+                            + " LIKE '%" + name.toUpperCase() + "%'"
+                                    + " AND accountingCode.code LIKE '%" + code + "%'",
+                    Service.class).getResultList();
+
+            if (!services.isEmpty()) {
+                return services.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Service findActiveByNameAndAccountingCode(
+            EntityManager em,
+            String serviceName,
+            String code) {
+
+        try {
+
+            serviceName = serviceName.replaceAll("&amp;", "&").replaceAll("'", "`");
+            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Service> services = em.createQuery(
+                    "SELECT s FROM Service s"
+                            + " JOIN s.accountingCode accountingCode"
+                            + " WHERE UPPER(s.name)"
+                            + " LIKE '%" + serviceName.toUpperCase() + "%'"
+                                    + " AND accountingCode.code LIKE '%" + code + "%' AND s.active = 1",
+                    Service.class).getResultList();
+
+            if (!services.isEmpty()) {
+                return services.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Service> findAllByName(EntityManager em, String name) {
+
+        try {
+
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Service> services
+                    = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
+                            + name.toUpperCase().trim() + "%' ORDER BY s.name", Service.class).getResultList();
+            return services;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Service> findAllActiveByName(EntityManager em, String name) {
+
+        try {
+
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Service> services
+                    = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
+                            + name.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Service.class).getResultList();
+            return services;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Service> findAllActiveByNameAndAccountingCode(
+            EntityManager em,
+            String name,
+            String code) {
+
+        try {
+
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Service> services
+                    = em.createQuery("SELECT s FROM Service s"
+                            + " JOIN s.accountingCode accountingCode"
+                            + " WHERE UPPER(s.name) LIKE '%"
+                            + name.toUpperCase().trim() + "%' AND s.active = 1"
+                                    + " AND accountingCode.code LIKE '%" + code + "%'"
+                                            + " ORDER BY s.name", Service.class).getResultList();
+            return services;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -218,240 +442,6 @@ public class Service implements Serializable, BusinessEntity, Comparable {
         return Collator.getInstance().compare(this.name, ((Service) o).name);
     }
 
-    public static List<Service> findAll(EntityManager em) {
-
-        try {
-            List<Service> services = em.createNamedQuery("findAll", Service.class).getResultList();
-
-            return services;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Service> findAllActive(EntityManager em) {
-
-        try {
-            List<Service> services = em.createNamedQuery("findAllActive", Service.class).getResultList();
-
-            return services;
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return null;
-        }
-    }
-
-    public static Service findById(EntityManager em, Long id) {
-
-        try {
-
-            Service service = em.find(Service.class, id);
-
-            return service;
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return null;
-        }
-    }
-
-    public static Service findByName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Service> services = em.createQuery(
-                    "SELECT s FROM Service s "
-                    + "WHERE UPPER(s.name) "
-                    + "LIKE '%" + name.toUpperCase() + "%'",
-                    Service.class).getResultList();
-            if (!services.isEmpty()) {
-                return services.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Service findByExactName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Service> services = em.createQuery(
-                    "SELECT s FROM Service s "
-                    + "WHERE UPPER(s.name) "
-                    + "= '" + name.toUpperCase() + "'",
-                    Service.class).getResultList();
-            if (!services.isEmpty()) {
-                return services.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Service findActiveByName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Service> services = em.createQuery(
-                    "SELECT s FROM Service s "
-                    + "WHERE UPPER(s.name) "
-                    + "LIKE '%" + name.toUpperCase() + "%' AND s.active = 1",
-                    Service.class).getResultList();
-            if (!services.isEmpty()) {
-                return services.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Service findActiveByExactName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Service> services = em.createQuery(
-                    "SELECT s FROM Service s "
-                    + "WHERE UPPER(s.name) "
-                    + "= '" + name.toUpperCase() + "' AND s.active = 1",
-                    Service.class).getResultList();
-            if (!services.isEmpty()) {
-                return services.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Service findByNameAndAccountingCode(
-            EntityManager em,
-            String name,
-            String code) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Service> services = em.createQuery(
-                    "SELECT s FROM Service s"
-                    + " JOIN s.accountingCode accountingCode"
-                    + " WHERE UPPER(s.name)"
-                    + " LIKE '%" + name.toUpperCase() + "%'"
-                    + " AND accountingCode.code LIKE '%" + code + "%'",
-                    Service.class).getResultList();
-
-            if (!services.isEmpty()) {
-                return services.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Service findActiveByNameAndAccountingCode(
-            EntityManager em,
-            String serviceName,
-            String code) {
-
-        try {
-
-            serviceName = serviceName.replaceAll("&amp;", "&").replaceAll("'", "`");
-            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Service> services = em.createQuery(
-                    "SELECT s FROM Service s"
-                    + " JOIN s.accountingCode accountingCode"
-                    + " WHERE UPPER(s.name)"
-                    + " LIKE '%" + serviceName.toUpperCase() + "%'"
-                    + " AND accountingCode.code LIKE '%" + code + "%' AND s.active = 1",
-                    Service.class).getResultList();
-
-            if (!services.isEmpty()) {
-                return services.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Service> findAllByName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Service> services
-                    = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY s.name", Service.class).getResultList();
-            return services;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Service> findAllActiveByName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Service> services
-                    = em.createQuery("SELECT s FROM Service s WHERE UPPER(s.name) LIKE '%"
-                            + name.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Service.class).getResultList();
-            return services;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Service> findAllActiveByNameAndAccountingCode(
-            EntityManager em,
-            String name,
-            String code) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Service> services
-                    = em.createQuery("SELECT s FROM Service s"
-                            + " JOIN s.accountingCode accountingCode"
-                            + " WHERE UPPER(s.name) LIKE '%"
-                            + name.toUpperCase().trim() + "%' AND s.active = 1"
-                            + " AND accountingCode.code LIKE '%" + code + "%'"
-                            + " ORDER BY s.name", Service.class).getResultList();
-            return services;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -485,22 +475,22 @@ public class Service implements Serializable, BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

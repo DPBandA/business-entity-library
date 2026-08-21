@@ -19,6 +19,20 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.jmts;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
@@ -26,20 +40,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
@@ -61,6 +61,84 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllJobSamples", query = "SELECT e FROM JobSample e ORDER BY e.dateReceived")
 })
 public class JobSample implements Product, Sample, Comparable, BusinessEntity {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(JobSample.class.getName());
+    public static JobSample copy(JobSample src) {
+        
+        JobSample copy = new JobSample();
+        
+        copy.jobId = src.jobId;
+        copy.name = src.name;
+        copy.code = src.code;
+        copy.reference = src.reference;
+        copy.referenceIndex = src.referenceIndex;
+        copy.sampleQuantity = src.sampleQuantity;
+        copy.quantity = src.quantity;
+        copy.unitOfMeasure = src.unitOfMeasure;
+        copy.description = src.description;
+        copy.type = src.type;
+        copy.comments = src.comments;
+        copy.productType = src.productType;
+        copy.productModel = src.productModel;
+        copy.productSerialNumber = src.productSerialNumber;
+        copy.productCode = src.productCode;
+        copy.productBrand = src.productBrand;
+        copy.sampleSize = src.sampleSize;
+        copy.client = src.client;
+        copy.manufacturer = src.manufacturer;
+        copy.regulatoryOffice = src.regulatoryOffice;
+        copy.sampledBy = src.sampledBy;
+        copy.receivedBy = src.receivedBy;
+        copy.tests = src.tests;
+        copy.countryOfOrigin = src.countryOfOrigin;
+        copy.dateReceived = src.dateReceived;
+        copy.dateSampled = src.dateSampled;
+        copy.dateReturned = src.dateReturned;
+        copy.methodOfDisposal = src.methodOfDisposal;
+        copy.isToBeAdded = src.isToBeAdded;
+        
+        return copy;
+    }
+    public static boolean locateJobSampleByReference(
+            ArrayList<JobSample> samples,
+            String reference) {
+        
+        for (JobSample jobSample : samples) {
+            if (jobSample.getReference().equals(reference)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    public static boolean locateJobSampleById(ArrayList<JobSample> samples, Long id) {
+        
+        for (JobSample jobSample : samples) {
+            if (Objects.equals(jobSample.getId(), id)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    public static List<JobSample> findJobSamplesByJobId(EntityManager em, Long jobId) {
+        
+        try {
+            List<JobSample> jobSamples
+                    = em.createQuery("SELECT s FROM JobSample s "
+                            + "WHERE s.jobId "
+                            + "= '" + jobId + "'"
+                                    + " ORDER BY s.reference", JobSample.class).getResultList();
+            return jobSamples;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static JobSample findJobSampleById(EntityManager em, Long Id) {
+        return em.find(JobSample.class, Id);
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -97,11 +175,8 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<ProductTest> tests;
     private String countryOfOrigin;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateReceived;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateSampled;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateReturned;
     private Integer methodOfDisposal;
     @Transient
@@ -147,42 +222,6 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
         this.isToBeAdded = isToBeAdded;
     }
 
-    public static JobSample copy(JobSample src) {
-        
-        JobSample copy = new JobSample();
-        
-        copy.jobId = src.jobId;
-        copy.name = src.name;
-        copy.code = src.code;
-        copy.reference = src.reference;
-        copy.referenceIndex = src.referenceIndex;
-        copy.sampleQuantity = src.sampleQuantity;
-        copy.quantity = src.quantity;
-        copy.unitOfMeasure = src.unitOfMeasure;
-        copy.description = src.description;
-        copy.type = src.type;
-        copy.comments = src.comments;
-        copy.productType = src.productType;
-        copy.productModel = src.productModel;
-        copy.productSerialNumber = src.productSerialNumber;
-        copy.productCode = src.productCode;
-        copy.productBrand = src.productBrand;
-        copy.sampleSize = src.sampleSize;
-        copy.client = src.client;
-        copy.manufacturer = src.manufacturer;
-        copy.regulatoryOffice = src.regulatoryOffice;
-        copy.sampledBy = src.sampledBy;
-        copy.receivedBy = src.receivedBy;
-        copy.tests = src.tests;
-        copy.countryOfOrigin = src.countryOfOrigin;
-        copy.dateReceived = src.dateReceived;
-        copy.dateSampled = src.dateSampled;
-        copy.dateReturned = src.dateReturned;
-        copy.methodOfDisposal = src.methodOfDisposal;  
-        copy.isToBeAdded = src.isToBeAdded;
-        
-        return copy;
-    }
 
     public String getCountryOfOrigin() {
         return countryOfOrigin;
@@ -532,48 +571,6 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
         this.type = type;
     }
 
-    public static boolean locateJobSampleByReference(
-            ArrayList<JobSample> samples,
-            String reference) {
-
-        for (JobSample jobSample : samples) {
-            if (jobSample.getReference().equals(reference)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean locateJobSampleById(ArrayList<JobSample> samples, Long id) {
-
-        for (JobSample jobSample : samples) {
-            if (Objects.equals(jobSample.getId(), id)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static List<JobSample> findJobSamplesByJobId(EntityManager em, Long jobId) {
-
-        try {
-            List<JobSample> jobSamples
-                    = em.createQuery("SELECT s FROM JobSample s "
-                            + "WHERE s.jobId "
-                            + "= '" + jobId + "'"
-                            + " ORDER BY s.reference", JobSample.class).getResultList();
-            return jobSamples;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static JobSample findJobSampleById(EntityManager em, Long Id) {
-        return em.find(JobSample.class, Id);
-    }
 
     public String getSampleDetail() {
         String detail = "";
@@ -702,22 +699,22 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

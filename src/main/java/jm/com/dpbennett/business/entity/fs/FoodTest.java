@@ -19,21 +19,20 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fs;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.mt.Test;
@@ -50,32 +49,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class FoodTest implements Test, Serializable, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    private String name;
-    private Double hourlyRate;
-    private String type;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date testDate;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee testDoneBy;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date reTestDate;
-    private String category;
-    @Transient
-    private Boolean isDirty;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    private static final System.Logger LOG = System.getLogger(FoodTest.class.getName());
     public static FoodTest findByName(EntityManager em, String value,
             Boolean ignoreCase) {
 
@@ -105,6 +79,30 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
             return null;
         }
     }
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String name;
+    private Double hourlyRate;
+    private String type;
+    private LocalDateTime testDate;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee testDoneBy;
+    private LocalDateTime reTestDate;
+    private String category;
+    @Transient
+    private Boolean isDirty;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 
     @Override
     public Boolean getIsDirty() {
@@ -174,12 +172,12 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     }
 
     @Override
-    public Date getTestDate() {
+    public LocalDateTime getTestDate() {
         return testDate;
     }
 
     @Override
-    public void setTestDate(Date testDate) {
+    public void setTestDate(LocalDateTime testDate) {
         this.testDate = testDate;
     }
 
@@ -199,12 +197,12 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     }
 
     @Override
-    public Date getReTestDate() {
+    public LocalDateTime getReTestDate() {
         return reTestDate;
     }
 
     @Override
-    public void setReCalibrationDate(Date reTestDate) {
+    public void setReCalibrationDate(LocalDateTime reTestDate) {
         this.reTestDate = reTestDate;
     }
 
@@ -259,22 +257,22 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -379,5 +377,11 @@ public class FoodTest implements Test, Serializable, Comparable, BusinessEntity 
     public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
+    public static System.Logger getLOG() {
+        return LOG;
+    }
+    
+    
 
 }

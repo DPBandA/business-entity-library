@@ -70,6 +70,7 @@ public class BusinessEntityUtils {
     private static final ZoneId DEFAULT_ZONE_ID = ZoneId.systemDefault();
     private static final DateTimeFormatter MEDIUM_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
     private static final DateTimeFormatter MEDIUM_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy, h:mm a");
+    private static final System.Logger LOG = System.getLogger(BusinessEntityUtils.class.getName());
 
     public static String sanitize(String value) {
 
@@ -458,6 +459,8 @@ public class BusinessEntityUtils {
 
     /**
      * Compatibility helper for legacy callers. Prefer createDate(LocalDateTime).
+     * @param date
+     * @return 
      */
     public static LocalDateTime createDate(Date date) {
         return createDate(toLocalDateTime(date));
@@ -1207,6 +1210,9 @@ public class BusinessEntityUtils {
 
     public static String getYearShortFormat(Date date, int digits) {
         return getYearShortFormat(toLocalDateTime(date), digits);
+    }
+
+    private BusinessEntityUtils() {
     }
 
 }

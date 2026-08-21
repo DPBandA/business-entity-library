@@ -19,6 +19,19 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.lo;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.dm.DocumentType;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Department;
@@ -27,27 +40,16 @@ import jm.com.dpbennett.business.entity.fm.Classification;
 import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.rm.DatePeriod;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import static jm.com.dpbennett.business.entity.util.BusinessEntityUtils.toDate;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
 /**
@@ -62,6 +64,162 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class LegalDocument implements LegalDocumentInterface {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(LegalDocument.class.getName());
+    public static List<LegalDocument> findGroupedLegalDocumentsByDateSearchField(
+            EntityManager em,
+            String dateSearchField,
+            String searchType,
+            Date startDate,
+            Date endDate) {
+        
+        List<LegalDocument> foundDocuments;
+        String searchQuery = null;
+        
+        switch (searchType) {
+            case "General":
+                searchQuery
+                        = "SELECT new jm.com.dpbennett.entity.LegalDocument(doc.type, COUNT(doc.type)) FROM LegalDocument doc"
+                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + " GROUP BY doc.type";
+                break;
+            case "My documents":
+                break;
+            case "My department's documents":
+                break;
+            default:
+                break;
+        }
+        
+        try {
+            foundDocuments = em.createQuery(searchQuery, LegalDocument.class).getResultList();
+            if (foundDocuments == null) {
+                foundDocuments = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return foundDocuments;
+    }
+    public static List<LegalDocument> findLegalDocumentsByDateSearchField(
+            EntityManager em,
+            DatePeriod dateSearchPeriod,
+            String searchType,
+            String searchText) {
+        
+        List<LegalDocument> foundDocuments;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        String searchQuery = null;
+        String searchTextAndClause;
+        
+        switch (searchType) {
+            case "Legal Documents":
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(responsibleDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(responsibleOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(responsibleOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(submittedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(submittedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.description) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.status) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.priorityLevel) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.url) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+                
+                searchQuery
+                        = "SELECT doc FROM LegalDocument doc"
+                        + " JOIN doc.responsibleDepartment responsibleDepartment"
+                        + " JOIN doc.responsibleOfficer responsibleOfficer"
+                        + " JOIN doc.submittedBy submittedBy"
+                        + " JOIN doc.classification classification"
+                        + " WHERE (doc." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND doc." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY doc.dateReceived DESC";
+                break;
+            case "Legal document types":
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
+                        + " )";
+                searchQuery
+                        = "SELECT doc FROM LegalDocument doc"
+                        + " JOIN doc.type t"
+                        + " WHERE (doc." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
+                        + " AND doc." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY doc.dateReceived DESC";
+                break;
+            default:
+                break;
+        }
+        
+        try {
+            foundDocuments = em.createQuery(searchQuery, LegalDocument.class).getResultList();
+            if (foundDocuments == null) {
+                foundDocuments = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return foundDocuments;
+    }
+    public static LegalDocument findLegalDocumentById(EntityManager em, Long Id) {
+        
+        return em.find(LegalDocument.class, Id);
+    }
+    public static List<LegalDocument> findAllLegalDocuments(EntityManager em) {
+        
+        try {
+            return em.createNamedQuery("findAllLegalDocuments", LegalDocument.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static String getLegalDocumentNumber(LegalDocument legalDocument, String prefix) {
+        String number = prefix;
+        
+        if (legalDocument.getResponsibleDepartment().getCode() != null) {
+            number = number + legalDocument.getResponsibleDepartment().getCode();
+        } else {
+            number = number + "?";
+        }
+        
+        if (legalDocument.getDocumentType() != null) {
+            number = number + "_" + legalDocument.getDocumentType().getCode();
+        }
+        
+        if (legalDocument.getDocumentForm() != null) {
+            number = number + "/" + legalDocument.getDocumentForm();
+        }
+        
+        if (legalDocument.getSequenceNumber() != null) {
+            NumberFormat formatter = DecimalFormat.getIntegerInstance();
+            formatter.setMinimumIntegerDigits(2);
+            number = number + "_" + formatter.format(legalDocument.getSequenceNumber());
+        } else {
+            number = number + "_?";
+        }
+        
+        if (legalDocument.getDateReceived() != null) {
+            number = number + "/" + BusinessEntityUtils.getMonthShortFormat(legalDocument.getDateReceived())
+                    + BusinessEntityUtils.getYearShortFormat(legalDocument.getDateReceived(), 2);
+        }
+        
+        return number;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -81,12 +239,9 @@ public class LegalDocument implements LegalDocumentInterface {
     private String description;
     @Column(length = 1024)
     private String notes;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateReceived;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date expectedDateOfCompletion;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfCompletion;
+    private LocalDateTime dateReceived;
+    private LocalDateTime expectedDateOfCompletion;
+    private LocalDateTime dateOfCompletion;
     private String url;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Classification classification;
@@ -117,6 +272,10 @@ public class LegalDocument implements LegalDocumentInterface {
     private Boolean visited;
 
     public LegalDocument() {
+    }
+    public LegalDocument(DocumentType documentType, Long numberOfDocuments) {
+        this.documentType = documentType;
+        this.numberOfDocuments = numberOfDocuments;
     }
 
     @Override
@@ -240,12 +399,13 @@ public class LegalDocument implements LegalDocumentInterface {
         this.goal = goal;
     }
 
+    // tk Ask GPT to fix.
     @Override
     public Integer getYearReceived() {
         Calendar c = Calendar.getInstance();
 
         if (dateReceived != null) {
-            c.setTime(dateReceived);
+            c.setTime(toDate(dateReceived));
             yearReceived = c.get(Calendar.YEAR);
         }
         return yearReceived;
@@ -270,10 +430,6 @@ public class LegalDocument implements LegalDocumentInterface {
         this.externalClient = externalClient;
     }
 
-    public LegalDocument(DocumentType documentType, Long numberOfDocuments) {
-        this.documentType = documentType;
-        this.numberOfDocuments = numberOfDocuments;
-    }
 
     @Override
     public Long getNumberOfDocuments() {
@@ -332,12 +488,13 @@ public class LegalDocument implements LegalDocumentInterface {
         this.requestingDepartment = requestingDepartment;
     }
 
+    // tk Ask GPT to fix.
     @Override
     public Integer getMonthReceived() {
         Calendar c = Calendar.getInstance();
 
         if (dateReceived != null) {
-            c.setTime(dateReceived);
+            c.setTime(toDate(dateReceived));
             monthReceived = c.get(Calendar.MONTH);
         }
         return monthReceived;
@@ -413,22 +570,22 @@ public class LegalDocument implements LegalDocumentInterface {
     }
 
     @Override
-    public Date getDateOfCompletion() {
+    public LocalDateTime getDateOfCompletion() {
         return dateOfCompletion;
     }
 
     @Override
-    public void setDateOfCompletion(Date dateOfCompletion) {
+    public void setDateOfCompletion(LocalDateTime dateOfCompletion) {
         this.dateOfCompletion = dateOfCompletion;
     }
 
     @Override
-    public Date getDateReceived() {
+    public LocalDateTime getDateReceived() {
         return dateReceived;
     }
 
     @Override
-    public void setDateReceived(Date dateReceived) {
+    public void setDateReceived(LocalDateTime dateReceived) {
         this.dateReceived = dateReceived;
     }
 
@@ -443,12 +600,12 @@ public class LegalDocument implements LegalDocumentInterface {
     }
 
     @Override
-    public Date getExpectedDateOfCompletion() {
+    public LocalDateTime getExpectedDateOfCompletion() {
         return expectedDateOfCompletion;
     }
 
     @Override
-    public void setExpectedDateOfCompletion(Date expectedDateOfCompletion) {
+    public void setExpectedDateOfCompletion(LocalDateTime expectedDateOfCompletion) {
         this.expectedDateOfCompletion = expectedDateOfCompletion;
     }
 
@@ -584,165 +741,6 @@ public class LegalDocument implements LegalDocumentInterface {
 
     }
 
-    public static List<LegalDocument> findGroupedLegalDocumentsByDateSearchField(
-            EntityManager em,
-            String dateSearchField,
-            String searchType,
-            Date startDate,
-            Date endDate) {
-
-        List<LegalDocument> foundDocuments;
-        String searchQuery = null;
-
-        switch (searchType) {
-            case "General":
-                searchQuery
-                        = "SELECT new jm.com.dpbennett.entity.LegalDocument(doc.type, COUNT(doc.type)) FROM LegalDocument doc"
-                        + " WHERE (doc." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND doc." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                        + " GROUP BY doc.type";
-                break;
-            case "My documents":
-                break;
-            case "My department's documents":
-                break;
-            default:
-                break;
-        }
-
-        try {
-            foundDocuments = em.createQuery(searchQuery, LegalDocument.class).getResultList();
-            if (foundDocuments == null) {
-                foundDocuments = new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundDocuments;
-    }
-
-    public static List<LegalDocument> findLegalDocumentsByDateSearchField(
-            EntityManager em,
-            DatePeriod dateSearchPeriod,
-            String searchType,
-            String searchText) {
-
-        List<LegalDocument> foundDocuments;
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        String searchQuery = null;
-        String searchTextAndClause;
-
-        switch (searchType) {
-            case "Legal Documents":
-                searchTextAndClause
-                        = " AND ("
-                        + " UPPER(doc.number) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(responsibleDepartment.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(responsibleOfficer.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(responsibleOfficer.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(submittedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(submittedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.notes) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.status) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.priorityLevel) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.url) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(classification.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.workPerformedOnDocument) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(doc.documentForm) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " )";
-
-                searchQuery
-                        = "SELECT doc FROM LegalDocument doc"
-                        + " JOIN doc.responsibleDepartment responsibleDepartment"
-                        + " JOIN doc.responsibleOfficer responsibleOfficer"
-                        + " JOIN doc.submittedBy submittedBy"
-                        + " JOIN doc.classification classification"
-                        + " WHERE (doc." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND doc." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
-                        + searchTextAndClause
-                        + " ORDER BY doc.dateReceived DESC";
-                break;
-            case "Legal document types":
-                searchTextAndClause
-                        = " AND ("
-                        + " UPPER(t.name) = '" + searchText.toUpperCase() + "'"
-                        + " )";
-                searchQuery
-                        = "SELECT doc FROM LegalDocument doc"
-                        + " JOIN doc.type t"
-                        + " WHERE (doc." + dateSearchPeriod.getDateField() + " >= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getStartDate(), "'", "YMD", "-")
-                        + " AND doc." + dateSearchPeriod.getDateField() + " <= " + BusinessEntityUtils.getDateString(dateSearchPeriod.getEndDate(), "'", "YMD", "-") + ")"
-                        + searchTextAndClause
-                        + " ORDER BY doc.dateReceived DESC";
-                break;
-            default:
-                break;
-        }
-
-        try {
-            foundDocuments = em.createQuery(searchQuery, LegalDocument.class).getResultList();
-            if (foundDocuments == null) {
-                foundDocuments = new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundDocuments;
-    }
-
-    public static LegalDocument findLegalDocumentById(EntityManager em, Long Id) {
-
-        return em.find(LegalDocument.class, Id);
-    }
-
-    public static List<LegalDocument> findAllLegalDocuments(EntityManager em) {
-
-        try {
-            return em.createNamedQuery("findAllLegalDocuments", LegalDocument.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static String getLegalDocumentNumber(LegalDocument legalDocument, String prefix) {
-        String number = prefix;
-
-        if (legalDocument.getResponsibleDepartment().getCode() != null) {
-            number = number + legalDocument.getResponsibleDepartment().getCode();
-        } else {
-            number = number + "?";
-        }
-
-        if (legalDocument.getDocumentType() != null) {
-            number = number + "_" + legalDocument.getDocumentType().getCode();
-        }
-
-        if (legalDocument.getDocumentForm() != null) {
-            number = number + "/" + legalDocument.getDocumentForm();
-        }
-
-        if (legalDocument.getSequenceNumber() != null) {
-            NumberFormat formatter = DecimalFormat.getIntegerInstance();
-            formatter.setMinimumIntegerDigits(2);
-            number = number + "_" + formatter.format(legalDocument.getSequenceNumber());
-        } else {
-            number = number + "_?";
-        }
-
-        if (legalDocument.getDateReceived() != null) {
-            number = number + "/" + BusinessEntityUtils.getMonthShortFormat(legalDocument.getDateReceived())
-                    + BusinessEntityUtils.getYearShortFormat(legalDocument.getDateReceived(), 2);
-        }
-
-        return number;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -823,22 +821,22 @@ public class LegalDocument implements LegalDocumentInterface {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

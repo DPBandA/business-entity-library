@@ -20,19 +20,20 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.rm;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -50,14 +51,54 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 })
 public class DocumentReport implements BusinessEntity {
 
+    private static final long serialVersionUID = 1L;
+    public static List<DocumentReport> findAllDocumentReports(EntityManager em) {
+        
+        try {
+            List<DocumentReport> reports = em.createNamedQuery("findAllDocumentReports", DocumentReport.class).getResultList();
+            return reports;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static DocumentReport findDocumentReportById(EntityManager em, Long Id) {
+        
+        try {
+            DocumentReport report = em.find(DocumentReport.class, Id);
+            return report;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static DocumentReport findDocumentReportByName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<DocumentReport> reports = em.createQuery("SELECT d FROM DocumentReport d "
+                    + "WHERE UPPER(d.name) "
+                    + "= '" + value.toUpperCase() + "'", DocumentReport.class).getResultList();
+            if (!reports.isEmpty()) {
+                return reports.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date startDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     @Column(length = 1024)
     private String sqlText;
     private Boolean showType = false;
@@ -277,11 +318,11 @@ public class DocumentReport implements BusinessEntity {
         this.showWorkPerformedOnDocument = showWorkPerformedOnDocument;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
@@ -303,11 +344,11 @@ public class DocumentReport implements BusinessEntity {
         this.sqlText = sqlText;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
@@ -333,48 +374,6 @@ public class DocumentReport implements BusinessEntity {
         return "jm.com.dpbennett.entity.DocumentReport[id=" + id + "]";
     }
 
-    public static List<DocumentReport> findAllDocumentReports(EntityManager em) {
-
-        try {
-            List<DocumentReport> reports = em.createNamedQuery("findAllDocumentReports", DocumentReport.class).getResultList();
-            return reports;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static DocumentReport findDocumentReportById(EntityManager em, Long Id) {
-
-        try {
-            DocumentReport report = em.find(DocumentReport.class, Id);
-            return report;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
-
-    public static DocumentReport findDocumentReportByName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<DocumentReport> reports = em.createQuery("SELECT d FROM DocumentReport d "
-                    + "WHERE UPPER(d.name) "
-                    + "= '" + value.toUpperCase() + "'", DocumentReport.class).getResultList();
-            if (!reports.isEmpty()) {
-                return reports.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -428,22 +427,22 @@ public class DocumentReport implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -526,4 +525,5 @@ public class DocumentReport implements BusinessEntity {
     public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+    private static final System.Logger LOG = System.getLogger(DocumentReport.class.getName());
 }

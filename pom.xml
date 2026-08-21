@@ -133,5 +133,11 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-util</artifactId>
+            <version>1.10</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 </project>

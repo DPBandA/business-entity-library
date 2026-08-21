@@ -19,21 +19,22 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.mt;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
@@ -51,6 +52,64 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Seal implements Product, BusinessEntity, Comparable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Seal.class.getName());
+    public static Seal findSealByNumber(List<Seal> seals, String number) {
+        for (Seal seal : seals) {
+            if (seal.getNumber().equals(number)) {
+                return seal;
+            }
+        }
+        
+        return null;
+    }
+    public static List<Seal> findSealsByNumber(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Seal> seals
+                    = em.createQuery("SELECT s FROM Seal s where UPPER(s.number) like '"
+                            + value.toUpperCase().trim() + "%' ORDER BY s.number", Seal.class).getResultList();
+            
+            return seals;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Seal findSealByNumber(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Seal> seals = em.createQuery("SELECT s FROM Seal s "
+                    + "WHERE s.number "
+                    + "= '" + value + "'", Seal.class).getResultList();
+            if (!seals.isEmpty()) {
+                return seals.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static Seal getDefaultSeal(EntityManager em, String number) {
+        Seal seal = Seal.findSealByNumber(em, number);
+        
+        if (seal == null) {
+            seal = new Seal();
+            
+            em.getTransaction().begin();
+            seal.setNumber(number);
+            BusinessEntityUtils.saveBusinessEntity(em, seal);
+            em.getTransaction().commit();
+        }
+        
+        return seal;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -63,16 +122,13 @@ public class Seal implements Product, BusinessEntity, Comparable {
     private String model;
     private Boolean valid;
     private Boolean used;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateIssued;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateExpired;
+    private LocalDateTime dateIssued;
+    private LocalDateTime dateExpired;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee assignee;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateAssigned;
+    private LocalDateTime dateAssigned;
     @Transient
     private Boolean isDirty;
 
@@ -152,19 +208,19 @@ public class Seal implements Product, BusinessEntity, Comparable {
         this.assignee = assignee;
     }
 
-    public Date getDateAssigned() {
+    public LocalDateTime getDateAssigned() {
         return dateAssigned;
     }
 
-    public void setDateAssigned(Date dateAssigned) {
+    public void setDateAssigned(LocalDateTime dateAssigned) {
         this.dateAssigned = dateAssigned;
     }
 
-    public Date getDateExpired() {
+    public LocalDateTime getDateExpired() {
         return dateExpired;
     }
 
-    public void setDateExpired(Date dateExpired) {
+    public void setDateExpired(LocalDateTime dateExpired) {
         this.dateExpired = dateExpired;
     }
 
@@ -207,11 +263,11 @@ public class Seal implements Product, BusinessEntity, Comparable {
         this.manufacturer = manufacturer;
     }
 
-    public Date getDateIssued() {
+    public LocalDateTime getDateIssued() {
         return dateIssued;
     }
 
-    public void setDateIssued(Date dateIssued) {
+    public void setDateIssued(LocalDateTime dateIssued) {
         this.dateIssued = dateIssued;
     }
 
@@ -257,19 +313,13 @@ public class Seal implements Product, BusinessEntity, Comparable {
 
     @Override
     public int compareTo(Object o) {
-        Long oTime, thisTime;
-        if (((Seal) o).getDateIssued() != null) {
-            oTime = ((Seal) o).getDateIssued().getTime();
+      if ((((Seal) o).id != null) && (this.id != null)) {
+            return Collator.getInstance().compare(
+                    Long.toString(((BusinessEntity) o).getId()),
+                    Long.toString(this.getId()));
         } else {
-            oTime = 0L;
+            return 0;
         }
-        if (this.getDateIssued() != null) {
-            thisTime = this.getDateIssued().getTime();
-        } else {
-            thisTime = 0L;
-        }
-
-        return Collator.getInstance().compare(thisTime.toString(), oTime.toString());
     }
 
     @Override
@@ -282,66 +332,6 @@ public class Seal implements Product, BusinessEntity, Comparable {
         this.name = name;
     }
 
-    public static Seal findSealByNumber(List<Seal> seals, String number) {
-        for (Seal seal : seals) {
-            if (seal.getNumber().equals(number)) {
-                return seal;
-            }
-        }
-
-        return null;
-    }
-
-    public static List<Seal> findSealsByNumber(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Seal> seals
-                    = em.createQuery("SELECT s FROM Seal s where UPPER(s.number) like '"
-                            + value.toUpperCase().trim() + "%' ORDER BY s.number", Seal.class).getResultList();
-
-            return seals;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Seal findSealByNumber(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Seal> seals = em.createQuery("SELECT s FROM Seal s "
-                    + "WHERE s.number "
-                    + "= '" + value + "'", Seal.class).getResultList();
-            if (!seals.isEmpty()) {
-                return seals.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static Seal getDefaultSeal(EntityManager em, String number) {
-        Seal seal = Seal.findSealByNumber(em, number);
-
-        if (seal == null) {
-            seal = new Seal();
-
-            em.getTransaction().begin();
-            seal.setNumber(number);
-            BusinessEntityUtils.saveBusinessEntity(em, seal);
-            em.getTransaction().commit();
-        }
-
-        return seal;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -392,22 +382,22 @@ public class Seal implements Product, BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

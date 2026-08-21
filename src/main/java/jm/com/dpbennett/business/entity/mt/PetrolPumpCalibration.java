@@ -19,22 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.mt;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -51,16 +52,15 @@ public class PetrolPumpCalibration implements Calibration, Comparable,
         Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(PetrolPumpCalibration.class.getName());
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     private String type;
     private Double hourlyRate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date calibrationDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date reCalibrationDate;
+    private LocalDateTime calibrationDate;
+    private LocalDateTime reCalibrationDate;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee calibrationDoneBy;
     @OneToMany(cascade = CascadeType.REFRESH)
@@ -142,12 +142,12 @@ public class PetrolPumpCalibration implements Calibration, Comparable,
     }
 
     @Override
-    public Date getCalibrationDate() {
+    public LocalDateTime getCalibrationDate() {
         return calibrationDate;
     }
 
     @Override
-    public void setCalibrationDate(Date calibrationDate) {
+    public void setCalibrationDate(LocalDateTime calibrationDate) {
         this.calibrationDate = calibrationDate;
     }
 
@@ -167,12 +167,12 @@ public class PetrolPumpCalibration implements Calibration, Comparable,
     }
 
     @Override
-    public Date getReCalibrationDate() {
+    public LocalDateTime getReCalibrationDate() {
         return reCalibrationDate;
     }
 
     @Override
-    public void setReCalibrationDate(Date reCalibrationDate) {
+    public void setReCalibrationDate(LocalDateTime reCalibrationDate) {
         this.reCalibrationDate = reCalibrationDate;
     }
 
@@ -217,22 +217,22 @@ public class PetrolPumpCalibration implements Calibration, Comparable,
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
