@@ -31,9 +31,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -43,6 +45,7 @@ import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.dm.DocumentStandard;
 import jm.com.dpbennett.business.entity.auth.Signature;
+import jm.com.dpbennett.business.entity.hrm.Business;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
@@ -145,13 +148,15 @@ public class ComplianceSurvey implements BusinessEntity {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee authEmployeeForDetentionRequestPOE;
     private String consignmentSizeDetained;
-    // Sample Request - Port of Entry
+    // Sample Request - POE/DM
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspectorForSampleRequestPOE;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Signature inspectorSigForSampleRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date inspectorSigDateForSampleRequestPOE;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Business testingLaboratory;
     // Release Request - Port of Entry
     @OneToOne(cascade = CascadeType.REFRESH)
     private Signature preparedBySigForReleaseRequestPOE;
@@ -202,6 +207,19 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public ComplianceSurvey() {
         this.surveyType = "";
+    }
+
+    public Business getTestingLaboratory() {
+
+        if (testingLaboratory == null) {
+            return new Business();
+        }
+
+        return testingLaboratory;
+    }
+
+    public void setTestingLaboratory(Business testingLaboratory) {
+        this.testingLaboratory = testingLaboratory;
     }
 
     public Boolean getCanExportDetentionRequestPOEForm() {
@@ -1475,6 +1493,10 @@ public class ComplianceSurvey implements BusinessEntity {
             if (businessOffice != null) {
                 businessOffice.save(em);
             }
+            
+            if (testingLaboratory != null) {
+                testingLaboratory.save(em);
+            }
 
             if (inspector != null) {
                 inspector.save(em);
@@ -1600,7 +1622,7 @@ public class ComplianceSurvey implements BusinessEntity {
                             Message.SEVERITY_ERROR_NAME);
                 }
             }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             setIsDirty(false);
