@@ -95,6 +95,15 @@ public class Certification implements CertificationInterface {
         this.applicant = certification.applicant;
     }
 
+    public String getSignButtonLabel() {
+
+        if (dateSigned == null) {
+            return "Sign";
+        } else {
+            return "Unsign";
+        }
+    }
+
     public Date getDateSigned() {
         return dateSigned;
     }
