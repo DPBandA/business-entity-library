@@ -133,6 +133,7 @@ public class ComplianceSurvey implements BusinessEntity {
     private Boolean samplesToBeCollected;
     private Boolean requestForDetentionIssuedForPortOfEntry;
     private Boolean requestForSampleIssuedForPortOfEntry;
+    private Boolean requestForSampleIssuedForDomesticMarket;
     private Boolean requestForReleaseIssuedForPortOfEntry;
     private Boolean noticeOfDetentionIssuedForDomesticMarket;
     private Boolean noticeOfReleaseFromDetentionIssuedForDomesticMarket;
@@ -191,6 +192,14 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public ComplianceSurvey() {
         this.surveyType = "";
+    }
+
+    public Boolean getRequestForSampleIssuedForDomesticMarket() {
+        return requestForSampleIssuedForDomesticMarket;
+    }
+
+    public void setRequestForSampleIssuedForDomesticMarket(Boolean requestForSampleIssuedForDomesticMarket) {
+        this.requestForSampleIssuedForDomesticMarket = requestForSampleIssuedForDomesticMarket;
     }
 
     public String getAuthorizeNoticeOfDetentionDMButtonLabel() {
