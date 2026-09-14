@@ -160,6 +160,18 @@ public class ComplianceSurvey implements BusinessEntity {
     private Employee approvedByEmployeeForReleaseRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date approvedBySigDateForReleaseRequestPOE;
+    // Notice of Discontinuance  - Domestic Market
+    private Boolean noticeOfDiscontinuanceIssuedForDomesticMarket;
+    private Boolean temporarily;
+    private Boolean permanently;
+    private Boolean importer;
+    private Boolean manufacturer;
+    private Boolean processor;
+    private Boolean administrativeClosure;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateNoticeOfDiscontinuanceSigned;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateOfDiscontinuance;
     // Notice of Detention - Domestic Market
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date authSigDateForNoticeOfDentionDM;
@@ -192,6 +204,78 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public ComplianceSurvey() {
         this.surveyType = "";
+    }
+
+    public Date getDateOfDiscontinuance() {
+        return dateOfDiscontinuance;
+    }
+
+    public void setDateOfDiscontinuance(Date dateOfDiscontinuance) {
+        this.dateOfDiscontinuance = dateOfDiscontinuance;
+    }
+
+    public Boolean getNoticeOfDiscontinuanceIssuedForDomesticMarket() {
+        return noticeOfDiscontinuanceIssuedForDomesticMarket;
+    }
+
+    public void setNoticeOfDiscontinuanceIssuedForDomesticMarket(Boolean noticeOfDiscontinuanceIssuedForDomesticMarket) {
+        this.noticeOfDiscontinuanceIssuedForDomesticMarket = noticeOfDiscontinuanceIssuedForDomesticMarket;
+    }
+
+    public Date getDateNoticeOfDiscontinuanceSigned() {
+        return dateNoticeOfDiscontinuanceSigned;
+    }
+
+    public void setDateNoticeOfDiscontinuanceSigned(Date dateNoticeOfDiscontinuanceSigned) {
+        this.dateNoticeOfDiscontinuanceSigned = dateNoticeOfDiscontinuanceSigned;
+    }
+
+    public Boolean getTemporarily() {
+        return temporarily;
+    }
+
+    public void setTemporarily(Boolean temporarily) {
+        this.temporarily = temporarily;
+    }
+
+    public Boolean getPermanently() {
+        return permanently;
+    }
+
+    public void setPermanently(Boolean permanently) {
+        this.permanently = permanently;
+    }
+
+    public Boolean getImporter() {
+        return importer;
+    }
+
+    public void setImporter(Boolean importer) {
+        this.importer = importer;
+    }
+
+    public Boolean getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(Boolean manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public Boolean getProcessor() {
+        return processor;
+    }
+
+    public void setProcessor(Boolean processor) {
+        this.processor = processor;
+    }
+
+    public Boolean getAdministrativeClosure() {
+        return administrativeClosure;
+    }
+
+    public void setAdministrativeClosure(Boolean administrativeClosure) {
+        this.administrativeClosure = administrativeClosure;
     }
 
     public Boolean getRequestForSampleIssuedForDomesticMarket() {
