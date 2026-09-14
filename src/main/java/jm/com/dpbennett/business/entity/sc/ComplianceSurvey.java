@@ -148,8 +148,12 @@ public class ComplianceSurvey implements BusinessEntity {
     // Sample Request - POE/DM
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspectorForSampleRequestPOE;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee inspectorForSampleRequestDM;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date inspectorSigDateForSampleRequestPOE;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date inspectorSigDateForSampleRequestDM;
     @ManyToOne(fetch = FetchType.LAZY)
     private Business testingLaboratory;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -172,6 +176,8 @@ public class ComplianceSurvey implements BusinessEntity {
     private Date dateNoticeOfDiscontinuanceSigned;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfDiscontinuance;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee inspectorForNoticeOfDiscontinuanceDM;
     // Notice of Detention - Domestic Market
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date authSigDateForNoticeOfDentionDM;
@@ -204,6 +210,40 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public ComplianceSurvey() {
         this.surveyType = "";
+    }
+
+    public Employee getInspectorForNoticeOfDiscontinuanceDM() {
+
+        if (inspectorForNoticeOfDiscontinuanceDM == null) {
+            return new Employee();
+        }
+
+        return inspectorForNoticeOfDiscontinuanceDM;
+    }
+
+    public void setInspectorForNoticeOfDiscontinuanceDM(Employee inspectorForNoticeOfDiscontinuanceDM) {
+        this.inspectorForNoticeOfDiscontinuanceDM = inspectorForNoticeOfDiscontinuanceDM;
+    }
+
+    public Employee getInspectorForSampleRequestDM() {
+
+        if (inspectorForSampleRequestDM == null) {
+            return new Employee();
+        }
+
+        return inspectorForSampleRequestDM;
+    }
+
+    public void setInspectorForSampleRequestDM(Employee inspectorForSampleRequestDM) {
+        this.inspectorForSampleRequestDM = inspectorForSampleRequestDM;
+    }
+
+    public Date getInspectorSigDateForSampleRequestDM() {
+        return inspectorSigDateForSampleRequestDM;
+    }
+
+    public void setInspectorSigDateForSampleRequestDM(Date inspectorSigDateForSampleRequestDM) {
+        this.inspectorSigDateForSampleRequestDM = inspectorSigDateForSampleRequestDM;
     }
 
     public Date getDateOfDiscontinuance() {
@@ -312,6 +352,22 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public String getSignForSampleRequestPOEButtonLabel() {
         if (inspectorSigDateForSampleRequestPOE == null) {
+            return "Sign";
+        } else {
+            return "Unsign";
+        }
+    }
+    
+    public String getSignForNoticeOfDiscontinuanceDMButtonLabel() {
+        if (dateNoticeOfDiscontinuanceSigned == null) {
+            return "Sign";
+        } else {
+            return "Unsign";
+        }
+    }
+
+    public String getSignForSampleRequestDMButtonLabel() {
+        if (inspectorSigDateForSampleRequestDM == null) {
             return "Sign";
         } else {
             return "Unsign";
