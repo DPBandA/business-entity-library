@@ -263,6 +263,11 @@ public class ComplianceSurvey implements BusinessEntity {
     }
 
     public Date getDateNoticeOfDiscontinuanceSigned() {
+
+        if (dateNoticeOfDiscontinuanceSigned == null) {
+            dateNoticeOfDiscontinuanceSigned = new Date();
+        }
+
         return dateNoticeOfDiscontinuanceSigned;
     }
 
@@ -271,6 +276,10 @@ public class ComplianceSurvey implements BusinessEntity {
     }
 
     public Boolean getTemporarily() {
+        if (temporarily == null) {
+            temporarily = false;
+        }
+
         return temporarily;
     }
 
@@ -279,6 +288,11 @@ public class ComplianceSurvey implements BusinessEntity {
     }
 
     public Boolean getPermanently() {
+
+        if (permanently == null) {
+            permanently = false;
+        }
+
         return permanently;
     }
 
@@ -287,6 +301,11 @@ public class ComplianceSurvey implements BusinessEntity {
     }
 
     public Boolean getImporter() {
+
+        if (importer == null) {
+            importer = false;
+        }
+
         return importer;
     }
 
@@ -295,6 +314,11 @@ public class ComplianceSurvey implements BusinessEntity {
     }
 
     public Boolean getManufacturer() {
+
+        if (manufacturer == null) {
+            manufacturer = false;
+        }
+
         return manufacturer;
     }
 
@@ -303,6 +327,11 @@ public class ComplianceSurvey implements BusinessEntity {
     }
 
     public Boolean getProcessor() {
+
+        if (processor == null) {
+            processor = false;
+        }
+
         return processor;
     }
 
@@ -311,6 +340,11 @@ public class ComplianceSurvey implements BusinessEntity {
     }
 
     public Boolean getAdministrativeClosure() {
+
+        if (administrativeClosure == null) {
+            administrativeClosure = false;
+        }
+
         return administrativeClosure;
     }
 
@@ -357,7 +391,7 @@ public class ComplianceSurvey implements BusinessEntity {
             return "Unsign";
         }
     }
-    
+
     public String getSignForNoticeOfDiscontinuanceDMButtonLabel() {
         if (dateNoticeOfDiscontinuanceSigned == null) {
             return "Sign";
