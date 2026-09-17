@@ -1036,7 +1036,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getLocationOfDetainedProductDomesticMarket() {
         if (locationOfDetainedProductDomesticMarket == null) {
-            return new Address();
+            locationOfDetainedProductDomesticMarket = new Address();
         }
 
         return locationOfDetainedProductDomesticMarket;
@@ -1048,7 +1048,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getSpecifiedReleaseLocationDomesticMarket() {
         if (specifiedReleaseLocationDomesticMarket == null) {
-            return new Address();
+            specifiedReleaseLocationDomesticMarket = new Address();
         }
 
         return specifiedReleaseLocationDomesticMarket;
@@ -1709,7 +1709,7 @@ public class ComplianceSurvey implements BusinessEntity {
             if (editedBy != null) {
                 editedBy.save(em);
             }
-
+  
             for (DocumentStandard documentStandard : getStandardsBreached()) {
                 documentStandard.save(em);
             }
