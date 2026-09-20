@@ -19,25 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.mt;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -54,6 +52,50 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(PetrolPumpNozzleCalibration.class.getName());
+    public static PetrolPumpNozzleCalibration findLastPetrolPumpNozzleCalibrationByJobNumber(EntityManager em, String jobNumber) {
+        List<PetrolPumpNozzleCalibration> foundPetrolPumpNozzleCalibrations;
+        
+        String searchQuery
+                = "SELECT PetrolPumpNozzleCalibration FROM PetrolPumpNozzleCalibration petrolPumpNozzleCalibration"
+                + " JOIN petrolPumpNozzleCalibration.job job"
+                + " WHERE job.jobNumber = '" + jobNumber + "'"
+                + " ORDER BY petrolPumpNozzleCalibration.id DESC";
+        
+        try {
+            foundPetrolPumpNozzleCalibrations = em.createQuery(searchQuery, PetrolPumpNozzleCalibration.class).getResultList();
+            if (foundPetrolPumpNozzleCalibrations != null) {
+                if (!foundPetrolPumpNozzleCalibrations.isEmpty()) {
+                    return foundPetrolPumpNozzleCalibrations.get(0);
+                }
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return null;
+    }
+    public static List<PetrolPumpNozzleCalibration> findPetrolPumpNozzleCalibrationsByJobNumber(EntityManager em, String jobNumber) {
+        List<PetrolPumpNozzleCalibration> foundPetrolPumpNozzleCalibrations;
+        
+        String searchQuery
+                = "SELECT PetrolPumpNozzleCalibration FROM PetrolPumpNozzleCalibration petrolPumpNozzleCalibration"
+                + " JOIN petrolPumpNozzleCalibration.job job"
+                + " WHERE job.jobNumber = '" + jobNumber + "'"
+                + " ORDER BY petrolPumpNozzleCalibration.id DESC";
+        
+        try {
+            foundPetrolPumpNozzleCalibrations = em.createQuery(searchQuery, PetrolPumpNozzleCalibration.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return foundPetrolPumpNozzleCalibrations;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -70,15 +112,12 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     private Double petrolCost = 0.0;
     @OneToMany(cascade = CascadeType.ALL)
     private List<PetrolPumpNozzleCalibrationPoint> calibrationPoints;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date calibrationDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date reCalibrationDate;
+    private LocalDateTime calibrationDate;
+    private LocalDateTime reCalibrationDate;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee calibrationDoneBy;
     private String results;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateAndTimeRecorded;
+    private LocalDateTime dateAndTimeRecorded;
 
     public PetrolPumpNozzleCalibration() {
         calibrationPoints = new ArrayList<>();
@@ -107,6 +146,29 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
                     testMeasures.get(1)));
         }
     }
+    public PetrolPumpNozzleCalibration(PetrolPumpNozzleCalibration original) {
+        this.calibrationPoints = new ArrayList<>();
+        this.name = original.name;
+        this.type = original.type;
+        this.hourlyRate = original.hourlyRate;
+        this.petrolPriceRate = original.petrolPriceRate;
+        this.totalizerStart = original.totalizerStart;
+        this.totalizerEnd = original.totalizerEnd;
+        this.productDispensed = original.productDispensed;
+        this.setPetrolUsage = original.setPetrolUsage;
+        this.actualPetrolUsage = original.actualPetrolUsage;
+        this.petrolCost = original.petrolCost;
+        
+        List<PetrolPumpNozzleCalibrationPoint> calPoints = original.getCalibrationPoints();
+        for (int i = 0; i < original.calibrationPoints.size(); i++) {
+            this.calibrationPoints.add(new PetrolPumpNozzleCalibrationPoint(calPoints.get(i)));
+        }
+        
+        this.calibrationDate = original.calibrationDate;
+        this.reCalibrationDate = original.reCalibrationDate;
+        this.results = original.results;
+        this.dateAndTimeRecorded = original.dateAndTimeRecorded;
+    }
 
     public Long getOwnerId() {
         return ownerId;
@@ -130,35 +192,12 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         }
     }
 
-    public PetrolPumpNozzleCalibration(PetrolPumpNozzleCalibration original) {
-        this.calibrationPoints = new ArrayList<>();
-        this.name = original.name;
-        this.type = original.type;
-        this.hourlyRate = original.hourlyRate;
-        this.petrolPriceRate = original.petrolPriceRate;
-        this.totalizerStart = original.totalizerStart;
-        this.totalizerEnd = original.totalizerEnd;
-        this.productDispensed = original.productDispensed;
-        this.setPetrolUsage = original.setPetrolUsage;
-        this.actualPetrolUsage = original.actualPetrolUsage;
-        this.petrolCost = original.petrolCost;
 
-        List<PetrolPumpNozzleCalibrationPoint> calPoints = original.getCalibrationPoints();
-        for (int i = 0; i < original.calibrationPoints.size(); i++) {
-            this.calibrationPoints.add(new PetrolPumpNozzleCalibrationPoint(calPoints.get(i)));
-        }
-
-        this.calibrationDate = original.calibrationDate;
-        this.reCalibrationDate = original.reCalibrationDate;
-        this.results = original.results;
-        this.dateAndTimeRecorded = original.dateAndTimeRecorded;
-    }
-
-    public Date getDateAndTimeRecorded() {
+    public LocalDateTime getDateAndTimeRecorded() {
         return dateAndTimeRecorded;
     }
 
-    public void setDateAndTimeRecorded(Date dateAndTimeRecorded) {
+    public void setDateAndTimeRecorded(LocalDateTime dateAndTimeRecorded) {
         this.dateAndTimeRecorded = dateAndTimeRecorded;
     }
 
@@ -187,22 +226,22 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -327,19 +366,6 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    class CalibrationPointErrorComparator implements Comparator<PetrolPumpNozzleCalibrationPoint> {
-
-        @Override
-        public int compare(PetrolPumpNozzleCalibrationPoint o1, PetrolPumpNozzleCalibrationPoint o2) {
-            if (Math.abs(o1.getError()) < Math.abs(o2.getError())) {
-                return -1;
-            } else if (Math.abs(o1.getError()) == Math.abs(o2.getError())) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
-    }
 
     public String getLowestOfFirst3Errors() {
         return getErrorFromSortedErrors(0, 0, 2);
@@ -665,12 +691,12 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     }
 
     @Override
-    public Date getCalibrationDate() {
+    public LocalDateTime getCalibrationDate() {
         return calibrationDate;
     }
 
     @Override
-    public void setCalibrationDate(Date calibrationDate) {
+    public void setCalibrationDate(LocalDateTime calibrationDate) {
         this.calibrationDate = calibrationDate;
     }
 
@@ -690,12 +716,12 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
     }
 
     @Override
-    public Date getReCalibrationDate() {
+    public LocalDateTime getReCalibrationDate() {
         return reCalibrationDate;
     }
 
     @Override
-    public void setReCalibrationDate(Date reCalibrationDate) {
+    public void setReCalibrationDate(LocalDateTime reCalibrationDate) {
         this.reCalibrationDate = reCalibrationDate;
     }
 
@@ -704,48 +730,17 @@ public class PetrolPumpNozzleCalibration implements Calibration, Comparable,
         return Collator.getInstance().compare(o.toString(), this.toString());
     }
 
-    public static PetrolPumpNozzleCalibration findLastPetrolPumpNozzleCalibrationByJobNumber(EntityManager em, String jobNumber) {
-        List<PetrolPumpNozzleCalibration> foundPetrolPumpNozzleCalibrations;
-
-        String searchQuery
-                = "SELECT PetrolPumpNozzleCalibration FROM PetrolPumpNozzleCalibration petrolPumpNozzleCalibration"
-                + " JOIN petrolPumpNozzleCalibration.job job"
-                + " WHERE job.jobNumber = '" + jobNumber + "'"
-                + " ORDER BY petrolPumpNozzleCalibration.id DESC";
-
-        try {
-            foundPetrolPumpNozzleCalibrations = em.createQuery(searchQuery, PetrolPumpNozzleCalibration.class).getResultList();
-            if (foundPetrolPumpNozzleCalibrations != null) {
-                if (!foundPetrolPumpNozzleCalibrations.isEmpty()) {
-                    return foundPetrolPumpNozzleCalibrations.get(0);
-                }
+    class CalibrationPointErrorComparator implements Comparator<PetrolPumpNozzleCalibrationPoint> {
+        
+        @Override
+        public int compare(PetrolPumpNozzleCalibrationPoint o1, PetrolPumpNozzleCalibrationPoint o2) {
+            if (Math.abs(o1.getError()) < Math.abs(o2.getError())) {
+                return -1;
+            } else if (Math.abs(o1.getError()) == Math.abs(o2.getError())) {
+                return 0;
             } else {
-                return null;
+                return 1;
             }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
         }
-
-        return null;
-    }
-
-    public static List<PetrolPumpNozzleCalibration> findPetrolPumpNozzleCalibrationsByJobNumber(EntityManager em, String jobNumber) {
-        List<PetrolPumpNozzleCalibration> foundPetrolPumpNozzleCalibrations;
-
-        String searchQuery
-                = "SELECT PetrolPumpNozzleCalibration FROM PetrolPumpNozzleCalibration petrolPumpNozzleCalibration"
-                + " JOIN petrolPumpNozzleCalibration.job job"
-                + " WHERE job.jobNumber = '" + jobNumber + "'"
-                + " ORDER BY petrolPumpNozzleCalibration.id DESC";
-
-        try {
-            foundPetrolPumpNozzleCalibrations = em.createQuery(searchQuery, PetrolPumpNozzleCalibration.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundPetrolPumpNozzleCalibrations;
     }
 }

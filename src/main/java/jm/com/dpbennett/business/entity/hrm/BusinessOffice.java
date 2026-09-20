@@ -20,21 +20,21 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -52,6 +52,127 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllActiveBusinessOffices", query = "SELECT b FROM BusinessOffice b WHERE b.active = 1 ORDER BY b.name")
 })
 public class BusinessOffice implements Serializable, BusinessEntity {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(BusinessOffice.class.getName());
+    public static List<BusinessOffice> findBusinessOfficesByName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<BusinessOffice> businessOffices
+                    = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY b.name", BusinessOffice.class).getResultList();
+            return businessOffices;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<BusinessOffice> findActiveBusinessOfficesByName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<BusinessOffice> businessOffices
+                    = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '%"
+                            + value.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", BusinessOffice.class).getResultList();
+            return businessOffices;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<BusinessOffice> findAllBusinessOffices(EntityManager em) {
+        
+        try {
+            List<BusinessOffice> offices = em.createNamedQuery("findAllBusinessOffices", BusinessOffice.class).getResultList();
+            
+            return offices;
+        } catch (Exception e) {
+            
+            return null;
+        }
+        
+    }
+    public static List<BusinessOffice> findAllActiveBusinessOffices(EntityManager em) {
+        
+        try {
+            List<BusinessOffice> offices = em.createNamedQuery("findAllActiveBusinessOffices",
+                    BusinessOffice.class).getResultList();
+            
+            return offices;
+        } catch (Exception e) {
+            
+            return null;
+        }
+        
+    }
+    public static List<String> findAllBusinessOfficeNames(EntityManager em) {
+        
+        ArrayList<String> names = new ArrayList<>();
+        
+        try {
+            List<BusinessOffice> offices = em.createNamedQuery("findAllBusinessOffices", BusinessOffice.class).getResultList();
+            for (BusinessOffice office : offices) {
+                names.add(office.getName());
+            }
+            
+            return names;
+        } catch (Exception e) {
+            
+            return null;
+        }
+        
+    }
+    public static BusinessOffice findBusinessOfficeByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<BusinessOffice> offices = em.createQuery("SELECT b FROM BusinessOffice b "
+                    + "WHERE UPPER(b.name) "
+                    + "= '" + value.toUpperCase() + "'", BusinessOffice.class).getResultList();
+            
+            if (!offices.isEmpty()) {
+                return offices.get(0);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return null;
+    }
+    public static BusinessOffice findBusinessOfficeById(EntityManager em, Long id) {
+        
+        try {
+            BusinessOffice office = em.find(BusinessOffice.class, id);
+            
+            return office;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static BusinessOffice findDefaultBusinessOffice(EntityManager em, String name) {
+        BusinessOffice office = BusinessOffice.findBusinessOfficeByName(em, name);
+        
+        if (office == null) {
+            em.getTransaction().begin();
+            office = new BusinessOffice();
+            office.setName(name);
+            BusinessEntityUtils.saveBusinessEntity(em, office);
+            em.getTransaction().commit();
+        }
+        
+        return office;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -216,131 +337,6 @@ public class BusinessOffice implements Serializable, BusinessEntity {
         }
     }
 
-    public static List<BusinessOffice> findBusinessOfficesByName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<BusinessOffice> businessOffices
-                    = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY b.name", BusinessOffice.class).getResultList();
-            return businessOffices;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<BusinessOffice> findActiveBusinessOfficesByName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<BusinessOffice> businessOffices
-                    = em.createQuery("SELECT b FROM BusinessOffice b where UPPER(b.name) like '%"
-                            + value.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", BusinessOffice.class).getResultList();
-            return businessOffices;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<BusinessOffice> findAllBusinessOffices(EntityManager em) {
-
-        try {
-            List<BusinessOffice> offices = em.createNamedQuery("findAllBusinessOffices", BusinessOffice.class).getResultList();
-
-            return offices;
-        } catch (Exception e) {
-
-            return null;
-        }
-
-    }
-
-    public static List<BusinessOffice> findAllActiveBusinessOffices(EntityManager em) {
-
-        try {
-            List<BusinessOffice> offices = em.createNamedQuery("findAllActiveBusinessOffices",
-                    BusinessOffice.class).getResultList();
-
-            return offices;
-        } catch (Exception e) {
-
-            return null;
-        }
-
-    }
-
-    public static List<String> findAllBusinessOfficeNames(EntityManager em) {
-
-        ArrayList<String> names = new ArrayList<>();
-
-        try {
-            List<BusinessOffice> offices = em.createNamedQuery("findAllBusinessOffices", BusinessOffice.class).getResultList();
-            for (BusinessOffice office : offices) {
-                names.add(office.getName());
-            }
-
-            return names;
-        } catch (Exception e) {
-
-            return null;
-        }
-
-    }
-
-    public static BusinessOffice findBusinessOfficeByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<BusinessOffice> offices = em.createQuery("SELECT b FROM BusinessOffice b "
-                    + "WHERE UPPER(b.name) "
-                    + "= '" + value.toUpperCase() + "'", BusinessOffice.class).getResultList();
-
-            if (!offices.isEmpty()) {
-                return offices.get(0);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return null;
-    }
-
-    public static BusinessOffice findBusinessOfficeById(EntityManager em, Long id) {
-
-        try {
-            BusinessOffice office = em.find(BusinessOffice.class, id);
-
-            return office;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static BusinessOffice findDefaultBusinessOffice(EntityManager em, String name) {
-        BusinessOffice office = BusinessOffice.findBusinessOfficeByName(em, name);
-
-        if (office == null) {
-            em.getTransaction().begin();
-            office = new BusinessOffice();
-            office.setName(name);
-            BusinessEntityUtils.saveBusinessEntity(em, office);
-            em.getTransaction().commit();
-        }
-
-        return office;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -400,22 +396,22 @@ public class BusinessOffice implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -19,24 +19,24 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fs;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Laboratory;
@@ -56,6 +56,35 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class FoodSample implements Product, Sample, Serializable, Comparable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(FoodSample.class.getName());
+    public static FoodSample findByName(EntityManager em, String value,
+            Boolean ignoreCase) {
+        
+        List<FoodSample> foodSamples;
+        
+        try {
+            
+            if (ignoreCase) {
+                foodSamples = em.createQuery("SELECT s FROM FoodSample s "
+                        + "WHERE UPPER(s.name) "
+                        + "= '" + value.toUpperCase() + "'",
+                        FoodSample.class).getResultList();
+            } else {
+                foodSamples = em.createQuery("SELECT s FROM FoodSample s "
+                        + "WHERE s.name "
+                        + "= '" + value + "'",
+                        FoodSample.class).getResultList();
+            }
+            
+            if (!foodSamples.isEmpty()) {
+                return foodSamples.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -69,11 +98,8 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     private String unitOfMeasure;
     private String description;
     private String type;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateReceived;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateSampled;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateReturned;
     private Integer methodOfDisposal;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -101,34 +127,6 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
         this.id = id;
     }
 
-    public static FoodSample findByName(EntityManager em, String value,
-            Boolean ignoreCase) {
-
-        List<FoodSample> foodSamples;
-
-        try {
-
-            if (ignoreCase) {
-                foodSamples = em.createQuery("SELECT s FROM FoodSample s "
-                        + "WHERE UPPER(s.name) "
-                        + "= '" + value.toUpperCase() + "'",
-                        FoodSample.class).getResultList();
-            } else {
-                foodSamples = em.createQuery("SELECT s FROM FoodSample s "
-                        + "WHERE s.name "
-                        + "= '" + value + "'",
-                        FoodSample.class).getResultList();
-            }
-
-            if (!foodSamples.isEmpty()) {
-                return foodSamples.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public Boolean getIsDirty() {
@@ -455,22 +453,22 @@ public class FoodSample implements Product, Sample, Serializable, Comparable, Bu
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -20,18 +20,18 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.dm;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -62,6 +62,78 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(DocumentSequenceNumber.class.getName());
+    public static List<DocumentSequenceNumber> findAllDocumentSequenceNumbers(EntityManager em) {
+        
+        try {
+            List<DocumentSequenceNumber> documentSequenceNumbers = em.createNamedQuery("findAllDocumentSequenceNumbers", DocumentSequenceNumber.class).getResultList();
+            
+            return documentSequenceNumbers;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Long findLastDocumentSequenceNumber(EntityManager em, Integer year, Integer month, Long typeId) {
+        Long last;
+        
+        try {
+            last = em.createNamedQuery("getLastDocumentSequenceNumber",
+                    Long.class).setParameter("yearReceived", year).
+                    setParameter("monthReceived", month).
+                    setParameter("documentTypeId", typeId).getSingleResult();
+        } catch (Exception e) {
+            System.out.println(e);
+            last = null;
+        }
+        
+        return last;
+    }
+    public static Long findDocumentSequenceNumber(EntityManager em,
+            Long sequentialNumber,
+            Integer year,
+            Integer month,
+            Long typeId) {
+        
+        Long last;
+        
+        try {
+            last = em.createNamedQuery("getDocumentSequenceNumber",
+                    Long.class).
+                    setParameter("yearReceived", year).
+                    setParameter("monthReceived", month).
+                    setParameter("documentTypeId", typeId).
+                    setParameter("sequentialNumber", sequentialNumber).getSingleResult();
+        } catch (Exception e) {
+            System.out.println(e);
+            last = null;
+        }
+        
+        return last;
+    }
+    public static Long findNextDocumentSequenceNumber(EntityManager em, Integer year, Integer month, Long typeId) {
+        Long last;
+        
+        DocumentSequenceNumber documentSequenceNumber = new DocumentSequenceNumber();
+        
+        last = DocumentSequenceNumber.findLastDocumentSequenceNumber(em, year, month, typeId);
+        
+        if (last == null) {
+            documentSequenceNumber.setYearReceived(year);
+            documentSequenceNumber.setMonthReceived(month);
+            documentSequenceNumber.setDocumentTypeId(typeId);
+            documentSequenceNumber.setSequentialNumber(0L);
+            em.persist(documentSequenceNumber);
+        } else {
+            documentSequenceNumber.setYearReceived(year);
+            documentSequenceNumber.setMonthReceived(month);
+            documentSequenceNumber.setDocumentTypeId(typeId);
+            documentSequenceNumber.setSequentialNumber(last + 1);
+            em.persist(documentSequenceNumber);
+        }
+        
+        return documentSequenceNumber.getSequentialNumber();
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -160,80 +232,6 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
 
     }
 
-    public static List<DocumentSequenceNumber> findAllDocumentSequenceNumbers(EntityManager em) {
-
-        try {
-            List<DocumentSequenceNumber> documentSequenceNumbers = em.createNamedQuery("findAllDocumentSequenceNumbers", DocumentSequenceNumber.class).getResultList();
-
-            return documentSequenceNumbers;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Long findLastDocumentSequenceNumber(EntityManager em, Integer year, Integer month, Long typeId) {
-        Long last;
-
-        try {
-            last = em.createNamedQuery("getLastDocumentSequenceNumber",
-                    Long.class).setParameter("yearReceived", year).
-                    setParameter("monthReceived", month).
-                    setParameter("documentTypeId", typeId).getSingleResult();
-        } catch (Exception e) {
-            System.out.println(e);
-            last = null;
-        }
-
-        return last;
-    }
-
-    public static Long findDocumentSequenceNumber(EntityManager em,
-            Long sequentialNumber,
-            Integer year,
-            Integer month,
-            Long typeId) {
-
-        Long last;
-
-        try {
-            last = em.createNamedQuery("getDocumentSequenceNumber",
-                    Long.class).
-                    setParameter("yearReceived", year).
-                    setParameter("monthReceived", month).
-                    setParameter("documentTypeId", typeId).
-                    setParameter("sequentialNumber", sequentialNumber).getSingleResult();
-        } catch (Exception e) {
-            System.out.println(e);
-            last = null;
-        }
-
-        return last;
-    }
-
-    public static Long findNextDocumentSequenceNumber(EntityManager em, Integer year, Integer month, Long typeId) {
-        Long last;
-
-        DocumentSequenceNumber documentSequenceNumber = new DocumentSequenceNumber();
-
-        last = DocumentSequenceNumber.findLastDocumentSequenceNumber(em, year, month, typeId);
-
-        if (last == null) {
-            documentSequenceNumber.setYearReceived(year);
-            documentSequenceNumber.setMonthReceived(month);
-            documentSequenceNumber.setDocumentTypeId(typeId);
-            documentSequenceNumber.setSequentialNumber(0L);
-            em.persist(documentSequenceNumber);
-        } else {
-            documentSequenceNumber.setYearReceived(year);
-            documentSequenceNumber.setMonthReceived(month);
-            documentSequenceNumber.setDocumentTypeId(typeId);
-            documentSequenceNumber.setSequentialNumber(last + 1);
-            em.persist(documentSequenceNumber);
-        }
-
-        return documentSequenceNumber.getSequentialNumber();
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -266,12 +264,12 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -311,12 +309,12 @@ public class DocumentSequenceNumber implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

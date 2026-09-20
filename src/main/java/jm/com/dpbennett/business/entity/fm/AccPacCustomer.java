@@ -20,17 +20,18 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -46,6 +47,65 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class AccPacCustomer implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(AccPacCustomer.class.getName());
+    
+    public static List<AccPacCustomer> findAllByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<AccPacCustomer> clients;
+            clients = em.createQuery(
+                    "SELECT a FROM AccPacCustomer a"
+                            + " WHERE UPPER(a.customerName)"
+                            + " LIKE '" + value.toUpperCase().trim()
+                            + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<AccPacCustomer> findAllByNameAndId(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<AccPacCustomer> clients;
+            clients = em.createQuery(
+                    "SELECT a FROM AccPacCustomer a"
+                            + " WHERE UPPER(a.customerName) LIKE '" + value.toUpperCase().trim() + "%'"
+                                    + " OR UPPER(a.idCust) LIKE '" + value.toUpperCase().trim() + "%'"
+                                            + " ORDER BY a.customerName", AccPacCustomer.class).getResultList();
+            return clients;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static AccPacCustomer findByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<AccPacCustomer> customers = em.createQuery(
+                    "SELECT a FROM AccPacCustomer a"
+                            + " WHERE UPPER(a.customerName)"
+                            + " LIKE '" + value.toUpperCase().trim()
+                            + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
+            
+            if (!customers.isEmpty()) {
+                return customers.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @Column(length = 12, name = "IDCUST")
     private String idCust;
@@ -238,65 +298,6 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
         return getCustomerName();
     }
 
-    public static List<AccPacCustomer> findAllByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<AccPacCustomer> clients;
-            clients = em.createQuery(
-                    "SELECT a FROM AccPacCustomer a"
-                    + " WHERE UPPER(a.customerName)"
-                    + " LIKE '" + value.toUpperCase().trim()
-                    + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
-            return clients;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<AccPacCustomer> findAllByNameAndId(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<AccPacCustomer> clients;
-            clients = em.createQuery(
-                    "SELECT a FROM AccPacCustomer a"
-                    + " WHERE UPPER(a.customerName) LIKE '" + value.toUpperCase().trim() + "%'"
-                    + " OR UPPER(a.idCust) LIKE '" + value.toUpperCase().trim() + "%'"
-                    + " ORDER BY a.customerName", AccPacCustomer.class).getResultList();
-            return clients;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static AccPacCustomer findByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<AccPacCustomer> customers = em.createQuery(
-                    "SELECT a FROM AccPacCustomer a"
-                    + " WHERE UPPER(a.customerName)"
-                    + " LIKE '" + value.toUpperCase().trim()
-                    + "%' ORDER BY a.customerName", AccPacCustomer.class).getResultList();
-
-            if (!customers.isEmpty()) {
-                return customers.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public Boolean getIsDirty() {
@@ -377,22 +378,22 @@ public class AccPacCustomer implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

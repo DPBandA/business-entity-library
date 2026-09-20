@@ -19,23 +19,24 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.Company;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.cm.Customer;
@@ -52,6 +53,104 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Business implements Customer, Company, BusinessEntity, Comparable, Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Business.class.getName());
+    public static Business findById(EntityManager em, Long id) {
+        
+        try {
+            Business business = em.find(Business.class, id);
+            return business;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Business findByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Business> businesses = em.createQuery("SELECT b FROM Business b "
+                    + "WHERE UPPER(b.name) "
+                    + "= '" + value.toUpperCase() + "'", Business.class).getResultList();
+            if (!businesses.isEmpty()) {
+                return businesses.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Business findDefault(EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        Business business = Business.findByName(em, name);
+        
+        if (business == null) {
+            business = new Business();
+            business.setName(name);
+            
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, business);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, business);
+            }
+        }
+        
+        return business;
+    }
+    public static List<Business> findAll(EntityManager em) {
+        
+        try {
+            return em.createQuery("SELECT b FROM Business b ORDER BY b.name", Business.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Business> findAllActive(EntityManager em) {
+        
+        try {
+            return em.createQuery("SELECT b FROM Business b WHERE b.active = 1 ORDER BY b.name",
+                    Business.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Business> findAllByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Business> businesses
+                    = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY b.name", Business.class).getResultList();
+            return businesses;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Business> findAllActiveByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Business> businesses
+                    = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
+                            + value.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", Business.class).getResultList();
+            return businesses;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -70,10 +169,8 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     private List<Address> addresses;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Contact> contacts;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastAccessed;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateFirstReceived;
+    private LocalDateTime dateLastAccessed;
+    private LocalDateTime dateFirstReceived;
     private Boolean active;
     private String domainName;
     @Transient
@@ -335,12 +432,12 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     @Override
-    public Date getDateLastAccessed() {
+    public LocalDateTime getDateLastAccessed() {
         return dateLastAccessed;
     }
 
     @Override
-    public void setDateLastAccessed(Date dateLastAccessed) {
+    public void setDateLastAccessed(LocalDateTime dateLastAccessed) {
         this.dateLastAccessed = dateLastAccessed;
     }
 
@@ -365,12 +462,12 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     @Override
-    public Date getDateFirstReceived() {
+    public LocalDateTime getDateFirstReceived() {
         return dateFirstReceived;
     }
 
     @Override
-    public void setDateFirstReceived(Date dateFirstReceived) {
+    public void setDateFirstReceived(LocalDateTime dateFirstReceived) {
         this.dateFirstReceived = dateFirstReceived;
     }
 
@@ -389,109 +486,6 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
 
-    public static Business findById(EntityManager em, Long id) {
-
-        try {
-            Business business = em.find(Business.class, id);
-            return business;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Business findByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Business> businesses = em.createQuery("SELECT b FROM Business b "
-                    + "WHERE UPPER(b.name) "
-                    + "= '" + value.toUpperCase() + "'", Business.class).getResultList();
-            if (!businesses.isEmpty()) {
-                return businesses.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Business findDefault(EntityManager em,
-            String name,
-            Boolean useTransaction) {
-        Business business = Business.findByName(em, name);
-
-        if (business == null) {
-            business = new Business();
-            business.setName(name);
-
-            if (useTransaction) {
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, business);
-                em.getTransaction().commit();
-            } else {
-                BusinessEntityUtils.saveBusinessEntity(em, business);
-            }
-        }
-
-        return business;
-    }
-
-    public static List<Business> findAll(EntityManager em) {
-
-        try {
-            return em.createQuery("SELECT b FROM Business b ORDER BY b.name", Business.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Business> findAllActive(EntityManager em) {
-
-        try {
-            return em.createQuery("SELECT b FROM Business b WHERE b.active = 1 ORDER BY b.name",
-                    Business.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Business> findAllByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Business> businesses
-                    = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY b.name", Business.class).getResultList();
-            return businesses;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Business> findAllActiveByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Business> businesses
-                    = em.createQuery("SELECT b FROM Business b where UPPER(b.name) like '%"
-                            + value.toUpperCase().trim() + "%' AND b.active = 1 ORDER BY b.name", Business.class).getResultList();
-            return businesses;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -579,21 +573,21 @@ public class Business implements Customer, Company, BusinessEntity, Comparable, 
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
     }
 
     @Override

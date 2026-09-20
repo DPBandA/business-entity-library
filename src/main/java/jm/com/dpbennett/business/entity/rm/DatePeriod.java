@@ -19,21 +19,20 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.rm;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.text.Collator;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -46,9 +45,81 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  */
 @Entity
 @Table(name = "dateperiod")
-public class DatePeriod implements BusinessEntity, Comparable {
+public class DatePeriod implements BusinessEntity, Comparable<DatePeriod> {
 
     private static final long serialVersionUID = 1L;
+    private static final DateTimeFormatter MEDIUM_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+    private static final System.Logger LOG = System.getLogger(DatePeriod.class.getName());
+    private static LocalDateTime toLocalDateTime(Date date) {
+        if (date == null) {
+            return null;
+        }
+        
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    }
+    private static Date toDate(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        }
+        
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+    private static LocalDateTime startOfDay(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+        
+        return dateTime.toLocalDate().atStartOfDay();
+    }
+    private static LocalDateTime createDate(int year, int month, int day) {
+        return LocalDateTime.of(year, month, day, 0, 0, 0, 0);
+    }
+    private static LocalDateTime getStartOfCurrentMonth(LocalDateTime referenceDate) {
+        return referenceDate.withDayOfMonth(1).toLocalDate().atStartOfDay();
+    }
+    private static LocalDateTime getEndOfCurrentMonth(LocalDateTime referenceDate) {
+        return referenceDate.withDayOfMonth(referenceDate.toLocalDate().lengthOfMonth()).toLocalDate().atStartOfDay();
+    }
+    private static LocalDateTime getStartOfCurrentYear(LocalDateTime referenceDate) {
+        return createDate(referenceDate.getYear(), 1, 1);
+    }
+    private static LocalDateTime getEndOfCurrentYear(LocalDateTime referenceDate) {
+        return createDate(referenceDate.getYear(), 12, 31);
+    }
+    private static LocalDateTime getStartOfPreviousYear(LocalDateTime referenceDate) {
+        return createDate(referenceDate.getYear() - 1, 1, 1);
+    }
+    private static LocalDateTime getEndOfPreviousYear(LocalDateTime referenceDate) {
+        return createDate(referenceDate.getYear() - 1, 12, 31);
+    }
+    private static String formatMediumDate(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return "";
+        }
+        
+        return MEDIUM_DATE_FORMATTER.format(dateTime);
+    }
+    public static DatePeriod findById(EntityManager em, Long id) {
+        return em.find(DatePeriod.class, id);
+    }
+    public static List<String> getDatePeriodNames() {
+        ArrayList<String> names = new ArrayList<>();
+        
+        names.add("This month");
+        names.add("This month last year");
+        names.add("This financial month");
+        names.add("This financial year");
+        names.add("This year to date");
+        names.add("This year");
+        names.add("Last month");
+        names.add("Last financial month");
+        names.add("Last financial year");
+        names.add("Last year");
+        names.add("Custom");
+        
+        return names;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -56,10 +127,8 @@ public class DatePeriod implements BusinessEntity, Comparable {
     private String type;
     private String dateField;
     private String label;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date startDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private Boolean startDateDisabled;
     private Boolean endDateDisabled;
     @Transient
@@ -77,8 +146,8 @@ public class DatePeriod implements BusinessEntity, Comparable {
             String type,
             String dateField,
             String label,
-            Date startDate,
-            Date endDate,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
             Boolean startDateDisabled,
             Boolean endDateDisabled,
             Boolean init) {
@@ -93,10 +162,38 @@ public class DatePeriod implements BusinessEntity, Comparable {
         this.endDateDisabled = endDateDisabled;
         this.init = init;
 
-        if (init) {
+        if (Boolean.TRUE.equals(init)) {
             init();
         }
     }
+
+    /**
+     * Compatibility constructor for older callers that still pass java.util.Date.
+     * Prefer the LocalDateTime constructor in new code.
+     */
+    public DatePeriod(
+            String name,
+            String type,
+            String dateField,
+            String label,
+            Date startDate,
+            Date endDate,
+            Boolean startDateDisabled,
+            Boolean endDateDisabled,
+            Boolean init) {
+
+        this(
+                name,
+                type,
+                dateField,
+                label,
+                toLocalDateTime(startDate),
+                toLocalDateTime(endDate),
+                startDateDisabled,
+                endDateDisabled,
+                init);
+    }
+
 
     public Boolean getShow() {
         if (show == null) {
@@ -109,11 +206,6 @@ public class DatePeriod implements BusinessEntity, Comparable {
         this.show = show;
     }
 
-    public static DatePeriod findById(EntityManager em, Long id) {
-
-        return em.find(DatePeriod.class, id);
-
-    }
 
     public String getLabel() {
         if (label == null) {
@@ -180,23 +272,6 @@ public class DatePeriod implements BusinessEntity, Comparable {
         this.type = type;
     }
 
-    public static List<String> getDatePeriodNames() {
-        ArrayList<String> names = new ArrayList<>();
-
-        names.add("This month");
-        names.add("This month last year");
-        names.add("This financial month");
-        names.add("This financial year");
-        names.add("This year to date");
-        names.add("This year");
-        names.add("Last month");
-        names.add("Last financial month");
-        names.add("Last financial year");
-        names.add("Last year");
-        names.add("Custom");
-
-        return names;
-    }
 
     public Boolean getEndDateDisabled() {
         return endDateDisabled;
@@ -214,90 +289,104 @@ public class DatePeriod implements BusinessEntity, Comparable {
         this.startDateDisabled = startDateDisabled;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         if (endDate == null) {
             initDatePeriod();
         }
+
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
-    public Date getStartDate() {
+    /**
+     * Compatibility setter for older JSF/utility code that still passes java.util.Date.
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = toLocalDateTime(endDate);
+    }
+
+    public LocalDateTime getStartDate() {
         if (startDate == null) {
             initDatePeriod();
         }
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
+    /**
+     * Compatibility setter for older JSF/utility code that still passes java.util.Date.
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = toLocalDateTime(startDate);
+    }
+
+    public Date getStartDateAsDate() {
+        return toDate(getStartDate());
+    }
+
+    public Date getEndDateAsDate() {
+        return toDate(getEndDate());
+    }
+
     public String getFormattedStartDate() {
-        return BusinessEntityUtils.getDateInMediumDateFormat(getStartDate());
+        return formatMediumDate(getStartDate());
     }
 
     public String getFormattedEndDate() {
-        return BusinessEntityUtils.getDateInMediumDateFormat(getEndDate());
+        return formatMediumDate(getEndDate());
     }
 
-    public void initFinancialMonthPeriod(Date baseDate) {
-        Calendar c = Calendar.getInstance();
-
-        c.setTime(baseDate);
-        Date edate = BusinessEntityUtils.createDate(
-                c.get(Calendar.YEAR),
-                c.get(Calendar.MONTH),
-                25);
-
-        Calendar edateCal = Calendar.getInstance();
-        edateCal.setTime(edate);
-        edateCal.add(Calendar.MONTH, -1);
-        edateCal.add(Calendar.DAY_OF_MONTH, 1);
-        Date sdate = edateCal.getTime();
+    public void initFinancialMonthPeriod(LocalDateTime baseDate) {
+        LocalDateTime referenceDate = startOfDay(baseDate != null ? baseDate : LocalDateTime.now());
+        LocalDateTime edate = createDate(referenceDate.getYear(), referenceDate.getMonthValue(), 25);
+        LocalDateTime sdate = edate.minusMonths(1).plusDays(1);
 
         setStartDate(sdate);
         setEndDate(edate);
     }
 
-    public void initFinancialYearPeriod(Date refDate) {
-        Calendar referenceCalendar = Calendar.getInstance();
+    /**
+     * Compatibility overload for older callers that still pass java.util.Date.
+     */
+    public void initFinancialMonthPeriod(Date baseDate) {
+        initFinancialMonthPeriod(toLocalDateTime(baseDate));
+    }
 
-        referenceCalendar.setTime(refDate);
+    public void initFinancialYearPeriod(LocalDateTime refDate) {
+        LocalDateTime referenceDate = startOfDay(refDate != null ? refDate : LocalDateTime.now());
+        int referenceYear = referenceDate.getYear();
 
-        Date referenceDate = BusinessEntityUtils.createDate(
-                referenceCalendar.get(Calendar.YEAR),
-                referenceCalendar.get(Calendar.MONTH),
-                referenceCalendar.get(Calendar.DAY_OF_MONTH));
+        LocalDateTime referenceStartOfFinancialYear = createDate(referenceYear, 4, 1);
+        LocalDateTime referenceEndOfFinancialYear = createDate(referenceYear, 3, 31);
+        LocalDateTime referenceStartOfYear = createDate(referenceYear, 1, 1);
+        LocalDateTime referenceEndOfYear = createDate(referenceYear, 12, 31);
 
-        int referenceYear = referenceCalendar.get(Calendar.YEAR);
-        Date referenceStartOfFinancialYear = BusinessEntityUtils.createDate(referenceYear, 3, 1);
-        Date referenceEndOfFinancialYear = BusinessEntityUtils.createDate(referenceYear, 2, 31);
-        Date referenceStartOfYear = BusinessEntityUtils.createDate(referenceYear, 0, 1);
-        Date referenceEndOfYear = BusinessEntityUtils.createDate(referenceYear, 11, 31);
-
-        if (referenceDate.equals(referenceStartOfYear)) {
-            setStartDate(BusinessEntityUtils.createDate(referenceYear - 1, 3, 1));
+        if (referenceDate.equals(referenceStartOfYear)
+                || (referenceDate.isAfter(referenceStartOfYear) && referenceDate.isBefore(referenceEndOfFinancialYear))
+                || referenceDate.equals(referenceEndOfFinancialYear)) {
+            setStartDate(createDate(referenceYear - 1, 4, 1));
             setEndDate(referenceEndOfFinancialYear);
-        } else if (referenceDate.after(referenceStartOfYear)
-                && referenceDate.before(referenceEndOfFinancialYear)) {
-            setStartDate(BusinessEntityUtils.createDate(referenceYear - 1, 3, 1));
-            setEndDate(referenceEndOfFinancialYear);
-        } else if (referenceDate.equals(referenceEndOfFinancialYear)) {
-            setStartDate(BusinessEntityUtils.createDate(referenceYear - 1, 3, 1));
-            setEndDate(referenceEndOfFinancialYear);
-        } else if (referenceDate.after(referenceEndOfFinancialYear)
-                && referenceDate.before(referenceEndOfYear)) {
+        } else if (referenceDate.isAfter(referenceEndOfFinancialYear)
+                && referenceDate.isBefore(referenceEndOfYear)) {
             setStartDate(referenceStartOfFinancialYear);
-            setEndDate(BusinessEntityUtils.createDate(referenceYear + 1, 2, 31));
+            setEndDate(createDate(referenceYear + 1, 3, 31));
         } else {
             setStartDate(referenceStartOfFinancialYear);
-            setEndDate(BusinessEntityUtils.createDate(referenceYear + 1, 2, 31));
+            setEndDate(createDate(referenceYear + 1, 3, 31));
         }
+    }
 
+    /**
+     * Compatibility overload for older callers that still pass java.util.Date.
+     */
+    public void initFinancialYearPeriod(Date refDate) {
+        initFinancialYearPeriod(toLocalDateTime(refDate));
     }
 
     public DatePeriod getInitDatePeriod() {
@@ -305,67 +394,75 @@ public class DatePeriod implements BusinessEntity, Comparable {
     }
 
     public DatePeriod initDatePeriod() {
-        return initDatePeriod(new Date());
+        return initDatePeriod(LocalDateTime.now());
     }
 
-    public DatePeriod initDatePeriod(Date referencDate) {
+    /**
+     * Compatibility overload for older callers that still pass java.util.Date.
+     */
+    public DatePeriod initDatePeriod(Date referenceDate) {
+        return initDatePeriod(toLocalDateTime(referenceDate));
+    }
+
+    public DatePeriod initDatePeriod(LocalDateTime referenceDate) {
+        LocalDateTime refDate = startOfDay(referenceDate != null ? referenceDate : LocalDateTime.now());
 
         switch (getName()) {
             case "This month":
-                setStartDate(BusinessEntityUtils.getStartOfCurrentMonth());
-                setEndDate(BusinessEntityUtils.getEndOfCurrentMonth());
+                setStartDate(getStartOfCurrentMonth(refDate));
+                setEndDate(getEndOfCurrentMonth(refDate));
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
             case "This month last year":
-                setStartDate(BusinessEntityUtils.getStartOfCurrentMonthPreviousYear());
-                setEndDate(BusinessEntityUtils.getEndOfCurrentMonthPreviousYear());
+                setStartDate(getStartOfCurrentMonth(refDate).minusYears(1));
+                setEndDate(getEndOfCurrentMonth(refDate).minusYears(1));
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
             case "This financial month":
-                initFinancialMonthPeriod(BusinessEntityUtils.createDate(referencDate));
+                initFinancialMonthPeriod(refDate);
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
             case "This financial year":
-                initFinancialYearPeriod(referencDate);
+                initFinancialYearPeriod(refDate);
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
             case "This year to date":
-                setStartDate(BusinessEntityUtils.getStartOfCurrentYear());
-                setEndDate(BusinessEntityUtils.createDate(referencDate));
+                setStartDate(getStartOfCurrentYear(refDate));
+                setEndDate(refDate);
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
             case "This year":
-                setStartDate(BusinessEntityUtils.getStartOfCurrentYear());
-                setEndDate(BusinessEntityUtils.getEndOfCurrentYear());
+                setStartDate(getStartOfCurrentYear(refDate));
+                setEndDate(getEndOfCurrentYear(refDate));
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
             case "Last month":
-                setStartDate(BusinessEntityUtils.getStartOfLastMonth());
-                setEndDate(BusinessEntityUtils.getEndOfLastMonth());
+                setStartDate(getStartOfCurrentMonth(refDate).minusMonths(1));
+                setEndDate(getStartOfCurrentMonth(refDate).minusDays(1));
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
             case "Last financial month":
-                initFinancialMonthPeriod(BusinessEntityUtils.getEndOfLastMonth());
+                initFinancialMonthPeriod(getStartOfCurrentMonth(refDate).minusDays(1));
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
             case "Last financial year":
-                initFinancialYearPeriod(BusinessEntityUtils.createDate(referencDate));
-                startDate = BusinessEntityUtils.adjustDate(startDate, Calendar.YEAR, -1);
-                endDate = BusinessEntityUtils.adjustDate(endDate, Calendar.YEAR, -1);
+                initFinancialYearPeriod(refDate);
+                setStartDate(startDate.minusYears(1));
+                setEndDate(endDate.minusYears(1));
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
             case "Last year":
-                setStartDate(BusinessEntityUtils.getStartOfPreviousYear());
-                setEndDate(BusinessEntityUtils.getEndOfPreviousYear());
+                setStartDate(getStartOfPreviousYear(refDate));
+                setEndDate(getEndOfPreviousYear(refDate));
                 setStartDateDisabled(true);
                 setEndDateDisabled(true);
                 break;
@@ -380,7 +477,6 @@ public class DatePeriod implements BusinessEntity, Comparable {
         }
 
         return this;
-
     }
 
     @Override
@@ -402,9 +498,7 @@ public class DatePeriod implements BusinessEntity, Comparable {
 
     @Override
     public String toString() {
-        DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy");
-
-        return getName() + " (" + formatter.format(startDate) + " to " + formatter.format(endDate) + ")";
+        return getName() + " (" + getPeriodString() + ")";
     }
 
     @Override
@@ -416,9 +510,7 @@ public class DatePeriod implements BusinessEntity, Comparable {
     }
 
     public String getPeriodString() {
-        DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy");
-
-        return formatter.format(startDate) + " to " + formatter.format(endDate);
+        return formatMediumDate(getStartDate()) + " to " + formatMediumDate(getEndDate());
     }
 
     @Override
@@ -429,7 +521,6 @@ public class DatePeriod implements BusinessEntity, Comparable {
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
-
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             em.getTransaction().commit();
@@ -448,9 +539,9 @@ public class DatePeriod implements BusinessEntity, Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
-        if (((DatePeriod) o).getId() != null && this.getId() != null) {
-            return Collator.getInstance().compare(this.getId().toString(), ((DatePeriod) o).getId().toString());
+    public int compareTo(DatePeriod o) {
+        if (o != null && o.getId() != null && this.getId() != null) {
+            return Collator.getInstance().compare(this.getId().toString(), o.getId().toString());
         } else {
             return 1;
         }
@@ -458,121 +549,121 @@ public class DatePeriod implements BusinessEntity, Comparable {
 
     @Override
     public Boolean getActive() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void setActive(Boolean active) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public String getCategory() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void setCategory(String category) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Date getDateEntered() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public LocalDateTime getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setDateEntered(LocalDateTime dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Date getDateEdited() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public LocalDateTime getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setDateEdited(LocalDateTime dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ReturnMessage delete(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public String getDescription() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void setDescription(String description) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public String getNotes() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void setNotes(String notes) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public String getComments() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void setComments(String comments) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Person getEditedBy() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void setEditedBy(Person person) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Person getEnteredBy() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void setEnteredBy(Person person) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ReturnMessage saveUnique(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public List<SystemOption> getSettings() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void setSettings(List<SystemOption> settings) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public SystemOption getSetting(String setting, String settingValue, String type, String category) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void setSetting(String setting, String settingValue, String type, String category) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

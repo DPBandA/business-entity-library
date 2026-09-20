@@ -19,24 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.DefaultEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.auth.Privilege;
@@ -61,6 +60,210 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 })
 public class User extends DefaultEntity {
 
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(User.class.getName());
+    public static boolean isNotificationActive(
+            User user,
+            String notificationSetting) {
+        
+        SystemOption ns = user.getSetting(
+                notificationSetting,
+                null,
+                "Boolean",
+                "Notification");
+        
+        return ns.getBoolean();
+        
+    }
+    public static Business getUserOrganizationByDepartment(EntityManager em, User user) {
+        
+        try {
+            Department department = user.getEmployee().getDepartment();
+            for (Business business : Business.findAllActive(em)) {
+                for (Department dept : business.getDepartments()) {
+                    if (Objects.equals(department.getId(), dept.getId())) {
+                        return business;
+                    }
+                }
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error occurred while getting the organization of a user: " + e);
+        }
+        
+        return null;
+    }
+    public static Boolean isUserDepartmentSupervisor(Job job, User user, EntityManager em) {
+        
+        Job foundJob = Job.findJobById(em, job.getId());
+        
+        if (Department.findAssignedToJob(foundJob, em).getHead().getId().longValue() == user.getEmployee().getId().longValue()) {
+            return true;
+        } else {
+            return (Department.findAssignedToJob(foundJob, em).getActingHead().getId().longValue() == user.getEmployee().getId().longValue())
+                    && Department.findAssignedToJob(foundJob, em).getActingHeadActive();
+        }
+    }
+    public static List<User> findAllByUsername(
+            EntityManager em,
+            String value,
+            int maxResults) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<User> users
+                    = em.createQuery("SELECT j FROM User j where UPPER(j.username) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY j.username", User.class)
+                            .setMaxResults(maxResults).getResultList();
+            
+            return users;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static User findById(EntityManager em, Long Id) {
+        return em.find(User.class, Id);
+    }
+    public static User findByUsername(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<User> users
+                    = em.createNamedQuery("findByJobManagerUsername",
+                            User.class).
+                            setParameter("username", value.toUpperCase()).getResultList();
+            
+            if (!users.isEmpty()) {
+                return users.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+    }
+    public static User findActiveByUsername(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<User> users = em.createQuery("SELECT j FROM User j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '"
+                    + value + "'", User.class).getResultList();
+            
+            if (!users.isEmpty()) {
+                return users.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+    }
+    public static User findActiveByEmployeeId(
+            EntityManager em, Long employeeId) {
+        try {
+            List<User> users = em.createQuery("SELECT j FROM User j"
+                    + " JOIN j.employee employee"
+                    + " WHERE j.active = 1 AND employee.id = " + employeeId, User.class).getResultList();
+            
+            if (!users.isEmpty()) {
+                return users.get(0);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<User> findAllByName(
+            EntityManager em,
+            String value,
+            int maxResults) {
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<User> users = em.createQuery("SELECT j FROM User j"
+                    + " JOIN j.employee e"
+                    + " WHERE UPPER(e.firstName) like '%"
+                    + value + "%'" + " OR UPPER(e.lastName) like '%"
+                    + value + "%'" + " OR UPPER(j.username) like '%"
+                    + value + "%' ORDER BY j.username", User.class)
+                    .setMaxResults(maxResults).getResultList();
+            
+            return users;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<User> findAllActiveByName(
+            EntityManager em,
+            String value,
+            int maxResults) {
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<User> users = em.createQuery("SELECT j FROM User j"
+                    + " JOIN j.employee e"
+                    + " WHERE (j.active = 1 OR j.active IS NULL) AND (UPPER(e.firstName) like '%"
+                    + value + "%'" + " OR UPPER(e.lastName) like '%"
+                    + value + "%'" + " OR UPPER(j.username) like '%"
+                    + value + "%') ORDER BY j.username", User.class).
+                    setMaxResults(maxResults).getResultList();
+            
+            return users;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<User> findAllActive(
+            EntityManager em,
+            int maxResults) {
+        
+        try {
+            
+            List<User> users = em.createQuery("SELECT j FROM User j WHERE j.active = 1 OR j.active IS NULL ORDER BY j.username", User.class).
+                    setMaxResults(maxResults).getResultList();
+            
+            return users;
+            
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static List<User> findAll(
+            EntityManager em,
+            int maxResults) {
+        
+        try {
+            
+            List<User> users = em.createQuery("SELECT j FROM User j WHERE j.active = 1 ORDER BY j.username", User.class).
+                    setMaxResults(maxResults).getResultList();
+            
+            return users;
+            
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -71,8 +274,7 @@ public class User extends DefaultEntity {
     private String jobTableViewPreference;
     private Boolean authenticate;
     private String activity;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date pollTime;
+    private LocalDateTime pollTime;
     @Column(length = 255)
     private String password;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -93,10 +295,8 @@ public class User extends DefaultEntity {
     private String confirmedNewPassword;
     @Transient
     private Boolean updateLDAPUser;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date loginTime;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date logoutTime;
+    private LocalDateTime loginTime;
+    private LocalDateTime logoutTime;
     @Transient
     private String email;
 
@@ -127,19 +327,6 @@ public class User extends DefaultEntity {
         this.settings = settings;
     }
 
-    public static boolean isNotificationActive(
-            User user,
-            String notificationSetting) {
-
-        SystemOption ns = user.getSetting(
-                notificationSetting,
-                null,
-                "Boolean",
-                "Notification");
-
-        return ns.getBoolean();
-
-    }
 
     public boolean isJobAssigned() {
 
@@ -269,19 +456,19 @@ public class User extends DefaultEntity {
         this.updateLDAPUser = updateLDAPUser;
     }
 
-    public Date getLoginTime() {
+    public LocalDateTime getLoginTime() {
         return loginTime;
     }
 
-    public void setLoginTime(Date loginTime) {
+    public void setLoginTime(LocalDateTime loginTime) {
         this.loginTime = loginTime;
     }
 
-    public Date getLogoutTime() {
+    public LocalDateTime getLogoutTime() {
         return logoutTime;
     }
 
-    public void setLogoutTime(Date logoutTime) {
+    public void setLogoutTime(LocalDateTime logoutTime) {
         this.logoutTime = logoutTime;
     }
 
@@ -409,24 +596,6 @@ public class User extends DefaultEntity {
         return false;
     }
 
-    public static Business getUserOrganizationByDepartment(EntityManager em, User user) {
-
-        try {
-            Department department = user.getEmployee().getDepartment();
-            for (Business business : Business.findAllActive(em)) {
-                for (Department dept : business.getDepartments()) {
-                    if (Objects.equals(department.getId(), dept.getId())) {
-                        return business;
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            System.out.println("Error occurred while getting the organization of a user: " + e);
-        }
-
-        return null;
-    }
 
     @Override
     public Boolean getActive() {
@@ -468,17 +637,6 @@ public class User extends DefaultEntity {
         return getJobTableViewPreference().equals("Job Costings");
     }
 
-    public static Boolean isUserDepartmentSupervisor(Job job, User user, EntityManager em) {
-
-        Job foundJob = Job.findJobById(em, job.getId());
-
-        if (Department.findAssignedToJob(foundJob, em).getHead().getId().longValue() == user.getEmployee().getId().longValue()) {
-            return true;
-        } else {
-            return (Department.findAssignedToJob(foundJob, em).getActingHead().getId().longValue() == user.getEmployee().getId().longValue())
-                    && Department.findAssignedToJob(foundJob, em).getActingHeadActive();
-        }
-    }
 
     public Boolean getAuthenticate() {
         if (authenticate == null) {
@@ -548,15 +706,15 @@ public class User extends DefaultEntity {
         }
     }
 
-    public Date getPollTime() {
+    public LocalDateTime getPollTime() {
         if (pollTime == null) {
-            pollTime = new Date();
+            pollTime = LocalDateTime.now();
         }
 
         return pollTime;
     }
 
-    public void setPollTime(Date pollTime) {
+    public void setPollTime(LocalDateTime pollTime) {
         this.pollTime = pollTime;
     }
 
@@ -639,173 +797,6 @@ public class User extends DefaultEntity {
         username = name;
     }
 
-    public static List<User> findAllByUsername(
-            EntityManager em,
-            String value,
-            int maxResults) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<User> users
-                    = em.createQuery("SELECT j FROM User j where UPPER(j.username) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY j.username", User.class)
-                            .setMaxResults(maxResults).getResultList();
-
-            return users;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static User findById(EntityManager em, Long Id) {
-        return em.find(User.class, Id);
-    }
-
-    public static User findByUsername(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<User> users
-                    = em.createNamedQuery("findByJobManagerUsername",
-                            User.class).
-                            setParameter("username", value.toUpperCase()).getResultList();
-
-            if (!users.isEmpty()) {
-                return users.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-    }
-
-    public static User findActiveByUsername(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<User> users = em.createQuery("SELECT j FROM User j WHERE (j.active = 1 OR j.active IS NULL) AND j.username = '"
-                    + value + "'", User.class).getResultList();
-
-            if (!users.isEmpty()) {
-                return users.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-    }
-
-    public static User findActiveByEmployeeId(
-            EntityManager em, Long employeeId) {
-        try {
-            List<User> users = em.createQuery("SELECT j FROM User j"
-                    + " JOIN j.employee employee"
-                    + " WHERE j.active = 1 AND employee.id = " + employeeId, User.class).getResultList();
-
-            if (!users.isEmpty()) {
-                return users.get(0);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<User> findAllByName(
-            EntityManager em,
-            String value,
-            int maxResults) {
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<User> users = em.createQuery("SELECT j FROM User j"
-                    + " JOIN j.employee e"
-                    + " WHERE UPPER(e.firstName) like '%"
-                    + value + "%'" + " OR UPPER(e.lastName) like '%"
-                    + value + "%'" + " OR UPPER(j.username) like '%"
-                    + value + "%' ORDER BY j.username", User.class)
-                    .setMaxResults(maxResults).getResultList();
-
-            return users;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<User> findAllActiveByName(
-            EntityManager em,
-            String value,
-            int maxResults) {
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<User> users = em.createQuery("SELECT j FROM User j"
-                    + " JOIN j.employee e"
-                    + " WHERE (j.active = 1 OR j.active IS NULL) AND (UPPER(e.firstName) like '%"
-                    + value + "%'" + " OR UPPER(e.lastName) like '%"
-                    + value + "%'" + " OR UPPER(j.username) like '%"
-                    + value + "%') ORDER BY j.username", User.class).
-                    setMaxResults(maxResults).getResultList();
-
-            return users;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<User> findAllActive(
-            EntityManager em,
-            int maxResults) {
-
-        try {
-
-            List<User> users = em.createQuery("SELECT j FROM User j WHERE j.active = 1 OR j.active IS NULL ORDER BY j.username", User.class).
-                    setMaxResults(maxResults).getResultList();
-
-            return users;
-
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static List<User> findAll(
-            EntityManager em,
-            int maxResults) {
-
-        try {
-
-            List<User> users = em.createQuery("SELECT j FROM User j WHERE j.active = 1 ORDER BY j.username", User.class).
-                    setMaxResults(maxResults).getResultList();
-
-            return users;
-
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -909,22 +900,22 @@ public class User extends DefaultEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

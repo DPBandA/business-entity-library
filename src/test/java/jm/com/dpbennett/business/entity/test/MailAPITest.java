@@ -19,9 +19,9 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import jm.com.dpbennett.business.entity.util.MailUtils;
 import org.junit.Test;
 

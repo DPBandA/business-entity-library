@@ -20,7 +20,7 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.gm;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.sm.User;
 
 /**

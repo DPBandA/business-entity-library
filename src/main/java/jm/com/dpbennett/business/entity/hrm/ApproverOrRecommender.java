@@ -26,15 +26,11 @@ package jm.com.dpbennett.business.entity.hrm;
  */
 public class ApproverOrRecommender extends Employee {
 
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(ApproverOrRecommender.class.getName());
+
     private Boolean approver;
 
-    public Boolean getApprover() {
-        return approver;
-    }
-
-    public void setApprover(Boolean approver) {
-        this.approver = approver;
-    }
 
     public ApproverOrRecommender(Boolean approver, String firstName, String lastName) {
         super(firstName, lastName);
@@ -46,6 +42,12 @@ public class ApproverOrRecommender extends Employee {
         super.setFirstName(employee.getFirstName());
         super.setLastName(employee.getLastName());
         super.setPositions(employee.getPositions());
+        this.approver = approver;
+    }
+    public Boolean getApprover() {
+        return approver;
+    }
+    public void setApprover(Boolean approver) {
         this.approver = approver;
     }
 

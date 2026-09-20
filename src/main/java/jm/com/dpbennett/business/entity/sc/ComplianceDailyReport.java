@@ -20,16 +20,15 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.sc;
 
-import java.util.Date;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -45,20 +44,19 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Table(name = "complianceDailyReport")
 public class ComplianceDailyReport implements BusinessEntity {
 
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(ComplianceDailyReport.class.getName());
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id = null;
     private String name = "";
     private String reportName = "";
     private String team = "";
-    @Temporal(javax.persistence.TemporalType.TIME)
-    private Date startOfPeriod = null;
-    @Temporal(javax.persistence.TemporalType.TIME)
-    private Date endOfPeriod = null;
-    @Temporal(javax.persistence.TemporalType.TIME)
-    private Date timeOfArrival = null;
-    @Temporal(javax.persistence.TemporalType.TIME)
-    private Date timeOfDeparture = null;
+    private LocalDateTime startOfPeriod = null;
+    private LocalDateTime endOfPeriod = null;
+    private LocalDateTime timeOfArrival = null;
+    private LocalDateTime timeOfDeparture = null;
     private String location = "";
     private String teamMembers = "";
     private String driver = "";
@@ -68,14 +66,14 @@ public class ComplianceDailyReport implements BusinessEntity {
     public ComplianceDailyReport() {
         this.name = "";
         this.reportName = "";
-        this.startOfPeriod = new Date();
+        this.startOfPeriod = LocalDateTime.now();
         this.endOfPeriod = startOfPeriod;
         this.location = "";
         this.teamMembers = "";
     }
 
     public ComplianceDailyReport(String reportName,
-            Date startOfPeriod,
+            LocalDateTime startOfPeriod,
             String location,
             String teamMembers) {
         this.name = reportName;
@@ -139,35 +137,35 @@ public class ComplianceDailyReport implements BusinessEntity {
         this.team = team;
     }
 
-    public Date getStartOfPeriod() {
+    public LocalDateTime getStartOfPeriod() {
         return startOfPeriod;
     }
 
-    public void setStartOfPeriod(Date startOfPeriod) {
+    public void setStartOfPeriod(LocalDateTime startOfPeriod) {
         this.startOfPeriod = startOfPeriod;
     }
 
-    public Date getEndOfPeriod() {
+    public LocalDateTime getEndOfPeriod() {
         return endOfPeriod;
     }
 
-    public void setEndOfPeriod(Date endOfPeriod) {
+    public void setEndOfPeriod(LocalDateTime endOfPeriod) {
         this.endOfPeriod = endOfPeriod;
     }
 
-    public Date getTimeOfArrival() {
+    public LocalDateTime getTimeOfArrival() {
         return timeOfArrival;
     }
 
-    public void setTimeOfArrival(Date timeOfArrival) {
+    public void setTimeOfArrival(LocalDateTime timeOfArrival) {
         this.timeOfArrival = timeOfArrival;
     }
 
-    public Date getTimeOfDeparture() {
+    public LocalDateTime getTimeOfDeparture() {
         return timeOfDeparture;
     }
 
-    public void setTimeOfDeparture(Date timeOfDeparture) {
+    public void setTimeOfDeparture(LocalDateTime timeOfDeparture) {
         this.timeOfDeparture = timeOfDeparture;
     }
 
@@ -271,22 +269,22 @@ public class ComplianceDailyReport implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

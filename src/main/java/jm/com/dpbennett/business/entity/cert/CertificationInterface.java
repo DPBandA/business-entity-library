@@ -20,9 +20,9 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.cert;
 
+import jakarta.persistence.EntityManager;
 import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.hrm.Business;
@@ -50,9 +50,9 @@ public interface CertificationInterface extends BusinessEntity, Comparable, Seri
 
     Employee getCertificateSignedBy();
 
-    Date getDateIssued();
+    LocalDateTime getDateIssued();
 
-    Date getExpiryDate();
+    LocalDateTime getExpiryDate();
 
     Business getGrantedTo();
 
@@ -88,9 +88,9 @@ public interface CertificationInterface extends BusinessEntity, Comparable, Seri
 
     void setCertificateSignedBy(Employee certificateSignedBy);
 
-    void setDateIssued(Date dateIssued);
+    void setDateIssued(LocalDateTime dateIssued);
 
-    void setExpiryDate(Date expiryDate);
+    void setExpiryDate(LocalDateTime expiryDate);
 
     void setGrantedTo(Business grantedTo);
 

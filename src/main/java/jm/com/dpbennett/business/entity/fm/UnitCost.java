@@ -19,23 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.DepartmentUnit;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Laboratory;
@@ -52,6 +52,72 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class UnitCost implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(UnitCost.class.getName());
+    public static List<UnitCost> findUnitCosts(
+            EntityManager em,
+            String departmentName,
+            String searchText) {
+        
+        List<UnitCost> foundUnitCosts;
+        String searchQuery;
+        String searchTextAndClause = "";
+        String joinClause;
+        
+        departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        
+        joinClause
+                = " JOIN unitCost.department department"
+                + " JOIN unitCost.laboratory laboratory"
+                + " JOIN unitCost.departmentUnit departmentUnit";
+        
+        if (!searchText.equals("") && !departmentName.equals("")) {
+            searchTextAndClause
+                    = " AND ("
+                    + " UPPER(unitCost.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(unitCost.service) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(unitCost.description) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(unitCost.unit) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(department.name) LIKE '%" + departmentName.toUpperCase() + "%'"
+                    + " OR UPPER(laboratory.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(departmentUnit.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " )";
+        } else if (searchText.equals("") && !departmentName.equals("")) {
+            searchTextAndClause
+                    = " AND ("
+                    + " UPPER(department.name) LIKE '%" + departmentName.toUpperCase() + "%'"
+                    + " )";
+        } else if (!searchText.equals("") && departmentName.equals("")) {
+            searchTextAndClause
+                    = " AND ("
+                    + " UPPER(unitCost.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(unitCost.service) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(unitCost.description) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(unitCost.unit) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(laboratory.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " OR UPPER(departmentUnit.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                    + " )";
+        }
+        
+        searchQuery
+                = "SELECT unitCost FROM UnitCost unitCost"
+                + joinClause
+                + " WHERE (0 = 0)" // used as place holder
+                + searchTextAndClause
+                + " ORDER BY unitCost.service DESC";
+        try {
+            foundUnitCosts = em.createQuery(searchQuery, UnitCost.class).getResultList();
+            if (foundUnitCosts == null) {
+                foundUnitCosts = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<UnitCost>();
+        }
+        
+        return foundUnitCosts;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -63,7 +129,6 @@ public class UnitCost implements Serializable, BusinessEntity {
     private String description;
     private Double cost;
     private String unit;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date effectiveDate;
     private Boolean effective;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -238,71 +303,6 @@ public class UnitCost implements Serializable, BusinessEntity {
         this.name = name;
     }
 
-    public static List<UnitCost> findUnitCosts(
-            EntityManager em,
-            String departmentName,
-            String searchText) {
-
-        List<UnitCost> foundUnitCosts;
-        String searchQuery;
-        String searchTextAndClause = "";
-        String joinClause;
-
-        departmentName = departmentName.replaceAll("&amp;", "&").replaceAll("'", "`");
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-        joinClause
-                = " JOIN unitCost.department department"
-                + " JOIN unitCost.laboratory laboratory"
-                + " JOIN unitCost.departmentUnit departmentUnit";
-
-        if (!searchText.equals("") && !departmentName.equals("")) {
-            searchTextAndClause
-                    = " AND ("
-                    + " UPPER(unitCost.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " OR UPPER(unitCost.service) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " OR UPPER(unitCost.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " OR UPPER(unitCost.unit) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " OR UPPER(department.name) LIKE '%" + departmentName.toUpperCase() + "%'"
-                    + " OR UPPER(laboratory.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " OR UPPER(departmentUnit.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " )";
-        } else if (searchText.equals("") && !departmentName.equals("")) {
-            searchTextAndClause
-                    = " AND ("
-                    + " UPPER(department.name) LIKE '%" + departmentName.toUpperCase() + "%'"
-                    + " )";
-        } else if (!searchText.equals("") && departmentName.equals("")) {
-            searchTextAndClause
-                    = " AND ("
-                    + " UPPER(unitCost.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " OR UPPER(unitCost.service) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " OR UPPER(unitCost.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " OR UPPER(unitCost.unit) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " OR UPPER(department.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " OR UPPER(laboratory.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " OR UPPER(departmentUnit.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                    + " )";
-        }
-
-        searchQuery
-                = "SELECT unitCost FROM UnitCost unitCost"
-                + joinClause
-                + " WHERE (0 = 0)" // used as place holder
-                + searchTextAndClause
-                + " ORDER BY unitCost.service DESC";
-        try {
-            foundUnitCosts = em.createQuery(searchQuery, UnitCost.class).getResultList();
-            if (foundUnitCosts == null) {
-                foundUnitCosts = new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<UnitCost>();
-        }
-
-        return foundUnitCosts;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -368,22 +368,22 @@ public class UnitCost implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -19,30 +19,29 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.pm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Internet;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -59,6 +58,224 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 })
 
 public class Supplier implements BusinessEntity, Comparable {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Supplier.class.getName());
+    public static List<Supplier> findByIdentification(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("'", "`");
+            
+            List<Supplier> suppliers;
+            suppliers = em.createQuery("SELECT s FROM Supplier s where UPPER(s.identification) like '"
+                    + value.toUpperCase() + "%' ORDER BY s.identification", Supplier.class).getResultList();
+            return suppliers;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<String> findActiveNames(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("'", "`");
+            
+            List<String> names
+                    = em.createQuery("SELECT s FROM Supplier s WHERE UPPER(s.name) like '"
+                            + value.toUpperCase() + "%'"
+                                    + " AND s.active = 1"
+                                    + " ORDER BY s.name", String.class).getResultList();
+            return names;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Supplier> findActive(
+            EntityManager em,
+            String value,
+            int maxSearchResults) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Supplier> suppliers
+                    = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
+                            + value + "%'"
+                                    + " AND s.active = 1"
+                                    + " ORDER BY s.id", Supplier.class).
+                            setMaxResults(maxSearchResults).getResultList();
+            
+            Iterator<Supplier> iterator = suppliers.iterator();
+            while (iterator.hasNext()) {
+                Supplier element = iterator.next();
+                if (element.getName().contains("'")) {
+                    iterator.remove();
+                }
+            }
+            
+            return suppliers;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Supplier> find(EntityManager em,
+            String value,
+            int maxSearchResults) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Supplier> suppliers
+                    = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
+                            + value + "%'"
+                                    + " ORDER BY s.id", Supplier.class).
+                            setMaxResults(maxSearchResults).getResultList();
+            
+            return suppliers;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<String> findNames(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("'", "`");
+            
+            List<String> names
+                    = em.createQuery("SELECT s FROM Supplier s where UPPER(s.name) like '"
+                            + value.toUpperCase()
+                            + "%' ORDER BY s.name", String.class).getResultList();
+            return names;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Supplier> getAllSuppliers(EntityManager em) {
+        
+        try {
+            List<Supplier> suppliers = em.createNamedQuery("findAllSuppliers", Supplier.class).getResultList();
+            return suppliers;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Supplier findByName(EntityManager em, String value, Boolean ignoreCase) {
+        
+        List<Supplier> suppliers;
+        
+        try {
+            
+            value = value.replaceAll("'", "`");
+            
+            if (ignoreCase) {
+                suppliers = em.createQuery("SELECT s FROM Supplier s "
+                        + "WHERE UPPER(s.name) "
+                        + "= '" + value.toUpperCase() + "'", Supplier.class).getResultList();
+            } else {
+                suppliers = em.createQuery("SELECT s FROM Supplier s "
+                        + "WHERE s.name "
+                        + "= '" + value + "'", Supplier.class).getResultList();
+            }
+            
+            if (!suppliers.isEmpty()) {
+                return suppliers.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Supplier findById(EntityManager em, Long id) {
+        
+        try {
+            return em.find(Supplier.class, id);
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Supplier findActiveByName(
+            EntityManager em, String value, Boolean ignoreCase) {
+        
+        List<Supplier> suppliers;
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            if (ignoreCase) {
+                suppliers = em.createQuery("SELECT s FROM Supplier s "
+                        + "WHERE UPPER(s.name) "
+                        + "= '" + value.toUpperCase() + "'"
+                                + " AND s.active = 1", Supplier.class).getResultList();
+            } else {
+                suppliers = em.createQuery("SELECT s FROM Supplier s "
+                        + "WHERE s.name "
+                        + "= '" + value + "'"
+                                + " AND s.active = 1", Supplier.class).getResultList();
+            }
+            
+            if (!suppliers.isEmpty()) {
+                return suppliers.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Supplier findActiveDefault(
+            EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        
+        Supplier supplier = findActiveByName(em, name, false);
+        
+        if (supplier == null) {
+            supplier = new Supplier(name);
+            supplier.setActive(true);
+            supplier.setInternet(Internet.findDefaultInternet(em, "--", useTransaction));
+            supplier.setEnteredBy(Employee.findDefault(em, "--", "--", useTransaction));
+            
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, supplier);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, supplier);
+            }
+        }
+        
+        return supplier;
+    }
+    public static List<Supplier> findBySearchPattern(EntityManager em, String searchPattern) {
+        
+        try {
+            
+            searchPattern = searchPattern.replaceAll("'", "`");
+            
+            List<Supplier> suppliers = em.createQuery("SELECT s FROM Supplier s "
+                    + "WHERE UPPER(s.name) "
+                    + "LIKE '" + searchPattern.toUpperCase() + "%' "
+                            + "ORDER BY s.name", Supplier.class).getResultList();
+            return suppliers;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -78,12 +295,9 @@ public class Supplier implements BusinessEntity, Comparable {
     private Employee editedBy;
     @Column(length = 1024)
     private String notes;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastAccessed;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEntered;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEdited;
+    private LocalDateTime dateLastAccessed;
+    private LocalDateTime dateEntered;
+    private LocalDateTime dateEdited;
     private Boolean tag;
     private String identification;
     private String identificationType;
@@ -122,6 +336,10 @@ public class Supplier implements BusinessEntity, Comparable {
         internet = new Internet();
         this.active = active;
         international = false;
+    }
+    public Supplier(Supplier src, Boolean active) {
+        doCopy(src);
+        this.active = active;
     }
 
     public Boolean getIsNameAndIdEditable() {
@@ -175,12 +393,12 @@ public class Supplier implements BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         return dateEdited;
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         this.dateEdited = dateEdited;
     }
 
@@ -197,10 +415,6 @@ public class Supplier implements BusinessEntity, Comparable {
         this.editedBy = editedBy;
     }
 
-    public Supplier(Supplier src, Boolean active) {
-        doCopy(src);
-        this.active = active;
-    }
 
     public Boolean getInternational() {
         if (international == null) {
@@ -214,12 +428,12 @@ public class Supplier implements BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         return dateEntered;
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         this.dateEntered = dateEntered;
     }
 
@@ -445,11 +659,11 @@ public class Supplier implements BusinessEntity, Comparable {
         return getAddresses().get(0);
     }
 
-    public Date getDateLastAccessed() {
+    public LocalDateTime getDateLastAccessed() {
         return dateLastAccessed;
     }
 
-    public void setDateLastAccessed(Date dateLastAccessed) {
+    public void setDateLastAccessed(LocalDateTime dateLastAccessed) {
         this.dateLastAccessed = dateLastAccessed;
     }
 
@@ -515,231 +729,6 @@ public class Supplier implements BusinessEntity, Comparable {
         this.type = type;
     }
 
-    public static List<Supplier> findByIdentification(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("'", "`");
-
-            List<Supplier> suppliers;
-            suppliers = em.createQuery("SELECT s FROM Supplier s where UPPER(s.identification) like '"
-                    + value.toUpperCase() + "%' ORDER BY s.identification", Supplier.class).getResultList();
-            return suppliers;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<String> findActiveNames(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("'", "`");
-
-            List<String> names
-                    = em.createQuery("SELECT s FROM Supplier s WHERE UPPER(s.name) like '"
-                            + value.toUpperCase() + "%'"
-                            + " AND s.active = 1"
-                            + " ORDER BY s.name", String.class).getResultList();
-            return names;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Supplier> findActive(
-            EntityManager em,
-            String value,
-            int maxSearchResults) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Supplier> suppliers
-                    = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
-                            + value + "%'"
-                            + " AND s.active = 1"
-                            + " ORDER BY s.id", Supplier.class).
-                            setMaxResults(maxSearchResults).getResultList();
-
-            Iterator<Supplier> iterator = suppliers.iterator();
-            while (iterator.hasNext()) {
-                Supplier element = iterator.next();
-                if (element.getName().contains("'")) {
-                    iterator.remove();
-                }
-            }
-
-            return suppliers;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Supplier> find(EntityManager em,
-            String value,
-            int maxSearchResults) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Supplier> suppliers
-                    = em.createQuery("SELECT s FROM Supplier s WHERE s.name like '%"
-                            + value + "%'"
-                            + " ORDER BY s.id", Supplier.class).
-                            setMaxResults(maxSearchResults).getResultList();
-
-            return suppliers;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<String> findNames(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("'", "`");
-
-            List<String> names
-                    = em.createQuery("SELECT s FROM Supplier s where UPPER(s.name) like '"
-                            + value.toUpperCase()
-                            + "%' ORDER BY s.name", String.class).getResultList();
-            return names;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Supplier> getAllSuppliers(EntityManager em) {
-
-        try {
-            List<Supplier> suppliers = em.createNamedQuery("findAllSuppliers", Supplier.class).getResultList();
-            return suppliers;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Supplier findByName(EntityManager em, String value, Boolean ignoreCase) {
-
-        List<Supplier> suppliers;
-
-        try {
-
-            value = value.replaceAll("'", "`");
-
-            if (ignoreCase) {
-                suppliers = em.createQuery("SELECT s FROM Supplier s "
-                        + "WHERE UPPER(s.name) "
-                        + "= '" + value.toUpperCase() + "'", Supplier.class).getResultList();
-            } else {
-                suppliers = em.createQuery("SELECT s FROM Supplier s "
-                        + "WHERE s.name "
-                        + "= '" + value + "'", Supplier.class).getResultList();
-            }
-
-            if (!suppliers.isEmpty()) {
-                return suppliers.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Supplier findById(EntityManager em, Long id) {
-
-        try {
-            return em.find(Supplier.class, id);
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Supplier findActiveByName(
-            EntityManager em, String value, Boolean ignoreCase) {
-
-        List<Supplier> suppliers;
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            if (ignoreCase) {
-                suppliers = em.createQuery("SELECT s FROM Supplier s "
-                        + "WHERE UPPER(s.name) "
-                        + "= '" + value.toUpperCase() + "'"
-                        + " AND s.active = 1", Supplier.class).getResultList();
-            } else {
-                suppliers = em.createQuery("SELECT s FROM Supplier s "
-                        + "WHERE s.name "
-                        + "= '" + value + "'"
-                        + " AND s.active = 1", Supplier.class).getResultList();
-            }
-
-            if (!suppliers.isEmpty()) {
-                return suppliers.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Supplier findActiveDefault(
-            EntityManager em,
-            String name,
-            Boolean useTransaction) {
-
-        Supplier supplier = findActiveByName(em, name, false);
-
-        if (supplier == null) {
-            supplier = new Supplier(name);
-            supplier.setActive(true);
-            supplier.setInternet(Internet.findDefaultInternet(em, "--", useTransaction));
-            supplier.setEnteredBy(Employee.findDefault(em, "--", "--", useTransaction));
-
-            if (useTransaction) {
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, supplier);
-                em.getTransaction().commit();
-            } else {
-                BusinessEntityUtils.saveBusinessEntity(em, supplier);
-            }
-        }
-
-        return supplier;
-    }
-
-    public static List<Supplier> findBySearchPattern(EntityManager em, String searchPattern) {
-
-        try {
-
-            searchPattern = searchPattern.replaceAll("'", "`");
-
-            List<Supplier> suppliers = em.createQuery("SELECT s FROM Supplier s "
-                    + "WHERE UPPER(s.name) "
-                    + "LIKE '" + searchPattern.toUpperCase() + "%' "
-                    + "ORDER BY s.name", Supplier.class).getResultList();
-            return suppliers;
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {

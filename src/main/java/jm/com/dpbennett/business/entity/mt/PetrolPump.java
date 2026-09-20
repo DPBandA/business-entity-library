@@ -19,21 +19,20 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.mt;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
@@ -51,6 +50,18 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class PetrolPump implements Product, BusinessEntity, Comparable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(PetrolPump.class.getName());
+    public static PetrolPump findPetrolPumpById(EntityManager em, Long id) {
+        
+        try {
+            PetrolPump pump = em.find(PetrolPump.class, id);
+            
+            return pump;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -61,8 +72,7 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     private String model;
     private String status;
     private Double rate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateScheduledForTest;
+    private LocalDateTime dateScheduledForTest;
     private String name;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Manufacturer manufacturer;
@@ -147,11 +157,11 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
         this.manufacturer = manufacturer;
     }
 
-    public Date getDateScheduledForTest() {
+    public LocalDateTime getDateScheduledForTest() {
         return dateScheduledForTest;
     }
 
-    public void setDateScheduledForTest(Date dateScheduledForTest) {
+    public void setDateScheduledForTest(LocalDateTime dateScheduledForTest) {
         this.dateScheduledForTest = dateScheduledForTest;
     }
 
@@ -269,17 +279,6 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
         this.name = name;
     }
 
-    public static PetrolPump findPetrolPumpById(EntityManager em, Long id) {
-
-        try {
-            PetrolPump pump = em.find(PetrolPump.class, id);
-
-            return pump;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -332,22 +331,22 @@ public class PetrolPump implements Product, BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

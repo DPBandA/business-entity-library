@@ -20,7 +20,7 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.mt;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 
 /**
@@ -42,15 +42,15 @@ public interface Calibration {
 
     public void setHourlyRate(Double hourlyRate);
 
-    public Date getCalibrationDate();
+    public LocalDateTime getCalibrationDate();
 
-    public void setCalibrationDate(Date calibrationDate);
+    public void setCalibrationDate(LocalDateTime calibrationDate);
 
     public Employee getCalibrationDoneBy();
 
     public void setCalibrationDoneBy(Employee calibrationDoneBy);
 
-    public Date getReCalibrationDate();
+    public LocalDateTime getReCalibrationDate();
 
-    public void setReCalibrationDate(Date reCalibrationDate);
+    public void setReCalibrationDate(LocalDateTime reCalibrationDate);
 }

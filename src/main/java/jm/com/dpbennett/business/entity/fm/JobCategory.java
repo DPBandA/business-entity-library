@@ -19,23 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -54,6 +54,110 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findByCategory", query = "SELECT e FROM JobCategory e WHERE e.category = :category ORDER BY e.category")
 })
 public class JobCategory implements Serializable, BusinessEntity {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(JobCategory.class.getName());
+    public static List<JobCategory> findAllJobCategories(EntityManager em) {
+        
+        try {
+            
+            List<JobCategory> categories = em.createNamedQuery("findAllJobCategories", JobCategory.class).getResultList();
+            
+            return categories;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static List<JobCategory> findAllActiveJobCategories(EntityManager em) {
+        
+        try {
+            
+            List<JobCategory> categories = em.createNamedQuery("findAllActiveJobCategories", JobCategory.class).getResultList();
+            
+            return categories;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static List<String> findAllJobCategoryNames(EntityManager em) {
+        
+        ArrayList<String> names = new ArrayList<>();
+        
+        try {
+            List<JobCategory> jobCategories = em.createNamedQuery("findAllJobCategories", JobCategory.class).getResultList();
+            for (JobCategory jobCategory : jobCategories) {
+                names.add(jobCategory.getCategory());
+            }
+            
+            return names;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static JobCategory findJobCategoryById(EntityManager em, Long Id) {
+        try {
+            
+            return em.find(JobCategory.class, Id);
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static JobCategory findJobCategoryByName(EntityManager em, String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<JobCategory> jobCategories = em.createQuery("SELECT c FROM JobCategory c "
+                    + "WHERE UPPER(c.category) "
+                    + "= '" + name.toUpperCase() + "'", JobCategory.class).getResultList();
+            
+            if (!jobCategories.isEmpty()) {
+                return jobCategories.get(0);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<JobCategory> findJobCategoriesByName(EntityManager em, String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<JobCategory> jobCategories
+                    = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"
+                            + name.toUpperCase().trim() + "%' ORDER BY j.category", JobCategory.class).getResultList();
+            return jobCategories;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<JobCategory> findActiveJobCategoriesByName(
+            EntityManager em, String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<JobCategory> jobCategories
+                    = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"
+                            + name.toUpperCase().trim() + "%' AND j.active = 1 ORDER BY j.category", JobCategory.class).getResultList();
+            return jobCategories;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -251,113 +355,6 @@ public class JobCategory implements Serializable, BusinessEntity {
         category = name;
     }
 
-    public static List<JobCategory> findAllJobCategories(EntityManager em) {
-
-        try {
-
-            List<JobCategory> categories = em.createNamedQuery("findAllJobCategories", JobCategory.class).getResultList();
-
-            return categories;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
-
-    public static List<JobCategory> findAllActiveJobCategories(EntityManager em) {
-
-        try {
-
-            List<JobCategory> categories = em.createNamedQuery("findAllActiveJobCategories", JobCategory.class).getResultList();
-
-            return categories;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
-
-    public static List<String> findAllJobCategoryNames(EntityManager em) {
-
-        ArrayList<String> names = new ArrayList<>();
-
-        try {
-            List<JobCategory> jobCategories = em.createNamedQuery("findAllJobCategories", JobCategory.class).getResultList();
-            for (JobCategory jobCategory : jobCategories) {
-                names.add(jobCategory.getCategory());
-            }
-
-            return names;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static JobCategory findJobCategoryById(EntityManager em, Long Id) {
-        try {
-
-            return em.find(JobCategory.class, Id);
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static JobCategory findJobCategoryByName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<JobCategory> jobCategories = em.createQuery("SELECT c FROM JobCategory c "
-                    + "WHERE UPPER(c.category) "
-                    + "= '" + name.toUpperCase() + "'", JobCategory.class).getResultList();
-
-            if (!jobCategories.isEmpty()) {
-                return jobCategories.get(0);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<JobCategory> findJobCategoriesByName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<JobCategory> jobCategories
-                    = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY j.category", JobCategory.class).getResultList();
-            return jobCategories;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<JobCategory> findActiveJobCategoriesByName(
-            EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<JobCategory> jobCategories
-                    = em.createQuery("SELECT j FROM JobCategory j WHERE UPPER(j.category) like '%"
-                            + name.toUpperCase().trim() + "%' AND j.active = 1 ORDER BY j.category", JobCategory.class).getResultList();
-            return jobCategories;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -395,22 +392,22 @@ public class JobCategory implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -19,6 +19,17 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.mt;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -26,20 +37,10 @@ import jm.com.dpbennett.business.entity.cm.Customer;
 import jm.com.dpbennett.business.entity.cert.Certification;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -56,6 +57,137 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class PetrolStation implements Customer, BusinessEntity, Comparable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(PetrolStation.class.getName());
+    public static List<PetrolStation> find(
+            EntityManager em,
+            String value,
+            int maxSearchResults) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<PetrolStation> stations
+                    = em.createQuery("SELECT p FROM PetrolStation p where UPPER(p.name) like '"
+                            + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class)
+                            .setMaxResults(maxSearchResults)
+                            .getResultList();
+            
+            return stations;
+            
+        } catch (Exception e) {
+            
+            System.out.println(e);
+            return new ArrayList<>();
+            
+        }
+    }
+    public static List<PetrolStation> findActive(
+            EntityManager em,
+            String value,
+            int maxSearchResults) {
+        
+        try {
+            
+            value = value.replaceAll("'", "`");
+            
+            List<PetrolStation> stations
+                    = em.createQuery("SELECT p FROM PetrolStation p WHERE p.name like '%"
+                            + value + "%'"
+                                    + " AND p.active = 1"
+                                    + " ORDER BY p.name", PetrolStation.class)
+                            .setMaxResults(maxSearchResults)
+                            .getResultList();
+            
+            return stations;
+            
+        } catch (Exception e) {
+            
+            System.out.println(e);
+            return new ArrayList<>();
+            
+        }
+    }
+    public static List<PetrolStation> findByDateSearchField(
+            EntityManager em,
+            User user,
+            String dateSearchField,
+            String searchType,
+            String searchText,
+            Date startDate,
+            Date endDate,
+            Boolean includeSampleSearch) {
+        
+        List<PetrolStation> stations;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        String searchQuery = null;
+        String searchTextAndClause = "";
+        
+        if (searchType.equals("General")) {
+            
+            if (!searchText.equals("")) {
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(petrolStation.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(lastAssignee.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(lastAssignee.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+            }
+            
+            searchQuery
+                    = "SELECT petrolStation FROM PetrolStation petrolStation"
+                    + " JOIN petrolStation.client client"
+                    + " JOIN petrolStation.certification certification"
+                    + " JOIN petrolStation.lastAssignee lastAssignee"
+                    + " WHERE (certification." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                    + " AND certification." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                    + searchTextAndClause
+                    + " ORDER BY certification.expiryDate ASC";
+            
+        }
+        
+        try {
+            stations = em.createQuery(searchQuery, PetrolStation.class).getResultList();
+        } catch (Exception e) {
+            
+            System.out.println(e);
+            return null;
+            
+        }
+        
+        return stations;
+    }
+    public static PetrolStation findByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<PetrolStation> companies = em.createQuery("SELECT p FROM PetrolStation p "
+                    + "WHERE UPPER(p.name) "
+                    + "= '" + value.toUpperCase() + "'", PetrolStation.class).getResultList();
+            if (!companies.isEmpty()) {
+                return companies.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+    }
+    public static PetrolStation findById(EntityManager em, Long id) {
+        
+        try {
+            PetrolStation station = em.find(PetrolStation.class, id);
+            
+            return station;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -66,10 +198,8 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client client;
     private String notes;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateFirstReceived;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastAccessed;
+    private LocalDateTime dateFirstReceived;
+    private LocalDateTime dateLastAccessed;
     private String taxRegistrationNumber;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee lastAssignee;
@@ -239,12 +369,12 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateLastAccessed() {
+    public LocalDateTime getDateLastAccessed() {
         return dateLastAccessed;
     }
 
     @Override
-    public void setDateLastAccessed(Date dateLastAccessed) {
+    public void setDateLastAccessed(LocalDateTime dateLastAccessed) {
         this.dateLastAccessed = dateLastAccessed;
     }
 
@@ -269,12 +399,12 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateFirstReceived() {
+    public LocalDateTime getDateFirstReceived() {
         return dateFirstReceived;
     }
 
     @Override
-    public void setDateFirstReceived(Date dateFirstReceived) {
+    public void setDateFirstReceived(LocalDateTime dateFirstReceived) {
         this.dateFirstReceived = dateFirstReceived;
     }
 
@@ -298,140 +428,6 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
         this.taxRegistrationNumber = taxRegistrationNumber;
     }
 
-    public static List<PetrolStation> find(
-            EntityManager em,
-            String value,
-            int maxSearchResults) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<PetrolStation> stations
-                    = em.createQuery("SELECT p FROM PetrolStation p where UPPER(p.name) like '"
-                            + value.toUpperCase().trim() + "%' ORDER BY p.name", PetrolStation.class)
-                            .setMaxResults(maxSearchResults)
-                            .getResultList();
-
-            return stations;
-
-        } catch (Exception e) {
-
-            System.out.println(e);
-            return new ArrayList<>();
-
-        }
-    }
-
-    public static List<PetrolStation> findActive(
-            EntityManager em,
-            String value,
-            int maxSearchResults) {
-
-        try {
-
-            value = value.replaceAll("'", "`");
-
-            List<PetrolStation> stations
-                    = em.createQuery("SELECT p FROM PetrolStation p WHERE p.name like '%"
-                            + value + "%'"
-                            + " AND p.active = 1"
-                            + " ORDER BY p.name", PetrolStation.class)
-                            .setMaxResults(maxSearchResults)
-                            .getResultList();
-
-            return stations;
-
-        } catch (Exception e) {
-
-            System.out.println(e);
-            return new ArrayList<>();
-
-        }
-    }
-
-    public static List<PetrolStation> findByDateSearchField(
-            EntityManager em,
-            User user,
-            String dateSearchField,
-            String searchType,
-            String searchText,
-            Date startDate,
-            Date endDate,
-            Boolean includeSampleSearch) {
-
-        List<PetrolStation> stations;
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        String searchQuery = null;
-        String searchTextAndClause = "";
-
-        if (searchType.equals("General")) {
-
-            if (!searchText.equals("")) {
-                searchTextAndClause
-                        = " AND ("
-                        + " UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(petrolStation.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(lastAssignee.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(lastAssignee.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " )";
-            }
-
-            searchQuery
-                    = "SELECT petrolStation FROM PetrolStation petrolStation"
-                    + " JOIN petrolStation.client client"
-                    + " JOIN petrolStation.certification certification"
-                    + " JOIN petrolStation.lastAssignee lastAssignee"
-                    + " WHERE (certification." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                    + " AND certification." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                    + searchTextAndClause
-                    + " ORDER BY certification.expiryDate ASC";
-
-        }
-
-        try {
-            stations = em.createQuery(searchQuery, PetrolStation.class).getResultList();
-        } catch (Exception e) {
-
-            System.out.println(e);
-            return null;
-
-        }
-
-        return stations;
-    }
-
-    public static PetrolStation findByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<PetrolStation> companies = em.createQuery("SELECT p FROM PetrolStation p "
-                    + "WHERE UPPER(p.name) "
-                    + "= '" + value.toUpperCase() + "'", PetrolStation.class).getResultList();
-            if (!companies.isEmpty()) {
-                return companies.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-    }
-
-    public static PetrolStation findById(EntityManager em, Long id) {
-
-        try {
-            PetrolStation station = em.find(PetrolStation.class, id);
-
-            return station;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -500,22 +496,22 @@ public class PetrolStation implements Customer, BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

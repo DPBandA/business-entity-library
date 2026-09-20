@@ -17,19 +17,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.util;
 
+import jakarta.mail.Authenticator;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.persistence.EntityManager;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-import javax.mail.Authenticator;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 
 /**
@@ -37,6 +36,7 @@ import jm.com.dpbennett.business.entity.sm.SystemOption;
  * @author Desmond Bennett <info@dpbennett.com.jm at http//dpbennett.com.jm>
  */
 public class MailUtils {
+    private static final System.Logger LOG = System.getLogger(MailUtils.class.getName());
 
     public static Session getDefaultEmailSession(EntityManager em) {
         Session session;
@@ -141,5 +141,14 @@ public class MailUtils {
         }
 
     }
+
+
+    public static System.Logger getLOG() {
+        return LOG;
+    }
+    private MailUtils() {
+    }
+    
+    
 
 }

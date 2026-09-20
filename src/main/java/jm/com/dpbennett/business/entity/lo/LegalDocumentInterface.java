@@ -19,9 +19,9 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.lo;
 
-import java.util.Date;
+import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -67,14 +67,14 @@ public interface LegalDocumentInterface extends BusinessEntity, Comparable, Docu
     Integer getCurrentDocumentActualTurnaroundTime();
 
     @Override
-    Date getDateEdited();
+    LocalDateTime getDateEdited();
 
     @Override
-    Date getDateEntered();
+    LocalDateTime getDateEntered();
 
-    Date getDateOfCompletion();
+    LocalDateTime getDateOfCompletion();
 
-    Date getDateReceived();
+    LocalDateTime getDateReceived();
 
     @Override
     String getDescription();
@@ -90,7 +90,7 @@ public interface LegalDocumentInterface extends BusinessEntity, Comparable, Docu
     @Override
     Person getEnteredBy();
 
-    Date getExpectedDateOfCompletion();
+    LocalDateTime getExpectedDateOfCompletion();
 
     Client getExternalClient();
 
@@ -179,14 +179,14 @@ public interface LegalDocumentInterface extends BusinessEntity, Comparable, Docu
     void setComments(String comments);
 
     @Override
-    void setDateEdited(Date dateEdited);
+    void setDateEdited(LocalDateTime dateEdited);
 
     @Override
-    void setDateEntered(Date dateEntered);
+    void setDateEntered(LocalDateTime dateEntered);
 
-    void setDateOfCompletion(Date dateOfCompletion);
+    void setDateOfCompletion(LocalDateTime dateOfCompletion);
 
-    void setDateReceived(Date dateReceived);
+    void setDateReceived(LocalDateTime dateReceived);
 
     @Override
     void setDescription(String description);
@@ -202,7 +202,7 @@ public interface LegalDocumentInterface extends BusinessEntity, Comparable, Docu
     @Override
     void setEnteredBy(Person person);
 
-    void setExpectedDateOfCompletion(Date expectedDateOfCompletion);
+    void setExpectedDateOfCompletion(LocalDateTime expectedDateOfCompletion);
 
     void setExternalClient(Client externalClient);
 
