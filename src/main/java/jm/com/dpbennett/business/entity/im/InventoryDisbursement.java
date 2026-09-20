@@ -19,23 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.im;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.Asset;
@@ -55,6 +55,57 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class InventoryDisbursement implements Serializable, Comparable, BusinessEntity, Asset {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(InventoryDisbursement.class.getName());
+    public static InventoryDisbursement findById(EntityManager em, Long Id) {
+        
+        return em.find(InventoryDisbursement.class, Id);
+    }
+    public static List<InventoryDisbursement> find(
+            EntityManager em,
+            String searchText,
+            Integer maxResults) {
+        
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        
+        List<InventoryDisbursement> foundInventoryDisbursements;
+        String searchQuery;
+        String searchTextAndClause;
+        String selectClause = "SELECT inventoryDisbursement FROM InventoryDisbursement inventoryDisbursement";
+        String mainJoinClause
+                = " JOIN inventoryDisbursement.inventory inventory"
+                + " JOIN inventoryDisbursement.enteredBy enteredBy"
+                + " JOIN inventoryDisbursement.editedBy editedBy";
+        
+        String mainSearchWhereClause = " UPPER(inventoryDisbursement.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventoryDisbursement.type) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventoryDisbursement.status) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventoryDisbursement.description) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(enteredBy.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(editedBy.name) LIKE '%" + searchText.toUpperCase() + "%'";
+        
+        searchTextAndClause
+                = " WHERE"
+                + mainSearchWhereClause;
+        searchQuery
+                = selectClause
+                + mainJoinClause
+                + searchTextAndClause
+                + " ORDER BY inventoryDisbursement.id DESC";
+        
+        try {
+            if (maxResults == 0) {
+                foundInventoryDisbursements = em.createQuery(searchQuery, InventoryDisbursement.class).getResultList();
+            } else {
+                foundInventoryDisbursements = em.createQuery(searchQuery, InventoryDisbursement.class).setMaxResults(maxResults).getResultList();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return foundInventoryDisbursements;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -64,16 +115,12 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     private Inventory inventory;
     private Double quantityOrdered;
     private Double quantityReceived;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOrdered;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateReceived;
+    private LocalDateTime dateOrdered;
+    private LocalDateTime dateReceived;
     private Double unitCost;
     private Double cost;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEntered;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEdited;
+    private LocalDateTime dateEntered;
+    private LocalDateTime dateEdited;
     private String status;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee enteredBy;
@@ -140,19 +187,19 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         this.id = id;
     }
 
-    public Date getDateOrdered() {
+    public LocalDateTime getDateOrdered() {
         return dateOrdered;
     }
 
-    public void setDateOrdered(Date dateOrdered) {
+    public void setDateOrdered(LocalDateTime dateOrdered) {
         this.dateOrdered = dateOrdered;
     }
 
-    public Date getDateReceived() {
+    public LocalDateTime getDateReceived() {
         return dateReceived;
     }
 
-    public void setDateReceived(Date dateReceived) {
+    public void setDateReceived(LocalDateTime dateReceived) {
         this.dateReceived = dateReceived;
     }
 
@@ -209,17 +256,17 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         return dateEntered;
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         this.dateEntered = dateEntered;
     }
 
     public ReturnMessage prepareAndSave(EntityManager em, User user) {
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
 
         try {
             Employee employee = user.getEmployee();
@@ -351,57 +398,6 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
         this.editStatus = editStatus;
     }
 
-    public static InventoryDisbursement findById(EntityManager em, Long Id) {
-
-        return em.find(InventoryDisbursement.class, Id);
-    }
-
-    public static List<InventoryDisbursement> find(
-            EntityManager em,
-            String searchText,
-            Integer maxResults) {
-
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-        List<InventoryDisbursement> foundInventoryDisbursements;
-        String searchQuery;
-        String searchTextAndClause;
-        String selectClause = "SELECT inventoryDisbursement FROM InventoryDisbursement inventoryDisbursement";
-        String mainJoinClause
-                = " JOIN inventoryDisbursement.inventory inventory"
-                + " JOIN inventoryDisbursement.enteredBy enteredBy"
-                + " JOIN inventoryDisbursement.editedBy editedBy";
-
-        String mainSearchWhereClause = " UPPER(inventoryDisbursement.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventoryDisbursement.type) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventoryDisbursement.status) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventoryDisbursement.description) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(enteredBy.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(editedBy.name) LIKE '%" + searchText.toUpperCase() + "%'";
-
-        searchTextAndClause
-                = " WHERE"
-                + mainSearchWhereClause;
-        searchQuery
-                = selectClause
-                + mainJoinClause
-                + searchTextAndClause
-                + " ORDER BY inventoryDisbursement.id DESC";
-
-        try {
-            if (maxResults == 0) {
-                foundInventoryDisbursements = em.createQuery(searchQuery, InventoryDisbursement.class).getResultList();
-            } else {
-                foundInventoryDisbursements = em.createQuery(searchQuery, InventoryDisbursement.class).setMaxResults(maxResults).getResultList();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundInventoryDisbursements;
-    }
 
     public Double getQuantityOrdered() {
         return quantityOrdered;
@@ -421,12 +417,12 @@ public class InventoryDisbursement implements Serializable, Comparable, Business
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         return dateEdited;
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         this.dateEdited = dateEdited;
     }
 

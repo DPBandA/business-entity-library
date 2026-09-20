@@ -19,20 +19,20 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -48,6 +48,146 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Subgroup implements BusinessEntity, Comparable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Subgroup.class.getName());
+    public static Subgroup findById(EntityManager em, Long id) {
+        
+        try {
+            Subgroup subgroup = em.find(Subgroup.class, id);
+            return subgroup;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Subgroup findActiveSubgroupByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
+                    + "WHERE s.active = 1 AND UPPER(s.name) "
+                    + "= '" + value.toUpperCase() + "'", Subgroup.class).getResultList();
+            
+            if (!subgroups.isEmpty()) {
+                return subgroups.get(0);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Subgroup findByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
+                    + "WHERE UPPER(s.name) "
+                    + "= '" + value.toUpperCase() + "'", Subgroup.class).getResultList();
+            if (!subgroups.isEmpty()) {
+                return subgroups.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Subgroup findDefault(EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        Subgroup subgroup = Subgroup.findByName(em, name);
+        
+        if (subgroup == null) {
+            subgroup = new Subgroup();
+            subgroup.setName(name);
+            
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, subgroup);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, subgroup);
+            }
+        }
+        
+        return subgroup;
+    }
+    public static List<Subgroup> findAll(EntityManager em) {
+        
+        try {
+            return em.createQuery("SELECT s FROM Subgroup s ORDER BY s.name", Subgroup.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Subgroup> findAllActive(EntityManager em) {
+        
+        try {
+            return em.createQuery("SELECT s FROM Subgroup s WHERE s.active = 1 ORDER BY s.name", Subgroup.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Subgroup> findAllByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Subgroup> subgroups
+                    = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY s.name", Subgroup.class).getResultList();
+            return subgroups;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Subgroup> findAllActiveByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Subgroup> subgroups
+                    = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
+                            + value.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Subgroup.class).getResultList();
+            return subgroups;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Subgroup findByDepartment(EntityManager em, Department department) {
+        
+        try {
+            
+            List<Subgroup> subgroups
+                    = em.createQuery(
+                            "SELECT s FROM Subgroup s"
+                                    + " JOIN s.departments departments"
+                                    + " WHERE departments.id = " + department.getId(),
+                            Subgroup.class).getResultList();
+            
+            if (!subgroups.isEmpty()) {
+                return subgroups.get(0);
+            } else {
+                return null;
+            }
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -212,153 +352,6 @@ public class Subgroup implements BusinessEntity, Comparable {
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
 
-    public static Subgroup findById(EntityManager em, Long id) {
-
-        try {
-            Subgroup subgroup = em.find(Subgroup.class, id);
-            return subgroup;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Subgroup findActiveSubgroupByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
-                    + "WHERE s.active = 1 AND UPPER(s.name) "
-                    + "= '" + value.toUpperCase() + "'", Subgroup.class).getResultList();
-
-            if (!subgroups.isEmpty()) {
-                return subgroups.get(0);
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Subgroup findByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Subgroup> subgroups = em.createQuery("SELECT s FROM Subgroup s "
-                    + "WHERE UPPER(s.name) "
-                    + "= '" + value.toUpperCase() + "'", Subgroup.class).getResultList();
-            if (!subgroups.isEmpty()) {
-                return subgroups.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Subgroup findDefault(EntityManager em,
-            String name,
-            Boolean useTransaction) {
-        Subgroup subgroup = Subgroup.findByName(em, name);
-
-        if (subgroup == null) {
-            subgroup = new Subgroup();
-            subgroup.setName(name);
-
-            if (useTransaction) {
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, subgroup);
-                em.getTransaction().commit();
-            } else {
-                BusinessEntityUtils.saveBusinessEntity(em, subgroup);
-            }
-        }
-
-        return subgroup;
-    }
-
-    public static List<Subgroup> findAll(EntityManager em) {
-
-        try {
-            return em.createQuery("SELECT s FROM Subgroup s ORDER BY s.name", Subgroup.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Subgroup> findAllActive(EntityManager em) {
-
-        try {
-            return em.createQuery("SELECT s FROM Subgroup s WHERE s.active = 1 ORDER BY s.name", Subgroup.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Subgroup> findAllByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Subgroup> subgroups
-                    = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY s.name", Subgroup.class).getResultList();
-            return subgroups;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Subgroup> findAllActiveByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Subgroup> subgroups
-                    = em.createQuery("SELECT s FROM Subgroup s where UPPER(s.name) like '%"
-                            + value.toUpperCase().trim() + "%' AND s.active = 1 ORDER BY s.name", Subgroup.class).getResultList();
-            return subgroups;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Subgroup findByDepartment(EntityManager em, Department department) {
-
-        try {
-
-            List<Subgroup> subgroups
-                    = em.createQuery(
-                            "SELECT s FROM Subgroup s"
-                            + " JOIN s.departments departments"
-                            + " WHERE departments.id = " + department.getId(),
-                            Subgroup.class).getResultList();
-
-            if (!subgroups.isEmpty()) {
-                return subgroups.get(0);
-            } else {
-                return null;
-            }
-
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -406,22 +399,22 @@ public class Subgroup implements BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

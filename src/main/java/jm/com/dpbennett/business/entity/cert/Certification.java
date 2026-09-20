@@ -19,21 +19,21 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.cert;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Business;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
+import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -50,6 +50,21 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Certification implements CertificationInterface {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Certification.class.getName());
+    public static List<Certification> findAllByOwnerId(EntityManager em, Long ownerId) {
+        
+        try {
+            List<Certification> certifications = em.createQuery("SELECT c FROM Certification c"
+                    + " WHERE c.ownerId = " + ownerId
+                    + " ORDER BY c.ownerId DESC", Certification.class).getResultList();
+            
+            return certifications;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -63,6 +78,8 @@ public class Certification implements CertificationInterface {
     private Employee certificateSignedBy;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Business grantedTo;
+    private LocalDateTime dateIssued;
+    private LocalDateTime expiryDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateSigned;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -82,6 +99,7 @@ public class Certification implements CertificationInterface {
         this.certificateNumber = "";
     }
 
+    @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     public Certification(Certification certification) {
         this.number = certification.number;
         this.type = certification.type;
@@ -248,23 +266,23 @@ public class Certification implements CertificationInterface {
     }
 
     @Override
-    public Date getDateIssued() {
+    public LocalDateTime getDateIssued() {
         return dateIssued;
     }
 
     @Override
-    public void setDateIssued(Date dateIssued) {
+    public void setDateIssued(LocalDateTime dateIssued) {
         this.dateIssued = dateIssued;
     }
 
     @Override
-    public Date getExpiryDate() {
+    public LocalDateTime getExpiryDate() {
 
         return expiryDate;
     }
 
     @Override
-    public void setExpiryDate(Date expiryDate) {
+    public void setExpiryDate(LocalDateTime expiryDate) {
         this.expiryDate = expiryDate;
     }
 
@@ -293,10 +311,10 @@ public class Certification implements CertificationInterface {
 
     @Override
     public int compareTo(Object o) {
-        if ((((Certification) o).dateIssued != null) && (this.dateIssued != null)) {
+        if ((((Certification) o).id != null) && (this.id != null)) {
             return Collator.getInstance().compare(
-                    Long.toString(((Certification) o).dateIssued.getTime()),
-                    Long.toString(this.dateIssued.getTime()));
+                    Long.toString(((BusinessEntity) o).getId()),
+                    Long.toString(this.getId()));
         } else {
             return 0;
         }
@@ -362,16 +380,7 @@ public class Certification implements CertificationInterface {
         this.isDirty = isDirty;
     }
 
-    @Override
-    public Date getDateEntered() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void setDateEntered(Date dateEntered) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
+  
     @Override
     public ReturnMessage delete(EntityManager em) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -404,16 +413,6 @@ public class Certification implements CertificationInterface {
 
     @Override
     public void setEnteredBy(Person person) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Date getDateEdited() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void setDateEdited(Date dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -459,6 +458,34 @@ public class Certification implements CertificationInterface {
 
     @Override
     public void setSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public ReturnMessage save(Object em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public ReturnMessage validate(Object em) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public LocalDateTime getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(LocalDateTime dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public LocalDateTime getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

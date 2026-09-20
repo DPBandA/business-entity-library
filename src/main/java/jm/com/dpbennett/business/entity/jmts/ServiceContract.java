@@ -19,21 +19,21 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.jmts;
 
-import java.util.Date;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Query;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Query;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.Service;
@@ -51,7 +51,53 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findAllServiceContracts", query = "SELECT s FROM ServiceContract s ORDER BY s.id"),
     @NamedQuery(name = "findByJobId", query = "SELECT s FROM ServiceContract s WHERE s.jobId = :jobId")
 })
-public class ServiceContract implements BusinessEntity {
+public class ServiceContract implements BusinessEntity, Cloneable {
+
+    private static final long serialVersionUID = 1L;
+    public static ServiceContract copy(ServiceContract src) {
+        
+        ServiceContract copy = new ServiceContract();
+        
+        copy.jobId = src.jobId;
+        copy.selectedService = src.selectedService;
+        copy.serviceRequestedDetails = src.serviceRequestedDetails;
+        copy.serviceRequestedOtherText = src.serviceRequestedOtherText;
+        copy.additionalServiceUrgent = src.additionalServiceUrgent;
+        copy.additionalServiceFaxResults = src.additionalServiceFaxResults;
+        copy.additionalServiceTelephonePresumptiveResults = src.additionalServiceTelephonePresumptiveResults;
+        copy.additionalServiceSendMoreContractForms = src.additionalServiceSendMoreContractForms;
+        copy.additionalServiceOther = src.additionalServiceOther;
+        copy.additionalServiceOtherText = src.additionalServiceOtherText;
+        copy.intendedMarketLocal = src.intendedMarketLocal;
+        copy.intendedMarketCaricom = src.intendedMarketCaricom;
+        copy.intendedMarketUK = src.intendedMarketUK;
+        copy.intendedMarketUSA = src.intendedMarketUSA;
+        copy.intendedMarketCanada = src.intendedMarketCanada;
+        copy.intendedMarketOther = src.intendedMarketOther;
+        copy.intendedMarketOtherText = src.intendedMarketOtherText;
+        copy.billingAddressId = src.billingAddressId;
+        copy.specialInstructions = src.specialInstructions;
+        copy.submittedBy = src.submittedBy;
+        copy.receivedBy = src.receivedBy;
+        copy.estimatedTurnAroundTime = src.estimatedTurnAroundTime;
+        copy.autoAddSampleInformation = src.autoAddSampleInformation;
+        
+        
+        return copy;
+        
+    }
+    public static ServiceContract findServiceContractByJobId(EntityManager em, Long jobId) {
+        
+        try {
+            Query q = em.createNamedQuery("findByJobId");
+            q.setParameter("jobId", jobId);
+            
+            return (ServiceContract) q.getSingleResult();
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -120,38 +166,6 @@ public class ServiceContract implements BusinessEntity {
         intendedMarketOtherText = src.intendedMarketOtherText;
     }
 
-    public static ServiceContract copy(ServiceContract src) {
-        
-        ServiceContract copy = new ServiceContract();
-        
-        copy.jobId = src.jobId;
-        copy.selectedService = src.selectedService;
-        copy.serviceRequestedDetails = src.serviceRequestedDetails;
-        copy.serviceRequestedOtherText = src.serviceRequestedOtherText;
-        copy.additionalServiceUrgent = src.additionalServiceUrgent;
-        copy.additionalServiceFaxResults = src.additionalServiceFaxResults;
-        copy.additionalServiceTelephonePresumptiveResults = src.additionalServiceTelephonePresumptiveResults;
-        copy.additionalServiceSendMoreContractForms = src.additionalServiceSendMoreContractForms;
-        copy.additionalServiceOther = src.additionalServiceOther;
-        copy.additionalServiceOtherText = src.additionalServiceOtherText;
-        copy.intendedMarketLocal = src.intendedMarketLocal;
-        copy.intendedMarketCaricom = src.intendedMarketCaricom;
-        copy.intendedMarketUK = src.intendedMarketUK;
-        copy.intendedMarketUSA = src.intendedMarketUSA;
-        copy.intendedMarketCanada = src.intendedMarketCanada;
-        copy.intendedMarketOther = src.intendedMarketOther;
-        copy.intendedMarketOtherText = src.intendedMarketOtherText;
-        copy.billingAddressId = src.billingAddressId;
-        copy.specialInstructions = src.specialInstructions;
-        copy.submittedBy = src.submittedBy;
-        copy.receivedBy = src.receivedBy;
-        copy.estimatedTurnAroundTime = src.estimatedTurnAroundTime;
-        copy.autoAddSampleInformation = src.autoAddSampleInformation;
-        
-        
-        return copy;
-
-    }
 
     public Job getJob() {
         return job;
@@ -469,18 +483,6 @@ public class ServiceContract implements BusinessEntity {
     public void setName(String name) {
     }
 
-    public static ServiceContract findServiceContractByJobId(EntityManager em, Long jobId) {
-
-        try {
-            Query q = em.createNamedQuery("findByJobId");
-            q.setParameter("jobId", jobId);
-
-            return (ServiceContract) q.getSingleResult();
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -538,22 +540,22 @@ public class ServiceContract implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -636,4 +638,5 @@ public class ServiceContract implements BusinessEntity {
     public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+    private static final System.Logger LOG = System.getLogger(ServiceContract.class.getName());
 }

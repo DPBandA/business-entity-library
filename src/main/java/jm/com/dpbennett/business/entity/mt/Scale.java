@@ -19,24 +19,25 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.mt;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.cm.Client;
 import jm.com.dpbennett.business.entity.cert.Certification;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
@@ -55,6 +56,109 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Scale implements Product, BusinessEntity, Comparable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Scale.class.getName());
+    public static List<Scale> findActive(
+            EntityManager em,
+            String searchText,
+            int maxSearchResults) {
+        
+        try {
+            
+            searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Scale> scales
+                    = em.createQuery("SELECT s FROM Scale s WHERE s.name like '%"
+                            + searchText + "%'"
+                                    + " AND s.active = 1"
+                                    + " ORDER BY s.name", Scale.class)
+                            .setMaxResults(maxSearchResults)
+                            .getResultList();
+            
+            return scales;
+            
+        } catch (Exception e) {
+            
+            System.out.println(e);
+            
+            return new ArrayList<>();
+            
+        }
+        
+    }
+    public static List<Scale> find(
+            EntityManager em,
+            String searchText,
+            int maxSearchResults) {
+        
+        try {
+            
+            searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Scale> scales
+                    = em.createQuery("SELECT s FROM Scale s WHERE s.name like '%"
+                            + searchText + "%'"
+                                    + " ORDER BY s.name", Scale.class)
+                            .setMaxResults(maxSearchResults)
+                            .getResultList();
+            
+            return scales;
+            
+        } catch (Exception e) {
+            
+            System.out.println(e);
+            
+            return new ArrayList<>();
+            
+        }
+        
+    }
+    public static List<Scale> findScalesByDateSearchField(
+            EntityManager em,
+            User user,
+            String dateSearchField,
+            String searchType,
+            String searchText,
+            Date startDate,
+            Date endDate,
+            Boolean includeSampleSearch) {
+        
+        List<Scale> scales;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        String searchQuery = null;
+        String searchTextAndClause = "";
+        
+        if (searchType.equals("General")) {
+            
+            if (!searchText.equals("")) {
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(scale.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(manufacturer.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+            }
+            
+            searchQuery
+                    = "SELECT scale FROM Scale scale"
+                    + " JOIN scale.client client"
+                    + " JOIN scale.certification certification"
+                    + " JOIN scale.manufacturer manufacturer"
+                    + " WHERE (certification." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                    + " AND certification." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                    + searchTextAndClause
+                    + " ORDER BY scale.id DESC";
+            
+        }
+        
+        try {
+            scales = em.createQuery(searchQuery, Scale.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return scales;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -73,8 +177,7 @@ public class Scale implements Product, BusinessEntity, Comparable {
     private Certification certification;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<Sticker> stickers;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateScheduledForTest;
+    private LocalDateTime dateScheduledForTest;
     private String name;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client client;
@@ -148,11 +251,11 @@ public class Scale implements Product, BusinessEntity, Comparable {
         this.certification = certification;
     }
 
-    public Date getDateScheduledForTest() {
+    public LocalDateTime getDateScheduledForTest() {
         return dateScheduledForTest;
     }
 
-    public void setDateScheduledForTest(Date dateScheduledForTest) {
+    public void setDateScheduledForTest(LocalDateTime dateScheduledForTest) {
         this.dateScheduledForTest = dateScheduledForTest;
     }
 
@@ -262,110 +365,6 @@ public class Scale implements Product, BusinessEntity, Comparable {
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
 
-    public static List<Scale> findActive(
-            EntityManager em,
-            String searchText,
-            int maxSearchResults) {
-
-        try {
-
-            searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Scale> scales
-                    = em.createQuery("SELECT s FROM Scale s WHERE s.name like '%"
-                            + searchText + "%'"
-                            + " AND s.active = 1"
-                            + " ORDER BY s.name", Scale.class)
-                            .setMaxResults(maxSearchResults)
-                            .getResultList();
-
-            return scales;
-
-        } catch (Exception e) {
-
-            System.out.println(e);
-
-            return new ArrayList<>();
-
-        }
-
-    }
-
-    public static List<Scale> find(
-            EntityManager em,
-            String searchText,
-            int maxSearchResults) {
-
-        try {
-
-            searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Scale> scales
-                    = em.createQuery("SELECT s FROM Scale s WHERE s.name like '%"
-                            + searchText + "%'"
-                            + " ORDER BY s.name", Scale.class)
-                            .setMaxResults(maxSearchResults)
-                            .getResultList();
-
-            return scales;
-
-        } catch (Exception e) {
-
-            System.out.println(e);
-
-            return new ArrayList<>();
-
-        }
-
-    }
-
-    public static List<Scale> findScalesByDateSearchField(
-            EntityManager em,
-            User user,
-            String dateSearchField,
-            String searchType,
-            String searchText,
-            Date startDate,
-            Date endDate,
-            Boolean includeSampleSearch) {
-
-        List<Scale> scales;
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        String searchQuery = null;
-        String searchTextAndClause = "";
-
-        if (searchType.equals("General")) {
-
-            if (!searchText.equals("")) {
-                searchTextAndClause
-                        = " AND ("
-                        + " UPPER(client.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(scale.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(manufacturer.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " )";
-            }
-
-            searchQuery
-                    = "SELECT scale FROM Scale scale"
-                    + " JOIN scale.client client"
-                    + " JOIN scale.certification certification"
-                    + " JOIN scale.manufacturer manufacturer"
-                    + " WHERE (certification." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                    + " AND certification." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                    + searchTextAndClause
-                    + " ORDER BY scale.id DESC";
-
-        }
-
-        try {
-            scales = em.createQuery(searchQuery, Scale.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return scales;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -431,22 +430,22 @@ public class Scale implements Product, BusinessEntity, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

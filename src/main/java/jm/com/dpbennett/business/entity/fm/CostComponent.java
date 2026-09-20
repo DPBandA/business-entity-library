@@ -19,25 +19,25 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Query;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Query;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -57,6 +57,56 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class CostComponent implements BusinessEntity, Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(CostComponent.class.getName());
+    
+    public static CostComponent copy(CostComponent src) {
+        CostComponent copy = new CostComponent();
+        
+        copy.name = src.name;
+        copy.code = src.code;
+        copy.type = src.type;
+        copy.category = src.category;
+        copy.hours = src.hours;
+        copy.hoursOrQuantity = src.hoursOrQuantity;
+        copy.rate = src.rate;
+        copy.convertedRate = src.convertedRate;
+        copy.cost = src.cost;
+        copy.convertedCost = src.convertedCost;
+        copy.comments = src.comments;
+        copy.isHeading = src.isHeading;
+        copy.isFixedCost = src.isFixedCost;
+        copy.isEditable = src.isEditable;
+        copy.description = src.description;
+        copy.unit = src.unit;
+        copy.currency = src.currency;
+        copy.costDate = src.costDate;
+        copy.currencyExchangeRate = src.currencyExchangeRate;
+        
+        return copy;
+    }
+    public static List<CostComponent> findCostComponentsByName(String name, List<CostComponent> list) {
+        ArrayList<CostComponent> foundComponents = new ArrayList<>();
+        
+        for (CostComponent costComponent : list) {
+            if (costComponent.getName().equals(name)) {
+                foundComponents.add(costComponent);
+            }
+        }
+        
+        return foundComponents;
+    }
+    public static CostComponent findByOwnerId(EntityManager em, Long ownerId) {
+        try {
+            Query q = em.createNamedQuery("findByJobId");
+            q.setParameter("jobId", ownerId);
+            
+            return (CostComponent) q.getSingleResult();
+            
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -80,7 +130,6 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     private String unit;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Currency currency;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date costDate;
     private Double currencyExchangeRate;
     @Transient
@@ -350,31 +399,6 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         this.currencyExchangeRate = src.currencyExchangeRate;
     }
 
-    public static CostComponent copy(CostComponent src) {
-        CostComponent copy = new CostComponent();
-
-        copy.name = src.name;
-        copy.code = src.code;
-        copy.type = src.type;
-        copy.category = src.category;
-        copy.hours = src.hours;
-        copy.hoursOrQuantity = src.hoursOrQuantity;
-        copy.rate = src.rate;
-        copy.convertedRate = src.convertedRate;
-        copy.cost = src.cost;
-        copy.convertedCost = src.convertedCost;
-        copy.comments = src.comments;
-        copy.isHeading = src.isHeading;
-        copy.isFixedCost = src.isFixedCost;
-        copy.isEditable = src.isEditable;
-        copy.description = src.description;
-        copy.unit = src.unit;
-        copy.currency = src.currency;
-        copy.costDate = src.costDate;
-        copy.currencyExchangeRate = src.currencyExchangeRate;
-
-        return copy;
-    }
 
     public Boolean getIsSubcontract() {
         return getType().toUpperCase().equals("SUBCONTRACT");
@@ -542,30 +566,6 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
         return Collator.getInstance().compare(this.toString(), ((CostComponent) o).toString());
     }
 
-    public static List<CostComponent> findCostComponentsByName(String name, List<CostComponent> list) {
-        ArrayList<CostComponent> foundComponents = new ArrayList<>();
-
-        for (CostComponent costComponent : list) {
-            if (costComponent.getName().equals(name)) {
-                foundComponents.add(costComponent);
-            }
-        }
-
-        return foundComponents;
-    }
-
-    public static CostComponent findByOwnerId(EntityManager em, Long ownerId) {
-        try {
-            Query q = em.createNamedQuery("findByJobId");
-            q.setParameter("jobId", ownerId);
-
-            return (CostComponent) q.getSingleResult();
-
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -607,22 +607,22 @@ public class CostComponent implements BusinessEntity, Serializable, Comparable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

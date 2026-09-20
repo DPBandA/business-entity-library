@@ -19,6 +19,18 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sc;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -60,6 +72,329 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Table(name = "compliancesurvey")
 public class ComplianceSurvey implements BusinessEntity {
 
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(ComplianceSurvey.class.getName());
+    public static List<Object[]> getReportRecords(
+            EntityManager em,
+            String startDate,
+            String endDate,
+            Long departmentId) {
+        
+        String reportSQL = "SELECT DISTINCT"
+                //                + "     compliancesurvey.`ID`" // 0 - ID
+                + "     compliancesurvey.`JOBNUMBER`," // 0 - Job number
+                + "     consignee.`NAME`," // 1 - Consignee
+                + "     compliancesurvey.`COMMENTS`," // 2 - Comments
+                + "     businessoffice.`NAME`," // 3 - Business office
+                + "     entrydocumentinspection.`ENTRYDOCUMENTNUMBER`," // 4 - Entry document #s
+                + "     entrydocumentinspection.`CONTAINERNUMBERS`," // 5 - Containers
+                + "     compliancesurvey.`SURVEYTYPE`," // 6 - Survey type
+                + "     compliancesurvey.`SURVEYLOCATIONTYPE`," // 7 - Survey location type
+                + "     compliancesurvey.`TYPEOFESTABLISHMENT`," // 8 - Type of establishment
+                + "     retailoutlet.`NAME`," // 9 - Retail outlet
+                + "     compliancesurvey.`DATEOFSURVEY`," // 10 - Date of survey
+                + "     compliancesurvey.`TYPEOFPORTOFENTRY`," // 11 - Type of port of entry
+                + "     compliancesurvey.`PORTOFENTRY`," // 12 - Port of entry
+                + "     compliancesurvey.`INSPECTIONPOINT`," // 13 - Inspection point
+                + "     broker.`NAME`," // 14 - Broker
+                + "     compliancesurvey.`REASONFORDETENTION`," // 15 - Reason for detention
+                + "     GROUP_CONCAT(DISTINCT documentstandard.`NAME` SEPARATOR ', ') AS standardsBreached," // 16 - Standards breached
+                + "     compliancesurvey.`WORKPROGRESS`," // 17 - Work progress
+                + "     GROUP_CONCAT(DISTINCT employee.`NAME` SEPARATOR '; ') AS inspectors," // 18 - Inspectors
+                + "     SUM(DISTINCT productinspection.`QUANTITY`)," // 19 - Product quantity
+                + "     entrydocumentinspection.`PROFILEFLAGGED`," // 20 - Profile flagged
+                + "     GROUP_CONCAT(DISTINCT productinspection.`TARIFFCODE` SEPARATOR ', ')," // 21 - Commodity codes
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Detention', '')))"
+                + "     / LENGTH('Detention')," // 22 Detentions
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Destruction', '')))"
+                + "     / LENGTH('Destruction')," // 23 Destructions
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Seizure', '')))"
+                + "     / LENGTH('Seizure')," // 24 Seizures
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Condemnation', '')))"
+                + "     / LENGTH('Condemnation')," // 25 Condemnations
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Verification', '')))"
+                + "     / LENGTH('Verification')," // 26 Verifications
+                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
+                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Withdrawal', '')))"
+                + "     / LENGTH('Withdrawal')," // 27 Withdrawals
+                + "     GROUP_CONCAT(DISTINCT marketproduct.`NAME` SEPARATOR ', ')," // 28 - Products
+                + "     GROUP_CONCAT(DISTINCT productcategory.`NAME` SEPARATOR ', ')," // 29 - Product categories
+                + "     compliancesurvey.`ID`" // 30
+                + " FROM"
+                + "     compliancesurvey"
+                + "     LEFT JOIN `client` consignee ON compliancesurvey.`CONSIGNEE_ID` = consignee.`ID`"
+                + "     LEFT JOIN `client` broker ON compliancesurvey.`BROKER_ID` = broker.`ID`"
+                + "     LEFT JOIN `businessoffice` businessoffice ON compliancesurvey.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
+                + "     LEFT JOIN `entrydocumentinspection` entrydocumentInspection ON compliancesurvey.`ENTRYDOCUMENTINSPECTION_ID` = entrydocumentInspection.`ID`"
+                + "     LEFT JOIN `client` retailoutlet ON compliancesurvey.`RETAILOUTLET_ID` = retailoutlet.`ID`"
+                + "     LEFT JOIN `compliancesurvey_documentstandard` compliancesurvey_documentstandard ON compliancesurvey.`ID` = compliancesurvey_documentstandard.`ComplianceSurvey_ID`"
+                + "     LEFT JOIN `documentstandard` documentstandard ON compliancesurvey_documentstandard.`standardsBreached_ID` = documentstandard.`ID`"
+                + "     LEFT JOIN `compliancesurvey_employee` compliancesurvey_employee ON compliancesurvey.`ID` = compliancesurvey_employee.`ComplianceSurvey_ID`"
+                + "     LEFT JOIN `employee` employee ON compliancesurvey_employee.`inspectors_ID` = employee.`ID`"
+                + "     LEFT JOIN `compliancesurvey_productinspection` compliancesurvey_productinspection ON compliancesurvey.`ID` = compliancesurvey_productinspection.`ComplianceSurvey_ID`"
+                + "     LEFT JOIN `productinspection` productinspection ON compliancesurvey_productinspection.`productInspections_ID` = productinspection.`ID`"
+                + "     LEFT JOIN `marketproduct` marketproduct ON productinspection.`MARKETPRODUCT_ID` = marketproduct.`ID`"
+                + "     LEFT JOIN `category` productcategory ON productinspection.`PRODUCTCATEGORY_ID` = productcategory.`ID`"
+                + " WHERE"
+                + "     (compliancesurvey.`DATEOFSURVEY` >= " + startDate
+                + " AND compliancesurvey.`DATEOFSURVEY` <= " + endDate + ")"
+                + " GROUP BY"
+                + "     compliancesurvey.`ID`"
+                + " ORDER BY"
+                + "     compliancesurvey.`ID` DESC";
+        
+        try {
+            return em.createNativeQuery(reportSQL).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+        
+    }
+    public static List<ComplianceSurveySearchResult> findComplianceSurveyResultsByDateSearchField(
+            EntityManager em,
+            User user,
+            String dateSearchField,
+            String searchType,
+            String searchText,
+            Date startDate,
+            Date endDate,
+            Boolean includeProductInspectionSearch,
+            int maxResult) {
+        
+        List<ComplianceSurveySearchResult> foundComplianceSurveys;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        String searchQuery = null;
+        String searchTextAndClause = "";
+        String joinClause;
+        
+        joinClause
+                = " JOIN complianceSurvey.retailOutlet retailOutlet"
+                + " JOIN complianceSurvey.retailRepresentative retailRepresentative"
+                + " JOIN complianceSurvey.consignee consignee"
+                + " JOIN complianceSurvey.consigneeRepresentative consigneeRepresentative"
+                + " JOIN complianceSurvey.broker broker"
+                + " JOIN complianceSurvey.editedBy editedBy"
+                + " JOIN complianceSurvey.brokerRepresentative brokerRepresentative"
+                + " JOIN complianceSurvey.entryDocumentInspection entryDocumentInspection"
+                + (includeProductInspectionSearch ? " JOIN complianceSurvey.productInspections productInspections" : "")
+                //+ " JOIN complianceSurvey.productInspections productInspections"
+                + " JOIN complianceSurvey.inspector inspector";
+        switch (searchType) {
+            case "General":
+                if (!searchText.equals("")) {
+                    searchTextAndClause
+                            = " AND ("
+                            + " UPPER(complianceSurvey.portOfEntry) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + (includeProductInspectionSearch ? " OR UPPER(productInspections.name) LIKE '%" + searchText.toUpperCase() + "%'" : "")
+                            + " OR UPPER(complianceSurvey.inspectionPoint) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(retailOutlet.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(broker.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(consignee.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(inspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(inspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(editedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(editedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.surveyType) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(entryDocumentInspection.vessel) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(entryDocumentInspection.countryOfConsignment) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(entryDocumentInspection.containerNumbers) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(entryDocumentInspection.entryDocumentNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.referenceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.reasonForDetention) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.companyTypes) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " )";
+                }
+                if ((startDate == null) || (endDate == null)) {
+                    searchQuery
+                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
+                            + joinClause
+                            + " WHERE (0 = 0)" // used as place holder
+                            + searchTextAndClause
+                            + " ORDER BY complianceSurvey.id DESC";
+                } else {
+                    searchQuery
+                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
+                            + joinClause
+                            + " WHERE (complianceSurvey." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                            + " AND complianceSurvey." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                            + searchTextAndClause
+                            + " ORDER BY complianceSurvey.id DESC";
+                }
+                break;
+            case "?":
+                break;
+        }
+        
+        try {
+            foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurveySearchResult.class).setMaxResults(maxResult).getResultList();
+            if (foundComplianceSurveys == null) {
+                foundComplianceSurveys = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return foundComplianceSurveys;
+    }
+    public static List<ComplianceSurvey> findComplianceSurveysByDateSearchField(
+            EntityManager em,
+            User user,
+            String dateSearchField,
+            String searchType,
+            String searchText,
+            Date startDate,
+            Date endDate,
+            Boolean includeProductInspectionSearch,
+            int maxResults) {
+        
+        List<ComplianceSurvey> foundComplianceSurveys;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        String searchQuery = null;
+        String searchTextAndClause = "";
+        String joinClause;
+        
+        joinClause
+                = " LEFT JOIN complianceSurvey.retailOutlet retailOutlet"
+                + " LEFT JOIN complianceSurvey.retailRepresentative retailRepresentative"
+                + " LEFT JOIN complianceSurvey.consignee consignee"
+                + " LEFT JOIN complianceSurvey.consigneeRepresentative consigneeRepresentative"
+                + " LEFT JOIN complianceSurvey.broker broker"
+                + " LEFT JOIN complianceSurvey.editedBy editedBy"
+                + " LEFT JOIN complianceSurvey.brokerRepresentative brokerRepresentative"
+                + " LEFT JOIN complianceSurvey.entryDocumentInspection entryDocumentInspection"
+                + (includeProductInspectionSearch ? " JOIN complianceSurvey.productInspections productInspections" : "")
+                + " LEFT JOIN complianceSurvey.inspector inspector";
+        switch (searchType) {
+            case "General":
+                if (!searchText.equals("")) {
+                    searchTextAndClause
+                            = " AND ("
+                            + " UPPER(complianceSurvey.portOfEntry) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + (includeProductInspectionSearch ? " OR UPPER(productInspections.name) LIKE '%" + searchText.toUpperCase() + "%'" : "")
+                            + " OR UPPER(complianceSurvey.inspectionPoint) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(retailOutlet.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(broker.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(consignee.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(inspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(inspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(editedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(editedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.surveyType) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(entryDocumentInspection.vessel) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(entryDocumentInspection.countryOfConsignment) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(entryDocumentInspection.containerNumbers) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(entryDocumentInspection.entryDocumentNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.referenceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.reasonForDetention) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " OR UPPER(complianceSurvey.companyTypes) LIKE '%" + searchText.toUpperCase() + "%'"
+                            + " )";
+                }
+                if ((startDate == null) || (endDate == null)) {
+                    searchQuery
+                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
+                            + joinClause
+                            + " WHERE (0 = 0)"
+                            + searchTextAndClause
+                            + " ORDER BY complianceSurvey.id DESC";
+                } else {
+                    searchQuery
+                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
+                            + joinClause
+                            + " WHERE (complianceSurvey." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                            + " AND complianceSurvey." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                            + searchTextAndClause
+                            + " ORDER BY complianceSurvey.id DESC";
+                }
+                break;
+            case "?":
+                break;
+        }
+        
+        try {
+            if (maxResults == 0) {
+                foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).getResultList();
+            } else {
+                foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).setMaxResults(maxResults).getResultList();
+            }
+            if (foundComplianceSurveys == null) {
+                foundComplianceSurveys = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return foundComplianceSurveys;
+    }
+    public static ComplianceSurvey findComplianceSurveyById(
+            EntityManager em, Long Id) {
+        
+        try {
+            
+            ComplianceSurvey complianceSurvey = em.find(ComplianceSurvey.class, Id);
+            
+            return complianceSurvey;
+        } catch (Exception e) {
+            return null;
+        }
+        
+    }
+    public static ComplianceSurvey findDefaultComplianceSurvey(
+            EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        
+        ComplianceSurvey complianceSurvey = findComplianceSurveyByName(em, name);
+        
+        if (complianceSurvey == null) {
+            complianceSurvey = new ComplianceSurvey();
+            complianceSurvey.setName(name);
+            
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, complianceSurvey);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, complianceSurvey);
+            }
+        }
+        
+        return complianceSurvey;
+    }
+    public static ComplianceSurvey findComplianceSurveyByName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<ComplianceSurvey> complianceSurveys = em.createQuery("SELECT c FROM  ComplianceSurvey c "
+                    + "WHERE UPPER(c.name) "
+                    + "= '" + value.toUpperCase() + "'", ComplianceSurvey.class).getResultList();
+            if (!complianceSurveys.isEmpty()) {
+                return complianceSurveys.get(0);
+            }
+            
+            return null;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -69,24 +404,15 @@ public class ComplianceSurvey implements BusinessEntity {
     private String typeOfEstablishment;
     @OneToOne(cascade = CascadeType.REFRESH)
     private BusinessOffice businessOffice;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfSurvey;
-    @Temporal(javax.persistence.TemporalType.TIME)
-    private Date surveyStartTime;
-    @Temporal(javax.persistence.TemporalType.TIME)
-    private Date surveyEndTime;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateSigned;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date releaseRequestReportDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date releaseDateDomesticMarket;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date releaseFromDetentionReportDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfDetention;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfNoticeOfDetention;
+    private LocalDateTime dateOfSurvey;
+    private LocalDateTime surveyStartTime;
+    private LocalDateTime surveyEndTime;
+    private LocalDateTime dateSigned;
+    private LocalDateTime releaseRequestReportDate;
+    private LocalDateTime releaseDateDomesticMarket;
+    private LocalDateTime releaseFromDetentionReportDate;
+    private LocalDateTime dateOfDetention;
+    private LocalDateTime dateOfNoticeOfDetention;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspector;
     @Column(length = 1024)
@@ -140,6 +466,10 @@ public class ComplianceSurvey implements BusinessEntity {
     private Boolean compliant;
     private String portOfEntryDetentionNumber;
     private String domesticMarketDetentionNumber;
+    // Port of Entry/POE Detention Request
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Signature authSigForDetentionRequestPOE;
+    private LocalDateTime authSigDateForDetentionRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date authSigDateForDetentionRequestPOE;
     @OneToOne(cascade = CascadeType.REFRESH)
@@ -149,6 +479,11 @@ public class ComplianceSurvey implements BusinessEntity {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspectorForSampleRequestPOE;
     @OneToOne(cascade = CascadeType.REFRESH)
+    private Signature inspectorSigForSampleRequestPOE;
+    private LocalDateTime inspectorSigDateForSampleRequestPOE;
+    // Release Request - Port of Entry
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Signature preparedBySigForReleaseRequestPOE;
     private Employee inspectorForSampleRequestDM;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date inspectorSigDateForSampleRequestPOE;
@@ -158,10 +493,14 @@ public class ComplianceSurvey implements BusinessEntity {
     private Business testingLaboratory;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee preparedByEmployeeForReleaseRequestPOE;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date preparedBySigDateForReleaseRequestPOE;
+    private LocalDateTime preparedBySigDateForReleaseRequestPOE;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approvedByEmployeeForReleaseRequestPOE;
+    private LocalDateTime approvedBySigDateForReleaseRequestPOE;
+    // Notice of Detention - Domestic Market
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Signature authSigForNoticeOfDentionDM;
+    private LocalDateTime authSigDateForNoticeOfDentionDM;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date approvedBySigDateForReleaseRequestPOE;
     // Notice of Discontinuance  - Domestic Market
@@ -184,14 +523,16 @@ public class ComplianceSurvey implements BusinessEntity {
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee authEmployeeForNoticeOfDentionDM;
     // Notice of Release from Detention - Domestic Market
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Signature authSigForNoticeOfReleaseFromDentionDM; // tk replace with *Detention*
+    private LocalDateTime authSigDateForNoticeOfReleaseFromDentionDM; // tk replace with *Detention*
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date authSigDateForNoticeOfReleaseFromDentionDM;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee authEmpForNoticeOfReleaseFromDentionDM;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEdited;
+    private LocalDateTime dateEdited;
     @OneToOne(cascade = CascadeType.ALL)
     private EntryDocumentInspection entryDocumentInspection;
     private String jobNumber;
@@ -512,94 +853,12 @@ public class ComplianceSurvey implements BusinessEntity {
         this.businessOffice = businessOffice;
     }
 
-    public static List<Object[]> getReportRecords(
-            EntityManager em,
-            String startDate,
-            String endDate,
-            Long departmentId) {
 
-        String reportSQL = "SELECT DISTINCT"
-                //                + "     compliancesurvey.`ID`" // 0 - ID
-                + "     compliancesurvey.`JOBNUMBER`," // 0 - Job number 
-                + "     consignee.`NAME`," // 1 - Consignee
-                + "     compliancesurvey.`COMMENTS`," // 2 - Comments                  
-                + "     businessoffice.`NAME`," // 3 - Business office                 
-                + "     entrydocumentinspection.`ENTRYDOCUMENTNUMBER`," // 4 - Entry document #s
-                + "     entrydocumentinspection.`CONTAINERNUMBERS`," // 5 - Containers
-                + "     compliancesurvey.`SURVEYTYPE`," // 6 - Survey type
-                + "     compliancesurvey.`SURVEYLOCATIONTYPE`," // 7 - Survey location type 
-                + "     compliancesurvey.`TYPEOFESTABLISHMENT`," // 8 - Type of establishment
-                + "     retailoutlet.`NAME`," // 9 - Retail outlet  
-                + "     compliancesurvey.`DATEOFSURVEY`," // 10 - Date of survey
-                + "     compliancesurvey.`TYPEOFPORTOFENTRY`," // 11 - Type of port of entry
-                + "     compliancesurvey.`PORTOFENTRY`," // 12 - Port of entry
-                + "     compliancesurvey.`INSPECTIONPOINT`," // 13 - Inspection point
-                + "     broker.`NAME`," // 14 - Broker
-                + "     compliancesurvey.`REASONFORDETENTION`," // 15 - Reason for detention
-                + "     GROUP_CONCAT(DISTINCT documentstandard.`NAME` SEPARATOR ', ') AS standardsBreached," // 16 - Standards breached
-                + "     compliancesurvey.`WORKPROGRESS`," // 17 - Work progress 
-                + "     GROUP_CONCAT(DISTINCT employee.`NAME` SEPARATOR '; ') AS inspectors," // 18 - Inspectors
-                + "     SUM(DISTINCT productinspection.`QUANTITY`)," // 19 - Product quantity
-                + "     entrydocumentinspection.`PROFILEFLAGGED`," // 20 - Profile flagged
-                + "     GROUP_CONCAT(DISTINCT productinspection.`TARIFFCODE` SEPARATOR ', ')," // 21 - Commodity codes
-                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Detention', '')))"
-                + "     / LENGTH('Detention')," // 22 Detentions            
-                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Destruction', '')))"
-                + "     / LENGTH('Destruction')," // 23 Destructions
-                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Seizure', '')))"
-                + "     / LENGTH('Seizure')," // 24 Seizures
-                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Condemnation', '')))"
-                + "     / LENGTH('Condemnation')," // 25 Condemnations
-                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Verification', '')))"
-                + "     / LENGTH('Verification')," // 26 Verifications
-                + "     (LENGTH(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '))"
-                + "     - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT productinspection.`ENFORCEMENTACTION` SEPARATOR ', '), 'Withdrawal', '')))"
-                + "     / LENGTH('Withdrawal')," // 27 Withdrawals
-                + "     GROUP_CONCAT(DISTINCT marketproduct.`NAME` SEPARATOR ', ')," // 28 - Products
-                + "     GROUP_CONCAT(DISTINCT productcategory.`NAME` SEPARATOR ', ')," // 29 - Product categories
-                + "     compliancesurvey.`ID`" // 30
-                + " FROM"
-                + "     compliancesurvey"
-                + "     LEFT JOIN `client` consignee ON compliancesurvey.`CONSIGNEE_ID` = consignee.`ID`"
-                + "     LEFT JOIN `client` broker ON compliancesurvey.`BROKER_ID` = broker.`ID`"
-                + "     LEFT JOIN `businessoffice` businessoffice ON compliancesurvey.`BUSINESSOFFICE_ID` = businessoffice.`ID`"
-                + "     LEFT JOIN `entrydocumentinspection` entrydocumentInspection ON compliancesurvey.`ENTRYDOCUMENTINSPECTION_ID` = entrydocumentInspection.`ID`"
-                + "     LEFT JOIN `client` retailoutlet ON compliancesurvey.`RETAILOUTLET_ID` = retailoutlet.`ID`"
-                + "     LEFT JOIN `compliancesurvey_documentstandard` compliancesurvey_documentstandard ON compliancesurvey.`ID` = compliancesurvey_documentstandard.`ComplianceSurvey_ID`"
-                + "     LEFT JOIN `documentstandard` documentstandard ON compliancesurvey_documentstandard.`standardsBreached_ID` = documentstandard.`ID`"
-                + "     LEFT JOIN `compliancesurvey_employee` compliancesurvey_employee ON compliancesurvey.`ID` = compliancesurvey_employee.`ComplianceSurvey_ID`"
-                + "     LEFT JOIN `employee` employee ON compliancesurvey_employee.`inspectors_ID` = employee.`ID`"
-                + "     LEFT JOIN `compliancesurvey_productinspection` compliancesurvey_productinspection ON compliancesurvey.`ID` = compliancesurvey_productinspection.`ComplianceSurvey_ID`"
-                + "     LEFT JOIN `productinspection` productinspection ON compliancesurvey_productinspection.`productInspections_ID` = productinspection.`ID`"
-                + "     LEFT JOIN `marketproduct` marketproduct ON productinspection.`MARKETPRODUCT_ID` = marketproduct.`ID`"
-                + "     LEFT JOIN `category` productcategory ON productinspection.`PRODUCTCATEGORY_ID` = productcategory.`ID`"
-                + " WHERE"
-                + "     (compliancesurvey.`DATEOFSURVEY` >= " + startDate
-                + " AND compliancesurvey.`DATEOFSURVEY` <= " + endDate + ")"
-                + " GROUP BY"
-                + "     compliancesurvey.`ID`"
-                + " ORDER BY"
-                + "     compliancesurvey.`ID` DESC";
-
-        try {
-            return em.createNativeQuery(reportSQL).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-
-    }
-
-    public Date getDateOfNoticeOfDetention() {
+    public LocalDateTime getDateOfNoticeOfDetention() {
         return dateOfNoticeOfDetention;
     }
 
-    public void setDateOfNoticeOfDetention(Date dateOfNoticeOfDetention) {
+    public void setDateOfNoticeOfDetention(LocalDateTime dateOfNoticeOfDetention) {
         this.dateOfNoticeOfDetention = dateOfNoticeOfDetention;
     }
 
@@ -744,12 +1003,12 @@ public class ComplianceSurvey implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         return dateEdited;
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         this.dateEdited = dateEdited;
     }
 
@@ -779,19 +1038,32 @@ public class ComplianceSurvey implements BusinessEntity {
         this.approvedByEmployeeForReleaseRequestPOE = approvedByEmployeeForReleaseRequestPOE;
     }
 
-    public Date getApprovedBySigDateForReleaseRequestPOE() {
+    public LocalDateTime getApprovedBySigDateForReleaseRequestPOE() {
         return approvedBySigDateForReleaseRequestPOE;
     }
 
-    public void setApprovedBySigDateForReleaseRequestPOE(Date approvedBySigDateForReleaseRequestPOE) {
+    public void setApprovedBySigDateForReleaseRequestPOE(LocalDateTime approvedBySigDateForReleaseRequestPOE) {
         this.approvedBySigDateForReleaseRequestPOE = approvedBySigDateForReleaseRequestPOE;
     }
 
+    public Signature getAuthSigForDetentionRequestPOE() {
+        if (authSigForDetentionRequestPOE == null) {
+            return new Signature();
+        }
+
+        return authSigForDetentionRequestPOE;
+    }
+
+    public void setAuthSigForDetentionRequestPOE(Signature authSigForDetentionRequestPOE) {
+        this.authSigForDetentionRequestPOE = authSigForDetentionRequestPOE;
+    }
+
+    public LocalDateTime getAuthSigDateForDetentionRequestPOE() {
     public Date getAuthSigDateForDetentionRequestPOE() {
         return authSigDateForDetentionRequestPOE;
     }
 
-    public void setAuthSigDateForDetentionRequestPOE(Date authSigDateForDetentionRequestPOE) {
+    public void setAuthSigDateForDetentionRequestPOE(LocalDateTime authSigDateForDetentionRequestPOE) {
         this.authSigDateForDetentionRequestPOE = authSigDateForDetentionRequestPOE;
     }
 
@@ -807,11 +1079,24 @@ public class ComplianceSurvey implements BusinessEntity {
         this.authEmployeeForDetentionRequestPOE = authEmployeeForDetentionRequestPOE;
     }
 
+    public Signature getInspectorSigForSampleRequestPOE() {
+        if (inspectorSigForSampleRequestPOE == null) {
+            return new Signature();
+        }
+
+        return inspectorSigForSampleRequestPOE;
+    }
+
+    public void setInspectorSigForSampleRequestPOE(Signature inspectorSigForSampleRequestPOE) {
+        this.inspectorSigForSampleRequestPOE = inspectorSigForSampleRequestPOE;
+    }
+
+    public LocalDateTime getInspectorSigDateForSampleRequestPOE() {
     public Date getInspectorSigDateForSampleRequestPOE() {
         return inspectorSigDateForSampleRequestPOE;
     }
 
-    public void setInspectorSigDateForSampleRequestPOE(Date inspectorSigDateForSampleRequestPOE) {
+    public void setInspectorSigDateForSampleRequestPOE(LocalDateTime inspectorSigDateForSampleRequestPOE) {
         this.inspectorSigDateForSampleRequestPOE = inspectorSigDateForSampleRequestPOE;
     }
 
@@ -827,19 +1112,32 @@ public class ComplianceSurvey implements BusinessEntity {
         this.preparedByEmployeeForReleaseRequestPOE = preparedByEmployeeForReleaseRequestPOE;
     }
 
-    public Date getPreparedBySigDateForReleaseRequestPOE() {
+    public LocalDateTime getPreparedBySigDateForReleaseRequestPOE() {
         return preparedBySigDateForReleaseRequestPOE;
     }
 
-    public void setPreparedBySigDateForReleaseRequestPOE(Date preparedBySigDateForReleaseRequestPOE) {
+    public void setPreparedBySigDateForReleaseRequestPOE(LocalDateTime preparedBySigDateForReleaseRequestPOE) {
         this.preparedBySigDateForReleaseRequestPOE = preparedBySigDateForReleaseRequestPOE;
     }
 
+    public Signature getAuthSigForNoticeOfReleaseFromDentionDM() {
+        if (authSigForNoticeOfReleaseFromDentionDM == null) {
+            return new Signature();
+        }
+
+        return authSigForNoticeOfReleaseFromDentionDM;
+    }
+
+    public void setAuthSigForNoticeOfReleaseFromDentionDM(Signature authSigForNoticeOfReleaseFromDentionDM) {
+        this.authSigForNoticeOfReleaseFromDentionDM = authSigForNoticeOfReleaseFromDentionDM;
+    }
+
+    public LocalDateTime getAuthSigDateForNoticeOfReleaseFromDentionDM() {
     public Date getAuthSigDateForNoticeOfReleaseFromDentionDM() {
         return authSigDateForNoticeOfReleaseFromDentionDM;
     }
 
-    public void setAuthSigDateForNoticeOfReleaseFromDentionDM(Date authSigDateForNoticeOfReleaseFromDentionDM) {
+    public void setAuthSigDateForNoticeOfReleaseFromDentionDM(LocalDateTime authSigDateForNoticeOfReleaseFromDentionDM) {
         this.authSigDateForNoticeOfReleaseFromDentionDM = authSigDateForNoticeOfReleaseFromDentionDM;
     }
 
@@ -855,11 +1153,24 @@ public class ComplianceSurvey implements BusinessEntity {
         this.authEmpForNoticeOfReleaseFromDentionDM = authEmpForNoticeOfReleaseFromDentionDM;
     }
 
+    public Signature getAuthSigForNoticeOfDentionDM() {
+        if (authSigForNoticeOfDentionDM == null) {
+            return new Signature();
+        }
+
+        return authSigForNoticeOfDentionDM;
+    }
+
+    public void setAuthSigForNoticeOfDentionDM(Signature authSigForNoticeOfDentionDM) {
+        this.authSigForNoticeOfDentionDM = authSigForNoticeOfDentionDM;
+    }
+
+    public LocalDateTime getAuthSigDateForNoticeOfDentionDM() {
     public Date getAuthSigDateForNoticeOfDentionDM() {
         return authSigDateForNoticeOfDentionDM;
     }
 
-    public void setAuthSigDateForNoticeOfDentionDM(Date authSigDateForNoticeOfDentionDM) {
+    public void setAuthSigDateForNoticeOfDentionDM(LocalDateTime authSigDateForNoticeOfDentionDM) {
         this.authSigDateForNoticeOfDentionDM = authSigDateForNoticeOfDentionDM;
     }
 
@@ -977,19 +1288,19 @@ public class ComplianceSurvey implements BusinessEntity {
         this.fullRelease = fullRelease;
     }
 
-    public Date getDateOfDetention() {
+    public LocalDateTime getDateOfDetention() {
         return dateOfDetention;
     }
 
-    public void setDateOfDetention(Date dateOfDetention) {
+    public void setDateOfDetention(LocalDateTime dateOfDetention) {
         this.dateOfDetention = dateOfDetention;
     }
 
-    public Date getReleaseFromDetentionReportDate() {
+    public LocalDateTime getReleaseFromDetentionReportDate() {
         return releaseFromDetentionReportDate;
     }
 
-    public void setReleaseFromDetentionReportDate(Date releaseFromDetentionReportDate) {
+    public void setReleaseFromDetentionReportDate(LocalDateTime releaseFromDetentionReportDate) {
         this.releaseFromDetentionReportDate = releaseFromDetentionReportDate;
     }
 
@@ -1058,19 +1369,19 @@ public class ComplianceSurvey implements BusinessEntity {
         this.specifiedReleaseLocationDomesticMarket = specifiedReleaseLocationDomesticMarket;
     }
 
-    public Date getReleaseDateDomesticMarket() {
+    public LocalDateTime getReleaseDateDomesticMarket() {
         return releaseDateDomesticMarket;
     }
 
-    public void setReleaseDateDomesticMarket(Date releaseDateDomesticMarket) {
+    public void setReleaseDateDomesticMarket(LocalDateTime releaseDateDomesticMarket) {
         this.releaseDateDomesticMarket = releaseDateDomesticMarket;
     }
 
-    public Date getReleaseRequestReportDate() {
+    public LocalDateTime getReleaseRequestReportDate() {
         return releaseRequestReportDate;
     }
 
-    public void setReleaseRequestReportDate(Date releaseRequestReportDate) {
+    public void setReleaseRequestReportDate(LocalDateTime releaseRequestReportDate) {
         this.releaseRequestReportDate = releaseRequestReportDate;
     }
 
@@ -1210,19 +1521,19 @@ public class ComplianceSurvey implements BusinessEntity {
         this.comments = comments;
     }
 
-    public Date getDateOfSurvey() {
+    public LocalDateTime getDateOfSurvey() {
         return dateOfSurvey;
     }
 
-    public void setDateOfSurvey(Date dateOfSurvey) {
+    public void setDateOfSurvey(LocalDateTime dateOfSurvey) {
         this.dateOfSurvey = dateOfSurvey;
     }
 
-    public Date getDateSigned() {
+    public LocalDateTime getDateSigned() {
         return dateSigned;
     }
 
-    public void setDateSigned(Date dateSigned) {
+    public void setDateSigned(LocalDateTime dateSigned) {
         this.dateSigned = dateSigned;
     }
 
@@ -1291,19 +1602,19 @@ public class ComplianceSurvey implements BusinessEntity {
         this.retailRepresentative = retailRepresentative;
     }
 
-    public Date getSurveyEndTime() {
+    public LocalDateTime getSurveyEndTime() {
         return surveyEndTime;
     }
 
-    public void setSurveyEndTime(Date surveyEndTime) {
+    public void setSurveyEndTime(LocalDateTime surveyEndTime) {
         this.surveyEndTime = surveyEndTime;
     }
 
-    public Date getSurveyStartTime() {
+    public LocalDateTime getSurveyStartTime() {
         return surveyStartTime;
     }
 
-    public void setSurveyStartTime(Date surveyStartTime) {
+    public void setSurveyStartTime(LocalDateTime surveyStartTime) {
         this.surveyStartTime = surveyStartTime;
     }
 
@@ -1379,248 +1690,6 @@ public class ComplianceSurvey implements BusinessEntity {
         return getTypeOfPortOfEntry().trim().equals("Seaport");
     }
 
-    public static List<ComplianceSurveySearchResult> findComplianceSurveyResultsByDateSearchField(
-            EntityManager em,
-            User user,
-            String dateSearchField,
-            String searchType,
-            String searchText,
-            Date startDate,
-            Date endDate,
-            Boolean includeProductInspectionSearch,
-            int maxResult) {
-
-        List<ComplianceSurveySearchResult> foundComplianceSurveys;
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        String searchQuery = null;
-        String searchTextAndClause = "";
-        String joinClause;
-
-        joinClause
-                = " JOIN complianceSurvey.retailOutlet retailOutlet"
-                + " JOIN complianceSurvey.retailRepresentative retailRepresentative"
-                + " JOIN complianceSurvey.consignee consignee"
-                + " JOIN complianceSurvey.consigneeRepresentative consigneeRepresentative"
-                + " JOIN complianceSurvey.broker broker"
-                + " JOIN complianceSurvey.editedBy editedBy"
-                + " JOIN complianceSurvey.brokerRepresentative brokerRepresentative"
-                + " JOIN complianceSurvey.entryDocumentInspection entryDocumentInspection"
-                + (includeProductInspectionSearch ? " JOIN complianceSurvey.productInspections productInspections" : "")
-                //+ " JOIN complianceSurvey.productInspections productInspections"
-                + " JOIN complianceSurvey.inspector inspector";
-        switch (searchType) {
-            case "General":
-                if (!searchText.equals("")) {
-                    searchTextAndClause
-                            = " AND ("
-                            + " UPPER(complianceSurvey.portOfEntry) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + (includeProductInspectionSearch ? " OR UPPER(productInspections.name) LIKE '%" + searchText.toUpperCase() + "%'" : "")
-                            + " OR UPPER(complianceSurvey.inspectionPoint) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(retailOutlet.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(broker.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(consignee.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(inspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(inspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(editedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(editedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.surveyType) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(entryDocumentInspection.vessel) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(entryDocumentInspection.countryOfConsignment) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(entryDocumentInspection.containerNumbers) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(entryDocumentInspection.entryDocumentNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.referenceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.reasonForDetention) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.companyTypes) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " )";
-                }
-                if ((startDate == null) || (endDate == null)) {
-                    searchQuery
-                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
-                            + joinClause
-                            + " WHERE (0 = 0)" // used as place holder
-                            + searchTextAndClause
-                            + " ORDER BY complianceSurvey.id DESC";
-                } else {
-                    searchQuery
-                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
-                            + joinClause
-                            + " WHERE (complianceSurvey." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                            + " AND complianceSurvey." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                            + searchTextAndClause
-                            + " ORDER BY complianceSurvey.id DESC";
-                }
-                break;
-            case "?":
-                break;
-        }
-
-        try {
-            foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurveySearchResult.class).setMaxResults(maxResult).getResultList();
-            if (foundComplianceSurveys == null) {
-                foundComplianceSurveys = new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundComplianceSurveys;
-    }
-
-    public static List<ComplianceSurvey> findComplianceSurveysByDateSearchField(
-            EntityManager em,
-            User user,
-            String dateSearchField,
-            String searchType,
-            String searchText,
-            Date startDate,
-            Date endDate,
-            Boolean includeProductInspectionSearch,
-            int maxResults) {
-
-        List<ComplianceSurvey> foundComplianceSurveys;
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        String searchQuery = null;
-        String searchTextAndClause = "";
-        String joinClause;
-
-        joinClause
-                = " LEFT JOIN complianceSurvey.retailOutlet retailOutlet"
-                + " LEFT JOIN complianceSurvey.retailRepresentative retailRepresentative"
-                + " LEFT JOIN complianceSurvey.consignee consignee"
-                + " LEFT JOIN complianceSurvey.consigneeRepresentative consigneeRepresentative"
-                + " LEFT JOIN complianceSurvey.broker broker"
-                + " LEFT JOIN complianceSurvey.editedBy editedBy"
-                + " LEFT JOIN complianceSurvey.brokerRepresentative brokerRepresentative"
-                + " LEFT JOIN complianceSurvey.entryDocumentInspection entryDocumentInspection"
-                + (includeProductInspectionSearch ? " JOIN complianceSurvey.productInspections productInspections" : "")
-                + " LEFT JOIN complianceSurvey.inspector inspector";
-        switch (searchType) {
-            case "General":
-                if (!searchText.equals("")) {
-                    searchTextAndClause
-                            = " AND ("
-                            + " UPPER(complianceSurvey.portOfEntry) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + (includeProductInspectionSearch ? " OR UPPER(productInspections.name) LIKE '%" + searchText.toUpperCase() + "%'" : "")
-                            + " OR UPPER(complianceSurvey.inspectionPoint) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.jobNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(retailOutlet.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(broker.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(consignee.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(inspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(inspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(editedBy.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(editedBy.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.surveyType) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(entryDocumentInspection.vessel) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(entryDocumentInspection.countryOfConsignment) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(entryDocumentInspection.containerNumbers) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(entryDocumentInspection.entryDocumentNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.referenceNumber) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.reasonForDetention) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " OR UPPER(complianceSurvey.companyTypes) LIKE '%" + searchText.toUpperCase() + "%'"
-                            + " )";
-                }
-                if ((startDate == null) || (endDate == null)) {
-                    searchQuery
-                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
-                            + joinClause
-                            + " WHERE (0 = 0)"
-                            + searchTextAndClause
-                            + " ORDER BY complianceSurvey.id DESC";
-                } else {
-                    searchQuery
-                            = "SELECT DISTINCT complianceSurvey FROM ComplianceSurvey complianceSurvey"
-                            + joinClause
-                            + " WHERE (complianceSurvey." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                            + " AND complianceSurvey." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                            + searchTextAndClause
-                            + " ORDER BY complianceSurvey.id DESC";
-                }
-                break;
-            case "?":
-                break;
-        }
-
-        try {
-            if (maxResults == 0) {
-                foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).getResultList();
-            } else {
-                foundComplianceSurveys = em.createQuery(searchQuery, ComplianceSurvey.class).setMaxResults(maxResults).getResultList();
-            }
-            if (foundComplianceSurveys == null) {
-                foundComplianceSurveys = new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundComplianceSurveys;
-    }
-
-    public static ComplianceSurvey findComplianceSurveyById(
-            EntityManager em, Long Id) {
-
-        try {
-
-            ComplianceSurvey complianceSurvey = em.find(ComplianceSurvey.class, Id);
-
-            return complianceSurvey;
-        } catch (Exception e) {
-            return null;
-        }
-
-    }
-
-    public static ComplianceSurvey findDefaultComplianceSurvey(
-            EntityManager em,
-            String name,
-            Boolean useTransaction) {
-
-        ComplianceSurvey complianceSurvey = findComplianceSurveyByName(em, name);
-
-        if (complianceSurvey == null) {
-            complianceSurvey = new ComplianceSurvey();
-            complianceSurvey.setName(name);
-
-            if (useTransaction) {
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, complianceSurvey);
-                em.getTransaction().commit();
-            } else {
-                BusinessEntityUtils.saveBusinessEntity(em, complianceSurvey);
-            }
-        }
-
-        return complianceSurvey;
-    }
-
-    public static ComplianceSurvey findComplianceSurveyByName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<ComplianceSurvey> complianceSurveys = em.createQuery("SELECT c FROM  ComplianceSurvey c "
-                    + "WHERE UPPER(c.name) "
-                    + "= '" + value.toUpperCase() + "'", ComplianceSurvey.class).getResultList();
-            if (!complianceSurveys.isEmpty()) {
-                return complianceSurveys.get(0);
-            }
-
-            return null;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -1774,12 +1843,12 @@ public class ComplianceSurvey implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

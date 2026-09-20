@@ -19,23 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.sm.Category;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -53,6 +53,162 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class MarketProduct implements BusinessEntity, Comparable, Serializable, Product {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(MarketProduct.class.getName());
+    public static List<MarketProduct> findAllActiveMarketProducts(EntityManager em) {
+
+        try {
+            List<MarketProduct> marketProducts;
+            marketProducts = em.createQuery("SELECT m FROM MarketProduct m WHERE m.active = 1 ORDER BY m.name",
+                    MarketProduct.class).getResultList();
+
+            return marketProducts;
+
+        } catch (Exception e) {
+            System.out.println(e);
+
+            return new ArrayList<>();
+        }
+    }
+    public static List<MarketProduct> findAllActiveMarketProductsByType(EntityManager em,
+            String type) {
+
+        try {
+            List<MarketProduct> marketProducts;
+            marketProducts = em.createQuery("SELECT m FROM MarketProduct m WHERE "
+                    + "m.active = 1 AND "
+                    + "m.type = '" + type + "' "
+                            + "ORDER BY m.name",
+                    MarketProduct.class).getResultList();
+
+            return marketProducts;
+
+        } catch (Exception e) {
+            System.out.println(e);
+
+            return new ArrayList<>();
+        }
+    }
+    public static MarketProduct findActiveMarketProduct(
+            EntityManager em, String name) {
+
+        try {
+
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
+                    + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + name + "'",
+                    MarketProduct.class).getResultList();
+            if (!products.isEmpty()) {
+                MarketProduct product = products.get(0);
+
+                return product;
+            }
+        } catch (Exception e) {
+            System.out.println("Error finding market product: " + e);
+            return null;
+        }
+
+        return null;
+    }
+    public static MarketProduct findActiveMarketProductByType(
+            EntityManager em, String name, String type) {
+
+        try {
+
+            name = name.replaceAll("'", "`");
+
+            List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
+                    + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + name
+                    + "' AND m.type = '" + type + "'",
+                    MarketProduct.class).getResultList();
+            if (!products.isEmpty()) {
+                MarketProduct product = products.get(0);
+
+                return product;
+            }
+        } catch (Exception e) {
+            System.out.println("Error finding market product: " + e);
+            return null;
+        }
+
+        return null;
+    }
+    public static List<MarketProduct> findActiveMarketProductsByName(EntityManager em, String value) {
+
+        try {
+
+            value = value.replaceAll("'", "`");
+
+            List<MarketProduct> marketProducts
+                    = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
+                            + value.toUpperCase() + "%'"
+                                    + " AND m.active = 1"
+                                    + " ORDER BY m.name", MarketProduct.class).getResultList();
+            
+            return marketProducts;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<MarketProduct> findActiveMarketProductsByNameAndType(EntityManager em,
+            String name, String type) {
+
+        try {
+
+            name = name.replaceAll("'", "`");
+
+            List<MarketProduct> marketProducts
+                    = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
+                            + name.toUpperCase() + "%'"
+                                    + " AND m.active = 1 AND m.type = '" + type + "'"
+                                            + " ORDER BY m.name", MarketProduct.class).getResultList();
+            
+            return marketProducts;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<MarketProduct> findMarketProductsByName(EntityManager em, String value) {
+
+        try {
+
+            value = value.replaceAll("'", "`");
+
+            List<MarketProduct> marketProducts
+                    = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
+                            + value.toUpperCase() + "%'"
+                                    + " ORDER BY m.name", MarketProduct.class).getResultList();
+            
+            return marketProducts;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<MarketProduct> findMarketProductsByNameAndType(EntityManager em,
+            String name, String type) {
+
+        try {
+
+            name = name.replaceAll("'", "`");
+
+            List<MarketProduct> marketProducts
+                    = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
+                            + name.toUpperCase() + "%' AND m.type = '" + type + "'"
+                                    + " ORDER BY m.name", MarketProduct.class).getResultList();
+            
+            return marketProducts;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -111,168 +267,6 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
         this.manufacturer = manufacturer;
     }
 
-    public static List<MarketProduct> findAllActiveMarketProducts(EntityManager em) {
-
-        try {
-            List<MarketProduct> marketProducts;
-            marketProducts = em.createQuery("SELECT m FROM MarketProduct m WHERE m.active = 1 ORDER BY m.name",
-                    MarketProduct.class).getResultList();
-
-            return marketProducts;
-
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<MarketProduct> findAllActiveMarketProductsByType(EntityManager em,
-            String type) {
-
-        try {
-            List<MarketProduct> marketProducts;
-            marketProducts = em.createQuery("SELECT m FROM MarketProduct m WHERE "
-                    + "m.active = 1 AND "
-                    + "m.type = '" + type + "' "
-                    + "ORDER BY m.name",
-                    MarketProduct.class).getResultList();
-
-            return marketProducts;
-
-        } catch (Exception e) {
-            System.out.println(e);
-
-            return new ArrayList<>();
-        }
-    }
-
-    public static MarketProduct findActiveMarketProduct(
-            EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
-                    + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + name + "'",
-                    MarketProduct.class).getResultList();
-            if (!products.isEmpty()) {
-                MarketProduct product = products.get(0);
-
-                return product;
-            }
-        } catch (Exception e) {
-            System.out.println("Error finding market product: " + e);
-            return null;
-        }
-
-        return null;
-    }
-
-    public static MarketProduct findActiveMarketProductByType(
-            EntityManager em, String name, String type) {
-
-        try {
-
-            name = name.replaceAll("'", "`");
-
-            List<MarketProduct> products = em.createQuery("SELECT m FROM MarketProduct m "
-                    + "WHERE m.active = 1 AND UPPER(m.name)" + " = '" + name
-                    + "' AND m.type = '" + type + "'",
-                    MarketProduct.class).getResultList();
-            if (!products.isEmpty()) {
-                MarketProduct product = products.get(0);
-
-                return product;
-            }
-        } catch (Exception e) {
-            System.out.println("Error finding market product: " + e);
-            return null;
-        }
-
-        return null;
-    }
-
-    public static List<MarketProduct> findActiveMarketProductsByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("'", "`");
-
-            List<MarketProduct> marketProducts
-                    = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
-                            + value.toUpperCase() + "%'"
-                            + " AND m.active = 1"
-                            + " ORDER BY m.name", MarketProduct.class).getResultList();
-
-            return marketProducts;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<MarketProduct> findActiveMarketProductsByNameAndType(EntityManager em,
-            String name, String type) {
-
-        try {
-
-            name = name.replaceAll("'", "`");
-
-            List<MarketProduct> marketProducts
-                    = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
-                            + name.toUpperCase() + "%'"
-                            + " AND m.active = 1 AND m.type = '" + type + "'"
-                            + " ORDER BY m.name", MarketProduct.class).getResultList();
-
-            return marketProducts;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<MarketProduct> findMarketProductsByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("'", "`");
-
-            List<MarketProduct> marketProducts
-                    = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
-                            + value.toUpperCase() + "%'"
-                            + " ORDER BY m.name", MarketProduct.class).getResultList();
-
-            return marketProducts;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<MarketProduct> findMarketProductsByNameAndType(EntityManager em,
-            String name, String type) {
-
-        try {
-
-            name = name.replaceAll("'", "`");
-
-            List<MarketProduct> marketProducts
-                    = em.createQuery("SELECT m FROM MarketProduct m WHERE UPPER(m.name) like '%"
-                            + name.toUpperCase() + "%' AND m.type = '" + type + "'"
-                            + " ORDER BY m.name", MarketProduct.class).getResultList();
-
-            return marketProducts;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     public String getModel() {
         if (model == null) {
@@ -513,22 +507,22 @@ public class MarketProduct implements BusinessEntity, Comparable, Serializable, 
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

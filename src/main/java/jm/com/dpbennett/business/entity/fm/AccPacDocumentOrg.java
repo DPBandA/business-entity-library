@@ -20,21 +20,22 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -50,6 +51,67 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class AccPacDocumentOrg implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(AccPacDocumentOrg.class.getName());
+    
+    public static List<AccPacDocumentOrg> findAccPacDocumentsByCustomerId(EntityManager em, String customerId) {
+        try {
+            List<AccPacDocumentOrg> docs = em.createQuery("SELECT d FROM AccPacDocument d "
+                    + "WHERE d.idCust "
+                    + "LIKE '" + customerId + "%'", AccPacDocumentOrg.class).getResultList();
+            
+            if (docs == null) {
+                return new ArrayList<>();
+            } else {
+                return docs;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<AccPacDocumentOrg> findAccPacInvoicesByCustomerId(EntityManager em, String customerId) {
+        try {
+            List<AccPacDocumentOrg> docs = em.createQuery("SELECT d FROM AccPacDocument d "
+                    + "WHERE d.idCust "
+                    + "LIKE '" + customerId + "%' AND d.documentType = 1", AccPacDocumentOrg.class).getResultList();
+            
+            if (docs == null) {
+                return new ArrayList<>();
+            } else {
+                return docs;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<AccPacDocumentOrg> findAccPacInvoicesDueByCustomerId(EntityManager em,
+            String customerId, Boolean includePrepayments) {
+        
+        List<AccPacDocumentOrg> foundsDocs;
+        
+        try {
+            if (includePrepayments) {
+                foundsDocs = em.createQuery("SELECT d FROM AccPacDocument d "
+                        + "WHERE d.idCust "
+                        + "LIKE '" + customerId + "%' AND d.fullyPaid = 0 ORDER BY d.dueDate DESC", AccPacDocumentOrg.class).getResultList();
+            } else {
+                foundsDocs = em.createQuery("SELECT d FROM AccPacDocument d "
+                        + "WHERE d.idCust " // NB: 50 == Prepayment transaction type
+                        + "LIKE '" + customerId + "%' AND d.fullyPaid = 0 AND d.transactionType <> 50 ORDER BY d.dueDate DESC", AccPacDocumentOrg.class).getResultList();
+            }
+            
+            if (foundsDocs != null) {
+                return foundsDocs;
+            } else {
+                return new ArrayList<>();
+            }
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
     @Id
     @Column(length = 22, name = "IDINVC")
     private String idInvc;
@@ -330,67 +392,6 @@ public class AccPacDocumentOrg implements Serializable, BusinessEntity {
         return "jm.com.dpbennett.entity.AccPacDocument[id=" + idInvc + "]";
     }
 
-    public static List<AccPacDocumentOrg> findAccPacDocumentsByCustomerId(EntityManager em, String customerId) {
-        try {
-            List<AccPacDocumentOrg> docs = em.createQuery("SELECT d FROM AccPacDocument d "
-                    + "WHERE d.idCust "
-                    + "LIKE '" + customerId + "%'", AccPacDocumentOrg.class).getResultList();
-
-            if (docs == null) {
-                return new ArrayList<>();
-            } else {
-                return docs;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<AccPacDocumentOrg> findAccPacInvoicesByCustomerId(EntityManager em, String customerId) {
-        try {
-            List<AccPacDocumentOrg> docs = em.createQuery("SELECT d FROM AccPacDocument d "
-                    + "WHERE d.idCust "
-                    + "LIKE '" + customerId + "%' AND d.documentType = 1", AccPacDocumentOrg.class).getResultList();
-
-            if (docs == null) {
-                return new ArrayList<>();
-            } else {
-                return docs;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<AccPacDocumentOrg> findAccPacInvoicesDueByCustomerId(EntityManager em,
-            String customerId, Boolean includePrepayments) {
-
-        List<AccPacDocumentOrg> foundsDocs;
-
-        try {
-            if (includePrepayments) {
-                foundsDocs = em.createQuery("SELECT d FROM AccPacDocument d "
-                        + "WHERE d.idCust "
-                        + "LIKE '" + customerId + "%' AND d.fullyPaid = 0 ORDER BY d.dueDate DESC", AccPacDocumentOrg.class).getResultList();
-            } else {
-                foundsDocs = em.createQuery("SELECT d FROM AccPacDocument d "
-                        + "WHERE d.idCust " // NB: 50 == Prepayment transaction type
-                        + "LIKE '" + customerId + "%' AND d.fullyPaid = 0 AND d.transactionType <> 50 ORDER BY d.dueDate DESC", AccPacDocumentOrg.class).getResultList();
-            }
-
-            if (foundsDocs != null) {
-                return foundsDocs;
-            } else {
-                return new ArrayList<>();
-            }
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     @Override
     public Long getId() {
@@ -465,22 +466,22 @@ public class AccPacDocumentOrg implements Serializable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

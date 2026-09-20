@@ -19,22 +19,22 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -54,6 +54,154 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Discount implements Serializable, BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Discount.class.getName());
+    
+    public static Discount findDefault(EntityManager em, String name) {
+        Discount discount = Discount.findByName(em, name);
+        
+        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+        
+        if (discount == null) {
+            discount = new Discount(name);
+            
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, discount);
+            em.getTransaction().commit();
+        }
+        
+        return discount;
+    }
+    public static Discount findDefault(EntityManager em,
+            String name, Double value, String type) {
+        Discount discount = Discount.findByName(em, name);
+        
+        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+        type = type.replaceAll("&amp;", "&").replaceAll("'", "`");
+        
+        if (discount == null) {
+            discount = new Discount(name, value, type);
+            discount.setActive(false);
+            
+            em.getTransaction().begin();
+            BusinessEntityUtils.saveBusinessEntity(em, discount);
+            em.getTransaction().commit();
+        }
+        
+        return discount;
+    }
+    public static List<Discount> findAllDiscounts(EntityManager em) {
+        
+        try {
+            
+            List<Discount> discounts = em.createNamedQuery("findAllDiscounts", Discount.class).getResultList();
+            
+            return discounts;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Discount> findAllActiveDiscounts(EntityManager em) {
+        
+        try {
+            
+            List<Discount> discounts = em.createNamedQuery("findAllActiveDiscounts", Discount.class).getResultList();
+            
+            return discounts;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Discount> findDiscountsByNameAndDescription(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("'", "`");
+            
+            List<Discount> discounts
+                    = em.createQuery("SELECT d FROM Discount d WHERE UPPER(d.name) LIKE '%"
+                            + value.toUpperCase().trim() + "%' OR UPPER(d.description) LIKE '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY d.name",
+                            Discount.class).getResultList();
+            return discounts;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Discount> findActiveDiscountsByNameAndDescription(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Discount> discounts
+                    = em.createQuery("SELECT d FROM Discount d WHERE (UPPER(d.name) LIKE '%"
+                            + value.toUpperCase().trim() + "%' OR UPPER(d.description) LIKE '%"
+                            + value.toUpperCase().trim() + "%') AND d.active = 1 ORDER BY d.name",
+                            Discount.class).getResultList();
+            return discounts;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Discount findByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
+                    + "WHERE UPPER(d.name) "
+                    + "= '" + value.toUpperCase() + "'", Discount.class).getResultList();
+            if (!discounts.isEmpty()) {
+                return discounts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Discount findByValue(EntityManager em, Double value) {
+        
+        try {
+            
+            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d"
+                    + " WHERE d.discountValue = " + value, Discount.class).getResultList();
+            if (!discounts.isEmpty()) {
+                return discounts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Discount findByValueAndType(EntityManager em,
+            Double value,
+            String valueType) {
+        
+        try {
+            
+            valueType = valueType.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d"
+                    + " WHERE d.discountValue = " + value
+                    + " AND d.discountValueType LIKE '" + valueType + "'", Discount.class).getResultList();
+            if (!discounts.isEmpty()) {
+                return discounts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -110,40 +258,6 @@ public class Discount implements Serializable, BusinessEntity {
         this.active = active;
     }
 
-    public static Discount findDefault(EntityManager em, String name) {
-        Discount discount = Discount.findByName(em, name);
-
-        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-        if (discount == null) {
-            discount = new Discount(name);
-
-            em.getTransaction().begin();
-            BusinessEntityUtils.saveBusinessEntity(em, discount);
-            em.getTransaction().commit();
-        }
-
-        return discount;
-    }
-
-    public static Discount findDefault(EntityManager em,
-            String name, Double value, String type) {
-        Discount discount = Discount.findByName(em, name);
-
-        name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-        type = type.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-        if (discount == null) {
-            discount = new Discount(name, value, type);
-            discount.setActive(false);
-
-            em.getTransaction().begin();
-            BusinessEntityUtils.saveBusinessEntity(em, discount);
-            em.getTransaction().commit();
-        }
-
-        return discount;
-    }
 
     public Double getValue() {
         if (discountValueType.equals("Percentage")) {
@@ -192,69 +306,6 @@ public class Discount implements Serializable, BusinessEntity {
         this.accountingCode = accountingCode;
     }
 
-    public static List<Discount> findAllDiscounts(EntityManager em) {
-
-        try {
-
-            List<Discount> discounts = em.createNamedQuery("findAllDiscounts", Discount.class).getResultList();
-
-            return discounts;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Discount> findAllActiveDiscounts(EntityManager em) {
-
-        try {
-
-            List<Discount> discounts = em.createNamedQuery("findAllActiveDiscounts", Discount.class).getResultList();
-
-            return discounts;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Discount> findDiscountsByNameAndDescription(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("'", "`");
-
-            List<Discount> discounts
-                    = em.createQuery("SELECT d FROM Discount d WHERE UPPER(d.name) LIKE '%"
-                            + value.toUpperCase().trim() + "%' OR UPPER(d.description) LIKE '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY d.name",
-                            Discount.class).getResultList();
-            return discounts;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Discount> findActiveDiscountsByNameAndDescription(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Discount> discounts
-                    = em.createQuery("SELECT d FROM Discount d WHERE (UPPER(d.name) LIKE '%"
-                            + value.toUpperCase().trim() + "%' OR UPPER(d.description) LIKE '%"
-                            + value.toUpperCase().trim() + "%') AND d.active = 1 ORDER BY d.name",
-                            Discount.class).getResultList();
-            return discounts;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     @Override
     public Long getId() {
@@ -353,79 +404,24 @@ public class Discount implements Serializable, BusinessEntity {
         this.isDirty = isDirty;
     }
 
-    public static Discount findByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d "
-                    + "WHERE UPPER(d.name) "
-                    + "= '" + value.toUpperCase() + "'", Discount.class).getResultList();
-            if (!discounts.isEmpty()) {
-                return discounts.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Discount findByValue(EntityManager em, Double value) {
-
-        try {
-
-            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d"
-                    + " WHERE d.discountValue = " + value, Discount.class).getResultList();
-            if (!discounts.isEmpty()) {
-                return discounts.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Discount findByValueAndType(EntityManager em,
-            Double value,
-            String valueType) {
-
-        try {
-
-            valueType = valueType.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Discount> discounts = em.createQuery("SELECT d FROM Discount d"
-                    + " WHERE d.discountValue = " + value
-                    + " AND d.discountValueType LIKE '" + valueType + "'", Discount.class).getResultList();
-            if (!discounts.isEmpty()) {
-                return discounts.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -19,17 +19,16 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.rm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -40,15 +39,17 @@ import javax.persistence.Temporal;
 public class FieldUpdate implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(FieldUpdate.class.getName());
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String fieldName;
     private String className;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateUpdated;
+    private LocalDateTime dateUpdated;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee updatedBy;
+    public FieldUpdate() {
+    }
 
     public Employee getUpdatedBy() {
         return updatedBy;
@@ -58,11 +59,11 @@ public class FieldUpdate implements Serializable {
         this.updatedBy = updatedBy;
     }
 
-    public Date getDateUpdated() {
+    public LocalDateTime getDateUpdated() {
         return dateUpdated;
     }
 
-    public void setDateUpdated(Date dateUpdated) {
+    public void setDateUpdated(LocalDateTime dateUpdated) {
         this.dateUpdated = dateUpdated;
     }
 
@@ -74,8 +75,6 @@ public class FieldUpdate implements Serializable {
         this.className = className;
     }
 
-    public FieldUpdate() {
-    }
 
     public String getFieldName() {
         return fieldName;

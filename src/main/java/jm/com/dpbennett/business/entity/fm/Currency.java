@@ -19,20 +19,20 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 import java.text.Collator;
-import java.util.Date;
+import java.time.LocalDateTime;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.cm.Client;
@@ -47,6 +47,87 @@ import jm.com.dpbennett.business.entity.sm.SystemOption;
 public class Currency implements Asset, BusinessEntity, Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Currency.class.getName());
+    
+    public static Currency findByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
+                    + "WHERE UPPER(c.name) "
+                    + "= '" + value.toUpperCase() + "'", Currency.class).getResultList();
+            if (!currencies.isEmpty()) {
+                return currencies.get(0);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+    }
+    public static Currency findByCode(EntityManager em, String code) {
+        
+        try {
+            
+            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
+                    + "WHERE c.code "
+                    + "= '" + code + "'", Currency.class).getResultList();
+            if (!currencies.isEmpty()) {
+                return currencies.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+    }
+    public static List<Currency> findAll(EntityManager em) {
+        
+        try {
+            
+            List<Currency> codes = em.createQuery("SELECT c FROM Currency c ORDER BY c.code", Currency.class).getResultList();
+            
+            return codes;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Currency> findAllByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Currency> currencies
+                    = em.createQuery("SELECT c FROM Currency c WHERE UPPER(c.name) LIKE '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY c.name",
+                            Currency.class).getResultList();
+            return currencies;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Currency findById(EntityManager em, Long id) {
+        
+        try {
+            
+            Currency code = em.find(Currency.class, id);
+            
+            return code;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -141,89 +222,6 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
         this.name = name;
     }
 
-    public static Currency findByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
-                    + "WHERE UPPER(c.name) "
-                    + "= '" + value.toUpperCase() + "'", Currency.class).getResultList();
-            if (!currencies.isEmpty()) {
-                return currencies.get(0);
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-    }
-
-    public static Currency findByCode(EntityManager em, String code) {
-
-        try {
-
-            code = code.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Currency> currencies = em.createQuery("SELECT c FROM Currency c "
-                    + "WHERE c.code "
-                    + "= '" + code + "'", Currency.class).getResultList();
-            if (!currencies.isEmpty()) {
-                return currencies.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-    }
-
-    public static List<Currency> findAll(EntityManager em) {
-
-        try {
-
-            List<Currency> codes = em.createQuery("SELECT c FROM Currency c ORDER BY c.code", Currency.class).getResultList();
-
-            return codes;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Currency> findAllByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Currency> currencies
-                    = em.createQuery("SELECT c FROM Currency c WHERE UPPER(c.name) LIKE '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY c.name",
-                            Currency.class).getResultList();
-            return currencies;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Currency findById(EntityManager em, Long id) {
-
-        try {
-
-            Currency code = em.find(Currency.class, id);
-
-            return code;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -286,22 +284,22 @@ public class Currency implements Asset, BusinessEntity, Serializable, Comparable
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

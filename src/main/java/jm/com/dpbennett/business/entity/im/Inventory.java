@@ -19,26 +19,25 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.im;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.fm.Asset;
@@ -62,6 +61,177 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Inventory implements Serializable, Comparable, BusinessEntity, Asset {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Inventory.class.getName());
+    public static Inventory findById(EntityManager em, Long Id) {
+        
+        return em.find(Inventory.class, Id);
+    }
+    public static List<Inventory> findAllByName(EntityManager em,
+            String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Inventory> inventory
+                    = em.createQuery("SELECT i FROM Inventory i WHERE UPPER(i.name) like '%"
+                            + name.toUpperCase() + "%'"
+                                    + " ORDER BY i.name", Inventory.class).getResultList();
+            
+            return inventory;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Inventory findByName(
+            EntityManager em, String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
+                    + "WHERE UPPER(i.name)" + " = '" + name + "'",
+                    Inventory.class).getResultList();
+            if (!inventory.isEmpty()) {
+                Inventory inventoryItem = inventory.get(0);
+                
+                return inventoryItem;
+            }
+        } catch (Exception e) {
+            System.out.println("Error finding inventory: " + e);
+            return null;
+        }
+        
+        return null;
+    }
+    public static Inventory findActiveByName(
+            EntityManager em, String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
+                    + "WHERE UPPER(i.name)" + " = '" + name + "'"
+                            + " AND i.active = 1",
+                    Inventory.class).getResultList();
+            if (!inventory.isEmpty()) {
+                Inventory inventoryItem = inventory.get(0);
+                
+                return inventoryItem;
+            }
+        } catch (Exception e) {
+            System.out.println("Error finding inventory: " + e);
+            return null;
+        }
+        
+        return null;
+    }
+    public static List<Inventory> find(
+            EntityManager em,
+            String searchText,
+            Integer maxResults) {
+        
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        
+        List<Inventory> foundInventory = new ArrayList<>();
+        String searchQuery;
+        String searchTextAndClause;
+        String selectClause = "SELECT inventory FROM Inventory inventory";
+        String mainJoinClause
+                = " JOIN inventory.category category"
+                + " JOIN inventory.supplier supplier"
+                + " JOIN inventory.product product"
+                + " JOIN inventory.enteredBy enteredBy";
+        
+        String mainSearchWhereClause = " UPPER(category.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(product.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.type) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.stockKeepingUnit) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.measurementUnit) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.valuationMethod) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.batchCode) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.dateMark) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.status) LIKE '%" + searchText.toUpperCase() + "%'";
+        
+        searchTextAndClause
+                = " WHERE"
+                + mainSearchWhereClause;
+        searchQuery
+                = selectClause
+                + mainJoinClause
+                + searchTextAndClause
+                + " ORDER BY inventory.id DESC";
+        
+        try {
+            if (maxResults == 0) {
+                foundInventory = em.createQuery(searchQuery, Inventory.class).getResultList();
+            } else {
+                foundInventory = em.createQuery(searchQuery, Inventory.class).setMaxResults(maxResults).getResultList();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return foundInventory;
+        }
+        
+        return foundInventory;
+    }
+    public static List<Inventory> findActive(
+            EntityManager em,
+            String searchText,
+            Integer maxResults) {
+        
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        
+        List<Inventory> foundInventory = new ArrayList<>();
+        String searchQuery;
+        String searchTextAndClause;
+        String selectClause = "SELECT inventory FROM Inventory inventory";
+        String mainJoinClause
+                = " JOIN inventory.category category"
+                + " JOIN inventory.supplier supplier"
+                + " JOIN inventory.product product"
+                + " JOIN inventory.enteredBy enteredBy";
+        
+        String mainSearchWhereClause = " UPPER(category.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(product.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.type) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.stockKeepingUnit) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.measurementUnit) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.valuationMethod) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.batchCode) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.dateMark) LIKE '%" + searchText.toUpperCase() + "%'"
+                + " OR UPPER(inventory.status) LIKE '%" + searchText.toUpperCase() + "%')";
+        
+        searchTextAndClause
+                = " WHERE  inventory.active = 1 AND ("
+                + mainSearchWhereClause;
+        searchQuery
+                = selectClause
+                + mainJoinClause
+                + searchTextAndClause
+                + " ORDER BY inventory.name";
+        
+        try {
+            if (maxResults == 0) {
+                foundInventory = em.createQuery(searchQuery, Inventory.class).getResultList();
+            } else {
+                foundInventory = em.createQuery(searchQuery, Inventory.class).setMaxResults(maxResults).getResultList();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return foundInventory;
+        }
+        
+        return foundInventory;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -79,16 +249,11 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     private String valuationMethod;
     @OneToOne(cascade = CascadeType.REFRESH)
     private MarketProduct product;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateAcquired;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateChecked;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEntered;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEdited;
-    @Temporal(javax.persistence.TemporalType.TIME)
-    private Date timeChecked;
+    private LocalDateTime dateAcquired;
+    private LocalDateTime dateChecked;
+    private LocalDateTime dateEntered;
+    private LocalDateTime dateEdited;
+    private LocalDateTime timeChecked;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Supplier supplier;
     private String batchCode;
@@ -353,11 +518,11 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.budget = budget;
     }
 
-    public Date getDateAcquired() {
+    public LocalDateTime getDateAcquired() {
         return dateAcquired;
     }
 
-    public void setDateAcquired(Date dateAcquired) {
+    public void setDateAcquired(LocalDateTime dateAcquired) {
         this.dateAcquired = dateAcquired;
     }
 
@@ -376,17 +541,17 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         return dateEntered;
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         this.dateEntered = dateEntered;
     }
 
     public ReturnMessage prepareAndSave(EntityManager em, User user) {
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
 
         try {
             Employee employee = user.getEmployee();
@@ -530,181 +695,6 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         return null;
     }
 
-    public static Inventory findById(EntityManager em, Long Id) {
-
-        return em.find(Inventory.class, Id);
-    }
-
-    public static List<Inventory> findAllByName(EntityManager em,
-            String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Inventory> inventory
-                    = em.createQuery("SELECT i FROM Inventory i WHERE UPPER(i.name) like '%"
-                            + name.toUpperCase() + "%'"
-                            + " ORDER BY i.name", Inventory.class).getResultList();
-
-            return inventory;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Inventory findByName(
-            EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
-                    + "WHERE UPPER(i.name)" + " = '" + name + "'",
-                    Inventory.class).getResultList();
-            if (!inventory.isEmpty()) {
-                Inventory inventoryItem = inventory.get(0);
-
-                return inventoryItem;
-            }
-        } catch (Exception e) {
-            System.out.println("Error finding inventory: " + e);
-            return null;
-        }
-
-        return null;
-    }
-
-    public static Inventory findActiveByName(
-            EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Inventory> inventory = em.createQuery("SELECT i FROM Inventory i "
-                    + "WHERE UPPER(i.name)" + " = '" + name + "'"
-                    + " AND i.active = 1",
-                    Inventory.class).getResultList();
-            if (!inventory.isEmpty()) {
-                Inventory inventoryItem = inventory.get(0);
-
-                return inventoryItem;
-            }
-        } catch (Exception e) {
-            System.out.println("Error finding inventory: " + e);
-            return null;
-        }
-
-        return null;
-    }
-
-    public static List<Inventory> find(
-            EntityManager em,
-            String searchText,
-            Integer maxResults) {
-
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-        List<Inventory> foundInventory = new ArrayList<>();
-        String searchQuery;
-        String searchTextAndClause;
-        String selectClause = "SELECT inventory FROM Inventory inventory";
-        String mainJoinClause
-                = " JOIN inventory.category category"
-                + " JOIN inventory.supplier supplier"
-                + " JOIN inventory.product product"
-                + " JOIN inventory.enteredBy enteredBy";
-
-        String mainSearchWhereClause = " UPPER(category.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(product.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.type) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.stockKeepingUnit) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.measurementUnit) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.valuationMethod) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.batchCode) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.dateMark) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.status) LIKE '%" + searchText.toUpperCase() + "%'";
-
-        searchTextAndClause
-                = " WHERE"
-                + mainSearchWhereClause;
-        searchQuery
-                = selectClause
-                + mainJoinClause
-                + searchTextAndClause
-                + " ORDER BY inventory.id DESC";
-
-        try {
-            if (maxResults == 0) {
-                foundInventory = em.createQuery(searchQuery, Inventory.class).getResultList();
-            } else {
-                foundInventory = em.createQuery(searchQuery, Inventory.class).setMaxResults(maxResults).getResultList();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return foundInventory;
-        }
-
-        return foundInventory;
-    }
-
-    public static List<Inventory> findActive(
-            EntityManager em,
-            String searchText,
-            Integer maxResults) {
-
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-        List<Inventory> foundInventory = new ArrayList<>();
-        String searchQuery;
-        String searchTextAndClause;
-        String selectClause = "SELECT inventory FROM Inventory inventory";
-        String mainJoinClause
-                = " JOIN inventory.category category"
-                + " JOIN inventory.supplier supplier"
-                + " JOIN inventory.product product"
-                + " JOIN inventory.enteredBy enteredBy";
-
-        String mainSearchWhereClause = " UPPER(category.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(supplier.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(product.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.type) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.stockKeepingUnit) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.measurementUnit) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.valuationMethod) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.batchCode) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.dateMark) LIKE '%" + searchText.toUpperCase() + "%'"
-                + " OR UPPER(inventory.status) LIKE '%" + searchText.toUpperCase() + "%')";
-
-        searchTextAndClause
-                = " WHERE  inventory.active = 1 AND ("
-                + mainSearchWhereClause;
-        searchQuery
-                = selectClause
-                + mainJoinClause
-                + searchTextAndClause
-                + " ORDER BY inventory.name";
-
-        try {
-            if (maxResults == 0) {
-                foundInventory = em.createQuery(searchQuery, Inventory.class).getResultList();
-            } else {
-                foundInventory = em.createQuery(searchQuery, Inventory.class).setMaxResults(maxResults).getResultList();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return foundInventory;
-        }
-
-        return foundInventory;
-    }
 
     public String getMeasurementUnit() {
         return measurementUnit;
@@ -771,12 +761,12 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         return dateEdited;
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         this.dateEdited = dateEdited;
     }
 
@@ -896,11 +886,11 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.batchCode = batchCode;
     }
 
-    public Date getDateChecked() {
+    public LocalDateTime getDateChecked() {
         return dateChecked;
     }
 
-    public void setDateChecked(Date dateChecked) {
+    public void setDateChecked(LocalDateTime dateChecked) {
         this.dateChecked = dateChecked;
     }
 
@@ -912,11 +902,11 @@ public class Inventory implements Serializable, Comparable, BusinessEntity, Asse
         this.dateMark = dateMark;
     }
 
-    public Date getTimeChecked() {
+    public LocalDateTime getTimeChecked() {
         return timeChecked;
     }
 
-    public void setTimeChecked(Date timeChecked) {
+    public void setTimeChecked(LocalDateTime timeChecked) {
         this.timeChecked = timeChecked;
     }
 

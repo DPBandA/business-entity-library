@@ -20,26 +20,26 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.sc;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Address;
@@ -58,62 +58,7 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class FactoryInspection implements BusinessEntity, Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date inspectionDate;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date inspectionStartTime;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date inspectionEndTime;
-    @Column(length = 1024)
-    private String workInProgress;
-    private String workProgress;
-    private String inspectionType;
-    @Column(length = 1024)
-    private String generalComments;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee assignedInspector;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Address address;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Contact factoryRepresentative;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<FactoryInspectionComponent> inspectionComponents;
-    @OneToMany(cascade = CascadeType.REFRESH)
-    private List<ProductInspection> productInspections;
-    private String name;
-    private Integer maxDaysForCompliance;
-    private String actionsTaken;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Manufacturer manufacturer;
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private BusinessOffice businessOffice;
-    private String jobNumber;
-    @Transient
-    private Boolean isDirty;
-    @Transient
-    private String editStatus;
-
-    public FactoryInspection() {
-        inspectionComponents = new ArrayList<>();
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Boolean getIsJobNumberValid() {
-        return !getJobNumber().isEmpty();
-    }
-
+    private static final System.Logger LOG = System.getLogger(FactoryInspection.class.getName());
     public static List<Object[]> getReportRecords(
             EntityManager em,
             String startDate,
@@ -123,8 +68,8 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         String reportSQL = "SELECT DISTINCT"
                 + "     factoryinspection.`JOBNUMBER`," // 0 - Job number 
                 + "     assignedInspector.`NAME`," // 1 - Assigned inspector
-                + "     factoryinspection.`GENERALCOMMENTS`," // 2 - General comments                  
-                + "     businessoffice.`NAME`," // 3 - Business office   
+                + "     factoryinspection.`GENERALCOMMENTS`," // 2 - General comments
+                + "     businessoffice.`NAME`," // 3 - Business office
                 + "     manufacturer.`NAME`," // 4 - Manufacturer  
                 + "     factoryinspection.`INSPECTIONDATE`," // 5 - Inspection date
                 + "     factoryinspection.`WORKPROGRESS`," // 6 - Work progress 
@@ -154,41 +99,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         }
 
     }
-
-    public String getJobNumber() {
-        if (jobNumber == null) {
-            jobNumber = "";
-        }
-
-        return jobNumber;
-    }
-
-    public void setJobNumber(String jobNumber) {
-        this.jobNumber = jobNumber;
-    }
-
-    public String getEditStatus() {
-        return editStatus;
-    }
-
-    public void setEditStatus(String editStatus) {
-        this.editStatus = editStatus;
-    }
-
-    public List<ProductInspection> getProductInspections() {
-        if (productInspections != null) {
-            Collections.sort(productInspections);
-        } else {
-            productInspections = new ArrayList<>();
-        }
-
-        return productInspections;
-    }
-
-    public void setProductInspections(List<ProductInspection> productInspections) {
-        this.productInspections = productInspections;
-    }
-
     public static List<FactoryInspection> findFactoryInspectionsByDateSearchField(
             EntityManager em,
             String dateSearchField,
@@ -259,7 +169,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
 
         return foundFactoryInspections;
     }
-
     public static List<FactoryInspection> findFactoryInspectionsByName(
             EntityManager em, String value) {
 
@@ -277,7 +186,6 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             return new ArrayList<>();
         }
     }
-
     public static FactoryInspection findFactoryInspectionByName(
             EntityManager em, String value) {
 
@@ -299,6 +207,94 @@ public class FactoryInspection implements BusinessEntity, Serializable {
             return null;
         }
     }
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private LocalDateTime inspectionDate;
+    private LocalDateTime inspectionStartTime;
+    private LocalDateTime inspectionEndTime;
+    @Column(length = 1024)
+    private String workInProgress;
+    private String workProgress;
+    private String inspectionType;
+    @Column(length = 1024)
+    private String generalComments;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Employee assignedInspector;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Address address;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Contact factoryRepresentative;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<FactoryInspectionComponent> inspectionComponents;
+    @OneToMany(cascade = CascadeType.REFRESH)
+    private List<ProductInspection> productInspections;
+    private String name;
+    private Integer maxDaysForCompliance;
+    private String actionsTaken;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private Manufacturer manufacturer;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private BusinessOffice businessOffice;
+    private String jobNumber;
+    @Transient
+    private Boolean isDirty;
+    @Transient
+    private String editStatus;
+
+    public FactoryInspection() {
+        inspectionComponents = new ArrayList<>();
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Boolean getIsJobNumberValid() {
+        return !getJobNumber().isEmpty();
+    }
+
+
+    public String getJobNumber() {
+        if (jobNumber == null) {
+            jobNumber = "";
+        }
+
+        return jobNumber;
+    }
+
+    public void setJobNumber(String jobNumber) {
+        this.jobNumber = jobNumber;
+    }
+
+    public String getEditStatus() {
+        return editStatus;
+    }
+
+    public void setEditStatus(String editStatus) {
+        this.editStatus = editStatus;
+    }
+
+    public List<ProductInspection> getProductInspections() {
+        if (productInspections != null) {
+            Collections.sort(productInspections);
+        } else {
+            productInspections = new ArrayList<>();
+        }
+
+        return productInspections;
+    }
+
+    public void setProductInspections(List<ProductInspection> productInspections) {
+        this.productInspections = productInspections;
+    }
+
 
     public String getWorkProgress() {
         return workProgress;
@@ -455,27 +451,27 @@ public class FactoryInspection implements BusinessEntity, Serializable {
         return components;
     }
 
-    public Date getInspectionDate() {
+    public LocalDateTime getInspectionDate() {
         return inspectionDate;
     }
 
-    public void setInspectionDate(Date inspectionDate) {
+    public void setInspectionDate(LocalDateTime inspectionDate) {
         this.inspectionDate = inspectionDate;
     }
 
-    public Date getInspectionEndTime() {
+    public LocalDateTime getInspectionEndTime() {
         return inspectionEndTime;
     }
 
-    public void setInspectionEndTime(Date inspectionEndTime) {
+    public void setInspectionEndTime(LocalDateTime inspectionEndTime) {
         this.inspectionEndTime = inspectionEndTime;
     }
 
-    public Date getInspectionStartTime() {
+    public LocalDateTime getInspectionStartTime() {
         return inspectionStartTime;
     }
 
-    public void setInspectionStartTime(Date inspectionStartTime) {
+    public void setInspectionStartTime(LocalDateTime inspectionStartTime) {
         this.inspectionStartTime = inspectionStartTime;
     }
 
@@ -618,22 +614,22 @@ public class FactoryInspection implements BusinessEntity, Serializable {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

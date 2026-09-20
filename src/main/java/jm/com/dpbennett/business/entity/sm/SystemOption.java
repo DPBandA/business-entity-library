@@ -20,20 +20,20 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.sm;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -51,6 +51,302 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
             query = "SELECT s FROM SystemOption s WHERE s.category LIKE '%FINANCE%' OR s.category LIKE '%Finance%' ORDER BY s.comments")
 })
 public class SystemOption implements BusinessEntity {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(SystemOption.class.getName());
+    public static String getString(EntityManager em, String name) {
+        SystemOption option = SystemOption.findSystemOptionByName(em, name);
+        
+        if (option != null) {
+            return option.getOptionValue();
+        }
+        
+        return "";
+        
+    }
+    public static Long getLong(EntityManager em, String name) {
+        SystemOption option = SystemOption.findSystemOptionByName(em, name);
+        
+        if (option != null) {
+            try {
+                
+                return Long.valueOf(option.getOptionValue());
+            } catch (NumberFormatException e) {
+                
+                return 0L;
+            }
+        }
+        
+        return 0L;
+        
+    }
+    public static Integer getInteger(EntityManager em, String name) {
+        SystemOption option = SystemOption.findSystemOptionByName(em, name);
+        
+        if (option != null) {
+            try {
+                
+                return Integer.valueOf(option.getOptionValue());
+            } catch (NumberFormatException e) {
+                
+                return 0;
+            }
+        }
+        
+        return 0;
+        
+    }
+    public static Double getDouble(EntityManager em, String name) {
+        SystemOption option = SystemOption.findSystemOptionByName(em, name);
+        
+        if (option != null) {
+            try {
+                
+                return Double.valueOf(option.getOptionValue());
+            } catch (NumberFormatException e) {
+                
+                return 0.0;
+            }
+        }
+        
+        return 0.0;
+        
+    }
+    public static Boolean getBoolean(EntityManager em, String name) {
+        SystemOption option = SystemOption.findSystemOptionByName(em, name);
+        
+        if (option != null) {
+            try {
+                
+                return Boolean.valueOf(option.getOptionValue());
+            } catch (NumberFormatException e) {
+                
+                return false;
+            }
+        }
+        
+        return false;
+        
+    }
+    public static List<String> getStringList(EntityManager em, String name) {
+        SystemOption option = SystemOption.findSystemOptionByName(em, name);
+        
+        if (option != null) {
+            try {
+                return getOptionValueListObject(em, option.getOptionValue());
+            } catch (NumberFormatException e) {
+                return new ArrayList<>();
+            }
+        }
+        
+        return new ArrayList<>();
+        
+    }
+    public static Object getOptionValueObject(EntityManager em, String name) {
+        SystemOption option = SystemOption.findSystemOptionByName(em, name);
+        
+        try {
+            if (option != null) {
+                switch (option.getOptionValueType()) {
+                    case "String":
+                        return option.getOptionValue();
+                    case "Long":
+                        return Long.valueOf(option.getOptionValue());
+                    case "Integer":
+                        return Integer.valueOf(option.getOptionValue());
+                    case "Double":
+                        return Double.valueOf(option.getOptionValue());
+                    case "Boolean":
+                        return Boolean.valueOf(option.getOptionValue());
+                    case "List<String>":
+                        return getOptionValueListObject(em, option.getOptionValue());
+                    default:
+                        return option.getOptionValue();
+                }
+                
+            } else {
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+            
+            return null;
+        }
+        
+    }
+    public static Object getOptionValueObject(SystemOption option) {
+        
+        try {
+            if (option != null) {
+                switch (option.getOptionValueType()) {
+                    case "String":
+                        return option.getOptionValue();
+                    case "Long":
+                        return Long.valueOf(option.getOptionValue());
+                    case "Integer":
+                        return Integer.valueOf(option.getOptionValue());
+                    case "Double":
+                        return Double.valueOf(option.getOptionValue());
+                    case "Boolean":
+                        return Boolean.valueOf(option.getOptionValue());
+                    case "List<String>":
+                        return getOptionValueListObject(option.getOptionValue());
+                    default:
+                        return option.getOptionValue();
+                }
+                
+            } else {
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+            
+            return null;
+        }
+        
+    }
+    public static List<String> getOptionValueListObject(EntityManager em,
+            String optionValue) {
+        ArrayList list = new ArrayList();
+        String itemSep = (String) SystemOption.getOptionValueObject(em,
+                "defaultListItemSeparationCharacter");
+        
+        String items[] = optionValue.split(itemSep);
+        
+        list.addAll(Arrays.asList(items));
+        
+        return list;
+    }
+    public static List<String> getOptionValueListObject(String optionValue) {
+        ArrayList list = new ArrayList();
+        String itemSep = ";";
+        
+        String items[] = optionValue.split(itemSep);
+        
+        list.addAll(Arrays.asList(items));
+        
+        return list;
+    }
+    public static SystemOption findSystemOptionByName(EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<SystemOption> options = em.createQuery("SELECT o FROM SystemOption o "
+                    + "WHERE UPPER(o.name) "
+                    + "= '" + value.toUpperCase() + "'", SystemOption.class).getResultList();
+            
+            if (!options.isEmpty()) {
+                
+                SystemOption option = options.get(0);
+                
+                return option;
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<SystemOption> findAllSystemOptions(EntityManager em) {
+        
+        try {
+            List<SystemOption> systemOption = em.createNamedQuery("findAllSystemOptions", SystemOption.class).getResultList();
+            
+            return systemOption;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<SystemOption> findAllFinancialSystemOptions(EntityManager em) {
+        
+        try {
+            List<SystemOption> systemOption = em.createNamedQuery("findAllFinancialSystemOptions", SystemOption.class).getResultList();
+            
+            return systemOption;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<SystemOption> findSystemOptions(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<SystemOption> systemOptions
+                    = em.createQuery("SELECT o FROM SystemOption o WHERE "
+                            + "UPPER(o.name) LIKE '%" + value + "%'"
+                                    + " OR UPPER(o.optionValue) like '%" + value + "%'"
+                                            + " OR UPPER(o.comments) like '%" + value + "%'"
+                                                    + " OR UPPER(o.category) LIKE '%" + value + "%'"
+                                                            + " ORDER BY o.comments", SystemOption.class).getResultList();
+            return systemOptions;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<SystemOption> findFinancialSystemOptions(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<SystemOption> systemOptions
+                    = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = 'FINANCE' AND ("
+                            + " UPPER(o.name) LIKE '%" + value + "%'"
+                                    + " OR UPPER(o.optionValue) like '%" + value + "%'"
+                                            + " OR UPPER(o.comments) like '%" + value + "%'"
+                                                    + " ) ORDER BY o.comments", SystemOption.class).getResultList();
+            return systemOptions;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<SystemOption> findSystemOptions(EntityManager em,
+            String queryString, String category) {
+        
+        try {
+            
+            queryString = queryString.replaceAll("'", "`");
+            category = category.replaceAll("'", "`");
+            
+            List<SystemOption> systemOptions
+                    = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = "
+                            + "'" + category.toUpperCase() + "'"
+                                    + " AND ("
+                                    + " UPPER(o.name) LIKE '%" + queryString + "%'"
+                                            + " OR UPPER(o.optionValue) like '%" + queryString + "%'"
+                                                    + " OR UPPER(o.comments) like '%" + queryString + "%'"
+                                                            + " ) ORDER BY o.comments", SystemOption.class).getResultList();
+            return systemOptions;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<SystemOption> findByOwnerId(EntityManager em, Long ownerId) {
+        
+        try {
+            List<SystemOption> systemOptions = em.createQuery("SELECT o FROM SystemOption o"
+                    + " WHERE o.ownerId = " + ownerId
+                    + " ORDER BY o.ownerId DESC", SystemOption.class).getResultList();
+            
+            return systemOptions;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -236,84 +532,6 @@ public class SystemOption implements BusinessEntity {
         this.optionValue = optionValue;
     }
 
-    public static String getString(EntityManager em, String name) {
-        SystemOption option = SystemOption.findSystemOptionByName(em, name);
-
-        if (option != null) {
-            return option.getOptionValue();
-        }
-
-        return "";
-
-    }
-
-    public static Long getLong(EntityManager em, String name) {
-        SystemOption option = SystemOption.findSystemOptionByName(em, name);
-
-        if (option != null) {
-            try {
-
-                return Long.valueOf(option.getOptionValue());
-            } catch (NumberFormatException e) {
-
-                return 0L;
-            }
-        }
-
-        return 0L;
-
-    }
-
-    public static Integer getInteger(EntityManager em, String name) {
-        SystemOption option = SystemOption.findSystemOptionByName(em, name);
-
-        if (option != null) {
-            try {
-
-                return Integer.valueOf(option.getOptionValue());
-            } catch (NumberFormatException e) {
-
-                return 0;
-            }
-        }
-
-        return 0;
-
-    }
-
-    public static Double getDouble(EntityManager em, String name) {
-        SystemOption option = SystemOption.findSystemOptionByName(em, name);
-
-        if (option != null) {
-            try {
-
-                return Double.valueOf(option.getOptionValue());
-            } catch (NumberFormatException e) {
-
-                return 0.0;
-            }
-        }
-
-        return 0.0;
-
-    }
-
-    public static Boolean getBoolean(EntityManager em, String name) {
-        SystemOption option = SystemOption.findSystemOptionByName(em, name);
-
-        if (option != null) {
-            try {
-
-                return Boolean.valueOf(option.getOptionValue());
-            } catch (NumberFormatException e) {
-
-                return false;
-            }
-        }
-
-        return false;
-
-    }
 
     public Boolean getBoolean() {
 
@@ -340,109 +558,6 @@ public class SystemOption implements BusinessEntity {
 
     }
 
-    public static List<String> getStringList(EntityManager em, String name) {
-        SystemOption option = SystemOption.findSystemOptionByName(em, name);
-
-        if (option != null) {
-            try {
-                return getOptionValueListObject(em, option.getOptionValue());
-            } catch (NumberFormatException e) {
-                return new ArrayList<>();
-            }
-        }
-
-        return new ArrayList<>();
-
-    }
-
-    public static Object getOptionValueObject(EntityManager em, String name) {
-        SystemOption option = SystemOption.findSystemOptionByName(em, name);
-
-        try {
-            if (option != null) {
-                switch (option.getOptionValueType()) {
-                    case "String":
-                        return option.getOptionValue();
-                    case "Long":
-                        return Long.valueOf(option.getOptionValue());
-                    case "Integer":
-                        return Integer.valueOf(option.getOptionValue());
-                    case "Double":
-                        return Double.valueOf(option.getOptionValue());
-                    case "Boolean":
-                        return Boolean.valueOf(option.getOptionValue());
-                    case "List<String>":
-                        return getOptionValueListObject(em, option.getOptionValue());
-                    default:
-                        return option.getOptionValue();
-                }
-
-            } else {
-                return null;
-            }
-        } catch (NumberFormatException e) {
-            System.out.println(e);
-
-            return null;
-        }
-
-    }
-
-    public static Object getOptionValueObject(SystemOption option) {
-
-        try {
-            if (option != null) {
-                switch (option.getOptionValueType()) {
-                    case "String":
-                        return option.getOptionValue();
-                    case "Long":
-                        return Long.valueOf(option.getOptionValue());
-                    case "Integer":
-                        return Integer.valueOf(option.getOptionValue());
-                    case "Double":
-                        return Double.valueOf(option.getOptionValue());
-                    case "Boolean":
-                        return Boolean.valueOf(option.getOptionValue());
-                    case "List<String>":
-                        return getOptionValueListObject(option.getOptionValue());
-                    default:
-                        return option.getOptionValue();
-                }
-
-            } else {
-                return null;
-            }
-        } catch (NumberFormatException e) {
-            System.out.println(e);
-
-            return null;
-        }
-
-    }
-
-    public static List<String> getOptionValueListObject(EntityManager em,
-            String optionValue) {
-        ArrayList list = new ArrayList();
-        String itemSep = (String) SystemOption.getOptionValueObject(em,
-                "defaultListItemSeparationCharacter");
-
-        String items[] = optionValue.split(itemSep);
-
-        list.addAll(Arrays.asList(items));
-
-        return list;
-    }
-
-    public static List<String> getOptionValueListObject(String optionValue) {
-        ArrayList list = new ArrayList();
-        String itemSep = ";";
-
-        String items[] = optionValue.split(itemSep);
-
-        list.addAll(Arrays.asList(items));
-
-        return list;
-    }
 
     public String getOptionValueType() {
         if (optionValueType == null) {
@@ -487,132 +602,6 @@ public class SystemOption implements BusinessEntity {
         this.name = name;
     }
 
-    public static SystemOption findSystemOptionByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<SystemOption> options = em.createQuery("SELECT o FROM SystemOption o "
-                    + "WHERE UPPER(o.name) "
-                    + "= '" + value.toUpperCase() + "'", SystemOption.class).getResultList();
-
-            if (!options.isEmpty()) {
-
-                SystemOption option = options.get(0);
-
-                return option;
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<SystemOption> findAllSystemOptions(EntityManager em) {
-
-        try {
-            List<SystemOption> systemOption = em.createNamedQuery("findAllSystemOptions", SystemOption.class).getResultList();
-
-            return systemOption;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<SystemOption> findAllFinancialSystemOptions(EntityManager em) {
-
-        try {
-            List<SystemOption> systemOption = em.createNamedQuery("findAllFinancialSystemOptions", SystemOption.class).getResultList();
-
-            return systemOption;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<SystemOption> findSystemOptions(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<SystemOption> systemOptions
-                    = em.createQuery("SELECT o FROM SystemOption o WHERE "
-                            + "UPPER(o.name) LIKE '%" + value + "%'"
-                            + " OR UPPER(o.optionValue) like '%" + value + "%'"
-                            + " OR UPPER(o.comments) like '%" + value + "%'"
-                            + " OR UPPER(o.category) LIKE '%" + value + "%'"
-                            + " ORDER BY o.comments", SystemOption.class).getResultList();
-            return systemOptions;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<SystemOption> findFinancialSystemOptions(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<SystemOption> systemOptions
-                    = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = 'FINANCE' AND ("
-                            + " UPPER(o.name) LIKE '%" + value + "%'"
-                            + " OR UPPER(o.optionValue) like '%" + value + "%'"
-                            + " OR UPPER(o.comments) like '%" + value + "%'"
-                            + " ) ORDER BY o.comments", SystemOption.class).getResultList();
-            return systemOptions;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<SystemOption> findSystemOptions(EntityManager em,
-            String queryString, String category) {
-
-        try {
-
-            queryString = queryString.replaceAll("'", "`");
-            category = category.replaceAll("'", "`");
-
-            List<SystemOption> systemOptions
-                    = em.createQuery("SELECT o FROM SystemOption o WHERE UPPER(o.category) = "
-                            + "'" + category.toUpperCase() + "'"
-                            + " AND ("
-                            + " UPPER(o.name) LIKE '%" + queryString + "%'"
-                            + " OR UPPER(o.optionValue) like '%" + queryString + "%'"
-                            + " OR UPPER(o.comments) like '%" + queryString + "%'"
-                            + " ) ORDER BY o.comments", SystemOption.class).getResultList();
-            return systemOptions;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<SystemOption> findByOwnerId(EntityManager em, Long ownerId) {
-
-        try {
-            List<SystemOption> systemOptions = em.createQuery("SELECT o FROM SystemOption o"
-                    + " WHERE o.ownerId = " + ownerId
-                    + " ORDER BY o.ownerId DESC", SystemOption.class).getResultList();
-
-            return systemOptions;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -656,22 +645,22 @@ public class SystemOption implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

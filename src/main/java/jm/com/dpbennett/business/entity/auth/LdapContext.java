@@ -20,8 +20,17 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.auth;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
@@ -35,15 +44,6 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.ModificationItem;
 import javax.naming.ldap.InitialLdapContext;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -66,6 +66,247 @@ import jm.com.dpbennett.business.entity.util.Security;
 public class LdapContext implements BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(LdapContext.class.getName());
+    public static List<LdapContext> findAllLdapContexts(EntityManager em) {
+        
+        try {
+            return em.createNamedQuery("findAllLdapContexts", LdapContext.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<LdapContext> findAllActiveLdapContexts(EntityManager em) {
+        
+        try {
+            return em.createNamedQuery("findAllActiveLdapContexts", LdapContext.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<LdapContext> findActiveLdapContexts(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<LdapContext> ldapContexts
+                    = em.createQuery("SELECT l FROM LdapContext l WHERE "
+                            + "( UPPER(l.name) LIKE '%" + value + "%'"
+                                    + " OR UPPER(l.domainName) like '%" + value + "%'"
+                                            + " OR UPPER(l.initialContextFactory) like '%" + value + "%'"
+                                                    + " OR UPPER(l.providerUrl) LIKE '%" + value + "%'"
+                                                            + ") AND l.active = 1 ORDER BY l.name", LdapContext.class).getResultList();
+            
+            return ldapContexts;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<LdapContext> findLdapContexts(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<LdapContext> ldapContexts
+                    = em.createQuery("SELECT l FROM LdapContext l WHERE "
+                            + "UPPER(l.name) LIKE '%" + value + "%'"
+                                    + " OR UPPER(l.domainName) like '%" + value + "%'"
+                                            + " OR UPPER(l.initialContextFactory) like '%" + value + "%'"
+                                                    + " OR UPPER(l.providerUrl) LIKE '%" + value + "%'"
+                                                            + " ORDER BY l.name", LdapContext.class).getResultList();
+            
+            return ldapContexts;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static LdapContext findActiveLdapContextByName(
+            EntityManager em, String value) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<LdapContext> ldapContexts = em.createQuery("SELECT l FROM LdapContext l "
+                    + "WHERE l.active = 1 AND UPPER(l.name) "
+                    + "= '" + value.toUpperCase() + "'", LdapContext.class).getResultList();
+            if (!ldapContexts.isEmpty()) {
+                return ldapContexts.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static DirContext getConnection(EntityManager em, String name) {
+        LdapContext context = LdapContext.findActiveLdapContextByName(em, name);
+        Properties env = new Properties();
+        
+        env.put(Context.INITIAL_CONTEXT_FACTORY, context.initialContextFactory);
+        env.put(Context.PROVIDER_URL, context.providerUrl);
+        env.put(Context.SECURITY_PRINCIPAL, context.securityPrincipal);
+        env.put(Context.SECURITY_CREDENTIALS, context.securityCredentials);
+        
+        try {
+            return new InitialDirContext(env);
+            
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+        
+        return null;
+    }
+    public static DirContext getConnection(LdapContext context) {
+        
+        Properties env = new Properties();
+        
+        env.put(Context.INITIAL_CONTEXT_FACTORY, context.initialContextFactory);
+        env.put(Context.PROVIDER_URL, context.providerUrl);
+        env.put(Context.SECURITY_PRINCIPAL, context.securityPrincipal);
+        env.put(Context.SECURITY_CREDENTIALS, context.securityCredentials);
+        
+        try {
+            return new InitialDirContext(env);
+            
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+        
+        return null;
+    }
+    public static boolean addUser(
+            EntityManager em,
+            LdapContext context,
+            User user) {
+        
+        String securityKey = SystemOption.getString(em, "securityKey");
+        Attributes attributes = new BasicAttributes();
+        Attribute inetOrgPerson = new BasicAttribute("objectClass");
+        
+        inetOrgPerson.add("inetOrgPerson");
+        
+        attributes.put(inetOrgPerson);
+        attributes.put("uid", user.getUsername());
+        attributes.put("userPassword", Security.encrypt(securityKey, user.getPassword()));
+        attributes.put("cn", user.getEmployeeFirstname());
+        attributes.put("sn", user.getEmployeeLastname());
+        
+        try {
+            DirContext connection = getConnection(context);
+            
+            if (connection != null) {
+                connection.createSubcontext(
+                        "uid=" + user.getUsername() + "," + context.domainName,
+                        attributes);
+                
+                return true;
+            }
+            
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+        
+        return false;
+        
+    }
+    public static boolean authenticateUser(
+            EntityManager em,
+            LdapContext context,
+            String userName,
+            String userPassword) {
+        
+        try {
+            
+            String securityKey = SystemOption.getString(em, "securityKey");
+            Properties env = new Properties();
+            
+            env.put(Context.INITIAL_CONTEXT_FACTORY, context.initialContextFactory);
+            env.put(Context.PROVIDER_URL, context.providerUrl);
+            env.put(Context.SECURITY_PRINCIPAL, "uid=" + userName + ","
+                    + context.domainName);
+            env.put(Context.SECURITY_CREDENTIALS,
+                    Security.encrypt(securityKey, userPassword));
+            
+            DirContext con = new InitialDirContext(env);
+            con.close();
+            
+            return true;
+            
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+        
+        return false;
+        
+    }
+    public static boolean updateUserPassword(
+            EntityManager em,
+            LdapContext context,
+            String userName,
+            String password) {
+        
+        String securityKey = SystemOption.getString(em, "securityKey");
+        ModificationItem[] mods = new ModificationItem[1];
+        mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
+                new BasicAttribute("userPassword", Security.encrypt(securityKey, password)));
+        
+        try {
+            DirContext connection = getConnection(context);
+            
+            if (connection != null) {
+                connection.modifyAttributes(
+                        "uid=" + userName + "," + context.domainName,
+                        mods);
+                
+                return true;
+            }
+            
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+        
+        return false;
+        
+    }
+    public static boolean updateUser(
+            LdapContext context,
+            User user) {
+        
+        ModificationItem[] mods = new ModificationItem[2];
+        
+        mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
+                new BasicAttribute("cn", user.getEmployeeFirstname()));
+        mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
+                new BasicAttribute("sn", user.getEmployeeLastname()));
+        
+        try {
+            DirContext connection = getConnection(context);
+            
+            if (connection != null) {
+                connection.modifyAttributes(
+                        "uid=" + user.getUsername() + "," + context.domainName,
+                        mods);
+                
+                return true;
+            }
+            
+        } catch (NamingException ex) {
+            System.out.println(ex);
+        }
+        
+        return false;
+        
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -232,71 +473,6 @@ public class LdapContext implements BusinessEntity {
         this.name = name;
     }
 
-    public static List<LdapContext> findAllLdapContexts(EntityManager em) {
-
-        try {
-            return em.createNamedQuery("findAllLdapContexts", LdapContext.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<LdapContext> findAllActiveLdapContexts(EntityManager em) {
-
-        try {
-            return em.createNamedQuery("findAllActiveLdapContexts", LdapContext.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<LdapContext> findActiveLdapContexts(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<LdapContext> ldapContexts
-                    = em.createQuery("SELECT l FROM LdapContext l WHERE "
-                            + "( UPPER(l.name) LIKE '%" + value + "%'"
-                            + " OR UPPER(l.domainName) like '%" + value + "%'"
-                            + " OR UPPER(l.initialContextFactory) like '%" + value + "%'"
-                            + " OR UPPER(l.providerUrl) LIKE '%" + value + "%'"
-                            + ") AND l.active = 1 ORDER BY l.name", LdapContext.class).getResultList();
-
-            return ldapContexts;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<LdapContext> findLdapContexts(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<LdapContext> ldapContexts
-                    = em.createQuery("SELECT l FROM LdapContext l WHERE "
-                            + "UPPER(l.name) LIKE '%" + value + "%'"
-                            + " OR UPPER(l.domainName) like '%" + value + "%'"
-                            + " OR UPPER(l.initialContextFactory) like '%" + value + "%'"
-                            + " OR UPPER(l.providerUrl) LIKE '%" + value + "%'"
-                            + " ORDER BY l.name", LdapContext.class).getResultList();
-
-            return ldapContexts;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
 
     public InitialLdapContext getInitialLDAPContext(String username, String password) {
 
@@ -340,190 +516,6 @@ public class LdapContext implements BusinessEntity {
         return new ReturnMessage();
     }
 
-    public static LdapContext findActiveLdapContextByName(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<LdapContext> ldapContexts = em.createQuery("SELECT l FROM LdapContext l "
-                    + "WHERE l.active = 1 AND UPPER(l.name) "
-                    + "= '" + value.toUpperCase() + "'", LdapContext.class).getResultList();
-            if (!ldapContexts.isEmpty()) {
-                return ldapContexts.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static DirContext getConnection(EntityManager em, String name) {
-        LdapContext context = LdapContext.findActiveLdapContextByName(em, name);
-        Properties env = new Properties();
-
-        env.put(Context.INITIAL_CONTEXT_FACTORY, context.initialContextFactory);
-        env.put(Context.PROVIDER_URL, context.providerUrl);
-        env.put(Context.SECURITY_PRINCIPAL, context.securityPrincipal);
-        env.put(Context.SECURITY_CREDENTIALS, context.securityCredentials);
-
-        try {
-            return new InitialDirContext(env);
-
-        } catch (NamingException ex) {
-            System.out.println(ex);
-        }
-
-        return null;
-    }
-
-    public static DirContext getConnection(LdapContext context) {
-
-        Properties env = new Properties();
-
-        env.put(Context.INITIAL_CONTEXT_FACTORY, context.initialContextFactory);
-        env.put(Context.PROVIDER_URL, context.providerUrl);
-        env.put(Context.SECURITY_PRINCIPAL, context.securityPrincipal);
-        env.put(Context.SECURITY_CREDENTIALS, context.securityCredentials);
-
-        try {
-            return new InitialDirContext(env);
-
-        } catch (NamingException ex) {
-            System.out.println(ex);
-        }
-
-        return null;
-    }
-
-    public static boolean addUser(
-            EntityManager em,
-            LdapContext context,
-            User user) {
-
-        String securityKey = SystemOption.getString(em, "securityKey");
-        Attributes attributes = new BasicAttributes();
-        Attribute inetOrgPerson = new BasicAttribute("objectClass");
-
-        inetOrgPerson.add("inetOrgPerson");
-
-        attributes.put(inetOrgPerson);
-        attributes.put("uid", user.getUsername());
-        attributes.put("userPassword", Security.encrypt(securityKey, user.getPassword()));
-        attributes.put("cn", user.getEmployeeFirstname());
-        attributes.put("sn", user.getEmployeeLastname());
-
-        try {
-            DirContext connection = getConnection(context);
-
-            if (connection != null) {
-                connection.createSubcontext(
-                        "uid=" + user.getUsername() + "," + context.domainName,
-                        attributes);
-
-                return true;
-            }
-
-        } catch (NamingException ex) {
-            System.out.println(ex);
-        }
-
-        return false;
-
-    }
-
-    public static boolean authenticateUser(
-            EntityManager em,
-            LdapContext context,
-            String userName,
-            String userPassword) {
-
-        try {
-
-            String securityKey = SystemOption.getString(em, "securityKey");
-            Properties env = new Properties();
-
-            env.put(Context.INITIAL_CONTEXT_FACTORY, context.initialContextFactory);
-            env.put(Context.PROVIDER_URL, context.providerUrl);
-            env.put(Context.SECURITY_PRINCIPAL, "uid=" + userName + ","
-                    + context.domainName);
-            env.put(Context.SECURITY_CREDENTIALS,
-                    Security.encrypt(securityKey, userPassword));
-
-            DirContext con = new InitialDirContext(env);
-            con.close();
-
-            return true;
-
-        } catch (NamingException ex) {
-            System.out.println(ex);
-        }
-
-        return false;
-
-    }
-
-    public static boolean updateUserPassword(
-            EntityManager em,
-            LdapContext context,
-            String userName,
-            String password) {
-
-        String securityKey = SystemOption.getString(em, "securityKey");
-        ModificationItem[] mods = new ModificationItem[1];
-        mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
-                new BasicAttribute("userPassword", Security.encrypt(securityKey, password)));
-
-        try {
-            DirContext connection = getConnection(context);
-
-            if (connection != null) {
-                connection.modifyAttributes(
-                        "uid=" + userName + "," + context.domainName,
-                        mods);
-
-                return true;
-            }
-
-        } catch (NamingException ex) {
-            System.out.println(ex);
-        }
-
-        return false;
-
-    }
-
-    public static boolean updateUser(
-            LdapContext context,
-            User user) {
-
-        ModificationItem[] mods = new ModificationItem[2];
-
-        mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
-                new BasicAttribute("cn", user.getEmployeeFirstname()));
-        mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
-                new BasicAttribute("sn", user.getEmployeeLastname()));
-
-        try {
-            DirContext connection = getConnection(context);
-
-            if (connection != null) {
-                connection.modifyAttributes(
-                        "uid=" + user.getUsername() + "," + context.domainName,
-                        mods);
-
-                return true;
-            }
-
-        } catch (NamingException ex) {
-            System.out.println(ex);
-        }
-
-        return false;
-
-    }
 
     @Override
     public String getType() {
@@ -542,26 +534,6 @@ public class LdapContext implements BusinessEntity {
 
     @Override
     public void setCategory(String category) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Date getDateEntered() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void setDateEntered(Date dateEntered) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Date getDateEdited() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void setDateEdited(Date dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -642,6 +614,26 @@ public class LdapContext implements BusinessEntity {
 
     @Override
     public void setSetting(String setting, String settingValue, String type, String category) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public LocalDateTime getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEntered(LocalDateTime dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public LocalDateTime getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

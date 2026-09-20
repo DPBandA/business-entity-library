@@ -19,9 +19,10 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity;
 
+import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.EntityManager;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.ReturnMessage;
 
@@ -30,6 +31,9 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
  * @author Desmond Bennett
  */
 public class DefaultEntity implements BusinessEntity {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(DefaultEntity.class.getName());
 
     @Override
     public Long getId() {
@@ -78,26 +82,6 @@ public class DefaultEntity implements BusinessEntity {
 
     @Override
     public void setCategory(String category) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Date getDateEntered() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void setDateEntered(Date dateEntered) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Date getDateEdited() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void setDateEdited(Date dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -240,6 +224,26 @@ public class DefaultEntity implements BusinessEntity {
 
         getSettings().add(so);
 
+    }
+
+    @Override
+    public void setDateEntered(LocalDateTime dateEntered) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setDateEdited(LocalDateTime dateEdited) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public LocalDateTime getDateEntered() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public LocalDateTime getDateEdited() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

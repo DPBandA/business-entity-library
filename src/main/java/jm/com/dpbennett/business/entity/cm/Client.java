@@ -19,29 +19,28 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.cm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.fm.Discount;
 import jm.com.dpbennett.business.entity.hrm.Address;
 import jm.com.dpbennett.business.entity.fm.AccPacCustomer;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.hrm.Employee;
@@ -89,14 +88,10 @@ public class Client implements ClientInterface {
     private String notes;
     private Boolean internal;
     private Double creditLimit;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateFirstReceived;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateLastAccessed;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEntered;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEdited;
+    private LocalDateTime dateFirstReceived;
+    private LocalDateTime dateLastAccessed;
+    private LocalDateTime dateEntered;
+    private LocalDateTime dateEdited;
     private Boolean tag;
     private String taxRegistrationNumber;
     private Boolean active;
@@ -299,12 +294,7 @@ public class Client implements ClientInterface {
     }
 
     @Override
-    public Date getDateEdited() {
-        return dateEdited;
-    }
-
-    @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         this.dateEdited = dateEdited;
     }
 
@@ -367,16 +357,6 @@ public class Client implements ClientInterface {
     @Override
     public void setInternational(Boolean international) {
         this.international = international;
-    }
-
-    @Override
-    public Date getDateEntered() {
-        return dateEntered;
-    }
-
-    @Override
-    public void setDateEntered(Date dateEntered) {
-        this.dateEntered = dateEntered;
     }
 
     @Override
@@ -635,12 +615,12 @@ public class Client implements ClientInterface {
     }
 
     @Override
-    public Date getDateLastAccessed() {
+    public LocalDateTime getDateLastAccessed() {
         return dateLastAccessed;
     }
 
     @Override
-    public void setDateLastAccessed(Date dateLastAccessed) {
+    public void setDateLastAccessed(LocalDateTime dateLastAccessed) {
         this.dateLastAccessed = dateLastAccessed;
     }
 
@@ -652,12 +632,12 @@ public class Client implements ClientInterface {
     }
 
     @Override
-    public Date getDateFirstReceived() {
+    public LocalDateTime getDateFirstReceived() {
         return dateFirstReceived;
     }
 
     @Override
-    public void setDateFirstReceived(Date dateFirstReceived) {
+    public void setDateFirstReceived(LocalDateTime dateFirstReceived) {
         this.dateFirstReceived = dateFirstReceived;
     }
 
@@ -974,6 +954,11 @@ public class Client implements ClientInterface {
         }
     }
 
+    /**
+     *
+     * @param em
+     * @return
+     */
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
@@ -981,7 +966,7 @@ public class Client implements ClientInterface {
             if (enteredBy != null) {
                 enteredBy.save(em);
             }
-            
+
             if (editedBy != null) {
                 editedBy.save(em);
             }
@@ -989,23 +974,23 @@ public class Client implements ClientInterface {
             if (billingAddress != null) {
                 billingAddress.save(em);
             }
-            
+
             if (billingContact != null) {
                 billingContact.save(em);
             }
-            
+
             if (discount != null) {
                 discount.save(em);
             }
-            
+
             if (defaultTax != null) {
                 defaultTax.save(em);
             }
-            
+
             for (Contact contact : getContacts()) {
                 contact.save(em);
             }
-            
+
             for (Address address : getAddresses()) {
                 address.save(em);
             }
@@ -1122,4 +1107,20 @@ public class Client implements ClientInterface {
     public void setSetting(String setting, String settingValue, String type, String category) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
+    @Override
+    public void setDateEntered(LocalDateTime dateEntered) {
+        this.dateEntered = dateEntered;
+    }
+
+    @Override
+    public LocalDateTime getDateEdited() {
+        return dateEdited;
+    }
+
+    @Override
+    public LocalDateTime getDateEntered() {
+        return dateEntered;
+    }
+    
 }

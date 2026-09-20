@@ -20,24 +20,24 @@ Email: info@dpbennett.com.jm
 
 package jm.com.dpbennett.business.entity.sc;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.hrm.Contact;
 import jm.com.dpbennett.business.entity.cm.Client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.rm.Form;
@@ -54,6 +54,67 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 @Table(name = "samplerequest")
 public class SampleRequest implements BusinessEntity, Form {
 
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(SampleRequest.class.getName());
+    public static List<SampleRequest> findSampleRequestsByDateSearchField(
+            EntityManager em,
+            User user,
+            String dateSearchField,
+            String searchType,
+            String searchText,
+            Date startDate,
+            Date endDate) {
+        
+        List<SampleRequest> foundSampleRequests;
+        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
+        String searchQuery = null;
+        String searchTextAndClause = "";
+        
+        if (searchType.equals("General")) {
+            if (!searchText.equals("")) {
+                searchTextAndClause
+                        = " AND ("
+                        + " UPPER(sampleRequest.type) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(inspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(inspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(receivedFrom.name) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " OR UPPER(sampleRequest.comments) LIKE '%" + searchText.toUpperCase() + "%'"
+                        + " )";
+            }
+            if ((startDate == null) || (endDate == null)) {
+                searchQuery
+                        = "SELECT sampleRequest FROM SampleRequest sampleRequest"
+                        + " JOIN sampleRequest.inspector inspector"
+                        + " JOIN sampleRequest.receivedFrom receivedFrom"
+                        + " WHERE (0 = 0)" // used as place holder
+                        + searchTextAndClause
+                        + " ORDER BY sampleRequest.id DESC";
+            } else {
+                searchQuery
+                        = "SELECT sampleRequest FROM SampleRequest sampleRequest"
+                        + " JOIN sampleRequest.inspector inspector"
+                        + " JOIN sampleRequest.receivedFrom receivedFrom"
+                        + " WHERE (sampleRequest." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
+                        + " AND sampleRequest." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
+                        + searchTextAndClause
+                        + " ORDER BY sampleRequest.id DESC";
+            }
+        } else if (searchType.equals("?")) {
+        }
+        
+        try {
+            foundSampleRequests = em.createQuery(searchQuery, SampleRequest.class).getResultList();
+            if (foundSampleRequests == null) {
+                foundSampleRequests = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
+        return foundSampleRequests;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -69,8 +130,7 @@ public class SampleRequest implements BusinessEntity, Form {
     private String comments;
     @OneToMany(cascade = CascadeType.REFRESH)
     private List<ProductInspection> products;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfRequest;
+    private LocalDateTime dateOfRequest;
     @Transient
     private Boolean isDirty;
 
@@ -91,11 +151,11 @@ public class SampleRequest implements BusinessEntity, Form {
         this.isDirty = isDirty;
     }
 
-    public Date getDateOfRequest() {
+    public LocalDateTime getDateOfRequest() {
         return dateOfRequest;
     }
 
-    public void setDateOfRequest(Date dateOfRequest) {
+    public void setDateOfRequest(LocalDateTime dateOfRequest) {
         this.dateOfRequest = dateOfRequest;
     }
 
@@ -210,64 +270,6 @@ public class SampleRequest implements BusinessEntity, Form {
         this.name = name;
     }
 
-    public static List<SampleRequest> findSampleRequestsByDateSearchField(
-            EntityManager em,
-            User user,
-            String dateSearchField,
-            String searchType,
-            String searchText,
-            Date startDate,
-            Date endDate) {
-
-        List<SampleRequest> foundSampleRequests;
-        searchText = searchText.replaceAll("&amp;", "&").replaceAll("'", "`");
-        String searchQuery = null;
-        String searchTextAndClause = "";
-
-        if (searchType.equals("General")) {
-            if (!searchText.equals("")) {
-                searchTextAndClause
-                        = " AND ("
-                        + " UPPER(sampleRequest.type) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(inspector.firstName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(inspector.lastName) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(receivedFrom.name) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " OR UPPER(sampleRequest.comments) LIKE '%" + searchText.toUpperCase() + "%'"
-                        + " )";
-            }
-            if ((startDate == null) || (endDate == null)) {
-                searchQuery
-                        = "SELECT sampleRequest FROM SampleRequest sampleRequest"
-                        + " JOIN sampleRequest.inspector inspector"
-                        + " JOIN sampleRequest.receivedFrom receivedFrom"
-                        + " WHERE (0 = 0)" // used as place holder
-                        + searchTextAndClause
-                        + " ORDER BY sampleRequest.id DESC";
-            } else {
-                searchQuery
-                        = "SELECT sampleRequest FROM SampleRequest sampleRequest"
-                        + " JOIN sampleRequest.inspector inspector"
-                        + " JOIN sampleRequest.receivedFrom receivedFrom"
-                        + " WHERE (sampleRequest." + dateSearchField + " >= " + BusinessEntityUtils.getDateString(startDate, "'", "YMD", "-")
-                        + " AND sampleRequest." + dateSearchField + " <= " + BusinessEntityUtils.getDateString(endDate, "'", "YMD", "-") + ")"
-                        + searchTextAndClause
-                        + " ORDER BY sampleRequest.id DESC";
-            }
-        } else if (searchType.equals("?")) {
-        }
-
-        try {
-            foundSampleRequests = em.createQuery(searchQuery, SampleRequest.class).getResultList();
-            if (foundSampleRequests == null) {
-                foundSampleRequests = new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-
-        return foundSampleRequests;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -327,22 +329,22 @@ public class SampleRequest implements BusinessEntity, Form {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

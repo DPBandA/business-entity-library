@@ -19,25 +19,25 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.dm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Employee;
 import jm.com.dpbennett.business.entity.fm.Classification;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -65,18 +65,12 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
     private String number;
     private String enforcement;
     private Boolean autoGenerateNumber;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateRevised;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateConfirmed;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date datePublished;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateRevisionDue;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEntered;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateEdited;
+    private LocalDateTime dateRevised;
+    private LocalDateTime dateConfirmed;
+    private LocalDateTime datePublished;
+    private LocalDateTime dateRevisionDue;
+    private LocalDateTime dateEntered;
+    private LocalDateTime dateEdited;
     private String url;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Classification classification;
@@ -142,22 +136,22 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         return dateEntered;
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         this.dateEntered = dateEntered;
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         return dateEdited;
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         this.dateEdited = dateEdited;
     }
 
@@ -347,35 +341,35 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
         this.enforcement = enforcement;
     }
 
-    public Date getDateRevised() {
+    public LocalDateTime getDateRevised() {
         return dateRevised;
     }
 
-    public void setDateRevised(Date dateRevised) {
+    public void setDateRevised(LocalDateTime dateRevised) {
         this.dateRevised = dateRevised;
     }
 
-    public Date getDateConfirmed() {
+    public LocalDateTime getDateConfirmed() {
         return dateConfirmed;
     }
 
-    public void setDateConfirmed(Date dateConfirmed) {
+    public void setDateConfirmed(LocalDateTime dateConfirmed) {
         this.dateConfirmed = dateConfirmed;
     }
 
-    public Date getDatePublished() {
+    public LocalDateTime getDatePublished() {
         return datePublished;
     }
 
-    public void setDatePublished(Date datePublished) {
+    public void setDatePublished(LocalDateTime datePublished) {
         this.datePublished = datePublished;
     }
 
-    public Date getDateRevisionDue() {
+    public LocalDateTime getDateRevisionDue() {
         return dateRevisionDue;
     }
 
-    public void setDateRevisionDue(Date dateRevisionDue) {
+    public void setDateRevisionDue(LocalDateTime dateRevisionDue) {
         this.dateRevisionDue = dateRevisionDue;
     }
 
@@ -466,8 +460,8 @@ public class DocumentStandard implements Document, Comparable, BusinessEntity {
             String dateSearchField,
             String searchType,
             String originalSearchText,
-            Date startDate,
-            Date endDate) {
+            LocalDateTime startDate,
+            LocalDateTime endDate) {
 
         List<DocumentStandard> foundDocuments;
         String searchQuery = null;

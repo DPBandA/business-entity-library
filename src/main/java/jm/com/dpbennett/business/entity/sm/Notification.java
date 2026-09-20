@@ -19,18 +19,17 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.sm;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -46,6 +45,189 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Notification implements BusinessEntity {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Notification.class.getName());
+    public static Notification findNotificationById(EntityManager em, Long Id) {
+        
+        try {
+            return em.find(Notification.class, Id);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Notification> findNotificationsByName(
+            EntityManager em,
+            String value,
+            int maxResults) {
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<Notification> notifications
+                    = em.createQuery("SELECT n FROM Notification n WHERE UPPER(n.name) LIKE '%"
+                            + value.toUpperCase().trim() + "%' ORDER BY n.issueTime DESC",
+                            Notification.class).setMaxResults(maxResults).getResultList();
+            
+            return notifications;
+            
+        } catch (Exception e) {
+            
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Notification findFirstNotificationByOwnerId(
+            EntityManager em, Long ownerId) {
+        
+        try {
+            List<Notification> notifications = em.createQuery("SELECT n FROM Notification n "
+                    + "WHERE n.ownerId"
+                    + "= " + ownerId + " ORDER BY n.issueTime DESC", Notification.class).getResultList();
+            
+            if (!notifications.isEmpty()) {
+                return notifications.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Notification> findAllActiveNotifications(EntityManager em) {
+        
+        try {
+            
+            int maxResult = SystemOption.getInteger(em, "maxSearchResults");
+            
+            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
+                    + "WHERE n.active = 1 ORDER BY n.issueTime DESC",
+                    Notification.class).setMaxResults(maxResult).getResultList();
+            
+            return alerts;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static String findLastActiveSystemNotificationMessage(EntityManager em) {
+        
+        try {
+            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
+                    + "WHERE n.active = 1 AND n.type = 'System' ORDER BY n.id DESC",
+                    Notification.class).setMaxResults(1).getResultList();
+            
+            if (!alerts.isEmpty()) {
+                return alerts.get(0).message;
+            }
+            
+            return "";
+            
+        } catch (Exception e) {
+            
+            System.out.println(e);
+            
+            return "";
+        }
+    }
+    public static List<Notification> findActiveNotificationsByOwnerId(
+            EntityManager em, Long ownerId) {
+        
+        try {
+            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
+                    + "WHERE n.active = 1 AND "
+                    + "n.ownerId = " + ownerId
+                    + " ORDER BY n.issueTime DESC", Notification.class).getResultList();
+            
+            return alerts;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<Notification> findNotificationsByOwnerId(
+            EntityManager em, Long ownerId) {
+        
+        int maxResults = SystemOption.getInteger(em, "maxNotificationsSearchResults");
+        
+        try {
+            
+            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n"
+                    + " WHERE n.ownerId = " + ownerId
+                    + " ORDER BY n.issueTime DESC", Notification.class)
+                    .setMaxResults(maxResults).getResultList();
+            
+            return alerts;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static Notification findNotificationByName(
+            EntityManager em, String value, Boolean ignoreCase) {
+        
+        List<Notification> notifications;
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            if (ignoreCase) {
+                notifications = em.createQuery("SELECT n FROM Notification n"
+                        + " WHERE UPPER(n.name)"
+                        + " = '" + value.toUpperCase() + "'", Notification.class).getResultList();
+            } else {
+                notifications = em.createQuery("SELECT n FROM Notification n"
+                        + " WHERE n.name "
+                        + "= '" + value + "'", Notification.class).getResultList();
+            }
+            
+            if (!notifications.isEmpty()) {
+                return notifications.get(0);
+            }
+            
+            return null;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Notification findNotificationByNameAndOwnerId(
+            EntityManager em,
+            String value,
+            Long ownerId,
+            Boolean ignoreCase) {
+        
+        List<Notification> notifications;
+        
+        try {
+            
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            if (ignoreCase) {
+                notifications = em.createQuery("SELECT n FROM Notification n"
+                        + " WHERE UPPER(n.name)"
+                        + " = '" + value.toUpperCase() + "'"
+                                + " AND n.ownerId = " + ownerId, Notification.class).getResultList();
+            } else {
+                notifications = em.createQuery("SELECT n FROM Notification n"
+                        + " WHERE n.name "
+                        + "= '" + value + "'"
+                                + " AND n.ownerId = " + ownerId, Notification.class).getResultList();
+            }
+            
+            if (!notifications.isEmpty()) {
+                return notifications.get(0);
+            }
+            
+            return null;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -53,10 +235,8 @@ public class Notification implements BusinessEntity {
     private String name;
     private String type;
     private String reference;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date dueTime;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date issueTime;
+    private LocalDateTime dueTime;
+    private LocalDateTime issueTime;
     private String periodType;
     private Long recurrencePeriod;
     @Column(length = 1024)
@@ -111,7 +291,7 @@ public class Notification implements BusinessEntity {
     }
 
     public Notification(Long ownerId,
-            Date dueTime,
+            LocalDateTime dueTime,
             String status) {
         this.message = "";
         this.subject = "";
@@ -150,11 +330,11 @@ public class Notification implements BusinessEntity {
         this.id = id;
     }
 
-    public Date getIssueTime() {
+    public LocalDateTime getIssueTime() {
         return issueTime;
     }
 
-    public void setIssueTime(Date issueTime) {
+    public void setIssueTime(LocalDateTime issueTime) {
         this.issueTime = issueTime;
     }
 
@@ -286,11 +466,11 @@ public class Notification implements BusinessEntity {
         this.reference = reference;
     }
 
-    public Date getDueTime() {
+    public LocalDateTime getDueTime() {
         return dueTime;
     }
 
-    public void setDueTime(Date dueTime) {
+    public void setDueTime(LocalDateTime dueTime) {
         this.dueTime = dueTime;
     }
 
@@ -326,196 +506,6 @@ public class Notification implements BusinessEntity {
         this.status = status;
     }
 
-    public static Notification findNotificationById(EntityManager em, Long Id) {
-
-        try {
-            return em.find(Notification.class, Id);
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Notification> findNotificationsByName(
-            EntityManager em,
-            String value,
-            int maxResults) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Notification> notifications
-                    = em.createQuery("SELECT n FROM Notification n WHERE UPPER(n.name) LIKE '%"
-                            + value.toUpperCase().trim() + "%' ORDER BY n.issueTime DESC",
-                            Notification.class).setMaxResults(maxResults).getResultList();
-
-            return notifications;
-
-        } catch (Exception e) {
-
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Notification findFirstNotificationByOwnerId(
-            EntityManager em, Long ownerId) {
-
-        try {
-            List<Notification> notifications = em.createQuery("SELECT n FROM Notification n "
-                    + "WHERE n.ownerId"
-                    + "= " + ownerId + " ORDER BY n.issueTime DESC", Notification.class).getResultList();
-
-            if (!notifications.isEmpty()) {
-                return notifications.get(0);
-            }
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<Notification> findAllActiveNotifications(EntityManager em) {
-
-        try {
-
-            int maxResult = SystemOption.getInteger(em, "maxSearchResults");
-
-            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
-                    + "WHERE n.active = 1 ORDER BY n.issueTime DESC",
-                    Notification.class).setMaxResults(maxResult).getResultList();
-
-            return alerts;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static String findLastActiveSystemNotificationMessage(EntityManager em) {
-
-        try {
-            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
-                    + "WHERE n.active = 1 AND n.type = 'System' ORDER BY n.id DESC",
-                    Notification.class).setMaxResults(1).getResultList();
-
-            if (!alerts.isEmpty()) {
-                return alerts.get(0).message;
-            }
-
-            return "";
-
-        } catch (Exception e) {
-
-            System.out.println(e);
-
-            return "";
-        }
-    }
-
-    public static List<Notification> findActiveNotificationsByOwnerId(
-            EntityManager em, Long ownerId) {
-
-        try {
-            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n "
-                    + "WHERE n.active = 1 AND "
-                    + "n.ownerId = " + ownerId
-                    + " ORDER BY n.issueTime DESC", Notification.class).getResultList();
-
-            return alerts;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Notification> findNotificationsByOwnerId(
-            EntityManager em, Long ownerId) {
-
-        int maxResults = SystemOption.getInteger(em, "maxNotificationsSearchResults");
-
-        try {
-
-            List<Notification> alerts = em.createQuery("SELECT n FROM Notification n"
-                    + " WHERE n.ownerId = " + ownerId
-                    + " ORDER BY n.issueTime DESC", Notification.class)
-                    .setMaxResults(maxResults).getResultList();
-
-            return alerts;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static Notification findNotificationByName(
-            EntityManager em, String value, Boolean ignoreCase) {
-
-        List<Notification> notifications;
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            if (ignoreCase) {
-                notifications = em.createQuery("SELECT n FROM Notification n"
-                        + " WHERE UPPER(n.name)"
-                        + " = '" + value.toUpperCase() + "'", Notification.class).getResultList();
-            } else {
-                notifications = em.createQuery("SELECT n FROM Notification n"
-                        + " WHERE n.name "
-                        + "= '" + value + "'", Notification.class).getResultList();
-            }
-
-            if (!notifications.isEmpty()) {
-                return notifications.get(0);
-            }
-
-            return null;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Notification findNotificationByNameAndOwnerId(
-            EntityManager em,
-            String value,
-            Long ownerId,
-            Boolean ignoreCase) {
-
-        List<Notification> notifications;
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            if (ignoreCase) {
-                notifications = em.createQuery("SELECT n FROM Notification n"
-                        + " WHERE UPPER(n.name)"
-                        + " = '" + value.toUpperCase() + "'"
-                        + " AND n.ownerId = " + ownerId, Notification.class).getResultList();
-            } else {
-                notifications = em.createQuery("SELECT n FROM Notification n"
-                        + " WHERE n.name "
-                        + "= '" + value + "'"
-                        + " AND n.ownerId = " + ownerId, Notification.class).getResultList();
-            }
-
-            if (!notifications.isEmpty()) {
-                return notifications.get(0);
-            }
-
-            return null;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -569,22 +559,22 @@ public class Notification implements BusinessEntity {
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

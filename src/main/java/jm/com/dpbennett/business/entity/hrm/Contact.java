@@ -19,23 +19,23 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.hrm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.cm.Client;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -50,6 +50,172 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 public class Contact implements Person, BusinessEntity, Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(Contact.class.getName());
+    public static Contact findContactById(EntityManager em, Long id) {
+        
+        try {
+            Contact contact = em.find(Contact.class, id);
+            
+            return contact;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static Contact findContactByName(EntityManager em,
+            String firstName, String lastName) {
+        
+        if (firstName != null && lastName != null) {
+            
+            try {
+                
+                firstName = firstName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                lastName = lastName.replaceAll("&amp;", "&").replaceAll("'", "`");
+                
+                List<Contact> contacts = em.createQuery("SELECT c FROM Contact c "
+                        + "WHERE UPPER(c.firstName) "
+                        + "= '" + firstName + "' AND UPPER(c.lastName) = '" + lastName + "'",
+                        Contact.class).getResultList();
+                if (!contacts.isEmpty()) {
+                    return contacts.get(0);
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        
+        return null;
+    }
+    public static Contact findClientContactById(EntityManager em,
+            String query, Long clientId) {
+        
+        try {
+            
+            String contacts[] = query.split(", ");
+            String lastname = contacts[0];
+            String firstname = contacts[1];
+            
+            Client client = Client.findById(em, clientId);
+            
+            if (client != null) {
+                for (Contact contact : client.getContacts()) {
+                    if (contact.getFirstName().equals(firstname)
+                            && contact.getLastName().equals(lastname)) {
+                        return contact;
+                    }
+                }
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Contact findClientContact(EntityManager em, String query, Client client) {
+        
+        try {
+            
+            String contacts[] = query.split(", ");
+            String lastname = contacts[0];
+            String firstname = contacts[1];
+            
+            if (client != null) {
+                for (Contact contact : client.getContacts()) {
+                    if (contact.getFirstName().equals(firstname)
+                            && contact.getLastName().equals(lastname)) {
+                        return contact;
+                    }
+                }
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Contact findClientContactByEmployee(EntityManager em,
+            Employee employee, Long clientId) {
+        
+        try {
+            
+            Client client = Client.findById(em, clientId);
+            
+            if (client != null) {
+                for (Contact contact : client.getContacts()) {
+                    if (contact.getFirstName().equals(employee.getFirstName())
+                            && contact.getLastName().equals(employee.getLastName())) {
+                        return contact;
+                    }
+                }
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Contact findContact(EntityManager em,
+            String query, List<Contact> contactsList) {
+        
+        try {
+            
+            String contacts[] = query.split(", ");
+            String lastname = contacts[0];
+            String firstname = contacts[1];
+            
+            for (Contact contact : contactsList) {
+                if (contact.getFirstName().equals(firstname)
+                        && contact.getLastName().equals(lastname)) {
+                    return contact;
+                }
+            }
+            
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Contact findDefaultContact(
+            EntityManager em,
+            String firstName,
+            String lastName,
+            Boolean useTransaction) {
+        
+        Contact contact = Contact.findContactByName(em, firstName, lastName);
+        
+        if (contact == null) {
+            contact = new Contact();
+            contact.setFirstName(firstName);
+            contact.setLastName(lastName);
+            contact.setInternet(Internet.findDefaultInternet(em, "--", useTransaction));
+            
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, contact);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, contact);
+            }
+        }
+        
+        return contact;
+    }
+    public static Boolean validate(Contact contact) {
+        
+        if (contact != null) {
+            if (!BusinessEntityUtils.validateText(contact.toString().trim())) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        
+        return true;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -116,17 +282,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         this.isDirty = isDirty;
     }
 
-    public static Contact findContactById(EntityManager em, Long id) {
-
-        try {
-            Contact contact = em.find(Contact.class, id);
-
-            return contact;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
 
     public List getContactTypes() {
 
@@ -405,153 +560,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         }
     }
 
-    public static Contact findContactByName(EntityManager em,
-            String firstName, String lastName) {
-
-        if (firstName != null && lastName != null) {
-
-            try {
-
-                firstName = firstName.replaceAll("&amp;", "&").replaceAll("'", "`");
-                lastName = lastName.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-                List<Contact> contacts = em.createQuery("SELECT c FROM Contact c "
-                        + "WHERE UPPER(c.firstName) "
-                        + "= '" + firstName + "' AND UPPER(c.lastName) = '" + lastName + "'",
-                        Contact.class).getResultList();
-                if (!contacts.isEmpty()) {
-                    return contacts.get(0);
-                }
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        return null;
-    }
-
-    public static Contact findClientContactById(EntityManager em,
-            String query, Long clientId) {
-
-        try {
-
-            String contacts[] = query.split(", ");
-            String lastname = contacts[0];
-            String firstname = contacts[1];
-
-            Client client = Client.findById(em, clientId);
-
-            if (client != null) {
-                for (Contact contact : client.getContacts()) {
-                    if (contact.getFirstName().equals(firstname)
-                            && contact.getLastName().equals(lastname)) {
-                        return contact;
-                    }
-                }
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Contact findClientContact(EntityManager em, String query, Client client) {
-
-        try {
-
-            String contacts[] = query.split(", ");
-            String lastname = contacts[0];
-            String firstname = contacts[1];
-
-            if (client != null) {
-                for (Contact contact : client.getContacts()) {
-                    if (contact.getFirstName().equals(firstname)
-                            && contact.getLastName().equals(lastname)) {
-                        return contact;
-                    }
-                }
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Contact findClientContactByEmployee(EntityManager em,
-            Employee employee, Long clientId) {
-
-        try {
-
-            Client client = Client.findById(em, clientId);
-
-            if (client != null) {
-                for (Contact contact : client.getContacts()) {
-                    if (contact.getFirstName().equals(employee.getFirstName())
-                            && contact.getLastName().equals(employee.getLastName())) {
-                        return contact;
-                    }
-                }
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Contact findContact(EntityManager em,
-            String query, List<Contact> contactsList) {
-
-        try {
-
-            String contacts[] = query.split(", ");
-            String lastname = contacts[0];
-            String firstname = contacts[1];
-
-            for (Contact contact : contactsList) {
-                if (contact.getFirstName().equals(firstname)
-                        && contact.getLastName().equals(lastname)) {
-                    return contact;
-                }
-            }
-
-            return null;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Contact findDefaultContact(
-            EntityManager em,
-            String firstName,
-            String lastName,
-            Boolean useTransaction) {
-
-        Contact contact = Contact.findContactByName(em, firstName, lastName);
-
-        if (contact == null) {
-            contact = new Contact();
-            contact.setFirstName(firstName);
-            contact.setLastName(lastName);
-            contact.setInternet(Internet.findDefaultInternet(em, "--", useTransaction));
-
-            if (useTransaction) {
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, contact);
-                em.getTransaction().commit();
-            } else {
-                BusinessEntityUtils.saveBusinessEntity(em, contact);
-            }
-        }
-
-        return contact;
-    }
 
     @Override
     public ReturnMessage save(EntityManager em) {
@@ -575,18 +583,6 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public static Boolean validate(Contact contact) {
-
-        if (contact != null) {
-            if (!BusinessEntityUtils.validateText(contact.toString().trim())) {
-                return false;
-            }
-        } else {
-            return false;
-        }
-
-        return true;
-    }
 
     @Override
     public Boolean getActive() {
@@ -609,22 +605,22 @@ public class Contact implements Person, BusinessEntity, Serializable, Comparable
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

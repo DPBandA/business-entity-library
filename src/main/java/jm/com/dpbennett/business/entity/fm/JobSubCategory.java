@@ -19,25 +19,25 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.fm;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jm.com.dpbennett.business.entity.hrm.Department;
 import java.io.Serializable;
 import java.text.Collator;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
@@ -56,6 +56,181 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
     @NamedQuery(name = "findByCategoryId", query = "SELECT e FROM JobSubCategory e WHERE e.categoryId = :categoryId")
 })
 public class JobSubCategory implements Serializable, BusinessEntity, Comparable {
+
+    private static final long serialVersionUID = 1L;
+    private static final System.Logger LOG = System.getLogger(JobSubCategory.class.getName());
+    public static JobSubCategory findJobSubCategoryById(EntityManager em, Long Id) {
+        
+        try {
+            
+            return em.find(JobSubCategory.class, Id);
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static JobSubCategory findJobSubCategoryByName(EntityManager em, String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<JobSubCategory> jobSubCategories
+                    = em.createQuery("SELECT c FROM JobSubCategory c "
+                            + "WHERE UPPER(c.subCategory) "
+                            + "= '" + name.toUpperCase() + "'", JobSubCategory.class).getResultList();
+            if (!jobSubCategories.isEmpty()) {
+                return jobSubCategories.get(0);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<JobSubCategory> findJobSubCategoriesByCategoryId(
+            EntityManager em, Long Id) {
+        try {
+            return em.createNamedQuery("findByCategoryId", JobSubCategory.class).
+                    setParameter("categoryId", Id).
+                    getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<JobSubCategory> findAllJobSubCategories(EntityManager em) {
+        try {
+            return em.createNamedQuery("findAllJobSubCategories", JobSubCategory.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<JobSubCategory> findAllActiveJobSubCategories(EntityManager em) {
+        try {
+            return em.createNamedQuery("findAllActiveJobSubCategories", JobSubCategory.class).getResultList();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<JobSubCategory> findJobSubcategoriesByName(EntityManager em, String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<JobSubCategory> jobSubcategories
+                    = em.createQuery("SELECT j FROM JobSubCategory j where UPPER(j.subCategory) like '%"
+                            + name.toUpperCase().trim() + "%' ORDER BY j.subCategory", JobSubCategory.class).getResultList();
+            return jobSubcategories;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<JobSubCategory> findActiveJobSubcategoriesByName(
+            EntityManager em, String name) {
+        
+        try {
+            
+            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
+            
+            List<JobSubCategory> jobSubcategories
+                    = em.createQuery("SELECT j FROM JobSubCategory j where UPPER(j.subCategory) like '%"
+                            + name.toUpperCase().trim() + "%' AND j.active = 1 ORDER BY j.subCategory", JobSubCategory.class).getResultList();
+            return jobSubcategories;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<JobSubCategory> findAllJobSubCategoriesByDepartment(
+            EntityManager em, Department department) {
+        try {
+            
+            List<JobSubCategory> jobSubCategories
+                    = em.createQuery(
+                            "SELECT j FROM JobSubCategory j JOIN j.departments department"
+                                    + " WHERE department.name = '" + department.getName().trim() + "'"
+                                            + " ORDER BY j.subCategory", JobSubCategory.class).getResultList();
+            return jobSubCategories;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<JobSubCategory> findAllJobSubCategoriesGroupedByEarningsByDepartment(
+            EntityManager em, Department department) {
+        
+        try {
+            
+            List<JobSubCategory> earningJobSubCategories = new ArrayList<>();
+            List<JobSubCategory> nonEarningJobSubCategories = new ArrayList<>();
+            List<JobSubCategory> jobSubCategories
+                    = em.createQuery(
+                            "SELECT j FROM JobSubCategory j JOIN j.departments department"
+                                    + " WHERE department.name = '" + department.getName().trim() + "' ORDER BY j.subCategory",
+                            JobSubCategory.class).getResultList();
+            
+            if (!jobSubCategories.isEmpty()) {
+                for (JobSubCategory jobSubCategory : jobSubCategories) {
+                    if (jobSubCategory.getIsEarning()) {
+                        earningJobSubCategories.add(jobSubCategory);
+                    } else {
+                        nonEarningJobSubCategories.add(jobSubCategory);
+                    }
+                }
+            }
+            
+            jobSubCategories.clear();
+            Collections.sort(earningJobSubCategories);
+            Collections.sort(nonEarningJobSubCategories);
+            jobSubCategories.addAll(earningJobSubCategories);
+            jobSubCategories.addAll(nonEarningJobSubCategories);
+            
+            return jobSubCategories;
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+    public static List<JobSubCategory> findJobSubCategoriesById(
+            EntityManager em, Long jobCategoryId) {
+        
+        try {
+            List<JobSubCategory> subCategories = em.createNamedQuery("findByCategoryId", JobSubCategory.class).
+                    setParameter("jobCategoryId", jobCategoryId).
+                    getResultList();
+            
+            return subCategories;
+        } catch (Exception e) {
+            
+            return null;
+        }
+    }
+    public static List<String> findAllJobSubCategoryNames(EntityManager em) {
+        
+        ArrayList<String> names = new ArrayList<>();
+        
+        try {
+            
+            List<JobSubCategory> jobSubCategories = em.createNamedQuery("findAllJobSubCategories", JobSubCategory.class).getResultList();
+            for (JobSubCategory jobSubCategory : jobSubCategories) {
+                names.add(jobSubCategory.getSubCategory());
+            }
+            return names;
+            
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -223,188 +398,6 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
         return Collator.getInstance().compare(this.toString(), o.toString());
     }
 
-    public static JobSubCategory findJobSubCategoryById(EntityManager em, Long Id) {
-
-        try {
-
-            return em.find(JobSubCategory.class, Id);
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static JobSubCategory findJobSubCategoryByName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<JobSubCategory> jobSubCategories
-                    = em.createQuery("SELECT c FROM JobSubCategory c "
-                            + "WHERE UPPER(c.subCategory) "
-                            + "= '" + name.toUpperCase() + "'", JobSubCategory.class).getResultList();
-            if (!jobSubCategories.isEmpty()) {
-                return jobSubCategories.get(0);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<JobSubCategory> findJobSubCategoriesByCategoryId(
-            EntityManager em, Long Id) {
-        try {
-            return em.createNamedQuery("findByCategoryId", JobSubCategory.class).
-                    setParameter("categoryId", Id).
-                    getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<JobSubCategory> findAllJobSubCategories(EntityManager em) {
-        try {
-            return em.createNamedQuery("findAllJobSubCategories", JobSubCategory.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<JobSubCategory> findAllActiveJobSubCategories(EntityManager em) {
-        try {
-            return em.createNamedQuery("findAllActiveJobSubCategories", JobSubCategory.class).getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<JobSubCategory> findJobSubcategoriesByName(EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<JobSubCategory> jobSubcategories
-                    = em.createQuery("SELECT j FROM JobSubCategory j where UPPER(j.subCategory) like '%"
-                            + name.toUpperCase().trim() + "%' ORDER BY j.subCategory", JobSubCategory.class).getResultList();
-            return jobSubcategories;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<JobSubCategory> findActiveJobSubcategoriesByName(
-            EntityManager em, String name) {
-
-        try {
-
-            name = name.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<JobSubCategory> jobSubcategories
-                    = em.createQuery("SELECT j FROM JobSubCategory j where UPPER(j.subCategory) like '%"
-                            + name.toUpperCase().trim() + "%' AND j.active = 1 ORDER BY j.subCategory", JobSubCategory.class).getResultList();
-            return jobSubcategories;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<JobSubCategory> findAllJobSubCategoriesByDepartment(
-            EntityManager em, Department department) {
-        try {
-
-            List<JobSubCategory> jobSubCategories
-                    = em.createQuery(
-                            "SELECT j FROM JobSubCategory j JOIN j.departments department"
-                            + " WHERE department.name = '" + department.getName().trim() + "'"
-                            + " ORDER BY j.subCategory", JobSubCategory.class).getResultList();
-            return jobSubCategories;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static List<JobSubCategory> findAllJobSubCategoriesGroupedByEarningsByDepartment(
-            EntityManager em, Department department) {
-
-        try {
-
-            List<JobSubCategory> earningJobSubCategories = new ArrayList<>();
-            List<JobSubCategory> nonEarningJobSubCategories = new ArrayList<>();
-            List<JobSubCategory> jobSubCategories
-                    = em.createQuery(
-                            "SELECT j FROM JobSubCategory j JOIN j.departments department"
-                            + " WHERE department.name = '" + department.getName().trim() + "' ORDER BY j.subCategory",
-                            JobSubCategory.class).getResultList();
-
-            if (!jobSubCategories.isEmpty()) {
-                for (JobSubCategory jobSubCategory : jobSubCategories) {
-                    if (jobSubCategory.getIsEarning()) {
-                        earningJobSubCategories.add(jobSubCategory);
-                    } else {
-                        nonEarningJobSubCategories.add(jobSubCategory);
-                    }
-                }
-            }
-
-            jobSubCategories.clear();
-            Collections.sort(earningJobSubCategories);
-            Collections.sort(nonEarningJobSubCategories);
-            jobSubCategories.addAll(earningJobSubCategories);
-            jobSubCategories.addAll(nonEarningJobSubCategories);
-
-            return jobSubCategories;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<JobSubCategory> findJobSubCategoriesById(
-            EntityManager em, Long jobCategoryId) {
-
-        try {
-            List<JobSubCategory> subCategories = em.createNamedQuery("findByCategoryId", JobSubCategory.class).
-                    setParameter("jobCategoryId", jobCategoryId).
-                    getResultList();
-
-            return subCategories;
-        } catch (Exception e) {
-
-            return null;
-        }
-    }
-
-    public static List<String> findAllJobSubCategoryNames(EntityManager em) {
-
-        ArrayList<String> names = new ArrayList<>();
-
-        try {
-
-            List<JobSubCategory> jobSubCategories = em.createNamedQuery("findAllJobSubCategories", JobSubCategory.class).getResultList();
-            for (JobSubCategory jobSubCategory : jobSubCategories) {
-                names.add(jobSubCategory.getSubCategory());
-            }
-            return names;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
 
     public String getIsBillable() {
         if (getIsEarning()) {
@@ -484,22 +477,22 @@ public class JobSubCategory implements Serializable, BusinessEntity, Comparable 
     }
 
     @Override
-    public Date getDateEntered() {
+    public LocalDateTime getDateEntered() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEntered(Date dateEntered) {
+    public void setDateEntered(LocalDateTime dateEntered) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Date getDateEdited() {
+    public LocalDateTime getDateEdited() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void setDateEdited(Date dateEdited) {
+    public void setDateEdited(LocalDateTime dateEdited) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
