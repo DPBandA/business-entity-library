@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sc;
 
 import java.util.Date;
@@ -48,6 +47,83 @@ import jm.com.dpbennett.business.entity.util.ReturnMessage;
 })
 public class Distributor implements BusinessEntity {
 
+    private static final System.Logger LOG = System.getLogger(Distributor.class.getName());
+    private static final long serialVersionUID = 1L;
+
+    public static List<Distributor> findDistributorsBySearchPattern(
+            EntityManager em, String value) {
+
+        try {
+
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
+                    + "WHERE UPPER(d.name) "
+                    + "LIKE '" + value.toUpperCase() + "%' "
+                    + "ORDER BY d.name", Distributor.class).getResultList();
+
+            return distributors;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static System.Logger getLOG() {
+        return LOG;
+    }
+
+    public static Distributor findDistributorByName(EntityManager em, String value) {
+
+        try {
+
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
+                    + "WHERE UPPER(d.name) "
+                    + "= '" + value.toUpperCase() + "'", Distributor.class).getResultList();
+            if (!distributors.isEmpty()) {
+                return distributors.get(0);
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Distributor findDistributorById(EntityManager em, Long Id) {
+
+        try {
+            Distributor distributor = em.find(Distributor.class, Id);
+            return distributor;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Distributor findDefaultDistributor(EntityManager em,
+            String name,
+            Boolean useTransaction) {
+        Distributor distributor = Distributor.findDistributorByName(em, name);
+
+        if (distributor == null) {
+            distributor = new Distributor();
+            distributor.setName(name);
+
+            if (useTransaction) {
+                em.getTransaction().begin();
+                BusinessEntityUtils.saveBusinessEntity(em, distributor);
+                em.getTransaction().commit();
+            } else {
+                BusinessEntityUtils.saveBusinessEntity(em, distributor);
+            }
+        }
+
+        return distributor;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -62,6 +138,13 @@ public class Distributor implements BusinessEntity {
     @Transient
     private Boolean isDirty;
 
+    public Distributor() {
+    }
+
+    public Distributor(String name) {
+        this.name = name;
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -70,13 +153,6 @@ public class Distributor implements BusinessEntity {
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Distributor() {
-    }
-
-    public Distributor(String name) {
-        this.name = name;
     }
 
     @Override
@@ -181,79 +257,6 @@ public class Distributor implements BusinessEntity {
         return name;
     }
 
-    public static List<Distributor> findDistributorsBySearchPattern(
-            EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
-                    + "WHERE UPPER(d.name) "
-                    + "LIKE '" + value.toUpperCase() + "%' "
-                    + "ORDER BY d.name", Distributor.class).getResultList();
-
-            return distributors;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Distributor findDistributorByName(EntityManager em, String value) {
-
-        try {
-
-            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
-
-            List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
-                    + "WHERE UPPER(d.name) "
-                    + "= '" + value.toUpperCase() + "'", Distributor.class).getResultList();
-            if (!distributors.isEmpty()) {
-                return distributors.get(0);
-            }
-
-            return null;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Distributor findDistributorById(EntityManager em, Long Id) {
-
-        try {
-            Distributor distributor = em.find(Distributor.class, Id);
-            return distributor;
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
-
-    public static Distributor findDefaultDistributor(EntityManager em,
-            String name,
-            Boolean useTransaction) {
-        Distributor distributor = Distributor.findDistributorByName(em, name);
-
-        if (distributor == null) {
-            distributor = new Distributor();
-            distributor.setName(name);
-
-            if (useTransaction) {
-                em.getTransaction().begin();
-                BusinessEntityUtils.saveBusinessEntity(em, distributor);
-                em.getTransaction().commit();
-            } else {
-                BusinessEntityUtils.saveBusinessEntity(em, distributor);
-            }
-        }
-
-        return distributor;
-    }
-
     @Override
     public ReturnMessage save(EntityManager em) {
         try {
@@ -264,7 +267,6 @@ public class Distributor implements BusinessEntity {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
         }
 
         return new ReturnMessage(false, "Distributor not saved");

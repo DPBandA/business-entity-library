@@ -19,11 +19,7 @@ Email: info@dpbennett.com.jm
  */
 package jm.com.dpbennett.business.entity.test;
 
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.cm.Client;
+import java.util.logging.Logger;
 import org.junit.Test;
 
 /**
@@ -32,10 +28,61 @@ import org.junit.Test;
  */
 public class GenericsTest {
 
+    private static final Logger LOG = Logger.getLogger(GenericsTest.class.getName());
+
+    public static Logger getLOG() {
+        return LOG;
+    }
+
     @Test
     public void testEntity() {
-        
-        
+
+        // Create a Gen reference for Integers.
+        Gen<Integer> iOb;
+        // Create a Gen<Integer> object and assign its
+        // reference to iOb. Notice the use of autoboxing
+        // to encapsulate the value 88 within an Integer object.
+        iOb = new Gen<>(88);
+        // Show the type of data used by iOb.
+        iOb.showType();
+        // Get the value in iOb. Notice that
+        // no cast is needed.
+        int v = iOb.getob();
+        System.out.println("value: " + v);
+        System.out.println();
+
+        // Create a Gen object for Strings.
+        Gen<String> strOb = new Gen<>("Generics Test");
+        // Show the type of data used by strOb.
+        strOb.showType();
+        // Get the value of strOb. Again, notice
+        // that no cast is needed.
+        String str = strOb.getob();
+        System.out.println("value: " + str);
 
     }
+
+}
+
+class Gen<T> {
+
+    T ob; // declare an object of type T
+    // Pass the constructor a reference to
+    // an object of type T.
+
+    Gen(T o) {
+        ob = o;
+    }
+
+    // Return ob.
+    T getob() {
+        return ob;
+    }
+
+    // Show type of T.
+    void showType() {
+        System.out.println("Type of T is "
+                + ob.getClass().getName());
+    }
+
 }
