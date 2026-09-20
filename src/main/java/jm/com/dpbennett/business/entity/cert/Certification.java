@@ -80,12 +80,23 @@ public class Certification implements CertificationInterface {
     private Business grantedTo;
     private LocalDateTime dateIssued;
     private LocalDateTime expiryDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateSigned;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateIssued;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date expiryDate;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Client applicant;
     @Transient
     private Boolean isDirty;
 
     public Certification() {
+        this.number = "";
+        this.type = "";
+        this.notes = "";
+        this.active = true;
+        this.certificateNumber = "";
     }
 
     @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
@@ -102,6 +113,41 @@ public class Certification implements CertificationInterface {
         this.applicant = certification.applicant;
     }
 
+    public String getSignButtonLabel() {
+
+        if (dateSigned == null) {
+            return "Sign";
+        } else {
+            return "Unsign";
+        }
+    }
+
+    public Date getDateSigned() {
+        return dateSigned;
+    }
+
+    public void setDateSigned(Date dateSigned) {
+        this.dateSigned = dateSigned;
+    }
+
+    public Boolean getIsJobNumberValid() {
+        return !getNumber().isEmpty();
+    }
+
+    public static List<Certification> findAllByOwnerId(EntityManager em, Long ownerId) {
+
+        try {
+            List<Certification> certifications = em.createQuery("SELECT c FROM Certification c"
+                    + " WHERE c.ownerId = " + ownerId
+                    + " ORDER BY c.ownerId DESC", Certification.class).getResultList();
+
+            return certifications;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
 
     public Long getOwnerId() {
         return ownerId;
@@ -185,7 +231,7 @@ public class Certification implements CertificationInterface {
         if (grantedTo == null) {
             return new Business();
         }
-        
+
         return grantedTo;
     }
 
@@ -196,6 +242,11 @@ public class Certification implements CertificationInterface {
 
     @Override
     public String getNumber() {
+
+        if (number == null) {
+            number = "";
+        }
+
         return number;
     }
 

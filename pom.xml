@@ -6,7 +6,7 @@
 
     <groupId>jm.com.dpbennett</groupId>
     <artifactId>business-entity-library</artifactId>
-    <version>7.0.0</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>a.BEL</name>
@@ -16,6 +16,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
         <skipTests>true</skipTests>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <skipTests>false</skipTests>
 
         <!-- Java 17 / Jakarta EE 11 migration line. Payara provides the Jakarta APIs at runtime. -->
         <jakartaee.version>11.0.0</jakartaee.version>

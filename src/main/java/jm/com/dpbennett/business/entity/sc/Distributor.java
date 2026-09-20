@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Email: info@dpbennett.com.jm
  */
-
 package jm.com.dpbennett.business.entity.sc;
 
 import jakarta.persistence.Entity;
@@ -75,6 +74,38 @@ public class Distributor implements BusinessEntity {
             
             value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
             
+    private static final System.Logger LOG = System.getLogger(Distributor.class.getName());
+    private static final long serialVersionUID = 1L;
+
+    public static List<Distributor> findDistributorsBySearchPattern(
+            EntityManager em, String value) {
+
+        try {
+
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+
+            List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
+                    + "WHERE UPPER(d.name) "
+                    + "LIKE '" + value.toUpperCase() + "%' "
+                    + "ORDER BY d.name", Distributor.class).getResultList();
+
+            return distributors;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static System.Logger getLOG() {
+        return LOG;
+    }
+
+    public static Distributor findDistributorByName(EntityManager em, String value) {
+
+        try {
+
+            value = value.replaceAll("&amp;", "&").replaceAll("'", "`");
+
             List<Distributor> distributors = em.createQuery("SELECT d FROM Distributor d "
                     + "WHERE UPPER(d.name) "
                     + "= '" + value.toUpperCase() + "'", Distributor.class).getResultList();
@@ -91,6 +122,16 @@ public class Distributor implements BusinessEntity {
     }
     public static Distributor findDistributorById(EntityManager em, Long Id) {
         
+
+            return null;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Distributor findDistributorById(EntityManager em, Long Id) {
+
         try {
             Distributor distributor = em.find(Distributor.class, Id);
             return distributor;
@@ -99,6 +140,10 @@ public class Distributor implements BusinessEntity {
             return null;
         }
     }
+            return null;
+        }
+    }
+
     public static Distributor findDefaultDistributor(EntityManager em,
             String name,
             Boolean useTransaction) {
@@ -108,6 +153,11 @@ public class Distributor implements BusinessEntity {
             distributor = new Distributor();
             distributor.setName(name);
             
+
+        if (distributor == null) {
+            distributor = new Distributor();
+            distributor.setName(name);
+
             if (useTransaction) {
                 em.getTransaction().begin();
                 BusinessEntityUtils.saveBusinessEntity(em, distributor);
@@ -117,6 +167,7 @@ public class Distributor implements BusinessEntity {
             }
         }
         
+
         return distributor;
     }
 
@@ -141,6 +192,7 @@ public class Distributor implements BusinessEntity {
     public Distributor(String name) {
         this.name = name;
     }
+
     @Override
     public Long getId() {
         return id;
@@ -263,7 +315,6 @@ public class Distributor implements BusinessEntity {
 
             return new ReturnMessage();
         } catch (Exception e) {
-            System.out.println(e);
         }
 
         return new ReturnMessage(false, "Distributor not saved");

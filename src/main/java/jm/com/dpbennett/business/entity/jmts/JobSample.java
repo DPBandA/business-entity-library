@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Objects;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.fm.MarketProduct;
 import jm.com.dpbennett.business.entity.hrm.Manufacturer;
 import jm.com.dpbennett.business.entity.fm.Product;
 import jm.com.dpbennett.business.entity.sc.ProductTest;
@@ -156,6 +157,8 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
     private String type;
     @Column(length = 1024)
     private String comments;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    private MarketProduct marketProduct;
     private String productType;
     private String productModel;
     private String productSerialNumber;
@@ -186,6 +189,21 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     public JobSample() {
         tests = new ArrayList<>();
+    }
+
+    public MarketProduct getMarketProduct() {
+        if (marketProduct == null) {
+            MarketProduct mp = new MarketProduct();
+            mp.setName(getName());
+
+            return mp;
+        }
+
+        return marketProduct;
+    }
+
+    public void setMarketProduct(MarketProduct marketProduct) {
+        this.marketProduct = marketProduct;
     }
 
     @Override
@@ -222,6 +240,42 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
         this.isToBeAdded = isToBeAdded;
     }
 
+    public static JobSample copy(JobSample src) {
+
+        JobSample copy = new JobSample();
+
+        copy.jobId = src.jobId;
+        copy.name = src.name;
+        copy.code = src.code;
+        copy.reference = src.reference;
+        copy.referenceIndex = src.referenceIndex;
+        copy.sampleQuantity = src.sampleQuantity;
+        copy.quantity = src.quantity;
+        copy.unitOfMeasure = src.unitOfMeasure;
+        copy.description = src.description;
+        copy.type = src.type;
+        copy.comments = src.comments;
+        copy.productType = src.productType;
+        copy.productModel = src.productModel;
+        copy.productSerialNumber = src.productSerialNumber;
+        copy.productCode = src.productCode;
+        copy.productBrand = src.productBrand;
+        copy.sampleSize = src.sampleSize;
+        copy.client = src.client;
+        copy.manufacturer = src.manufacturer;
+        copy.regulatoryOffice = src.regulatoryOffice;
+        copy.sampledBy = src.sampledBy;
+        copy.receivedBy = src.receivedBy;
+        copy.tests = src.tests;
+        copy.countryOfOrigin = src.countryOfOrigin;
+        copy.dateReceived = src.dateReceived;
+        copy.dateSampled = src.dateSampled;
+        copy.dateReturned = src.dateReturned;
+        copy.methodOfDisposal = src.methodOfDisposal;
+        copy.isToBeAdded = src.isToBeAdded;
+
+        return copy;
+    }
 
     public String getCountryOfOrigin() {
         return countryOfOrigin;
@@ -538,6 +592,11 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
 
     @Override
     public String getName() {
+
+        if (name == null) {
+            name = "";
+        }
+
         return name;
     }
 
@@ -635,23 +694,27 @@ public class JobSample implements Product, Sample, Comparable, BusinessEntity {
             if (client != null) {
                 client.save(em);
             }
-            
+
             if (manufacturer != null) {
                 manufacturer.save(em);
             }
-            
+
             if (regulatoryOffice != null) {
                 regulatoryOffice.save(em);
             }
-            
+
             if (sampledBy != null) {
                 sampledBy.save(em);
             }
-            
+
             if (receivedBy != null) {
                 receivedBy.save(em);
             }
-            
+
+            if (marketProduct != null) {
+                marketProduct.save(em);
+            }
+
             for (ProductTest test : getTests()) {
                 test.save(em);
             }
