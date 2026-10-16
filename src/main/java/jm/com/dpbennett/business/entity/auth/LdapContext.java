@@ -507,6 +507,7 @@ public class LdapContext implements BusinessEntity {
                 new BasicAttribute("sn", user.getEmployeeLastname()));
 
         try {
+                      
             DirContext connection = getConnection(context);
 
             if (connection != null) {
