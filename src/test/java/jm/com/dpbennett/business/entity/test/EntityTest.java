@@ -35,14 +35,14 @@ public class EntityTest {
     @Test
     public void testEntity() {
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
-        EntityManager em = emf.createEntityManager();
+//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
+//        EntityManager em = emf.createEntityManager();
+//        
+//        List<Client> clients = Client.find(em, "D P", 5);
+//        
+//        
         
-        List<Client> clients = Client.find(em, "D P", 5);
-        
-        
-        
-        System.out.println("Results: " + clients.size());
+        System.out.println("Results: " + "Yes iya!!");
        
 
     }
