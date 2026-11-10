@@ -411,7 +411,7 @@ public class LdapContext implements BusinessEntity {
 
         attributes.put(inetOrgPerson);
         attributes.put("uid", user.getUsername());
-        attributes.put("userPassword", Security.encrypt(securityKey, user.getPassword()));
+        attributes.put("userPassword", Security.encrypt(securityKey, user.getNewPassword()));
         attributes.put("cn", user.getEmployeeFirstname());
         attributes.put("sn", user.getEmployeeLastname());
 
@@ -507,6 +507,7 @@ public class LdapContext implements BusinessEntity {
                 new BasicAttribute("sn", user.getEmployeeLastname()));
 
         try {
+                      
             DirContext connection = getConnection(context);
 
             if (connection != null) {

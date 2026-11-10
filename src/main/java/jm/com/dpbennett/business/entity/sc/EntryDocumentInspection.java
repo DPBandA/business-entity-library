@@ -58,6 +58,7 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
     private Date entryDocumentReportDate;
     private String containerNumbers;
     private String containerSizes;
+    private Integer numberOfConsignments;
     @OneToMany(cascade = CascadeType.ALL)
     private List<ShippingContainer> shippingContainers;
     private Double CIF;
@@ -78,6 +79,19 @@ public class EntryDocumentInspection implements Comparable, BusinessEntity {
 
     public EntryDocumentInspection() {
         shippingContainers = new ArrayList<>();
+    }
+
+    public Integer getNumberOfConsignments() {
+
+        if (numberOfConsignments == null) {
+            numberOfConsignments = 1;
+        }
+
+        return numberOfConsignments;
+    }
+
+    public void setNumberOfConsignments(Integer numberOfConsignments) {
+        this.numberOfConsignments = numberOfConsignments;
     }
 
     @Override

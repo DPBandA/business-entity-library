@@ -31,9 +31,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -42,7 +44,7 @@ import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
 import jm.com.dpbennett.business.entity.dm.DocumentStandard;
-import jm.com.dpbennett.business.entity.auth.Signature;
+import jm.com.dpbennett.business.entity.hrm.Business;
 import jm.com.dpbennett.business.entity.hrm.BusinessOffice;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.sm.User;
@@ -131,55 +133,61 @@ public class ComplianceSurvey implements BusinessEntity {
     private Boolean samplesToBeCollected;
     private Boolean requestForDetentionIssuedForPortOfEntry;
     private Boolean requestForSampleIssuedForPortOfEntry;
+    private Boolean requestForSampleIssuedForDomesticMarket;
     private Boolean requestForReleaseIssuedForPortOfEntry;
     private Boolean noticeOfDetentionIssuedForDomesticMarket;
     private Boolean noticeOfReleaseFromDetentionIssuedForDomesticMarket;
     private Boolean compliant;
     private String portOfEntryDetentionNumber;
     private String domesticMarketDetentionNumber;
-    // Port of Entry/POE Detention Request
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature authSigForDetentionRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date authSigDateForDetentionRequestPOE;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee authEmployeeForDetentionRequestPOE;
     private String consignmentSizeDetained;
-    // Sample Request - Port of Entry
+    // Sample Request - POE/DM
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee inspectorForSampleRequestPOE;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature inspectorSigForSampleRequestPOE;
+    private Employee inspectorForSampleRequestDM;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date inspectorSigDateForSampleRequestPOE;
-    // Release Request - Port of Entry
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature preparedBySigForReleaseRequestPOE;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date inspectorSigDateForSampleRequestDM;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Business testingLaboratory;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee preparedByEmployeeForReleaseRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date preparedBySigDateForReleaseRequestPOE;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature approvedBySigForReleaseRequestPOE;
-    @OneToOne(cascade = CascadeType.REFRESH)
     private Employee approvedByEmployeeForReleaseRequestPOE;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date approvedBySigDateForReleaseRequestPOE;
-    // Notice of Detention - Domestic Market
+    // Notice of Discontinuance  - Domestic Market
+    private Boolean noticeOfDiscontinuanceIssuedForDomesticMarket;
+    private Boolean temporarily;
+    private Boolean permanently;
+    private Boolean importer;
+    private Boolean manufacturer;
+    private Boolean processor;
+    private Boolean administrativeClosure;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateNoticeOfDiscontinuanceSigned;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateOfDiscontinuance;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature authSigForNoticeOfDentionDM;
+    private Employee inspectorForNoticeOfDiscontinuanceDM;
+    // Notice of Detention - Domestic Market
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date authSigDateForNoticeOfDentionDM;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee authEmployeeForNoticeOfDentionDM; // tk replace with *Detention*
+    private Employee authEmployeeForNoticeOfDentionDM;
     // Notice of Release from Detention - Domestic Market
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private Signature authSigForNoticeOfReleaseFromDentionDM; // tk replace with *Detention*
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date authSigDateForNoticeOfReleaseFromDentionDM; // tk replace with *Detention*
+    private Date authSigDateForNoticeOfReleaseFromDentionDM;
     @OneToOne(cascade = CascadeType.REFRESH)
-    private Employee authEmpForNoticeOfReleaseFromDentionDM; // tk replace with *Detention*
-    // End signatures    
+    private Employee authEmpForNoticeOfReleaseFromDentionDM;
     @OneToOne(cascade = CascadeType.REFRESH)
     private Employee editedBy;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -202,6 +210,224 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public ComplianceSurvey() {
         this.surveyType = "";
+    }
+
+    public Employee getInspectorForNoticeOfDiscontinuanceDM() {
+
+        if (inspectorForNoticeOfDiscontinuanceDM == null) {
+            return new Employee();
+        }
+
+        return inspectorForNoticeOfDiscontinuanceDM;
+    }
+
+    public void setInspectorForNoticeOfDiscontinuanceDM(Employee inspectorForNoticeOfDiscontinuanceDM) {
+        this.inspectorForNoticeOfDiscontinuanceDM = inspectorForNoticeOfDiscontinuanceDM;
+    }
+
+    public Employee getInspectorForSampleRequestDM() {
+
+        if (inspectorForSampleRequestDM == null) {
+            return new Employee();
+        }
+
+        return inspectorForSampleRequestDM;
+    }
+
+    public void setInspectorForSampleRequestDM(Employee inspectorForSampleRequestDM) {
+        this.inspectorForSampleRequestDM = inspectorForSampleRequestDM;
+    }
+
+    public Date getInspectorSigDateForSampleRequestDM() {
+        return inspectorSigDateForSampleRequestDM;
+    }
+
+    public void setInspectorSigDateForSampleRequestDM(Date inspectorSigDateForSampleRequestDM) {
+        this.inspectorSigDateForSampleRequestDM = inspectorSigDateForSampleRequestDM;
+    }
+
+    public Date getDateOfDiscontinuance() {
+        return dateOfDiscontinuance;
+    }
+
+    public void setDateOfDiscontinuance(Date dateOfDiscontinuance) {
+        this.dateOfDiscontinuance = dateOfDiscontinuance;
+    }
+
+    public Boolean getNoticeOfDiscontinuanceIssuedForDomesticMarket() {
+        return noticeOfDiscontinuanceIssuedForDomesticMarket;
+    }
+
+    public void setNoticeOfDiscontinuanceIssuedForDomesticMarket(Boolean noticeOfDiscontinuanceIssuedForDomesticMarket) {
+        this.noticeOfDiscontinuanceIssuedForDomesticMarket = noticeOfDiscontinuanceIssuedForDomesticMarket;
+    }
+
+    public Date getDateNoticeOfDiscontinuanceSigned() {
+
+        if (dateNoticeOfDiscontinuanceSigned == null) {
+            dateNoticeOfDiscontinuanceSigned = new Date();
+        }
+
+        return dateNoticeOfDiscontinuanceSigned;
+    }
+
+    public void setDateNoticeOfDiscontinuanceSigned(Date dateNoticeOfDiscontinuanceSigned) {
+        this.dateNoticeOfDiscontinuanceSigned = dateNoticeOfDiscontinuanceSigned;
+    }
+
+    public Boolean getTemporarily() {
+        if (temporarily == null) {
+            temporarily = false;
+        }
+
+        return temporarily;
+    }
+
+    public void setTemporarily(Boolean temporarily) {
+        this.temporarily = temporarily;
+    }
+
+    public Boolean getPermanently() {
+
+        if (permanently == null) {
+            permanently = false;
+        }
+
+        return permanently;
+    }
+
+    public void setPermanently(Boolean permanently) {
+        this.permanently = permanently;
+    }
+
+    public Boolean getImporter() {
+
+        if (importer == null) {
+            importer = false;
+        }
+
+        return importer;
+    }
+
+    public void setImporter(Boolean importer) {
+        this.importer = importer;
+    }
+
+    public Boolean getManufacturer() {
+
+        if (manufacturer == null) {
+            manufacturer = false;
+        }
+
+        return manufacturer;
+    }
+
+    public void setManufacturer(Boolean manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public Boolean getProcessor() {
+
+        if (processor == null) {
+            processor = false;
+        }
+
+        return processor;
+    }
+
+    public void setProcessor(Boolean processor) {
+        this.processor = processor;
+    }
+
+    public Boolean getAdministrativeClosure() {
+
+        if (administrativeClosure == null) {
+            administrativeClosure = false;
+        }
+
+        return administrativeClosure;
+    }
+
+    public void setAdministrativeClosure(Boolean administrativeClosure) {
+        this.administrativeClosure = administrativeClosure;
+    }
+
+    public Boolean getRequestForSampleIssuedForDomesticMarket() {
+        return requestForSampleIssuedForDomesticMarket;
+    }
+
+    public void setRequestForSampleIssuedForDomesticMarket(Boolean requestForSampleIssuedForDomesticMarket) {
+        this.requestForSampleIssuedForDomesticMarket = requestForSampleIssuedForDomesticMarket;
+    }
+
+    public String getAuthorizeNoticeOfDetentionDMButtonLabel() {
+        if (authSigDateForNoticeOfDentionDM == null) {
+            return "Authorize Detention Notice";
+        } else {
+            return "Unauthorize Detention Notice";
+        }
+    }
+
+    public String getApprovedBySignForReleaseRequestPOEButtonLabel() {
+        if (approvedBySigDateForReleaseRequestPOE == null) {
+            return "Sign Approved By";
+        } else {
+            return "Unsign Approved By";
+        }
+    }
+
+    public String getPreparedBySignForReleaseRequestPOEButtonLabel() {
+        if (preparedBySigDateForReleaseRequestPOE == null) {
+            return "Sign Prepared By";
+        } else {
+            return "Unsign Prepared By";
+        }
+    }
+
+    public String getSignForSampleRequestPOEButtonLabel() {
+        if (inspectorSigDateForSampleRequestPOE == null) {
+            return "Sign";
+        } else {
+            return "Unsign";
+        }
+    }
+
+    public String getSignForNoticeOfDiscontinuanceDMButtonLabel() {
+        if (dateNoticeOfDiscontinuanceSigned == null) {
+            return "Sign";
+        } else {
+            return "Unsign";
+        }
+    }
+
+    public String getSignForSampleRequestDMButtonLabel() {
+        if (inspectorSigDateForSampleRequestDM == null) {
+            return "Sign";
+        } else {
+            return "Unsign";
+        }
+    }
+
+    public String getAuthDetentionRequestPOEButtonLabel() {
+
+        if (authSigDateForDetentionRequestPOE == null) {
+            return "Authorize";
+        } else {
+            return "Unauthorize";
+        }
+    }
+
+    public Business getTestingLaboratory() {
+
+        if (testingLaboratory == null) {
+            return new Business();
+        }
+
+        return testingLaboratory;
+    }
+
+    public void setTestingLaboratory(Business testingLaboratory) {
+        this.testingLaboratory = testingLaboratory;
     }
 
     public Boolean getCanExportDetentionRequestPOEForm() {
@@ -541,18 +767,6 @@ public class ComplianceSurvey implements BusinessEntity {
         this.editedBy = (Employee) person;
     }
 
-    public Signature getApprovedBySigForReleaseRequestPOE() {
-        if (approvedBySigForReleaseRequestPOE == null) {
-            return new Signature();
-        }
-
-        return approvedBySigForReleaseRequestPOE;
-    }
-
-    public void setApprovedBySigForReleaseRequestPOE(Signature approvedBySigForReleaseRequestPOE) {
-        this.approvedBySigForReleaseRequestPOE = approvedBySigForReleaseRequestPOE;
-    }
-
     public Employee getApprovedByEmployeeForReleaseRequestPOE() {
         if (approvedByEmployeeForReleaseRequestPOE == null) {
             return new Employee();
@@ -571,18 +785,6 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public void setApprovedBySigDateForReleaseRequestPOE(Date approvedBySigDateForReleaseRequestPOE) {
         this.approvedBySigDateForReleaseRequestPOE = approvedBySigDateForReleaseRequestPOE;
-    }
-
-    public Signature getAuthSigForDetentionRequestPOE() {
-        if (authSigForDetentionRequestPOE == null) {
-            return new Signature();
-        }
-
-        return authSigForDetentionRequestPOE;
-    }
-
-    public void setAuthSigForDetentionRequestPOE(Signature authSigForDetentionRequestPOE) {
-        this.authSigForDetentionRequestPOE = authSigForDetentionRequestPOE;
     }
 
     public Date getAuthSigDateForDetentionRequestPOE() {
@@ -605,36 +807,12 @@ public class ComplianceSurvey implements BusinessEntity {
         this.authEmployeeForDetentionRequestPOE = authEmployeeForDetentionRequestPOE;
     }
 
-    public Signature getInspectorSigForSampleRequestPOE() {
-        if (inspectorSigForSampleRequestPOE == null) {
-            return new Signature();
-        }
-
-        return inspectorSigForSampleRequestPOE;
-    }
-
-    public void setInspectorSigForSampleRequestPOE(Signature inspectorSigForSampleRequestPOE) {
-        this.inspectorSigForSampleRequestPOE = inspectorSigForSampleRequestPOE;
-    }
-
     public Date getInspectorSigDateForSampleRequestPOE() {
         return inspectorSigDateForSampleRequestPOE;
     }
 
     public void setInspectorSigDateForSampleRequestPOE(Date inspectorSigDateForSampleRequestPOE) {
         this.inspectorSigDateForSampleRequestPOE = inspectorSigDateForSampleRequestPOE;
-    }
-
-    public Signature getPreparedBySigForReleaseRequestPOE() {
-        if (preparedBySigForReleaseRequestPOE == null) {
-            return new Signature();
-        }
-
-        return preparedBySigForReleaseRequestPOE;
-    }
-
-    public void setPreparedBySigForReleaseRequestPOE(Signature preparedBySigForReleaseRequestPOE) {
-        this.preparedBySigForReleaseRequestPOE = preparedBySigForReleaseRequestPOE;
     }
 
     public Employee getPreparedByEmployeeForReleaseRequestPOE() {
@@ -657,18 +835,6 @@ public class ComplianceSurvey implements BusinessEntity {
         this.preparedBySigDateForReleaseRequestPOE = preparedBySigDateForReleaseRequestPOE;
     }
 
-    public Signature getAuthSigForNoticeOfReleaseFromDentionDM() {
-        if (authSigForNoticeOfReleaseFromDentionDM == null) {
-            return new Signature();
-        }
-
-        return authSigForNoticeOfReleaseFromDentionDM;
-    }
-
-    public void setAuthSigForNoticeOfReleaseFromDentionDM(Signature authSigForNoticeOfReleaseFromDentionDM) {
-        this.authSigForNoticeOfReleaseFromDentionDM = authSigForNoticeOfReleaseFromDentionDM;
-    }
-
     public Date getAuthSigDateForNoticeOfReleaseFromDentionDM() {
         return authSigDateForNoticeOfReleaseFromDentionDM;
     }
@@ -687,18 +853,6 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public void setAuthEmpForNoticeOfReleaseFromDentionDM(Employee authEmpForNoticeOfReleaseFromDentionDM) {
         this.authEmpForNoticeOfReleaseFromDentionDM = authEmpForNoticeOfReleaseFromDentionDM;
-    }
-
-    public Signature getAuthSigForNoticeOfDentionDM() {
-        if (authSigForNoticeOfDentionDM == null) {
-            return new Signature();
-        }
-
-        return authSigForNoticeOfDentionDM;
-    }
-
-    public void setAuthSigForNoticeOfDentionDM(Signature authSigForNoticeOfDentionDM) {
-        this.authSigForNoticeOfDentionDM = authSigForNoticeOfDentionDM;
     }
 
     public Date getAuthSigDateForNoticeOfDentionDM() {
@@ -882,7 +1036,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getLocationOfDetainedProductDomesticMarket() {
         if (locationOfDetainedProductDomesticMarket == null) {
-            return new Address();
+            locationOfDetainedProductDomesticMarket = new Address();
         }
 
         return locationOfDetainedProductDomesticMarket;
@@ -894,7 +1048,7 @@ public class ComplianceSurvey implements BusinessEntity {
 
     public Address getSpecifiedReleaseLocationDomesticMarket() {
         if (specifiedReleaseLocationDomesticMarket == null) {
-            return new Address();
+            specifiedReleaseLocationDomesticMarket = new Address();
         }
 
         return specifiedReleaseLocationDomesticMarket;
@@ -1476,6 +1630,10 @@ public class ComplianceSurvey implements BusinessEntity {
                 businessOffice.save(em);
             }
 
+            if (testingLaboratory != null) {
+                testingLaboratory.save(em);
+            }
+
             if (inspector != null) {
                 inspector.save(em);
             }
@@ -1520,19 +1678,6 @@ public class ComplianceSurvey implements BusinessEntity {
                 retailOutletAddress.save(em);
             }
 
-//            if (specifiedReleaseLocation != null) {
-//                specifiedReleaseLocation.save(em);
-//            }
-//            if (specifiedReleaseLocationDomesticMarket != null) {
-//                specifiedReleaseLocationDomesticMarket.save(em);
-//            }
-//            if (locationOfDetainedProductDomesticMarket != null) {
-//                locationOfDetainedProductDomesticMarket.save(em);
-//            }
-            if (authSigForDetentionRequestPOE != null) {
-                authSigForDetentionRequestPOE.save(em);
-            }
-
             if (authEmployeeForDetentionRequestPOE != null) {
                 authEmployeeForDetentionRequestPOE.save(em);
             }
@@ -1541,36 +1686,16 @@ public class ComplianceSurvey implements BusinessEntity {
                 inspectorForSampleRequestPOE.save(em);
             }
 
-            if (inspectorSigForSampleRequestPOE != null) {
-                inspectorSigForSampleRequestPOE.save(em);
-            }
-
-            if (preparedBySigForReleaseRequestPOE != null) {
-                preparedBySigForReleaseRequestPOE.save(em);
-            }
-
             if (preparedByEmployeeForReleaseRequestPOE != null) {
                 preparedByEmployeeForReleaseRequestPOE.save(em);
-            }
-
-            if (approvedBySigForReleaseRequestPOE != null) {
-                approvedBySigForReleaseRequestPOE.save(em);
             }
 
             if (approvedByEmployeeForReleaseRequestPOE != null) {
                 approvedByEmployeeForReleaseRequestPOE.save(em);
             }
 
-            if (authSigForNoticeOfDentionDM != null) {
-                authSigForNoticeOfDentionDM.save(em);
-            }
-
             if (authEmployeeForNoticeOfDentionDM != null) {
                 authEmployeeForNoticeOfDentionDM.save(em);
-            }
-
-            if (authSigForNoticeOfReleaseFromDentionDM != null) {
-                authSigForNoticeOfReleaseFromDentionDM.save(em);
             }
 
             if (authEmpForNoticeOfReleaseFromDentionDM != null) {
@@ -1584,8 +1709,7 @@ public class ComplianceSurvey implements BusinessEntity {
             if (editedBy != null) {
                 editedBy.save(em);
             }
-
-//            getEntryDocumentInspection().save(em);
+  
             for (DocumentStandard documentStandard : getStandardsBreached()) {
                 documentStandard.save(em);
             }
@@ -1600,7 +1724,7 @@ public class ComplianceSurvey implements BusinessEntity {
                             Message.SEVERITY_ERROR_NAME);
                 }
             }
-            
+
             em.getTransaction().begin();
             BusinessEntityUtils.saveBusinessEntity(em, this);
             setIsDirty(false);

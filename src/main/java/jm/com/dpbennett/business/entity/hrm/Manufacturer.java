@@ -40,6 +40,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import jm.com.dpbennett.business.entity.BusinessEntity;
 import jm.com.dpbennett.business.entity.Person;
+import jm.com.dpbennett.business.entity.cert.Certification;
 import jm.com.dpbennett.business.entity.fm.MarketProduct;
 import jm.com.dpbennett.business.entity.sm.SystemOption;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
@@ -88,9 +89,11 @@ public class Manufacturer implements BusinessEntity, Comparable {
     private String notes;
     private Boolean tag;
     private Boolean active;
-    private Boolean international;
+    private Boolean international;    
     @Transient
     private Boolean isDirty;
+    @Transient
+    private List<Certification> certifications;
 
     public Manufacturer() {
         this.name = "";
@@ -128,6 +131,14 @@ public class Manufacturer implements BusinessEntity, Comparable {
         this.id = id;
     }
 
+    public List<Certification> getCertifications() {
+        return certifications;
+    }
+
+    public void setCertifications(List<Certification> certifications) {
+        this.certifications = certifications;
+    }
+   
     public List<MarketProduct> getMarketProducts() {
 
         if (marketProducts == null) {
